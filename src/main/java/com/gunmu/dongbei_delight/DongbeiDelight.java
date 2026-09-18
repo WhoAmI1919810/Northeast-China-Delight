@@ -1,6 +1,10 @@
 package com.gunmu.dongbei_delight;
 
 import com.gunmu.dongbei_delight.block.ModBlocks;
+import com.gunmu.dongbei_delight.block.ModBlockEntities;
+import com.gunmu.dongbei_delight.block.Vat;
+import com.gunmu.dongbei_delight.block.VatBlockEntity;
+import com.gunmu.dongbei_delight.client.VatRenderer;
 import com.gunmu.dongbei_delight.item.ModItems;
 import com.mojang.logging.LogUtils;
 import net.minecraft.client.Minecraft;
@@ -16,6 +20,7 @@ import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent;
 import net.neoforged.neoforge.event.server.ServerStartingEvent;
 import net.neoforged.neoforge.client.event.RegisterColorHandlersEvent;
+import net.neoforged.neoforge.client.event.EntityRenderersEvent;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 
@@ -31,6 +36,7 @@ public class DongbeiDelight
     {
         ModItems.register(modEventBus);
         ModBlocks.register(modEventBus);
+        ModBlockEntities.register(modEventBus);
         ModCreativeTabs.register(modEventBus);
 
         // 将物品添加到本模组的创造模式物品栏
@@ -72,11 +78,30 @@ public class DongbeiDelight
         public static void onRegisterBlockColors(RegisterColorHandlersEvent.Block event)
         {
             event.register(
-                    (state, level, pos, tintIndex) ->
-                            level != null && pos != null
-                                    ? BiomeColors.getAverageWaterColor(level, pos)
-                                    : 0x3F76E4,
+                    (state, level, pos, tintIndex) -> {
+                        int color = level != null && pos != null
+                                ? BiomeColors.getAverageWaterColor(level, pos)
+                                : 0x3F76E4;
+                        // 盐够了的水稍微发白，用来提示「可以压石头开腌了」
+                        if (state.getValue(Vat.SALTED)) {
+                            int r = (color >> 16) & 0xFF;
+                            int g = (color >> 8) & 0xFF;
+                            int b = color & 0xFF;
+                            r += (int) ((255 - r) * 0.45F);
+                            g += (int) ((255 - g) * 0.45F);
+                            b += (int) ((255 - b) * 0.45F);
+                            color = (r << 16) | (g << 8) | b;
+                        }
+                        return color;
+                    },
                     ModBlocks.VAT.get());
+        }
+
+        /** 大缸里的内容物需要渲染在方块上，所以注册方块实体渲染器 */
+        @SubscribeEvent
+        public static void onRegisterRenderers(EntityRenderersEvent.RegisterRenderers event)
+        {
+            event.registerBlockEntityRenderer(ModBlockEntities.VAT.get(), VatRenderer::new);
         }
     }
 }

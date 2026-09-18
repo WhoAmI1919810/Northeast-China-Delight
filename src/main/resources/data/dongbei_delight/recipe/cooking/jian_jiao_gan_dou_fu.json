@@ -7,6 +7,7 @@
   "experience": 1.0,
   "ingredients": [
     { "item": "dongbei_delight:green_pepper" },
+    { "item": "dongbei_delight:dried_tofu" },
     { "item": "dongbei_delight:dried_tofu" }
   ],
   "recipe_book_tab": "meals",

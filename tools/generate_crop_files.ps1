@@ -45,6 +45,13 @@ function Bar($g, $color, $x1, $y1, $x2, $y2, $width) {
     $p.Dispose()
 }
 
+function VStalk($g, $color, $x, $yTop, $yBottom, $width) {
+    # 竖直茎秆用实心矩形画：上下两格宽度完全一致，接缝不会错位
+    $b = Brush $color
+    $g.FillRectangle($b, $x, $yTop, $width, ($yBottom - $yTop + 1))
+    $b.Dispose()
+}
+
 function New-Canvas {
     $bitmap = New-Object System.Drawing.Bitmap 16, 16
     $g = [System.Drawing.Graphics]::FromImage($bitmap)
@@ -98,19 +105,54 @@ function Draw-Trellis($g) {
 }
 
 function Draw-CornStalk($g, [string]$leaf, [string]$fruit) {
-    # 玉米上方那一节：主茎贯穿 + 叶片 + 玉米穗
-    Bar $g $leaf 8 15 8 0 1
-    Bar $g $leaf 8 10 3 6 1
-    Bar $g $leaf 8 7 13 3 1
-    Oval $g $fruit $leaf 9 3 4 6
-    Oval $g $fruit $leaf 2 9 3 5
+    # 玉米上方那一节：主茎贯穿整格（与下方无缝衔接）+ 叶片 + 玉米穗
+    VStalk $g '#4E7A24' 6 0 15 4
+    VStalk $g $leaf 7 0 15 2
+    Bar $g $leaf 8 9 4 6 1
+    Bar $g $leaf 8 6 12 3 1
+    Oval $g $fruit $leaf 9 2 4 6
+    Oval $g $fruit $leaf 3 9 3 5
 }
 
 function Draw-CornStalkItem($g) {
-    # 物品图标：一节茎 + 两片叶子
-    Bar $g '#B7A24A' 8 15 8 1 2
-    Bar $g '#6BA83A' 8 11 4 8 1
-    Bar $g '#6BA83A' 8 7 12 4 1
+    # 物品图标：一根切下来的茎秆，带描边、切面和两片叶子
+    VStalk $g '#5E6B2E' 6 0 15 4     # 深色描边
+    VStalk $g '#B7A24A' 7 1 15 2     # 茎秆主体
+    VStalk $g '#E0D08A' 7 0 1 2      # 顶部切面
+    Bar $g '#6BA83A' 7 10 3 7 1      # 叶片
+    Bar $g '#6BA83A' 8 6 12 3 1      # 叶片
+}
+
+function Draw-CornStage($g, [int]$stage, [string]$leaf, [string]$fruit) {
+    # 玉米专用：成熟阶段（stage 3）的茎秆要贯穿整格，
+    # 否则和上方茎秆方块之间会空出一截，看起来像悬空。
+    switch ($stage) {
+        0 {
+            Bar $g $leaf 8 15 8 12 1
+            Bar $g $leaf 8 13 6 12 1
+            Bar $g $leaf 8 13 10 12 1
+        }
+        1 {
+            Bar $g $leaf 8 15 8 9 1
+            Bar $g $leaf 8 12 5 10 1
+            Bar $g $leaf 8 11 11 9 1
+        }
+        2 {
+            Bar $g $leaf 8 15 8 5 1
+            Bar $g $leaf 8 12 4 9 1
+            Bar $g $leaf 8 10 12 7 1
+            Oval $g $fruit $leaf 9 7 3 4
+        }
+        3 {
+            # 整格高的茎秆，顶部与上方那一节严丝合缝
+            VStalk $g '#4E7A24' 6 0 15 4
+            VStalk $g $leaf 7 0 15 2
+            Bar $g $leaf 8 12 3 8 1
+            Bar $g $leaf 8 9 13 5 1
+            Oval $g $fruit $leaf 9 6 4 7
+            Oval $g $fruit $leaf 3 10 3 5
+        }
+    }
 }
 
 function Draw-WholeCabbage($g, [int]$stage, [string]$leaf, [string]$fruit) {
@@ -199,7 +241,9 @@ foreach ($cropId in $crops.Keys) {
     # --- 作物贴图与模型 ---
     for ($stage = 0; $stage -lt $stageCount; $stage++) {
         $canvas = New-Canvas
-        if ($crop.wholePlant) {
+        if ($cropId -eq 'corn') {
+            Draw-CornStage $canvas.Graphics $stage $crop.leaf $crop.fruit
+        } elseif ($crop.wholePlant) {
             Draw-WholeCabbage $canvas.Graphics $stage $crop.leaf $crop.fruit
         } elseif ($crop.trellis) {
             Draw-Trellis $canvas.Graphics

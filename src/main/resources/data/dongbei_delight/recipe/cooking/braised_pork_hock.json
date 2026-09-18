@@ -1,0 +1,11 @@
+{
+  "type": "farmersdelight:cooking",
+  "container": { "count": 1, "id": "minecraft:bowl" },
+  "experience": 1.0,
+  "ingredients": [
+    { "item": "dongbei_delight:soy_sauce" },
+    { "item": "dongbei_delight:pork_hock" }
+  ],
+  "recipe_book_tab": "meals",
+  "result": { "count": 1, "id": "dongbei_delight:braised_pork_hock" }
+}

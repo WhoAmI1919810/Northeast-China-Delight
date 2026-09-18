@@ -12,7 +12,7 @@
 
   "item.dongbei_delight.eggplant_seeds": "Eggplant Seeds",
   "item.dongbei_delight.green_pepper_seeds": "Green Pepper Seeds",
-  "item.dongbei_delight.corn_seeds": "Corn Seeds",
+  "item.dongbei_delight.corn_seeds": "Corn Kernels",
   "item.dongbei_delight.green_beans_seeds": "Green Bean Seeds",
   "item.dongbei_delight.napa_cabbage_seeds": "Napa Cabbage Seeds",
   "item.dongbei_delight.cucumber_seeds": "Cucumber Seeds",
@@ -32,14 +32,23 @@
   "item.dongbei_delight.soy_paste": "Soy Paste",
   "item.dongbei_delight.pickled_cucumber": "Pickled Cucumber",
   "item.dongbei_delight.pickled_carrot": "Pickled Carrot",
-  "item.dongbei_delight.crushed_corn": "Crushed Corn",
   "item.dongbei_delight.corn_stalk": "Corn Stalk",
   "item.dongbei_delight.salt": "Salt",
   "item.dongbei_delight.salted_pork": "Salted Pork",
+  "item.dongbei_delight.soy_paste_chunk": "Soy Paste Chunk",
   "item.dongbei_delight.water_dough": "Water Dough",
   "item.dongbei_delight.buckwheat_noodles": "Buckwheat Noodles",
   "item.dongbei_delight.dried_tofu": "Dried Tofu",
   "item.dongbei_delight.pork_ribs": "Pork Ribs",
+  "item.dongbei_delight.pork_intestine": "Pig Intestine",
+  "item.dongbei_delight.pork_hock": "Pork Hock",
+  "item.dongbei_delight.pig_blood": "Pig Blood",
+  "item.dongbei_delight.raw_sausage": "Raw Sausage",
+  "item.dongbei_delight.blood_sausage": "Blood Sausage",
+  "item.dongbei_delight.rice_sausage": "Rice Sausage",
+  "item.dongbei_delight.soy_sauce": "Soy Sauce Bottle",
+  "item.dongbei_delight.braised_pork_hock": "Braised Pork Hock",
+  "item.dongbei_delight.braised_pork_strips": "Braised Pork Strips",
 
   "item.dongbei_delight.soy_milk": "Soy Milk",
   "item.dongbei_delight.guo_bao_rou": "Guo Bao Rou",
@@ -49,7 +58,7 @@
   "item.dongbei_delight.suan_cai_jiao_zi": "Sour Cabbage Dumplings",
   "item.dongbei_delight.di_guo_ji": "Di Guo Ji",
   "item.dongbei_delight.sour_tangzi": "Sour Tangzi",
-  "item.dongbei_delight.egg_soy_paste": "Egg Soy Paste",
+  "item.dongbei_delight.egg_soy_paste": "Egg Soybean Paste",
 
   "block.dongbei_delight.vat": "Vat",
   "item.dongbei_delight.unfired_vat_blank": "Unfired Vat Blank",
@@ -58,5 +67,6 @@
   "hud.dongbei_delight.vat.fermenting": "Fermenting...",
   "hud.dongbei_delight.vat.ready": "Fermentation complete",
 
-  "message.dongbei_delight.vat.need_bowl": "Hold a bowl to collect the soy paste"
+  "message.dongbei_delight.vat.need_container": "Hold a bowl to scoop the paste",
+  "message.dongbei_delight.vat.need_bottle": "Hold a glass bottle to collect the soy sauce"
 }

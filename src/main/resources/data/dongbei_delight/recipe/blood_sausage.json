@@ -1,0 +1,9 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    { "item": "dongbei_delight:pork_intestine" },
+    { "item": "dongbei_delight:pig_blood" }
+  ],
+  "result": { "count": 1, "id": "dongbei_delight:blood_sausage" }
+}

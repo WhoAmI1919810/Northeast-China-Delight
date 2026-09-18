@@ -7,6 +7,7 @@
   "experience": 1.0,
   "ingredients": [
     { "item": "dongbei_delight:sour_cabbage" },
+    { "item": "dongbei_delight:pork_ribs" },
     { "item": "dongbei_delight:pork_ribs" }
   ],
   "recipe_book_tab": "meals",

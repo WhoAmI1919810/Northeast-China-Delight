@@ -52,6 +52,8 @@ public class ModItems {
     public static final DeferredItem<Item> SOUR_CABBAGE = food("sour_cabbage");
     /** 大缸发酵大豆得到，需要用碗盛出 */
     public static final DeferredItem<Item> SOY_PASTE = bowlFood("soy_paste");
+    /** 大酱块：6 份黄豆在厨锅里煮成，放进大缸酿大酱 */
+    public static final DeferredItem<Item> SOY_PASTE_CHUNK = simple("soy_paste_chunk");
     /** 玉米茎秆：破坏玉米植株得到，可以当燃料 */
     public static final DeferredItem<Item> CORN_STALK = ITEMS.registerItem(
             "corn_stalk",
@@ -66,8 +68,6 @@ public class ModItems {
     public static final DeferredItem<Item> PICKLED_CUCUMBER = food("pickled_cucumber");
     /** 大缸发酵胡萝卜得到 */
     public static final DeferredItem<Item> PICKLED_CARROT = food("pickled_carrot");
-    /** 玉米压碎而成，用来在大缸里发酵 */
-    public static final DeferredItem<Item> CRUSHED_CORN = food("crushed_corn");
     /** 碎玉米粒在大缸里发酵得到，用来做酸汤子 */
     public static final DeferredItem<Item> WATER_DOUGH = simple("water_dough");
     public static final DeferredItem<Item> BUCKWHEAT_NOODLES = food("buckwheat_noodles");
@@ -80,6 +80,19 @@ public class ModItems {
 
     /** 猪掉落 */
     public static final DeferredItem<Item> PORK_RIBS = food("pork_ribs");
+    /** 猪副产物：只有用乐事的刀宰杀时才有概率掉落 */
+    public static final DeferredItem<Item> PORK_INTESTINE = food("pork_intestine");
+    public static final DeferredItem<Item> PORK_HOCK = food("pork_hock");
+    public static final DeferredItem<Item> PIG_BLOOD = food("pig_blood");
+    /** 灌肠类 */
+    public static final DeferredItem<Item> RAW_SAUSAGE = food("raw_sausage");
+    public static final DeferredItem<Item> BLOOD_SAUSAGE = food("blood_sausage");
+    public static final DeferredItem<Item> RICE_SAUSAGE = food("rice_sausage");
+    /** 酱油：大缸用酱块 + 小麦 + 盐 + 满水酿成 */
+    public static final DeferredItem<Item> SOY_SAUCE = food("soy_sauce");
+    /** 酱油烧的扒菜 */
+    public static final DeferredItem<Item> BRAISED_PORK_HOCK = bowlFood("braised_pork_hock");
+    public static final DeferredItem<Item> BRAISED_PORK_STRIPS = bowlFood("braised_pork_strips");
 
     // ===== 厨锅料理 =====
 
@@ -90,7 +103,8 @@ public class ModItems {
     public static final DeferredItem<Item> DI_SAN_XIAN = bowlFood("di_san_xian");
     public static final DeferredItem<Item> JIAN_JIAO_GAN_DOU_FU = bowlFood("jian_jiao_gan_dou_fu");
     public static final DeferredItem<Item> SUAN_CAI_DUN_GU_TOU = bowlFood("suan_cai_dun_gu_tou");
-    public static final DeferredItem<Item> SUAN_CAI_JIAO_ZI = bowlFood("suan_cai_jiao_zi");
+    /** 饺子不用碗装：吃完不返还容器 */
+    public static final DeferredItem<Item> SUAN_CAI_JIAO_ZI = food("suan_cai_jiao_zi");
     public static final DeferredItem<Item> DI_GUO_JI = bowlFood("di_guo_ji");
     public static final DeferredItem<Item> SOUR_TANGZI = bowlFood("sour_tangzi");
     public static final DeferredItem<Item> EGG_SOY_PASTE = bowlFood("egg_soy_paste");
@@ -119,8 +133,10 @@ public class ModItems {
             // 食材与加工品
             // 灵魂酸菜是彩蛋，不在此列出
             SOUR_CABBAGE, SOY_PASTE, PICKLED_CUCUMBER, PICKLED_CARROT,
-            CRUSHED_CORN, CORN_STALK, WATER_DOUGH, BUCKWHEAT_NOODLES, DRIED_TOFU,
-            PORK_RIBS, SALT, SALTED_PORK,
+            CORN_STALK, WATER_DOUGH, BUCKWHEAT_NOODLES, DRIED_TOFU,
+            PORK_RIBS, PORK_INTESTINE, PORK_HOCK, PIG_BLOOD, SALT, SALTED_PORK, SOY_PASTE_CHUNK,
+            RAW_SAUSAGE, BLOOD_SAUSAGE, RICE_SAUSAGE, SOY_SAUCE,
+            BRAISED_PORK_HOCK, BRAISED_PORK_STRIPS,
             // 料理
             SOY_MILK, GUO_BAO_ROU, DI_SAN_XIAN, JIAN_JIAO_GAN_DOU_FU, SUAN_CAI_DUN_GU_TOU,
             SUAN_CAI_JIAO_ZI, DI_GUO_JI, SOUR_TANGZI, EGG_SOY_PASTE,

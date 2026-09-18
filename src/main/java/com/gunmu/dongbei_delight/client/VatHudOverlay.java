@@ -1,8 +1,9 @@
 package com.gunmu.dongbei_delight.client;
 
 import com.gunmu.dongbei_delight.DongbeiDelight;
-import com.gunmu.dongbei_delight.block.ModBlockStateProperties.VatContent;
 import com.gunmu.dongbei_delight.block.Vat;
+import com.gunmu.dongbei_delight.block.VatBlockEntity;
+import net.minecraft.core.BlockPos;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
@@ -40,8 +41,11 @@ public class VatHudOverlay {
             return;
         }
 
-        BlockState state = minecraft.level.getBlockState(((BlockHitResult) hit).getBlockPos());
-        if (!(state.getBlock() instanceof Vat) || state.getValue(Vat.CONTENT) == VatContent.EMPTY) {
+        BlockPos pos = ((BlockHitResult) hit).getBlockPos();
+        BlockState state = minecraft.level.getBlockState(pos);
+        if (!(state.getBlock() instanceof Vat)
+                || !(minecraft.level.getBlockEntity(pos) instanceof VatBlockEntity vat)
+                || vat.isEmpty()) {
             return;
         }
 
