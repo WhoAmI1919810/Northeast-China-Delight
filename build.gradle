@@ -13,6 +13,8 @@ group = mod_group_id
 allprojects {
     repositories {
         maven { url 'https://maven.aliyun.com/nexus/content/groups/public/' }
+        // 农夫乐事未发布到公共 Maven，通过 Modrinth 的 Maven 代理获取
+        maven { name = 'Modrinth'; url = 'https://api.modrinth.com/maven' }
     }
 }
 
@@ -76,6 +78,10 @@ configurations {
 }
 
 dependencies {
+    // 农夫乐事：编译期引用其 API，开发运行时实际加载
+    compileOnly "maven.modrinth:farmers-delight:${farmersdelight_version}"
+    localRuntime "maven.modrinth:farmers-delight:${farmersdelight_version}"
+
     // 需要联动其它模组时在此声明，例如：
     // compileOnly "mezz.jei:jei-${minecraft_version}-common-api:${jei_version}"
     // localRuntime "mezz.jei:jei-${minecraft_version}-neoforge:${jei_version}"
@@ -97,7 +103,8 @@ var generateModMetadata = tasks.register("generateModMetadata", ProcessResources
             mod_license            : mod_license,
             mod_version            : mod_version,
             mod_authors            : mod_authors,
-            mod_description        : mod_description
+            mod_description        : mod_description,
+            farmersdelight_version_range: farmersdelight_version_range
     ]
     inputs.properties replaceProperties
     expand replaceProperties

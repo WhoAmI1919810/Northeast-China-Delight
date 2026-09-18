@@ -1,0 +1,18 @@
+{
+  "type": "farmersdelight:cooking",
+  "container": {
+    "count": 1,
+    "id": "minecraft:bowl"
+  },
+  "experience": 1.0,
+  "ingredients": [
+    { "item": "minecraft:porkchop" },
+    { "item": "minecraft:sugar" },
+    { "item": "farmersdelight:tomato_sauce" }
+  ],
+  "recipe_book_tab": "meals",
+  "result": {
+    "count": 1,
+    "id": "dongbei_delight:guo_bao_rou"
+  }
+}

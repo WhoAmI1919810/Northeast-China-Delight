@@ -1,8 +1,62 @@
 {
   "itemGroup.dongbei_delight": "Dongbei Delight",
+
+  "item.dongbei_delight.soybean": "Soybean",
+  "item.dongbei_delight.eggplant": "Eggplant",
+  "item.dongbei_delight.green_pepper": "Green Pepper",
+  "item.dongbei_delight.corn": "Corn",
+  "item.dongbei_delight.green_beans": "Green Beans",
+  "item.dongbei_delight.buckwheat": "Buckwheat",
+  "item.dongbei_delight.napa_cabbage": "Napa Cabbage",
+  "item.dongbei_delight.cucumber": "Cucumber",
+
+  "item.dongbei_delight.eggplant_seeds": "Eggplant Seeds",
+  "item.dongbei_delight.green_pepper_seeds": "Green Pepper Seeds",
+  "item.dongbei_delight.corn_seeds": "Corn Seeds",
+  "item.dongbei_delight.green_beans_seeds": "Green Bean Seeds",
+  "item.dongbei_delight.napa_cabbage_seeds": "Napa Cabbage Seeds",
+  "item.dongbei_delight.cucumber_seeds": "Cucumber Seeds",
+
+  "block.dongbei_delight.soybean_crop": "Soybeans",
+  "block.dongbei_delight.eggplant_crop": "Eggplants",
+  "block.dongbei_delight.green_pepper_crop": "Green Peppers",
+  "block.dongbei_delight.corn_crop": "Corn",
+  "block.dongbei_delight.green_beans_crop": "Green Beans",
+  "block.dongbei_delight.buckwheat_crop": "Buckwheat",
+  "block.dongbei_delight.napa_cabbage_crop": "Napa Cabbages",
+  "block.dongbei_delight.cucumber_crop": "Cucumbers",
+  "block.dongbei_delight.corn_stalk": "Corn Stalk",
+
   "item.dongbei_delight.sour_cabbage": "Sour Cabbage",
   "item.dongbei_delight.soul_cabbage": "Soul Cabbage",
+  "item.dongbei_delight.soy_paste": "Soy Paste",
+  "item.dongbei_delight.pickled_cucumber": "Pickled Cucumber",
+  "item.dongbei_delight.pickled_carrot": "Pickled Carrot",
+  "item.dongbei_delight.crushed_corn": "Crushed Corn",
+  "item.dongbei_delight.corn_stalk": "Corn Stalk",
+  "item.dongbei_delight.salt": "Salt",
+  "item.dongbei_delight.salted_pork": "Salted Pork",
+  "item.dongbei_delight.water_dough": "Water Dough",
+  "item.dongbei_delight.buckwheat_noodles": "Buckwheat Noodles",
+  "item.dongbei_delight.dried_tofu": "Dried Tofu",
+  "item.dongbei_delight.pork_ribs": "Pork Ribs",
+
+  "item.dongbei_delight.soy_milk": "Soy Milk",
+  "item.dongbei_delight.guo_bao_rou": "Guo Bao Rou",
+  "item.dongbei_delight.di_san_xian": "Di San Xian",
+  "item.dongbei_delight.jian_jiao_gan_dou_fu": "Green Pepper with Dried Tofu",
+  "item.dongbei_delight.suan_cai_dun_gu_tou": "Pork Rib Stew with Sour Cabbage",
+  "item.dongbei_delight.suan_cai_jiao_zi": "Sour Cabbage Dumplings",
+  "item.dongbei_delight.di_guo_ji": "Di Guo Ji",
+  "item.dongbei_delight.sour_tangzi": "Sour Tangzi",
+  "item.dongbei_delight.egg_soy_paste": "Egg Soy Paste",
+
   "block.dongbei_delight.vat": "Vat",
   "item.dongbei_delight.unfired_vat_blank": "Unfired Vat Blank",
-  "item.dongbei_delight.vat": "Vat"
+  "item.dongbei_delight.vat": "Vat",
+
+  "hud.dongbei_delight.vat.fermenting": "Fermenting...",
+  "hud.dongbei_delight.vat.ready": "Fermentation complete",
+
+  "message.dongbei_delight.vat.need_bowl": "Hold a bowl to collect the soy paste"
 }

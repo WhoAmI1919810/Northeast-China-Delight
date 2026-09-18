@@ -1,0 +1,18 @@
+{
+  "type": "farmersdelight:cooking",
+  "container": {
+    "count": 1,
+    "id": "minecraft:bowl"
+  },
+  "experience": 1.0,
+  "ingredients": [
+    { "item": "dongbei_delight:sour_cabbage" },
+    { "item": "farmersdelight:wheat_dough" },
+    { "item": "minecraft:porkchop" }
+  ],
+  "recipe_book_tab": "meals",
+  "result": {
+    "count": 1,
+    "id": "dongbei_delight:suan_cai_jiao_zi"
+  }
+}

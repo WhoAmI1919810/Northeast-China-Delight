@@ -1,0 +1,19 @@
+{
+  "type": "farmersdelight:cooking",
+  "container": {
+    "count": 1,
+    "id": "minecraft:bowl"
+  },
+  "experience": 1.0,
+  "ingredients": [
+    { "item": "minecraft:chicken" },
+    { "item": "minecraft:potato" },
+    { "item": "farmersdelight:wheat_dough" },
+    { "item": "dongbei_delight:green_beans" }
+  ],
+  "recipe_book_tab": "meals",
+  "result": {
+    "count": 1,
+    "id": "dongbei_delight:di_guo_ji"
+  }
+}

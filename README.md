@@ -1,18 +1,28 @@
 # 东北乐事 (Dongbei Delight)
 
-一个 NeoForge 模组，添加东北风味的内容。
+一个 NeoForge 模组，添加东北风味的内容，是 [农夫乐事 (Farmer's Delight)](https://github.com/vectorwing/FarmersDelight) 的附属模组。
 
 ## 支持的版本
 
-| Minecraft | NeoForge | 说明 |
-| --- | --- | --- |
-| 1.21.1 | 21.1.250 | 仓库主版本（VCS version），提交前源码保持此状态 |
-| 1.21.4 | 21.4.157 | 第二个目标版本 |
+| Minecraft | NeoForge | 农夫乐事 | 说明 |
+| --- | --- | --- | --- |
+| 1.21.1 | 21.1.250 | 1.3.4 | 仓库主版本（VCS version），提交前源码保持此状态 |
+
+目标版本必须跟随农夫乐事：它目前只发布到 1.21.1。待其发布新版本线后，在 `settings.gradle` 中追加对应节点即可，`versions/1.21.4` 已删除。
 
 ## 环境要求
 
 - JDK 21（`JAVA_HOME` 必须指向 JDK 21，Stonecutter 与 Gradle 9 都要求 JVM 21）
 - 首次构建需要联网下载 Gradle、NeoForge 与 Minecraft 反编译产物
+
+## 依赖：农夫乐事
+
+农夫乐事没有发布到公共 Maven，工程通过 [Modrinth Maven](https://api.modrinth.com/maven) 获取，坐标 `maven.modrinth:farmers-delight:<版本>`，版本号在 `versions/1.21.1/gradle.properties` 的 `farmersdelight_version` 中配置。
+
+- `compileOnly`：编译期可引用其 API，但不会打进本模组的 jar
+- `localRuntime`：开发运行时自动加载，便于本地测试
+
+模组元数据中已声明 `farmersdelight` 为 `required` 依赖，玩家必须同时安装农夫乐事。
 
 ## 常用命令
 
@@ -83,3 +93,36 @@ Stonecutter 只处理文本源码，**不会处理 JSON 等资源**，因此版�
 | `useItemOn` 返回值 | `ItemInteractionResult`（`PASS_TO_DEFAULT_BLOCK_INTERACTION`） | `InteractionResult`（`TRY_WITH_EMPTY_HAND`） |
 
 新增版本时：在 `settings.gradle` 的 `versions` 里登记、创建 `versions/<版本>/gradle.properties` 与资源目录，然后按上面的方式处理代码差异。
+
+## 与农夫乐事的联动
+
+数据驱动的配方直接写在 `src/main/resources/data/dongbei_delight/recipe/` 下即可。
+
+**炖锅（Cooking Pot）**
+
+```json
+{
+  "type": "farmersdelight:cooking",
+  "experience": 1.0,
+  "ingredients": [
+    { "item": "minecraft:apple" },
+    { "item": "minecraft:sugar" }
+  ],
+  "recipe_book_tab": "drinks",
+  "result": { "count": 1, "id": "dongbei_delight:soul_cabbage" }
+}
+```
+
+**砧板（Cutting Board）**
+
+```json
+{
+  "type": "farmersdelight:cutting",
+  "ingredients": [{ "item": "dongbei_delight:sour_cabbage" }],
+  "result": [{ "item": { "count": 1, "id": "dongbei_delight:soul_cabbage" } }],
+  "sound": { "sound_id": "minecraft:item.axe.strip" },
+  "tool": [{ "tag": "farmersdelight:tools/knives" }]
+}
+```
+
+常用的农夫乐事标签：`farmersdelight:tools/knives`（刀具）、`farmersdelight:meals`（正餐）、`farmersdelight:snacks`（零食）、`farmersdelight:drinks`（饮品）、`farmersdelight:flat_on_cutting_board`（可平放于砧板）。

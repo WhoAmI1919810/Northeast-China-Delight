@@ -1,0 +1,11 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    { "item": "dongbei_delight:corn" }
+  ],
+  "result": {
+    "count": 1,
+    "id": "dongbei_delight:crushed_corn"
+  }
+}
