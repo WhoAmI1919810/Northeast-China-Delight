@@ -3,9 +3,26 @@ pluginManagement {
         mavenLocal()
         gradlePluginPortal()
         maven { url = 'https://maven.neoforged.net/releases' }
+        maven { url = 'https://maven.kikugie.dev/snapshots' }
     }
 }
 
 plugins {
     id 'org.gradle.toolchains.foojay-resolver-convention' version '0.9.0'
+    id 'dev.kikugie.stonecutter' version '0.9.8'
 }
+
+stonecutter {
+    // 本工程使用 Groovy DSL
+    kotlinController = false
+    centralScript = 'build.gradle'
+
+    create(getRootProject()) {
+        // 每个条目会在 versions/<名字>/ 下生成一个 Gradle 子项目
+        versions '1.21.1', '1.21.4'
+        // 提交进仓库的源码状态以该版本为准
+        vcsVersion = '1.21.1'
+    }
+}
+
+rootProject.name = 'dongbei_delight'

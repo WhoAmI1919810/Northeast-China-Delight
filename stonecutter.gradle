@@ -1,0 +1,8 @@
+plugins {
+    id 'dev.kikugie.stonecutter'
+}
+
+// 当前激活的版本：根目录 src/ 中的条件注释按它展开
+// 切换版本：./gradlew "Set active project to 1.21.4"
+// 恢复仓库状态：./gradlew "Reset active project"
+stonecutter.active '1.21.1'

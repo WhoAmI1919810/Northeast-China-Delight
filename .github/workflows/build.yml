@@ -22,4 +22,5 @@ jobs:
         uses: gradle/actions/setup-gradle@v4
 
       - name: Build with Gradle
+        # 在不指定项目路径时，Gradle 会对所有版本节点执行 build
         run: ./gradlew build
