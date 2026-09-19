@@ -1,0 +1,12 @@
+{
+  "type": "dongbei_delight:hairtail_fishing",
+  "conditions": [
+    {
+      "condition": "minecraft:entity_properties",
+      "entity": "this",
+      "predicate": {
+        "type": "minecraft:fishing_bobber"
+      }
+    }
+  ]
+}

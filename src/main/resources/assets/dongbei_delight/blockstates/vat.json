@@ -6,15 +6,15 @@
       }
     },
     {
-      "when": { "water_level": "1", "fermented": "false" },
+      "when": { "water_level": "1" },
       "apply": { "model": "dongbei_delight:block/vat_water1" }
     },
     {
-      "when": { "water_level": "2", "fermented": "false" },
+      "when": { "water_level": "2" },
       "apply": { "model": "dongbei_delight:block/vat_water2" }
     },
     {
-      "when": { "water_level": "3", "fermented": "false" },
+      "when": { "water_level": "3" },
       "apply": { "model": "dongbei_delight:block/vat_water3" }
     }
   ]

@@ -1,0 +1,6 @@
+{
+  "parent": "item/generated",
+  "textures": {
+    "layer0": "dongbei_delight:item/bai_cai_dou_fu_dun_fen_tiao"
+  }
+}

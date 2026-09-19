@@ -1,0 +1,18 @@
+{
+  "type": "farmersdelight:cooking",
+  "container": {
+    "count": 1,
+    "id": "minecraft:bowl"
+  },
+  "experience": 0.35,
+  "ingredients": [
+    { "item": "dongbei_delight:shrimp_paste" },
+    { "item": "minecraft:egg" },
+    { "item": "dongbei_delight:green_pepper" }
+  ],
+  "recipe_book_tab": "meals",
+  "result": {
+    "count": 1,
+    "id": "dongbei_delight:xia_jiang_chao_ji_dan"
+  }
+}

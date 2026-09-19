@@ -11,8 +11,11 @@ public class ModBlockStateProperties {
     /** 大缸发酵一共分多少步（进度条用） */
     public static final int VAT_MAX_PROGRESS = 20;
 
+    /** 大缸水位上限，和炼药锅一样分 0~3 四档 */
+    public static final int VAT_MAX_WATER = 3;
+
     /** 大缸水位，和炼药锅一样分 0~3 四档 */
-    public static final IntegerProperty WATER_LEVEL = IntegerProperty.create("water_level", 0, 3);
+    public static final IntegerProperty WATER_LEVEL = IntegerProperty.create("water_level", 0, VAT_MAX_WATER);
 
     /** 大缸内的发酵是否已完成 */
     public static final BooleanProperty VAT_FERMENTED = BooleanProperty.create("fermented");

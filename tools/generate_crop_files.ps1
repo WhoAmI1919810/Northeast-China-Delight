@@ -7,10 +7,15 @@
     掉落规则（产量、抢夺加成）也由本脚本生成，调整产量时改下面的 PLACEHOLDER 段。
 
     用法： pwsh -File tools/generate_crop_files.ps1
+          pwsh -File tools/generate_crop_files.ps1 -Only sweet_potato
+
+    注意：不带 -Only 会重画全部作物；已经交付正式素材的作物请用 -Only 点名生成，
+    否则会把正式贴图覆盖回占位图。
 #>
 param(
     [string]$AssetsRoot = (Join-Path $PSScriptRoot '..\src\main\resources\assets\dongbei_delight'),
-    [string]$DataRoot = (Join-Path $PSScriptRoot '..\src\main\resources\data\dongbei_delight')
+    [string]$DataRoot = (Join-Path $PSScriptRoot '..\src\main\resources\data\dongbei_delight'),
+    [string[]]$Only = @()
 )
 
 Add-Type -AssemblyName System.Drawing
@@ -114,6 +119,14 @@ function Draw-CornStalk($g, [string]$leaf, [string]$fruit) {
     Oval $g $fruit $leaf 3 9 3 5
 }
 
+function Draw-CornStalkYoung($g, [string]$leaf) {
+    # 还没结穗的上半格：只有茎秆和叶片
+    VStalk $g '#4E7A24' 6 0 15 4
+    VStalk $g $leaf 7 0 15 2
+    Bar $g $leaf 8 9 4 6 1
+    Bar $g $leaf 8 6 12 3 1
+}
+
 function Draw-CornStalkItem($g) {
     # 物品图标：一根切下来的茎秆，带描边、切面和两片叶子
     VStalk $g '#5E6B2E' 6 0 15 4     # 深色描边
@@ -177,6 +190,66 @@ function Draw-WholeCabbage($g, [int]$stage, [string]$leaf, [string]$fruit) {
     }
 }
 
+function Draw-SweetPotato($g, [int]$stage, [string]$leaf, [string]$fruit) {
+    # 红薯：藤蔓 + 叶片，成熟后根部露出薯块
+    switch ($stage) {
+        0 {
+            Bar $g $leaf 8 15 8 12 1
+            Bar $g $leaf 8 13 6 12 1
+            Bar $g $leaf 8 13 10 12 1
+        }
+        1 {
+            Bar $g $leaf 8 15 8 10 1
+            Bar $g $leaf 8 12 5 10 1
+            Bar $g $leaf 8 11 11 9 1
+        }
+        2 {
+            Bar $g $leaf 8 15 8 6 1
+            Bar $g $leaf 8 12 4 9 1
+            Bar $g $leaf 8 10 12 7 1
+            Bar $g $leaf 7 8 4 6 1
+            Oval $g $fruit '#7A3E22' 5 11 5 4
+        }
+        3 {
+            Bar $g $leaf 8 15 8 4 1
+            Bar $g $leaf 8 12 3 8 1
+            Bar $g $leaf 8 9 13 5 1
+            Bar $g $leaf 7 6 3 4 1
+            Oval $g '#8A4A26' $leaf 3 10 5 5
+            Oval $g '#8A4A26' $leaf 8 11 5 4
+            Oval $g $leaf '#3E6B24' 9 2 5 4
+        }
+    }
+}
+
+function Draw-GreenOnion($g, [int]$stage) {
+    # 大葱：白葱白 + 绿葱叶，越成熟葱白越粗、叶片越多
+    switch ($stage) {
+        0 {
+            Bar $g '#6BA83A' 8 15 8 11 1
+            Bar $g '#6BA83A' 8 13 6 12 1
+        }
+        1 {
+            VStalk $g '#E8F0D8' 7 13 15 2
+            Bar $g '#6BA83A' 7 13 5 8 1
+            Bar $g '#6BA83A' 8 13 11 8 1
+        }
+        2 {
+            VStalk $g '#E8F0D8' 7 10 15 2
+            Bar $g '#6BA83A' 7 10 4 5 1
+            Bar $g '#6BA83A' 8 10 12 5 1
+            Bar $g '#4E8A32' 8 11 8 6 1
+        }
+        3 {
+            VStalk $g '#F2F6E4' 6 8 15 4
+            Bar $g '#4E8A32' 6 8 4 3 1
+            Bar $g '#6BA83A' 8 8 8 2 1
+            Bar $g '#6BA83A' 9 8 12 3 1
+            Bar $g '#6BA83A' 5 9 2 6 1
+        }
+    }
+}
+
 # 作物定义
 #   produce    收获产物
 #   seed       种子 id；填 $null 表示「自身即种子」（大豆、荞麦）
@@ -203,6 +276,8 @@ $crops = [ordered]@{
         produce = 'dongbei_delight:corn'; seed = 'corn_seeds'
         leaf = '#6BA83A'; fruit = '#F0C93F'; seedColor = '#E8C860'
         trellis = $false; wholePlant = $false
+        # 玉米一次收获 2 个
+        produceCount = 2
     }
     'green_beans' = @{
         produce = 'dongbei_delight:green_beans'; seed = 'green_beans_seeds'
@@ -224,13 +299,46 @@ $crops = [ordered]@{
         leaf = '#3E7A2A'; fruit = '#4F9B3F'; seedColor = '#E8DCAA'
         trellis = $true; wholePlant = $false
     }
+    'sweet_potato' = @{
+        produce = 'dongbei_delight:sweet_potato'; seed = $null
+        leaf = '#4E8A32'; fruit = '#B5623C'; seedColor = '#B5623C'
+        trellis = $false; wholePlant = $false
+    }
+    'red_chili' = @{
+        produce = 'dongbei_delight:red_chili'; seed = 'red_chili_seeds'
+        leaf = '#3E7A2A'; fruit = '#C42A1E'; seedColor = '#E8DCAA'
+        trellis = $false; wholePlant = $false
+    }
+    'peanut' = @{
+        produce = 'dongbei_delight:peanut'; seed = $null
+        leaf = '#4E8A32'; fruit = '#C9A05A'; seedColor = '#C9A05A'
+        trellis = $false; wholePlant = $false
+    }
+    'red_bean' = @{
+        produce = 'dongbei_delight:red_bean'; seed = $null
+        leaf = '#4E8A32'; fruit = '#B5301A'; seedColor = '#B5301A'
+        trellis = $false; wholePlant = $false
+    }
+    'green_onion' = @{
+        produce = 'dongbei_delight:green_onion'; seed = 'green_onion_seeds'
+        leaf = '#6BA83A'; fruit = '#F2F6E4'; seedColor = '#E8DCAA'
+        trellis = $false; wholePlant = $false
+    }
 }
 
 # 4 个视觉阶段对应的生长年龄
 $stageByAge = @(0, 0, 1, 1, 2, 2, 3, 3)
 $stageCount = 4
 
-foreach ($cropId in $crops.Keys) {
+# 用 -File 调用时，PowerShell 会把 -Only a,b 当成一个逗号字符串，这里统一拆开
+$onlyIds = @($Only | ForEach-Object { $_ -split ',' } | ForEach-Object { $_.Trim() } | Where-Object { $_ })
+$cropIds = if ($onlyIds.Count -gt 0) { $onlyIds } else { @($crops.Keys) }
+
+foreach ($cropId in $cropIds) {
+    if (-not $crops.Contains($cropId)) {
+        Write-Warning "跳过未知作物 id：$cropId"
+        continue
+    }
     $crop = $crops[$cropId]
     $produce = $crop.produce
     $selfSeeding = $null -eq $crop.seed
@@ -243,6 +351,10 @@ foreach ($cropId in $crops.Keys) {
         $canvas = New-Canvas
         if ($cropId -eq 'corn') {
             Draw-CornStage $canvas.Graphics $stage $crop.leaf $crop.fruit
+        } elseif ($cropId -eq 'sweet_potato') {
+            Draw-SweetPotato $canvas.Graphics $stage $crop.leaf $crop.fruit
+        } elseif ($cropId -eq 'green_onion') {
+            Draw-GreenOnion $canvas.Graphics $stage
         } elseif ($crop.wholePlant) {
             Draw-WholeCabbage $canvas.Graphics $stage $crop.leaf $crop.fruit
         } elseif ($crop.trellis) {
@@ -293,6 +405,13 @@ foreach ($cropId in $crops.Keys) {
         block      = "dongbei_delight:$blockId"
         properties = [ordered]@{ age = '7' }
     }
+    # 收获数量：大部分作物 1 个，玉米 2 个
+    $produceEntry = [ordered]@{ type = 'minecraft:item'; name = $produce; conditions = @($mature) }
+    if ($crop.ContainsKey('produceCount') -and [int]$crop.produceCount -gt 1) {
+        $produceEntry.functions = @(
+            [ordered]@{ function = 'minecraft:set_count'; count = [int]$crop.produceCount }
+        )
+    }
     $loot = [ordered]@{
         type      = 'minecraft:block'
         functions = @([ordered]@{ function = 'minecraft:explosion_decay' })
@@ -304,7 +423,7 @@ foreach ($cropId in $crops.Keys) {
                     [ordered]@{
                         type     = 'minecraft:alternatives'
                         children = @(
-                            [ordered]@{ type = 'minecraft:item'; name = $produce; conditions = @($mature) },
+                            $produceEntry,
                             [ordered]@{ type = 'minecraft:item'; name = $seedDrop }
                         )
                     }
@@ -348,7 +467,8 @@ foreach ($cropId in $crops.Keys) {
     }
 }
 
-# --- 玉米上方的茎秆 ---
+# --- 玉米上方的茎秆（只在生成玉米或全量生成时重画）---
+if ($onlyIds.Count -eq 0 -or $onlyIds -contains 'corn') {
 $cornLeaf = $crops['corn'].leaf
 $cornFruit = $crops['corn'].fruit
 
@@ -358,6 +478,13 @@ $canvas.Graphics.Dispose()
 $canvas.Bitmap.Save((Join-Path $blockTextureDir 'corn_stalk.png'), [System.Drawing.Imaging.ImageFormat]::Png)
 $canvas.Bitmap.Dispose()
 
+# 还没结穗的上半格
+$canvas = New-Canvas
+Draw-CornStalkYoung $canvas.Graphics $cornLeaf
+$canvas.Graphics.Dispose()
+$canvas.Bitmap.Save((Join-Path $blockTextureDir 'corn_stalk_young.png'), [System.Drawing.Imaging.ImageFormat]::Png)
+$canvas.Bitmap.Dispose()
+
 $stalkModel = [ordered]@{
     parent      = 'minecraft:block/crop'
     render_type = 'minecraft:cutout'
@@ -365,7 +492,18 @@ $stalkModel = [ordered]@{
 }
 $stalkModel | ConvertTo-Json -Depth 5 | Set-Content -Path (Join-Path $blockModelDir 'corn_stalk.json') -Encoding utf8
 
-([ordered]@{ variants = [ordered]@{ '' = [ordered]@{ model = 'dongbei_delight:block/corn_stalk' } } }) |
+$youngStalkModel = [ordered]@{
+    parent      = 'minecraft:block/crop'
+    render_type = 'minecraft:cutout'
+    textures    = [ordered]@{ crop = 'dongbei_delight:block/corn_stalk_young' }
+}
+$youngStalkModel | ConvertTo-Json -Depth 5 | Set-Content -Path (Join-Path $blockModelDir 'corn_stalk_young.json') -Encoding utf8
+
+# 上半格分「没结穗 / 结穗成熟」两种状态
+([ordered]@{ variants = [ordered]@{
+    'has_corn=false' = [ordered]@{ model = 'dongbei_delight:block/corn_stalk_young' }
+    'has_corn=true'  = [ordered]@{ model = 'dongbei_delight:block/corn_stalk' }
+} }) |
     ConvertTo-Json -Depth 8 | Set-Content -Path (Join-Path $blockStateDir 'corn_stalk.json') -Encoding utf8
 
 # 茎秆方块本身不掉落任何东西：它只是玉米植株的上半截，
@@ -389,9 +527,9 @@ $stalkItemModel = [ordered]@{
     textures = [ordered]@{ layer0 = 'dongbei_delight:item/corn_stalk' }
 }
 $stalkItemModel | ConvertTo-Json -Depth 5 | Set-Content -Path (Join-Path $itemModelDir 'corn_stalk.json') -Encoding utf8
+}
 
-Write-Host "已为 $($crops.Count) 种作物生成方块状态 / 模型 / 贴图 / 掉落表" -ForegroundColor Green
-Write-Host "  含玉米茎秆 corn_stalk" -ForegroundColor Green
+Write-Host "已为 $($cropIds.Count) 种作物生成方块状态 / 模型 / 贴图 / 掉落表" -ForegroundColor Green
 Write-Host "  方块状态: $blockStateDir"
 Write-Host "  方块模型: $blockModelDir"
 Write-Host "  方块贴图: $blockTextureDir"

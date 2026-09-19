@@ -1,0 +1,6 @@
+{
+  "parent": "item/generated",
+  "textures": {
+    "layer0": "dongbei_delight:item/old_style_guo_bao_rou"
+  }
+}

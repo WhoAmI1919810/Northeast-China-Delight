@@ -1,9 +1,8 @@
 {
   "replace": false,
   "entries": [
-    "dongbei_delight:pork_ribs_from_pig",
-    "dongbei_delight:pork_intestine_from_pig",
-    "dongbei_delight:pork_hock_from_pig"
-    ,"dongbei_delight:pig_blood_from_pig"
+    "dongbei_delight:pig_offal",
+    "dongbei_delight:hazelnut",
+    "dongbei_delight:hairtail_fishing"
   ]
 }

@@ -1,0 +1,14 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    { "item": "dongbei_delight:pickled_cucumber" },
+    { "item": "dongbei_delight:spicy_cabbage" },
+    { "item": "farmersdelight:onion" },
+    { "item": "dongbei_delight:salt" }
+  ],
+  "result": {
+    "count": 1,
+    "id": "dongbei_delight:jia_xian_huang_gua_pao_cai"
+  }
+}

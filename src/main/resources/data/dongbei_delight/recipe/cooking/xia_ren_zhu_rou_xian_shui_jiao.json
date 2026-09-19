@@ -1,0 +1,15 @@
+{
+  "type": "farmersdelight:cooking",
+  "experience": 0.35,
+  "ingredients": [
+    { "item": "dongbei_delight:shrimp" },
+    { "item": "minecraft:porkchop" },
+    { "item": "dongbei_delight:napa_cabbage" },
+    { "item": "farmersdelight:wheat_dough" }
+  ],
+  "recipe_book_tab": "misc",
+  "result": {
+    "count": 1,
+    "id": "dongbei_delight:xia_ren_zhu_rou_xian_shui_jiao"
+  }
+}

@@ -124,6 +124,11 @@ function Shape-Dumpling($g, $main, $dark, $accent) {
     Oval $g $accent $dark 5 10 6 5
 }
 
+function Shape-Mushroom($g, $main, $dark, $accent) {
+    Oval $g $main $dark 2 2 12 7
+    Rect $g $accent $dark 6 8 4 6
+}
+
 # ---- 物品清单：id = 形状, 主色, 描边, 点缀色 ----
 
 $items = [ordered]@{
@@ -136,6 +141,16 @@ $items = [ordered]@{
     'buckwheat'               = @('grain',     '#9A6B3A', '#5E3F1E', '#C79A63')
     'napa_cabbage'            = @('leafy',     '#DCE8C0', '#7A8C55', '#F2F6E4')
     'cucumber'                = @('speckled',  '#4F9B3F', '#2A5A21', '#2F6B26')
+    'sweet_potato'            = @('long',      '#B5623C', '#6B3220', '#D98A5A')
+    'green_onion'             = @('leafy',     '#7FB25A', '#3E6B24', '#F2F6E4')
+    # 山珍与海味
+    'hazelnut'                = @('cluster',   '#A9743A', '#6B4420', '#D9A868')
+    'hazel_mushroom'          = @('mushroom',  '#C08A4A', '#6B4420', '#E8D9B0')
+    'wood_ear'                = @('cluster',   '#4E3A2E', '#241A12', '#6B5240')
+    'hairtail'                = @('long',      '#C9D2D8', '#7A848C', '#F2F5F8')
+    'oyster'                  = @('sheet',     '#B8B09A', '#6B6452', '#E8E4D4')
+    'sea_cucumber'            = @('pod',       '#4A3A2E', '#241A12', '#6B5240')
+    'chicken_frame'           = @('bone',      '#E8D9A8', '#9A8850', '#C4645C')
     # 食材与加工品
     'soy_paste'               = @('bowl',      '#8A5A2B', '#4A2E12', '#6B4420')
     'pickled_cucumber'        = @('speckled',  '#7A9A3A', '#44561C', '#4E6B22')
@@ -154,14 +169,70 @@ $items = [ordered]@{
     'blood_sausage'           = @('pod',       '#5E1414', '#2E0808', '#8A2A2A')
     'rice_sausage'            = @('pod',       '#E8DCC0', '#9A8A60', '#C4645C')
     'soy_sauce'               = @('bottle',    '#3E2410', '#1A0E06', '#5E3A1A')
+    'vinegar'                 = @('bottle',    '#6B3A16', '#3A1E0A', '#8A5A28')
+    'sour_water'              = @('bottle',    '#C9C09A', '#8A8058', '#E8E2C4')
+    'white_vinegar'           = @('bottle',    '#E4DCC2', '#A89E7E', '#F5F0DE')
     'braised_pork_hock'       = @('bowl',      '#8A4A2A', '#4E2410', '#C4845A')
     'braised_pork_strips'     = @('bowl',      '#9A5A3A', '#4E2A18', '#D8A08A')
     'salt'                    = @('grain',     '#F2F2F2', '#A8A8A8', '#DCDCDC')
     'salted_pork'             = @('sheet',     '#B5534A', '#6B2A24', '#D98A7A')
     'soy_paste_chunk'         = @('sheet',     '#7A4A1E', '#3E2410', '#9A6B2A')
+    'soy_residue'             = @('cluster',   '#8A6B3A', '#4E3A18', '#A88A54')
     # 料理
     'soy_milk'                = @('bottle',    '#F2F2E8', '#9A9A8A', '#D8D8C8')
-    'guo_bao_rou'             = @('bowl',      '#C87A3C', '#7A4218', '#E8A860')
+    'old_style_guo_bao_rou'   = @('bowl',      '#C87A3C', '#7A4218', '#E8C8A0')
+    'new_style_guo_bao_rou'   = @('bowl',      '#C4502C', '#7A2A14', '#E8A860')
+    'sweet_potato_porridge'   = @('bowl',      '#E8C46A', '#A8842A', '#F5E4B0')
+    'zhu_rou_dun_fen_tiao'    = @('bowl',      '#B58A6A', '#5E3A24', '#E8DCC0')
+    'suan_cai_chao_fen_tiao'  = @('bowl',      '#D9C08A', '#8A7440', '#E8DCC0')
+    'sweet_potato_starch'     = @('grain',     '#F2EDDC', '#B0A583', '#FFFFFF')
+    'vermicelli'              = @('noodles',   '#E8DCC0', '#9A8A60', '#F5EEDC')
+    'baked_sweet_potato'      = @('long',      '#8A4A26', '#4E2410', '#C97A3C')
+    'red_chili'               = @('long',      '#C42A1E', '#6B1410', '#E85A3A')
+    'red_chili_seeds'         = @('grain',     '#E8DCAA', '#A89058', '#F5EED0')
+    'shrimp'                  = @('pod',       '#E8826A', '#9A4636', '#F2B0A0')
+    'spicy_cabbage'           = @('leafy',     '#C4442A', '#7A2416', '#E8A08A')
+    'fish_sauce'              = @('bottle',    '#6B4416', '#3A2408', '#8A5A24')
+    'shrimp_paste'            = @('bottle',    '#8A4A34', '#4E2418', '#A8624A')
+    'buckwheat_cold_noodles'  = @('bowl',      '#D8CCB0', '#8A7A58', '#C4442A')
+    'chili_oil'               = @('bottle',    '#C4442A', '#6B1410', '#E8825A')
+    'chili_sauce'             = @('bowl',      '#B5301A', '#6B1410', '#E05A3A')
+    'liang_ban_xian_cai'      = @('bowl',      '#D9A03A', '#8A5A18', '#7A9A3A')
+    'ming_tai_yu_si'          = @('bowl',      '#E8DCC0', '#A89058', '#C4442A')
+    'zhan_jiang_cai'          = @('bowl',      '#7FA05A', '#3E5A24', '#8A5A2B')
+    'da_fan_bao'              = @('leafy',     '#DCE8C0', '#7A8C55', '#F2F6E4')
+    'jia_xian_huang_gua_pao_cai' = @('speckled', '#7A9A3A', '#44561C', '#C4442A')
+    'liang_ban_hua_cai'       = @('bowl',      '#EDE3C8', '#9A8A60', '#C4442A')
+    'da_feng_shou'            = @('bowl',      '#B58A5A', '#5E3A1E', '#F0C93F')
+    'bai_cai_dou_fu_dun_fen_tiao' = @('bowl',  '#EFE3C8', '#9A8A60', '#E8DCC0')
+    'la_niu_rou_tang_fan'     = @('bowl',      '#C4502C', '#6B2414', '#E8DCC0')
+    'la_bai_cai_chao_fan'     = @('bowl',      '#D8503A', '#7A2416', '#F2E8C0')
+    'tu_dou_bing'             = @('sheet',     '#E8C46A', '#A8842A', '#C4442A')
+    'xia_ren_zhu_rou_xian_shui_jiao' = @('dumpling', '#EDE3C8', '#9A8A60', '#E8826A')
+    'xia_jiang_chao_ji_dan'   = @('bowl',      '#E8B93C', '#96700F', '#E8826A')
+    'xia_jiang_dun_dou_fu'    = @('bowl',      '#E8D9A8', '#9A8850', '#8A4A34')
+    'hai_xian_dou_fu_tang'    = @('bowl',      '#E8DCC0', '#8A7A58', '#E8826A')
+    'san_xian_xian_shui_jiao' = @('dumpling',  '#EDE3C8', '#9A8A60', '#7FA05A')
+    'bean_sprouts'            = @('grain',     '#E8F0C0', '#8AA05A', '#FFFFFF')
+    'sour_corn_kernels'       = @('grain',     '#F0D45C', '#A88A1E', '#C9B06A')
+    'peanut'                  = @('cluster',   '#C9A05A', '#8A6B3A', '#E8D0A0')
+    'red_bean'                = @('grain',     '#B5301A', '#6B1410', '#D8503A')
+    'pig_liver'               = @('sheet',     '#8A3A3A', '#4E1A1A', '#B5534A')
+    'red_sausage'             = @('pod',       '#B5301A', '#6B1410', '#D8503A')
+    'smoked_pork_hock'        = @('bone',      '#8A5A3A', '#4E2A14', '#F0EDE4')
+    'smoked_pig_liver'        = @('sheet',     '#6B3A2A', '#3A1E14', '#9A5A3A')
+    'yu_mi_lao'               = @('sheet',     '#F0C93F', '#A88A1E', '#E8B93C')
+    'cha_zi_zhou'             = @('bowl',      '#EFD98A', '#8A7440', '#F2E8C0')
+    'roasted_peanuts'         = @('cluster',   '#C97A3C', '#8A4E20', '#E8B06A')
+    'nian_dou_bao'            = @('dumpling',  '#EDE3C8', '#9A8A60', '#B5301A')
+    'xun_jiang_pin_pan'       = @('bowl',      '#8A5A3A', '#4E2A14', '#B5301A')
+    'peanut_butter'           = @('bottle',    '#C9A05A', '#8A6B3A', '#E8D0A0')
+    'orange_guo_bao_rou'      = @('bowl',      '#E08A2E', '#8A4E12', '#F0C93F')
+    'la_pi'                   = @('sheet',     '#E8DCC0', '#A89058', '#F5EEDC')
+    'jiang_ban_la_pi'         = @('bowl',      '#E8DCC0', '#A89058', '#C4442A')
+    'la_bai_cai_tang_fan'     = @('bowl',      '#D8503A', '#7A2416', '#EFE3C8')
+    'cong_shao_hai_shen'      = @('bowl',      '#5E3A2E', '#2E1A12', '#7FB25A')
+    'hai_shen_dou_fu_tang'    = @('bowl',      '#E8DCC0', '#8A7A58', '#4A3A2E')
     'di_san_xian'             = @('bowl',      '#8A7A3C', '#4E4418', '#B7A45E')
     'jian_jiao_gan_dou_fu'    = @('bowl',      '#7FA05A', '#3E5A24', '#D8C79A')
     'suan_cai_dun_gu_tou'     = @('bowl',      '#D9C08A', '#8A7440', '#F0EDE4')
@@ -193,6 +264,7 @@ $shapeMap = @{
     'sheet'    = ${function:Shape-Sheet}
     'bone'     = ${function:Shape-Bone}
     'dumpling' = ${function:Shape-Dumpling}
+    'mushroom' = ${function:Shape-Mushroom}
 }
 
 # 用 -File 调用时，PowerShell 会把 -Only a,b,c 当成一个逗号字符串，这里统一拆开

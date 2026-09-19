@@ -1,0 +1,9 @@
+{
+  "type": "dongbei_delight:hazelnut",
+  "conditions": [
+    {
+      "condition": "minecraft:block_state_property",
+      "block": "minecraft:large_fern"
+    }
+  ]
+}

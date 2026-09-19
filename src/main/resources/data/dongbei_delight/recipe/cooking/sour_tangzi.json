@@ -6,7 +6,8 @@
   },
   "experience": 1.0,
   "ingredients": [
-    { "item": "dongbei_delight:water_dough" }
+    { "item": "dongbei_delight:water_dough" },
+    { "item": "minecraft:water_bucket" }
   ],
   "recipe_book_tab": "meals",
   "result": {

@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    { "item": "farmersdelight:cod_slice" },
+    { "item": "farmersdelight:cod_slice" },
+    { "item": "dongbei_delight:salt" },
+    { "item": "minecraft:sugar" },
+    { "item": "dongbei_delight:chili_sauce" },
+    { "item": "minecraft:bowl" },
+    { "item": "dongbei_delight:green_pepper" }
+  ],
+  "result": {
+    "count": 1,
+    "id": "dongbei_delight:ming_tai_yu_si"
+  }
+}

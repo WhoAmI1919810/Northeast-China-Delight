@@ -1,0 +1,30 @@
+{
+  "type": "create:mixing",
+  "ingredients": [
+    {
+      "item": "dongbei_delight:sweet_potato_starch"
+    },
+    {
+      "item": "dongbei_delight:sweet_potato_starch"
+    },
+    {
+      "item": "dongbei_delight:sweet_potato_starch"
+    },
+    {
+      "item": "dongbei_delight:sweet_potato_starch"
+    },
+    {
+      "item": "dongbei_delight:salt"
+    },
+    {
+      "type": "neoforge:single",
+      "amount": 1000,
+      "fluid": "minecraft:water"
+    }
+  ],
+  "results": [
+    {
+      "id": "dongbei_delight:vermicelli"
+    }
+  ]
+}

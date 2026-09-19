@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    { "item": "minecraft:bowl" },
+    { "item": "dongbei_delight:red_sausage" },
+    { "item": "dongbei_delight:smoked_pork_hock" },
+    { "item": "dongbei_delight:smoked_pig_liver" },
+    { "item": "dongbei_delight:jiang_da_gu" },
+    { "item": "dongbei_delight:jiang_niu_rou" }
+  ],
+  "result": {
+    "count": 1,
+    "id": "dongbei_delight:xun_jiang_pin_pan"
+  }
+}

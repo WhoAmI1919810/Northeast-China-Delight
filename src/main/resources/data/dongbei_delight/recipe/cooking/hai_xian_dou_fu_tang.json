@@ -1,0 +1,19 @@
+{
+  "type": "farmersdelight:cooking",
+  "container": {
+    "count": 1,
+    "id": "minecraft:bowl"
+  },
+  "experience": 0.35,
+  "ingredients": [
+    { "item": "dongbei_delight:shrimp" },
+    { "item": "dongbei_delight:tofu" },
+    { "item": "dongbei_delight:green_pepper" },
+    { "item": "dongbei_delight:fish_sauce" }
+  ],
+  "recipe_book_tab": "meals",
+  "result": {
+    "count": 1,
+    "id": "dongbei_delight:hai_xian_dou_fu_tang"
+  }
+}

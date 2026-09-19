@@ -1,0 +1,16 @@
+{
+  "type": "create:mixing",
+  "ingredients": [
+    {
+      "item": "dongbei_delight:sour_corn_kernels"
+    },
+    {
+      "item": "dongbei_delight:sour_corn_kernels"
+    }
+  ],
+  "results": [
+    {
+      "id": "dongbei_delight:water_dough"
+    }
+  ]
+}

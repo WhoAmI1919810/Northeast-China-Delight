@@ -1,0 +1,18 @@
+{
+  "type": "farmersdelight:cooking",
+  "container": {
+    "count": 1,
+    "id": "minecraft:bowl"
+  },
+  "experience": 0.35,
+  "ingredients": [
+    { "item": "dongbei_delight:sweet_potato" },
+    { "item": "minecraft:water_bucket" },
+    { "item": "farmersdelight:rice" }
+  ],
+  "recipe_book_tab": "meals",
+  "result": {
+    "count": 1,
+    "id": "dongbei_delight:sweet_potato_porridge"
+  }
+}

@@ -1,6 +1,9 @@
 package com.gunmu.dongbei_delight.crafting;
 
 import com.gunmu.dongbei_delight.item.ModItems;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -32,6 +35,20 @@ public final class VatRecipes {
         PASTE,
         /** 酱油：大酱块 + 小麦 + 盐 + 满水，蒙地毯 */
         SOY_SAUCE,
+        /** 醋：大酱 / 酱油剩下的酱渣 + 玉米粒或荞麦，蒙粗布毯二次发酵 */
+        VINEGAR,
+        /** 白醋：泡菜剩下的酸引水 + 玉米粒或荞麦，蒙粗布毯二次发酵 */
+        WHITE_VINEGAR,
+        /** 鱼露：6 份任意生鱼 + 3 份盐，不加水，压石头发酵 */
+        FISH_SAUCE,
+        /** 虾酱：6 只大虾 + 3 份盐，不加水，压石头发酵 */
+        SHRIMP_PASTE,
+        /** 辣白菜：白菜 + 红辣椒 + 调味品，按泡菜的方式腌 */
+        SPICY_PICKLE,
+        /** 豆芽：1 层水 + 1~2 份黄豆，蒙粗布毯发芽 */
+        BEAN_SPROUTS,
+        /** 酸玉米粒：每 1 层水配 2 份玉米粒，蒙粗布毯发酵 */
+        SOUR_CORN,
         /** 水面团：碎玉米粒泡水 */
         DOUGH
     }
@@ -46,9 +63,47 @@ public final class VatRecipes {
     public static final int PASTE_SERVINGS = 10;
     /** 一缸酱油能装几瓶 */
     public static final int SOY_SAUCE_SERVINGS = 10;
+    /** 一缸醋能装几瓶 */
+    public static final int VINEGAR_SERVINGS = 10;
+    /** 一缸白醋能装几瓶 */
+    public static final int WHITE_VINEGAR_SERVINGS = 10;
+    /** 大缸一层水折算成多少 mB（水位 0~3 层，一层就是一桶） */
+    public static final int WATER_MB_PER_LEVEL = 1000;
+    /**
+     * 一份成品折算成多少 mB 液体：一碗大酱 / 一瓶酱油都按 250 mB 算。
+     * 流体管道按 mB 抽取，所以缸里其实按 mB 记账，取碗取瓶只是每次扣一份。
+     */
+    public static final int SERVING_MB = 250;
+    /** 酿白醋需要的酸引水（3 瓶 = 750 mB） */
+    public static final int SOUR_WATER_MB = 3 * SERVING_MB;
+    /** 鱼露：6 条鱼 + 3 份盐，只出 1 瓶（鱼自身析出的液体不多） */
+    public static final int FISH_SAUCE_FISH = 6;
+    public static final int FISH_SAUCE_SALT = 3;
+    public static final int FISH_SAUCE_SERVINGS = 1;
+    /** 虾酱：6 只虾 + 3 份盐，出 4 瓶 */
+    public static final int SHRIMP_PASTE_SHRIMP = 6;
+    public static final int SHRIMP_PASTE_SALT = 3;
+    public static final int SHRIMP_PASTE_SERVINGS = 1;
+    /** 辣白菜：辣椒酱最多放几份（1 份是必需的） */
+    public static final int SPICY_SAUCE_MAX = 1;
+    /** 辣白菜的调味品上限（鱼露 + 虾酱，最多就是满水时需要的 2 份） */
+    public static final int SPICY_SEASONING_MAX = 2;
+    /** 生豆芽：一缸最多放 2 份黄豆 */
+    public static final int SPROUT_SOYBEAN_MAX = 2;
+    /** 酸玉米粒：每 1 层水配 2 份玉米粒 */
+    public static final int SOUR_CORN_PER_WATER = 2;
+    /** 辣白菜需要几份调味品：2 份 / 4 份（水位 1、2）要 1 份，6 份（满水）要 2 份 */
+    public static int spicySeasoningNeed(int waterLevel) {
+        return waterLevel >= 3 ? 2 : 1;
+    }
+    /** 一缸成品的总容量（mB） */
+    public static final int PRODUCT_CAPACITY_MB = PASTE_SERVINGS * SERVING_MB;
     /** 大酱 / 酱油需要的酱块与盐的数量 */
     public static final int PASTE_CHUNKS = 3;
     public static final int PASTE_SALT = 3;
+    /** 酿醋需要的酱渣与谷物数量 */
+    public static final int RESIDUE_COUNT = 3;
+    public static final int VINEGAR_GRAIN_COUNT = 3;
 
     /** 酱油额外需要的麦子 */
     public static Item wheatInput() {
@@ -92,6 +147,69 @@ public final class VatRecipes {
 
     public static Item doughResult() {
         return ModItems.WATER_DOUGH.get();
+    }
+
+    /** 酿醋用的谷物：玉米粒或荞麦 */
+    public static boolean isVinegarGrain(ItemStack stack) {
+        return stack.is(ModItems.CORN_SEEDS.get()) || stack.is(ModItems.BUCKWHEAT.get());
+    }
+
+    /** 任意生鱼：直接用 NeoForge 通用标签 c:foods/raw_fish（鳕鱼、鲑鱼以及模组生鱼片都算） */
+    public static final TagKey<Item> RAW_FISH = TagKey.create(Registries.ITEM,
+            ResourceLocation.fromNamespaceAndPath("c", "foods/raw_fish"));
+
+    public static boolean isRawFish(ItemStack stack) {
+        return stack.is(RAW_FISH);
+    }
+
+    /** 大酱 / 酱油酿好后留在缸里的酱渣 */
+    public static Item residue() {
+        return ModItems.SOY_RESIDUE.get();
+    }
+
+    /** 醋瓶 */
+    public static Item vinegarResult() {
+        return ModItems.VINEGAR.get();
+    }
+
+    /** 酸引水瓶 */
+    public static Item sourWaterResult() {
+        return ModItems.SOUR_WATER.get();
+    }
+
+    /** 白醋瓶 */
+    public static Item whiteVinegarResult() {
+        return ModItems.WHITE_VINEGAR.get();
+    }
+
+    /** 鱼露瓶 */
+    public static Item fishSauceResult() {
+        return ModItems.FISH_SAUCE.get();
+    }
+
+    /** 虾酱瓶 */
+    public static Item shrimpPasteResult() {
+        return ModItems.SHRIMP_PASTE.get();
+    }
+
+    /** 辣白菜 */
+    public static Item spicyCabbage() {
+        return ModItems.SPICY_CABBAGE.get();
+    }
+
+    /** 辣椒酱：辣白菜的必选调料 */
+    public static Item chiliSauce() {
+        return ModItems.CHILI_SAUCE.get();
+    }
+
+    /** 豆芽 */
+    public static Item beanSprouts() {
+        return ModItems.BEAN_SPROUTS.get();
+    }
+
+    /** 酸玉米粒 */
+    public static Item sourCornKernels() {
+        return ModItems.SOUR_CORN_KERNELS.get();
     }
 
     /**

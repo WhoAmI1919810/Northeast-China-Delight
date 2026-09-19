@@ -46,8 +46,8 @@ public class VatRenderer implements BlockEntityRenderer<VatBlockEntity> {
 
         // 大酱：发酵完成后才是一缸酱色液体，液面随剩余碗数下降
         boolean fermented = vat.getBlockState().getValue(Vat.FERMENTED);
-        if (vat.kind() == VatRecipes.Kind.PASTE && fermented && vat.paste() > 0) {
-            float ratio = vat.paste() / (float) VatRecipes.PASTE_SERVINGS;
+        if (vat.kind() == VatRecipes.Kind.PASTE && fermented && vat.pasteMb() > 0) {
+            float ratio = vat.pasteMb() / (float) VatRecipes.PRODUCT_CAPACITY_MB;
             float height = 0.15F + 0.7F * ratio;
             pose.pushPose();
             pose.translate(0.14F, 0.10F, 0.14F);
@@ -58,13 +58,37 @@ public class VatRenderer implements BlockEntityRenderer<VatBlockEntity> {
         }
 
         // 酱油：发酵完成后是一缸深褐色酱油，液面随剩余瓶数下降
-        if (vat.kind() == VatRecipes.Kind.SOY_SAUCE && fermented && vat.soySauce() > 0) {
-            float ratio = vat.soySauce() / (float) VatRecipes.SOY_SAUCE_SERVINGS;
+        if (vat.kind() == VatRecipes.Kind.SOY_SAUCE && fermented && vat.soySauceMb() > 0) {
+            float ratio = vat.soySauceMb() / (float) VatRecipes.PRODUCT_CAPACITY_MB;
             float height = 0.15F + 0.7F * ratio;
             pose.pushPose();
             pose.translate(0.14F, 0.10F, 0.14F);
             pose.scale(0.72F, height, 0.72F);
             blockRenderer.renderSingleBlock(Blocks.BROWN_TERRACOTTA.defaultBlockState(), pose, buffer,
+                    light, packedOverlay, ModelData.EMPTY, null);
+            pose.popPose();
+        }
+
+        // 醋：红褐色，液面随剩余瓶数下降
+        if (vat.kind() == VatRecipes.Kind.VINEGAR && fermented && vat.vinegarMb() > 0) {
+            float ratio = vat.vinegarMb() / (float) VatRecipes.PRODUCT_CAPACITY_MB;
+            float height = 0.15F + 0.7F * ratio;
+            pose.pushPose();
+            pose.translate(0.14F, 0.10F, 0.14F);
+            pose.scale(0.72F, height, 0.72F);
+            blockRenderer.renderSingleBlock(Blocks.RED_TERRACOTTA.defaultBlockState(), pose, buffer,
+                    light, packedOverlay, ModelData.EMPTY, null);
+            pose.popPose();
+        }
+
+        // 白醋：接近透明的浅色
+        if (vat.kind() == VatRecipes.Kind.WHITE_VINEGAR && fermented && vat.whiteVinegarMb() > 0) {
+            float ratio = vat.whiteVinegarMb() / (float) VatRecipes.PRODUCT_CAPACITY_MB;
+            float height = 0.15F + 0.7F * ratio;
+            pose.pushPose();
+            pose.translate(0.14F, 0.10F, 0.14F);
+            pose.scale(0.72F, height, 0.72F);
+            blockRenderer.renderSingleBlock(Blocks.WHITE_TERRACOTTA.defaultBlockState(), pose, buffer,
                     light, packedOverlay, ModelData.EMPTY, null);
             pose.popPose();
         }

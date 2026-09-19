@@ -1,0 +1,14 @@
+{
+  "type": "create:compacting",
+  "ingredients": [
+    {
+      "item": "dongbei_delight:roasted_peanuts"
+    }
+  ],
+  "results": [
+    {
+      "amount": 50,
+      "id": "dongbei_delight:vegetable_oil"
+    }
+  ]
+}

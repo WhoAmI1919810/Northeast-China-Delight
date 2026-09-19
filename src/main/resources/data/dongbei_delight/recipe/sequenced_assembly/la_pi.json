@@ -1,0 +1,48 @@
+{
+  "type": "create:sequenced_assembly",
+  "ingredient": {
+    "item": "dongbei_delight:sweet_potato_starch"
+  },
+  "loops": 1,
+  "results": [
+    {
+      "id": "dongbei_delight:la_pi"
+    }
+  ],
+  "sequence": [
+    {
+      "type": "create:filling",
+      "ingredients": [
+        {
+          "item": "dongbei_delight:sweet_potato_starch"
+        },
+        {
+          "type": "neoforge:single",
+          "amount": 200,
+          "fluid": "minecraft:water"
+        }
+      ],
+      "results": [
+        {
+          "id": "dongbei_delight:sweet_potato_starch"
+        }
+      ]
+    },
+    {
+      "type": "create:pressing",
+      "ingredients": [
+        {
+          "item": "dongbei_delight:sweet_potato_starch"
+        }
+      ],
+      "results": [
+        {
+          "id": "dongbei_delight:sweet_potato_starch"
+        }
+      ]
+    }
+  ],
+  "transitional_item": {
+    "id": "dongbei_delight:sweet_potato_starch"
+  }
+}

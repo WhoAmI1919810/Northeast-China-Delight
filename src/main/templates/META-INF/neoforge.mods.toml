@@ -93,6 +93,22 @@ description='''${mod_description}'''
     ordering="AFTER"
     side="BOTH"
 
+# 机械动力：本模组把它作为前置（大缸成品经流体管道进出储罐）
+[[dependencies.${mod_id}]]
+    modId="create"
+    type="required"
+    versionRange="${create_version_range}"
+    ordering="AFTER"
+    side="BOTH"
+
+# 玉（Jade）：可选，只在客户端显示大缸信息
+[[dependencies.${mod_id}]]
+    modId="jade"
+    type="optional"
+    versionRange="[15.10,)"
+    ordering="AFTER"
+    side="CLIENT"
+
 # Features are specific properties of the game environment, that you may want to declare you require. This example declares
 # that your mod requires GL version 3.2 or higher. Other features will be added. They are side aware so declaring this won't
 # stop your mod loading on the server for example.

@@ -1,0 +1,15 @@
+{
+  "type": "farmersdelight:cooking",
+  "experience": 0.35,
+  "ingredients": [
+    { "item": "dongbei_delight:cucumber" },
+    { "item": "minecraft:egg" },
+    { "item": "dongbei_delight:shrimp" },
+    { "item": "farmersdelight:wheat_dough" }
+  ],
+  "recipe_book_tab": "misc",
+  "result": {
+    "count": 1,
+    "id": "dongbei_delight:san_xian_xian_shui_jiao"
+  }
+}

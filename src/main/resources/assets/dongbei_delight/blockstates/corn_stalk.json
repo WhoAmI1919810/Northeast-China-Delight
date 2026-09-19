@@ -1,6 +1,9 @@
 {
   "variants": {
-    "": {
+    "has_corn=false": {
+      "model": "dongbei_delight:block/corn_stalk_young"
+    },
+    "has_corn=true": {
       "model": "dongbei_delight:block/corn_stalk"
     }
   }

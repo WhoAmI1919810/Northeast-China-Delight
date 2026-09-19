@@ -1,0 +1,19 @@
+{
+  "type": "farmersdelight:cooking",
+  "container": {
+    "count": 1,
+    "id": "minecraft:bowl"
+  },
+  "experience": 1.0,
+  "ingredients": [
+    { "item": "minecraft:porkchop" },
+    { "item": "dongbei_delight:napa_cabbage" },
+    { "item": "dongbei_delight:vermicelli" },
+    { "item": "dongbei_delight:tofu" }
+  ],
+  "recipe_book_tab": "meals",
+  "result": {
+    "count": 1,
+    "id": "dongbei_delight:zhu_rou_dun_fen_tiao"
+  }
+}

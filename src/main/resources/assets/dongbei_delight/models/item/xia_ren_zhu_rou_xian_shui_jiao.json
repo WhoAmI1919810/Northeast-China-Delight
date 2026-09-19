@@ -1,0 +1,6 @@
+{
+  "parent": "item/generated",
+  "textures": {
+    "layer0": "dongbei_delight:item/xia_ren_zhu_rou_xian_shui_jiao"
+  }
+}

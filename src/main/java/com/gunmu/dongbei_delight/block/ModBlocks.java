@@ -1,9 +1,11 @@
 package com.gunmu.dongbei_delight.block;
 
 import com.gunmu.dongbei_delight.DongbeiDelight;
+import com.gunmu.dongbei_delight.fluid.ModFluids;
 import com.gunmu.dongbei_delight.item.ModItems;
 import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.LiquidBlock;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.material.MapColor;
@@ -46,6 +48,20 @@ public class ModBlocks {
             crop("napa_cabbage", () -> ModItems.NAPA_CABBAGE_SEEDS.get());
     public static final DeferredBlock<Block> CUCUMBER_CROP =
             fruitCrop("cucumber", () -> ModItems.CUCUMBER_SEEDS.get(), () -> ModItems.CUCUMBER.get());
+    /** 红薯：自身即种子，没有单独的种子物品 */
+    public static final DeferredBlock<Block> SWEET_POTATO_CROP =
+            crop("sweet_potato", () -> ModItems.SWEET_POTATO.get());
+    /** 红辣椒：可以用剪刀采摘，植株继续生长 */
+    public static final DeferredBlock<Block> RED_CHILI_CROP =
+            fruitCrop("red_chili", () -> ModItems.RED_CHILI_SEEDS.get(), () -> ModItems.RED_CHILI.get());
+    /** 花生、红豆：自身即种子 */
+    public static final DeferredBlock<Block> PEANUT_CROP =
+            crop("peanut", () -> ModItems.PEANUT.get());
+    public static final DeferredBlock<Block> RED_BEAN_CROP =
+            crop("red_bean", () -> ModItems.RED_BEAN.get());
+    /** 大葱：整株收获，需要单独的种子物品 */
+    public static final DeferredBlock<Block> GREEN_ONION_CROP =
+            crop("green_onion", () -> ModItems.GREEN_ONION_SEEDS.get());
 
     // ===== 功能方块 =====
 
@@ -54,6 +70,59 @@ public class ModBlocks {
             "vat",
             Vat::new,
             BlockBehaviour.Properties.of().strength(3.5f)
+    );
+
+    // ===== 流体方块 =====
+
+    /**
+     * 酱油 / 大酱的液体方块。
+     * 直接传入液体实例（而不是从注册表里取），避免液体与方块两个注册事件的先后顺序问题。
+     * 没有对应的桶物品，正常情况下玩家不会把它倒出来。
+     */
+    public static final DeferredBlock<LiquidBlock> SOY_SAUCE_FLUID = BLOCKS.registerBlock(
+            "soy_sauce",
+            properties -> new LiquidBlock(ModFluids.soySauceSource(), properties),
+            fluidProperties()
+    );
+    public static final DeferredBlock<LiquidBlock> SOY_PASTE_FLUID = BLOCKS.registerBlock(
+            "soy_paste",
+            properties -> new LiquidBlock(ModFluids.soyPasteSource(), properties),
+            fluidProperties()
+    );
+    public static final DeferredBlock<LiquidBlock> SOY_MILK_FLUID = BLOCKS.registerBlock(
+            "soy_milk",
+            properties -> new LiquidBlock(ModFluids.soyMilkSource(), properties),
+            fluidProperties()
+    );
+    public static final DeferredBlock<LiquidBlock> VINEGAR_FLUID = BLOCKS.registerBlock(
+            "vinegar",
+            properties -> new LiquidBlock(ModFluids.vinegarSource(), properties),
+            fluidProperties()
+    );
+    public static final DeferredBlock<LiquidBlock> SOUR_WATER_FLUID = BLOCKS.registerBlock(
+            "sour_water",
+            properties -> new LiquidBlock(ModFluids.sourWaterSource(), properties),
+            fluidProperties()
+    );
+    public static final DeferredBlock<LiquidBlock> WHITE_VINEGAR_FLUID = BLOCKS.registerBlock(
+            "white_vinegar",
+            properties -> new LiquidBlock(ModFluids.whiteVinegarSource(), properties),
+            fluidProperties()
+    );
+    public static final DeferredBlock<LiquidBlock> FISH_SAUCE_FLUID = BLOCKS.registerBlock(
+            "fish_sauce",
+            properties -> new LiquidBlock(ModFluids.fishSauceSource(), properties),
+            fluidProperties()
+    );
+    public static final DeferredBlock<LiquidBlock> SHRIMP_PASTE_FLUID = BLOCKS.registerBlock(
+            "shrimp_paste",
+            properties -> new LiquidBlock(ModFluids.shrimpPasteSource(), properties),
+            fluidProperties()
+    );
+    public static final DeferredBlock<LiquidBlock> VEGETABLE_OIL_FLUID = BLOCKS.registerBlock(
+            "vegetable_oil",
+            properties -> new LiquidBlock(ModFluids.vegetableOilSource(), properties),
+            fluidProperties()
     );
 
     private static DeferredBlock<Block> crop(String name, Supplier<? extends ItemLike> seed) {
@@ -86,6 +155,19 @@ public class ModBlocks {
                 .instabreak()
                 .sound(SoundType.CROP)
                 .pushReaction(PushReaction.DESTROY);
+    }
+
+    /** 与原版水一致的液体方块属性 */
+    private static BlockBehaviour.Properties fluidProperties() {
+        return BlockBehaviour.Properties.of()
+                .mapColor(MapColor.WATER)
+                .replaceable()
+                .noCollission()
+                .strength(100.0F)
+                .pushReaction(PushReaction.DESTROY)
+                .noLootTable()
+                .liquid()
+                .sound(SoundType.EMPTY);
     }
 
     public static void register(IEventBus eventBus) {

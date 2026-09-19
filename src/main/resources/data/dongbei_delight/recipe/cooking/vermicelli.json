@@ -1,0 +1,17 @@
+{
+  "type": "farmersdelight:cooking",
+  "experience": 0.35,
+  "ingredients": [
+    { "item": "dongbei_delight:sweet_potato_starch" },
+    { "item": "dongbei_delight:sweet_potato_starch" },
+    { "item": "dongbei_delight:sweet_potato_starch" },
+    { "item": "dongbei_delight:sweet_potato_starch" },
+    { "item": "dongbei_delight:salt" },
+    { "item": "minecraft:water_bucket" }
+  ],
+  "recipe_book_tab": "misc",
+  "result": {
+    "count": 1,
+    "id": "dongbei_delight:vermicelli"
+  }
+}

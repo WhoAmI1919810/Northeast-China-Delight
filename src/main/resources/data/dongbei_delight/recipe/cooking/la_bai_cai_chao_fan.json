@@ -1,0 +1,18 @@
+{
+  "type": "farmersdelight:cooking",
+  "container": {
+    "count": 1,
+    "id": "minecraft:bowl"
+  },
+  "experience": 0.35,
+  "ingredients": [
+    { "item": "dongbei_delight:spicy_cabbage" },
+    { "item": "minecraft:porkchop" },
+    { "item": "farmersdelight:cooked_rice" }
+  ],
+  "recipe_book_tab": "meals",
+  "result": {
+    "count": 1,
+    "id": "dongbei_delight:la_bai_cai_chao_fan"
+  }
+}

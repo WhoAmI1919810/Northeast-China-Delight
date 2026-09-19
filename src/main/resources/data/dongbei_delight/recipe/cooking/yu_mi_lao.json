@@ -1,0 +1,16 @@
+{
+  "type": "farmersdelight:cooking",
+  "experience": 0.35,
+  "ingredients": [
+    { "item": "dongbei_delight:corn_seeds" },
+    { "item": "dongbei_delight:corn_seeds" },
+    { "item": "minecraft:sugar" },
+    { "item": "dongbei_delight:cooking_oil" },
+    { "item": "dongbei_delight:sweet_potato_starch" }
+  ],
+  "recipe_book_tab": "misc",
+  "result": {
+    "count": 1,
+    "id": "dongbei_delight:yu_mi_lao"
+  }
+}
