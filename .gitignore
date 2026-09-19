@@ -23,4 +23,8 @@ run
 runs
 run-data
 
+# 启动 Minecraft 时记录的日志（约定：所有日志统一放这里，只保留占位文件）
+logs/*
+!logs/README.md
+
 repo

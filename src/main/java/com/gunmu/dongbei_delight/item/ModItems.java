@@ -73,6 +73,10 @@ public class ModItems {
     public static final DeferredItem<Item> BUCKWHEAT_NOODLES = food("buckwheat_noodles");
     /** 豆浆压制而成 */
     public static final DeferredItem<Item> DRIED_TOFU = food("dried_tofu");
+    /** 豆腐：由豆浆压制（配方待定） */
+    public static final DeferredItem<Item> TOFU = food("tofu");
+    /** 食用油：炒菜用（来源与配方待定） */
+    public static final DeferredItem<Item> COOKING_OIL = simple("cooking_oil");
     /** 灵魂酸菜：彩蛋物品，不进创造模式物品栏 */
     public static final DeferredItem<Item> SOUL_CABBAGE = food("soul_cabbage");
 
@@ -108,6 +112,15 @@ public class ModItems {
     public static final DeferredItem<Item> DI_GUO_JI = bowlFood("di_guo_ji");
     public static final DeferredItem<Item> SOUR_TANGZI = bowlFood("sour_tangzi");
     public static final DeferredItem<Item> EGG_SOY_PASTE = bowlFood("egg_soy_paste");
+    public static final DeferredItem<Item> DI_GUO_PAI_GU = bowlFood("di_guo_pai_gu");
+    public static final DeferredItem<Item> JIANG_DA_GU = bowlFood("jiang_da_gu");
+    public static final DeferredItem<Item> SHA_ZHU_CAI = bowlFood("sha_zhu_cai");
+    public static final DeferredItem<Item> LA_ROU_DUN_DOU_JIAO = bowlFood("la_rou_dun_dou_jiao");
+    public static final DeferredItem<Item> JIANG_NIU_ROU = bowlFood("jiang_niu_rou");
+    public static final DeferredItem<Item> LIU_ROU_DUAN = bowlFood("liu_rou_duan");
+    public static final DeferredItem<Item> HONG_SHAO_PAI_GU = bowlFood("hong_shao_pai_gu");
+    public static final DeferredItem<Item> BA_SI_TU_DOU = bowlFood("ba_si_tu_dou");
+    public static final DeferredItem<Item> SUAN_HUANG_GUA_CHAO_ROU_SI = bowlFood("suan_huang_gua_chao_rou_si");
 
     // ===== 方块物品 =====
 
@@ -133,13 +146,16 @@ public class ModItems {
             // 食材与加工品
             // 灵魂酸菜是彩蛋，不在此列出
             SOUR_CABBAGE, SOY_PASTE, PICKLED_CUCUMBER, PICKLED_CARROT,
-            CORN_STALK, WATER_DOUGH, BUCKWHEAT_NOODLES, DRIED_TOFU,
+            CORN_STALK, WATER_DOUGH, BUCKWHEAT_NOODLES, DRIED_TOFU, TOFU, COOKING_OIL,
             PORK_RIBS, PORK_INTESTINE, PORK_HOCK, PIG_BLOOD, SALT, SALTED_PORK, SOY_PASTE_CHUNK,
             RAW_SAUSAGE, BLOOD_SAUSAGE, RICE_SAUSAGE, SOY_SAUCE,
             BRAISED_PORK_HOCK, BRAISED_PORK_STRIPS,
             // 料理
             SOY_MILK, GUO_BAO_ROU, DI_SAN_XIAN, JIAN_JIAO_GAN_DOU_FU, SUAN_CAI_DUN_GU_TOU,
-            SUAN_CAI_JIAO_ZI, DI_GUO_JI, SOUR_TANGZI, EGG_SOY_PASTE,
+            SUAN_CAI_JIAO_ZI, DI_GUO_JI, DI_GUO_PAI_GU, JIANG_DA_GU, SHA_ZHU_CAI,
+            LA_ROU_DUN_DOU_JIAO, JIANG_NIU_ROU, LIU_ROU_DUAN, HONG_SHAO_PAI_GU,
+            BA_SI_TU_DOU, SUAN_HUANG_GUA_CHAO_ROU_SI,
+            SOUR_TANGZI, EGG_SOY_PASTE,
             // 方块
             UNFIRED_VAT_BLANK, VAT
     );

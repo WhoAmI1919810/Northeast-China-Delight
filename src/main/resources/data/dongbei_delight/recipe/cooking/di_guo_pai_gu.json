@@ -1,0 +1,13 @@
+{
+  "type": "farmersdelight:cooking",
+  "container": { "count": 1, "id": "minecraft:bowl" },
+  "experience": 1.0,
+  "ingredients": [
+    { "item": "dongbei_delight:pork_ribs" },
+    { "item": "dongbei_delight:green_beans" },
+    { "item": "minecraft:potato" },
+    { "item": "farmersdelight:wheat_dough" }
+  ],
+  "recipe_book_tab": "meals",
+  "result": { "count": 1, "id": "dongbei_delight:di_guo_pai_gu" }
+}

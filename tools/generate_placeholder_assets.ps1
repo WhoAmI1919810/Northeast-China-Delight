@@ -6,9 +6,14 @@
     直接用同名文件覆盖 textures/item/*.png 即可，不需要改动代码。
 
     用法： pwsh -File tools/generate_placeholder_assets.ps1
+          pwsh -File tools/generate_placeholder_assets.ps1 -Only tofu,cooking_oil
+
+    注意：不带 -Only 会重画全部物品；已经交付正式素材的物品请用 -Only 点名生成，
+    否则会把正式贴图覆盖回占位图。
 #>
 param(
-    [string]$AssetsRoot = (Join-Path $PSScriptRoot '..\src\main\resources\assets\dongbei_delight')
+    [string]$AssetsRoot = (Join-Path $PSScriptRoot '..\src\main\resources\assets\dongbei_delight'),
+    [string[]]$Only = @()
 )
 
 Add-Type -AssemblyName System.Drawing
@@ -139,6 +144,8 @@ $items = [ordered]@{
     'water_dough'             = @('dumpling',  '#EFE3B8', '#A89460', '#D8C78A')
     'buckwheat_noodles'       = @('noodles',   '#A8895C', '#5E4A2A', '#C9AC7E')
     'dried_tofu'              = @('sheet',     '#E8D9A8', '#9A8850', '#C9B77E')
+    'tofu'                    = @('sheet',     '#F2EDDC', '#B0A583', '#FFFFFF')
+    'cooking_oil'             = @('bottle',    '#E8C33C', '#96760F', '#FFF0A0')
     'pork_ribs'               = @('bone',      '#C4645C', '#7A332E', '#F0EDE4')
     'pork_intestine'          = @('pod',       '#D98A9A', '#8A4E58', '#F0B0BC')
     'pork_hock'               = @('bone',      '#C4645C', '#7A332E', '#E8C8A0')
@@ -160,6 +167,15 @@ $items = [ordered]@{
     'suan_cai_dun_gu_tou'     = @('bowl',      '#D9C08A', '#8A7440', '#F0EDE4')
     'suan_cai_jiao_zi'        = @('dumpling',  '#EDE3C8', '#9A8A60', '#C9BE9A')
     'di_guo_ji'               = @('bowl',      '#9A6B3F', '#4E3116', '#C79A63')
+    'di_guo_pai_gu'           = @('bowl',      '#9A6B3F', '#4E3116', '#F0EDE4')
+    'jiang_da_gu'             = @('bowl',      '#7A451E', '#3A1E0C', '#F0EDE4')
+    'sha_zhu_cai'             = @('bowl',      '#B58A6A', '#5E3A24', '#E8B0A0')
+    'la_rou_dun_dou_jiao'     = @('bowl',      '#8A5A3A', '#4A2C14', '#7FA05A')
+    'jiang_niu_rou'           = @('bowl',      '#5E3A1E', '#2E1A0A', '#B5534A')
+    'liu_rou_duan'            = @('bowl',      '#C88A3C', '#7A4E18', '#7FA05A')
+    'hong_shao_pai_gu'        = @('bowl',      '#9A4A2A', '#4E2010', '#F0EDE4')
+    'ba_si_tu_dou'            = @('bowl',      '#E8B93C', '#96700F', '#F2E8C0')
+    'suan_huang_gua_chao_rou_si' = @('bowl',   '#D98A9A', '#8A4E58', '#7A9A3A')
     'sour_tangzi'             = @('bowl',      '#EFD98A', '#8A7440', '#F2E8C0')
     'egg_soy_paste'           = @('bowl',      '#D9B441', '#8A6B1E', '#F2D45C')
 }
@@ -179,7 +195,15 @@ $shapeMap = @{
     'dumpling' = ${function:Shape-Dumpling}
 }
 
-foreach ($id in $items.Keys) {
+# 用 -File 调用时，PowerShell 会把 -Only a,b,c 当成一个逗号字符串，这里统一拆开
+$onlyIds = @($Only | ForEach-Object { $_ -split ',' } | ForEach-Object { $_.Trim() } | Where-Object { $_ })
+$ids = if ($onlyIds.Count -gt 0) { $onlyIds } else { @($items.Keys) }
+
+foreach ($id in $ids) {
+    if (-not $items.Contains($id)) {
+        Write-Warning "跳过未知物品 id：$id"
+        continue
+    }
     $spec = $items[$id]
     $kind, $main, $dark, $accent = $spec
 
@@ -203,6 +227,6 @@ foreach ($id in $items.Keys) {
     $model | ConvertTo-Json -Depth 5 | Set-Content -Path (Join-Path $modelDir "$id.json") -Encoding utf8
 }
 
-Write-Host "已生成 $($items.Count) 个物品的占位贴图与模型：" -ForegroundColor Green
+Write-Host "已生成 $($ids.Count) 个物品的占位贴图与模型：" -ForegroundColor Green
 Write-Host "  贴图: $textureDir"
 Write-Host "  模型: $modelDir"

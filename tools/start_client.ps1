@@ -1,0 +1,41 @@
+#Requires -Version 7
+<#
+    启动 Minecraft 客户端（开发环境），并把日志统一写进工程根目录的 logs\ 文件夹。
+
+    - 控制台输出（Gradle + 启动器 + 游戏日志）：logs\client-<版本>-<时间戳>.log
+    - 游戏自身的 latest.log，退出后归档为：logs\minecraft-<版本>-<时间戳>.log
+    - 游戏目录仍在 run\<版本>\（存档、配置），不在 Codex 工作目录里
+
+    用法：
+        pwsh -File tools\start_client.ps1
+        pwsh -File tools\start_client.ps1 -GameVersion 1.21.1
+#>
+param(
+    [string]$GameVersion = '1.21.1',
+    [string]$JavaHome = 'H:\OpenJDK21'
+)
+
+$ErrorActionPreference = 'Stop'
+
+$env:JAVA_HOME = $JavaHome
+$projectRoot = (Resolve-Path (Join-Path $PSScriptRoot '..')).Path
+$logDir = Join-Path $projectRoot 'logs'
+New-Item -ItemType Directory -Force -Path $logDir | Out-Null
+
+$stamp = Get-Date -Format 'yyyyMMdd-HHmmss'
+$consoleLog = Join-Path $logDir "client-$GameVersion-$stamp.log"
+# 注意：不能写成 ":$GameVersion:runClient" —— PowerShell 会把 $GameVersion:runClient
+# 当成「作用域变量」解析，任务名就丢了。
+$task = ':' + $GameVersion + ':runClient'
+
+Set-Location $projectRoot
+Write-Host "日志输出：$consoleLog"
+& .\gradlew.bat $task --console=plain *>&1 | Tee-Object -FilePath $consoleLog
+
+# 游戏自身的 latest.log 下次启动会被覆盖，这里归档一份
+$gameLog = Join-Path $projectRoot "run\$GameVersion\logs\latest.log"
+if (Test-Path $gameLog) {
+    $archive = Join-Path $logDir "minecraft-$GameVersion-$stamp.log"
+    Copy-Item -LiteralPath $gameLog -Destination $archive -Force
+    Write-Host "游戏日志归档：$archive"
+}
