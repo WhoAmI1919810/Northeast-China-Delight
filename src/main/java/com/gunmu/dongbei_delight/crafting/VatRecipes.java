@@ -110,8 +110,67 @@ public final class VatRecipes {
         return Items.WHEAT;
     }
 
-    /** 一个腌制单位 = 2 秒 = 40 tick；水量几层就是几个单位 */
-    public static final int UNIT_TICKS = 40;
+    // ===== 发酵时长 =====
+    // 每个配方自己的时长都写在下面这张表里（单位：秒）。
+    // 按水位配比的配方写「每层多少秒」，其余写一个固定值。
+    // 改这里，游戏里的计时和 JEI 里显示的时长会一起变。
+
+    /** 泡菜：每层水位的发酵秒数 */
+    public static final int PICKLE_SECONDS_PER_LAYER = 2;
+    /** 辣白菜：每层水位的发酵秒数 */
+    public static final int SPICY_PICKLE_SECONDS_PER_LAYER = 2;
+    /** 水面团：每层水位的发酵秒数 */
+    public static final int DOUGH_SECONDS_PER_LAYER = 2;
+    /** 咸腊肉 */
+    public static final int MEAT_SECONDS = 2;
+    /** 大酱 */
+    public static final int PASTE_SECONDS = 2;
+    /** 酱油 */
+    public static final int SOY_SAUCE_SECONDS = 2;
+    /** 醋 */
+    public static final int VINEGAR_SECONDS = 2;
+    /** 白醋 */
+    public static final int WHITE_VINEGAR_SECONDS = 2;
+    /** 鱼露 */
+    public static final int FISH_SAUCE_SECONDS = 2;
+    /** 虾酱 */
+    public static final int SHRIMP_PASTE_SECONDS = 2;
+    /** 豆芽 */
+    public static final int BEAN_SPROUTS_SECONDS = 2;
+    /** 酸玉米粒 */
+    public static final int SOUR_CORN_SECONDS = 2;
+
+    /** 一秒钟多少游戏刻 */
+    public static final int TICKS_PER_SECOND = 20;
+
+    /**
+     * 某个配方要发酵多少秒。
+     *
+     * @param waterLevel 缸里的水位层数（0~3），按水位配比的配方会乘上它
+     */
+    public static int processSeconds(Kind kind, int waterLevel) {
+        int layers = Math.max(1, waterLevel);
+        return switch (kind) {
+            case PICKLE -> PICKLE_SECONDS_PER_LAYER * layers;
+            case SPICY_PICKLE -> SPICY_PICKLE_SECONDS_PER_LAYER * layers;
+            case DOUGH -> DOUGH_SECONDS_PER_LAYER * layers;
+            case MEAT -> MEAT_SECONDS;
+            case PASTE -> PASTE_SECONDS;
+            case SOY_SAUCE -> SOY_SAUCE_SECONDS;
+            case VINEGAR -> VINEGAR_SECONDS;
+            case WHITE_VINEGAR -> WHITE_VINEGAR_SECONDS;
+            case FISH_SAUCE -> FISH_SAUCE_SECONDS;
+            case SHRIMP_PASTE -> SHRIMP_PASTE_SECONDS;
+            case BEAN_SPROUTS -> BEAN_SPROUTS_SECONDS;
+            case SOUR_CORN -> SOUR_CORN_SECONDS;
+            case NONE -> 0;
+        };
+    }
+
+    /** 同上，换算成游戏刻（至少 1 刻） */
+    public static int processTicks(Kind kind, int waterLevel) {
+        return Math.max(1, processSeconds(kind, waterLevel) * TICKS_PER_SECOND);
+    }
 
     private static Map<Item, Item> pickles;
 

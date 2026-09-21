@@ -5,6 +5,7 @@
     { "item": "dongbei_delight:cucumber" },
     { "item": "minecraft:egg" },
     { "item": "dongbei_delight:shrimp" },
+    { "item": "dongbei_delight:wood_ear" },
     { "item": "farmersdelight:wheat_dough" }
   ],
   "recipe_book_tab": "misc",

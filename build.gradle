@@ -15,6 +15,8 @@ allprojects {
         maven { url 'https://maven.aliyun.com/nexus/content/groups/public/' }
         // 农夫乐事未发布到公共 Maven，通过 Modrinth 的 Maven 代理获取
         maven { name = 'Modrinth'; url = 'https://api.modrinth.com/maven' }
+        // JEI 的官方 Maven：Modrinth 的 maven 只会给到 Fabric 版的 jar（中间名映射，编译不过）
+        maven { name = 'BlameJared'; url = 'https://maven.blamejared.com' }
     }
 }
 
@@ -93,6 +95,11 @@ dependencies {
     // 果园乐事：可选联动，只在开发环境里加载方便测试（配方用 neoforge:mod_loaded 门控）
     localRuntime "maven.modrinth:fruits-delight:${fruitsdelight_version}"
 
+    // JEI：可选联动，用于展示大缸的多步骤配方（开发环境里直接装上方便测试）
+    // 注意用 JEI 官方 Maven 的构件：-api 里只有 NeoForge 附加部分，公共 API 由它依赖的 common-api 带进来
+    compileOnly "mezz.jei:jei-1.21.1-neoforge-api:${jei_version}"
+    localRuntime "mezz.jei:jei-1.21.1-neoforge:${jei_version}"
+
     // 需要联动其它模组时在此声明，例如：
     // compileOnly "mezz.jei:jei-${minecraft_version}-common-api:${jei_version}"
     // localRuntime "mezz.jei:jei-${minecraft_version}-neoforge:${jei_version}"
@@ -116,7 +123,8 @@ var generateModMetadata = tasks.register("generateModMetadata", ProcessResources
             mod_authors            : mod_authors,
             mod_description        : mod_description,
             farmersdelight_version_range: farmersdelight_version_range,
-            create_version_range   : create_version_range
+            create_version_range   : create_version_range,
+            jei_version_range      : jei_version_range
     ]
     inputs.properties replaceProperties
     expand replaceProperties

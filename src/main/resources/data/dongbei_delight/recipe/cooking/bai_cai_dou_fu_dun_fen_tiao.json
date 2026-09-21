@@ -1,9 +1,6 @@
 {
   "type": "farmersdelight:cooking",
-  "container": {
-    "count": 1,
-    "id": "minecraft:bowl"
-  },
+  "container": { "count": 1, "id": "dongbei_delight:large_basin" },
   "experience": 0.35,
   "ingredients": [
     { "item": "dongbei_delight:napa_cabbage" },

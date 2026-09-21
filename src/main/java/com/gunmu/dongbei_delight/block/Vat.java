@@ -118,7 +118,7 @@ public class Vat extends Block implements EntityBlock {
         };
     }
 
-    /** 这次处理要几个腌制单位：泡水类按水位算（满水 3 层 = 3 个单位 = 6 秒），干腌固定 1 个单位 */
+    /** 这次处理要几个腌制单位：泡水类按水位算（满水 3 层 = 3 个单位），干腌固定 1 个单位 */
     private static int totalUnits(BlockState state, VatBlockEntity vat) {
         return switch (vat.kind()) {
             case PICKLE, DOUGH -> Math.max(1, state.getValue(WATER_LEVEL));
@@ -134,8 +134,10 @@ public class Vat extends Block implements EntityBlock {
         return kind == VatRecipes.Kind.DOUGH;
     }
 
+    /** 每走一格进度条要多少刻：总时长写在各配方自己的表里（VatRecipes#processTicks） */
     private static int stepTicks(BlockState state, VatBlockEntity vat) {
-        return Math.max(1, totalUnits(state, vat) * VatRecipes.UNIT_TICKS / MAX_PROGRESS);
+        int totalTicks = VatRecipes.processTicks(vat.kind(), state.getValue(WATER_LEVEL));
+        return Math.max(1, totalTicks / MAX_PROGRESS);
     }
 
     /**
@@ -177,7 +179,7 @@ public class Vat extends Block implements EntityBlock {
                     && state.getValue(WATER_LEVEL) > 0
                     && hasEnoughSalt(vat, state)          // 盐不够就不开腌
                     && vat.vegetableCount() > 0;
-            // 腊肉必须「一层肉一层盐」配对完成才能开腌：盐的数量要跟肉一样多
+            // 腊肉：盐的数量要跟肉一样多（谁先放都行）
             case MEAT -> vat.isPressed()
                     && vat.meatCount() > 0
                     && vat.countOf(ModItems.SALT.get()) == vat.meatCount();
@@ -294,15 +296,13 @@ public class Vat extends Block implements EntityBlock {
                 return ItemInteractionResult.sidedSuccess(false);
             }
 
-            // 放盐：泡菜要先在水里放一份盐；腊肉要一层肉一层盐交替
-            // 放盐：泡菜要按「一份水配一份盐」；腊肉要一层肉一层盐交替
+            // 放盐：泡菜要按「一份水配一份盐」；腊肉最多 5 份，和肉搭配着放（不分先后）
             if (stack.is(ModItems.SALT.get())) {
                 boolean ok = switch (vat.kind()) {
                     case NONE -> water > 0;                                   // 水里放盐 → 泡菜
                     case PICKLE -> vat.countOf(ModItems.SALT.get()) < water * VatRecipes.SALT_PER_WATER;
-                    // 一层肉一层盐：只要盐比肉少就能补，这样第 5 层肉也能撒上盐
-                    case MEAT -> vat.countOf(ModItems.SALT.get()) < vat.meatCount()
-                            && vat.lastContent().is(VatRecipes.meatInput());
+                    // 腊肉：盐最多 5 份，先放盐后放肉也行
+                    case MEAT -> vat.countOf(ModItems.SALT.get()) < VatRecipes.MAX_MEATS;
                     case PASTE, SOY_SAUCE -> vat.countOf(ModItems.SALT.get()) < VatRecipes.PASTE_SALT;
                     // 辣白菜：盐只算盐水那一份，调味品是鱼露 / 虾酱
                     case SPICY_PICKLE -> vat.countOf(ModItems.SALT.get())
@@ -339,12 +339,11 @@ public class Vat extends Block implements EntityBlock {
                 return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
             }
 
-            // 放猪肉：腊肉类，不加水，最多 5 块，必须与盐交替
+            // 放猪肉：腊肉类，不加水，最多 5 块（和盐不分先后）
             if (stack.is(VatRecipes.meatInput())) {
                 boolean ok = switch (vat.kind()) {
                     case NONE -> water <= 0;
-                    case MEAT -> vat.meatCount() < VatRecipes.MAX_MEATS
-                            && vat.lastContent().is(ModItems.SALT.get());
+                    case MEAT -> vat.meatCount() < VatRecipes.MAX_MEATS;
                     default -> false;
                 };
                 if (ok) {

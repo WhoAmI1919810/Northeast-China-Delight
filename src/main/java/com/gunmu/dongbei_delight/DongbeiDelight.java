@@ -128,6 +128,21 @@ public class DongbeiDelight
                     ModBlocks.VAT.get());
         }
 
+        /**
+         * 调料瓶照原版药水的做法：瓶身和液面都用原版的贴图（potion / potion_overlay），
+         * 这里只给液面那一层（tintindex 0）按物品染上对应颜色，瓶子那层不染。
+         * 颜色表在 {@link com.gunmu.dongbei_delight.item.BottleColors}。
+         */
+        @SubscribeEvent
+        public static void onRegisterItemColors(RegisterColorHandlersEvent.Item event)
+        {
+            event.register(
+                    (stack, tintIndex) -> tintIndex == 0
+                            ? com.gunmu.dongbei_delight.item.BottleColors.of(stack.getItem())
+                            : -1,
+                    com.gunmu.dongbei_delight.item.BottleColors.bottles());
+        }
+
         /** 大缸里的内容物需要渲染在方块上，所以注册方块实体渲染器 */
         @SubscribeEvent
         public static void onRegisterRenderers(EntityRenderersEvent.RegisterRenderers event)

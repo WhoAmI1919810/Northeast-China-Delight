@@ -116,6 +116,11 @@ public class ModItems {
     /** 灵魂酸菜：彩蛋物品，不进创造模式物品栏 */
     public static final DeferredItem<Item> SOUL_CABBAGE = food("soul_cabbage");
 
+    // ===== 容器 =====
+
+    /** 大脸盆：大份炖菜盛在里面的容器 */
+    public static final DeferredItem<Item> LARGE_BASIN = simple("large_basin");
+
     // ===== 山珍与海味 =====
 
     /** 榛子：破坏大型蕨时有 12.5% 概率掉落 */
@@ -173,23 +178,25 @@ public class ModItems {
     public static final DeferredItem<Item> NEW_STYLE_GUO_BAO_ROU = bowlFood("new_style_guo_bao_rou");
     public static final DeferredItem<Item> DI_SAN_XIAN = bowlFood("di_san_xian");
     public static final DeferredItem<Item> JIAN_JIAO_GAN_DOU_FU = bowlFood("jian_jiao_gan_dou_fu");
-    public static final DeferredItem<Item> SUAN_CAI_DUN_GU_TOU = bowlFood("suan_cai_dun_gu_tou");
+    public static final DeferredItem<Item> SUAN_CAI_DUN_GU_TOU = basinFood("suan_cai_dun_gu_tou");
     /** 饺子不用碗装：吃完不返还容器 */
     public static final DeferredItem<Item> SUAN_CAI_JIAO_ZI = food("suan_cai_jiao_zi");
-    public static final DeferredItem<Item> DI_GUO_JI = bowlFood("di_guo_ji");
+    public static final DeferredItem<Item> DI_GUO_JI = basinFood("di_guo_ji");
     public static final DeferredItem<Item> SOUR_TANGZI = bowlFood("sour_tangzi");
     public static final DeferredItem<Item> EGG_SOY_PASTE = bowlFood("egg_soy_paste");
-    public static final DeferredItem<Item> DI_GUO_PAI_GU = bowlFood("di_guo_pai_gu");
-    public static final DeferredItem<Item> JIANG_DA_GU = bowlFood("jiang_da_gu");
-    public static final DeferredItem<Item> SHA_ZHU_CAI = bowlFood("sha_zhu_cai");
+    public static final DeferredItem<Item> DI_GUO_PAI_GU = basinFood("di_guo_pai_gu");
+    /** 酱大骨、酱牛肉：直接盛出来，不用碗 */
+    public static final DeferredItem<Item> JIANG_DA_GU = food("jiang_da_gu");
+    public static final DeferredItem<Item> SHA_ZHU_CAI = basinFood("sha_zhu_cai");
     public static final DeferredItem<Item> LA_ROU_DUN_DOU_JIAO = bowlFood("la_rou_dun_dou_jiao");
-    public static final DeferredItem<Item> JIANG_NIU_ROU = bowlFood("jiang_niu_rou");
+    public static final DeferredItem<Item> JIANG_NIU_ROU = food("jiang_niu_rou");
     public static final DeferredItem<Item> LIU_ROU_DUAN = bowlFood("liu_rou_duan");
     public static final DeferredItem<Item> HONG_SHAO_PAI_GU = bowlFood("hong_shao_pai_gu");
+    /** 拔丝地瓜（物品 id 沿用早期的 ba_si_tu_dou，方便老存档继续用） */
     public static final DeferredItem<Item> BA_SI_TU_DOU = bowlFood("ba_si_tu_dou");
     public static final DeferredItem<Item> SUAN_HUANG_GUA_CHAO_ROU_SI = bowlFood("suan_huang_gua_chao_rou_si");
     public static final DeferredItem<Item> SWEET_POTATO_PORRIDGE = bowlFood("sweet_potato_porridge");
-    public static final DeferredItem<Item> ZHU_ROU_DUN_FEN_TIAO = bowlFood("zhu_rou_dun_fen_tiao");
+    public static final DeferredItem<Item> ZHU_ROU_DUN_FEN_TIAO = basinFood("zhu_rou_dun_fen_tiao");
     public static final DeferredItem<Item> SUAN_CAI_CHAO_FEN_TIAO = bowlFood("suan_cai_chao_fen_tiao");
     public static final DeferredItem<Item> BUCKWHEAT_COLD_NOODLES = bowlFood("buckwheat_cold_noodles");
     public static final DeferredItem<Item> LIANG_BAN_XIAN_CAI = bowlFood("liang_ban_xian_cai");
@@ -200,8 +207,8 @@ public class ModItems {
     public static final DeferredItem<Item> JIA_XIAN_HUANG_GUA_PAO_CAI = bowlFood("jia_xian_huang_gua_pao_cai");
     public static final DeferredItem<Item> LIANG_BAN_HUA_CAI = bowlFood("liang_ban_hua_cai");
     // 厨锅料理（东北家常菜续）
-    public static final DeferredItem<Item> DA_FENG_SHOU = bowlFood("da_feng_shou");
-    public static final DeferredItem<Item> BAI_CAI_DOU_FU_DUN_FEN_TIAO = bowlFood("bai_cai_dou_fu_dun_fen_tiao");
+    public static final DeferredItem<Item> DA_FENG_SHOU = basinFood("da_feng_shou");
+    public static final DeferredItem<Item> BAI_CAI_DOU_FU_DUN_FEN_TIAO = basinFood("bai_cai_dou_fu_dun_fen_tiao");
     public static final DeferredItem<Item> LA_NIU_ROU_TANG_FAN = bowlFood("la_niu_rou_tang_fan");
     public static final DeferredItem<Item> LA_BAI_CAI_CHAO_FAN = bowlFood("la_bai_cai_chao_fan");
     public static final DeferredItem<Item> TU_DOU_BING = food("tu_dou_bing");
@@ -238,58 +245,76 @@ public class ModItems {
             new Item.Properties().stacksTo(1)
     );
 
-    /** 「食材与调料」物品栏的展示顺序 */
+    /**
+     * 「食材与调料」物品栏的展示顺序。
+     *
+     * 按类别分组排列，方便在创造栏里找：
+     * 种子 → 蔬菜 → 豆类与杂粮 → 山珍 → 肉类与水产 → 肉制品 → 腌制品
+     * → 调料 → 酿造原料 → 主食与半成品 → 容器 → 方块。
+     * （灵魂酸菜是彩蛋，不在此列出）
+     */
     public static final List<Supplier<? extends Item>> INGREDIENT_TAB_ITEMS = List.of(
-            // 农作物
-            SOYBEAN, EGGPLANT, GREEN_PEPPER, CORN, GREEN_BEANS, BUCKWHEAT, NAPA_CABBAGE, CUCUMBER,
-            SWEET_POTATO, RED_CHILI, GREEN_ONION,
-            PEANUT, RED_BEAN,
             // 种子
             EGGPLANT_SEEDS, GREEN_PEPPER_SEEDS, CORN_SEEDS, GREEN_BEANS_SEEDS,
             NAPA_CABBAGE_SEEDS, CUCUMBER_SEEDS, RED_CHILI_SEEDS, GREEN_ONION_SEEDS,
-            // 山珍与海味
-            HAZELNUT, HAZEL_MUSHROOM, WOOD_EAR, HAIRTAIL, OYSTER, SEA_CUCUMBER, CHICKEN_FRAME,
-            // 海产与肉类
-            SHRIMP, PORK_RIBS, PORK_INTESTINE, PORK_HOCK, PIG_BLOOD,
-            PIG_LIVER,
-            // 腌制品与调料
-            // 灵魂酸菜是彩蛋，不在此列出
-            SOUR_CABBAGE, SPICY_CABBAGE, SOY_PASTE, PICKLED_CUCUMBER, PICKLED_CARROT,
-            SALT, SALTED_PORK, SOY_PASTE_CHUNK, SOY_RESIDUE,
-            RAW_SAUSAGE, BLOOD_SAUSAGE, RICE_SAUSAGE,
-            RED_SAUSAGE, SMOKED_PORK_HOCK, SMOKED_PIG_LIVER,
-            SOY_SAUCE, VINEGAR, SOUR_WATER, WHITE_VINEGAR, FISH_SAUCE, SHRIMP_PASTE,
-            // 加工食材
-            CORN_STALK, WATER_DOUGH, BUCKWHEAT_NOODLES, DRIED_TOFU, TOFU, COOKING_OIL,
-            SWEET_POTATO_STARCH, VERMICELLI, CHILI_OIL, CHILI_SAUCE,
-            LA_PI,
-            BEAN_SPROUTS, SOUR_CORN_KERNELS,
-            ROASTED_PEANUTS, PEANUT_BUTTER,
+            // 蔬菜
+            NAPA_CABBAGE, CUCUMBER, EGGPLANT, GREEN_PEPPER, GREEN_ONION, RED_CHILI,
+            GREEN_BEANS, CORN, SWEET_POTATO,
+            // 豆类与杂粮
+            SOYBEAN, PEANUT, RED_BEAN, BUCKWHEAT,
+            // 山珍
+            HAZELNUT, HAZEL_MUSHROOM, WOOD_EAR,
+            // 肉类与水产
+            PORK_RIBS, PORK_INTESTINE, PORK_HOCK, PIG_BLOOD, PIG_LIVER, CHICKEN_FRAME,
+            SHRIMP, HAIRTAIL, OYSTER, SEA_CUCUMBER,
+            // 肉制品（灌肠与熏货）
+            RAW_SAUSAGE, BLOOD_SAUSAGE, RICE_SAUSAGE, RED_SAUSAGE,
+            SMOKED_PORK_HOCK, SMOKED_PIG_LIVER,
+            // 腌制品
+            SOUR_CABBAGE, SPICY_CABBAGE, PICKLED_CUCUMBER, PICKLED_CARROT, SALTED_PORK,
+            // 调料
+            SALT, SOY_PASTE, CHILI_SAUCE, SOY_SAUCE, VINEGAR, SOUR_WATER, WHITE_VINEGAR,
+            FISH_SAUCE, SHRIMP_PASTE, CHILI_OIL, PEANUT_BUTTER, COOKING_OIL,
+            // 酿造原料
+            SOY_PASTE_CHUNK, SOY_RESIDUE,
+            // 主食与半成品
+            WATER_DOUGH, BUCKWHEAT_NOODLES, DRIED_TOFU, TOFU, SWEET_POTATO_STARCH,
+            VERMICELLI, LA_PI, BEAN_SPROUTS, SOUR_CORN_KERNELS, ROASTED_PEANUTS,
+            CORN_STALK,
+            // 容器
+            LARGE_BASIN,
             // 方块
             UNFIRED_VAT_BLANK, VAT
     );
 
-    /** 「菜肴」物品栏的展示顺序 */
+    /**
+     * 「菜肴」物品栏的展示顺序。
+     *
+     * 按「吃完给什么效果 / 要不要餐具」分组排列，方便在创造栏里找：
+     * 饮品 → 油腻 → 清爽 → 荤素搭配 → 不需要带餐具（非碗装）→ 饺子。
+     * 一道菜只出现在一组里：既是油腻又是非碗装的（比如土豆饼）就归到「不需要带餐具」那组。
+     */
     public static final List<Supplier<? extends Item>> DISH_TAB_ITEMS = List.of(
-            BAKED_SWEET_POTATO,
-            SOY_MILK, SWEET_POTATO_PORRIDGE, SOUR_TANGZI, EGG_SOY_PASTE,
-            OLD_STYLE_GUO_BAO_ROU, NEW_STYLE_GUO_BAO_ROU, DI_SAN_XIAN, JIAN_JIAO_GAN_DOU_FU,
-            SUAN_CAI_DUN_GU_TOU, ZHU_ROU_DUN_FEN_TIAO, SUAN_CAI_CHAO_FEN_TIAO, BUCKWHEAT_COLD_NOODLES,
-            LIANG_BAN_XIAN_CAI, MING_TAI_YU_SI,
-            ZHAN_JIANG_CAI, DA_FAN_BAO, JIA_XIAN_HUANG_GUA_PAO_CAI,
-            LIANG_BAN_HUA_CAI,
-            DA_FENG_SHOU, BAI_CAI_DOU_FU_DUN_FEN_TIAO, LA_NIU_ROU_TANG_FAN, LA_BAI_CAI_CHAO_FAN,
-            TU_DOU_BING, XIA_REN_ZHU_ROU_XIAN_SHUI_JIAO, XIA_JIANG_CHAO_JI_DAN, XIA_JIANG_DUN_DOU_FU,
-            HAI_XIAN_DOU_FU_TANG, SAN_XIAN_XIAN_SHUI_JIAO,
-            LA_BAI_CAI_TANG_FAN,
-            YU_MI_LAO, CHA_ZI_ZHOU, NIAN_DOU_BAO, XUN_JIANG_PIN_PAN,
-            ORANGE_GUO_BAO_ROU,
-            JIANG_BAN_LA_PI,
-            CONG_SHAO_HAI_SHEN, HAI_SHEN_DOU_FU_TANG,
-            SUAN_CAI_JIAO_ZI, DI_GUO_JI, DI_GUO_PAI_GU, JIANG_DA_GU, SHA_ZHU_CAI,
-            LA_ROU_DUN_DOU_JIAO, JIANG_NIU_ROU, LIU_ROU_DUAN, HONG_SHAO_PAI_GU,
-            BA_SI_TU_DOU, SUAN_HUANG_GUA_CHAO_ROU_SI,
-            BRAISED_PORK_HOCK, BRAISED_PORK_STRIPS
+            // 饮品
+            SOY_MILK,
+            // 油腻（吃多了腻，给油腻效果）
+            OLD_STYLE_GUO_BAO_ROU, NEW_STYLE_GUO_BAO_ROU, ORANGE_GUO_BAO_ROU, LIU_ROU_DUAN,
+            DI_SAN_XIAN, HONG_SHAO_PAI_GU, DI_GUO_JI, DI_GUO_PAI_GU, SHA_ZHU_CAI,
+            JIANG_DA_GU, JIANG_NIU_ROU, BRAISED_PORK_HOCK, BRAISED_PORK_STRIPS,
+            BA_SI_TU_DOU, XUN_JIANG_PIN_PAN,
+            // 清爽（给爽口效果）
+            SUAN_CAI_CHAO_FEN_TIAO, JIAN_JIAO_GAN_DOU_FU, BAI_CAI_DOU_FU_DUN_FEN_TIAO,
+            LA_BAI_CAI_TANG_FAN, SUAN_HUANG_GUA_CHAO_ROU_SI, LIANG_BAN_XIAN_CAI, LIANG_BAN_HUA_CAI,
+            JIA_XIAN_HUANG_GUA_PAO_CAI, ZHAN_JIANG_CAI, MING_TAI_YU_SI, BUCKWHEAT_COLD_NOODLES,
+            SOUR_TANGZI, CHA_ZI_ZHOU, SWEET_POTATO_PORRIDGE,
+            // 荤素搭配（给滋养效果）
+            EGG_SOY_PASTE, SUAN_CAI_DUN_GU_TOU, ZHU_ROU_DUN_FEN_TIAO, LA_NIU_ROU_TANG_FAN,
+            LA_BAI_CAI_CHAO_FAN, XIA_JIANG_CHAO_JI_DAN, XIA_JIANG_DUN_DOU_FU, HAI_XIAN_DOU_FU_TANG,
+            JIANG_BAN_LA_PI, CONG_SHAO_HAI_SHEN, HAI_SHEN_DOU_FU_TANG, LA_ROU_DUN_DOU_JIAO, DA_FENG_SHOU,
+            // 不需要带餐具（直接拿在手里吃）
+            BAKED_SWEET_POTATO, DA_FAN_BAO, TU_DOU_BING, YU_MI_LAO, NIAN_DOU_BAO,
+            // 饺子（一碟一碟的）
+            SUAN_CAI_JIAO_ZI, XIA_REN_ZHU_ROU_XIAN_SHUI_JIAO, SAN_XIAN_XIAN_SHUI_JIAO
     );
 
     /** 登记一个只有默认属性的普通物品 */
@@ -341,6 +366,18 @@ public class ModItems {
         return ITEMS.registerItem(id, Item::new, new Item.Properties()
                 .craftRemainder(Items.BOWL)
                 .food(steakFood().usingConvertsTo(Items.BOWL).build()));
+    }
+
+    /**
+     * 用大脸盆盛装的料理（分量大的炖菜）：吃完返还大脸盆，作为食材放进炖锅时也会把空盆弹出。
+     *
+     * 注意这里必须用 supplier 把属性拖到「物品注册事件」里现做：
+     * 静态初始化阶段物品注册表还是冻结状态，既建不了 Item 实例，也取不到 LARGE_BASIN 的实例。
+     */
+    private static DeferredItem<Item> basinFood(String id) {
+        return ITEMS.register(id, () -> new Item(new Item.Properties()
+                .craftRemainder(LARGE_BASIN.get())
+                .food(steakFood().usingConvertsTo(LARGE_BASIN.get()).build())));
     }
 
     private static FoodProperties.Builder steakFood() {

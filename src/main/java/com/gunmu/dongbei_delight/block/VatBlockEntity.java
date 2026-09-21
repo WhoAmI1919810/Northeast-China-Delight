@@ -310,16 +310,6 @@ public class VatBlockEntity extends BlockEntity implements IFluidHandler {
         return this.shrimpPasteMb;
     }
 
-    /** 最后放入的一份内容物（用来判断「肉/盐交替」） */
-    public ItemStack lastContent() {
-        for (int i = MAX_ENTRIES - 1; i >= 0; i--) {
-            if (!this.contents.get(i).isEmpty()) {
-                return this.contents.get(i);
-            }
-        }
-        return ItemStack.EMPTY;
-    }
-
     // ===== 修改 =====
 
     public void setKind(VatRecipes.Kind kind) {

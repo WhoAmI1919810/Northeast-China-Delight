@@ -58,7 +58,7 @@ public final class DishFlavors {
         put(map, Flavor.GREASY, 4, "new_style_guo_bao_rou");
         put(map, Flavor.GREASY, 5, "orange_guo_bao_rou");
         put(map, Flavor.GREASY, 4, "liu_rou_duan");
-        put(map, Flavor.GREASY, 2, "braised_pork_hock");
+        put(map, Flavor.GREASY, 3, "braised_pork_hock");
         put(map, Flavor.GREASY, 2, "braised_pork_strips");
         put(map, Flavor.GREASY, 2, "jiang_da_gu");
         put(map, Flavor.GREASY, 3, "jiang_niu_rou");
@@ -75,14 +75,14 @@ public final class DishFlavors {
 
         // ===== 爽口：凉拌 / 酸口 / 清汤 =====
         put(map, Flavor.REFRESHING, 3, "sweet_potato_porridge");
-        put(map, Flavor.REFRESHING, 3, "cha_zi_zhou");
+        put(map, Flavor.REFRESHING, 4, "cha_zi_zhou");
         put(map, Flavor.REFRESHING, 2, "sour_tangzi");
         put(map, Flavor.REFRESHING, 3, "jian_jiao_gan_dou_fu");
         put(map, Flavor.REFRESHING, 2, "suan_cai_chao_fen_tiao");
         put(map, Flavor.REFRESHING, 6, "buckwheat_cold_noodles");
         put(map, Flavor.REFRESHING, 5, "liang_ban_xian_cai");
         put(map, Flavor.REFRESHING, 7, "ming_tai_yu_si");
-        put(map, Flavor.REFRESHING, 5, "zhan_jiang_cai");
+        put(map, Flavor.REFRESHING, 8, "zhan_jiang_cai");
         put(map, Flavor.REFRESHING, 4, "jia_xian_huang_gua_pao_cai");
         put(map, Flavor.REFRESHING, 7, "liang_ban_hua_cai");
         put(map, Flavor.REFRESHING, 3, "bai_cai_dou_fu_dun_fen_tiao");
@@ -96,12 +96,12 @@ public final class DishFlavors {
         put(map, Flavor.BALANCED, 4, "zhu_rou_dun_fen_tiao");
         put(map, Flavor.BALANCED, 6, "da_feng_shou");
         put(map, Flavor.BALANCED, 5, "la_niu_rou_tang_fan");
-        put(map, Flavor.BALANCED, 3, "la_bai_cai_chao_fan");
+        put(map, Flavor.BALANCED, 4, "la_bai_cai_chao_fan");
         put(map, Flavor.BALANCED, 4, "xia_ren_zhu_rou_xian_shui_jiao");
         put(map, Flavor.BALANCED, 3, "xia_jiang_chao_ji_dan");
         put(map, Flavor.BALANCED, 3, "xia_jiang_dun_dou_fu");
         put(map, Flavor.BALANCED, 4, "hai_xian_dou_fu_tang");
-        put(map, Flavor.BALANCED, 4, "san_xian_xian_shui_jiao");
+        put(map, Flavor.BALANCED, 5, "san_xian_xian_shui_jiao");
         put(map, Flavor.BALANCED, 3, "suan_cai_jiao_zi");
         put(map, Flavor.BALANCED, 2, "la_rou_dun_dou_jiao");
         put(map, Flavor.BALANCED, 5, "jiang_ban_la_pi");

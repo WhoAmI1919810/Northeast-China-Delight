@@ -5,7 +5,7 @@
   "ingredients": [
     { "item": "minecraft:sugar" },
     { "item": "dongbei_delight:cooking_oil" },
-    { "item": "minecraft:potato" }
+    { "item": "dongbei_delight:sweet_potato" }
   ],
   "recipe_book_tab": "meals",
   "result": { "count": 1, "id": "dongbei_delight:ba_si_tu_dou" }

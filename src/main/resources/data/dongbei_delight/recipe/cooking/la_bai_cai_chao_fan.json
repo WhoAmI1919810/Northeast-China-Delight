@@ -8,7 +8,8 @@
   "ingredients": [
     { "item": "dongbei_delight:spicy_cabbage" },
     { "item": "minecraft:porkchop" },
-    { "item": "farmersdelight:cooked_rice" }
+    { "item": "farmersdelight:cooked_rice" },
+    { "item": "minecraft:egg" }
   ],
   "recipe_book_tab": "meals",
   "result": {

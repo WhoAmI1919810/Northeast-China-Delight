@@ -129,6 +129,13 @@ function Shape-Mushroom($g, $main, $dark, $accent) {
     Rect $g $accent $dark 6 8 4 6
 }
 
+function Shape-Basin($g, $main, $dark, $accent) {
+    # 大脸盆：宽口的搪瓷盆 —— 先画盆身，再叠一圈亮色盆口
+    Oval $g $main $dark 1 6 14 8
+    Oval $g $accent $dark 2 3 12 5
+    Bar $g $dark 3 8 12 8 1
+}
+
 # ---- 物品清单：id = 形状, 主色, 描边, 点缀色 ----
 
 $items = [ordered]@{
@@ -179,7 +186,8 @@ $items = [ordered]@{
     'soy_paste_chunk'         = @('sheet',     '#7A4A1E', '#3E2410', '#9A6B2A')
     'soy_residue'             = @('cluster',   '#8A6B3A', '#4E3A18', '#A88A54')
     # 料理
-    'soy_milk'                = @('bottle',    '#F2F2E8', '#9A9A8A', '#D8D8C8')
+    # 豆浆是用碗盛的（喝完返还空碗），占位图也用碗
+    'soy_milk'                = @('bowl',      '#F2F2E8', '#9A9A8A', '#D8D8C8')
     'old_style_guo_bao_rou'   = @('bowl',      '#C87A3C', '#7A4218', '#E8C8A0')
     'new_style_guo_bao_rou'   = @('bowl',      '#C4502C', '#7A2A14', '#E8A860')
     'sweet_potato_porridge'   = @('bowl',      '#E8C46A', '#A8842A', '#F5E4B0')
@@ -249,7 +257,16 @@ $items = [ordered]@{
     'suan_huang_gua_chao_rou_si' = @('bowl',   '#D98A9A', '#8A4E58', '#7A9A3A')
     'sour_tangzi'             = @('bowl',      '#EFD98A', '#8A7440', '#F2E8C0')
     'egg_soy_paste'           = @('bowl',      '#D9B441', '#8A6B1E', '#F2D45C')
+    # 容器
+    'large_basin'             = @('basin',     '#C9CFD4', '#6B7378', '#EDF2F5')
 }
+
+# 这些「调料瓶」照原版药水的方式画：模型只有两层（原版的液面 + 玻璃瓶），颜色由代码染，
+# 所以它们不需要单独的物品贴图，模型也不要用 layer0 = 自己的贴图那种写法。
+$potionBottles = @(
+    'soy_sauce', 'vinegar', 'sour_water', 'white_vinegar', 'fish_sauce',
+    'shrimp_paste', 'chili_oil', 'peanut_butter', 'cooking_oil'
+)
 
 $shapeMap = @{
     'cluster'  = ${function:Shape-Cluster}
@@ -265,6 +282,7 @@ $shapeMap = @{
     'bone'     = ${function:Shape-Bone}
     'dumpling' = ${function:Shape-Dumpling}
     'mushroom' = ${function:Shape-Mushroom}
+    'basin'    = ${function:Shape-Basin}
 }
 
 # 用 -File 调用时，PowerShell 会把 -Only a,b,c 当成一个逗号字符串，这里统一拆开
@@ -292,9 +310,19 @@ foreach ($id in $ids) {
     $bitmap.Dispose()
 
     # 物品模型
-    $model = [ordered]@{
-        parent   = 'item/generated'
-        textures = [ordered]@{ layer0 = "dongbei_delight:item/$id" }
+    if ($potionBottles -contains $id) {
+        $model = [ordered]@{
+            parent   = 'minecraft:item/generated'
+            textures = [ordered]@{
+                layer0 = 'minecraft:item/potion_overlay'
+                layer1 = 'minecraft:item/potion'
+            }
+        }
+    } else {
+        $model = [ordered]@{
+            parent   = 'item/generated'
+            textures = [ordered]@{ layer0 = "dongbei_delight:item/$id" }
+        }
     }
     $model | ConvertTo-Json -Depth 5 | Set-Content -Path (Join-Path $modelDir "$id.json") -Encoding utf8
 }

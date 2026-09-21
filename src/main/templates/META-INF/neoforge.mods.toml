@@ -109,6 +109,14 @@ description='''${mod_description}'''
     ordering="AFTER"
     side="CLIENT"
 
+# JEI：可选，只在客户端把大缸的配方做成 JEI 分类展示
+[[dependencies.${mod_id}]]
+    modId="jei"
+    type="optional"
+    versionRange="${jei_version_range}"
+    ordering="AFTER"
+    side="CLIENT"
+
 # Features are specific properties of the game environment, that you may want to declare you require. This example declares
 # that your mod requires GL version 3.2 or higher. Other features will be added. They are side aware so declaring this won't
 # stop your mod loading on the server for example.
