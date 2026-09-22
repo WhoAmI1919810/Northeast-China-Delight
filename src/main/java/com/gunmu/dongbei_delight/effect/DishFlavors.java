@@ -72,6 +72,8 @@ public final class DishFlavors {
         put(map, Flavor.GREASY, 6, "sha_zhu_cai");
         put(map, Flavor.GREASY, 4, "di_guo_ji");
         put(map, Flavor.GREASY, 4, "di_guo_pai_gu");
+        put(map, Flavor.GREASY, 2, "xian_yu_bing_zi");
+        put(map, Flavor.GREASY, 3, "grilled_chicken_frame");
 
         // ===== 爽口：凉拌 / 酸口 / 清汤 =====
         put(map, Flavor.REFRESHING, 3, "sweet_potato_porridge");
@@ -88,6 +90,7 @@ public final class DishFlavors {
         put(map, Flavor.REFRESHING, 3, "bai_cai_dou_fu_dun_fen_tiao");
         put(map, Flavor.REFRESHING, 6, "la_bai_cai_tang_fan");
         put(map, Flavor.REFRESHING, 2, "suan_huang_gua_chao_rou_si");
+        put(map, Flavor.REFRESHING, 3, "da_jiang_tang");
 
         // ===== 荤素搭配、不会腻：吃完给农夫乐事的滋养 =====
         put(map, Flavor.BALANCED, 3, "egg_soy_paste");
@@ -107,6 +110,11 @@ public final class DishFlavors {
         put(map, Flavor.BALANCED, 5, "jiang_ban_la_pi");
         put(map, Flavor.BALANCED, 2, "cong_shao_hai_shen");
         put(map, Flavor.BALANCED, 2, "hai_shen_dou_fu_tang");
+        put(map, Flavor.BALANCED, 6, "de_mo_li_dun_yu");
+        put(map, Flavor.BALANCED, 6, "su_bo_tang");
+        put(map, Flavor.BALANCED, 6, "suan_cai_hai_xian_guo");
+        put(map, Flavor.BALANCED, 5, "shen_ji_tang");
+        put(map, Flavor.BALANCED, 4, "xiao_ji_dun_mo_gu");
 
         return Map.copyOf(map);
     }

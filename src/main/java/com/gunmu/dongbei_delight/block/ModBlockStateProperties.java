@@ -27,4 +27,11 @@ public class ModBlockStateProperties {
     public static final IntegerProperty VAT_PROGRESS =
             IntegerProperty.create("progress", 0, VAT_MAX_PROGRESS);
 
+    /** 烧烤架烤一串东西一共分几步（用来做烤制进度） */
+    public static final int GRILL_MAX_PROGRESS = 4;
+
+    /** 烤架上的烤制进度：0 ~ GRILL_MAX_PROGRESS */
+    public static final IntegerProperty GRILL_PROGRESS =
+            IntegerProperty.create("grill_progress", 0, GRILL_MAX_PROGRESS);
+
 }

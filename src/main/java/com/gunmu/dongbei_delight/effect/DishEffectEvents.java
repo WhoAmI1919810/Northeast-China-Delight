@@ -1,6 +1,7 @@
 package com.gunmu.dongbei_delight.effect;
 
 import com.gunmu.dongbei_delight.item.ModItems;
+import com.gunmu.dongbei_delight.item.SeasoningBottleItem;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.Holder;
 import net.minecraft.network.chat.Component;
@@ -78,6 +79,14 @@ public class DishEffectEvents {
     @SubscribeEvent
     public static void onItemTooltip(ItemTooltipEvent event) {
         ItemStack stack = event.getItemStack();
+        // 瓶装调料：把还剩多少 mB、还能用几次写出来
+        if (SeasoningBottleItem.isBottle(stack)) {
+            event.getToolTip().add(Component.translatable("tooltip.dongbei_delight.bottle_amount",
+                            SeasoningBottleItem.remainingMb(stack),
+                            SeasoningBottleItem.CAPACITY_MB,
+                            SeasoningBottleItem.remainingUses(stack))
+                    .withStyle(ChatFormatting.GRAY));
+        }
         DishFlavors.Info info = DishFlavors.of(stack.getItem());
         if (info == null) {
             return;

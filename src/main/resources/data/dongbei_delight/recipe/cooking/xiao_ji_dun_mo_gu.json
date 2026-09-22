@@ -1,0 +1,16 @@
+{
+  "type": "farmersdelight:cooking",
+  "container": { "count": 1, "id": "dongbei_delight:large_basin" },
+  "experience": 1.0,
+  "ingredients": [
+    { "item": "minecraft:chicken" },
+    { "item": "dongbei_delight:hazel_mushroom" },
+    { "item": "dongbei_delight:soy_sauce" },
+    { "item": "dongbei_delight:vermicelli" }
+  ],
+  "recipe_book_tab": "meals",
+  "result": {
+    "count": 1,
+    "id": "dongbei_delight:xiao_ji_dun_mo_gu"
+  }
+}

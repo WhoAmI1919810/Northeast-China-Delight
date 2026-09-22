@@ -2,7 +2,9 @@
   "type": "create:emptying",
   "ingredients": [
     {
-      "item": "dongbei_delight:shrimp_paste"
+      "type": "neoforge:components",
+      "items": "dongbei_delight:shrimp_paste",
+      "components": { "minecraft:damage": 0 }
     }
   ],
   "results": [

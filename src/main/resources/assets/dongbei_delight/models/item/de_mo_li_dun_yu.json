@@ -1,0 +1,6 @@
+{
+  "parent": "item/generated",
+  "textures": {
+    "layer0": "dongbei_delight:item/de_mo_li_dun_yu"
+  }
+}

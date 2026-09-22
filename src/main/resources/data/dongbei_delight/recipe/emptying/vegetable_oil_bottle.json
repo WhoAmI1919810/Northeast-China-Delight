@@ -2,7 +2,9 @@
   "type": "create:emptying",
   "ingredients": [
     {
-      "item": "dongbei_delight:cooking_oil"
+      "type": "neoforge:components",
+      "items": "dongbei_delight:cooking_oil",
+      "components": { "minecraft:damage": 0 }
     }
   ],
   "results": [

@@ -2,8 +2,10 @@ package com.gunmu.dongbei_delight;
 
 import com.gunmu.dongbei_delight.block.ModBlocks;
 import com.gunmu.dongbei_delight.block.ModBlockEntities;
+import com.gunmu.dongbei_delight.block.GrillCampfireBlock;
 import com.gunmu.dongbei_delight.block.Vat;
 import com.gunmu.dongbei_delight.block.VatBlockEntity;
+import com.gunmu.dongbei_delight.client.GrillCampfireRenderer;
 import com.gunmu.dongbei_delight.client.VatRenderer;
 import com.gunmu.dongbei_delight.effect.DishEffectEvents;
 import com.gunmu.dongbei_delight.effect.ModEffects;
@@ -13,7 +15,18 @@ import com.gunmu.dongbei_delight.loot.ModLootModifiers;
 import com.mojang.logging.LogUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BiomeColors;
+import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.block.entity.CampfireBlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -25,6 +38,7 @@ import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent;
+import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 import net.neoforged.neoforge.event.server.ServerStartingEvent;
 import net.neoforged.neoforge.client.event.RegisterColorHandlersEvent;
 import net.neoforged.neoforge.client.event.EntityRenderersEvent;
@@ -83,6 +97,44 @@ public class DongbeiDelight
     public void onServerStarting(ServerStartingEvent event)
     {
         LOGGER.info("da dong bei shi wo di jia xiang ~");
+    }
+
+    /**
+     * 拿着烧烤架右键普通营火：把营火换成「架了烤架的营火」。
+     *
+     * 这里是另换一个方块，而不是给原版营火加一个方块状态属性 ——
+     * 给原版方块加属性会改变全局方块状态 id，老存档里的方块会错位。
+     */
+    @SubscribeEvent
+    public void onRightClickCampfire(PlayerInteractEvent.RightClickBlock event)
+    {
+        if (event.getHand() != InteractionHand.MAIN_HAND || event.isCanceled()
+                || !event.getItemStack().is(ModItems.GRILL_RACK.get()))
+        {
+            return;
+        }
+        Level level = event.getLevel();
+        BlockPos pos = event.getPos();
+        BlockState state = level.getBlockState(pos);
+        if (!state.is(Blocks.CAMPFIRE) || !(level.getBlockEntity(pos) instanceof CampfireBlockEntity fire))
+        {
+            return;
+        }
+        // 客户端先拦下来，避免本地预测跑一遍原版营火的交互
+        event.setCanceled(true);
+        // 必须给一个「已消费」的结果：默认的 PASS 会让客户端接着去处理副手，
+        // 副手那次「空手右键」打在刚装好的烤架营火上，会把烤架又撸下来
+        event.setCancellationResult(InteractionResult.SUCCESS);
+        if (level.isClientSide)
+        {
+            return;
+        }
+        GrillCampfireBlock.install(level, pos, state, fire);
+        if (!event.getEntity().getAbilities().instabuild)
+        {
+            event.getItemStack().shrink(1);
+        }
+        level.playSound(null, pos, SoundEvents.LANTERN_PLACE, SoundSource.BLOCKS, 1.0F, 1.0F);
     }
 
     @EventBusSubscriber(modid = MODID, bus = EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
@@ -148,6 +200,8 @@ public class DongbeiDelight
         public static void onRegisterRenderers(EntityRenderersEvent.RegisterRenderers event)
         {
             event.registerBlockEntityRenderer(ModBlockEntities.VAT.get(), VatRenderer::new);
+            // 烤架营火：火堆用方块模型，架上的东西和那层烤架由这个渲染器画
+            event.registerBlockEntityRenderer(ModBlockEntities.GRILL_CAMPFIRE.get(), GrillCampfireRenderer::new);
         }
 
         /**

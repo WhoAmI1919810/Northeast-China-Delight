@@ -2,7 +2,9 @@
   "type": "create:emptying",
   "ingredients": [
     {
-      "item": "dongbei_delight:sour_water"
+      "type": "neoforge:components",
+      "items": "dongbei_delight:sour_water",
+      "components": { "minecraft:damage": 0 }
     }
   ],
   "results": [

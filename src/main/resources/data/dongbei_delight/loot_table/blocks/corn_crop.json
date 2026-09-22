@@ -16,12 +16,6 @@
             {
               "type": "minecraft:item",
               "name": "dongbei_delight:corn",
-              "functions": [
-                {
-                  "function": "minecraft:set_count",
-                  "count": 2
-                }
-              ],
               "conditions": [
                 {
                   "condition": "minecraft:block_state_property",
@@ -29,6 +23,12 @@
                   "properties": {
                     "age": "7"
                   }
+                }
+              ],
+              "functions": [
+                {
+                  "function": "minecraft:set_count",
+                  "count": 2
                 }
               ]
             },

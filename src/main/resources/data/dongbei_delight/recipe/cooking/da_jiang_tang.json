@@ -1,0 +1,18 @@
+{
+  "type": "farmersdelight:cooking",
+  "container": {
+    "count": 1,
+    "id": "minecraft:bowl"
+  },
+  "experience": 0.35,
+  "ingredients": [
+    { "item": "dongbei_delight:soy_paste" },
+    { "item": "minecraft:water_bucket" },
+    { "item": "dongbei_delight:tofu" }
+  ],
+  "recipe_book_tab": "meals",
+  "result": {
+    "count": 1,
+    "id": "dongbei_delight:da_jiang_tang"
+  }
+}

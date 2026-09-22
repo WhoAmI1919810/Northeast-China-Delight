@@ -69,11 +69,12 @@ public enum VatComponentProvider implements IBlockComponentProvider {
             return;
         }
 
-        // 水位与盐：泡菜按「一层水一份盐」，大酱 / 酱油固定 3 份盐，腊肉按肉的数量配对
+        // 水位与盐：泡菜按「一层水一份盐」，大酱 / 酱油固定 3 份盐，腊肉 / 咸鱼按肉（鱼）的数量配对
         int salt = vat.countOf(ModItems.SALT.get());
         int saltNeeded = switch (kind) {
             case PICKLE, SPICY_PICKLE -> water * VatRecipes.SALT_PER_WATER;
             case MEAT -> vat.meatCount();
+            case SALTED_FISH -> vat.rawFishCount();
             case PASTE, SOY_SAUCE -> VatRecipes.PASTE_SALT;
             default -> 0;
         };
@@ -147,9 +148,9 @@ public enum VatComponentProvider implements IBlockComponentProvider {
         // 发酵进度条
         if (kind != VatRecipes.Kind.NONE) {
             float ratio = fermented ? 1.0F : progress / (float) Vat.MAX_PROGRESS;
-            // 按大缸在做的东西换说法：泡菜「发酵」、腊肉「腌制」、大酱/酱油「酿造」
+            // 按大缸在做的东西换说法：泡菜「发酵」、腊肉/咸鱼「腌制」、大酱/酱油「酿造」
             String stage = switch (kind) {
-                case MEAT -> "curing";
+                case MEAT, SALTED_FISH -> "curing";
                 case PASTE, SOY_SAUCE -> "brewing";
                 case BEAN_SPROUTS -> "sprouting";
                 default -> "fermenting";

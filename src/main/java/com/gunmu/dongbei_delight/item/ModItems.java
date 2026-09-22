@@ -80,6 +80,8 @@ public class ModItems {
     public static final DeferredItem<Item> SALT = simple("salt");
     /** 盐渍猪肉 */
     public static final DeferredItem<Item> SALTED_PORK = food("salted_pork");
+    /** 咸鱼：大缸里用任意生鱼 + 等量盐腌成（和咸腊肉一个路子，最多 5 条） */
+    public static final DeferredItem<Item> SALTED_FISH = food("salted_fish");
     /** 大缸发酵黄瓜得到 */
     public static final DeferredItem<Item> PICKLED_CUCUMBER = food("pickled_cucumber");
     /** 大缸发酵胡萝卜得到 */
@@ -120,6 +122,8 @@ public class ModItems {
 
     /** 大脸盆：大份炖菜盛在里面的容器 */
     public static final DeferredItem<Item> LARGE_BASIN = simple("large_basin");
+    /** 烧烤架：右键架在营火上，把营火变成可以烤东西的样子 */
+    public static final DeferredItem<Item> GRILL_RACK = simple("grill_rack");
 
     // ===== 山珍与海味 =====
 
@@ -128,6 +132,8 @@ public class ModItems {
     /** 榛蘑、木耳：山珍，获取方式待定 */
     public static final DeferredItem<Item> HAZEL_MUSHROOM = food("hazel_mushroom");
     public static final DeferredItem<Item> WOOD_EAR = food("wood_ear");
+    /** 人参：山珍，用于参鸡汤，获取方式待定 */
+    public static final DeferredItem<Item> GINSENG = food("ginseng");
     /** 带鱼、生蚝：海味，获取方式待定 */
     public static final DeferredItem<Item> HAIRTAIL = food("hairtail");
     public static final DeferredItem<Item> OYSTER = food("oyster");
@@ -211,14 +217,16 @@ public class ModItems {
     public static final DeferredItem<Item> BAI_CAI_DOU_FU_DUN_FEN_TIAO = basinFood("bai_cai_dou_fu_dun_fen_tiao");
     public static final DeferredItem<Item> LA_NIU_ROU_TANG_FAN = bowlFood("la_niu_rou_tang_fan");
     public static final DeferredItem<Item> LA_BAI_CAI_CHAO_FAN = bowlFood("la_bai_cai_chao_fan");
-    public static final DeferredItem<Item> TU_DOU_BING = food("tu_dou_bing");
+    /** 土豆饼：碗装（吃完返还空碗） */
+    public static final DeferredItem<Item> TU_DOU_BING = bowlFood("tu_dou_bing");
     public static final DeferredItem<Item> XIA_REN_ZHU_ROU_XIAN_SHUI_JIAO = food("xia_ren_zhu_rou_xian_shui_jiao");
     public static final DeferredItem<Item> XIA_JIANG_CHAO_JI_DAN = bowlFood("xia_jiang_chao_ji_dan");
     public static final DeferredItem<Item> XIA_JIANG_DUN_DOU_FU = bowlFood("xia_jiang_dun_dou_fu");
     public static final DeferredItem<Item> HAI_XIAN_DOU_FU_TANG = bowlFood("hai_xian_dou_fu_tang");
     public static final DeferredItem<Item> SAN_XIAN_XIAN_SHUI_JIAO = food("san_xian_xian_shui_jiao");
     public static final DeferredItem<Item> LA_BAI_CAI_TANG_FAN = bowlFood("la_bai_cai_tang_fan");
-    public static final DeferredItem<Item> YU_MI_LAO = food("yu_mi_lao");
+    /** 玉米烙：碗装 */
+    public static final DeferredItem<Item> YU_MI_LAO = bowlFood("yu_mi_lao");
     public static final DeferredItem<Item> CHA_ZI_ZHOU = bowlFood("cha_zi_zhou");
     public static final DeferredItem<Item> NIAN_DOU_BAO = food("nian_dou_bao");
     public static final DeferredItem<Item> XUN_JIANG_PIN_PAN = bowlFood("xun_jiang_pin_pan");
@@ -230,6 +238,17 @@ public class ModItems {
     public static final DeferredItem<Item> CONG_SHAO_HAI_SHEN = bowlFood("cong_shao_hai_shen");
     /** 海参豆腐汤：海参 + 豆腐 */
     public static final DeferredItem<Item> HAI_SHEN_DOU_FU_TANG = bowlFood("hai_shen_dou_fu_tang");
+    /** 咸鱼饼子：2 咸鱼 + 2 面团，碗装 */
+    public static final DeferredItem<Item> XIAN_YU_BING_ZI = bowlFood("xian_yu_bing_zi");
+    public static final DeferredItem<Item> DA_JIANG_TANG = bowlFood("da_jiang_tang");
+    /** 得莫利炖鱼：分量大，用大脸盆盛 */
+    public static final DeferredItem<Item> DE_MO_LI_DUN_YU = basinFood("de_mo_li_dun_yu");
+    public static final DeferredItem<Item> SU_BO_TANG = bowlFood("su_bo_tang");
+    public static final DeferredItem<Item> SUAN_CAI_HAI_XIAN_GUO = basinFood("suan_cai_hai_xian_guo");
+    public static final DeferredItem<Item> SHEN_JI_TANG = bowlFood("shen_ji_tang");
+    public static final DeferredItem<Item> XIAO_JI_DUN_MO_GU = basinFood("xiao_ji_dun_mo_gu");
+    /** 烤鸡架：生鸡架刷辣椒油撒糖，放在烤架上烤出来 */
+    public static final DeferredItem<Item> GRILLED_CHICKEN_FRAME = food("grilled_chicken_frame");
 
     // ===== 方块物品 =====
 
@@ -263,7 +282,7 @@ public class ModItems {
             // 豆类与杂粮
             SOYBEAN, PEANUT, RED_BEAN, BUCKWHEAT,
             // 山珍
-            HAZELNUT, HAZEL_MUSHROOM, WOOD_EAR,
+            HAZELNUT, HAZEL_MUSHROOM, WOOD_EAR, GINSENG,
             // 肉类与水产
             PORK_RIBS, PORK_INTESTINE, PORK_HOCK, PIG_BLOOD, PIG_LIVER, CHICKEN_FRAME,
             SHRIMP, HAIRTAIL, OYSTER, SEA_CUCUMBER,
@@ -271,7 +290,7 @@ public class ModItems {
             RAW_SAUSAGE, BLOOD_SAUSAGE, RICE_SAUSAGE, RED_SAUSAGE,
             SMOKED_PORK_HOCK, SMOKED_PIG_LIVER,
             // 腌制品
-            SOUR_CABBAGE, SPICY_CABBAGE, PICKLED_CUCUMBER, PICKLED_CARROT, SALTED_PORK,
+            SOUR_CABBAGE, SPICY_CABBAGE, PICKLED_CUCUMBER, PICKLED_CARROT, SALTED_PORK, SALTED_FISH,
             // 调料
             SALT, SOY_PASTE, CHILI_SAUCE, SOY_SAUCE, VINEGAR, SOUR_WATER, WHITE_VINEGAR,
             FISH_SAUCE, SHRIMP_PASTE, CHILI_OIL, PEANUT_BUTTER, COOKING_OIL,
@@ -281,8 +300,8 @@ public class ModItems {
             WATER_DOUGH, BUCKWHEAT_NOODLES, DRIED_TOFU, TOFU, SWEET_POTATO_STARCH,
             VERMICELLI, LA_PI, BEAN_SPROUTS, SOUR_CORN_KERNELS, ROASTED_PEANUTS,
             CORN_STALK,
-            // 容器
-            LARGE_BASIN,
+            // 厨具与容器
+            LARGE_BASIN, GRILL_RACK,
             // 方块
             UNFIRED_VAT_BLANK, VAT
     );
@@ -302,17 +321,19 @@ public class ModItems {
             DI_SAN_XIAN, HONG_SHAO_PAI_GU, DI_GUO_JI, DI_GUO_PAI_GU, SHA_ZHU_CAI,
             JIANG_DA_GU, JIANG_NIU_ROU, BRAISED_PORK_HOCK, BRAISED_PORK_STRIPS,
             BA_SI_TU_DOU, XUN_JIANG_PIN_PAN,
+            TU_DOU_BING, YU_MI_LAO, XIAN_YU_BING_ZI,
             // 清爽（给爽口效果）
             SUAN_CAI_CHAO_FEN_TIAO, JIAN_JIAO_GAN_DOU_FU, BAI_CAI_DOU_FU_DUN_FEN_TIAO,
             LA_BAI_CAI_TANG_FAN, SUAN_HUANG_GUA_CHAO_ROU_SI, LIANG_BAN_XIAN_CAI, LIANG_BAN_HUA_CAI,
             JIA_XIAN_HUANG_GUA_PAO_CAI, ZHAN_JIANG_CAI, MING_TAI_YU_SI, BUCKWHEAT_COLD_NOODLES,
-            SOUR_TANGZI, CHA_ZI_ZHOU, SWEET_POTATO_PORRIDGE,
+            SOUR_TANGZI, CHA_ZI_ZHOU, SWEET_POTATO_PORRIDGE, DA_JIANG_TANG,
             // 荤素搭配（给滋养效果）
             EGG_SOY_PASTE, SUAN_CAI_DUN_GU_TOU, ZHU_ROU_DUN_FEN_TIAO, LA_NIU_ROU_TANG_FAN,
             LA_BAI_CAI_CHAO_FAN, XIA_JIANG_CHAO_JI_DAN, XIA_JIANG_DUN_DOU_FU, HAI_XIAN_DOU_FU_TANG,
             JIANG_BAN_LA_PI, CONG_SHAO_HAI_SHEN, HAI_SHEN_DOU_FU_TANG, LA_ROU_DUN_DOU_JIAO, DA_FENG_SHOU,
+            DE_MO_LI_DUN_YU, SU_BO_TANG, SUAN_CAI_HAI_XIAN_GUO, SHEN_JI_TANG, XIAO_JI_DUN_MO_GU,
             // 不需要带餐具（直接拿在手里吃）
-            BAKED_SWEET_POTATO, DA_FAN_BAO, TU_DOU_BING, YU_MI_LAO, NIAN_DOU_BAO,
+            BAKED_SWEET_POTATO, DA_FAN_BAO, NIAN_DOU_BAO, GRILLED_CHICKEN_FRAME,
             // 饺子（一碟一碟的）
             SUAN_CAI_JIAO_ZI, XIA_REN_ZHU_ROU_XIAN_SHUI_JIAO, SAN_XIAN_XIAN_SHUI_JIAO
     );
@@ -322,15 +343,25 @@ public class ModItems {
         return ITEMS.registerItem(id, Item::new, new Item.Properties());
     }
 
-    /** 玻璃瓶装的东西：当材料用时返还空瓶（厨锅 / 工作台通用） */
+    /**
+     * 玻璃瓶装的调料：一瓶 250 mB，用一次扣 50 mB（见 {@link SeasoningBottleItem}）。
+     *
+     * 物品属性里仍然留着 {@code craftRemainder(空玻璃瓶)}：用空了的瓶子自然就是空瓶，
+     * 而"还能用几次"是靠 {@link SeasoningBottleItem#getCraftingRemainingItem(ItemStack)} 返回带耐久的瓶子。
+     */
     private static DeferredItem<Item> bottled(String id) {
-        return ITEMS.registerItem(id, Item::new, new Item.Properties().craftRemainder(Items.GLASS_BOTTLE));
+        return ITEMS.registerItem(id, SeasoningBottleItem::new, new Item.Properties()
+                .craftRemainder(Items.GLASS_BOTTLE)
+                .durability(SeasoningBottleItem.CAPACITY_MB));
     }
 
-    /** 玻璃瓶装的饮品：既是食物也返还空瓶 */
+    /** 玻璃瓶装的饮品：既是食物也返还瓶子（同样带余量） */
     private static DeferredItem<Item> bottledFood(String id) {
-        return ITEMS.registerItem(id, Item::new,
-                new Item.Properties().craftRemainder(Items.GLASS_BOTTLE).food(steakFood().build()));
+        return ITEMS.registerItem(id, SeasoningBottleItem::new,
+                new Item.Properties()
+                        .craftRemainder(Items.GLASS_BOTTLE)
+                        .food(steakFood().build())
+                        .durability(SeasoningBottleItem.CAPACITY_MB));
     }
 
     /**

@@ -494,6 +494,51 @@ public class VatBlockEntity extends BlockEntity implements IFluidHandler {
     }
 
     /**
+     * 从缸里的成品液体里抽走最多 want mB —— 给"用过的调料瓶续上"用的。
+     * 返回实际抽走的量（缸里不够就有多少给多少）。
+     */
+    public int drainProduct(VatRecipes.Kind bottled, int want) {
+        if (want <= 0) {
+            return 0;
+        }
+        int moved;
+        switch (bottled) {
+            case SOY_SAUCE -> {
+                moved = Math.min(want, this.soySauceMb);
+                this.soySauceMb -= moved;
+            }
+            case VINEGAR -> {
+                moved = Math.min(want, this.vinegarMb);
+                this.vinegarMb -= moved;
+            }
+            case WHITE_VINEGAR -> {
+                moved = Math.min(want, this.whiteVinegarMb);
+                this.whiteVinegarMb -= moved;
+            }
+            case FISH_SAUCE -> {
+                moved = Math.min(want, this.fishSauceMb);
+                this.fishSauceMb -= moved;
+            }
+            case SHRIMP_PASTE -> {
+                moved = Math.min(want, this.shrimpPasteMb);
+                this.shrimpPasteMb -= moved;
+            }
+            case PICKLE -> {
+                moved = Math.min(want, this.sourWaterMb);
+                this.sourWaterMb -= moved;
+                this.refreshSourWaterLevel();
+            }
+            default -> {
+                return 0;
+            }
+        }
+        if (moved > 0) {
+            this.sync();
+        }
+        return moved;
+    }
+
+    /**
      * 酸引水按「一层水 = 1000 mB」折算回水位，
      * 这样用瓶子 / 管道取走一部分之后，缸里的水面也会跟着降。
      */

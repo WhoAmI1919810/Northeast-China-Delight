@@ -531,12 +531,12 @@ public class VatRecipeCategory implements IRecipeCategory<VatJeiRecipe> {
             return Component.empty();
         }
         if (seconds < 60) {
-            return Component.translatable("jei.dongbei_delight.vat.time.seconds", seconds);
+            return Component.translatable("jei.dongbei_delight.time.seconds", seconds);
         }
         if (seconds % 60 == 0) {
-            return Component.translatable("jei.dongbei_delight.vat.time.minutes", seconds / 60);
+            return Component.translatable("jei.dongbei_delight.time.minutes", seconds / 60);
         }
-        return Component.translatable("jei.dongbei_delight.vat.time.minutes_seconds",
+        return Component.translatable("jei.dongbei_delight.time.minutes_seconds",
                 seconds / 60, seconds % 60);
     }
 }

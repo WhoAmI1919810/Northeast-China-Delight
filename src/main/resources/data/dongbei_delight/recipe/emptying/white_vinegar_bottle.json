@@ -2,7 +2,9 @@
   "type": "create:emptying",
   "ingredients": [
     {
-      "item": "dongbei_delight:white_vinegar"
+      "type": "neoforge:components",
+      "items": "dongbei_delight:white_vinegar",
+      "components": { "minecraft:damage": 0 }
     }
   ],
   "results": [

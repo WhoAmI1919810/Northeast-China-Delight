@@ -1,0 +1,20 @@
+{
+  "type": "farmersdelight:cooking",
+  "container": {
+    "count": 1,
+    "id": "minecraft:bowl"
+  },
+  "experience": 1.0,
+  "ingredients": [
+    { "item": "dongbei_delight:ginseng" },
+    { "item": "minecraft:chicken" },
+    { "item": "farmersdelight:rice" },
+    { "item": "dongbei_delight:salt" },
+    { "item": "minecraft:water_bucket" }
+  ],
+  "recipe_book_tab": "meals",
+  "result": {
+    "count": 1,
+    "id": "dongbei_delight:shen_ji_tang"
+  }
+}

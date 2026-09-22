@@ -3,6 +3,7 @@ package com.gunmu.dongbei_delight.block;
 import com.gunmu.dongbei_delight.DongbeiDelight;
 import com.gunmu.dongbei_delight.crafting.VatRecipes;
 import com.gunmu.dongbei_delight.item.ModItems;
+import com.gunmu.dongbei_delight.item.SeasoningBottleItem;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
@@ -183,6 +184,10 @@ public class Vat extends Block implements EntityBlock {
             case MEAT -> vat.isPressed()
                     && vat.meatCount() > 0
                     && vat.countOf(ModItems.SALT.get()) == vat.meatCount();
+            // 咸鱼：和腊肉一个路子，盐的数量要跟生鱼一样多（谁先放都行）
+            case SALTED_FISH -> vat.isPressed()
+                    && vat.rawFishCount() > 0
+                    && vat.countOf(ModItems.SALT.get()) == vat.rawFishCount();
             // 大酱：满水 + 3 酱块 + 3 盐，蒙地毯
             case PASTE -> vat.isCovered()
                     && state.getValue(WATER_LEVEL) == 3
@@ -296,13 +301,33 @@ public class Vat extends Block implements EntityBlock {
                 return ItemInteractionResult.sidedSuccess(false);
             }
 
+            // 用过的调料瓶：右键大缸把液体续进瓶里（缺多少补多少，缸里不够就补多少）
+            if (SeasoningBottleItem.isBottle(stack) && state.getValue(FERMENTED)) {
+                if (SeasoningBottleItem.isFull(stack)) {
+                    hint(player, "message.dongbei_delight.vat.bottle_full");
+                    return ItemInteractionResult.sidedSuccess(false);
+                }
+                if (VatRecipes.bottleFor(vat.kind()) != stack.getItem()) {
+                    hint(player, "message.dongbei_delight.vat.bottle_mismatch");
+                    return ItemInteractionResult.sidedSuccess(false);
+                }
+                int moved = vat.drainProduct(vat.kind(), SeasoningBottleItem.usedMb(stack));
+                if (moved <= 0) {
+                    hint(player, "message.dongbei_delight.vat.bottle_empty");
+                    return ItemInteractionResult.sidedSuccess(false);
+                }
+                SeasoningBottleItem.refill(stack, moved);
+                playFill(level, pos);
+                return ItemInteractionResult.sidedSuccess(false);
+            }
+
             // 放盐：泡菜要按「一份水配一份盐」；腊肉最多 5 份，和肉搭配着放（不分先后）
             if (stack.is(ModItems.SALT.get())) {
                 boolean ok = switch (vat.kind()) {
                     case NONE -> water > 0;                                   // 水里放盐 → 泡菜
                     case PICKLE -> vat.countOf(ModItems.SALT.get()) < water * VatRecipes.SALT_PER_WATER;
-                    // 腊肉：盐最多 5 份，先放盐后放肉也行
-                    case MEAT -> vat.countOf(ModItems.SALT.get()) < VatRecipes.MAX_MEATS;
+                    // 腊肉 / 咸鱼：盐最多 5 份，和肉（鱼）搭配着放，不分先后
+                    case MEAT, SALTED_FISH -> vat.countOf(ModItems.SALT.get()) < VatRecipes.MAX_MEATS;
                     case PASTE, SOY_SAUCE -> vat.countOf(ModItems.SALT.get()) < VatRecipes.PASTE_SALT;
                     // 辣白菜：盐只算盐水那一份，调味品是鱼露 / 虾酱
                     case SPICY_PICKLE -> vat.countOf(ModItems.SALT.get())
@@ -340,7 +365,8 @@ public class Vat extends Block implements EntityBlock {
             }
 
             // 放猪肉：腊肉类，不加水，最多 5 块（和盐不分先后）
-            if (stack.is(VatRecipes.meatInput())) {
+            // 已经腌好的缸不再收料：否则新放的肉会立刻被算成成品
+            if (stack.is(VatRecipes.meatInput()) && !state.getValue(FERMENTED)) {
                 boolean ok = switch (vat.kind()) {
                     case NONE -> water <= 0;
                     case MEAT -> vat.meatCount() < VatRecipes.MAX_MEATS;
@@ -361,18 +387,33 @@ public class Vat extends Block implements EntityBlock {
                 return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
             }
 
-            // 鱼露：6 份任意生鱼 + 3 份盐，不加水，压石头发酵
-            if (VatRecipes.isRawFish(stack) && water <= 0
-                    && (vat.kind() == VatRecipes.Kind.NONE || vat.kind() == VatRecipes.Kind.FISH_SAUCE)
-                    && vat.rawFishCount() < VatRecipes.FISH_SAUCE_FISH) {
-                if (vat.addContent(stack)) {
-                    if (vat.kind() == VatRecipes.Kind.NONE) {
-                        vat.setKind(VatRecipes.Kind.FISH_SAUCE);
+            // 生鱼：空缸先按「咸鱼」起步（和腊肉一样，鱼和盐 1:1、最多 5 条），压石头发酵；
+            // 鱼露要 6 条，所以在 5 条的基础上再放第 6 条时自动转成鱼露流程。
+            if (VatRecipes.isRawFish(stack) && water <= 0) {
+                if (state.getValue(FERMENTED)) {
+                    return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+                }
+                boolean salting = vat.kind() == VatRecipes.Kind.NONE || vat.kind() == VatRecipes.Kind.SALTED_FISH;
+                boolean sauceBrewing = vat.kind() == VatRecipes.Kind.FISH_SAUCE;
+                boolean roomForSaltedFish = salting && vat.rawFishCount() < VatRecipes.MAX_MEATS;
+                // 已经压满 5 条、盐又没超过鱼露的份数：这一条是冲着鱼露来的
+                boolean becomesFishSauce = salting
+                        && vat.rawFishCount() == VatRecipes.MAX_MEATS
+                        && vat.countOf(ModItems.SALT.get()) <= VatRecipes.FISH_SAUCE_SALT;
+                boolean roomForFishSauce = sauceBrewing && vat.rawFishCount() < VatRecipes.FISH_SAUCE_FISH;
+                if (roomForSaltedFish || becomesFishSauce || roomForFishSauce) {
+                    if (vat.addContent(stack)) {
+                        if (vat.kind() == VatRecipes.Kind.NONE) {
+                            vat.setKind(VatRecipes.Kind.SALTED_FISH);
+                        }
+                        if (becomesFishSauce) {
+                            vat.setKind(VatRecipes.Kind.FISH_SAUCE);
+                        }
+                        consume(player, stack);
+                        playFill(level, pos);
+                        tryStart(level, pos, state, vat);
+                        return ItemInteractionResult.sidedSuccess(false);
                     }
-                    consume(player, stack);
-                    playFill(level, pos);
-                    tryStart(level, pos, state, vat);
-                    return ItemInteractionResult.sidedSuccess(false);
                 }
                 return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
             }
@@ -503,6 +544,7 @@ public class Vat extends Block implements EntityBlock {
             if (isPressStone(stack) && !vat.isEmpty() && !vat.isPressed()
                     && (vat.kind() == VatRecipes.Kind.PICKLE
                             || vat.kind() == VatRecipes.Kind.MEAT
+                            || vat.kind() == VatRecipes.Kind.SALTED_FISH
                             || vat.kind() == VatRecipes.Kind.SPICY_PICKLE
                             || vat.kind() == VatRecipes.Kind.FISH_SAUCE
                             || vat.kind() == VatRecipes.Kind.SHRIMP_PASTE)) {
@@ -724,6 +766,14 @@ public class Vat extends Block implements EntityBlock {
                     case MEAT -> {
                         if (vat.removeOneMatching(s -> s.is(VatRecipes.meatInput()))) {
                             give(player, new ItemStack(VatRecipes.meatResult()));
+                            yield true;
+                        }
+                        yield false;
+                    }
+                    // 咸鱼：取一条生鱼的位置给一条咸鱼（鱼的种类不限）
+                    case SALTED_FISH -> {
+                        if (vat.removeOneMatching(VatRecipes::isRawFish)) {
+                            give(player, new ItemStack(VatRecipes.saltedFishResult()));
                             yield true;
                         }
                         yield false;

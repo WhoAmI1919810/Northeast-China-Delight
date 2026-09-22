@@ -31,6 +31,8 @@ public final class VatRecipes {
         PICKLE,
         /** 腊肉：肉与盐交替层叠，压石头，不加水 */
         MEAT,
+        /** 咸鱼：任意生鱼与盐交替层叠，压石头，不加水 */
+        SALTED_FISH,
         /** 大酱：大酱块 + 盐 + 水，蒙地毯 */
         PASTE,
         /** 酱油：大酱块 + 小麦 + 盐 + 满水，蒙地毯 */
@@ -123,6 +125,8 @@ public final class VatRecipes {
     public static final int DOUGH_SECONDS_PER_LAYER = 2;
     /** 咸腊肉 */
     public static final int MEAT_SECONDS = 2;
+    /** 咸鱼 */
+    public static final int SALTED_FISH_SECONDS = 2;
     /** 大酱 */
     public static final int PASTE_SECONDS = 2;
     /** 酱油 */
@@ -155,6 +159,7 @@ public final class VatRecipes {
             case SPICY_PICKLE -> SPICY_PICKLE_SECONDS_PER_LAYER * layers;
             case DOUGH -> DOUGH_SECONDS_PER_LAYER * layers;
             case MEAT -> MEAT_SECONDS;
+            case SALTED_FISH -> SALTED_FISH_SECONDS;
             case PASTE -> PASTE_SECONDS;
             case SOY_SAUCE -> SOY_SAUCE_SECONDS;
             case VINEGAR -> VINEGAR_SECONDS;
@@ -197,6 +202,11 @@ public final class VatRecipes {
 
     public static Item meatResult() {
         return ModItems.SALTED_PORK.get();
+    }
+
+    /** 咸鱼用的原料与成品：任意生鱼，数量与盐 1:1 */
+    public static Item saltedFishResult() {
+        return ModItems.SALTED_FISH.get();
     }
 
     /** 水面团 */
@@ -284,9 +294,29 @@ public final class VatRecipes {
         if (input == meatInput()) {
             return meatResult();
         }
+        if (input.builtInRegistryHolder().is(RAW_FISH)) {
+            return saltedFishResult();
+        }
         if (input == doughInput()) {
             return doughResult();
         }
         return null;
+    }
+
+    /**
+     * 大缸里能装瓶的成品液体 → 对应的瓶子物品。
+     * 大酱是碗装的、植物油不是缸里出的，都返回 null（这些瓶子没法从缸里续）。
+     */
+    @Nullable
+    public static Item bottleFor(Kind kind) {
+        return switch (kind) {
+            case SOY_SAUCE -> ModItems.SOY_SAUCE.get();
+            case VINEGAR -> ModItems.VINEGAR.get();
+            case WHITE_VINEGAR -> ModItems.WHITE_VINEGAR.get();
+            case FISH_SAUCE -> ModItems.FISH_SAUCE.get();
+            case SHRIMP_PASTE -> ModItems.SHRIMP_PASTE.get();
+            case PICKLE -> ModItems.SOUR_WATER.get();
+            default -> null;
+        };
     }
 }

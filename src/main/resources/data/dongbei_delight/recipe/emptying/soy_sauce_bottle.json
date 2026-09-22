@@ -2,7 +2,9 @@
   "type": "create:emptying",
   "ingredients": [
     {
-      "item": "dongbei_delight:soy_sauce"
+      "type": "neoforge:components",
+      "items": "dongbei_delight:soy_sauce",
+      "components": { "minecraft:damage": 0 }
     }
   ],
   "results": [

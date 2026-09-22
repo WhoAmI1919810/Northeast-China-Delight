@@ -136,6 +136,16 @@ function Shape-Basin($g, $main, $dark, $accent) {
     Bar $g $dark 3 8 12 8 1
 }
 
+function Shape-Grate($g, $main, $dark, $accent) {
+    # 烧烤架（俯视）：一圈外框 + 中间几根横竖条
+    Rect $g $main $dark 1 3 14 11
+    Bar $g $dark 4 4 4 12 1
+    Bar $g $dark 7 4 7 12 1
+    Bar $g $dark 10 4 10 12 1
+    Bar $g $dark 2 7 13 7 1
+    Bar $g $accent 2 4 13 4 1
+}
+
 # ---- 物品清单：id = 形状, 主色, 描边, 点缀色 ----
 
 $items = [ordered]@{
@@ -157,6 +167,7 @@ $items = [ordered]@{
     'hairtail'                = @('long',      '#C9D2D8', '#7A848C', '#F2F5F8')
     'oyster'                  = @('sheet',     '#B8B09A', '#6B6452', '#E8E4D4')
     'sea_cucumber'            = @('pod',       '#4A3A2E', '#241A12', '#6B5240')
+    'ginseng'                 = @('long',      '#E0CE9A', '#8A7440', '#4E9A3D')
     'chicken_frame'           = @('bone',      '#E8D9A8', '#9A8850', '#C4645C')
     # 食材与加工品
     'soy_paste'               = @('bowl',      '#8A5A2B', '#4A2E12', '#6B4420')
@@ -183,6 +194,7 @@ $items = [ordered]@{
     'braised_pork_strips'     = @('bowl',      '#9A5A3A', '#4E2A18', '#D8A08A')
     'salt'                    = @('grain',     '#F2F2F2', '#A8A8A8', '#DCDCDC')
     'salted_pork'             = @('sheet',     '#B5534A', '#6B2A24', '#D98A7A')
+    'salted_fish'             = @('long',      '#9AA8B4', '#5E6870', '#E0D8C8')
     'soy_paste_chunk'         = @('sheet',     '#7A4A1E', '#3E2410', '#9A6B2A')
     'soy_residue'             = @('cluster',   '#8A6B3A', '#4E3A18', '#A88A54')
     # 料理
@@ -215,7 +227,7 @@ $items = [ordered]@{
     'bai_cai_dou_fu_dun_fen_tiao' = @('bowl',  '#EFE3C8', '#9A8A60', '#E8DCC0')
     'la_niu_rou_tang_fan'     = @('bowl',      '#C4502C', '#6B2414', '#E8DCC0')
     'la_bai_cai_chao_fan'     = @('bowl',      '#D8503A', '#7A2416', '#F2E8C0')
-    'tu_dou_bing'             = @('sheet',     '#E8C46A', '#A8842A', '#C4442A')
+    'tu_dou_bing'             = @('bowl',      '#E8C46A', '#A8842A', '#C4442A')
     'xia_ren_zhu_rou_xian_shui_jiao' = @('dumpling', '#EDE3C8', '#9A8A60', '#E8826A')
     'xia_jiang_chao_ji_dan'   = @('bowl',      '#E8B93C', '#96700F', '#E8826A')
     'xia_jiang_dun_dou_fu'    = @('bowl',      '#E8D9A8', '#9A8850', '#8A4A34')
@@ -229,7 +241,7 @@ $items = [ordered]@{
     'red_sausage'             = @('pod',       '#B5301A', '#6B1410', '#D8503A')
     'smoked_pork_hock'        = @('bone',      '#8A5A3A', '#4E2A14', '#F0EDE4')
     'smoked_pig_liver'        = @('sheet',     '#6B3A2A', '#3A1E14', '#9A5A3A')
-    'yu_mi_lao'               = @('sheet',     '#F0C93F', '#A88A1E', '#E8B93C')
+    'yu_mi_lao'               = @('bowl',      '#F0C93F', '#A88A1E', '#E8B93C')
     'cha_zi_zhou'             = @('bowl',      '#EFD98A', '#8A7440', '#F2E8C0')
     'roasted_peanuts'         = @('cluster',   '#C97A3C', '#8A4E20', '#E8B06A')
     'nian_dou_bao'            = @('dumpling',  '#EDE3C8', '#9A8A60', '#B5301A')
@@ -257,8 +269,16 @@ $items = [ordered]@{
     'suan_huang_gua_chao_rou_si' = @('bowl',   '#D98A9A', '#8A4E58', '#7A9A3A')
     'sour_tangzi'             = @('bowl',      '#EFD98A', '#8A7440', '#F2E8C0')
     'egg_soy_paste'           = @('bowl',      '#D9B441', '#8A6B1E', '#F2D45C')
+    'xian_yu_bing_zi'         = @('bowl',      '#D9B45C', '#8A6B1E', '#9AA8B4')
+    'da_jiang_tang'           = @('bowl',      '#B08048', '#5E3F1E', '#E8DCC0')
+    'de_mo_li_dun_yu'         = @('bowl',      '#B58A5A', '#5E3A1E', '#9AA8B4')
+    'su_bo_tang'              = @('bowl',      '#C4502C', '#7A2A14', '#E8DCC0')
+    'suan_cai_hai_xian_guo'   = @('bowl',      '#D9C08A', '#8A7440', '#E8826A')
+    'shen_ji_tang'            = @('bowl',      '#E8E0C0', '#9A8A60', '#E0CE9A')
+    'xiao_ji_dun_mo_gu'       = @('bowl',      '#B58A5A', '#5E3A1E', '#C08A4A')
     # 容器
     'large_basin'             = @('basin',     '#C9CFD4', '#6B7378', '#EDF2F5')
+    'grilled_chicken_frame'   = @('bone',      '#C97A3C', '#7A4218', '#E8B06A')
 }
 
 # 这些「调料瓶」照原版药水的方式画：模型只有两层（原版的液面 + 玻璃瓶），颜色由代码染，
@@ -283,6 +303,7 @@ $shapeMap = @{
     'dumpling' = ${function:Shape-Dumpling}
     'mushroom' = ${function:Shape-Mushroom}
     'basin'    = ${function:Shape-Basin}
+    'grate'    = ${function:Shape-Grate}
 }
 
 # 用 -File 调用时，PowerShell 会把 -Only a,b,c 当成一个逗号字符串，这里统一拆开

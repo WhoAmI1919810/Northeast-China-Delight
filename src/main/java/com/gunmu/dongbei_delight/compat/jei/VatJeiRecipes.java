@@ -78,6 +78,17 @@ public final class VatJeiRecipes {
                         null, 0, 0,
                         VatRecipes.processSeconds(VatRecipes.Kind.MEAT, 0))));
 
+        // ===== 咸鱼：一条鱼一层盐，最多 5 条（任意生鱼都行） =====
+        list.add(new VatJeiRecipe(
+                new VatJeiRecipe.State(
+                        null, 0, 0,
+                        List.of(single(ModItems.SALT.get(), VatRecipes.MAX_MEATS)),
+                        List.of(rawFish(VatRecipes.MAX_MEATS)),
+                        sealStone(),
+                        stack(ModItems.SALTED_FISH.get(), VatRecipes.MAX_MEATS),
+                        null, 0, 0,
+                        VatRecipes.processSeconds(VatRecipes.Kind.SALTED_FISH, 0))));
+
         // ===== 大酱：满水 + 3 块酱块 + 3 份盐，蒙羊毛地毯 =====
         list.add(new VatJeiRecipe(
                 new VatJeiRecipe.State(

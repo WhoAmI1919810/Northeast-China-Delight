@@ -4,6 +4,7 @@ import com.gunmu.dongbei_delight.DongbeiDelight;
 import com.gunmu.dongbei_delight.item.ModItems;
 import mezz.jei.api.IModPlugin;
 import mezz.jei.api.JeiPlugin;
+import mezz.jei.api.helpers.IGuiHelper;
 import mezz.jei.api.recipe.RecipeType;
 import mezz.jei.api.registration.IRecipeCatalystRegistration;
 import mezz.jei.api.registration.IRecipeCategoryRegistration;
@@ -22,6 +23,9 @@ public class DongbeiJeiPlugin implements IModPlugin {
     public static final RecipeType<VatJeiRecipe> VAT_TYPE =
             RecipeType.create(DongbeiDelight.MODID, "vat", VatJeiRecipe.class);
 
+    public static final RecipeType<GrillJeiRecipe> GRILL_TYPE =
+            RecipeType.create(DongbeiDelight.MODID, "grill", GrillJeiRecipe.class);
+
     private static final ResourceLocation PLUGIN_UID =
             ResourceLocation.fromNamespaceAndPath(DongbeiDelight.MODID, "jei_plugin");
 
@@ -32,17 +36,21 @@ public class DongbeiJeiPlugin implements IModPlugin {
 
     @Override
     public void registerCategories(IRecipeCategoryRegistration registration) {
-        registration.addRecipeCategories(new VatRecipeCategory(registration.getJeiHelpers().getGuiHelper()));
+        IGuiHelper guiHelper = registration.getJeiHelpers().getGuiHelper();
+        registration.addRecipeCategories(new VatRecipeCategory(guiHelper));
+        registration.addRecipeCategories(new GrillRecipeCategory(guiHelper));
     }
 
     @Override
     public void registerRecipes(IRecipeRegistration registration) {
         registration.addRecipes(VAT_TYPE, VatJeiRecipes.all());
+        registration.addRecipes(GRILL_TYPE, GrillJeiRecipes.all());
     }
 
-    /** 拿着大缸按 R / 双击就能看到这些配方 */
+    /** 拿着大缸 / 烧烤架按 R / 双击就能看到对应的配方 */
     @Override
     public void registerRecipeCatalysts(IRecipeCatalystRegistration registration) {
         registration.addRecipeCatalyst(ModItems.VAT.get(), VAT_TYPE);
+        registration.addRecipeCatalyst(ModItems.GRILL_RACK.get(), GRILL_TYPE);
     }
 }

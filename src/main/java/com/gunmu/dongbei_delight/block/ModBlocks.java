@@ -3,11 +3,13 @@ package com.gunmu.dongbei_delight.block;
 import com.gunmu.dongbei_delight.DongbeiDelight;
 import com.gunmu.dongbei_delight.fluid.ModFluids;
 import com.gunmu.dongbei_delight.item.ModItems;
+import net.minecraft.world.level.block.CampfireBlock;
 import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.LiquidBlock;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
+import net.minecraft.world.level.block.state.properties.NoteBlockInstrument;
 import net.minecraft.world.level.material.MapColor;
 import net.minecraft.world.level.material.PushReaction;
 import net.neoforged.bus.api.IEventBus;
@@ -70,6 +72,27 @@ public class ModBlocks {
             "vat",
             Vat::new,
             BlockBehaviour.Properties.of().strength(3.5f)
+    );
+
+    /**
+     * 架上烧烤架的营火。
+     *
+     * 注意这里是**另一个方块**，而不是给原版营火加方块状态属性 ——
+     * 给原版方块加属性会改变全局方块状态 id，老存档里的方块会错位。
+     * 这个方块直接继承原版营火，所以点燃、熄灭、伤害、粒子、渲染都和营火一样，
+     * 只是多了一个烤架，并且把「放上去烤」的流程换成了本模组的烧烤配方。
+     */
+    public static final DeferredBlock<Block> GRILL_CAMPFIRE = BLOCKS.registerBlock(
+            "grill_campfire",
+            GrillCampfireBlock::new,
+            BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.PODZOL)
+                    .instrument(NoteBlockInstrument.BASS)
+                    .strength(2.0F)
+                    .sound(SoundType.WOOD)
+                    .lightLevel(state -> state.getValue(CampfireBlock.LIT) ? 15 : 0)
+                    .noOcclusion()
+                    .ignitedByLava()
     );
 
     // ===== 流体方块 =====

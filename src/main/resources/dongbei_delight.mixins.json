@@ -1,0 +1,13 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "com.gunmu.dongbei_delight.mixin",
+  "compatibilityLevel": "JAVA_21",
+  "mixins": [
+    "CookingPotBlockEntityInvoker",
+    "CookingPotBlockEntityMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

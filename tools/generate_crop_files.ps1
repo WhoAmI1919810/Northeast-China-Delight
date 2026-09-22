@@ -15,7 +15,9 @@
 param(
     [string]$AssetsRoot = (Join-Path $PSScriptRoot '..\src\main\resources\assets\dongbei_delight'),
     [string]$DataRoot = (Join-Path $PSScriptRoot '..\src\main\resources\data\dongbei_delight'),
-    [string[]]$Only = @()
+    [string[]]$Only = @(),
+    # 种子贴图多数已经交付正式素材，默认**不覆盖**已有的种子贴图；确实要重画时加 -ForceSeeds
+    [switch]$ForceSeeds
 )
 
 Add-Type -AssemblyName System.Drawing
@@ -92,6 +94,33 @@ function Draw-CropStage($g, [int]$stage, [string]$leaf, [string]$fruit) {
             Oval $g $fruit $leaf 4 8 4 5
             Oval $g $fruit $leaf 9 8 4 5
         }
+        4 {   # 长到最高，开花
+            Bar $g $leaf 8 15 8 2 1
+            Bar $g $leaf 8 12 4 9 1
+            Bar $g $leaf 8 10 12 7 1
+            Oval $g '#F2F2E8' $leaf 7 3 3 3
+        }
+        5 {   # 花谢，开始结果
+            Bar $g $leaf 8 15 8 2 1
+            Bar $g $leaf 8 12 4 9 1
+            Bar $g $leaf 8 10 12 7 1
+            Oval $g $fruit $leaf 6 5 4 5
+        }
+        6 {   # 果实长大
+            Bar $g $leaf 8 15 8 2 1
+            Bar $g $leaf 8 12 3 8 1
+            Bar $g $leaf 8 9 13 5 1
+            Oval $g $fruit $leaf 5 4 6 7
+            Oval $g $fruit $leaf 9 9 4 5
+        }
+        7 {   # 完熟，果实最大
+            Bar $g $leaf 8 15 8 2 1
+            Bar $g $leaf 8 12 3 8 1
+            Bar $g $leaf 8 9 13 5 1
+            Oval $g $fruit $leaf 4 3 7 8
+            Oval $g $fruit $leaf 2 9 5 6
+            Oval $g $fruit $leaf 9 9 5 6
+        }
     }
 }
 
@@ -163,6 +192,33 @@ function Draw-CornStage($g, [int]$stage, [string]$leaf, [string]$fruit) {
             Bar $g $leaf 8 12 3 8 1
             Bar $g $leaf 8 9 13 5 1
             Oval $g $fruit $leaf 9 6 4 7
+            Oval $g $fruit $leaf 3 10 3 5
+        }
+        4 {
+            Bar $g $leaf 8 15 8 2 1
+            Bar $g $leaf 8 12 4 9 1
+            Bar $g $leaf 8 10 12 7 1
+        }
+        5 {
+            Bar $g $leaf 8 15 8 2 1
+            Bar $g $leaf 8 12 4 9 1
+            Bar $g $leaf 8 10 12 7 1
+            Oval $g $fruit $leaf 9 8 3 4
+        }
+        6 {
+            # 从这一阶段开始是两格高：下半格的茎秆必须贯穿整格
+            VStalk $g '#4E7A24' 6 0 15 4
+            VStalk $g $leaf 7 0 15 2
+            Bar $g $leaf 8 12 3 8 1
+            Bar $g $leaf 8 9 13 5 1
+            Oval $g $fruit $leaf 9 7 4 6
+        }
+        7 {
+            VStalk $g '#4E7A24' 6 0 15 4
+            VStalk $g $leaf 7 0 15 2
+            Bar $g $leaf 8 12 3 8 1
+            Bar $g $leaf 8 9 13 5 1
+            Oval $g $fruit $leaf 9 5 4 8
             Oval $g $fruit $leaf 3 10 3 5
         }
     }
@@ -266,11 +322,13 @@ $crops = [ordered]@{
         produce = 'dongbei_delight:eggplant'; seed = 'eggplant_seeds'
         leaf = '#4E8A32'; fruit = '#6A3E9E'; seedColor = '#C9B06A'
         trellis = $false; wholePlant = $false
+        stages = 8
     }
     'green_pepper' = @{
         produce = 'dongbei_delight:green_pepper'; seed = 'green_pepper_seeds'
         leaf = '#3E7A2A'; fruit = '#4E9A3D'; seedColor = '#D8C98A'
         trellis = $false; wholePlant = $false
+        stages = 8
     }
     'corn' = @{
         produce = 'dongbei_delight:corn'; seed = 'corn_seeds'
@@ -278,6 +336,7 @@ $crops = [ordered]@{
         trellis = $false; wholePlant = $false
         # 玉米一次收获 2 个
         produceCount = 2
+        stages = 8
     }
     'green_beans' = @{
         produce = 'dongbei_delight:green_beans'; seed = 'green_beans_seeds'
@@ -298,6 +357,7 @@ $crops = [ordered]@{
         produce = 'dongbei_delight:cucumber'; seed = 'cucumber_seeds'
         leaf = '#3E7A2A'; fruit = '#4F9B3F'; seedColor = '#E8DCAA'
         trellis = $true; wholePlant = $false
+        stages = 8
     }
     'sweet_potato' = @{
         produce = 'dongbei_delight:sweet_potato'; seed = $null
@@ -308,6 +368,7 @@ $crops = [ordered]@{
         produce = 'dongbei_delight:red_chili'; seed = 'red_chili_seeds'
         leaf = '#3E7A2A'; fruit = '#C42A1E'; seedColor = '#E8DCAA'
         trellis = $false; wholePlant = $false
+        stages = 8
     }
     'peanut' = @{
         produce = 'dongbei_delight:peanut'; seed = $null
@@ -326,9 +387,14 @@ $crops = [ordered]@{
     }
 }
 
-# 4 个视觉阶段对应的生长年龄
-$stageByAge = @(0, 0, 1, 1, 2, 2, 3, 3)
-$stageCount = 4
+# 视觉阶段数：默认 4 个（8 个生长年龄两两共用一张贴图），
+# 上面标了 stages = 8 的作物则是 8 个年龄各一张贴图（和农夫乐事的卷心菜一致）
+function Get-StageByAge([int]$stages) {
+    if ($stages -ge 8) {
+        return @(0, 1, 2, 3, 4, 5, 6, 7)
+    }
+    return @(0, 0, 1, 1, 2, 2, 3, 3)
+}
 
 # 用 -File 调用时，PowerShell 会把 -Only a,b 当成一个逗号字符串，这里统一拆开
 $onlyIds = @($Only | ForEach-Object { $_ -split ',' } | ForEach-Object { $_.Trim() } | Where-Object { $_ })
@@ -345,9 +411,11 @@ foreach ($cropId in $cropIds) {
     # 自身即种子的作物，掉落表里的「种子」就是产物本身
     $seedDrop = if ($selfSeeding) { $produce } else { "dongbei_delight:$($crop.seed)" }
     $blockId = "${cropId}_crop"
+    $stages = if ($crop.ContainsKey('stages')) { [int]$crop.stages } else { 4 }
+    $stageByAge = Get-StageByAge $stages
 
     # --- 作物贴图与模型 ---
-    for ($stage = 0; $stage -lt $stageCount; $stage++) {
+    for ($stage = 0; $stage -lt $stages; $stage++) {
         $canvas = New-Canvas
         if ($cropId -eq 'corn') {
             Draw-CornStage $canvas.Graphics $stage $crop.leaf $crop.fruit
@@ -385,11 +453,16 @@ foreach ($cropId in $cropIds) {
     # --- 种子贴图与模型（自身即种子的作物不需要）---
     if (-not $selfSeeding) {
         $seedId = $crop.seed
-        $canvas = New-Canvas
-        Draw-Seed $canvas.Graphics $crop.seedColor
-        $canvas.Graphics.Dispose()
-        $canvas.Bitmap.Save((Join-Path $itemTextureDir "$seedId.png"), [System.Drawing.Imaging.ImageFormat]::Png)
-        $canvas.Bitmap.Dispose()
+        $seedTexture = Join-Path $itemTextureDir "$seedId.png"
+        if ($ForceSeeds -or -not (Test-Path -LiteralPath $seedTexture)) {
+            $canvas = New-Canvas
+            Draw-Seed $canvas.Graphics $crop.seedColor
+            $canvas.Graphics.Dispose()
+            $canvas.Bitmap.Save($seedTexture, [System.Drawing.Imaging.ImageFormat]::Png)
+            $canvas.Bitmap.Dispose()
+        } else {
+            Write-Host "  跳过已有种子贴图：$seedId.png（要覆盖请加 -ForceSeeds）" -ForegroundColor DarkYellow
+        }
 
         $seedModel = [ordered]@{
             parent   = 'item/generated'
