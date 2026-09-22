@@ -7,21 +7,28 @@ import com.gunmu.dongbei_delight.item.SeasoningBottleItem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.client.renderer.entity.ItemRenderer;
+import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.model.BakedModel;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.NonNullList;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.block.CampfireBlock;
+import com.gunmu.dongbei_delight.block.ModBlocks;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -70,7 +77,10 @@ public class GrillCampfireRenderer implements BlockEntityRenderer<GrillBlockEnti
      * （ItemRenderer 还会额外做一次 -0.5 的居中位移，所以这里再补 0.5。）
      */
     private static final float RACK_TOP_Y = 0.9F;
-    private static final float RACK_TRANSLATE_Y = 0.5F + RACK_TOP_Y - 14.0F / 16.0F;
+    /** 一格像素 */
+    private static final float PX = 1.0F / 16.0F;
+    /** 格面上纵向铁条的根数 */
+    private static final int BAR_COUNT = 6;
 
     private final ItemRenderer itemRenderer;
 
@@ -126,18 +136,144 @@ public class GrillCampfireRenderer implements BlockEntityRenderer<GrillBlockEnti
             }
         }
 
-        // 烤架：三维铁条模型（含四根立柱），几何直接按方块坐标写，只平移、不旋转不缩放
-        pose.pushPose();
-        pose.translate(0.5F, RACK_TRANSLATE_Y, 0.5F);
-        this.itemRenderer.renderStatic(new ItemStack(ModItems.GRILL_RACK.get()), ItemDisplayContext.NONE,
-                packedLight, packedOverlay, pose, buffer, grill.getLevel(), seed);
-        pose.popPose();
+        // 烤架：几何在代码里按方块坐标直接拼，这样可以看邻居决定怎么画
+        renderRack(grill, pose, buffer, packedLight, packedOverlay);
     }
 
     private void drawItem(ItemStack stack, MultiBufferSource buffer, PoseStack pose,
                           int packedLight, int packedOverlay, GrillBlockEntity grill, int seed) {
         this.itemRenderer.renderStatic(stack, ItemDisplayContext.FIXED, packedLight, packedOverlay,
                 pose, buffer, grill.getLevel(), seed);
+    }
+
+    // ===== 烤架本体 =====
+
+    /** 相邻那格是不是也架了烤架 */
+    private static boolean linked(BlockGetter level, BlockPos pos, Direction direction) {
+        return level != null && level.getBlockState(pos.relative(direction)).is(ModBlocks.GRILL_CAMPFIRE.get());
+    }
+
+    /**
+     * 画烤架：1px 粗的密集铁条 + 四边边框 + 四角立柱。
+     *
+     * <p>关键是**看四个方向的邻居**：
+     * <ul>
+     *     <li>某一侧连着另一台烤架时，这一侧不画边框，改由**正方向那一台**画一根骑在接缝上的共享铁条
+     *         —— 于是两台之间只有一根铁条，铁条也能上下接过去，看起来是拼成的一整台；</li>
+     *     <li>立柱只画在**外侧四角**：连着的那一侧不画，拼起来的中间就不会立一堆柱子。</li>
+     * </ul>
+     */
+    private void renderRack(GrillBlockEntity grill, PoseStack pose, MultiBufferSource buffer,
+                            int packedLight, int packedOverlay) {
+        BlockPos pos = grill.getBlockPos();
+        Level level = grill.getLevel();
+        boolean east = linked(level, pos, Direction.EAST);
+        boolean west = linked(level, pos, Direction.WEST);
+        boolean north = linked(level, pos, Direction.NORTH);
+        boolean south = linked(level, pos, Direction.SOUTH);
+
+        TextureAtlasSprite sprite = Minecraft.getInstance()
+                .getTextureAtlas(TextureAtlas.LOCATION_BLOCKS)
+                .apply(ResourceLocation.withDefaultNamespace("block/iron_bars"));
+        VertexConsumer consumer = buffer.getBuffer(RenderType.entityCutoutNoCull(TextureAtlas.LOCATION_BLOCKS));
+        PoseStack.Pose matrix = pose.last();
+
+        float y0 = RACK_TOP_Y;
+        float y1 = RACK_TOP_Y + PX;
+        float half = PX / 2.0F;
+
+        // 边框：西 / 北没连着就自己画；连着的话什么都不画（由对面那台画共享铁条）
+        if (!west) {
+            box(consumer, matrix, sprite, 0, y0, 0, PX, y1, 1, packedLight, packedOverlay);
+        }
+        if (!north) {
+            box(consumer, matrix, sprite, 0, y0, 0, 1, y1, PX, packedLight, packedOverlay);
+        }
+        // 东 / 南：连着的话画一根骑在接缝上的共享铁条（只由这边画，避免画两遍）
+        box(consumer, matrix, sprite,
+                east ? 1 - half : 1 - PX, y0, 0, east ? 1 + half : 1, y1, 1,
+                packedLight, packedOverlay);
+        box(consumer, matrix, sprite,
+                0, y0, south ? 1 - half : 1 - PX, 1, y1, south ? 1 + half : 1,
+                packedLight, packedOverlay);
+
+        // 纵向铁条（沿 Z 贯穿整格，这样连着的两台之间铁条也是连续的）
+        for (int i = 0; i < BAR_COUNT; i++) {
+            float x = (2 + i * 2) * PX;
+            box(consumer, matrix, sprite, x, y0, 0, x + PX, y1, 1, packedLight, packedOverlay);
+        }
+
+        // 四角立柱：只有外侧的角才立柱子
+        float legSize = 2 * PX;
+        if (!west && !north) {
+            box(consumer, matrix, sprite, PX, 0, PX, PX + legSize, y0, PX + legSize, packedLight, packedOverlay);
+        }
+        if (!east && !north) {
+            box(consumer, matrix, sprite, 1 - PX - legSize, 0, PX, 1 - PX, y0, PX + legSize, packedLight, packedOverlay);
+        }
+        if (!west && !south) {
+            box(consumer, matrix, sprite, PX, 0, 1 - PX - legSize, PX + legSize, y0, 1 - PX, packedLight, packedOverlay);
+        }
+        if (!east && !south) {
+            box(consumer, matrix, sprite, 1 - PX - legSize, 0, 1 - PX - legSize, 1 - PX, y0, 1 - PX, packedLight, packedOverlay);
+        }
+    }
+
+    /** 一根方柱：六个面都贴上铁栏杆贴图，贴图按「一格 16 像素」的原尺度铺 */
+    private static void box(VertexConsumer consumer, PoseStack.Pose matrix, TextureAtlasSprite sprite,
+                            float x0, float y0, float z0, float x1, float y1, float z1,
+                            int packedLight, int packedOverlay) {
+        float su = sprite.getU0();
+        float sv = sprite.getV0();
+        float du = sprite.getU1() - su;
+        float dv = sprite.getV1() - sv;
+        float u0 = su + x0 * du;
+        float u1 = su + x1 * du;
+        float v0 = sv + y0 * dv;
+        float v1 = sv + y1 * dv;
+        float w0 = sv + z0 * dv;
+        float w1 = sv + z1 * dv;
+
+        // 上（+Y）：u 沿 x，v 沿 z
+        vertex(consumer, matrix, x0, y1, z0, u0, w0, 0, 1, 0, packedLight, packedOverlay);
+        vertex(consumer, matrix, x0, y1, z1, u0, w1, 0, 1, 0, packedLight, packedOverlay);
+        vertex(consumer, matrix, x1, y1, z1, u1, w1, 0, 1, 0, packedLight, packedOverlay);
+        vertex(consumer, matrix, x1, y1, z0, u1, w0, 0, 1, 0, packedLight, packedOverlay);
+        // 下（-Y）
+        vertex(consumer, matrix, x0, y0, z0, u0, w0, 0, -1, 0, packedLight, packedOverlay);
+        vertex(consumer, matrix, x1, y0, z0, u1, w0, 0, -1, 0, packedLight, packedOverlay);
+        vertex(consumer, matrix, x1, y0, z1, u1, w1, 0, -1, 0, packedLight, packedOverlay);
+        vertex(consumer, matrix, x0, y0, z1, u0, w1, 0, -1, 0, packedLight, packedOverlay);
+        // 北（-Z）
+        vertex(consumer, matrix, x0, y0, z0, u0, v1, 0, 0, -1, packedLight, packedOverlay);
+        vertex(consumer, matrix, x0, y1, z0, u0, v0, 0, 0, -1, packedLight, packedOverlay);
+        vertex(consumer, matrix, x1, y1, z0, u1, v0, 0, 0, -1, packedLight, packedOverlay);
+        vertex(consumer, matrix, x1, y0, z0, u1, v1, 0, 0, -1, packedLight, packedOverlay);
+        // 南（+Z）
+        vertex(consumer, matrix, x0, y0, z1, u0, v1, 0, 0, 1, packedLight, packedOverlay);
+        vertex(consumer, matrix, x1, y0, z1, u1, v1, 0, 0, 1, packedLight, packedOverlay);
+        vertex(consumer, matrix, x1, y1, z1, u1, v0, 0, 0, 1, packedLight, packedOverlay);
+        vertex(consumer, matrix, x0, y1, z1, u0, v0, 0, 0, 1, packedLight, packedOverlay);
+        // 西（-X）
+        vertex(consumer, matrix, x0, y0, z0, w0, v1, -1, 0, 0, packedLight, packedOverlay);
+        vertex(consumer, matrix, x0, y0, z1, w1, v1, -1, 0, 0, packedLight, packedOverlay);
+        vertex(consumer, matrix, x0, y1, z1, w1, v0, -1, 0, 0, packedLight, packedOverlay);
+        vertex(consumer, matrix, x0, y1, z0, w0, v0, -1, 0, 0, packedLight, packedOverlay);
+        // 东（+X）
+        vertex(consumer, matrix, x1, y0, z0, w0, v1, 1, 0, 0, packedLight, packedOverlay);
+        vertex(consumer, matrix, x1, y1, z0, w0, v0, 1, 0, 0, packedLight, packedOverlay);
+        vertex(consumer, matrix, x1, y1, z1, w1, v0, 1, 0, 0, packedLight, packedOverlay);
+        vertex(consumer, matrix, x1, y0, z1, w1, v1, 1, 0, 0, packedLight, packedOverlay);
+    }
+
+    private static void vertex(VertexConsumer consumer, PoseStack.Pose matrix, float x, float y, float z,
+                               float u, float v, float nx, float ny, float nz, int packedLight, int packedOverlay) {
+        consumer.addVertex(matrix, x, y, z)
+                .setColor(1.0F, 1.0F, 1.0F, 1.0F)
+                .setUv(u, v)
+                .setOverlay(packedOverlay)
+                .setLight(packedLight)
+                .setNormal(nx, ny, nz);
     }
 
     /**
