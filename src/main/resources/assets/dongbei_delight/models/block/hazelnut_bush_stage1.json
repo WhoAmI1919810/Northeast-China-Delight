@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:block/cross",
+  "render_type": "minecraft:cutout",
+  "textures": {
+    "cross": "dongbei_delight:block/hazelnut_bush_stage1"
+  }
+}

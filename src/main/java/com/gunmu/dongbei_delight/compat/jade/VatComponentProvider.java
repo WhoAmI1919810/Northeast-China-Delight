@@ -121,6 +121,11 @@ public enum VatComponentProvider implements IBlockComponentProvider {
                     vat.cornKernelCount() + vat.countOf(ModItems.SOUR_CORN_KERNELS.get()),
                     water * VatRecipes.SOUR_CORN_PER_WATER));
         }
+        // 格瓦斯：写出缸里的面包数量（配方要 6 个）
+        if (kind == VatRecipes.Kind.KVASS) {
+            tooltip.add(Component.translatable("jade.dongbei_delight.vat.kvass_bread",
+                    vat.countOf(VatRecipes.kvassBread()), VatRecipes.KVASS_BREAD));
+        }
 
         // 内容物图标
         if (!contents.isEmpty()) {
@@ -194,6 +199,10 @@ public enum VatComponentProvider implements IBlockComponentProvider {
         if (fermented && kind == VatRecipes.Kind.SHRIMP_PASTE && vat.shrimpPasteMb() > 0) {
             tooltip.add(Component.translatable("jade.dongbei_delight.vat.shrimp_paste_amount",
                     vat.shrimpPaste(), vat.shrimpPasteMb()));
+        }
+        if (fermented && kind == VatRecipes.Kind.KVASS && vat.kvassMb() > 0) {
+            tooltip.add(Component.translatable("jade.dongbei_delight.vat.kvass_amount",
+                    vat.kvass(), vat.kvassMb()));
         }
     }
 

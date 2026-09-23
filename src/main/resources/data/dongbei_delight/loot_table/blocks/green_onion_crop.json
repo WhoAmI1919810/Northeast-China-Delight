@@ -21,7 +21,7 @@
                   "condition": "minecraft:block_state_property",
                   "block": "dongbei_delight:green_onion_crop",
                   "properties": {
-                    "age": "7"
+                    "age": "3"
                   }
                 }
               ]
@@ -42,7 +42,7 @@
           "condition": "minecraft:block_state_property",
           "block": "dongbei_delight:green_onion_crop",
           "properties": {
-            "age": "7"
+            "age": "3"
           }
         }
       ],

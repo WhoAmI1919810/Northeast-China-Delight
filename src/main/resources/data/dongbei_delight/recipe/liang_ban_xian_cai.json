@@ -4,6 +4,7 @@
   "ingredients": [
     { "item": "dongbei_delight:pickled_cucumber" },
     { "item": "dongbei_delight:pickled_carrot" },
+    { "item": "dongbei_delight:pickled_green_radish" },
     { "item": "minecraft:bowl" },
     { "item": "dongbei_delight:white_vinegar" },
     { "item": "dongbei_delight:chili_oil" }

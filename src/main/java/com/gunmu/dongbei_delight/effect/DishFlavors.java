@@ -11,7 +11,8 @@ import java.util.Map;
 /**
  * 菜肴的"口味"表：决定吃完给什么状态效果、持续多久。
  *
- * 持续时长按配方里用了几种材料算：≤4 种给 3 分钟，>4 种给 5 分钟。
+ * 持续时长按配方里用了几种材料算：≤4 种给 3 分钟，>4 种给 5 分钟；
+ * 个别菜可以单独指定时长（比如烤鸡架只给 10 秒）。
  * 不在表里的食物（比如豆浆、烤红薯）不给任何效果。
  */
 public final class DishFlavors {
@@ -25,9 +26,15 @@ public final class DishFlavors {
         BALANCED
     }
 
-    public record Info(Flavor flavor, int ingredientCount) {
-        /** 状态效果持续时长（tick）：≤4 种材料 3 分钟，>4 种 5 分钟 */
+    public record Info(Flavor flavor, int ingredientCount, int overrideTicks) {
+        /**
+         * 状态效果持续时长（tick）：≤4 种材料 3 分钟，>4 种 5 分钟；
+         * {@link #overrideTicks} 大于等于 0 时以它为准（个别菜的单独时长）。
+         */
         public int durationTicks() {
+            if (this.overrideTicks >= 0) {
+                return this.overrideTicks;
+            }
             return this.ingredientCount > 4 ? 6000 : 3600;
         }
     }
@@ -73,7 +80,12 @@ public final class DishFlavors {
         put(map, Flavor.GREASY, 4, "di_guo_ji");
         put(map, Flavor.GREASY, 4, "di_guo_pai_gu");
         put(map, Flavor.GREASY, 2, "xian_yu_bing_zi");
-        put(map, Flavor.GREASY, 3, "grilled_chicken_frame");
+        put(map, Flavor.GREASY, 4, "kimchi_pancake");
+        put(map, Flavor.GREASY, 5, "snowy_bean_paste");
+        put(map, Flavor.GREASY, 2, "candied_peanuts");
+        put(map, Flavor.GREASY, 3, "grilled_oil_edge");
+        // 烤鸡架：口味是油腻，但只给 10 秒（200 tick）—— 一串鸡架不值当腻三分钟
+        put(map, Flavor.GREASY, 3, 200, "grilled_chicken_frame");
 
         // ===== 爽口：凉拌 / 酸口 / 清汤 =====
         put(map, Flavor.REFRESHING, 3, "sweet_potato_porridge");
@@ -86,11 +98,12 @@ public final class DishFlavors {
         put(map, Flavor.REFRESHING, 7, "ming_tai_yu_si");
         put(map, Flavor.REFRESHING, 8, "zhan_jiang_cai");
         put(map, Flavor.REFRESHING, 4, "jia_xian_huang_gua_pao_cai");
-        put(map, Flavor.REFRESHING, 7, "liang_ban_hua_cai");
+        put(map, Flavor.REFRESHING, 8, "liang_ban_hua_cai");
         put(map, Flavor.REFRESHING, 3, "bai_cai_dou_fu_dun_fen_tiao");
         put(map, Flavor.REFRESHING, 6, "la_bai_cai_tang_fan");
         put(map, Flavor.REFRESHING, 2, "suan_huang_gua_chao_rou_si");
         put(map, Flavor.REFRESHING, 3, "da_jiang_tang");
+        put(map, Flavor.REFRESHING, 5, "tiger_salad");
 
         // ===== 荤素搭配、不会腻：吃完给农夫乐事的滋养 =====
         put(map, Flavor.BALANCED, 3, "egg_soy_paste");
@@ -115,12 +128,19 @@ public final class DishFlavors {
         put(map, Flavor.BALANCED, 6, "suan_cai_hai_xian_guo");
         put(map, Flavor.BALANCED, 5, "shen_ji_tang");
         put(map, Flavor.BALANCED, 4, "xiao_ji_dun_mo_gu");
+        put(map, Flavor.BALANCED, 6, "bibimbap");
+        put(map, Flavor.BALANCED, 3, "grilled_cold_noodles");
 
         return Map.copyOf(map);
     }
 
     private static void put(Map<Item, Info> map, Flavor flavor, int ingredientCount, String path) {
+        put(map, flavor, ingredientCount, -1, path);
+    }
+
+    /** 带单独时长（tick）的版本 */
+    private static void put(Map<Item, Info> map, Flavor flavor, int ingredientCount, int overrideTicks, String path) {
         Item item = BuiltInRegistries.ITEM.get(ResourceLocation.fromNamespaceAndPath(DongbeiDelight.MODID, path));
-        map.put(item, new Info(flavor, ingredientCount));
+        map.put(item, new Info(flavor, ingredientCount, overrideTicks));
     }
 }

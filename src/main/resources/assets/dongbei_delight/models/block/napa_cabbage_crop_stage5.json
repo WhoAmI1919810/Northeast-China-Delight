@@ -1,0 +1,7 @@
+{
+  "parent": "dongbei_delight:block/template_crop_cross",
+  "render_type": "minecraft:cutout",
+  "textures": {
+    "cross": "dongbei_delight:block/napa_cabbage_crop_stage5"
+  }
+}

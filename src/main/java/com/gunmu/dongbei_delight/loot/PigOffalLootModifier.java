@@ -42,7 +42,9 @@ public class PigOffalLootModifier extends LootModifier {
                 ModItems.PORK_INTESTINE.get(),
                 ModItems.PORK_HOCK.get(),
                 ModItems.PIG_BLOOD.get(),
-                ModItems.PIG_LIVER.get()));
+                ModItems.PIG_LIVER.get(),
+                ModItems.PORK_FAT.get(),
+                ModItems.OIL_EDGE.get()));
 
         RandomSource random = context.getRandom();
         // 打乱顺序：保证"最多 2 种"不会总是偏向列表里靠前的几项

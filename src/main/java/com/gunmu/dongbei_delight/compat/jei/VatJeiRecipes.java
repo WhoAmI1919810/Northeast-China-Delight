@@ -49,6 +49,7 @@ public final class VatJeiRecipes {
         addPickle(list, ModItems.NAPA_CABBAGE.get(), ModItems.SOUR_CABBAGE.get());
         addPickle(list, ModItems.CUCUMBER.get(), ModItems.PICKLED_CUCUMBER.get());
         addPickle(list, Items.CARROT, ModItems.PICKLED_CARROT.get());
+        addPickle(list, ModItems.GREEN_RADISH.get(), ModItems.PICKLED_GREEN_RADISH.get());
 
         // ===== 辣白菜：白菜 + 辣椒酱 + 鱼露 / 虾酱，6 份时调味品要两份，压缸石 =====
         List<VatJeiRecipe.State> spicy = new ArrayList<>();
@@ -191,6 +192,18 @@ public final class VatJeiRecipes {
                     VatRecipes.processSeconds(VatRecipes.Kind.SOUR_CORN, layers)));
         }
         list.add(new VatJeiRecipe(List.copyOf(sourCorn)));
+
+        // ===== 格瓦斯：满水 + 6 个面包，蒙粗布毯，一缸出 6 瓶 =====
+        list.add(new VatJeiRecipe(
+                new VatJeiRecipe.State(
+                        Fluids.WATER, FULL, FULL,
+                        List.of(),
+                        List.of(single(VatRecipes.kvassBread(), VatRecipes.KVASS_BREAD)),
+                        sealCloth(),
+                        // 面包泡化进水里，取出来是一瓶一瓶的格瓦斯
+                        stack(ModItems.KVASS.get(), VatRecipes.KVASS_SERVINGS),
+                        null, 0, 0,
+                        VatRecipes.processSeconds(VatRecipes.Kind.KVASS, 0))));
 
         return List.copyOf(list);
     }

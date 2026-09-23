@@ -52,7 +52,9 @@ public final class VatRecipes {
         /** 酸玉米粒：每 1 层水配 2 份玉米粒，蒙粗布毯发酵 */
         SOUR_CORN,
         /** 水面团：碎玉米粒泡水 */
-        DOUGH
+        DOUGH,
+        /** 格瓦斯：6 个面包 + 3 份水（满水），蒙粗布毯发酵成瓶装饮料 */
+        KVASS
     }
 
     /** 每一份水能泡几份蔬菜（一份水配两份菜） */
@@ -98,6 +100,11 @@ public final class VatRecipes {
     public static int spicySeasoningNeed(int waterLevel) {
         return waterLevel >= 3 ? 2 : 1;
     }
+    /** 格瓦斯：6 个面包 + 满水（3 层） */
+    public static final int KVASS_BREAD = 6;
+    public static final int KVASS_WATER_LEVEL = 3;
+    /** 一缸格瓦斯能装几瓶 */
+    public static final int KVASS_SERVINGS = 6;
     /** 一缸成品的总容量（mB） */
     public static final int PRODUCT_CAPACITY_MB = PASTE_SERVINGS * SERVING_MB;
     /** 大酱 / 酱油需要的酱块与盐的数量 */
@@ -143,6 +150,8 @@ public final class VatRecipes {
     public static final int BEAN_SPROUTS_SECONDS = 2;
     /** 酸玉米粒 */
     public static final int SOUR_CORN_SECONDS = 2;
+    /** 格瓦斯 */
+    public static final int KVASS_SECONDS = 2;
 
     /** 一秒钟多少游戏刻 */
     public static final int TICKS_PER_SECOND = 20;
@@ -168,6 +177,7 @@ public final class VatRecipes {
             case SHRIMP_PASTE -> SHRIMP_PASTE_SECONDS;
             case BEAN_SPROUTS -> BEAN_SPROUTS_SECONDS;
             case SOUR_CORN -> SOUR_CORN_SECONDS;
+            case KVASS -> KVASS_SECONDS;
             case NONE -> 0;
         };
     }
@@ -186,6 +196,7 @@ public final class VatRecipes {
             map.put(ModItems.NAPA_CABBAGE.get(), ModItems.SOUR_CABBAGE.get());
             map.put(ModItems.CUCUMBER.get(), ModItems.PICKLED_CUCUMBER.get());
             map.put(Items.CARROT, ModItems.PICKLED_CARROT.get());
+            map.put(ModItems.GREEN_RADISH.get(), ModItems.PICKLED_GREEN_RADISH.get());
             pickles = Map.copyOf(map);
         }
         return pickles;
@@ -281,6 +292,16 @@ public final class VatRecipes {
         return ModItems.SOUR_CORN_KERNELS.get();
     }
 
+    /** 格瓦斯用的面包（原版面包） */
+    public static Item kvassBread() {
+        return Items.BREAD;
+    }
+
+    /** 格瓦斯瓶 */
+    public static Item kvassResult() {
+        return ModItems.KVASS.get();
+    }
+
     /**
      * 腌制/发酵完成后，缸里应该显示成品的模型而不是原料的模型。
      * 没有对应成品的物品（比如盐）返回 null。
@@ -316,6 +337,7 @@ public final class VatRecipes {
             case FISH_SAUCE -> ModItems.FISH_SAUCE.get();
             case SHRIMP_PASTE -> ModItems.SHRIMP_PASTE.get();
             case PICKLE -> ModItems.SOUR_WATER.get();
+            case KVASS -> ModItems.KVASS.get();
             default -> null;
         };
     }

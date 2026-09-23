@@ -1,12 +1,19 @@
 package com.gunmu.dongbei_delight.mixin;
 
 import com.gunmu.dongbei_delight.item.SeasoningBottleItem;
+import com.gunmu.dongbei_delight.item.ModItems;
+import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.level.Level;
+import net.neoforged.neoforge.items.ItemStackHandler;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import vectorwing.farmersdelight.common.block.entity.CookingPotBlockEntity;
+import vectorwing.farmersdelight.common.crafting.CookingPotRecipe;
 
 /**
  * 让瓶装调料**留在厨锅里继续用**。
@@ -55,5 +62,33 @@ public abstract class CookingPotBlockEntityMixin {
             return;
         }
         stack.setDamageValue(used.getDamageValue());
+    }
+
+    /**
+     * 熬动物油：2 份肥肉 + 1 个玻璃瓶熬出 1 瓶动物油，**同时锅里还会留下 1 份油滋了**。
+     *
+     * <p>农夫乐事一条厨锅配方只有一个产物，所以在 {@code processCooking} 收尾之后补一份：
+     * 先试着塞回锅里的空槽位（玩家开锅就能拿到），塞不下就按「食材剩余物」弹到锅外。
+     */
+    @Inject(method = "processCooking", at = @At("RETURN"))
+    private void dongbei$leaveCracklings(RecipeHolder<CookingPotRecipe> recipe, CookingPotBlockEntity pot,
+                                         CallbackInfoReturnable<Boolean> cir) {
+        if (!cir.getReturnValueZ()) {
+            // 没真正做出这一锅就别给
+            return;
+        }
+        Level level = pot.getLevel();
+        if (level == null || !recipe.value().getResultItem(level.registryAccess()).is(ModItems.ANIMAL_OIL.get())) {
+            return;
+        }
+
+        ItemStack cracklings = new ItemStack(ModItems.CRACKLINGS.get());
+        ItemStackHandler inventory = pot.getInventory();
+        for (int slot = 0; slot < CookingPotBlockEntity.MEAL_DISPLAY_SLOT && !cracklings.isEmpty(); slot++) {
+            cracklings = inventory.insertItem(slot, cracklings, false);
+        }
+        if (!cracklings.isEmpty()) {
+            ((CookingPotBlockEntityInvoker) pot).dongbei$ejectIngredientRemainder(cracklings);
+        }
     }
 }

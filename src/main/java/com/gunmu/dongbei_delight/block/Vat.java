@@ -232,6 +232,10 @@ public class Vat extends Block implements EntityBlock {
             case SOUR_CORN -> vat.isCovered()
                     && state.getValue(WATER_LEVEL) > 0
                     && vat.cornKernelCount() == state.getValue(WATER_LEVEL) * VatRecipes.SOUR_CORN_PER_WATER;
+            // 格瓦斯：满水 + 6 个面包，蒙粗布毯
+            case KVASS -> vat.isCovered()
+                    && state.getValue(WATER_LEVEL) >= VatRecipes.KVASS_WATER_LEVEL
+                    && vat.countOf(VatRecipes.kvassBread()) >= VatRecipes.KVASS_BREAD;
             case NONE -> false;
         };
     }
@@ -334,7 +338,7 @@ public class Vat extends Block implements EntityBlock {
                             < water * VatRecipes.SALT_PER_WATER;
                     case FISH_SAUCE -> vat.countOf(ModItems.SALT.get()) < VatRecipes.FISH_SAUCE_SALT;
                     case SHRIMP_PASTE -> vat.countOf(ModItems.SALT.get()) < VatRecipes.SHRIMP_PASTE_SALT;
-                    case DOUGH, VINEGAR, WHITE_VINEGAR, BEAN_SPROUTS, SOUR_CORN -> false;
+                    case DOUGH, VINEGAR, WHITE_VINEGAR, BEAN_SPROUTS, SOUR_CORN, KVASS -> false;
                 };
                 if (ok) {
                     if (vat.kind() == VatRecipes.Kind.NONE) {
@@ -539,6 +543,22 @@ public class Vat extends Block implements EntityBlock {
                 return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
             }
 
+            // 格瓦斯：满水时放 6 个面包，蒙粗布毯发酵
+            if (stack.is(VatRecipes.kvassBread()) && water >= VatRecipes.KVASS_WATER_LEVEL
+                    && (vat.kind() == VatRecipes.Kind.NONE || vat.kind() == VatRecipes.Kind.KVASS)
+                    && vat.countOf(VatRecipes.kvassBread()) < VatRecipes.KVASS_BREAD) {
+                if (vat.addContent(stack)) {
+                    if (vat.kind() == VatRecipes.Kind.NONE) {
+                        vat.setKind(VatRecipes.Kind.KVASS);
+                    }
+                    consume(player, stack);
+                    playFill(level, pos);
+                    tryStart(level, pos, state, vat);
+                    return ItemInteractionResult.sidedSuccess(false);
+                }
+                return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+            }
+
             // 压石头：启动腌制
             // 压石头用于泡菜 / 腊肉 / 辣白菜 / 鱼露 / 虾酱
             if (isPressStone(stack) && !vat.isEmpty() && !vat.isPressed()
@@ -606,7 +626,8 @@ public class Vat extends Block implements EntityBlock {
                     && (vat.kind() == VatRecipes.Kind.VINEGAR
                             || vat.kind() == VatRecipes.Kind.WHITE_VINEGAR
                             || vat.kind() == VatRecipes.Kind.BEAN_SPROUTS
-                            || vat.kind() == VatRecipes.Kind.SOUR_CORN)
+                            || vat.kind() == VatRecipes.Kind.SOUR_CORN
+                            || vat.kind() == VatRecipes.Kind.KVASS)
                     && !vat.isCovered()) {
                 vat.setCover(stack);
                 consume(player, stack);
@@ -683,6 +704,16 @@ public class Vat extends Block implements EntityBlock {
                 vat.takeOneShrimpPaste();
                 consume(player, stack);
                 give(player, new ItemStack(ModItems.SHRIMP_PASTE.get()));
+                level.playSound(null, pos, SoundEvents.BOTTLE_FILL, SoundSource.BLOCKS, 1.0F, 1.0F);
+                return ItemInteractionResult.sidedSuccess(false);
+            }
+
+            // 用玻璃瓶装格瓦斯：一缸 6 瓶
+            if (stack.is(Items.GLASS_BOTTLE) && vat.kind() == VatRecipes.Kind.KVASS
+                    && state.getValue(FERMENTED) && vat.kvassMb() > 0 && !vat.isCovered()) {
+                vat.takeOneKvass();
+                consume(player, stack);
+                give(player, new ItemStack(ModItems.KVASS.get()));
                 level.playSound(null, pos, SoundEvents.BOTTLE_FILL, SoundSource.BLOCKS, 1.0F, 1.0F);
                 return ItemInteractionResult.sidedSuccess(false);
             }
@@ -866,7 +897,8 @@ public class Vat extends Block implements EntityBlock {
                     || vat.kind() == VatRecipes.Kind.VINEGAR
                     || vat.kind() == VatRecipes.Kind.WHITE_VINEGAR
                     || vat.kind() == VatRecipes.Kind.BEAN_SPROUTS
-                    || vat.kind() == VatRecipes.Kind.SOUR_CORN;
+                    || vat.kind() == VatRecipes.Kind.SOUR_CORN
+                    || vat.kind() == VatRecipes.Kind.KVASS;
             level.setBlock(pos, state.setValue(PROGRESS, MAX_PROGRESS).setValue(FERMENTED, true)
                             .setValue(WATER_LEVEL, clearWater ? 0 : state.getValue(WATER_LEVEL)),
                     Block.UPDATE_CLIENTS);
@@ -913,6 +945,11 @@ public class Vat extends Block implements EntityBlock {
             // 酸玉米粒发好了：每份玉米粒变成一份酸玉米粒，水被吸收
             if (vat.kind() == VatRecipes.Kind.SOUR_CORN) {
                 vat.finishSourCorn();
+            }
+            // 格瓦斯：面包泡化了，一缸出 6 瓶
+            if (vat.kind() == VatRecipes.Kind.KVASS) {
+                vat.consumeAllContents();
+                vat.setKvass(VatRecipes.KVASS_SERVINGS);
             }
             level.playSound(null, pos, SoundEvents.COMPOSTER_READY, SoundSource.BLOCKS, 1.0F, 1.0F);
         } else {

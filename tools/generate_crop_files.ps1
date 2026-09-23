@@ -347,11 +347,13 @@ $crops = [ordered]@{
         produce = 'dongbei_delight:buckwheat'; seed = $null
         leaf = '#5F9E3A'; fruit = '#9A6B3A'; seedColor = '#8A6B3A'
         trellis = $false; wholePlant = $false
+        stages = 8
     }
     'napa_cabbage' = @{
         produce = 'dongbei_delight:napa_cabbage'; seed = 'napa_cabbage_seeds'
         leaf = '#7A8C55'; fruit = '#DCE8C0'; seedColor = '#6A5A3A'
         trellis = $false; wholePlant = $true
+        stages = 8
     }
     'cucumber' = @{
         produce = 'dongbei_delight:cucumber'; seed = 'cucumber_seeds'
@@ -374,15 +376,22 @@ $crops = [ordered]@{
         produce = 'dongbei_delight:peanut'; seed = $null
         leaf = '#4E8A32'; fruit = '#C9A05A'; seedColor = '#C9A05A'
         trellis = $false; wholePlant = $false
+        stages = 8
     }
     'red_bean' = @{
         produce = 'dongbei_delight:red_bean'; seed = $null
         leaf = '#4E8A32'; fruit = '#B5301A'; seedColor = '#B5301A'
         trellis = $false; wholePlant = $false
+        stages = 8
     }
     'green_onion' = @{
         produce = 'dongbei_delight:green_onion'; seed = 'green_onion_seeds'
         leaf = '#6BA83A'; fruit = '#F2F6E4'; seedColor = '#E8DCAA'
+        trellis = $false; wholePlant = $false
+    }
+    'green_radish' = @{
+        produce = 'dongbei_delight:green_radish'; seed = 'green_radish_seeds'
+        leaf = '#4E8A32'; fruit = '#BFE0A8'; seedColor = '#D8C88A'
         trellis = $false; wholePlant = $false
     }
 }

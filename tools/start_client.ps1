@@ -22,6 +22,13 @@ $projectRoot = (Resolve-Path (Join-Path $PSScriptRoot '..')).Path
 $logDir = Join-Path $projectRoot 'logs'
 New-Item -ItemType Directory -Force -Path $logDir | Out-Null
 
+# 用户目录里的 Gradle 守护进程注册表（%USERPROFILE%\.gradle\daemon\<版本>\registry.bin）
+# 曾经损坏过一次，会让启动直接报「Could not write cache value to ... registry.bin」。
+# 把注册表挪到工程内，和那份解耦（目录已加进 .gitignore）。
+$registryBase = Join-Path $projectRoot '.gradle-registry'
+New-Item -ItemType Directory -Force -Path $registryBase | Out-Null
+$env:GRADLE_OPTS = "-Dorg.gradle.daemon.registry.base=$registryBase"
+
 $stamp = Get-Date -Format 'yyyyMMdd-HHmmss'
 $consoleLog = Join-Path $logDir "client-$GameVersion-$stamp.log"
 # 注意：不能写成 ":$GameVersion:runClient" —— PowerShell 会把 $GameVersion:runClient

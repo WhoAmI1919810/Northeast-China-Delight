@@ -20,6 +20,12 @@ $projectRoot = (Resolve-Path (Join-Path $PSScriptRoot '..')).Path
 $logDir = Join-Path $projectRoot 'logs'
 New-Item -ItemType Directory -Force -Path $logDir | Out-Null
 
+# 同 start_client.ps1：把 Gradle 守护进程注册表挪到工程内，
+# 避开用户目录里那份损坏过的 registry.bin。
+$registryBase = Join-Path $projectRoot '.gradle-registry'
+New-Item -ItemType Directory -Force -Path $registryBase | Out-Null
+$env:GRADLE_OPTS = "-Dorg.gradle.daemon.registry.base=$registryBase"
+
 $stamp = Get-Date -Format 'yyyyMMdd-HHmmss'
 $consoleLog = Join-Path $logDir "server-$GameVersion-$stamp.log"
 

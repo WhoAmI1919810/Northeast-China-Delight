@@ -1,0 +1,19 @@
+{
+  "type": "create:emptying",
+  "ingredients": [
+    {
+      "type": "neoforge:components",
+      "items": "dongbei_delight:animal_oil",
+      "components": { "minecraft:damage": 0 }
+    }
+  ],
+  "results": [
+    {
+      "id": "minecraft:glass_bottle"
+    },
+    {
+      "amount": 250,
+      "id": "dongbei_delight:animal_oil"
+    }
+  ]
+}

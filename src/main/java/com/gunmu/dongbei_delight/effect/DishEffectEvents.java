@@ -79,6 +79,11 @@ public class DishEffectEvents {
     @SubscribeEvent
     public static void onItemTooltip(ItemTooltipEvent event) {
         ItemStack stack = event.getItemStack();
+        // 烧烤架：提示一下用法（它自己不消耗、要架在营火上）
+        if (stack.is(ModItems.GRILL_RACK.get())) {
+            event.getToolTip().add(Component.translatable("tooltip.dongbei_delight.grill_rack")
+                    .withStyle(ChatFormatting.GRAY));
+        }
         // 瓶装调料：把还剩多少 mB、还能用几次写出来
         if (SeasoningBottleItem.isBottle(stack)) {
             event.getToolTip().add(Component.translatable("tooltip.dongbei_delight.bottle_amount",

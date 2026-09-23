@@ -345,6 +345,21 @@ public class DongbeiDelight
                     return ResourceLocation.fromNamespaceAndPath(MODID, "block/vegetable_oil_flow");
                 }
             }, ModFluids.VEGETABLE_OIL_TYPE);
+
+            event.registerFluidType(new IClientFluidTypeExtensions()
+            {
+                @Override
+                public ResourceLocation getStillTexture()
+                {
+                    return ResourceLocation.fromNamespaceAndPath(MODID, "block/animal_oil_still");
+                }
+
+                @Override
+                public ResourceLocation getFlowingTexture()
+                {
+                    return ResourceLocation.fromNamespaceAndPath(MODID, "block/animal_oil_flow");
+                }
+            }, ModFluids.ANIMAL_OIL_TYPE);
         }
     }
 }

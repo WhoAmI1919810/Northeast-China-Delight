@@ -113,6 +113,27 @@ public final class GrillRecipes {
                 new ItemStack(ModItems.GRILLED_CHICKEN_FRAME.get()),
                 20));
 
+        // 烤玉米：整根玉米撒糖
+        list.add(new Recipe(
+                Ingredient.of(ModItems.CORN.get()),
+                List.of(Items.SUGAR),
+                new ItemStack(ModItems.GRILLED_CORN.get()),
+                20));
+
+        // 烤油边：油边撒盐、刷辣椒油
+        list.add(new Recipe(
+                Ingredient.of(ModItems.OIL_EDGE.get()),
+                List.of(ModItems.SALT.get(), ModItems.CHILI_OIL.get()),
+                new ItemStack(ModItems.GRILLED_OIL_EDGE.get()),
+                25));
+
+        // 烤冷面：冷面片打鸡蛋、刷辣椒酱
+        list.add(new Recipe(
+                Ingredient.of(ModItems.COLD_NOODLE_SHEET.get()),
+                List.of(ModItems.CHILI_SAUCE.get(), Items.EGG),
+                new ItemStack(ModItems.GRILLED_COLD_NOODLES.get()),
+                30));
+
         return List.copyOf(list);
     }
 }

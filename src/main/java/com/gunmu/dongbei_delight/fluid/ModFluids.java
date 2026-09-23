@@ -407,6 +407,48 @@ public final class ModFluids {
     public static final DeferredHolder<Fluid, BaseFlowingFluid.Flowing> FLOWING_VEGETABLE_OIL =
             FLUIDS.register("flowing_vegetable_oil", ModFluids::vegetableOilFlowing);
 
+    // ===== 动物油 =====
+
+    public static final FluidType ANIMAL_OIL_TYPE = new FluidType(FluidType.Properties.create()
+            .descriptionId("fluid_type.dongbei_delight.animal_oil")
+            .density(900)
+            .viscosity(1800)
+            .motionScale(0.005D));
+
+    private static final BaseFlowingFluid.Properties ANIMAL_OIL_PROPERTIES =
+            new BaseFlowingFluid.Properties(() -> ANIMAL_OIL_TYPE,
+                    ModFluids::animalOilSource, ModFluids::animalOilFlowing)
+                    .block(() -> ModBlocks.ANIMAL_OIL_FLUID.get())
+                    .slopeFindDistance(3)
+                    .levelDecreasePerBlock(1)
+                    .tickRate(8);
+
+    private static BaseFlowingFluid.Source animalOilSource;
+    private static BaseFlowingFluid.Flowing animalOilFlowing;
+
+    /** 静止的动物油（动力搅拌器把肥肉熬出来的液态油） */
+    public static BaseFlowingFluid.Source animalOilSource() {
+        if (animalOilSource == null) {
+            animalOilSource = new BaseFlowingFluid.Source(ANIMAL_OIL_PROPERTIES);
+        }
+        return animalOilSource;
+    }
+
+    /** 流动的动物油 */
+    public static BaseFlowingFluid.Flowing animalOilFlowing() {
+        if (animalOilFlowing == null) {
+            animalOilFlowing = new BaseFlowingFluid.Flowing(ANIMAL_OIL_PROPERTIES);
+        }
+        return animalOilFlowing;
+    }
+
+    public static final DeferredHolder<FluidType, FluidType> ANIMAL_OIL_TYPE_HOLDER =
+            FLUID_TYPES.register("animal_oil", () -> ANIMAL_OIL_TYPE);
+    public static final DeferredHolder<Fluid, BaseFlowingFluid.Source> ANIMAL_OIL =
+            FLUIDS.register("animal_oil", ModFluids::animalOilSource);
+    public static final DeferredHolder<Fluid, BaseFlowingFluid.Flowing> FLOWING_ANIMAL_OIL =
+            FLUIDS.register("flowing_animal_oil", ModFluids::animalOilFlowing);
+
     public static void register(IEventBus eventBus) {
         FLUID_TYPES.register(eventBus);
         FLUIDS.register(eventBus);

@@ -1,0 +1,19 @@
+{
+  "type": "create:compacting",
+  "ingredients": [
+    {
+      "item": "farmersdelight:wheat_dough"
+    },
+    {
+      "item": "farmersdelight:wheat_dough"
+    },
+    {
+      "item": "farmersdelight:wheat_dough"
+    }
+  ],
+  "results": [
+    {
+      "id": "dongbei_delight:cold_noodle_sheet"
+    }
+  ]
+}

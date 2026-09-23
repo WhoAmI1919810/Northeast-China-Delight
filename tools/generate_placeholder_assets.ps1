@@ -136,6 +136,13 @@ function Shape-Basin($g, $main, $dark, $accent) {
     Bar $g $dark 3 8 12 8 1
 }
 
+function Shape-Pancake($g, $main, $dark, $accent) {
+    # 辣白菜饼：扁圆的金黄饼 + 上面几块红色辣白菜碎
+    Oval $g $main $dark 1 4 14 8
+    Oval $g $accent $dark 4 6 3 3
+    Oval $g $accent $dark 9 7 3 3
+}
+
 function Shape-Grate($g, $main, $dark, $accent) {
     # 烧烤架（俯视）：一圈外框 + 中间几根横竖条
     Rect $g $main $dark 1 3 14 11
@@ -179,10 +186,25 @@ $items = [ordered]@{
     'dried_tofu'              = @('sheet',     '#E8D9A8', '#9A8850', '#C9B77E')
     'tofu'                    = @('sheet',     '#F2EDDC', '#B0A583', '#FFFFFF')
     'cooking_oil'             = @('bottle',    '#E8C33C', '#96760F', '#FFF0A0')
+    'animal_oil'              = @('bottle',    '#F2E7C4', '#B0A480', '#FFFDF0')
+    'kvass'                   = @('bottle',    '#A05A1E', '#6B3A10', '#C9843C')
+    'bibimbap'                = @('bowl',      '#E8DCC0', '#8A7440', '#C43A2A')
+    'kimchi_pancake'          = @('pancake',   '#D9A04A', '#8A5A18', '#C43A2A')
     'pork_ribs'               = @('bone',      '#C4645C', '#7A332E', '#F0EDE4')
     'pork_intestine'          = @('pod',       '#D98A9A', '#8A4E58', '#F0B0BC')
     'pork_hock'               = @('bone',      '#C4645C', '#7A332E', '#E8C8A0')
     'pig_blood'               = @('cluster',   '#8A1A1A', '#4E0D0D', '#C43A3A')
+    'pork_fat'                = @('cluster',   '#F0DCC8', '#B08A6A', '#FFFFFF')
+    'oil_edge'                = @('long',      '#E8B0A0', '#8A4E48', '#FFF6F0')
+    'cracklings'              = @('cluster',   '#C98A3A', '#7A4A12', '#E8B85A')
+    'green_radish'            = @('long',      '#A8C46A', '#4E7A24', '#EAF2D8')
+    'cold_noodle_sheet'       = @('sheet',     '#EFE3C0', '#B0A060', '#FFF6DC')
+    'snowy_bean_paste'        = @('bowl',      '#F2EDE0', '#B0A583', '#8A4A2A')
+    'candied_peanuts'         = @('bowl',      '#D9A04A', '#8A5A18', '#F2E0B0')
+    'tiger_salad'             = @('bowl',      '#7FA85A', '#3E6B24', '#C43A2A')
+    'grilled_corn'            = @('long',      '#F0C93F', '#A88A1E', '#8A5A18')
+    'grilled_oil_edge'        = @('long',      '#B5534A', '#6B2A24', '#F0D8C0')
+    'grilled_cold_noodles'    = @('sheet',     '#E8C98A', '#A88A1E', '#C43A2A')
     'raw_sausage'             = @('pod',       '#C4645C', '#7A332E', '#E8A88A')
     'blood_sausage'           = @('pod',       '#5E1414', '#2E0808', '#8A2A2A')
     'rice_sausage'            = @('pod',       '#E8DCC0', '#9A8A60', '#C4645C')
@@ -285,7 +307,8 @@ $items = [ordered]@{
 # 所以它们不需要单独的物品贴图，模型也不要用 layer0 = 自己的贴图那种写法。
 $potionBottles = @(
     'soy_sauce', 'vinegar', 'sour_water', 'white_vinegar', 'fish_sauce',
-    'shrimp_paste', 'chili_oil', 'peanut_butter', 'cooking_oil'
+    'shrimp_paste', 'chili_oil', 'peanut_butter', 'cooking_oil', 'animal_oil'
+    , 'kvass'
 )
 
 $shapeMap = @{
@@ -304,6 +327,7 @@ $shapeMap = @{
     'mushroom' = ${function:Shape-Mushroom}
     'basin'    = ${function:Shape-Basin}
     'grate'    = ${function:Shape-Grate}
+    'pancake'  = ${function:Shape-Pancake}
 }
 
 # 用 -File 调用时，PowerShell 会把 -Only a,b,c 当成一个逗号字符串，这里统一拆开

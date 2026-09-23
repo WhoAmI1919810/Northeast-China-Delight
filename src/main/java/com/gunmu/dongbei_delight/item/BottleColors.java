@@ -8,7 +8,7 @@ import java.util.Map;
 import java.util.function.Supplier;
 
 /**
- * 调料瓶的「液面颜色」。
+ * 瓶装物品（调料瓶 / 瓶装饮品）的「液面颜色」。
  *
  * 瓶子的画法完全照原版药水：模型只有两层 ——
  * layer0 = {@code minecraft:item/potion_overlay}（灰白液面，会被染色），
@@ -37,6 +37,8 @@ public final class BottleColors {
         put(ModItems.CHILI_OIL, 0xF26B0F);      // 辣椒油：鲜亮的橙红 ΔE00 14.8（原 0xE8451E 只有 5.3，撞生命恢复药水）
         put(ModItems.PEANUT_BUTTER, 0xC9A05A);  // 花生酱：棕黄      ΔE00 13.7
         put(ModItems.COOKING_OIL, 0xAA7E10);    // 植物油：琥珀金    ΔE00 18.2（原 0xE8C33C 只有 5.4，撞力量药水）
+        put(ModItems.ANIMAL_OIL, 0xEBD98F);     // 动物油：白色偏微黄（熬出来的猪油那种颜色）
+        put(ModItems.KVASS, 0xA05A1E);          // 格瓦斯：面包发酵的焦糖褐
     }
 
     private BottleColors() {

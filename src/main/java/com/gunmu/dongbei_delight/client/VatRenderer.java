@@ -93,6 +93,18 @@ public class VatRenderer implements BlockEntityRenderer<VatBlockEntity> {
             pose.popPose();
         }
 
+        // 格瓦斯：面包发酵出的焦糖色
+        if (vat.kind() == VatRecipes.Kind.KVASS && fermented && vat.kvassMb() > 0) {
+            float ratio = vat.kvassMb() / (float) (VatRecipes.KVASS_SERVINGS * VatRecipes.SERVING_MB);
+            float height = 0.15F + 0.7F * ratio;
+            pose.pushPose();
+            pose.translate(0.14F, 0.10F, 0.14F);
+            pose.scale(0.72F, height, 0.72F);
+            blockRenderer.renderSingleBlock(Blocks.TERRACOTTA.defaultBlockState(), pose, buffer,
+                    light, packedOverlay, ModelData.EMPTY, null);
+            pose.popPose();
+        }
+
         // 内容物
         boolean done = vat.getBlockState().getValue(Vat.FERMENTED);
         List<ItemStack> contents = vat.contents();

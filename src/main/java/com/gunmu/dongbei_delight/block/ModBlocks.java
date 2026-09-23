@@ -46,8 +46,9 @@ public class ModBlocks {
             fruitCrop("green_beans", () -> ModItems.GREEN_BEANS_SEEDS.get(), () -> ModItems.GREEN_BEANS.get());
     public static final DeferredBlock<Block> BUCKWHEAT_CROP =
             crop("buckwheat", () -> ModItems.BUCKWHEAT.get());
+    /** 大白菜：整棵长在地上，形状和模型照农夫乐事的卷心菜 */
     public static final DeferredBlock<Block> NAPA_CABBAGE_CROP =
-            crop("napa_cabbage", () -> ModItems.NAPA_CABBAGE_SEEDS.get());
+            cabbageCrop("napa_cabbage", () -> ModItems.NAPA_CABBAGE_SEEDS.get());
     public static final DeferredBlock<Block> CUCUMBER_CROP =
             fruitCrop("cucumber", () -> ModItems.CUCUMBER_SEEDS.get(), () -> ModItems.CUCUMBER.get());
     /** 红薯：自身即种子，没有单独的种子物品 */
@@ -61,9 +62,32 @@ public class ModBlocks {
             crop("peanut", () -> ModItems.PEANUT.get());
     public static final DeferredBlock<Block> RED_BEAN_CROP =
             crop("red_bean", () -> ModItems.RED_BEAN.get());
-    /** 大葱：整株收获，需要单独的种子物品 */
+    /** 大葱：整株收获，需要单独的种子物品；**只有 4 个生长阶段**，所以用 4 阶段作物那套 */
     public static final DeferredBlock<Block> GREEN_ONION_CROP =
-            crop("green_onion", () -> ModItems.GREEN_ONION_SEEDS.get());
+            smallCrop("green_onion", () -> ModItems.GREEN_ONION_SEEDS.get());
+    /** 青萝卜：整株收获，需要单独的种子物品 */
+    public static final DeferredBlock<Block> GREEN_RADISH_CROP =
+            crop("green_radish", () -> ModItems.GREEN_RADISH_SEEDS.get());
+
+    // ===== 野生植物 =====
+
+    /**
+     * 榛子丛：像甜浆果丛一样长在地上，右键采摘榛子、不会伤害玩家。
+     *
+     * 没有对应的物品（不掉落方块本身，也不进创造模式物品栏），
+     * 想种就在地上右键榛子 —— 榛子自己就是种子。
+     */
+    public static final DeferredBlock<Block> HAZELNUT_BUSH = BLOCKS.registerBlock(
+            "hazelnut_bush",
+            HazelnutBushBlock::new,
+            BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.PLANT)
+                    .randomTicks()
+                    .noCollission()
+                    .instabreak()
+                    .sound(SoundType.SWEET_BERRY_BUSH)
+                    .pushReaction(PushReaction.DESTROY)
+    );
 
     // ===== 功能方块 =====
 
@@ -93,6 +117,22 @@ public class ModBlocks {
                     .lightLevel(state -> state.getValue(CampfireBlock.LIT) ? 15 : 0)
                     .noOcclusion()
                     .ignitedByLava()
+    );
+
+    /**
+     * 动物油块：4 瓶动物油在工作台压成一块。
+     * 特性照搬原版蜂蜜块（{@link AnimalOilBlock} 直接继承 {@link net.minecraft.world.level.block.HoneyBlock}），
+     * 只是贴图更白。
+     */
+    public static final DeferredBlock<Block> ANIMAL_OIL_BLOCK = BLOCKS.registerBlock(
+            "animal_oil_block",
+            AnimalOilBlock::new,
+            BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.COLOR_YELLOW)
+                    .speedFactor(0.4F)
+                    .jumpFactor(0.5F)
+                    .noOcclusion()
+                    .sound(SoundType.HONEY_BLOCK)
     );
 
     // ===== 流体方块 =====
@@ -147,9 +187,26 @@ public class ModBlocks {
             properties -> new LiquidBlock(ModFluids.vegetableOilSource(), properties),
             fluidProperties()
     );
+    public static final DeferredBlock<LiquidBlock> ANIMAL_OIL_FLUID = BLOCKS.registerBlock(
+            "animal_oil",
+            properties -> new LiquidBlock(ModFluids.animalOilSource(), properties),
+            fluidProperties()
+    );
 
     private static DeferredBlock<Block> crop(String name, Supplier<? extends ItemLike> seed) {
         return BLOCKS.registerBlock(name + "_crop", properties -> new DdCropBlock(properties, seed), cropProperties());
+    }
+
+    /** 4 个生长阶段的小作物（AGE_3，目前只有大葱用） */
+    private static DeferredBlock<Block> smallCrop(String name, Supplier<? extends ItemLike> seed) {
+        return BLOCKS.registerBlock(name + "_crop",
+                properties -> new DdSmallCropBlock(properties, seed), cropProperties());
+    }
+
+    /** 整棵长在地上的菜（大白菜）：形状照农夫乐事的卷心菜 */
+    private static DeferredBlock<Block> cabbageCrop(String name, Supplier<? extends ItemLike> seed) {
+        return BLOCKS.registerBlock(name + "_crop",
+                properties -> new DdCabbageCropBlock(properties, seed), cropProperties());
     }
 
     /** 果菜：成熟后可以用剪刀只摘果实，植株继续生长 */

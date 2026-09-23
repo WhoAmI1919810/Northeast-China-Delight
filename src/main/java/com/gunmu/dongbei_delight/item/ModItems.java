@@ -44,6 +44,8 @@ public class ModItems {
     public static final DeferredItem<Item> RED_CHILI = food("red_chili");
     /** 大葱：葱烧海参、蘸酱菜一类用的辛香料作物 */
     public static final DeferredItem<Item> GREEN_ONION = food("green_onion");
+    /** 青萝卜：新作物，生吃、拌菜都行 */
+    public static final DeferredItem<Item> GREEN_RADISH = food("green_radish");
     /** 大虾：海产食材（获取途径待定） */
     public static final DeferredItem<Item> SHRIMP = food("shrimp");
     /** 辣白菜：大缸用白菜 + 红辣椒 + 调味品腌成 */
@@ -59,6 +61,7 @@ public class ModItems {
     public static final DeferredItem<Item> CUCUMBER_SEEDS = seeds("cucumber_seeds", () -> ModBlocks.CUCUMBER_CROP.get());
     public static final DeferredItem<Item> RED_CHILI_SEEDS = seeds("red_chili_seeds", () -> ModBlocks.RED_CHILI_CROP.get());
     public static final DeferredItem<Item> GREEN_ONION_SEEDS = seeds("green_onion_seeds", () -> ModBlocks.GREEN_ONION_CROP.get());
+    public static final DeferredItem<Item> GREEN_RADISH_SEEDS = seeds("green_radish_seeds", () -> ModBlocks.GREEN_RADISH_CROP.get());
 
     // ===== 食材（含加工品）=====
 
@@ -86,6 +89,8 @@ public class ModItems {
     public static final DeferredItem<Item> PICKLED_CUCUMBER = food("pickled_cucumber");
     /** 大缸发酵胡萝卜得到 */
     public static final DeferredItem<Item> PICKLED_CARROT = food("pickled_carrot");
+    /** 大缸发酵青萝卜得到 */
+    public static final DeferredItem<Item> PICKLED_GREEN_RADISH = food("pickled_green_radish");
     /** 碎玉米粒在大缸里发酵得到，用来做酸汤子 */
     public static final DeferredItem<Item> WATER_DOUGH = simple("water_dough");
     public static final DeferredItem<Item> BUCKWHEAT_NOODLES = food("buckwheat_noodles");
@@ -97,6 +102,10 @@ public class ModItems {
     public static final DeferredItem<Item> COOKING_OIL = simple("cooking_oil");
     /** 辣椒油：一瓶食用油 + 两个红辣椒在厨锅里炸成，玻璃瓶装 */
     public static final DeferredItem<Item> CHILI_OIL = bottled("chili_oil");
+    /** 动物油：2 份肥肉在厨锅里熬出来，玻璃瓶装（白色偏微黄） */
+    public static final DeferredItem<Item> ANIMAL_OIL = bottled("animal_oil");
+    /** 格瓦斯：6 个面包 + 3 份水在大缸里蒙粗布毯发酵成的瓶装饮品（饮品不是调料，没有耐久条） */
+    public static final DeferredItem<Item> KVASS = bottledDrink("kvass");
     /** 花生酱：熟花生米磨出来，玻璃瓶装 */
     public static final DeferredItem<Item> PEANUT_BUTTER = bottledFood("peanut_butter");
     /** 熟花生米：花生在厨锅里炒熟 */
@@ -113,6 +122,10 @@ public class ModItems {
     public static final DeferredItem<Item> VERMICELLI = food("vermicelli");
     /** 拉皮：淀粉浆用动力冲压机压出来 */
     public static final DeferredItem<Item> LA_PI = food("la_pi");
+    /** 油滋了：熬动物油时锅里留下的油渣，也能直接吃 */
+    public static final DeferredItem<Item> CRACKLINGS = food("cracklings");
+    /** 冷面片：3 份面团在动力冲压机 + 工作盆里压出来（不用加热），烤冷面用 */
+    public static final DeferredItem<Item> COLD_NOODLE_SHEET = food("cold_noodle_sheet");
     /** 烤红薯：熔炉 / 烟熏炉 / 篝火 */
     public static final DeferredItem<Item> BAKED_SWEET_POTATO = food("baked_sweet_potato");
     /** 灵魂酸菜：彩蛋物品，不进创造模式物品栏 */
@@ -124,11 +137,13 @@ public class ModItems {
     public static final DeferredItem<Item> LARGE_BASIN = simple("large_basin");
     /** 烧烤架：右键架在营火上，把营火变成可以烤东西的样子 */
     public static final DeferredItem<Item> GRILL_RACK = simple("grill_rack");
+    /** 黄铜碗：机械动力的黄铜打的碗（具体用途与配方待定） */
+    public static final DeferredItem<Item> BRASS_BOWL = simple("brass_bowl");
 
     // ===== 山珍与海味 =====
 
-    /** 榛子：破坏大型蕨时有 12.5% 概率掉落 */
-    public static final DeferredItem<Item> HAZELNUT = food("hazelnut");
+    /** 榛子：破坏大型蕨时有 12.5% 概率掉落；自己也是种子，种下去长成榛子丛 */
+    public static final DeferredItem<Item> HAZELNUT = selfSeedingFood("hazelnut", () -> ModBlocks.HAZELNUT_BUSH.get());
     /** 榛蘑、木耳：山珍，获取方式待定 */
     public static final DeferredItem<Item> HAZEL_MUSHROOM = food("hazel_mushroom");
     public static final DeferredItem<Item> WOOD_EAR = food("wood_ear");
@@ -151,6 +166,10 @@ public class ModItems {
     public static final DeferredItem<Item> PORK_HOCK = food("pork_hock");
     public static final DeferredItem<Item> PIG_BLOOD = food("pig_blood");
     public static final DeferredItem<Item> PIG_LIVER = food("pig_liver");
+    /** 肥肉：用刀宰杀猪时掉落（和上面几种副产物同一套概率规则），用来熬动物油 */
+    public static final DeferredItem<Item> PORK_FAT = food("pork_fat");
+    /** 油边：猪排骨边上那条带油的肉，用刀宰杀猪时掉落，串起来烤最香 */
+    public static final DeferredItem<Item> OIL_EDGE = food("oil_edge");
     /** 灌肠类 */
     public static final DeferredItem<Item> RAW_SAUSAGE = food("raw_sausage");
     public static final DeferredItem<Item> BLOOD_SAUSAGE = food("blood_sausage");
@@ -204,9 +223,11 @@ public class ModItems {
     public static final DeferredItem<Item> SWEET_POTATO_PORRIDGE = bowlFood("sweet_potato_porridge");
     public static final DeferredItem<Item> ZHU_ROU_DUN_FEN_TIAO = basinFood("zhu_rou_dun_fen_tiao");
     public static final DeferredItem<Item> SUAN_CAI_CHAO_FEN_TIAO = bowlFood("suan_cai_chao_fen_tiao");
-    public static final DeferredItem<Item> BUCKWHEAT_COLD_NOODLES = bowlFood("buckwheat_cold_noodles");
+    /** 朝鲜族菜：黄铜碗盛 */
+    public static final DeferredItem<Item> BUCKWHEAT_COLD_NOODLES = brassBowlFood("buckwheat_cold_noodles");
     public static final DeferredItem<Item> LIANG_BAN_XIAN_CAI = bowlFood("liang_ban_xian_cai");
-    public static final DeferredItem<Item> MING_TAI_YU_SI = bowlFood("ming_tai_yu_si");
+    /** 朝鲜族菜：黄铜碗盛 */
+    public static final DeferredItem<Item> MING_TAI_YU_SI = brassBowlFood("ming_tai_yu_si");
     // 工作台凉菜 / 小吃
     public static final DeferredItem<Item> ZHAN_JIANG_CAI = bowlFood("zhan_jiang_cai");
     public static final DeferredItem<Item> DA_FAN_BAO = food("da_fan_bao");
@@ -214,9 +235,11 @@ public class ModItems {
     public static final DeferredItem<Item> LIANG_BAN_HUA_CAI = bowlFood("liang_ban_hua_cai");
     // 厨锅料理（东北家常菜续）
     public static final DeferredItem<Item> DA_FENG_SHOU = basinFood("da_feng_shou");
-    public static final DeferredItem<Item> BAI_CAI_DOU_FU_DUN_FEN_TIAO = basinFood("bai_cai_dou_fu_dun_fen_tiao");
-    public static final DeferredItem<Item> LA_NIU_ROU_TANG_FAN = bowlFood("la_niu_rou_tang_fan");
-    public static final DeferredItem<Item> LA_BAI_CAI_CHAO_FAN = bowlFood("la_bai_cai_chao_fan");
+    public static final DeferredItem<Item> BAI_CAI_DOU_FU_DUN_FEN_TIAO = bowlFood("bai_cai_dou_fu_dun_fen_tiao");
+    /** 朝鲜族菜：黄铜碗盛 */
+    public static final DeferredItem<Item> LA_NIU_ROU_TANG_FAN = brassBowlFood("la_niu_rou_tang_fan");
+    /** 朝鲜族菜：黄铜碗盛 */
+    public static final DeferredItem<Item> LA_BAI_CAI_CHAO_FAN = brassBowlFood("la_bai_cai_chao_fan");
     /** 土豆饼：碗装（吃完返还空碗） */
     public static final DeferredItem<Item> TU_DOU_BING = bowlFood("tu_dou_bing");
     public static final DeferredItem<Item> XIA_REN_ZHU_ROU_XIAN_SHUI_JIAO = food("xia_ren_zhu_rou_xian_shui_jiao");
@@ -224,7 +247,8 @@ public class ModItems {
     public static final DeferredItem<Item> XIA_JIANG_DUN_DOU_FU = bowlFood("xia_jiang_dun_dou_fu");
     public static final DeferredItem<Item> HAI_XIAN_DOU_FU_TANG = bowlFood("hai_xian_dou_fu_tang");
     public static final DeferredItem<Item> SAN_XIAN_XIAN_SHUI_JIAO = food("san_xian_xian_shui_jiao");
-    public static final DeferredItem<Item> LA_BAI_CAI_TANG_FAN = bowlFood("la_bai_cai_tang_fan");
+    /** 朝鲜族菜：黄铜碗盛 */
+    public static final DeferredItem<Item> LA_BAI_CAI_TANG_FAN = brassBowlFood("la_bai_cai_tang_fan");
     /** 玉米烙：碗装 */
     public static final DeferredItem<Item> YU_MI_LAO = bowlFood("yu_mi_lao");
     public static final DeferredItem<Item> CHA_ZI_ZHOU = bowlFood("cha_zi_zhou");
@@ -240,15 +264,31 @@ public class ModItems {
     public static final DeferredItem<Item> HAI_SHEN_DOU_FU_TANG = bowlFood("hai_shen_dou_fu_tang");
     /** 咸鱼饼子：2 咸鱼 + 2 面团，碗装 */
     public static final DeferredItem<Item> XIAN_YU_BING_ZI = bowlFood("xian_yu_bing_zi");
-    public static final DeferredItem<Item> DA_JIANG_TANG = bowlFood("da_jiang_tang");
+    /** 朝鲜族菜：黄铜碗盛 */
+    public static final DeferredItem<Item> DA_JIANG_TANG = brassBowlFood("da_jiang_tang");
     /** 得莫利炖鱼：分量大，用大脸盆盛 */
-    public static final DeferredItem<Item> DE_MO_LI_DUN_YU = basinFood("de_mo_li_dun_yu");
+    public static final DeferredItem<Item> DE_MO_LI_DUN_YU = bowlFood("de_mo_li_dun_yu");
     public static final DeferredItem<Item> SU_BO_TANG = bowlFood("su_bo_tang");
-    public static final DeferredItem<Item> SUAN_CAI_HAI_XIAN_GUO = basinFood("suan_cai_hai_xian_guo");
-    public static final DeferredItem<Item> SHEN_JI_TANG = bowlFood("shen_ji_tang");
+    public static final DeferredItem<Item> SUAN_CAI_HAI_XIAN_GUO = bowlFood("suan_cai_hai_xian_guo");
+    /** 朝鲜族菜：黄铜碗盛 */
+    public static final DeferredItem<Item> SHEN_JI_TANG = brassBowlFood("shen_ji_tang");
     public static final DeferredItem<Item> XIAO_JI_DUN_MO_GU = basinFood("xiao_ji_dun_mo_gu");
+    /** 拌饭：黄铜碗 + 米饭 + 胡萝卜 + 鸡蛋 + 干海带 + 辣白菜 + 辣椒酱，工作台合成 */
+    public static final DeferredItem<Item> BIBIMBAP = brassBowlFood("bibimbap");
+    /** 辣白菜饼：辣白菜 + 2 淀粉 + 植物油，厨锅煎成（饼类用普通碗盛） */
+    public static final DeferredItem<Item> KIMCHI_PANCAKE = bowlFood("kimchi_pancake");
     /** 烤鸡架：生鸡架刷辣椒油撒糖，放在烤架上烤出来 */
     public static final DeferredItem<Item> GRILLED_CHICKEN_FRAME = food("grilled_chicken_frame");
+    /** 雪绵豆沙：红豆 + 糖 + 鸡蛋 + 淀粉 + 动物油，厨锅做 */
+    public static final DeferredItem<Item> SNOWY_BEAN_PASTE = bowlFood("snowy_bean_paste");
+    /** 糖花生：糖 + 熟花生米，厨锅做 */
+    public static final DeferredItem<Item> CANDIED_PEANUTS = bowlFood("candied_peanuts");
+    /** 老虎菜：青椒 + 大葱 + 酱油 + 黄瓜 + 醋 */
+    public static final DeferredItem<Item> TIGER_SALAD = bowlFood("tiger_salad");
+    /** 烧烤出品：烤玉米、烤油边、烤冷面 */
+    public static final DeferredItem<Item> GRILLED_CORN = food("grilled_corn");
+    public static final DeferredItem<Item> GRILLED_OIL_EDGE = food("grilled_oil_edge");
+    public static final DeferredItem<Item> GRILLED_COLD_NOODLES = food("grilled_cold_noodles");
 
     // ===== 方块物品 =====
 
@@ -264,6 +304,12 @@ public class ModItems {
             new Item.Properties().stacksTo(1)
     );
 
+    public static final DeferredItem<Item> ANIMAL_OIL_BLOCK_ITEM = ITEMS.registerItem(
+            "animal_oil_block",
+            (properties) -> new BlockItem(ModBlocks.ANIMAL_OIL_BLOCK.get(), properties),
+            new Item.Properties()
+    );
+
     /**
      * 「食材与调料」物品栏的展示顺序。
      *
@@ -275,33 +321,34 @@ public class ModItems {
     public static final List<Supplier<? extends Item>> INGREDIENT_TAB_ITEMS = List.of(
             // 种子
             EGGPLANT_SEEDS, GREEN_PEPPER_SEEDS, CORN_SEEDS, GREEN_BEANS_SEEDS,
-            NAPA_CABBAGE_SEEDS, CUCUMBER_SEEDS, RED_CHILI_SEEDS, GREEN_ONION_SEEDS,
+            NAPA_CABBAGE_SEEDS, CUCUMBER_SEEDS, RED_CHILI_SEEDS, GREEN_ONION_SEEDS, GREEN_RADISH_SEEDS,
             // 蔬菜
             NAPA_CABBAGE, CUCUMBER, EGGPLANT, GREEN_PEPPER, GREEN_ONION, RED_CHILI,
-            GREEN_BEANS, CORN, SWEET_POTATO,
+            GREEN_BEANS, CORN, SWEET_POTATO, GREEN_RADISH,
             // 豆类与杂粮
             SOYBEAN, PEANUT, RED_BEAN, BUCKWHEAT,
             // 山珍
             HAZELNUT, HAZEL_MUSHROOM, WOOD_EAR, GINSENG,
             // 肉类与水产
-            PORK_RIBS, PORK_INTESTINE, PORK_HOCK, PIG_BLOOD, PIG_LIVER, CHICKEN_FRAME,
+            PORK_RIBS, PORK_INTESTINE, PORK_HOCK, PIG_BLOOD, PIG_LIVER, PORK_FAT, OIL_EDGE, CHICKEN_FRAME,
             SHRIMP, HAIRTAIL, OYSTER, SEA_CUCUMBER,
             // 肉制品（灌肠与熏货）
             RAW_SAUSAGE, BLOOD_SAUSAGE, RICE_SAUSAGE, RED_SAUSAGE,
             SMOKED_PORK_HOCK, SMOKED_PIG_LIVER,
             // 腌制品
-            SOUR_CABBAGE, SPICY_CABBAGE, PICKLED_CUCUMBER, PICKLED_CARROT, SALTED_PORK, SALTED_FISH,
+            SOUR_CABBAGE, SPICY_CABBAGE, PICKLED_CUCUMBER, PICKLED_CARROT, PICKLED_GREEN_RADISH,
+            SALTED_PORK, SALTED_FISH,
             // 调料
             SALT, SOY_PASTE, CHILI_SAUCE, SOY_SAUCE, VINEGAR, SOUR_WATER, WHITE_VINEGAR,
-            FISH_SAUCE, SHRIMP_PASTE, CHILI_OIL, PEANUT_BUTTER, COOKING_OIL,
+            FISH_SAUCE, SHRIMP_PASTE, CHILI_OIL, PEANUT_BUTTER, COOKING_OIL, ANIMAL_OIL,
             // 酿造原料
             SOY_PASTE_CHUNK, SOY_RESIDUE,
             // 主食与半成品
             WATER_DOUGH, BUCKWHEAT_NOODLES, DRIED_TOFU, TOFU, SWEET_POTATO_STARCH,
-            VERMICELLI, LA_PI, BEAN_SPROUTS, SOUR_CORN_KERNELS, ROASTED_PEANUTS,
+            VERMICELLI, LA_PI, CRACKLINGS, COLD_NOODLE_SHEET, BEAN_SPROUTS, SOUR_CORN_KERNELS, ROASTED_PEANUTS,
             CORN_STALK,
             // 厨具与容器
-            LARGE_BASIN, GRILL_RACK,
+            LARGE_BASIN, GRILL_RACK, BRASS_BOWL, ANIMAL_OIL_BLOCK_ITEM,
             // 方块
             UNFIRED_VAT_BLANK, VAT
     );
@@ -315,25 +362,27 @@ public class ModItems {
      */
     public static final List<Supplier<? extends Item>> DISH_TAB_ITEMS = List.of(
             // 饮品
-            SOY_MILK,
+            SOY_MILK, KVASS,
             // 油腻（吃多了腻，给油腻效果）
             OLD_STYLE_GUO_BAO_ROU, NEW_STYLE_GUO_BAO_ROU, ORANGE_GUO_BAO_ROU, LIU_ROU_DUAN,
             DI_SAN_XIAN, HONG_SHAO_PAI_GU, DI_GUO_JI, DI_GUO_PAI_GU, SHA_ZHU_CAI,
             JIANG_DA_GU, JIANG_NIU_ROU, BRAISED_PORK_HOCK, BRAISED_PORK_STRIPS,
-            BA_SI_TU_DOU, XUN_JIANG_PIN_PAN,
-            TU_DOU_BING, YU_MI_LAO, XIAN_YU_BING_ZI,
+            BA_SI_TU_DOU, XUN_JIANG_PIN_PAN, SNOWY_BEAN_PASTE, CANDIED_PEANUTS, GRILLED_OIL_EDGE,
+            TU_DOU_BING, YU_MI_LAO, XIAN_YU_BING_ZI, KIMCHI_PANCAKE,
             // 清爽（给爽口效果）
             SUAN_CAI_CHAO_FEN_TIAO, JIAN_JIAO_GAN_DOU_FU, BAI_CAI_DOU_FU_DUN_FEN_TIAO,
             LA_BAI_CAI_TANG_FAN, SUAN_HUANG_GUA_CHAO_ROU_SI, LIANG_BAN_XIAN_CAI, LIANG_BAN_HUA_CAI,
             JIA_XIAN_HUANG_GUA_PAO_CAI, ZHAN_JIANG_CAI, MING_TAI_YU_SI, BUCKWHEAT_COLD_NOODLES,
             SOUR_TANGZI, CHA_ZI_ZHOU, SWEET_POTATO_PORRIDGE, DA_JIANG_TANG,
+            TIGER_SALAD,
             // 荤素搭配（给滋养效果）
             EGG_SOY_PASTE, SUAN_CAI_DUN_GU_TOU, ZHU_ROU_DUN_FEN_TIAO, LA_NIU_ROU_TANG_FAN,
             LA_BAI_CAI_CHAO_FAN, XIA_JIANG_CHAO_JI_DAN, XIA_JIANG_DUN_DOU_FU, HAI_XIAN_DOU_FU_TANG,
             JIANG_BAN_LA_PI, CONG_SHAO_HAI_SHEN, HAI_SHEN_DOU_FU_TANG, LA_ROU_DUN_DOU_JIAO, DA_FENG_SHOU,
             DE_MO_LI_DUN_YU, SU_BO_TANG, SUAN_CAI_HAI_XIAN_GUO, SHEN_JI_TANG, XIAO_JI_DUN_MO_GU,
+            BIBIMBAP, GRILLED_COLD_NOODLES,
             // 不需要带餐具（直接拿在手里吃）
-            BAKED_SWEET_POTATO, DA_FAN_BAO, NIAN_DOU_BAO, GRILLED_CHICKEN_FRAME,
+            BAKED_SWEET_POTATO, DA_FAN_BAO, NIAN_DOU_BAO, GRILLED_CHICKEN_FRAME, GRILLED_CORN,
             // 饺子（一碟一碟的）
             SUAN_CAI_JIAO_ZI, XIA_REN_ZHU_ROU_XIAN_SHUI_JIAO, SAN_XIAN_XIAN_SHUI_JIAO
     );
@@ -362,6 +411,18 @@ public class ModItems {
                         .craftRemainder(Items.GLASS_BOTTLE)
                         .food(steakFood().build())
                         .durability(SeasoningBottleItem.CAPACITY_MB));
+    }
+
+    /**
+     * 玻璃瓶装的**饮品**：喝完返还空玻璃瓶，但**不带耐久条** —— 它不像调料瓶那样按 mB 记账，
+     * 也没有「还能用几次」的概念，一瓶就是一瓶。
+     *
+     * 液面颜色照样由 {@link BottleColors} 决定（模型用的是原版药水那两层贴图）。
+     */
+    private static DeferredItem<Item> bottledDrink(String id) {
+        return ITEMS.registerItem(id, Item::new, new Item.Properties()
+                .craftRemainder(Items.GLASS_BOTTLE)
+                .food(steakFood().usingConvertsTo(Items.GLASS_BOTTLE).build()));
     }
 
     /**
@@ -409,6 +470,19 @@ public class ModItems {
         return ITEMS.register(id, () -> new Item(new Item.Properties()
                 .craftRemainder(LARGE_BASIN.get())
                 .food(steakFood().usingConvertsTo(LARGE_BASIN.get()).build())));
+    }
+
+    /**
+     * 用黄铜碗盛装的料理 —— 目前是**朝鲜族菜**的辨识方式：
+     * 辣白菜豆腐汤、辣白菜炒饭、辣牛肉汤、大酱汤、参鸡汤、荞麦冷面、明太鱼丝、拌饭、辣白菜饼都用它。
+     *
+     * 和大脸盆一样：吃完返还黄铜碗，作为食材放进炖锅时也会把空碗弹出。
+     * 同样要拖到物品注册事件里现做，静态初始化阶段取不到 BRASS_BOWL 的实例。
+     */
+    private static DeferredItem<Item> brassBowlFood(String id) {
+        return ITEMS.register(id, () -> new Item(new Item.Properties()
+                .craftRemainder(BRASS_BOWL.get())
+                .food(steakFood().usingConvertsTo(BRASS_BOWL.get()).build())));
     }
 
     private static FoodProperties.Builder steakFood() {
