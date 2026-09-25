@@ -3,6 +3,7 @@
   "experience": 0.35,
   "ingredients": [
     { "item": "minecraft:sugar" },
+    { "item": "dongbei_delight:roasted_peanuts" },
     { "item": "dongbei_delight:roasted_peanuts" }
   ],
   "recipe_book_tab": "misc",

@@ -56,6 +56,14 @@ public class VatBlockEntity extends BlockEntity implements IFluidHandler {
     private int shrimpPasteMb;
     /** 格瓦斯剩余量（mB） */
     private int kvassMb;
+    /**
+     * 缸里的**清水**（mB，一层 = 1000 mB）。
+     *
+     * <p>以前清水直接用方块状态的水位记，而酸引水又会按 mB 折算回同一个水位 ——
+     * 两者混用一个字段，才会出现"倒一瓶酸引水当一层水腌菜、腌完水翻倍"这类问题。
+     * 现在清水单独记账，水位只是"显示值" = ceil((清水 + 酸引水) / 1000)。
+     */
+    private int waterMb;
     private VatRecipes.Kind kind = VatRecipes.Kind.NONE;
 
     public VatBlockEntity(BlockPos pos, BlockState state) {
@@ -66,6 +74,11 @@ public class VatBlockEntity extends BlockEntity implements IFluidHandler {
 
     public VatRecipes.Kind kind() {
         return this.kind;
+    }
+
+    /** 这一缸是不是已经做完（记在方块状态上，因为渲染 / Jade 都要看它） */
+    public boolean isFermented() {
+        return this.getBlockState().getValue(Vat.FERMENTED);
     }
 
     public boolean isEmpty() {
@@ -106,31 +119,6 @@ public class VatBlockEntity extends BlockEntity implements IFluidHandler {
         return countOf(ModItems.FISH_SAUCE.get()) + countOf(ModItems.SHRIMP_PASTE.get());
     }
 
-    /** 取辣白菜时把用掉的调料清掉，返回要返还的空容器（辣椒酱还碗，鱼露 / 虾酱还玻璃瓶） */
-    public List<ItemStack> consumeSeasonings() {
-        List<ItemStack> refunds = new ArrayList<>();
-        boolean changed = false;
-        for (int i = 0; i < MAX_ENTRIES; i++) {
-            ItemStack stack = this.contents.get(i);
-            if (stack.isEmpty()) {
-                continue;
-            }
-            if (stack.is(ModItems.FISH_SAUCE.get()) || stack.is(ModItems.SHRIMP_PASTE.get())) {
-                this.contents.set(i, ItemStack.EMPTY);
-                refunds.add(new ItemStack(net.minecraft.world.item.Items.GLASS_BOTTLE));
-                changed = true;
-            } else if (stack.is(ModItems.CHILI_SAUCE.get())) {
-                this.contents.set(i, ItemStack.EMPTY);
-                refunds.add(new ItemStack(net.minecraft.world.item.Items.BOWL));
-                changed = true;
-            }
-        }
-        if (changed) {
-            this.sync();
-        }
-        return refunds;
-    }
-
     /** 缸里的酱渣数量 */
     public int residueCount() {
         return countOf(ModItems.SOY_RESIDUE.get());
@@ -146,25 +134,6 @@ public class VatBlockEntity extends BlockEntity implements IFluidHandler {
         return this.pasteMb > 0 || this.soySauceMb > 0 || this.vinegarMb > 0
                 || this.sourWaterMb > 0 || this.whiteVinegarMb > 0
                 || this.fishSauceMb > 0 || this.shrimpPasteMb > 0 || this.kvassMb > 0;
-    }
-
-    /** 把已经用掉的盐清掉（腌制完成后盐就被吸收了） */
-    public void consumeSalt() {
-        removeAllMatching(stack -> stack.is(com.gunmu.dongbei_delight.item.ModItems.SALT.get()));
-    }
-
-    public void removeAllMatching(Predicate<ItemStack> filter) {
-        boolean changed = false;
-        for (int i = 0; i < MAX_ENTRIES; i++) {
-            ItemStack stack = this.contents.get(i);
-            if (!stack.isEmpty() && filter.test(stack)) {
-                this.contents.set(i, ItemStack.EMPTY);
-                changed = true;
-            }
-        }
-        if (changed) {
-            this.sync();
-        }
     }
 
     /**
@@ -214,6 +183,20 @@ public class VatBlockEntity extends BlockEntity implements IFluidHandler {
         return n;
     }
 
+    /**
+     * 缸里**物理上存在的**所有内容物的快照 —— 不过滤"溶在水里的盐"。
+     * 完成时按配方处理每一格、取货时清掉调料，用的都是这一份。
+     */
+    public List<ItemStack> contentSnapshot() {
+        List<ItemStack> list = new ArrayList<>();
+        for (ItemStack stack : this.contents) {
+            if (!stack.isEmpty()) {
+                list.add(stack.copyWithCount(1));
+            }
+        }
+        return list;
+    }
+
     public int countOf(Item item) {
         return count(stack -> stack.is(item));
     }
@@ -236,6 +219,11 @@ public class VatBlockEntity extends BlockEntity implements IFluidHandler {
 
     public boolean isCovered() {
         return !this.cover.isEmpty();
+    }
+
+    /** 缸上蒙的是农夫乐事的粗布毯（酿醋 / 发豆芽 / 格瓦斯用），而不是羊毛地毯（大酱 / 酱油用） */
+    public boolean isClothCover() {
+        return !this.cover.isEmpty() && Vat.isClothRug(this.cover);
     }
 
     public ItemStack cover() {
@@ -353,8 +341,17 @@ public class VatBlockEntity extends BlockEntity implements IFluidHandler {
         return false;
     }
 
-    public boolean removeOneOf(Item item) {
-        return removeOneMatching(stack -> stack.is(item));
+    /** 把一份符合条件的内容物换成另一样东西（完成时"酱块→酱渣"这类变化用） */
+    public boolean replaceOneMatching(Predicate<ItemStack> filter, ItemStack replacement) {
+        for (int i = 0; i < MAX_ENTRIES; i++) {
+            ItemStack stack = this.contents.get(i);
+            if (!stack.isEmpty() && filter.test(stack)) {
+                this.contents.set(i, replacement.copyWithCount(1));
+                this.sync();
+                return true;
+            }
+        }
+        return false;
     }
 
     public void setPress(ItemStack stack) {
@@ -381,28 +378,10 @@ public class VatBlockEntity extends BlockEntity implements IFluidHandler {
         return stack;
     }
 
-    /** 直接按份数灌满（发酵完成时用），1 份 = 250 mB */
-    public void setPaste(int servings) {
-        this.pasteMb = Math.max(0, servings) * VatRecipes.SERVING_MB;
-        this.sync();
-    }
-
-    /** 直接按份数灌满（发酵完成时用），1 份 = 250 mB */
-    public void setSoySauce(int servings) {
-        this.soySauceMb = Math.max(0, servings) * VatRecipes.SERVING_MB;
-        this.sync();
-    }
-
-    /** 直接按份数灌满（发酵完成时用），1 份 = 250 mB */
-    public void setVinegar(int servings) {
-        this.vinegarMb = Math.max(0, servings) * VatRecipes.SERVING_MB;
-        this.sync();
-    }
-
     /** 泡菜腌好了：把缸里的水等量换算成酸引水（一层水 = 1000 mB） */
     public void setSourWaterMb(int mb) {
         this.sourWaterMb = Math.max(0, mb);
-        this.refreshSourWaterLevel();
+        this.refreshLiquidLevel();
         this.sync();
     }
 
@@ -410,114 +389,100 @@ public class VatBlockEntity extends BlockEntity implements IFluidHandler {
     public void addSourWater(int mb) {
         if (mb > 0) {
             this.sourWaterMb += mb;
-            this.refreshSourWaterLevel();
+            this.refreshLiquidLevel();
             this.sync();
         }
     }
 
-    /** 直接按份数灌满（发酵完成时用），1 份 = 250 mB */
-    public void setWhiteVinegar(int servings) {
-        this.whiteVinegarMb = Math.max(0, servings) * VatRecipes.SERVING_MB;
+    /** 缸里的清水（mB） */
+    public int waterMb() {
+        return this.waterMb;
+    }
+
+    /** 缸里的清水有几层（一层 = 1000 mB）—— 配方判定要用的就是它 */
+    public int waterLayers() {
+        return this.waterMb / VatRecipes.WATER_MB_PER_LEVEL;
+    }
+
+    /** 直接设置清水量（mB） */
+    public void setWaterMb(int mb) {
+        this.waterMb = Math.max(0, mb);
+        this.refreshLiquidLevel();
         this.sync();
     }
 
-    /** 鱼露发酵完成：只出很少的量 */
-    public void setFishSauce(int servings) {
-        this.fishSauceMb = Math.max(0, servings) * VatRecipes.SERVING_MB;
+    /** 往缸里加水（水桶，一桶 1000 mB） */
+    public void addWater(int mb) {
+        if (mb > 0) {
+            this.waterMb += mb;
+            this.refreshLiquidLevel();
+            this.sync();
+        }
+    }
+
+    /**
+     * 往缸里加成品液体（发酵完成时用）。
+     *
+     * <p>这是**通用**入口：配方里写的是 {@code product(PASTE, 2500)}、{@code product(SOUR_WATER, 1000/层)}，
+     * 至于这笔账记到哪个字段，由这里按液体种类决定。新增液体只要在
+     * {@link com.gunmu.dongbei_delight.crafting.VatRecipe.Fluid} 里加一项、在这里加一行。
+     */
+    public void addProduct(com.gunmu.dongbei_delight.crafting.VatRecipe.Fluid fluid, int mb) {
+        if (mb <= 0) {
+            return;
+        }
+        this.setProductMb(fluid, this.productMb(fluid) + mb);
+    }
+
+    /** 缸里某种成品液体还剩多少 mB */
+    public int productMb(com.gunmu.dongbei_delight.crafting.VatRecipe.Fluid fluid) {
+        return switch (fluid) {
+            case WATER -> this.waterMb;
+            case SOUR_WATER -> this.sourWaterMb;
+            case PASTE -> this.pasteMb;
+            case SOY_SAUCE -> this.soySauceMb;
+            case VINEGAR -> this.vinegarMb;
+            case WHITE_VINEGAR -> this.whiteVinegarMb;
+            case FISH_SAUCE -> this.fishSauceMb;
+            case SHRIMP_PASTE -> this.shrimpPasteMb;
+            case KVASS -> this.kvassMb;
+        };
+    }
+
+    /** 按种类设置成品液体量（清水和酸引水会顺手刷新缸里的液面显示） */
+    public void setProductMb(com.gunmu.dongbei_delight.crafting.VatRecipe.Fluid fluid, int mb) {
+        int amount = Math.max(0, mb);
+        switch (fluid) {
+            case WATER -> {
+                this.waterMb = amount;
+                this.refreshLiquidLevel();
+            }
+            case SOUR_WATER -> {
+                this.sourWaterMb = amount;
+                this.refreshLiquidLevel();
+            }
+            case PASTE -> this.pasteMb = amount;
+            case SOY_SAUCE -> this.soySauceMb = amount;
+            case VINEGAR -> this.vinegarMb = amount;
+            case WHITE_VINEGAR -> this.whiteVinegarMb = amount;
+            case FISH_SAUCE -> this.fishSauceMb = amount;
+            case SHRIMP_PASTE -> this.shrimpPasteMb = amount;
+            case KVASS -> this.kvassMb = amount;
+        }
         this.sync();
     }
 
-    /** 虾酱发酵完成 */
-    public void setShrimpPaste(int servings) {
-        this.shrimpPasteMb = Math.max(0, servings) * VatRecipes.SERVING_MB;
-        this.sync();
-    }
-
-    /** 格瓦斯发酵完成 */
-    public void setKvass(int servings) {
-        this.kvassMb = Math.max(0, servings) * VatRecipes.SERVING_MB;
-        this.sync();
-    }
-
-    /** 只清空内容物，保留 kind 与成品数量（鱼露 / 虾酱发酵完成后鱼肉都被分解了） */
-    public void consumeAllContents() {
-        for (int i = 0; i < MAX_ENTRIES; i++) {
-            this.contents.set(i, ItemStack.EMPTY);
+    /**
+     * 用容器取走一份（{@link VatRecipes#SERVING_MB} mB）成品液体。
+     * 返回是否取到了（不够一份时把剩下的都取走，和以前一样）。
+     */
+    public boolean takeOneServing(com.gunmu.dongbei_delight.crafting.VatRecipe.Fluid fluid) {
+        int have = this.productMb(fluid);
+        if (have <= 0) {
+            return false;
         }
-        this.sync();
-    }
-
-    /** 用碗盛走一份大酱；不足一份时把剩下的都盛走，返回剩余碗数 */
-    public int takeOnePaste() {
-        if (this.pasteMb > 0) {
-            this.pasteMb = Math.max(0, this.pasteMb - VatRecipes.SERVING_MB);
-            this.sync();
-        }
-        return this.paste();
-    }
-
-    /** 用瓶装走一份酱油；不足一份时把剩下的都装走，返回剩余瓶数 */
-    public int takeOneSoySauce() {
-        if (this.soySauceMb > 0) {
-            this.soySauceMb = Math.max(0, this.soySauceMb - VatRecipes.SERVING_MB);
-            this.sync();
-        }
-        return this.soySauce();
-    }
-
-    /** 用瓶装走一份醋；不足一份时把剩下的都装走，返回剩余瓶数 */
-    public int takeOneVinegar() {
-        if (this.vinegarMb > 0) {
-            this.vinegarMb = Math.max(0, this.vinegarMb - VatRecipes.SERVING_MB);
-            this.sync();
-        }
-        return this.vinegar();
-    }
-
-    /** 用瓶装走一份酸引水 */
-    public int takeOneSourWater() {
-        if (this.sourWaterMb > 0) {
-            this.sourWaterMb = Math.max(0, this.sourWaterMb - VatRecipes.SERVING_MB);
-            this.refreshSourWaterLevel();
-            this.sync();
-        }
-        return this.sourWater();
-    }
-
-    /** 用瓶装走一份白醋 */
-    public int takeOneWhiteVinegar() {
-        if (this.whiteVinegarMb > 0) {
-            this.whiteVinegarMb = Math.max(0, this.whiteVinegarMb - VatRecipes.SERVING_MB);
-            this.sync();
-        }
-        return this.whiteVinegar();
-    }
-
-    /** 用瓶装走一份鱼露 */
-    public int takeOneFishSauce() {
-        if (this.fishSauceMb > 0) {
-            this.fishSauceMb = Math.max(0, this.fishSauceMb - VatRecipes.SERVING_MB);
-            this.sync();
-        }
-        return this.fishSauce();
-    }
-
-    /** 用瓶装走一份虾酱 */
-    public int takeOneShrimpPaste() {
-        if (this.shrimpPasteMb > 0) {
-            this.shrimpPasteMb = Math.max(0, this.shrimpPasteMb - VatRecipes.SERVING_MB);
-            this.sync();
-        }
-        return this.shrimpPaste();
-    }
-
-    /** 用瓶装走一份格瓦斯 */
-    public int takeOneKvass() {
-        if (this.kvassMb > 0) {
-            this.kvassMb = Math.max(0, this.kvassMb - VatRecipes.SERVING_MB);
-            this.sync();
-        }
-        return this.kvass();
+        this.setProductMb(fluid, have - VatRecipes.SERVING_MB);
+        return true;
     }
 
     /**
@@ -525,64 +490,30 @@ public class VatBlockEntity extends BlockEntity implements IFluidHandler {
      * 返回实际抽走的量（缸里不够就有多少给多少）。
      */
     public int drainProduct(VatRecipes.Kind bottled, int want) {
-        if (want <= 0) {
+        com.gunmu.dongbei_delight.crafting.VatRecipe.Fluid fluid = VatRecipes.productOf(bottled);
+        if (want <= 0 || fluid == null) {
             return 0;
         }
-        int moved;
-        switch (bottled) {
-            case SOY_SAUCE -> {
-                moved = Math.min(want, this.soySauceMb);
-                this.soySauceMb -= moved;
-            }
-            case VINEGAR -> {
-                moved = Math.min(want, this.vinegarMb);
-                this.vinegarMb -= moved;
-            }
-            case WHITE_VINEGAR -> {
-                moved = Math.min(want, this.whiteVinegarMb);
-                this.whiteVinegarMb -= moved;
-            }
-            case FISH_SAUCE -> {
-                moved = Math.min(want, this.fishSauceMb);
-                this.fishSauceMb -= moved;
-            }
-            case SHRIMP_PASTE -> {
-                moved = Math.min(want, this.shrimpPasteMb);
-                this.shrimpPasteMb -= moved;
-            }
-            case PICKLE -> {
-                moved = Math.min(want, this.sourWaterMb);
-                this.sourWaterMb -= moved;
-                this.refreshSourWaterLevel();
-            }
-            case KVASS -> {
-                moved = Math.min(want, this.kvassMb);
-                this.kvassMb -= moved;
-            }
-            default -> {
-                return 0;
-            }
-        }
+        int moved = Math.min(want, this.productMb(fluid));
         if (moved > 0) {
-            this.sync();
+            this.setProductMb(fluid, this.productMb(fluid) - moved);
         }
         return moved;
     }
 
     /**
-     * 酸引水按「一层水 = 1000 mB」折算回水位，
-     * 这样用瓶子 / 管道取走一部分之后，缸里的水面也会跟着降。
+     * 把「清水 + 酸引水」折算成方块状态里的水位（一层 = 1000 mB，最多 3 层）。
+     *
+     * <p>水位只是**显示值**：罐子里的液面高度、缸体模型的水面都看它。
+     * 配方判定一律走 {@link #waterLayers()}（只有清水）与 {@link #sourWaterMb()}，不会混淆。
      */
-    private void refreshSourWaterLevel() {
-        if (this.level == null
-                || (this.kind != VatRecipes.Kind.PICKLE
-                        && this.kind != VatRecipes.Kind.SPICY_PICKLE
-                        && this.kind != VatRecipes.Kind.WHITE_VINEGAR)) {
+    private void refreshLiquidLevel() {
+        if (this.level == null) {
             return;
         }
         BlockState state = this.getBlockState();
         int level = Math.min(ModBlockStateProperties.VAT_MAX_WATER,
-                (int) Math.ceil(this.sourWaterMb / (double) VatRecipes.WATER_MB_PER_LEVEL));
+                (int) Math.ceil((this.waterMb + this.sourWaterMb) / (double) VatRecipes.WATER_MB_PER_LEVEL));
         if (state.getValue(Vat.WATER_LEVEL) != level) {
             this.level.setBlock(this.worldPosition, state.setValue(Vat.WATER_LEVEL, level), Block.UPDATE_CLIENTS);
         }
@@ -591,6 +522,9 @@ public class VatBlockEntity extends BlockEntity implements IFluidHandler {
     /**
      * 大酱 / 酱油酿造完成：三块酱块变成酱渣，盐和小麦都被吸收掉。
      * 酱渣会留在缸里，等液体取空后由玩家取出（也可以继续酿醋）。
+     *
+     * <p>正常流程里这一步由 {@code VatBrewing.complete} 按配方里的 {@code Fate} 做掉；
+     * 这个方法只留给**旧存档**补一次转换（那时酱块还是酱块）。
      */
     public void finishBrewing() {
         for (int i = 0; i < MAX_ENTRIES; i++) {
@@ -602,39 +536,6 @@ public class VatBlockEntity extends BlockEntity implements IFluidHandler {
                 this.contents.set(i, new ItemStack(VatRecipes.residue()));
             } else if (stack.is(ModItems.SALT.get()) || stack.is(VatRecipes.wheatInput())) {
                 this.contents.set(i, ItemStack.EMPTY);
-            }
-        }
-        this.sync();
-    }
-
-    /** 醋酿造完成：谷物被消耗掉，酱渣留在缸里 */
-    public void finishVinegar() {
-        for (int i = 0; i < MAX_ENTRIES; i++) {
-            ItemStack stack = this.contents.get(i);
-            if (!stack.isEmpty() && VatRecipes.isVinegarGrain(stack)) {
-                this.contents.set(i, ItemStack.EMPTY);
-            }
-        }
-        this.sync();
-    }
-
-    /** 生豆芽完成：每份黄豆变成一份豆芽 */
-    public void finishSprouting() {
-        for (int i = 0; i < MAX_ENTRIES; i++) {
-            ItemStack stack = this.contents.get(i);
-            if (stack.is(ModItems.SOYBEAN.get())) {
-                this.contents.set(i, new ItemStack(VatRecipes.beanSprouts()));
-            }
-        }
-        this.sync();
-    }
-
-    /** 酸玉米粒发酵完成：每份玉米粒变成一份酸玉米粒 */
-    public void finishSourCorn() {
-        for (int i = 0; i < MAX_ENTRIES; i++) {
-            ItemStack stack = this.contents.get(i);
-            if (stack.is(ModItems.CORN_SEEDS.get())) {
-                this.contents.set(i, new ItemStack(VatRecipes.sourCornKernels()));
             }
         }
         this.sync();
@@ -655,6 +556,7 @@ public class VatBlockEntity extends BlockEntity implements IFluidHandler {
         this.fishSauceMb = 0;
         this.shrimpPasteMb = 0;
         this.kvassMb = 0;
+        this.waterMb = 0;
         this.sync();
     }
 
@@ -759,7 +661,7 @@ public class VatBlockEntity extends BlockEntity implements IFluidHandler {
                 case SHRIMP_PASTE -> this.shrimpPasteMb -= drained;
                 case PICKLE, SPICY_PICKLE -> {
                     this.sourWaterMb -= drained;
-                    this.refreshSourWaterLevel();
+                    this.refreshLiquidLevel();
                 }
                 default -> {
                 }
@@ -791,6 +693,7 @@ public class VatBlockEntity extends BlockEntity implements IFluidHandler {
         tag.putInt("fish_sauce_mb", this.fishSauceMb);
         tag.putInt("shrimp_paste_mb", this.shrimpPasteMb);
         tag.putInt("kvass_mb", this.kvassMb);
+        tag.putInt("water_mb", this.waterMb);
         tag.putString("kind", this.kind.name());
     }
 
@@ -810,7 +713,9 @@ public class VatBlockEntity extends BlockEntity implements IFluidHandler {
         this.cover = tag.contains("cover")
                 ? ItemStack.parse(registries, tag.getCompound("cover")).orElse(ItemStack.EMPTY)
                 : ItemStack.EMPTY;
-        this.kind = VatRecipes.Kind.valueOf(tag.getString("kind"));
+        // 旧存档里可能记着已经删掉的加工类型（比如早已废弃的「水面团」DOUGH）：
+        // 认不出来就当成空缸，绝不因为一条老数据把存档读崩
+        this.kind = parseKind(tag.getString("kind"));
 
         // 旧存档里存的是份数（paste / soy_sauce），换算成 mB；
         // 更旧的存档没有 soy_sauce 字段：已经在酿酱油的缸按满缸 10 瓶补上，避免卡住取不出来。
@@ -833,6 +738,14 @@ public class VatBlockEntity extends BlockEntity implements IFluidHandler {
         this.fishSauceMb = Math.max(0, tag.getInt("fish_sauce_mb"));
         this.shrimpPasteMb = Math.max(0, tag.getInt("shrimp_paste_mb"));
         this.kvassMb = Math.max(0, tag.getInt("kvass_mb"));
+        if (tag.contains("water_mb")) {
+            this.waterMb = Math.max(0, tag.getInt("water_mb"));
+        } else if (this.level != null) {
+            // 旧存档没有 water_mb：那时水位字段既代表清水也代表酸引水。
+            // 缸里有酸引水就说明那层水已经转化过（清水记 0），否则按水位补成清水。
+            int level = this.getBlockState().getValue(Vat.WATER_LEVEL);
+            this.waterMb = this.sourWaterMb > 0 ? 0 : level * VatRecipes.WATER_MB_PER_LEVEL;
+        }
         // 兼容一种历史状态：酿好的大酱被加了小麦，kind 变成了酱油、份数却还记在大酱里，
         // 结果这缸酱看起来是空的。这里把它救成同等份数的酱油。
         if (this.kind == VatRecipes.Kind.SOY_SAUCE && this.soySauceMb <= 0 && this.pasteMb > 0) {
@@ -851,6 +764,16 @@ public class VatBlockEntity extends BlockEntity implements IFluidHandler {
     @Override
     public CompoundTag getUpdateTag(HolderLookup.Provider registries) {
         return this.saveWithoutMetadata(registries);
+    }
+
+    /** 把存档里的加工类型名字转回枚举，认不出来（旧版本删掉的类型）就当空缸 */
+    private static VatRecipes.Kind parseKind(String name) {
+        for (VatRecipes.Kind kind : VatRecipes.Kind.values()) {
+            if (kind.name().equals(name)) {
+                return kind;
+            }
+        }
+        return VatRecipes.Kind.NONE;
     }
 
     @Override

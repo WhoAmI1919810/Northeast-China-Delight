@@ -1,6 +1,6 @@
 {
   "type": "farmersdelight:cooking",
-  "container": { "count": 1, "id": "dongbei_delight:large_basin" },
+  "container": { "count": 1, "id": "minecraft:bowl" },
   "experience": 1.0,
   "ingredients": [
     { "tag": "c:foods/raw_fish" },

@@ -1,0 +1,96 @@
+{
+  "type": "minecraft:block",
+  "pools": [
+    {
+      "rolls": 1.0,
+      "conditions": [
+        {
+          "condition": "minecraft:block_state_property",
+          "block": "dongbei_delight:di_guo_ji_pot",
+          "properties": {
+            "servings": "1"
+          }
+        }
+      ],
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "dongbei_delight:di_guo_ji"
+        }
+      ]
+    },
+    {
+      "rolls": 1.0,
+      "conditions": [
+        {
+          "condition": "minecraft:block_state_property",
+          "block": "dongbei_delight:di_guo_ji_pot",
+          "properties": {
+            "servings": "2"
+          }
+        }
+      ],
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "dongbei_delight:di_guo_ji"
+        }
+      ]
+    },
+    {
+      "rolls": 1.0,
+      "conditions": [
+        {
+          "condition": "minecraft:block_state_property",
+          "block": "dongbei_delight:di_guo_ji_pot",
+          "properties": {
+            "servings": "3"
+          }
+        }
+      ],
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "dongbei_delight:di_guo_ji"
+        }
+      ]
+    },
+    {
+      "rolls": 1.0,
+      "conditions": [
+        {
+          "condition": "minecraft:block_state_property",
+          "block": "dongbei_delight:di_guo_ji_pot",
+          "properties": {
+            "servings": "4"
+          }
+        }
+      ],
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "dongbei_delight:di_guo_ji"
+        }
+      ]
+    },
+    {
+      "rolls": 1.0,
+      "conditions": [
+        {
+          "condition": "minecraft:block_state_property",
+          "block": "dongbei_delight:di_guo_ji_pot",
+          "properties": {
+            "servings": "0"
+          }
+        }
+      ],
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "dongbei_delight:large_basin"
+        }
+      ]
+    }
+  ],
+  "random_sequence": "dongbei_delight:blocks/di_guo_ji_pot"
+}

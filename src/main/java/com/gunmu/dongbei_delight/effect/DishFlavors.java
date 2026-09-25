@@ -76,9 +76,10 @@ public final class DishFlavors {
         put(map, Flavor.GREASY, 5, "tu_dou_bing");
         put(map, Flavor.GREASY, 3, "di_san_xian");
         put(map, Flavor.GREASY, 3, "nian_dou_bao");
-        put(map, Flavor.GREASY, 6, "sha_zhu_cai");
-        put(map, Flavor.GREASY, 4, "di_guo_ji");
-        put(map, Flavor.GREASY, 4, "di_guo_pai_gu");
+        // 大盆菜：效果挂在**碗装的那一份**上（盆本身是方块物品，不能吃、没有效果）
+        put(map, Flavor.GREASY, 6, "sha_zhu_cai_bowl");
+        put(map, Flavor.GREASY, 4, "di_guo_ji_bowl");
+        put(map, Flavor.GREASY, 4, "di_guo_pai_gu_bowl");
         put(map, Flavor.GREASY, 2, "xian_yu_bing_zi");
         put(map, Flavor.GREASY, 4, "kimchi_pancake");
         put(map, Flavor.GREASY, 5, "snowy_bean_paste");
@@ -108,9 +109,9 @@ public final class DishFlavors {
         // ===== 荤素搭配、不会腻：吃完给农夫乐事的滋养 =====
         put(map, Flavor.BALANCED, 3, "egg_soy_paste");
         put(map, Flavor.BALANCED, 4, "da_fan_bao");
-        put(map, Flavor.BALANCED, 3, "suan_cai_dun_gu_tou");
-        put(map, Flavor.BALANCED, 4, "zhu_rou_dun_fen_tiao");
-        put(map, Flavor.BALANCED, 6, "da_feng_shou");
+        put(map, Flavor.BALANCED, 3, "suan_cai_dun_gu_tou_bowl");
+        put(map, Flavor.BALANCED, 4, "zhu_rou_dun_fen_tiao_bowl");
+        put(map, Flavor.BALANCED, 6, "da_feng_shou_bowl");
         put(map, Flavor.BALANCED, 5, "la_niu_rou_tang_fan");
         put(map, Flavor.BALANCED, 4, "la_bai_cai_chao_fan");
         put(map, Flavor.BALANCED, 4, "xia_ren_zhu_rou_xian_shui_jiao");
@@ -127,7 +128,7 @@ public final class DishFlavors {
         put(map, Flavor.BALANCED, 6, "su_bo_tang");
         put(map, Flavor.BALANCED, 6, "suan_cai_hai_xian_guo");
         put(map, Flavor.BALANCED, 5, "shen_ji_tang");
-        put(map, Flavor.BALANCED, 4, "xiao_ji_dun_mo_gu");
+        put(map, Flavor.BALANCED, 4, "xiao_ji_dun_mo_gu_bowl");
         put(map, Flavor.BALANCED, 6, "bibimbap");
         put(map, Flavor.BALANCED, 3, "grilled_cold_noodles");
 

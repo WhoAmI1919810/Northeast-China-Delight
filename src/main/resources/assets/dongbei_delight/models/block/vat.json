@@ -40,7 +40,9 @@
             "faces": {
                 "up":    { "texture": "#top", "cullface": "up" },
                 "north": { "texture": "#side", "cullface": "north" },
-                "south": { "texture": "#side" }
+                "south": { "texture": "#side" },
+                "west":  { "texture": "#side" },
+                "east":  { "texture": "#side" }
             }
         },
         {   "from": [ 2, 0, 14 ],
@@ -48,7 +50,9 @@
             "faces": {
                 "up":    { "texture": "#top", "cullface": "up" },
                 "north": { "texture": "#side" },
-                "south": { "texture": "#side", "cullface": "south" }
+                "south": { "texture": "#side", "cullface": "south" },
+                "west":  { "texture": "#side" },
+                "east":  { "texture": "#side" }
             }
         }
     ]

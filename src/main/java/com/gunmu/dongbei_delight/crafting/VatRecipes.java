@@ -9,8 +9,11 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.function.Predicate;
 
 /**
  * 大缸的全部规则集中在这里。
@@ -51,8 +54,6 @@ public final class VatRecipes {
         BEAN_SPROUTS,
         /** 酸玉米粒：每 1 层水配 2 份玉米粒，蒙粗布毯发酵 */
         SOUR_CORN,
-        /** 水面团：碎玉米粒泡水 */
-        DOUGH,
         /** 格瓦斯：6 个面包 + 3 份水（满水），蒙粗布毯发酵成瓶装饮料 */
         KVASS
     }
@@ -61,8 +62,10 @@ public final class VatRecipes {
     public static final int VEGETABLES_PER_WATER = 2;
     /** 每一份水配几份盐 */
     public static final int SALT_PER_WATER = 1;
-    /** 一缸最多放几块肉 */
-    public static final int MAX_MEATS = 5;
+    /** 一缸最多腌几块猪肉：缸里一层放两块、一共三层，正好装满 */
+    public static final int MAX_MEATS = 6;
+    /** 一缸最多腌几条咸鱼：和腊肉一样，一层两条 × 三层 = 6 条 */
+    public static final int MAX_SALTED_FISH = 6;
     /** 一缸大酱能装几碗 */
     public static final int PASTE_SERVINGS = 10;
     /** 一缸酱油能装几瓶 */
@@ -128,8 +131,6 @@ public final class VatRecipes {
     public static final int PICKLE_SECONDS_PER_LAYER = 2;
     /** 辣白菜：每层水位的发酵秒数 */
     public static final int SPICY_PICKLE_SECONDS_PER_LAYER = 2;
-    /** 水面团：每层水位的发酵秒数 */
-    public static final int DOUGH_SECONDS_PER_LAYER = 2;
     /** 咸腊肉 */
     public static final int MEAT_SECONDS = 2;
     /** 咸鱼 */
@@ -155,37 +156,6 @@ public final class VatRecipes {
 
     /** 一秒钟多少游戏刻 */
     public static final int TICKS_PER_SECOND = 20;
-
-    /**
-     * 某个配方要发酵多少秒。
-     *
-     * @param waterLevel 缸里的水位层数（0~3），按水位配比的配方会乘上它
-     */
-    public static int processSeconds(Kind kind, int waterLevel) {
-        int layers = Math.max(1, waterLevel);
-        return switch (kind) {
-            case PICKLE -> PICKLE_SECONDS_PER_LAYER * layers;
-            case SPICY_PICKLE -> SPICY_PICKLE_SECONDS_PER_LAYER * layers;
-            case DOUGH -> DOUGH_SECONDS_PER_LAYER * layers;
-            case MEAT -> MEAT_SECONDS;
-            case SALTED_FISH -> SALTED_FISH_SECONDS;
-            case PASTE -> PASTE_SECONDS;
-            case SOY_SAUCE -> SOY_SAUCE_SECONDS;
-            case VINEGAR -> VINEGAR_SECONDS;
-            case WHITE_VINEGAR -> WHITE_VINEGAR_SECONDS;
-            case FISH_SAUCE -> FISH_SAUCE_SECONDS;
-            case SHRIMP_PASTE -> SHRIMP_PASTE_SECONDS;
-            case BEAN_SPROUTS -> BEAN_SPROUTS_SECONDS;
-            case SOUR_CORN -> SOUR_CORN_SECONDS;
-            case KVASS -> KVASS_SECONDS;
-            case NONE -> 0;
-        };
-    }
-
-    /** 同上，换算成游戏刻（至少 1 刻） */
-    public static int processTicks(Kind kind, int waterLevel) {
-        return Math.max(1, processSeconds(kind, waterLevel) * TICKS_PER_SECOND);
-    }
 
     private static Map<Item, Item> pickles;
 
@@ -220,13 +190,9 @@ public final class VatRecipes {
         return ModItems.SALTED_FISH.get();
     }
 
-    /** 水面团 */
-    public static Item doughInput() {
+    /** 酸玉米粒用的玉米粒（旧的水面团配方已经删掉，这里只服务玉米粒这一条线） */
+    public static Item cornKernels() {
         return ModItems.CORN_SEEDS.get();
-    }
-
-    public static Item doughResult() {
-        return ModItems.WATER_DOUGH.get();
     }
 
     /** 酿醋用的谷物：玉米粒或荞麦 */
@@ -245,6 +211,233 @@ public final class VatRecipes {
     /** 大酱 / 酱油酿好后留在缸里的酱渣 */
     public static Item residue() {
         return ModItems.SOY_RESIDUE.get();
+    }
+
+    // ==========================================================================
+    //  配方注册表 —— **改配方 / 加配方只需要动这一张表**
+    //  每条配方只说四件事：要什么液体、要哪些材料（数量规则）、要什么封口、完成后变什么。
+    //  大缸的交互（VatBrewing）和 JEI 页面都从这张表生成，不会再出现"三处各写一遍"。
+    // ==========================================================================
+
+    private static List<VatRecipe> registry;
+    private static Map<Kind, VatRecipe> byKind;
+
+    /** 全部大缸配方（按 priority 从高到低排序，匹配时取第一条满足的） */
+    public static List<VatRecipe> all() {
+        if (registry == null) {
+            registry = buildRegistry();
+        }
+        return registry;
+    }
+
+    /**
+     * 大缸现在记着的 {@link Kind} 对应的那条配方 —— 取货时要用它来判断"缸里哪些东西能拿出来"。
+     * 没有任何配方对应（比如 {@code NONE}）时返回 null。
+     */
+    @Nullable
+    public static VatRecipe recipeOf(Kind kind) {
+        if (byKind == null) {
+            Map<Kind, VatRecipe> map = new java.util.EnumMap<>(Kind.class);
+            for (VatRecipe recipe : all()) {
+                map.putIfAbsent(recipe.kind(), recipe);
+            }
+            byKind = map;
+        }
+        return byKind.get(kind);
+    }
+
+    private static Predicate<ItemStack> salt() {
+        return stack -> stack.is(ModItems.SALT.get());
+    }
+
+    private static Predicate<ItemStack> of(Item item) {
+        return stack -> stack.is(item);
+    }
+
+    /** 泡菜：投入的蔬菜 → 腌制成品；认不出来的原样返回 */
+    private static VatRecipe.Converter pickleConverter() {
+        return stack -> {
+            Item result = pickles().get(stack.getItem());
+            return result == null ? stack : new ItemStack(result);
+        };
+    }
+
+    /**
+     * 辣白菜：大白菜 → 辣白菜，混进去的其它蔬菜还是按普通泡菜算。
+     * 这就是"点大白菜给辣白菜、点黄瓜给酸黄瓜"的全部规则。
+     */
+    private static VatRecipe.Converter spicyPickleConverter() {
+        return stack -> {
+            if (stack.is(ModItems.NAPA_CABBAGE.get())) {
+                return new ItemStack(spicyCabbage());
+            }
+            Item result = pickles().get(stack.getItem());
+            return result == null ? stack : new ItemStack(result);
+        };
+    }
+
+    private static List<VatRecipe> buildRegistry() {
+        List<VatRecipe> list = new ArrayList<>();
+        VatRecipe.Seal press = VatRecipe.Seal.PRESS;
+        VatRecipe.Seal cloth = VatRecipe.Seal.CLOTH;
+        VatRecipe.Seal carpet = VatRecipe.Seal.CARPET;
+
+        // ----- 泡菜：水 1~3 层 + 每层 2 份菜 + 每层 1 份盐，压缸石；腌好后水等量变酸引水 -----
+        list.add(VatRecipe.of(Kind.PICKLE, "pickle")
+                .priority(10).seal(press)
+                .water(1, 3, VatRecipe.LiquidAfter.KEEP)
+                .waterBecomesSourWater()
+                .seconds(PICKLE_SECONDS_PER_LAYER).perLayerSeconds()
+                .slot(VatRecipe.Slot.keep(VatRecipes::isPickleIngredient,
+                        VatRecipe.BoundsRule.minWithPerLayerMax(1, VEGETABLES_PER_WATER),
+                        pickleConverter()))
+                .slot(VatRecipe.Slot.absorb(salt(),
+                        VatRecipe.BoundsRule.perLayerExact(SALT_PER_WATER)).seasoning())
+                .build());
+
+        // ----- 辣白菜：泡菜的做法 + 1 份辣椒酱 + 1~2 份鱼露/虾酱，压缸石 -----
+        list.add(VatRecipe.of(Kind.SPICY_PICKLE, "spicy_pickle")
+                .priority(20).seal(press)
+                .water(1, 3, VatRecipe.LiquidAfter.KEEP)
+                .waterBecomesSourWater()
+                .seconds(SPICY_PICKLE_SECONDS_PER_LAYER).perLayerSeconds()
+                .slot(VatRecipe.Slot.keep(VatRecipes::isPickleIngredient,
+                        VatRecipe.BoundsRule.minWithPerLayerMax(1, VEGETABLES_PER_WATER),
+                        spicyPickleConverter()))
+                .slot(VatRecipe.Slot.absorb(salt(),
+                        VatRecipe.BoundsRule.perLayerExact(SALT_PER_WATER)).seasoning())
+                .slot(VatRecipe.Slot.absorb(of(chiliSauce()), VatRecipe.BoundsRule.exact(SPICY_SAUCE_MAX))
+                        .refund(Items.BOWL).seasoning())
+                .slot(VatRecipe.Slot.absorb(
+                        stack -> stack.is(ModItems.FISH_SAUCE.get()) || stack.is(ModItems.SHRIMP_PASTE.get()),
+                        VatRecipe.BoundsRule.minByWater(new int[] { 0, 1, 1, 2 }, SPICY_SEASONING_MAX))
+                        .refund(Items.GLASS_BOTTLE).seasoning())
+                .build());
+
+        // ----- 咸腊肉：肉与盐一比一，最多 6 块，压缸石；取出即咸腊肉 -----
+        list.add(VatRecipe.of(Kind.MEAT, "salted_pork")
+                .priority(10).seal(press)
+                .dry()
+                .seconds(MEAT_SECONDS)
+                .slot(VatRecipe.Slot.keep(of(meatInput()),
+                        VatRecipe.BoundsRule.between(1, MAX_MEATS), VatRecipe.Converter.to(meatResult())))
+                .slot(VatRecipe.Slot.absorb(salt(),
+                        VatRecipe.BoundsRule.sameAs(of(meatInput()), 1)).seasoning())
+                .build());
+
+        // ----- 咸鱼：任意生鱼与盐一比一，最多 6 条，压缸石 -----
+        list.add(VatRecipe.of(Kind.SALTED_FISH, "salted_fish")
+                .priority(10).seal(press)
+                .dry()
+                .seconds(SALTED_FISH_SECONDS)
+                .slot(VatRecipe.Slot.keep(VatRecipes::isRawFish,
+                        VatRecipe.BoundsRule.between(1, MAX_SALTED_FISH),
+                        VatRecipe.Converter.to(saltedFishResult())))
+                .slot(VatRecipe.Slot.absorb(salt(),
+                        VatRecipe.BoundsRule.sameAs(VatRecipes::isRawFish, 1)).seasoning())
+                .build());
+
+        // ----- 大酱：满水 + 3 酱块 + 3 盐，蒙羊毛地毯；酱块变酱渣、出 10 碗大酱 -----
+        list.add(VatRecipe.of(Kind.PASTE, "soy_paste")
+                .priority(10).seal(carpet)
+                .water(3, 3, VatRecipe.LiquidAfter.CLEAR)
+                .product(VatRecipe.Fluid.PASTE, PRODUCT_CAPACITY_MB, false)
+                .seconds(PASTE_SECONDS)
+                .slot(VatRecipe.Slot.convert(of(ModItems.SOY_PASTE_CHUNK.get()),
+                        VatRecipe.BoundsRule.exact(PASTE_CHUNKS), residue()))
+                .slot(VatRecipe.Slot.consume(salt(), VatRecipe.BoundsRule.exact(PASTE_SALT))
+                        .seasoning())
+                .build());
+
+        // ----- 酱油：大酱配方再加 1 份小麦（优先级更高，加了小麦就走这条） -----
+        list.add(VatRecipe.of(Kind.SOY_SAUCE, "soy_sauce")
+                .priority(30).seal(carpet)
+                .water(3, 3, VatRecipe.LiquidAfter.CLEAR)
+                .product(VatRecipe.Fluid.SOY_SAUCE, PRODUCT_CAPACITY_MB, false)
+                .seconds(SOY_SAUCE_SECONDS)
+                .slot(VatRecipe.Slot.convert(of(ModItems.SOY_PASTE_CHUNK.get()),
+                        VatRecipe.BoundsRule.exact(PASTE_CHUNKS), residue()))
+                .slot(VatRecipe.Slot.consume(salt(), VatRecipe.BoundsRule.exact(PASTE_SALT))
+                        .seasoning())
+                .slot(VatRecipe.Slot.consume(of(wheatInput()), VatRecipe.BoundsRule.exact(1))
+                        .seasoning())
+                .build());
+
+        // ----- 醋：3 酱渣 + 3 谷物 + 1~3 层水，蒙粗布毯；材料全消耗，出 10 瓶醋 -----
+        list.add(VatRecipe.of(Kind.VINEGAR, "vinegar")
+                .priority(20).seal(cloth)
+                .water(1, 3, VatRecipe.LiquidAfter.CLEAR)
+                .product(VatRecipe.Fluid.VINEGAR, PRODUCT_CAPACITY_MB, false)
+                .seconds(VINEGAR_SECONDS)
+                .slot(VatRecipe.Slot.consume(of(residue()), VatRecipe.BoundsRule.exact(RESIDUE_COUNT)))
+                .slot(VatRecipe.Slot.consume(VatRecipes::isVinegarGrain,
+                        VatRecipe.BoundsRule.exact(VINEGAR_GRAIN_COUNT)).seasoning())
+                .build());
+
+        // ----- 白醋：3 份酸引水 + 3 谷物，蒙粗布毯；只喝掉要求的那 3 份酸引水 -----
+        list.add(VatRecipe.of(Kind.WHITE_VINEGAR, "white_vinegar")
+                .priority(20).seal(cloth)
+                .dry()
+                .sourWater(SOUR_WATER_MB, VatRecipe.LiquidAfter.DRAIN_REQUIRED)
+                .product(VatRecipe.Fluid.WHITE_VINEGAR, PRODUCT_CAPACITY_MB, false)
+                .seconds(WHITE_VINEGAR_SECONDS)
+                .slot(VatRecipe.Slot.consume(VatRecipes::isVinegarGrain,
+                        VatRecipe.BoundsRule.exact(VINEGAR_GRAIN_COUNT)).seasoning())
+                .build());
+
+        // ----- 鱼露：6 条任意生鱼 + 3 份盐，压缸石；全化掉，只出 1 瓶 -----
+        list.add(VatRecipe.of(Kind.FISH_SAUCE, "fish_sauce")
+                .priority(40).seal(press)
+                .dry()
+                .product(VatRecipe.Fluid.FISH_SAUCE, FISH_SAUCE_SERVINGS * SERVING_MB, false)
+                .seconds(FISH_SAUCE_SECONDS)
+                .slot(VatRecipe.Slot.consume(VatRecipes::isRawFish,
+                        VatRecipe.BoundsRule.exact(FISH_SAUCE_FISH)))
+                .slot(VatRecipe.Slot.consume(salt(), VatRecipe.BoundsRule.exact(FISH_SAUCE_SALT))
+                        .seasoning())
+                .build());
+
+        // ----- 虾酱：6 只大虾 + 3 份盐，压缸石 -----
+        list.add(VatRecipe.of(Kind.SHRIMP_PASTE, "shrimp_paste")
+                .priority(40).seal(press)
+                .dry()
+                .product(VatRecipe.Fluid.SHRIMP_PASTE, SHRIMP_PASTE_SERVINGS * SERVING_MB, false)
+                .seconds(SHRIMP_PASTE_SECONDS)
+                .slot(VatRecipe.Slot.consume(of(ModItems.SHRIMP.get()),
+                        VatRecipe.BoundsRule.exact(SHRIMP_PASTE_SHRIMP)))
+                .slot(VatRecipe.Slot.consume(salt(), VatRecipe.BoundsRule.exact(SHRIMP_PASTE_SALT))
+                        .seasoning())
+                .build());
+
+        // ----- 豆芽：1 层水 + 1~2 份黄豆，蒙粗布毯；一份黄豆出一份豆芽 -----
+        list.add(VatRecipe.of(Kind.BEAN_SPROUTS, "bean_sprouts")
+                .priority(20).seal(cloth)
+                .water(1, 1, VatRecipe.LiquidAfter.CLEAR)
+                .seconds(BEAN_SPROUTS_SECONDS)
+                .slot(VatRecipe.Slot.convert(of(ModItems.SOYBEAN.get()),
+                        VatRecipe.BoundsRule.between(1, SPROUT_SOYBEAN_MAX), beanSprouts()))
+                .build());
+
+        // ----- 酸玉米粒：每层水配 2 份玉米粒，蒙粗布毯；一份玉米粒出一份酸玉米粒 -----
+        list.add(VatRecipe.of(Kind.SOUR_CORN, "sour_corn")
+                .priority(20).seal(cloth)
+                .water(1, 3, VatRecipe.LiquidAfter.CLEAR)
+                .seconds(SOUR_CORN_SECONDS)
+                .slot(VatRecipe.Slot.convert(of(cornKernels()),
+                        VatRecipe.BoundsRule.perLayerExact(SOUR_CORN_PER_WATER), sourCornKernels()))
+                .build());
+
+        // ----- 格瓦斯：满水 + 6 个面包，蒙粗布毯；出 6 瓶 -----
+        list.add(VatRecipe.of(Kind.KVASS, "kvass")
+                .priority(20).seal(cloth)
+                .water(KVASS_WATER_LEVEL, KVASS_WATER_LEVEL, VatRecipe.LiquidAfter.CLEAR)
+                .product(VatRecipe.Fluid.KVASS, KVASS_SERVINGS * SERVING_MB, false)
+                .seconds(KVASS_SECONDS)
+                .slot(VatRecipe.Slot.consume(of(kvassBread()), VatRecipe.BoundsRule.exact(KVASS_BREAD)))
+                .build());
+
+        list.sort((a, b) -> Integer.compare(b.priority(), a.priority()));
+        return List.copyOf(list);
     }
 
     /** 醋瓶 */
@@ -318,27 +511,50 @@ public final class VatRecipes {
         if (input.builtInRegistryHolder().is(RAW_FISH)) {
             return saltedFishResult();
         }
-        if (input == doughInput()) {
-            return doughResult();
-        }
         return null;
     }
 
     /**
+     * 用容器从缸里取液体：一个「一份」= {@link #SERVING_MB} mB，
+     * 大酱用碗盛、其它都用玻璃瓶装。
+     */
+    public record Serving(Item container, Item item) {
+    }
+
+    /** 某种液体用什么容器装、装出来是什么物品 */
+    @Nullable
+    public static Serving servingOf(VatRecipe.Fluid fluid) {
+        return switch (fluid) {
+            case PASTE -> new Serving(Items.BOWL, ModItems.SOY_PASTE.get());
+            case SOY_SAUCE -> new Serving(Items.GLASS_BOTTLE, ModItems.SOY_SAUCE.get());
+            case VINEGAR -> new Serving(Items.GLASS_BOTTLE, ModItems.VINEGAR.get());
+            case WHITE_VINEGAR -> new Serving(Items.GLASS_BOTTLE, ModItems.WHITE_VINEGAR.get());
+            case FISH_SAUCE -> new Serving(Items.GLASS_BOTTLE, ModItems.FISH_SAUCE.get());
+            case SHRIMP_PASTE -> new Serving(Items.GLASS_BOTTLE, ModItems.SHRIMP_PASTE.get());
+            case KVASS -> new Serving(Items.GLASS_BOTTLE, ModItems.KVASS.get());
+            case SOUR_WATER -> new Serving(Items.GLASS_BOTTLE, ModItems.SOUR_WATER.get());
+            case WATER -> null;
+        };
+    }
+
+    /**
+     * 这一缸的成品液体是什么（泡菜缸的成品就是那缸酸引水）。
+     * 存的是"种类"，具体剩多少要看 {@code VatBlockEntity#productMb}。
+     */
+    @Nullable
+    public static VatRecipe.Fluid productOf(Kind kind) {
+        VatRecipe recipe = recipeOf(kind);
+        return recipe == null ? null : recipe.liquid().product();
+    }
+
+    /**
      * 大缸里能装瓶的成品液体 → 对应的瓶子物品。
-     * 大酱是碗装的、植物油不是缸里出的，都返回 null（这些瓶子没法从缸里续）。
+     * 取货、以及"用过的调料瓶右键大缸续上"都用它。
      */
     @Nullable
     public static Item bottleFor(Kind kind) {
-        return switch (kind) {
-            case SOY_SAUCE -> ModItems.SOY_SAUCE.get();
-            case VINEGAR -> ModItems.VINEGAR.get();
-            case WHITE_VINEGAR -> ModItems.WHITE_VINEGAR.get();
-            case FISH_SAUCE -> ModItems.FISH_SAUCE.get();
-            case SHRIMP_PASTE -> ModItems.SHRIMP_PASTE.get();
-            case PICKLE -> ModItems.SOUR_WATER.get();
-            case KVASS -> ModItems.KVASS.get();
-            default -> null;
-        };
+        VatRecipe.Fluid fluid = productOf(kind);
+        Serving serving = fluid == null ? null : servingOf(fluid);
+        return serving == null ? null : serving.item();
     }
 }

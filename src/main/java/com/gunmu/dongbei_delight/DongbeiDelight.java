@@ -175,9 +175,40 @@ public class DongbeiDelight
                             b += (int) ((255 - b) * 0.45F);
                             color = (r << 16) | (g << 8) | b;
                         }
+                        // 缸里泡着的东西会给水染色：辣椒酱发红、酱块发酱色、蔬菜发淡绿 …
+                        if (level != null && pos != null
+                                && level.getBlockEntity(pos) instanceof VatBlockEntity vat) {
+                            float weight = 1.0F;
+                            for (ItemStack content : vat.contents()) {
+                                int tint = com.gunmu.dongbei_delight.client.VatItemShapes.liquidTint(content);
+                                if (tint == 0xFFFFFF) {
+                                    continue;
+                                }
+                                float strength = com.gunmu.dongbei_delight.client.VatItemShapes
+                                        .liquidStrength(content) * weight;
+                                color = blend(color, tint, strength);
+                                weight *= 0.55F;
+                            }
+                        }
                         return color;
                     },
                     ModBlocks.VAT.get());
+        }
+
+        /** 按比例把两个颜色混起来（amount = 0 全用 base，= 1 全用 tint） */
+        private static int blend(int base, int tint, float amount)
+        {
+            float a = Math.max(0.0F, Math.min(1.0F, amount));
+            int br = (base >> 16) & 0xFF;
+            int bg = (base >> 8) & 0xFF;
+            int bb = base & 0xFF;
+            int tr = (tint >> 16) & 0xFF;
+            int tg = (tint >> 8) & 0xFF;
+            int tb = tint & 0xFF;
+            int r = (int) (br + (tr - br) * a);
+            int g = (int) (bg + (tg - bg) * a);
+            int b = (int) (bb + (tb - bb) * a);
+            return (r << 16) | (g << 8) | b;
         }
 
         /**

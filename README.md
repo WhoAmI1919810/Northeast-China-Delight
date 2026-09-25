@@ -1,4 +1,4 @@
-# 东北乐事 (Dongbei Delight)
+# 东北乐事 (Northeast China Delight)
 
 一个 NeoForge 模组，添加东北风味的内容，是 [农夫乐事 (Farmer's Delight)](https://github.com/vectorwing/FarmersDelight) 的附属模组。
 

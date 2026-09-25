@@ -6,7 +6,6 @@ import com.gunmu.dongbei_delight.item.ModItems;
 import net.minecraft.world.level.block.CampfireBlock;
 import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.LiquidBlock;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.properties.NoteBlockInstrument;
@@ -137,62 +136,51 @@ public class ModBlocks {
 
     // ===== 流体方块 =====
 
-    /**
-     * 酱油 / 大酱的液体方块。
-     * 直接传入液体实例（而不是从注册表里取），避免液体与方块两个注册事件的先后顺序问题。
-     * 没有对应的桶物品，正常情况下玩家不会把它倒出来。
-     */
-    public static final DeferredBlock<LiquidBlock> SOY_SAUCE_FLUID = BLOCKS.registerBlock(
-            "soy_sauce",
-            properties -> new LiquidBlock(ModFluids.soySauceSource(), properties),
-            fluidProperties()
-    );
-    public static final DeferredBlock<LiquidBlock> SOY_PASTE_FLUID = BLOCKS.registerBlock(
-            "soy_paste",
-            properties -> new LiquidBlock(ModFluids.soyPasteSource(), properties),
-            fluidProperties()
-    );
-    public static final DeferredBlock<LiquidBlock> SOY_MILK_FLUID = BLOCKS.registerBlock(
-            "soy_milk",
-            properties -> new LiquidBlock(ModFluids.soyMilkSource(), properties),
-            fluidProperties()
-    );
-    public static final DeferredBlock<LiquidBlock> VINEGAR_FLUID = BLOCKS.registerBlock(
-            "vinegar",
-            properties -> new LiquidBlock(ModFluids.vinegarSource(), properties),
-            fluidProperties()
-    );
-    public static final DeferredBlock<LiquidBlock> SOUR_WATER_FLUID = BLOCKS.registerBlock(
-            "sour_water",
-            properties -> new LiquidBlock(ModFluids.sourWaterSource(), properties),
-            fluidProperties()
-    );
-    public static final DeferredBlock<LiquidBlock> WHITE_VINEGAR_FLUID = BLOCKS.registerBlock(
-            "white_vinegar",
-            properties -> new LiquidBlock(ModFluids.whiteVinegarSource(), properties),
-            fluidProperties()
-    );
-    public static final DeferredBlock<LiquidBlock> FISH_SAUCE_FLUID = BLOCKS.registerBlock(
-            "fish_sauce",
-            properties -> new LiquidBlock(ModFluids.fishSauceSource(), properties),
-            fluidProperties()
-    );
-    public static final DeferredBlock<LiquidBlock> SHRIMP_PASTE_FLUID = BLOCKS.registerBlock(
-            "shrimp_paste",
-            properties -> new LiquidBlock(ModFluids.shrimpPasteSource(), properties),
-            fluidProperties()
-    );
-    public static final DeferredBlock<LiquidBlock> VEGETABLE_OIL_FLUID = BLOCKS.registerBlock(
-            "vegetable_oil",
-            properties -> new LiquidBlock(ModFluids.vegetableOilSource(), properties),
-            fluidProperties()
-    );
-    public static final DeferredBlock<LiquidBlock> ANIMAL_OIL_FLUID = BLOCKS.registerBlock(
-            "animal_oil",
-            properties -> new LiquidBlock(ModFluids.animalOilSource(), properties),
-            fluidProperties()
-    );
+    // ===== 大盆菜的方块形式（一放就是一整盆，右键取一份）=====
+    // 做法见 DdFeastBlock：两个方块状态属性（朝向 + 剩余份数），没有方块实体。
 
+    public static final DeferredBlock<Block> DA_FENG_SHOU_POT =
+            feastBlock("da_feng_shou", () -> ModItems.DA_FENG_SHOU_BOWL.get());
+    public static final DeferredBlock<Block> DI_GUO_JI_POT =
+            feastBlock("di_guo_ji", () -> ModItems.DI_GUO_JI_BOWL.get());
+    public static final DeferredBlock<Block> DI_GUO_PAI_GU_POT =
+            feastBlock("di_guo_pai_gu", () -> ModItems.DI_GUO_PAI_GU_BOWL.get());
+    public static final DeferredBlock<Block> SHA_ZHU_CAI_POT =
+            feastBlock("sha_zhu_cai", () -> ModItems.SHA_ZHU_CAI_BOWL.get());
+    public static final DeferredBlock<Block> ZHU_ROU_DUN_FEN_TIAO_POT =
+            feastBlock("zhu_rou_dun_fen_tiao", () -> ModItems.ZHU_ROU_DUN_FEN_TIAO_BOWL.get());
+    public static final DeferredBlock<Block> SUAN_CAI_DUN_GU_TOU_POT =
+            feastBlock("suan_cai_dun_gu_tou", () -> ModItems.SUAN_CAI_DUN_GU_TOU_BOWL.get());
+    public static final DeferredBlock<Block> XIAO_JI_DUN_MO_GU_POT =
+            feastBlock("xiao_ji_dun_mo_gu", () -> ModItems.XIAO_JI_DUN_MO_GU_BOWL.get());
+    public static final DeferredBlock<Block> SUAN_CAI_HAI_XIAN_GUO_POT =
+            feastBlock("suan_cai_hai_xian_guo", () -> ModItems.SUAN_CAI_HAI_XIAN_GUO_BOWL.get());
+
+    /**
+     * 注册一口大盆菜。
+     *
+     * 注意第二个参数**必须**传「取一份给什么」—— 之前漏了它，方块里的 servingItem 一直是 null，
+     * 结果拿着碗右键毫无反应。
+     */
+    private static DeferredBlock<Block> feastBlock(String name, Supplier<? extends net.minecraft.world.item.Item> serving) {
+        return BLOCKS.registerBlock(name + "_pot",
+                properties -> new DdFeastBlock(properties, () -> serving.get()),
+                BlockBehaviour.Properties.of()
+                        .mapColor(MapColor.WOOD)
+                        .strength(0.5F)
+                        .sound(SoundType.WOOD)
+                        .noOcclusion());
+    }
+
+
+
+    /**
+     * 调料液体**不再有方块形态**（2026-09-24 用户要求）：
+     * 它们只作为真正的流体存在 —— 大缸、管道、机械动力储罐、玻璃瓶都能用，
+     * 但没法被倒到地上变成液体方块。
+     * NeoForge 的 createLegacyBlock 在没有方块时返回空气，所以删掉注册不会崩。
+     */
+    private static final boolean FLUIDS_HAVE_NO_BLOCK_FORM = true;
     private static DeferredBlock<Block> crop(String name, Supplier<? extends ItemLike> seed) {
         return BLOCKS.registerBlock(name + "_crop", properties -> new DdCropBlock(properties, seed), cropProperties());
     }
@@ -235,19 +223,6 @@ public class ModBlocks {
                 .instabreak()
                 .sound(SoundType.CROP)
                 .pushReaction(PushReaction.DESTROY);
-    }
-
-    /** 与原版水一致的液体方块属性 */
-    private static BlockBehaviour.Properties fluidProperties() {
-        return BlockBehaviour.Properties.of()
-                .mapColor(MapColor.WATER)
-                .replaceable()
-                .noCollission()
-                .strength(100.0F)
-                .pushReaction(PushReaction.DESTROY)
-                .noLootTable()
-                .liquid()
-                .sound(SoundType.EMPTY);
     }
 
     public static void register(IEventBus eventBus) {

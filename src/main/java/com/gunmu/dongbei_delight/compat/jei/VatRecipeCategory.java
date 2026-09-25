@@ -110,11 +110,21 @@ public class VatRecipeCategory implements IRecipeCategory<VatJeiRecipe> {
     private static final String SLOT_SEAL = "seal";
     private static final String SLOT_SEASONING_0 = "seasoning_0";
     private static final String SLOT_SEASONING_1 = "seasoning_1";
+    private static final String SLOT_SEASONING_2 = "seasoning_2";
+    private static final String SLOT_SEASONING_3 = "seasoning_3";
     private static final String SLOT_PRIMARY_0 = "primary_0";
     private static final String SLOT_PRIMARY_1 = "primary_1";
+    private static final String SLOT_PRIMARY_2 = "primary_2";
+    private static final String SLOT_PRIMARY_3 = "primary_3";
     private static final String SLOT_LIQUID = "liquid";
     private static final String SLOT_RESULT = "result";
     private static final String SLOT_RESULT_FLUID = "result_fluid";
+
+    /** 每一层的槽位名（一层最多 4 格：每行 2 格） */
+    private static final String[] SEASONING_SLOTS =
+            { SLOT_SEASONING_0, SLOT_SEASONING_1, SLOT_SEASONING_2, SLOT_SEASONING_3 };
+    private static final String[] PRIMARY_SLOTS =
+            { SLOT_PRIMARY_0, SLOT_PRIMARY_1, SLOT_PRIMARY_2, SLOT_PRIMARY_3 };
 
     private final IDrawable icon;
     private final IDrawable arrow;
@@ -158,18 +168,28 @@ public class VatRecipeCategory implements IRecipeCategory<VatJeiRecipe> {
 
     // ===== 行的排布：左侧材料从上到下依次是 顶部封缸物 → 配料 → 食材 → 缸底液体，整列上下居中 =====
 
+    /** 一层占几行：一格一行、两格一行，三 / 四格占两行（每行 2 格） */
+    private static int layerRows(int slots) {
+        return slots <= 0 ? 0 : (slots + 1) / 2;
+    }
+
+    /** 这一层按"每行两个"切开 */
+    private static List<List<List<ItemStack>>> splitRows(List<List<ItemStack>> layer) {
+        List<List<List<ItemStack>>> rows = new ArrayList<>();
+        for (int i = 0; i < layer.size(); i += 2) {
+            rows.add(layer.subList(i, Math.min(layer.size(), i + 2)));
+        }
+        return rows;
+    }
+
     /** 这条配方在左侧占几行 */
     private static int rowCount(VatJeiRecipe.State state) {
         int rows = 0;
         if (!state.seal().isEmpty()) {
             rows++;
         }
-        if (!state.seasoning().isEmpty()) {
-            rows++;
-        }
-        if (!state.primary().isEmpty()) {
-            rows++;
-        }
+        rows += layerRows(state.seasoning().size());
+        rows += layerRows(state.primary().size());
         if (state.hasLiquid()) {
             rows++;
         }
@@ -199,24 +219,19 @@ public class VatRecipeCategory implements IRecipeCategory<VatJeiRecipe> {
 
     /** 那一行是不是并排两格（右侧边界更靠右） */
     private static boolean isPairRow(VatJeiRecipe.State state, int index) {
-        boolean hasSeal = !state.seal().isEmpty();
-        boolean hasSeasoning = !state.seasoning().isEmpty();
-        boolean hasPrimary = !state.primary().isEmpty();
         int row = 0;
-        if (hasSeal) {
+        if (!state.seal().isEmpty()) {
             if (row++ == index) {
                 return false;
             }
         }
-        if (hasSeasoning) {
-            if (row++ == index) {
-                return state.seasoning().size() > 1;
+        for (List<List<ItemStack>> layer : List.of(state.seasoning(), state.primary())) {
+            int layerRows = layerRows(layer.size());
+            if (index >= row && index < row + layerRows) {
+                List<List<List<ItemStack>>> rows = splitRows(layer);
+                return rows.get(index - row).size() > 1;
             }
-        }
-        if (hasPrimary) {
-            if (row++ == index) {
-                return state.primary().size() > 1;
-            }
+            row += layerRows;
         }
         return false;
     }
@@ -236,13 +251,11 @@ public class VatRecipeCategory implements IRecipeCategory<VatJeiRecipe> {
         }
         // 配料
         if (!state.seasoning().isEmpty()) {
-            addRow(builder, state.seasoning(), y, SLOT_SEASONING_0, SLOT_SEASONING_1);
-            y += ROW_STEP;
+            y = addLayer(builder, state.seasoning(), y, SEASONING_SLOTS);
         }
         // 食材
         if (!state.primary().isEmpty()) {
-            addRow(builder, state.primary(), y, SLOT_PRIMARY_0, SLOT_PRIMARY_1);
-            y += ROW_STEP;
+            y = addLayer(builder, state.primary(), y, PRIMARY_SLOTS);
         }
         // 缸底：液体（缸口里另外会画一层液面，这里的格子是给 JEI 查配方用的）
         if (state.hasLiquid()) {
@@ -277,20 +290,32 @@ public class VatRecipeCategory implements IRecipeCategory<VatJeiRecipe> {
     /**
      * 一行里的槽：一个就放单列位置，两个就并排（整体仍以单列为中心线）。
      */
-    private static void addRow(IRecipeLayoutBuilder builder, List<List<ItemStack>> slots, int y,
-                               String firstName, String secondName) {
-        int count = Math.min(slots.size(), 2);
-        for (int i = 0; i < count; i++) {
-            List<ItemStack> items = slots.get(i);
-            if (items.isEmpty()) {
-                continue;
+    /**
+     * 画一层槽位：每行最多两个，超过两个就往下再排一行。
+     * 只有一格时居中，两格并排 —— 一格一行的老配方看起来和以前完全一样。
+     *
+     * @return 下一层的 y
+     */
+    private static int addLayer(IRecipeLayoutBuilder builder, List<List<ItemStack>> layer, int y,
+                                String[] names) {
+        List<List<List<ItemStack>>> rows = splitRows(layer);
+        for (int r = 0; r < rows.size(); r++) {
+            List<List<ItemStack>> row = rows.get(r);
+            for (int c = 0; c < row.size(); c++) {
+                List<ItemStack> items = row.get(c);
+                if (items.isEmpty()) {
+                    continue;
+                }
+                int index = r * 2 + c;
+                int x = row.size() == 1 ? INPUT_X : (c == 0 ? INPUT_PAIR_X1 : INPUT_PAIR_X2);
+                builder.addSlot(RecipeIngredientRole.INPUT, x, y)
+                        .addItemStacks(items)
+                        .setSlotName(names[index])
+                        .setStandardSlotBackground();
             }
-            int x = count == 1 ? INPUT_X : (i == 0 ? INPUT_PAIR_X1 : INPUT_PAIR_X2);
-            builder.addSlot(RecipeIngredientRole.INPUT, x, y)
-                    .addItemStacks(items)
-                    .setSlotName(i == 0 ? firstName : secondName)
-                    .setStandardSlotBackground();
+            y += ROW_STEP;
         }
+        return y;
     }
 
     @Override
@@ -379,14 +404,18 @@ public class VatRecipeCategory implements IRecipeCategory<VatJeiRecipe> {
 
         private void apply(VatJeiRecipe.State state) {
             VatJeiRecipe.State base = this.states.get(0);
-            overrideItems(SLOT_SEASONING_0, base.seasoning(), state.seasoning(), 0);
-            overrideItems(SLOT_SEASONING_1, base.seasoning(), state.seasoning(), 1);
-            overrideItems(SLOT_PRIMARY_0, base.primary(), state.primary(), 0);
-            overrideItems(SLOT_PRIMARY_1, base.primary(), state.primary(), 1);
+            overrideLayer(base.seasoning(), state.seasoning(), SEASONING_SLOTS);
+            overrideLayer(base.primary(), state.primary(), PRIMARY_SLOTS);
             overrideFluid(SLOT_LIQUID, base.liquid(), base.liquidMb(), state.liquid(), state.liquidMb());
             overrideItem(SLOT_RESULT, base.result(), state.result());
             overrideFluid(SLOT_RESULT_FLUID, base.resultFluid(), base.resultFluidMb(),
                     state.resultFluid(), state.resultFluidMb());
+        }
+
+        private void overrideLayer(List<List<ItemStack>> baseRows, List<List<ItemStack>> rows, String[] names) {
+            for (int i = 0; i < names.length; i++) {
+                overrideItems(names[i], baseRows, rows, i);
+            }
         }
 
         private void overrideItems(String slotName, List<List<ItemStack>> baseRows,

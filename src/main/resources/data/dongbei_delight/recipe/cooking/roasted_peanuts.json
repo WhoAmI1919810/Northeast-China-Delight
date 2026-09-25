@@ -2,6 +2,7 @@
   "type": "farmersdelight:cooking",
   "experience": 0.35,
   "ingredients": [
+    { "item": "dongbei_delight:peanut" },
     { "item": "dongbei_delight:peanut" }
   ],
   "recipe_book_tab": "misc",

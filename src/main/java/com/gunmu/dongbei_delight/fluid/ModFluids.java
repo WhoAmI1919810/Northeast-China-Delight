@@ -40,7 +40,6 @@ public final class ModFluids {
     private static final BaseFlowingFluid.Properties SOY_SAUCE_PROPERTIES =
             new BaseFlowingFluid.Properties(() -> SOY_SAUCE_TYPE,
                     ModFluids::soySauceSource, ModFluids::soySauceFlowing)
-                    .block(() -> ModBlocks.SOY_SAUCE_FLUID.get())
                     .slopeFindDistance(4)
                     .levelDecreasePerBlock(1)
                     .tickRate(6);
@@ -82,7 +81,6 @@ public final class ModFluids {
     private static final BaseFlowingFluid.Properties SOY_PASTE_PROPERTIES =
             new BaseFlowingFluid.Properties(() -> SOY_PASTE_TYPE,
                     ModFluids::soyPasteSource, ModFluids::soyPasteFlowing)
-                    .block(() -> ModBlocks.SOY_PASTE_FLUID.get())
                     .slopeFindDistance(2)
                     .levelDecreasePerBlock(2)
                     .tickRate(20);
@@ -124,7 +122,6 @@ public final class ModFluids {
     private static final BaseFlowingFluid.Properties SOY_MILK_PROPERTIES =
             new BaseFlowingFluid.Properties(() -> SOY_MILK_TYPE,
                     ModFluids::soyMilkSource, ModFluids::soyMilkFlowing)
-                    .block(() -> ModBlocks.SOY_MILK_FLUID.get())
                     .slopeFindDistance(4)
                     .levelDecreasePerBlock(1)
                     .tickRate(6);
@@ -166,7 +163,6 @@ public final class ModFluids {
     private static final BaseFlowingFluid.Properties VINEGAR_PROPERTIES =
             new BaseFlowingFluid.Properties(() -> VINEGAR_TYPE,
                     ModFluids::vinegarSource, ModFluids::vinegarFlowing)
-                    .block(() -> ModBlocks.VINEGAR_FLUID.get())
                     .slopeFindDistance(4)
                     .levelDecreasePerBlock(1)
                     .tickRate(6);
@@ -208,7 +204,6 @@ public final class ModFluids {
     private static final BaseFlowingFluid.Properties SOUR_WATER_PROPERTIES =
             new BaseFlowingFluid.Properties(() -> SOUR_WATER_TYPE,
                     ModFluids::sourWaterSource, ModFluids::sourWaterFlowing)
-                    .block(() -> ModBlocks.SOUR_WATER_FLUID.get())
                     .slopeFindDistance(4)
                     .levelDecreasePerBlock(1)
                     .tickRate(6);
@@ -250,7 +245,6 @@ public final class ModFluids {
     private static final BaseFlowingFluid.Properties WHITE_VINEGAR_PROPERTIES =
             new BaseFlowingFluid.Properties(() -> WHITE_VINEGAR_TYPE,
                     ModFluids::whiteVinegarSource, ModFluids::whiteVinegarFlowing)
-                    .block(() -> ModBlocks.WHITE_VINEGAR_FLUID.get())
                     .slopeFindDistance(4)
                     .levelDecreasePerBlock(1)
                     .tickRate(6);
@@ -292,7 +286,6 @@ public final class ModFluids {
     private static final BaseFlowingFluid.Properties FISH_SAUCE_PROPERTIES =
             new BaseFlowingFluid.Properties(() -> FISH_SAUCE_TYPE,
                     ModFluids::fishSauceSource, ModFluids::fishSauceFlowing)
-                    .block(() -> ModBlocks.FISH_SAUCE_FLUID.get())
                     .slopeFindDistance(4)
                     .levelDecreasePerBlock(1)
                     .tickRate(6);
@@ -334,7 +327,6 @@ public final class ModFluids {
     private static final BaseFlowingFluid.Properties SHRIMP_PASTE_PROPERTIES =
             new BaseFlowingFluid.Properties(() -> SHRIMP_PASTE_TYPE,
                     ModFluids::shrimpPasteSource, ModFluids::shrimpPasteFlowing)
-                    .block(() -> ModBlocks.SHRIMP_PASTE_FLUID.get())
                     .slopeFindDistance(2)
                     .levelDecreasePerBlock(2)
                     .tickRate(20);
@@ -376,7 +368,6 @@ public final class ModFluids {
     private static final BaseFlowingFluid.Properties VEGETABLE_OIL_PROPERTIES =
             new BaseFlowingFluid.Properties(() -> VEGETABLE_OIL_TYPE,
                     ModFluids::vegetableOilSource, ModFluids::vegetableOilFlowing)
-                    .block(() -> ModBlocks.VEGETABLE_OIL_FLUID.get())
                     .slopeFindDistance(4)
                     .levelDecreasePerBlock(1)
                     .tickRate(6);
@@ -418,7 +409,6 @@ public final class ModFluids {
     private static final BaseFlowingFluid.Properties ANIMAL_OIL_PROPERTIES =
             new BaseFlowingFluid.Properties(() -> ANIMAL_OIL_TYPE,
                     ModFluids::animalOilSource, ModFluids::animalOilFlowing)
-                    .block(() -> ModBlocks.ANIMAL_OIL_FLUID.get())
                     .slopeFindDistance(3)
                     .levelDecreasePerBlock(1)
                     .tickRate(8);

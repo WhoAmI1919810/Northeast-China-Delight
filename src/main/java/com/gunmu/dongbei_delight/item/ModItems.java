@@ -203,16 +203,21 @@ public class ModItems {
     public static final DeferredItem<Item> NEW_STYLE_GUO_BAO_ROU = bowlFood("new_style_guo_bao_rou");
     public static final DeferredItem<Item> DI_SAN_XIAN = bowlFood("di_san_xian");
     public static final DeferredItem<Item> JIAN_JIAO_GAN_DOU_FU = bowlFood("jian_jiao_gan_dou_fu");
-    public static final DeferredItem<Item> SUAN_CAI_DUN_GU_TOU = basinFood("suan_cai_dun_gu_tou");
+    /** 大盆菜：物品栏里是**方块**（放下就是一整盆），取一份得到对应的「碗装XX」 */
+    public static final DeferredItem<Item> SUAN_CAI_DUN_GU_TOU = feastItem("suan_cai_dun_gu_tou", () -> ModBlocks.SUAN_CAI_DUN_GU_TOU_POT.get());
+    public static final DeferredItem<Item> SUAN_CAI_DUN_GU_TOU_BOWL = bowlFood("suan_cai_dun_gu_tou_bowl");
     /** 饺子不用碗装：吃完不返还容器 */
     public static final DeferredItem<Item> SUAN_CAI_JIAO_ZI = food("suan_cai_jiao_zi");
-    public static final DeferredItem<Item> DI_GUO_JI = basinFood("di_guo_ji");
+    public static final DeferredItem<Item> DI_GUO_JI = feastItem("di_guo_ji", () -> ModBlocks.DI_GUO_JI_POT.get());
+    public static final DeferredItem<Item> DI_GUO_JI_BOWL = bowlFood("di_guo_ji_bowl");
     public static final DeferredItem<Item> SOUR_TANGZI = bowlFood("sour_tangzi");
     public static final DeferredItem<Item> EGG_SOY_PASTE = bowlFood("egg_soy_paste");
-    public static final DeferredItem<Item> DI_GUO_PAI_GU = basinFood("di_guo_pai_gu");
+    public static final DeferredItem<Item> DI_GUO_PAI_GU = feastItem("di_guo_pai_gu", () -> ModBlocks.DI_GUO_PAI_GU_POT.get());
+    public static final DeferredItem<Item> DI_GUO_PAI_GU_BOWL = bowlFood("di_guo_pai_gu_bowl");
     /** 酱大骨、酱牛肉：直接盛出来，不用碗 */
     public static final DeferredItem<Item> JIANG_DA_GU = food("jiang_da_gu");
-    public static final DeferredItem<Item> SHA_ZHU_CAI = basinFood("sha_zhu_cai");
+    public static final DeferredItem<Item> SHA_ZHU_CAI = feastItem("sha_zhu_cai", () -> ModBlocks.SHA_ZHU_CAI_POT.get());
+    public static final DeferredItem<Item> SHA_ZHU_CAI_BOWL = bowlFood("sha_zhu_cai_bowl");
     public static final DeferredItem<Item> LA_ROU_DUN_DOU_JIAO = bowlFood("la_rou_dun_dou_jiao");
     public static final DeferredItem<Item> JIANG_NIU_ROU = food("jiang_niu_rou");
     public static final DeferredItem<Item> LIU_ROU_DUAN = bowlFood("liu_rou_duan");
@@ -221,7 +226,8 @@ public class ModItems {
     public static final DeferredItem<Item> BA_SI_TU_DOU = bowlFood("ba_si_tu_dou");
     public static final DeferredItem<Item> SUAN_HUANG_GUA_CHAO_ROU_SI = bowlFood("suan_huang_gua_chao_rou_si");
     public static final DeferredItem<Item> SWEET_POTATO_PORRIDGE = bowlFood("sweet_potato_porridge");
-    public static final DeferredItem<Item> ZHU_ROU_DUN_FEN_TIAO = basinFood("zhu_rou_dun_fen_tiao");
+    public static final DeferredItem<Item> ZHU_ROU_DUN_FEN_TIAO = feastItem("zhu_rou_dun_fen_tiao", () -> ModBlocks.ZHU_ROU_DUN_FEN_TIAO_POT.get());
+    public static final DeferredItem<Item> ZHU_ROU_DUN_FEN_TIAO_BOWL = bowlFood("zhu_rou_dun_fen_tiao_bowl");
     public static final DeferredItem<Item> SUAN_CAI_CHAO_FEN_TIAO = bowlFood("suan_cai_chao_fen_tiao");
     /** 朝鲜族菜：黄铜碗盛 */
     public static final DeferredItem<Item> BUCKWHEAT_COLD_NOODLES = brassBowlFood("buckwheat_cold_noodles");
@@ -234,7 +240,8 @@ public class ModItems {
     public static final DeferredItem<Item> JIA_XIAN_HUANG_GUA_PAO_CAI = bowlFood("jia_xian_huang_gua_pao_cai");
     public static final DeferredItem<Item> LIANG_BAN_HUA_CAI = bowlFood("liang_ban_hua_cai");
     // 厨锅料理（东北家常菜续）
-    public static final DeferredItem<Item> DA_FENG_SHOU = basinFood("da_feng_shou");
+    public static final DeferredItem<Item> DA_FENG_SHOU = feastItem("da_feng_shou", () -> ModBlocks.DA_FENG_SHOU_POT.get());
+    public static final DeferredItem<Item> DA_FENG_SHOU_BOWL = bowlFood("da_feng_shou_bowl");
     public static final DeferredItem<Item> BAI_CAI_DOU_FU_DUN_FEN_TIAO = bowlFood("bai_cai_dou_fu_dun_fen_tiao");
     /** 朝鲜族菜：黄铜碗盛 */
     public static final DeferredItem<Item> LA_NIU_ROU_TANG_FAN = brassBowlFood("la_niu_rou_tang_fan");
@@ -269,10 +276,15 @@ public class ModItems {
     /** 得莫利炖鱼：分量大，用大脸盆盛 */
     public static final DeferredItem<Item> DE_MO_LI_DUN_YU = bowlFood("de_mo_li_dun_yu");
     public static final DeferredItem<Item> SU_BO_TANG = bowlFood("su_bo_tang");
-    public static final DeferredItem<Item> SUAN_CAI_HAI_XIAN_GUO = bowlFood("suan_cai_hai_xian_guo");
+    /** 酸菜海鲜锅：分量大，和大盆菜一样是「盆装方块 + 碗装一份」 */
+    public static final DeferredItem<Item> SUAN_CAI_HAI_XIAN_GUO =
+            feastItem("suan_cai_hai_xian_guo", () -> ModBlocks.SUAN_CAI_HAI_XIAN_GUO_POT.get());
+    public static final DeferredItem<Item> SUAN_CAI_HAI_XIAN_GUO_BOWL =
+            bowlFood("suan_cai_hai_xian_guo_bowl");
     /** 朝鲜族菜：黄铜碗盛 */
     public static final DeferredItem<Item> SHEN_JI_TANG = brassBowlFood("shen_ji_tang");
-    public static final DeferredItem<Item> XIAO_JI_DUN_MO_GU = basinFood("xiao_ji_dun_mo_gu");
+    public static final DeferredItem<Item> XIAO_JI_DUN_MO_GU = feastItem("xiao_ji_dun_mo_gu", () -> ModBlocks.XIAO_JI_DUN_MO_GU_POT.get());
+    public static final DeferredItem<Item> XIAO_JI_DUN_MO_GU_BOWL = bowlFood("xiao_ji_dun_mo_gu_bowl");
     /** 拌饭：黄铜碗 + 米饭 + 胡萝卜 + 鸡蛋 + 干海带 + 辣白菜 + 辣椒酱，工作台合成 */
     public static final DeferredItem<Item> BIBIMBAP = brassBowlFood("bibimbap");
     /** 辣白菜饼：辣白菜 + 2 淀粉 + 植物油，厨锅煎成（饼类用普通碗盛） */
@@ -365,7 +377,9 @@ public class ModItems {
             SOY_MILK, KVASS,
             // 油腻（吃多了腻，给油腻效果）
             OLD_STYLE_GUO_BAO_ROU, NEW_STYLE_GUO_BAO_ROU, ORANGE_GUO_BAO_ROU, LIU_ROU_DUAN,
-            DI_SAN_XIAN, HONG_SHAO_PAI_GU, DI_GUO_JI, DI_GUO_PAI_GU, SHA_ZHU_CAI,
+            DI_SAN_XIAN, HONG_SHAO_PAI_GU,
+            // 大盆菜：方块形式 + 碗装的一份
+            DI_GUO_JI, DI_GUO_JI_BOWL, DI_GUO_PAI_GU, DI_GUO_PAI_GU_BOWL, SHA_ZHU_CAI, SHA_ZHU_CAI_BOWL,
             JIANG_DA_GU, JIANG_NIU_ROU, BRAISED_PORK_HOCK, BRAISED_PORK_STRIPS,
             BA_SI_TU_DOU, XUN_JIANG_PIN_PAN, SNOWY_BEAN_PASTE, CANDIED_PEANUTS, GRILLED_OIL_EDGE,
             TU_DOU_BING, YU_MI_LAO, XIAN_YU_BING_ZI, KIMCHI_PANCAKE,
@@ -376,10 +390,15 @@ public class ModItems {
             SOUR_TANGZI, CHA_ZI_ZHOU, SWEET_POTATO_PORRIDGE, DA_JIANG_TANG,
             TIGER_SALAD,
             // 荤素搭配（给滋养效果）
-            EGG_SOY_PASTE, SUAN_CAI_DUN_GU_TOU, ZHU_ROU_DUN_FEN_TIAO, LA_NIU_ROU_TANG_FAN,
+            EGG_SOY_PASTE,
+            SUAN_CAI_DUN_GU_TOU, SUAN_CAI_DUN_GU_TOU_BOWL, ZHU_ROU_DUN_FEN_TIAO, ZHU_ROU_DUN_FEN_TIAO_BOWL,
+            LA_NIU_ROU_TANG_FAN,
             LA_BAI_CAI_CHAO_FAN, XIA_JIANG_CHAO_JI_DAN, XIA_JIANG_DUN_DOU_FU, HAI_XIAN_DOU_FU_TANG,
-            JIANG_BAN_LA_PI, CONG_SHAO_HAI_SHEN, HAI_SHEN_DOU_FU_TANG, LA_ROU_DUN_DOU_JIAO, DA_FENG_SHOU,
-            DE_MO_LI_DUN_YU, SU_BO_TANG, SUAN_CAI_HAI_XIAN_GUO, SHEN_JI_TANG, XIAO_JI_DUN_MO_GU,
+            JIANG_BAN_LA_PI, CONG_SHAO_HAI_SHEN, HAI_SHEN_DOU_FU_TANG, LA_ROU_DUN_DOU_JIAO,
+            DA_FENG_SHOU, DA_FENG_SHOU_BOWL,
+            DE_MO_LI_DUN_YU, SU_BO_TANG, SHEN_JI_TANG,
+            XIAO_JI_DUN_MO_GU, XIAO_JI_DUN_MO_GU_BOWL,
+            SUAN_CAI_HAI_XIAN_GUO, SUAN_CAI_HAI_XIAN_GUO_BOWL,
             BIBIMBAP, GRILLED_COLD_NOODLES,
             // 不需要带餐具（直接拿在手里吃）
             BAKED_SWEET_POTATO, DA_FAN_BAO, NIAN_DOU_BAO, GRILLED_CHICKEN_FRAME, GRILLED_CORN,
@@ -470,6 +489,15 @@ public class ModItems {
         return ITEMS.register(id, () -> new Item(new Item.Properties()
                 .craftRemainder(LARGE_BASIN.get())
                 .food(steakFood().usingConvertsTo(LARGE_BASIN.get()).build())));
+    }
+
+    /**
+     * 大盆菜的**方块物品**：放下就是一大盆（见 {@code DdFeastBlock}），右键取一份得「碗装XX」。
+     * 一盆就是一份菜，所以**不能堆叠**（最大堆叠 1）。
+     */
+    private static DeferredItem<Item> feastItem(String id, Supplier<? extends Block> block) {
+        return ITEMS.registerItem(id, properties -> new BlockItem(block.get(), properties),
+                new Item.Properties().stacksTo(1));
     }
 
     /**

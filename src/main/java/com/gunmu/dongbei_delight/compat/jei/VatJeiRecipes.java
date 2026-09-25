@@ -1,37 +1,48 @@
 package com.gunmu.dongbei_delight.compat.jei;
 
+import com.gunmu.dongbei_delight.crafting.VatRecipe;
 import com.gunmu.dongbei_delight.crafting.VatRecipes;
 import com.gunmu.dongbei_delight.fluid.ModFluids;
-import com.gunmu.dongbei_delight.item.ModItems;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.Fluids;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.function.Predicate;
 
 /**
- * 大缸在 JEI 里展示的全部配方，规则与 {@link VatRecipes} / {@code Vat} 里的判定一一对应。
+ * 大缸在 JEI 里展示的全部配方 —— **从 {@link VatRecipes#REGISTRY} 自动生成**，
+ * 这里不再手写任何一份"投料 / 时长 / 产物"的副本，所以游戏里的判定和 JEI 页面永远一致。
  *
- * 每条配方都从自己的原料出发，不描述前置步骤（想看酸引水怎么来，点酸引水本身）。
- * 按水位配比的配方（泡菜、辣白菜、酸玉米粒、豆芽）会做成多档，JEI 里自动轮换着演示。
+ * <p>生成规则：
+ * <ol>
+ *   <li>一格收什么 → 直接拿这一格的匹配器去扫一遍物品表，扫出来的物品就是"能放进去的东西"
+ *       （所以"任意生鱼""任意泡菜用蔬菜"这种标签 / 映射会自己展开）；</li>
+ *   <li>要几份 → 用这一格的**数量规则**按水位算出来（一层水两份菜、盐数和肉数一样，都算得出来）；</li>
+ *   <li>产出什么 → {@code KEEP} 的格子用它的换算规则（大白菜→酸白菜、生猪排→咸腊肉），
+ *       {@code CONVERT} 的格子直接用它变成的东西（酱块→酱渣）；</li>
+ *   <li>封口物、发酵时长、液体（缸底的原料液体与酿出来的成品液体）都照抄配方。</li>
+ * </ol>
+ *
+ * <p>"投什么"有多个候选的配方（泡菜有四种菜、咸鱼有各种鱼）会一页展开一样；
+ * 按水位配比的配方（泡菜、辣白菜、酸玉米粒）会做成多档，JEI 里自动轮换着演示。
  */
 public final class VatJeiRecipes {
 
     private VatJeiRecipes() {
     }
 
+    /** 一格最多展示几种候选，免得某个宽松的匹配器把半张物品表都扫进来 */
+    private static final int MAX_CANDIDATES = 12;
     /** 一层水 = 1 桶 */
     private static final long ONE_LAYER = VatRecipes.WATER_MB_PER_LEVEL;
-    /** 三层水 = 满缸 */
-    private static final long FULL = 3 * ONE_LAYER;
-    /** 水位最高就是 3 层 */
-    private static final int MAX_LAYERS = 3;
 
     private static List<VatJeiRecipe> recipes;
 
@@ -44,237 +55,262 @@ public final class VatJeiRecipes {
 
     private static List<VatJeiRecipe> build() {
         List<VatJeiRecipe> list = new ArrayList<>();
-
-        // ===== 泡菜：每层水 2 份菜 + 1 份盐，压缸石；腌好后水变成等量酸引水 =====
-        addPickle(list, ModItems.NAPA_CABBAGE.get(), ModItems.SOUR_CABBAGE.get());
-        addPickle(list, ModItems.CUCUMBER.get(), ModItems.PICKLED_CUCUMBER.get());
-        addPickle(list, Items.CARROT, ModItems.PICKLED_CARROT.get());
-        addPickle(list, ModItems.GREEN_RADISH.get(), ModItems.PICKLED_GREEN_RADISH.get());
-
-        // ===== 辣白菜：白菜 + 辣椒酱 + 鱼露 / 虾酱，6 份时调味品要两份，压缸石 =====
-        List<VatJeiRecipe.State> spicy = new ArrayList<>();
-        for (int layers = 1; layers <= MAX_LAYERS; layers++) {
-            int cabbage = layers * VatRecipes.VEGETABLES_PER_WATER;
-            int seasoningNeed = VatRecipes.spicySeasoningNeed(layers);
-            spicy.add(new VatJeiRecipe.State(
-                    Fluids.WATER, layers * ONE_LAYER, FULL,
-                    List.of(single(ModItems.CHILI_SAUCE.get()),
-                            oneOf(seasoningNeed, ModItems.FISH_SAUCE.get(), ModItems.SHRIMP_PASTE.get())),
-                    List.of(single(ModItems.NAPA_CABBAGE.get(), cabbage)),
-                    sealStone(),
-                    stack(ModItems.SPICY_CABBAGE.get(), cabbage),
-                    ModFluids.SOUR_WATER.get(), layers * ONE_LAYER, FULL,
-                    VatRecipes.processSeconds(VatRecipes.Kind.SPICY_PICKLE, layers)));
+        for (VatRecipe recipe : VatRecipes.all()) {
+            list.addAll(expand(recipe));
         }
-        list.add(new VatJeiRecipe(List.copyOf(spicy)));
-
-        // ===== 咸腊肉：一层肉一层盐，最多 5 块 =====
-        list.add(new VatJeiRecipe(
-                new VatJeiRecipe.State(
-                        null, 0, 0,
-                        List.of(single(ModItems.SALT.get(), VatRecipes.MAX_MEATS)),
-                        List.of(single(Items.PORKCHOP, VatRecipes.MAX_MEATS)),
-                        sealStone(),
-                        stack(ModItems.SALTED_PORK.get(), VatRecipes.MAX_MEATS),
-                        null, 0, 0,
-                        VatRecipes.processSeconds(VatRecipes.Kind.MEAT, 0))));
-
-        // ===== 咸鱼：一条鱼一层盐，最多 5 条（任意生鱼都行） =====
-        list.add(new VatJeiRecipe(
-                new VatJeiRecipe.State(
-                        null, 0, 0,
-                        List.of(single(ModItems.SALT.get(), VatRecipes.MAX_MEATS)),
-                        List.of(rawFish(VatRecipes.MAX_MEATS)),
-                        sealStone(),
-                        stack(ModItems.SALTED_FISH.get(), VatRecipes.MAX_MEATS),
-                        null, 0, 0,
-                        VatRecipes.processSeconds(VatRecipes.Kind.SALTED_FISH, 0))));
-
-        // ===== 大酱：满水 + 3 块酱块 + 3 份盐，蒙羊毛地毯 =====
-        list.add(new VatJeiRecipe(
-                new VatJeiRecipe.State(
-                        Fluids.WATER, FULL, FULL,
-                        List.of(single(ModItems.SALT.get(), VatRecipes.PASTE_SALT)),
-                        List.of(single(ModItems.SOY_PASTE_CHUNK.get(), VatRecipes.PASTE_CHUNKS)),
-                        sealCarpet(),
-                        // 酱块发酵完变成 3 块酱渣留在缸里，大酱是缸里的液体
-                        stack(ModItems.SOY_RESIDUE.get(), VatRecipes.RESIDUE_COUNT),
-                        ModFluids.SOY_PASTE.get(), VatRecipes.PRODUCT_CAPACITY_MB, VatRecipes.PRODUCT_CAPACITY_MB,
-                        VatRecipes.processSeconds(VatRecipes.Kind.PASTE, 0))));
-
-        // ===== 酱油：大酱的配方再加 1 份小麦，蒙羊毛地毯 =====
-        list.add(new VatJeiRecipe(
-                new VatJeiRecipe.State(
-                        Fluids.WATER, FULL, FULL,
-                        List.of(single(ModItems.SALT.get(), VatRecipes.PASTE_SALT),
-                                single(VatRecipes.wheatInput())),
-                        List.of(single(ModItems.SOY_PASTE_CHUNK.get(), VatRecipes.PASTE_CHUNKS)),
-                        sealCarpet(),
-                        stack(ModItems.SOY_RESIDUE.get(), VatRecipes.RESIDUE_COUNT),
-                        ModFluids.SOY_SAUCE.get(), VatRecipes.PRODUCT_CAPACITY_MB, VatRecipes.PRODUCT_CAPACITY_MB,
-                        VatRecipes.processSeconds(VatRecipes.Kind.SOY_SAUCE, 0))));
-
-        // ===== 醋：3 块酱渣 + 3 份谷物，蒙粗布毯 =====
-        list.add(new VatJeiRecipe(
-                new VatJeiRecipe.State(
-                        null, 0, 0,
-                        List.of(oneOf(VatRecipes.VINEGAR_GRAIN_COUNT,
-                                ModItems.CORN_SEEDS.get(), ModItems.BUCKWHEAT.get())),
-                        List.of(single(ModItems.SOY_RESIDUE.get(), VatRecipes.RESIDUE_COUNT)),
-                        sealCloth(),
-                        // 谷物被消耗掉，酱渣留在缸里
-                        stack(ModItems.SOY_RESIDUE.get(), VatRecipes.RESIDUE_COUNT),
-                        ModFluids.VINEGAR.get(), VatRecipes.PRODUCT_CAPACITY_MB, VatRecipes.PRODUCT_CAPACITY_MB,
-                        VatRecipes.processSeconds(VatRecipes.Kind.VINEGAR, 0))));
-
-        // ===== 白醋：3 瓶酸引水 + 3 份谷物，蒙粗布毯 =====
-        list.add(new VatJeiRecipe(
-                new VatJeiRecipe.State(
-                        ModFluids.SOUR_WATER.get(), VatRecipes.SOUR_WATER_MB, VatRecipes.SOUR_WATER_MB,
-                        List.of(oneOf(VatRecipes.VINEGAR_GRAIN_COUNT,
-                                ModItems.CORN_SEEDS.get(), ModItems.BUCKWHEAT.get())),
-                        List.of(),
-                        sealCloth(),
-                        // 谷物被消耗掉，缸里只剩白醋液体
-                        ItemStack.EMPTY,
-                        ModFluids.WHITE_VINEGAR.get(), VatRecipes.PRODUCT_CAPACITY_MB, VatRecipes.PRODUCT_CAPACITY_MB,
-                        VatRecipes.processSeconds(VatRecipes.Kind.WHITE_VINEGAR, 0))));
-
-        // ===== 鱼露：6 份任意生鱼 + 3 份盐，压缸石（鱼自身汁水不多，只出 1 瓶） =====
-        list.add(new VatJeiRecipe(
-                new VatJeiRecipe.State(
-                        null, 0, 0,
-                        List.of(single(ModItems.SALT.get(), VatRecipes.FISH_SAUCE_SALT)),
-                        List.of(rawFish(VatRecipes.FISH_SAUCE_FISH)),
-                        sealStone(),
-                        // 鱼和盐都被分解掉，只剩鱼露液体
-                        ItemStack.EMPTY,
-                        ModFluids.FISH_SAUCE.get(), VatRecipes.SERVING_MB, VatRecipes.SERVING_MB,
-                        VatRecipes.processSeconds(VatRecipes.Kind.FISH_SAUCE, 0))));
-
-        // ===== 虾酱：6 只大虾 + 3 份盐，压缸石 =====
-        list.add(new VatJeiRecipe(
-                new VatJeiRecipe.State(
-                        null, 0, 0,
-                        List.of(single(ModItems.SALT.get(), VatRecipes.SHRIMP_PASTE_SALT)),
-                        List.of(single(ModItems.SHRIMP.get(), VatRecipes.SHRIMP_PASTE_SHRIMP)),
-                        sealStone(),
-                        // 虾和盐都化成了酱，缸里只剩虾酱液体
-                        ItemStack.EMPTY,
-                        ModFluids.SHRIMP_PASTE.get(), VatRecipes.SERVING_MB, VatRecipes.SERVING_MB,
-                        VatRecipes.processSeconds(VatRecipes.Kind.SHRIMP_PASTE, 0))));
-
-        // ===== 豆芽：1 层水 + 1~2 份黄豆，一份黄豆出一份豆芽，蒙粗布毯 =====
-        List<VatJeiRecipe.State> sprouts = new ArrayList<>();
-        for (int soybeans = 1; soybeans <= VatRecipes.SPROUT_SOYBEAN_MAX; soybeans++) {
-            sprouts.add(new VatJeiRecipe.State(
-                    Fluids.WATER, ONE_LAYER, ONE_LAYER,
-                    List.of(),
-                    List.of(single(ModItems.SOYBEAN.get(), soybeans)),
-                    sealCloth(),
-                    stack(ModItems.BEAN_SPROUTS.get(), soybeans),
-                    null, 0, 0,
-                    VatRecipes.processSeconds(VatRecipes.Kind.BEAN_SPROUTS, 0)));
-        }
-        list.add(new VatJeiRecipe(List.copyOf(sprouts)));
-
-        // ===== 酸玉米粒：每层水配 2 份玉米粒，一份玉米粒出一份酸玉米粒，蒙粗布毯 =====
-        List<VatJeiRecipe.State> sourCorn = new ArrayList<>();
-        for (int layers = 1; layers <= MAX_LAYERS; layers++) {
-            int corn = layers * VatRecipes.SOUR_CORN_PER_WATER;
-            sourCorn.add(new VatJeiRecipe.State(
-                    Fluids.WATER, layers * ONE_LAYER, FULL,
-                    List.of(),
-                    List.of(single(ModItems.CORN_SEEDS.get(), corn)),
-                    sealCloth(),
-                    stack(ModItems.SOUR_CORN_KERNELS.get(), corn),
-                    null, 0, 0,
-                    VatRecipes.processSeconds(VatRecipes.Kind.SOUR_CORN, layers)));
-        }
-        list.add(new VatJeiRecipe(List.copyOf(sourCorn)));
-
-        // ===== 格瓦斯：满水 + 6 个面包，蒙粗布毯，一缸出 6 瓶 =====
-        list.add(new VatJeiRecipe(
-                new VatJeiRecipe.State(
-                        Fluids.WATER, FULL, FULL,
-                        List.of(),
-                        List.of(single(VatRecipes.kvassBread(), VatRecipes.KVASS_BREAD)),
-                        sealCloth(),
-                        // 面包泡化进水里，取出来是一瓶一瓶的格瓦斯
-                        stack(ModItems.KVASS.get(), VatRecipes.KVASS_SERVINGS),
-                        null, 0, 0,
-                        VatRecipes.processSeconds(VatRecipes.Kind.KVASS, 0))));
-
         return List.copyOf(list);
     }
 
-    /** 泡菜：水位 1 / 2 / 3 层各一档，每层 2 份菜 + 1 份盐，腌好后水等量变成酸引水 */
-    private static void addPickle(List<VatJeiRecipe> list, Item vegetable, Item result) {
-        List<VatJeiRecipe.State> states = new ArrayList<>();
-        for (int layers = 1; layers <= MAX_LAYERS; layers++) {
-            int count = layers * VatRecipes.VEGETABLES_PER_WATER;
-            states.add(new VatJeiRecipe.State(
-                    Fluids.WATER, layers * ONE_LAYER, FULL,
-                    List.of(single(ModItems.SALT.get(), layers)),
-                    List.of(single(vegetable, count)),
-                    sealStone(),
-                    stack(result, count),
-                    ModFluids.SOUR_WATER.get(), layers * ONE_LAYER, FULL,
-                    VatRecipes.processSeconds(VatRecipes.Kind.PICKLE, layers)));
+    // ===== 一条配方 → 若干页 =====
+
+    /**
+     * 一条配方展开成 JEI 上的页。
+     *
+     * <p>每个投料格的候选物品先扫出来；第一个有多个候选的格子当"页码驱动"（一样一页），
+     * 其余的格子在同一格里轮播（表示任选其一，比如辣白菜的鱼露 / 虾酱）。
+     */
+    private static List<VatJeiRecipe> expand(VatRecipe recipe) {
+        List<VatRecipe.Slot> slots = recipe.slots();
+        List<List<ItemStack>> candidates = new ArrayList<>(slots.size());
+        for (VatRecipe.Slot slot : slots) {
+            candidates.add(candidatesOf(slot));
         }
-        list.add(new VatJeiRecipe(List.copyOf(states)));
+        int driver = -1;
+        for (int i = 0; i < slots.size(); i++) {
+            if (candidates.get(i).size() > 1) {
+                driver = i;
+                break;
+            }
+        }
+        int pages = driver < 0 ? 1 : candidates.get(driver).size();
+        List<VatJeiRecipe> out = new ArrayList<>(pages);
+        for (int page = 0; page < pages; page++) {
+            List<VatJeiRecipe.State> states = new ArrayList<>();
+            for (int level : levelsOf(recipe)) {
+                states.add(stateOf(recipe, candidates, driver, page, level));
+            }
+            out.add(new VatJeiRecipe(List.copyOf(states)));
+        }
+        return out;
     }
 
-    private static ItemStack stack(Item item) {
-        return new ItemStack(item);
+    /** 按水位配比的配方要把每一档水位都演示一遍（大缸一层水配两份菜） */
+    private static int[] levelsOf(VatRecipe recipe) {
+        VatRecipe.Liquid liquid = recipe.liquid();
+        if (liquid.waterMin() <= 0) {
+            return new int[] { 0 };
+        }
+        int count = liquid.waterMax() - liquid.waterMin() + 1;
+        int[] levels = new int[count];
+        for (int i = 0; i < count; i++) {
+            levels[i] = liquid.waterMin() + i;
+        }
+        return levels;
     }
 
-    private static ItemStack stack(Item item, int count) {
-        return new ItemStack(item, count);
+    private static VatJeiRecipe.State stateOf(VatRecipe recipe, List<List<ItemStack>> candidates,
+                                             int driver, int page, int level) {
+        int[] counts = resolveCounts(recipe, candidates, level);
+        List<List<ItemStack>> seasoning = new ArrayList<>();
+        List<List<ItemStack>> primary = new ArrayList<>();
+        List<ItemStack> results = new ArrayList<>();
+
+        for (int i = 0; i < recipe.slots().size(); i++) {
+            VatRecipe.Slot slot = recipe.slots().get(i);
+            List<ItemStack> items = candidates.get(i);
+            if (items.isEmpty()) {
+                continue;
+            }
+            List<ItemStack> shown;
+            ItemStack sample;
+            if (i == driver) {
+                sample = items.get(page % items.size());
+                shown = List.of(withCount(sample, counts[i]));
+            } else {
+                sample = items.get(0);
+                shown = new ArrayList<>(items.size());
+                for (ItemStack item : items) {
+                    shown.add(withCount(item, counts[i]));
+                }
+            }
+            if (slot.layer() == VatRecipe.Layer.SEASONING) {
+                seasoning.add(List.copyOf(shown));
+            } else {
+                primary.add(List.copyOf(shown));
+            }
+            ItemStack produced = productOf(slot, sample, counts[i]);
+            if (!produced.isEmpty()) {
+                results.add(produced);
+            }
+        }
+
+        VatRecipe.Liquid liquid = recipe.liquid();
+        // 缸底的原料液体：水位配方画水，白醋那种配方画酸引水
+        VatRecipe.Fluid baseKind = liquid.waterMin() > 0 ? VatRecipe.Fluid.WATER
+                : liquid.sourWaterMb() > 0 ? VatRecipe.Fluid.SOUR_WATER : null;
+        Fluid base = fluidOf(baseKind);
+        long baseMb = baseKind == VatRecipe.Fluid.WATER ? level * ONE_LAYER : liquid.sourWaterMb();
+        Fluid product = fluidOf(liquid.product());
+        long productMb = product == null ? 0 : recipe.productMbFor(level);
+        ItemStack result = merge(results);
+        if (product == null) {
+            // 缸里出的东西没有对应的流体（格瓦斯就是这样）：那就按"装瓶"展示
+            ItemStack bottled = bottledProduct(liquid, level);
+            if (!bottled.isEmpty()) {
+                result = result.isEmpty() ? bottled : result;
+            }
+        }
+
+        return new VatJeiRecipe.State(
+                base, baseMb, Math.max(baseMb, (long) liquid.waterMax() * ONE_LAYER),
+                List.copyOf(seasoning), List.copyOf(primary), sealOf(recipe.seal()),
+                result, product, productMb,
+                Math.max(productMb, VatRecipes.PRODUCT_CAPACITY_MB),
+                recipe.secondsFor(level));
     }
 
-    /** 一个槽只放一种物品 */
-    private static List<ItemStack> single(Item item) {
-        return List.of(new ItemStack(item));
+    /** 缸底液体的流体：水位配方画水，酸引水配方画酸引水 */
+    @Nullable
+    private static Fluid fluidOf(@Nullable VatRecipe.Fluid fluid) {
+        if (fluid == null) {
+            return null;
+        }
+        return switch (fluid) {
+            case WATER -> Fluids.WATER;
+            case SOUR_WATER -> ModFluids.SOUR_WATER.get();
+            case PASTE -> ModFluids.SOY_PASTE.get();
+            case SOY_SAUCE -> ModFluids.SOY_SAUCE.get();
+            case VINEGAR -> ModFluids.VINEGAR.get();
+            case WHITE_VINEGAR -> ModFluids.WHITE_VINEGAR.get();
+            case FISH_SAUCE -> ModFluids.FISH_SAUCE.get();
+            case SHRIMP_PASTE -> ModFluids.SHRIMP_PASTE.get();
+            // 格瓦斯还没有对应的流体：不画液面、改成展示几瓶
+            case KVASS -> null;
+        };
     }
 
-    private static List<ItemStack> single(Item item, int count) {
-        return List.of(new ItemStack(item, count));
+    /** 没有流体产物的配方（格瓦斯）：按"一缸出几瓶"展示瓶子 */
+    private static ItemStack bottledProduct(VatRecipe.Liquid liquid, int level) {
+        if (liquid.product() == null) {
+            return ItemStack.EMPTY;
+        }
+        VatRecipes.Serving serving = VatRecipes.servingOf(liquid.product());
+        if (serving == null) {
+            return ItemStack.EMPTY;
+        }
+        int mb = liquid.productPerLayer()
+                ? liquid.productMb() * Math.max(1, level) : liquid.productMb();
+        return new ItemStack(serving.item(), Math.max(1, mb / VatRecipes.SERVING_MB));
     }
 
-    /** 一个槽里轮播多个物品 = 这些都可以 */
+    // ===== 数量、候选物品、产物 =====
+
+    /**
+     * 这一格要几份：把配方的数量规则按当前水位跑一遍。
+     *
+     * <p>规则之间会互相引用（盐数 = 肉数），所以多跑两遍让它们收敛。
+     */
+    private static int[] resolveCounts(VatRecipe recipe, List<List<ItemStack>> candidates, int level) {
+        int size = recipe.slots().size();
+        int[] counts = new int[size];
+        for (int i = 0; i < size; i++) {
+            counts[i] = candidates.get(i).isEmpty()
+                    ? 0 : Math.max(1, candidates.get(i).get(0).getCount());
+        }
+        Counts view = new Counts(recipe, level, counts);
+        for (int pass = 0; pass < 3; pass++) {
+            for (int i = 0; i < size; i++) {
+                VatRecipe.Bounds bounds = recipe.slots().get(i).bounds().get(view);
+                int want = bounds.max() == Integer.MAX_VALUE ? Math.max(1, bounds.min()) : bounds.max();
+                counts[i] = Math.max(0, Math.min(bounds.max(), Math.max(bounds.min(), want)));
+            }
+        }
+        return counts;
+    }
+
+    /** 按槽位号取数量的"缸内情况"，给数量规则用（格子之间靠匹配器认亲） */
+    private record Counts(VatRecipe recipe, int water, int[] counts) implements VatRecipe.Counts {
+
+        @Override
+        public int count(Predicate<ItemStack> matcher) {
+            for (int i = 0; i < this.recipe.slots().size(); i++) {
+                if (this.recipe.slots().get(i).matcher() == matcher) {
+                    return this.counts[i];
+                }
+            }
+            return 0;
+        }
+    }
+
+    /** 扫物品表，找出这一格收得下的东西 */
+    private static List<ItemStack> candidatesOf(VatRecipe.Slot slot) {
+        List<ItemStack> list = new ArrayList<>();
+        for (Item item : BuiltInRegistries.ITEM) {
+            ItemStack stack = new ItemStack(item);
+            if (stack.isEmpty() || !slot.matcher().test(stack)) {
+                continue;
+            }
+            list.add(stack);
+            if (list.size() >= MAX_CANDIDATES) {
+                break;
+            }
+        }
+        return list;
+    }
+
+    /** 这一格发酵 / 取货之后变成什么（JEI 右边的产物格） */
+    private static ItemStack productOf(VatRecipe.Slot slot, ItemStack sample, int count) {
+        if (count <= 0) {
+            return ItemStack.EMPTY;
+        }
+        return switch (slot.fate()) {
+            case KEEP -> slot.converter() == null
+                    ? withCount(sample, count)
+                    : withCount(slot.converter().apply(sample.copyWithCount(1)), count);
+            case CONVERT -> slot.product() == null
+                    ? ItemStack.EMPTY : new ItemStack(slot.product(), count);
+            case CONSUME, ABSORB -> ItemStack.EMPTY;
+        };
+    }
+
+    /** 多个格子都有产物时合成一格：同一种东西就把份数加起来 */
+    private static ItemStack merge(List<ItemStack> results) {
+        if (results.isEmpty()) {
+            return ItemStack.EMPTY;
+        }
+        ItemStack first = results.get(0);
+        int count = 0;
+        for (ItemStack stack : results) {
+            if (!stack.is(first.getItem())) {
+                return first;
+            }
+            count += stack.getCount();
+        }
+        return first.copyWithCount(count);
+    }
+
+    private static ItemStack withCount(ItemStack stack, int count) {
+        return stack.copyWithCount(Math.max(1, count));
+    }
+
+    // ===== 封口物 =====
+
+    private static List<ItemStack> sealOf(VatRecipe.Seal seal) {
+        return switch (seal) {
+            // 压缸石：任意石头类方块，这里挑几个代表
+            case PRESS -> oneOf(Items.STONE, Items.STONE_BRICKS, Items.COBBLESTONE, Items.DEEPSLATE);
+            // 蒙缸用的羊毛地毯
+            case CARPET -> oneOf(Items.WHITE_CARPET, Items.RED_CARPET, Items.BROWN_CARPET);
+            case CLOTH -> {
+                Item rug = BuiltInRegistries.ITEM.get(
+                        ResourceLocation.fromNamespaceAndPath("farmersdelight", "canvas_rug"));
+                yield rug == Items.AIR ? List.of() : List.of(new ItemStack(rug));
+            }
+            case NONE -> List.of();
+        };
+    }
+
     private static List<ItemStack> oneOf(Item... items) {
         return Arrays.stream(items).map(ItemStack::new).toList();
-    }
-
-    /** 一个槽里轮播多个物品，并且都带同样的数量 */
-    private static List<ItemStack> oneOf(int count, Item... items) {
-        return Arrays.stream(items).map(item -> new ItemStack(item, count)).toList();
-    }
-
-    /** 压缸石：任意石头类方块，这里挑几个代表 */
-    private static List<ItemStack> sealStone() {
-        return oneOf(Items.STONE, Items.STONE_BRICKS, Items.COBBLESTONE, Items.DEEPSLATE);
-    }
-
-    /** 蒙缸用的羊毛地毯 */
-    private static List<ItemStack> sealCarpet() {
-        return oneOf(Items.WHITE_CARPET, Items.RED_CARPET, Items.BROWN_CARPET);
-    }
-
-    /** 农夫乐事的粗布毯 */
-    private static List<ItemStack> sealCloth() {
-        Item rug = BuiltInRegistries.ITEM.get(
-                ResourceLocation.fromNamespaceAndPath("farmersdelight", "canvas_rug"));
-        return rug == Items.AIR ? List.of() : single(rug);
-    }
-
-    /** 任意生鱼（c:foods/raw_fish 标签里的东西都能用），带数量 */
-    private static List<ItemStack> rawFish(int count) {
-        ItemStack[] items = Ingredient.of(VatRecipes.RAW_FISH).getItems();
-        if (items.length == 0) {
-            return single(Items.COD, count);
-        }
-        return Arrays.stream(items).map(stack -> new ItemStack(stack.getItem(), count)).toList();
     }
 }

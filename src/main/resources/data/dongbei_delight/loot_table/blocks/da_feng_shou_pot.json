@@ -1,0 +1,96 @@
+{
+  "type": "minecraft:block",
+  "pools": [
+    {
+      "rolls": 1.0,
+      "conditions": [
+        {
+          "condition": "minecraft:block_state_property",
+          "block": "dongbei_delight:da_feng_shou_pot",
+          "properties": {
+            "servings": "1"
+          }
+        }
+      ],
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "dongbei_delight:da_feng_shou"
+        }
+      ]
+    },
+    {
+      "rolls": 1.0,
+      "conditions": [
+        {
+          "condition": "minecraft:block_state_property",
+          "block": "dongbei_delight:da_feng_shou_pot",
+          "properties": {
+            "servings": "2"
+          }
+        }
+      ],
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "dongbei_delight:da_feng_shou"
+        }
+      ]
+    },
+    {
+      "rolls": 1.0,
+      "conditions": [
+        {
+          "condition": "minecraft:block_state_property",
+          "block": "dongbei_delight:da_feng_shou_pot",
+          "properties": {
+            "servings": "3"
+          }
+        }
+      ],
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "dongbei_delight:da_feng_shou"
+        }
+      ]
+    },
+    {
+      "rolls": 1.0,
+      "conditions": [
+        {
+          "condition": "minecraft:block_state_property",
+          "block": "dongbei_delight:da_feng_shou_pot",
+          "properties": {
+            "servings": "4"
+          }
+        }
+      ],
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "dongbei_delight:da_feng_shou"
+        }
+      ]
+    },
+    {
+      "rolls": 1.0,
+      "conditions": [
+        {
+          "condition": "minecraft:block_state_property",
+          "block": "dongbei_delight:da_feng_shou_pot",
+          "properties": {
+            "servings": "0"
+          }
+        }
+      ],
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "dongbei_delight:large_basin"
+        }
+      ]
+    }
+  ],
+  "random_sequence": "dongbei_delight:blocks/da_feng_shou_pot"
+}

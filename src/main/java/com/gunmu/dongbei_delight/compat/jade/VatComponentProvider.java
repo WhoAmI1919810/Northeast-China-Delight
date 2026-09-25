@@ -4,8 +4,6 @@ import com.gunmu.dongbei_delight.block.ModBlockStateProperties;
 import com.gunmu.dongbei_delight.block.Vat;
 import com.gunmu.dongbei_delight.block.VatBlockEntity;
 import com.gunmu.dongbei_delight.crafting.VatRecipes;
-import com.gunmu.dongbei_delight.item.ModItems;
-import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
@@ -22,10 +20,12 @@ import snownee.jade.api.ui.ProgressStyle;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 
 /**
- * 准星指大缸时显示：状态、水位、盐、内容物、压缸石/盖布、发酵进度、成品份数。
+ * 准星指大缸时只显示三样：**液面高度、内容物、发酵进度条**。
+ *
+ * 详细的投料需求（几份盐、几块酱块、几份谷物…）一律不在这里写 —— 那些看 JEI 的
+ * 大缸配方页就行，Jade 里堆一堆文字反而看不清。
  *
  * 进度条只在这里显示；物品栏上方的 HUD 已经移除。
  * 数据全部读客户端那份方块实体（大缸每次变化都会同步），所以在没装 Jade 的服务端上也能正常显示。
@@ -61,70 +61,16 @@ public enum VatComponentProvider implements IBlockComponentProvider {
         boolean fermented = state.getValue(Vat.FERMENTED);
         IElementHelper helper = IElementHelper.get();
 
-        tooltip.add(Component.translatable(kindKey(kind)).withStyle(ChatFormatting.WHITE));
-
         List<ItemStack> contents = vat.contents();
         if (kind == VatRecipes.Kind.NONE && water <= 0 && contents.isEmpty()
                 && !vat.isPressed() && !vat.isCovered()) {
             return;
         }
 
-        // 水位与盐：泡菜按「一层水一份盐」，大酱 / 酱油固定 3 份盐，腊肉 / 咸鱼按肉（鱼）的数量配对
-        int salt = vat.countOf(ModItems.SALT.get());
-        int saltNeeded = switch (kind) {
-            case PICKLE, SPICY_PICKLE -> water * VatRecipes.SALT_PER_WATER;
-            case MEAT -> vat.meatCount();
-            case SALTED_FISH -> vat.rawFishCount();
-            case PASTE, SOY_SAUCE -> VatRecipes.PASTE_SALT;
-            default -> 0;
-        };
+        // 液面高度
         if (water > 0) {
             tooltip.add(Component.translatable("jade.dongbei_delight.vat.water", water,
                     ModBlockStateProperties.VAT_MAX_WATER));
-        }
-        if (salt > 0 || saltNeeded > 0) {
-            // 泡菜 / 大酱 / 酱油的盐溶在水里，只做数字显示
-            tooltip.add(Component.translatable(vat.isSaltDissolved()
-                    ? "jade.dongbei_delight.vat.salt_dissolved"
-                    : "jade.dongbei_delight.vat.salt", salt, saltNeeded));
-        }
-        // 大酱 / 酱油：把「酱块放够了没」也写出来，方便对着凑材料
-        if (kind == VatRecipes.Kind.PASTE || kind == VatRecipes.Kind.SOY_SAUCE) {
-            tooltip.add(Component.translatable("jade.dongbei_delight.vat.paste_chunks",
-                    vat.countOf(ModItems.SOY_PASTE_CHUNK.get()), VatRecipes.PASTE_CHUNKS));
-        }
-        // 酱渣：酿完之后缸里剩的东西，也是酿醋的引子
-        if (vat.residueCount() > 0) {
-            tooltip.add(Component.translatable("jade.dongbei_delight.vat.residue", vat.residueCount()));
-        }
-        // 酿醋 / 酿白醋：写出谷物放了几份
-        if (kind == VatRecipes.Kind.VINEGAR || kind == VatRecipes.Kind.WHITE_VINEGAR) {
-            tooltip.add(Component.translatable("jade.dongbei_delight.vat.vinegar_grain",
-                    vat.vinegarGrainCount(), VatRecipes.VINEGAR_GRAIN_COUNT));
-        }
-        // 辣白菜：红辣椒是必选，调味品数量按份数要求
-        if (kind == VatRecipes.Kind.SPICY_PICKLE) {
-            tooltip.add(Component.translatable("jade.dongbei_delight.vat.spicy_seasoning",
-                    vat.chiliSauceCount(),
-                    vat.seasoningCount(),
-                    VatRecipes.spicySeasoningNeed(water)));
-        }
-        // 生豆芽：写出缸里的黄豆 / 豆芽总数
-        if (kind == VatRecipes.Kind.BEAN_SPROUTS) {
-            tooltip.add(Component.translatable("jade.dongbei_delight.vat.sprout_soybean",
-                    vat.soybeanCount() + vat.countOf(ModItems.BEAN_SPROUTS.get()),
-                    VatRecipes.SPROUT_SOYBEAN_MAX));
-        }
-        // 酸玉米粒：写出缸里的玉米粒 / 酸玉米粒总数
-        if (kind == VatRecipes.Kind.SOUR_CORN) {
-            tooltip.add(Component.translatable("jade.dongbei_delight.vat.sour_corn_count",
-                    vat.cornKernelCount() + vat.countOf(ModItems.SOUR_CORN_KERNELS.get()),
-                    water * VatRecipes.SOUR_CORN_PER_WATER));
-        }
-        // 格瓦斯：写出缸里的面包数量（配方要 6 个）
-        if (kind == VatRecipes.Kind.KVASS) {
-            tooltip.add(Component.translatable("jade.dongbei_delight.vat.kvass_bread",
-                    vat.countOf(VatRecipes.kvassBread()), VatRecipes.KVASS_BREAD));
         }
 
         // 内容物图标
@@ -134,19 +80,6 @@ public enum VatComponentProvider implements IBlockComponentProvider {
             for (int i = 0; i < contents.size() && i < MAX_CONTENT_ICONS; i++) {
                 line.add(helper.smallItem(contents.get(i)));
             }
-            tooltip.add(line);
-        }
-
-        if (vat.isPressed()) {
-            List<IElement> line = new ArrayList<>();
-            line.add(helper.text(Component.translatable("jade.dongbei_delight.vat.press")));
-            line.add(helper.smallItem(vat.press()));
-            tooltip.add(line);
-        }
-        if (vat.isCovered()) {
-            List<IElement> line = new ArrayList<>();
-            line.add(helper.text(Component.translatable("jade.dongbei_delight.vat.cover")));
-            line.add(helper.smallItem(vat.cover()));
             tooltip.add(line);
         }
 
@@ -169,44 +102,5 @@ public enum VatComponentProvider implements IBlockComponentProvider {
             tooltip.add(helper.progress(ratio, text, style, BoxStyle.getNestedBox(), false));
         }
 
-        // 成品份数（同时给出 mB，方便对着储罐估算）
-        if (fermented && kind == VatRecipes.Kind.PASTE && vat.pasteMb() > 0) {
-            tooltip.add(Component.translatable("jade.dongbei_delight.vat.paste_amount",
-                    vat.paste(), vat.pasteMb()));
-        }
-        if (fermented && kind == VatRecipes.Kind.SOY_SAUCE && vat.soySauceMb() > 0) {
-            tooltip.add(Component.translatable("jade.dongbei_delight.vat.soy_sauce_amount",
-                    vat.soySauce(), vat.soySauceMb()));
-        }
-        if (fermented && kind == VatRecipes.Kind.VINEGAR && vat.vinegarMb() > 0) {
-            tooltip.add(Component.translatable("jade.dongbei_delight.vat.vinegar_amount",
-                    vat.vinegar(), vat.vinegarMb()));
-        }
-        // 泡菜腌好后缸里那缸水变成了酸引水，可以装瓶也可以抽走
-        if (fermented && (kind == VatRecipes.Kind.PICKLE || kind == VatRecipes.Kind.SPICY_PICKLE)
-                && vat.sourWaterMb() > 0) {
-            tooltip.add(Component.translatable("jade.dongbei_delight.vat.sour_water_amount",
-                    vat.sourWater(), vat.sourWaterMb()));
-        }
-        if (fermented && kind == VatRecipes.Kind.WHITE_VINEGAR && vat.whiteVinegarMb() > 0) {
-            tooltip.add(Component.translatable("jade.dongbei_delight.vat.white_vinegar_amount",
-                    vat.whiteVinegar(), vat.whiteVinegarMb()));
-        }
-        if (fermented && kind == VatRecipes.Kind.FISH_SAUCE && vat.fishSauceMb() > 0) {
-            tooltip.add(Component.translatable("jade.dongbei_delight.vat.fish_sauce_amount",
-                    vat.fishSauce(), vat.fishSauceMb()));
-        }
-        if (fermented && kind == VatRecipes.Kind.SHRIMP_PASTE && vat.shrimpPasteMb() > 0) {
-            tooltip.add(Component.translatable("jade.dongbei_delight.vat.shrimp_paste_amount",
-                    vat.shrimpPaste(), vat.shrimpPasteMb()));
-        }
-        if (fermented && kind == VatRecipes.Kind.KVASS && vat.kvassMb() > 0) {
-            tooltip.add(Component.translatable("jade.dongbei_delight.vat.kvass_amount",
-                    vat.kvass(), vat.kvassMb()));
-        }
-    }
-
-    private static String kindKey(VatRecipes.Kind kind) {
-        return "jade.dongbei_delight.vat.kind." + kind.name().toLowerCase(Locale.ROOT);
     }
 }
