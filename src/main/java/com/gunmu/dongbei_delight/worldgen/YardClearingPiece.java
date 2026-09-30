@@ -31,6 +31,19 @@ import net.minecraft.world.level.levelgen.structure.pieces.StructurePieceSeriali
  */
 public class YardClearingPiece extends StructurePiece
 {
+    /**
+     * 院子底下要填多深：地下经常有洞穴/空腔，只填「地表到院子地面」那一小段不够，
+     * 往下再垫一层实心泥土，站在院子里往下挖就不会突然漏到洞里。
+     */
+    public static final int FOUNDATION_DEPTH = 32;
+    /** 地基比院墙再往外多铺几格，免得贴着墙根挖就是洞 */
+    public static final int FOUNDATION_MARGIN = 4;
+    /** 树冠比树干宽，清场半径外再补一圈专门清树叶/原木，免得留下悬空的树冠 */
+    public static final int LEAF_MARGIN = 6;
+    /** 门口正前方这一片也要填实（不然出门就是个洞） */
+    public static final int GATE_PATH_LENGTH = 8;
+    public static final int GATE_PATH_HALF_WIDTH = 5;
+
     private final int groundY;
     private final int radius;
     private final int clearAbove;
@@ -39,9 +52,11 @@ public class YardClearingPiece extends StructurePiece
     private final int yardMaxX;
     private final int yardMinZ;
     private final int yardMaxZ;
+    /** 大门的朝向：+1 = 朝南（+z），-1 = 朝北（-z） */
+    private final int gateDir;
 
     public YardClearingPiece(BlockPos yardOrigin, int sizeX, int sizeZ, int groundY,
-                             int radius, int clearAbove)
+                             int radius, int clearAbove, int gateDir)
     {
         super(ModWorldGen.CLEARING_PIECE.get(), 0,
                 new BoundingBox(yardOrigin.getX() - radius, yardOrigin.getY() - 8, yardOrigin.getZ() - radius,
@@ -54,6 +69,7 @@ public class YardClearingPiece extends StructurePiece
         this.yardMaxX = yardOrigin.getX() + sizeX - 1;
         this.yardMinZ = yardOrigin.getZ();
         this.yardMaxZ = yardOrigin.getZ() + sizeZ - 1;
+        this.gateDir = gateDir >= 0 ? 1 : -1;
     }
 
     public YardClearingPiece(CompoundTag tag)
@@ -66,6 +82,7 @@ public class YardClearingPiece extends StructurePiece
         this.yardMaxX = tag.getInt("YardMaxX");
         this.yardMinZ = tag.getInt("YardMinZ");
         this.yardMaxZ = tag.getInt("YardMaxZ");
+        this.gateDir = tag.getInt("GateDir") >= 0 ? 1 : -1;
     }
 
     @Override
@@ -78,6 +95,7 @@ public class YardClearingPiece extends StructurePiece
         tag.putInt("YardMaxX", this.yardMaxX);
         tag.putInt("YardMinZ", this.yardMinZ);
         tag.putInt("YardMaxZ", this.yardMaxZ);
+        tag.putInt("GateDir", this.gateDir);
     }
 
     @Override
@@ -113,22 +131,71 @@ public class YardClearingPiece extends StructurePiece
                         level.setBlock(cursor, Blocks.AIR.defaultBlockState(), 2);
                     }
                 }
-                // 院子范围里：把地形表面到院子地面之间填实，别让院子悬空
-                if (x >= this.yardMinX && x <= this.yardMaxX && z >= this.yardMinZ && z <= this.yardMaxZ)
+                boolean inYard = x >= this.yardMinX - FOUNDATION_MARGIN
+                        && x <= this.yardMaxX + FOUNDATION_MARGIN
+                        && z >= this.yardMinZ - FOUNDATION_MARGIN
+                        && z <= this.yardMaxZ + FOUNDATION_MARGIN;
+                // 院子范围 + 大门正前方一条：把地形表面到院子地面之间填实，别让院子悬空、别让门口是洞
+                boolean inGatePath = x >= (this.yardMinX + this.yardMaxX) / 2 - GATE_PATH_HALF_WIDTH
+                        && x <= (this.yardMinX + this.yardMaxX) / 2 + GATE_PATH_HALF_WIDTH
+                        && (this.gateDir > 0
+                        ? (z >= this.yardMaxZ && z <= this.yardMaxZ + GATE_PATH_LENGTH)
+                        : (z <= this.yardMinZ && z >= this.yardMinZ - GATE_PATH_LENGTH));
+                if (inYard || inGatePath)
                 {
-                    int from = Math.max(level.getMinBuildHeight(), Math.min(surface, this.groundY));
-                    for (int y = from; y < this.groundY; y++)
+                    int top = inYard ? this.groundY
+                            : Math.max(this.groundY - 4, level.getHeight(Heightmap.Types.WORLD_SURFACE_WG, x, z));
+                    int from = Math.max(level.getMinBuildHeight(), top - FOUNDATION_DEPTH);
+                    // 注意这里是**含**地面那一层的：以前写到 y < top，
+                    // 院墙外那一圈就少垫一层，墙外的地表比院子里低一格，
+                    // 墙根那排砖就露在外面了。
+                    int fillTo = inYard ? this.groundY : top - 1;
+                    for (int y = from; y <= fillTo; y++)
                     {
                         cursor.set(x, y, z);
                         BlockState here = level.getBlockState(cursor);
-                        if (here.isAir() || isVegetation(here))
+                        if (here.isAir() || isVegetation(here) || isIce(here)
+                                || !here.getFluidState().isEmpty())
                         {
                             level.setBlock(cursor, Blocks.DIRT.defaultBlockState(), 2);
+                        }
+                    }
+                    // 地面以上只清「盖在地表的雪/冰/草皮」：雪原里高度图会把薄雪片当成一层方块，
+                    // 不把这些清掉，院外的雪就比院子里高，看着还是「内外不齐、墙根露砖」。
+                    int coverTop = Math.min(yardTop, this.groundY + 4);
+                    for (int y = this.groundY + 1; y <= coverTop; y++)
+                    {
+                        cursor.set(x, y, z);
+                        BlockState cover = level.getBlockState(cursor);
+                        if (cover.is(Blocks.SNOW) || cover.is(Blocks.SNOW_BLOCK) || isIce(cover)
+                                || isVegetation(cover))
+                        {
+                            level.setBlock(cursor, Blocks.AIR.defaultBlockState(), 2);
+                        }
+                    }
+                }
+                // 外圈再扫一遍树叶/原木：清场半径边缘被截断的树，树冠不会悬在半空
+                if (!inYard && Math.abs(x - (this.yardMinX + this.yardMaxX) / 2) <= this.radius + LEAF_MARGIN
+                        && Math.abs(z - (this.yardMinZ + this.yardMaxZ) / 2) <= this.radius + LEAF_MARGIN)
+                {
+                    for (int y = yFrom; y <= yardTop; y++)
+                    {
+                        cursor.set(x, y, z);
+                        BlockState state = level.getBlockState(cursor);
+                        if (state.is(BlockTags.LEAVES) || state.is(BlockTags.LOGS))
+                        {
+                            level.setBlock(cursor, Blocks.AIR.defaultBlockState(), 2);
                         }
                     }
                 }
             }
         }
+    }
+
+    private static boolean isIce(BlockState state)
+    {
+        return state.is(Blocks.ICE) || state.is(Blocks.PACKED_ICE)
+                || state.is(Blocks.BLUE_ICE) || state.is(Blocks.FROSTED_ICE);
     }
 
     /** 树、灌木、花草、作物这类「地物」，不是地形本身 */

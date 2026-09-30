@@ -7,14 +7,20 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Holder;
 import net.minecraft.core.QuartPos;
+import net.minecraft.core.Registry;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.level.block.Rotation;
+import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.level.levelgen.WorldgenRandom;
 import net.minecraft.world.level.levelgen.structure.Structure;
+import net.minecraft.world.level.levelgen.structure.StructureSet;
 import net.minecraft.world.level.levelgen.structure.StructureType;
 import net.minecraft.world.level.levelgen.structure.TemplateStructurePiece;
+import net.minecraft.world.level.levelgen.structure.placement.RandomSpreadStructurePlacement;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplate;
 
 import java.util.ArrayDeque;
@@ -61,13 +67,25 @@ public class DongbeiCourtyardStructure extends Structure
             "dongbei_delight:dongbei_yard_metal"
     );
 
-    /** 模板里在院子地面以下多垫了几层土（见 tools/structure_gen，base_y=2） */
-    public static final int TEMPLATE_BASE_Y = 2;
+    /**
+     * 默认要避开的其他结构集：原版的五种村庄。
+     * 小院要是长在村子里，两边的房子会互相插进对方身体里，所以离得太近就换地方。
+     */
+    public static final List<String> DEFAULT_AVOID_STRUCTURES = List.of(
+            "minecraft:village_plains",
+            "minecraft:village_desert",
+            "minecraft:village_savanna",
+            "minecraft:village_snowy",
+            "minecraft:village_taiga"
+    );
+
+    /** 模板里在院子地面以下多垫了几层土（见 tools/structure_gen，base_y=4，用来挖菜窖） */
+    public static final int TEMPLATE_BASE_Y = 4;
     /**
      * 模板里「院子地面（草方块）」在第几层：**第 0 层就是院子地面**，
      * 上面才是房子和家具 —— 见 tools/structure_gen/designs.py 的 GROUND/ON。
      */
-    public static final int GROUND_LAYER_IN_TEMPLATE = 0;
+    public static final int GROUND_LAYER_IN_TEMPLATE = TEMPLATE_BASE_Y;
     /** 游走时的横向随机偏移（格），让村子不像棋盘 */
     public static final int LATERAL_JITTER = 6;
     /** 门口前方检查范围：多宽、地形高差容忍几格 */
@@ -75,12 +93,42 @@ public class DongbeiCourtyardStructure extends Structure
     public static final int MAX_GATE_SLOPE = 4;
     /** 黑土地每格替换概率（改这一个数就能调密度） */
     public static final float BLACK_SOIL_DENSITY = 0.12F;
+
+    /**
+     * 「清场」设置：院子正上方留多少格空气、院子外扩多少格清树。
+     * 单独做成一个对象，是因为 RecordCodecBuilder 一份最多只能写 16 个字段，
+     * 后面还要加「避开村庄」的配置。
+     */
+    public record ClearSettings(int radius, int above)
+    {
+        public static final Codec<ClearSettings> CODEC = RecordCodecBuilder.create(i -> i.group(
+                Codec.intRange(0, 64).optionalFieldOf("radius", 20).forGetter(ClearSettings::radius),
+                Codec.intRange(4, 96).optionalFieldOf("above", 30).forGetter(ClearSettings::above)
+        ).apply(i, ClearSettings::new));
+    }
+
+    /** 「避开其他结构」设置：默认躲开原版五种村庄，间隔 64 格。 */
+    public record AvoidSettings(List<String> structures, int margin)
+    {
+        public static final Codec<AvoidSettings> CODEC = RecordCodecBuilder.create(i -> i.group(
+                Codec.STRING.listOf().optionalFieldOf("structures", DEFAULT_AVOID_STRUCTURES)
+                        .forGetter(AvoidSettings::structures),
+                Codec.intRange(0, 256).optionalFieldOf("margin", 64).forGetter(AvoidSettings::margin)
+        ).apply(i, AvoidSettings::new));
+
+        public static final AvoidSettings DEFAULT = new AvoidSettings(DEFAULT_AVOID_STRUCTURES, 64);
+    }
     /**
      * 游走概率递减曲线：第 1 户 80%，之后每多一户降 15%，降到 20% 不再降
      * （80 / 65 / 50 / 35 / 20 / 20 / 20 …）。{@code walk_chance} 是起始概率。
      */
     public static final float WALK_CHANCE_STEP = 0.15F;
     public static final float WALK_CHANCE_MIN = 0.20F;
+    /**
+     * 小院离水面的最小距离（格）：候选位置周围这么大一圈里只要有水就不生成。
+     * 玩家要求"生成的小院离水至少 15 格远"。
+     */
+    public static final int WATER_CLEARANCE = 15;
 
     private static final List<Direction> HORIZONTALS =
             List.of(Direction.EAST, Direction.WEST, Direction.NORTH, Direction.SOUTH);
@@ -99,9 +147,11 @@ public class DongbeiCourtyardStructure extends Structure
             Codec.floatRange(0.0F, 1.0F).optionalFieldOf("black_soil_chance", 0.35F).forGetter(s -> s.blackSoilChance),
             Codec.intRange(0, 64).optionalFieldOf("black_soil_radius", 18).forGetter(s -> s.blackSoilRadius),
             Codec.STRING.optionalFieldOf("step_measure", "gap").forGetter(s -> s.stepMeasure),
-            Codec.intRange(0, 64).optionalFieldOf("clear_radius", 20).forGetter(s -> s.clearRadius),
-            Codec.intRange(4, 96).optionalFieldOf("clear_above", 30).forGetter(s -> s.clearAbove),
-            Codec.intRange(0, 48).optionalFieldOf("gate_check_depth", 12).forGetter(s -> s.gateCheckDepth)
+            ClearSettings.CODEC.optionalFieldOf("clear", new ClearSettings(20, 30))
+                    .forGetter(s -> new ClearSettings(s.clearRadius, s.clearAbove)),
+            Codec.intRange(0, 48).optionalFieldOf("gate_check_depth", 12).forGetter(s -> s.gateCheckDepth),
+            AvoidSettings.CODEC.optionalFieldOf("avoid", AvoidSettings.DEFAULT)
+                    .forGetter(s -> new AvoidSettings(s.avoidStructures, s.avoidMargin))
     ).apply(instance, DongbeiCourtyardStructure::new));
 
     private final List<String> templates;
@@ -119,12 +169,14 @@ public class DongbeiCourtyardStructure extends Structure
     private final int clearRadius;
     private final int clearAbove;
     private final int gateCheckDepth;
+    private final List<String> avoidStructures;
+    private final int avoidMargin;
 
     public DongbeiCourtyardStructure(StructureSettings settings, List<String> templates, float originChance,
                                      float walkChance, int stepMin, int stepMax, int maxHouses, int minGap,
                                      int maxSlope, boolean allowFlip, float blackSoilChance,
                                      int blackSoilRadius, String stepMeasure,
-                                     int clearRadius, int clearAbove, int gateCheckDepth)
+                                     ClearSettings clear, int gateCheckDepth, AvoidSettings avoid)
     {
         super(settings);
         this.templates = templates.isEmpty() ? DEFAULT_TEMPLATES : templates;
@@ -141,9 +193,11 @@ public class DongbeiCourtyardStructure extends Structure
         // gap = 两个院子之间的空隙（默认，院子大了也不会挤在一起）
         // center = 两个院子原点的直线距离（旧行为）
         this.stepMeasure = "center".equalsIgnoreCase(stepMeasure) ? "center" : "gap";
-        this.clearRadius = clearRadius;
-        this.clearAbove = clearAbove;
+        this.clearRadius = clear.radius();
+        this.clearAbove = clear.above();
         this.gateCheckDepth = gateCheckDepth;
+        this.avoidStructures = avoid.structures();
+        this.avoidMargin = avoid.margin();
     }
 
     @Override
@@ -177,7 +231,8 @@ public class DongbeiCourtyardStructure extends Structure
                 builder.addPiece(new YardClearingPiece(yard.pos(),
                         template.getSize().getX(), template.getSize().getZ(),
                         yard.pos().getY() + GROUND_LAYER_IN_TEMPLATE,
-                        this.clearRadius, this.clearAbove));
+                        this.clearRadius, this.clearAbove,
+                        yard.rotation() == Rotation.CLOCKWISE_180 ? -1 : 1));
             }
             for (Yard yard : yards)
             {
@@ -323,6 +378,12 @@ public class DongbeiCourtyardStructure extends Structure
         {
             return null;
         }
+        // 河流和海洋里不长小院（河边、海边的岸上也不行 —— 那些地方容易半只脚泡水里）
+        if (biome.is(net.minecraft.tags.BiomeTags.IS_RIVER)
+                || biome.is(net.minecraft.tags.BiomeTags.IS_OCEAN))
+        {
+            return null;
+        }
         if (!this.slopeOk(context, x, z, surface))
         {
             return null;
@@ -332,11 +393,25 @@ public class DongbeiCourtyardStructure extends Structure
             // 院子这块地被山体埋住 / 悬在崖上，放弃
             return null;
         }
+        if (!this.waterFarEnough(context, template, x, z))
+        {
+            // 周围 15 格内有水（河、湖、海），换地方
+            return null;
+        }
+        if (this.tooCloseToAvoidedStructures(context, template, x, z))
+        {
+            // 旁边就是（或很可能是）村庄，别把院子摞到人家头上
+            return null;
+        }
         sizes.computeIfAbsent(template, id -> context.structureTemplateManager().getOrCreate(ResourceLocation.parse(id)));
         boolean blackSoil = this.blackSoilChance > 0.0F && random.nextFloat() < this.blackSoilChance;
-        // 院子的草地要对齐地形表面：surface 是「地表之上的空气层」，
-        // 所以再往下压一格，模板里的垫土全埋进地形，不会露出一圈土基。
-        BlockPos pos = new BlockPos(x, surface - GROUND_LAYER_IN_TEMPLATE - 1, z);
+        // 院子的草地要和外边的地面齐平。坑在于雪原：地表最上面那格是**雪层**，
+        // 高度图会把雪层也算进去，于是院子会被抬高整整一格（就是那块露在外面的砖）。
+        // 所以下雪的地方要多压一格，让院子地面落在雪层**下面**那层地面上。
+        boolean snowy = biome.value().getPrecipitationAt(new BlockPos(x, surface, z))
+                == net.minecraft.world.level.biome.Biome.Precipitation.SNOW;
+        int sink = snowy ? 2 : 1;
+        BlockPos pos = new BlockPos(x, surface - GROUND_LAYER_IN_TEMPLATE - sink, z);
         // 朝向：优先挑「门口不是悬崖/水面/墙」的那一面
         Rotation rotation = this.pickRotation(context, template, pos, surface, random);
         if (rotation == null)
@@ -450,6 +525,32 @@ public class DongbeiCourtyardStructure extends Structure
         return true;
     }
 
+    /**
+     * 检查候选位置周围「院子半径 + 15 格」范围内有没有水。
+     * 世界生成阶段读不到方块，只能用高度图：水面高度 != 海底高度 就说明那一列有液体。
+     */
+    private boolean waterFarEnough(GenerationContext context, String template, int x, int z)
+    {
+        StructureTemplate t = context.structureTemplateManager().getOrCreate(ResourceLocation.parse(template));
+        int half = Math.max(t.getSize().getX(), t.getSize().getZ()) / 2;
+        int reach = half + WATER_CLEARANCE;
+        for (int dx = -reach; dx <= reach; dx += 4)
+        {
+            for (int dz = -reach; dz <= reach; dz += 4)
+            {
+                int surface = context.chunkGenerator().getBaseHeight(x + dx, z + dz,
+                        Heightmap.Types.WORLD_SURFACE_WG, context.heightAccessor(), context.randomState());
+                int floor = context.chunkGenerator().getBaseHeight(x + dx, z + dz,
+                        Heightmap.Types.OCEAN_FLOOR_WG, context.heightAccessor(), context.randomState());
+                if (surface != floor)
+                {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
     /** 用模板的真实尺寸判断两个院子是否挤在一起（留 minGap 格缝）。 */
     private boolean overlaps(Yard candidate, List<Yard> yards, Map<String, StructureTemplate> sizes)
     {
@@ -466,6 +567,98 @@ public class DongbeiCourtyardStructure extends Structure
             int overlapZ = Math.min(candidate.pos().getZ() + ad, other.pos().getZ() + bd)
                     - Math.max(candidate.pos().getZ(), other.pos().getZ());
             if (overlapX > -this.minGap && overlapZ > -this.minGap)
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * 候选位置离「要避开的其他结构」太近就返回 true（这一户不生成）。
+     *
+     * <p>世界生成阶段问不到「别的结构到底生成了没」，只能照原版 {@code exclusion_zone} 的思路：
+     * 用放置算法算出村庄**可能**落在哪些区块，要求院子和这些候选位置至少隔开 {@code avoid_margin} 格。
+     * 村庄真正落地还要过生物群系那一关，所以这里再判一次群系，
+     * 免得把小院从「根本不会长村」的区块旁边无谓地赶走。
+     */
+    private boolean tooCloseToAvoidedStructures(GenerationContext context, String template, int x, int z)
+    {
+        if (this.avoidMargin <= 0 || this.avoidStructures.isEmpty())
+        {
+            return false;
+        }
+        Registry<StructureSet> sets;
+        try
+        {
+            sets = context.registryAccess().registryOrThrow(Registries.STRUCTURE_SET);
+        }
+        catch (Exception e)
+        {
+            return false;
+        }
+        StructureTemplate t = context.structureTemplateManager().getOrCreate(ResourceLocation.parse(template));
+        int sizeX = t.getSize().getX();
+        int sizeZ = t.getSize().getZ();
+        int minX = x - this.avoidMargin;
+        int maxX = x + sizeX - 1 + this.avoidMargin;
+        int minZ = z - this.avoidMargin;
+        int maxZ = z + sizeZ - 1 + this.avoidMargin;
+        long seed = context.seed();
+        for (String id : this.avoidStructures)
+        {
+            ResourceLocation key = ResourceLocation.tryParse(id);
+            if (key == null)
+            {
+                continue;
+            }
+            Optional<Holder.Reference<StructureSet>> holder =
+                    sets.getHolder(ResourceKey.create(Registries.STRUCTURE_SET, key));
+            if (holder.isEmpty() || !(holder.get().value().placement() instanceof RandomSpreadStructurePlacement spread))
+            {
+                continue;
+            }
+            int spacing = Math.max(1, spread.spacing());
+            int minRegionX = Math.floorDiv(minX >> 4, spacing) - 1;
+            int maxRegionX = Math.floorDiv(maxX >> 4, spacing) + 1;
+            int minRegionZ = Math.floorDiv(minZ >> 4, spacing) - 1;
+            int maxRegionZ = Math.floorDiv(maxZ >> 4, spacing) + 1;
+            for (int regionX = minRegionX; regionX <= maxRegionX; regionX++)
+            {
+                for (int regionZ = minRegionZ; regionZ <= maxRegionZ; regionZ++)
+                {
+                    ChunkPos candidate = spread.getPotentialStructureChunk(seed, regionX * spacing, regionZ * spacing);
+                    int centerX = candidate.getMinBlockX() + 8;
+                    int centerZ = candidate.getMinBlockZ() + 8;
+                    if (centerX < minX || centerX > maxX || centerZ < minZ || centerZ > maxZ)
+                    {
+                        continue;
+                    }
+                    if (!spread.applyAdditionalChunkRestrictions(candidate.x, candidate.z, seed))
+                    {
+                        continue;
+                    }
+                    if (this.avoidedStructureCouldGenerate(context, holder.get().value(), centerX, centerZ))
+                    {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
+    /** 这个位置的地表群系，是不是该结构集里某个结构允许生成的群系？ */
+    private boolean avoidedStructureCouldGenerate(GenerationContext context, StructureSet set, int blockX, int blockZ)
+    {
+        int surface = context.chunkGenerator().getBaseHeight(blockX, blockZ, Heightmap.Types.WORLD_SURFACE_WG,
+                context.heightAccessor(), context.randomState());
+        Holder<Biome> biomeHere = context.biomeSource().getNoiseBiome(
+                QuartPos.fromBlock(blockX), QuartPos.fromBlock(surface), QuartPos.fromBlock(blockZ),
+                context.randomState().sampler());
+        for (StructureSet.StructureSelectionEntry entry : set.structures())
+        {
+            if (entry.structure().value().biomes().contains(biomeHere))
             {
                 return true;
             }

@@ -15,6 +15,8 @@ ON = 1
 # 茅草/干草一律用惰性装饰块，不用干草捆（hay_block 一拆就是 9 个小麦，破坏生存平衡）
 THATCH = "minecraft:yellow_wool"
 NEST = "minecraft:brown_wool"
+# 晾衣绳用农夫乐事的绳栅栏（细绳缠出来的那种，比绊线像样）
+ROPE_FENCE = "farmersdelight:rope_fence"
 
 # 各作物的最大生长阶段（大葱只有 4 个阶段，写 age=7 会读不出来 —— 日志里会报
 # "Unable to read property: age with value: 7"，那一格就变成空气）
@@ -130,9 +132,14 @@ def house(b, x1, z1, x2, z2, y, height, wall, style, door_x=None,
     if porch:
         vestibule(b, door_x if door_x is not None else (x1 + x2) // 2, z2, y,
                   width=2, depth=2, wall=wall, style=style)
+        # 门斗门口铺半砖台阶：位置在楼板那一层，1 格宽（和门一样宽）
+        step_x = door_x if door_x is not None else (x1 + x2) // 2
+        b.set(step_x, y, z2 + 3, B("minecraft:stone_brick_slab", type="bottom",
+                                   waterlogged="false"))
     elif door_x is not None:
-        # 台阶
-        b.fill(door_x - 1, y, z2 + 1, door_x + 1, y, z2 + 1, "minecraft:stone_bricks")
+        # 门口铺半砖台阶，1 格宽，高度和楼板齐
+        b.set(door_x, y, z2 + 1, B("minecraft:stone_brick_slab", type="bottom",
+                                   waterlogged="false"))
     if lit:
         b.set((x1 + x2) // 2, y + height, (z1 + z2) // 2 + 1,
               B("minecraft:lantern", hanging="true"))
@@ -157,9 +164,16 @@ def interior_basic(b, x1, z1, x2, z2, y, wall="minecraft:bricks"):
 
 def interior_three_bay(b, x1, z1, x2, z2, y, wall="minecraft:bricks",
                        ceiling_y=None, loot_house=None, loot_kitchen=None):
-    """三开间内构：中间灶房（灶台+水缸+案板），东西两屋（各一盘火炕+柜子）。
+    """三开间内构，三个房间各有各的用处：
 
-    y 是楼板那一层；家具都在 y+1、y+2，梁在 y+5 左右。
+    * **西屋 = 卧室**：南窗下一盘火炕（红砖 + 白地毯），炕上摞被褥（白羊毛）和枕头（红羊毛），
+      北墙摆柜子，墙上挂灯。
+    * **中间 = 灶房**：北墙一整条砖砌灶台，两口灶眼（明火 + 炖锅），旁边水缸、案板、粮袋、米桶，
+      屋当中一张小桌，头顶吊灯。
+    * **东屋 = 储物间**：箱子摞两层、成排的桶和菜筐、粮袋、腌菜大缸，
+      角落里一个**菜窖口**（石砖框 + 两块木盖，这次是真有用途的活板门）。
+
+    y 是楼板那一层；家具都在 y+1 起，房梁在 ceiling_y（默认 y+4）。
     """
     ix1, ix2 = x1 + 1, x2 - 1
     iz1, iz2 = z1 + 1, z2 - 1
@@ -167,46 +181,80 @@ def interior_three_bay(b, x1, z1, x2, z2, y, wall="minecraft:bricks",
     p1 = ix1 + width // 3
     p2 = ix2 - width // 3
     door_z = (iz1 + iz2) // 2
-    # 隔断墙（中间留门洞，人能走进去）
+    floor = y + 1
+    cy = ceiling_y or y + 4
+
+    # ---- 两道隔断墙，各留一个两格高的门洞 ----
     for x in (p1, p2):
         for z in range(iz1, iz2 + 1):
             if z == door_z or z == door_z + 1:
                 continue
-            for yy in range(y + 1, y + 3):
+            for yy in range(floor, floor + 2):
                 b.set(x, yy, z, wall)
-    # 堂屋（中间那间）：灶台 + 锅 + 案板 + 水缸 + 柴
-    mid = (p1 + p2) // 2
-    b.set(mid - 1, y + 1, iz1, B("minecraft:furnace", facing="south"))
-    b.set(mid, y + 1, iz1, B("minecraft:furnace", facing="south"))
-    b.set(mid + 1, y + 1, iz1, B("minecraft:smoker", facing="south"))
-    b.set(mid, y + 2, iz1, "minecraft:cauldron")
-    b.set(mid - 1, y + 2, iz1, "minecraft:campfire")
-    b.set(mid + 1, y + 1, iz1 + 1, "minecraft:crafting_table")
-    vat(b, p2 - 1, y + 1, iz1 + 1, layers=2)
-    b.set(p1 + 1, y + 1, iz1, "minecraft:water_cauldron")
-    if loot_kitchen:
-        loot_barrel(b, p2 - 1, y + 1, iz1 + 2, loot_kitchen)
-    b.table(mid + 1, y + 1, door_z)
-    b.set(mid + 2, y + 1, door_z, B("minecraft:spruce_trapdoor", facing="north", half="top"))
-    # 堂屋也点灯 + 摆两盆花
-    b.set(mid, (ceiling_y or y + 4) - 1, iz1 + 2, B("minecraft:lantern", hanging="true"))
-    b.set(p1 + 1, y + 1, iz2 - 1, "minecraft:flower_pot")
-    b.set(p2 - 1, y + 1, iz2 - 1, "minecraft:flower_pot")
-    # 东西两屋：火炕（南窗下）+ 被褥（床）+ 柜子 + 吊灯
-    for (a, c, chest_z) in ((ix1, max(ix1, p1 - 1), iz1 + 1),
-                            (min(ix2, p2 + 1), ix2, iz1 + 1)):
-        if c - a < 1:
-            continue
-        b.kang(a, iz2 - 1, c, iz2, y + 1)
-        b.set(c, y + 1, chest_z, "minecraft:barrel")
-        b.set(a, y + 1, chest_z, "minecraft:chest")
-        b.set(c, y + 1, iz2 - 2, "minecraft:flower_pot")
-        b.set((a + c) // 2, (ceiling_y or y + 4) - 1, door_z,
-              B("minecraft:lantern", hanging="true"))
+
+    # ================= 西屋：卧室 =================
+    # 南窗下的火炕（红砖 + 白地毯），西屋整间都是炕
+    b.kang(ix1, iz2 - 1, p1 - 1, iz2, floor)
+    # 炕上摞被褥，炕尾放枕头
+    quilt_end = max(ix1, p1 - 3)
+    for x in range(ix1, quilt_end):
+        b.set(x, floor + 1, iz2 - 1, "minecraft:white_wool")
+    b.set(quilt_end, floor + 1, iz2 - 1, "minecraft:red_wool")
+    # 炕梢的柜子、墙边的花盆
+    b.set(ix1, floor, iz1, "minecraft:barrel")
+    b.set(ix1 + 1, floor, iz1, "minecraft:chest")
+    b.set(p1 - 1, floor, iz1 + 1, "minecraft:flower_pot")
     if loot_house:
-        loot_chest(b, ix1, y + 1, iz1 + 1, loot_house, facing="south")
-    # 房梁
-    cy = ceiling_y or y + 4
+        loot_chest(b, ix1 + 2, floor, iz1, loot_house, facing="south")
+    b.set((ix1 + p1) // 2, cy - 1, door_z, B("minecraft:lantern", hanging="true"))
+
+    # ================= 中屋：灶房 =================
+    mid = (p1 + p2) // 2
+    # 北墙一整条砖砌灶台，上面两口灶眼：一口明火、一口锅
+    b.fill(mid - 1, floor, iz1, mid + 1, floor, iz1, "minecraft:bricks")
+    b.set(mid - 1, floor + 1, iz1, "minecraft:campfire")
+    b.set(mid, floor + 1, iz1, "minecraft:cauldron")
+    b.set(mid + 1, floor + 1, iz1, B("minecraft:smoker", facing="south"))
+    # 水缸、案板、粮袋、米桶
+    b.set(mid + 1, floor, iz1 + 1, "minecraft:water_cauldron")
+    b.set(mid - 1, floor, iz1 + 1, "minecraft:crafting_table")
+    b.storage_sacks(mid - 1, floor, iz1 + 2, ["corn_seeds_sack"])
+    b.set(mid, floor, iz1 + 2, "minecraft:barrel")
+    if loot_kitchen:
+        loot_barrel(b, mid + 1, floor, iz1 + 2, loot_kitchen)
+    # 屋子当中一张细腿小桌（木腿 + 石板桌面，不再用活板门凑合）
+    b.set(mid - 1, floor, door_z, "minecraft:oak_fence")
+    b.set(mid - 1, floor + 1, door_z, B("minecraft:spruce_slab", type="bottom"))
+    b.set(mid + 1, floor, door_z, "minecraft:oak_fence")
+    b.set(mid + 1, floor + 1, door_z, B("minecraft:spruce_slab", type="bottom"))
+    b.set(mid, cy - 1, door_z, B("minecraft:lantern", hanging="true"))
+
+    # ================= 东屋：储物间 =================
+    ex1, ex2 = p2 + 1, ix2
+    # 菜窖口：石砖围一圈，两块木盖正好扣在上面
+    hatch_x = ex1
+    hatch_z = iz1 + 1
+    b.set(hatch_x - 1, floor, hatch_z, "minecraft:stone_bricks")
+    b.set(hatch_x + 2, floor, hatch_z, "minecraft:stone_bricks")
+    b.set(hatch_x, floor, hatch_z - 1, "minecraft:stone_bricks")
+    b.set(hatch_x + 1, floor, hatch_z - 1, "minecraft:stone_bricks")
+    b.set(hatch_x + 2, floor, hatch_z - 1, "minecraft:stone_bricks")
+    b.set(hatch_x - 1, floor, hatch_z + 1, "minecraft:stone_bricks")
+    b.set(hatch_x + 2, floor, hatch_z + 1, "minecraft:stone_bricks")
+    b.set(hatch_x, floor, hatch_z, B("minecraft:spruce_trapdoor", facing="north", half="bottom"))
+    b.set(hatch_x + 1, floor, hatch_z, B("minecraft:spruce_trapdoor", facing="north", half="bottom"))
+    # 箱子摞两层 + 成排的桶 + 菜筐 + 粮袋 + 腌菜大缸
+    b.set(ex2, floor, iz1, "minecraft:chest")
+    b.set(ex2, floor + 1, iz1, "minecraft:chest")
+    b.set(ex2 - 1, floor, iz1, "minecraft:barrel")
+    b.set(ex2, floor, iz1 + 1, "minecraft:barrel")
+    b.set(ex2, floor, iz1 + 2, "dongbei_delight:cucumber_crate")
+    b.set(ex2 - 1, floor, iz1 + 2, "dongbei_delight:corn_crate")
+    b.storage_sacks(ex1, floor, iz2 - 1, ["soybean_sack", "red_bean_sack"])
+    vat(b, ex2, floor, iz2 - 1, layers=1)
+    b.set((ex1 + ex2) // 2, cy - 1, door_z, B("minecraft:lantern", hanging="true"))
+
+    # ---- 房梁 ----
     for x in range(ix1, ix2 + 1, 3):
         b.set(x, cy, iz1, B("minecraft:spruce_log", axis="z"))
         b.set(x, cy, iz2, B("minecraft:spruce_log", axis="z"))
@@ -214,24 +262,57 @@ def interior_three_bay(b, x1, z1, x2, z2, y, wall="minecraft:bricks",
 
 # ---------------------------------------------------------------- 院子里的东西
 
-def stone_path(b, x1, z1, x2, z2, y=1, block="minecraft:stone_bricks"):
-    b.fill(min(x1, x2), y, min(z1, z2), max(x1, x2), y, max(z1, z2), block)
+def stone_path(b, x1, z1, x2, z2, y=GROUND, block="minecraft:dirt_path"):
+    """院内小路：铺在**地面那一层**的草径（dirt_path），不再高出草地一格。
+
+    只替换自然地面（草/土/砂土/灰化土/雪），不覆盖已经放好的台阶、门槛、家具 ——
+    否则门口那级台阶会被后面铺的小路盖掉。
+    """
+    groundish = {"minecraft:grass_block", "minecraft:dirt", "minecraft:coarse_dirt",
+                 "minecraft:podzol", "minecraft:snow", "minecraft:snow_block",
+                 "minecraft:sand", "minecraft:gravel", "minecraft:stone"}
+    for x in range(min(x1, x2), max(x1, x2) + 1):
+        for z in range(min(z1, z2), max(z1, z2) + 1):
+            existing = b.cells.get((x, y, z))
+            if existing is not None and existing[0] not in groundish:
+                continue
+            b.set(x, y, z, block)
 
 
-def zhangzi_fence(b, x1, z1, x2, z2, y=1, post="minecraft:oak_log",
-                  rail="minecraft:oak_fence", every=4):
-    """夹杖子：木杆栅栏 + 立柱 + 上下两道横杆，东北院子最常见。"""
+def zhangzi_fence(b, x1, z1, x2, z2, y=ON, post="minecraft:oak_log",
+                   rail="minecraft:oak_fence", every=4):
+    """夹杖子：木杆栅栏 + 立柱 + 上下两道横杆（y 传 GROUND 就会从地面砌起）。"""
     b.fence_line(x1, z1, x2, z2, y, block=rail, post_every=every, post=post)
     b.fence_line(x1, z1, x2, z2, y + 1, block=rail, post_every=every, post=post)
 
 
 def cellar(b, x, z, y=GROUND):
-    """菜窖口：地面上一圈石框 + 两块木盖（模板下方没有空间，就不挖坑了）。"""
-    for (dx, dz) in ((-1, 0), (-1, 2), (2, 0), (2, 2),
-                     (0, 2), (1, 2), (0, -1), (1, -1)):
-        b.set(x + dx, y, z + dz, "minecraft:stone_bricks")
-    b.set(x, y, z, B("minecraft:spruce_trapdoor", facing="north", half="bottom"))
-    b.set(x + 1, y, z, B("minecraft:spruce_trapdoor", facing="north", half="bottom"))
+    """菜窖：地面上一圈石框 + 两块**平放**的木盖，下面是一间真能下去的小窖。
+
+    窖室 3×3、深 3 格，梯子正对着其中一块盖子（爬得上来）、一个箱子、一筐菜，还有一盏灯。
+    模板会在院子地面以下垫土，这间窖正好挖在这些垫土里 —— 放下去时会顶掉垫土，不会被埋。
+    """
+    lid = B("minecraft:spruce_trapdoor", facing="up", half="bottom",
+            open="false", waterlogged="false")
+    # 石砖框（北 4、南 4、东西各 1）
+    for dx in range(-1, 3):
+        b.set(x + dx, y, z - 1, "minecraft:stone_bricks")
+        b.set(x + dx, y, z + 1, "minecraft:stone_bricks")
+    b.set(x - 1, y, z, "minecraft:stone_bricks")
+    b.set(x + 2, y, z, "minecraft:stone_bricks")
+    # 两块盖子平铺在窖口上（能踩、能掀开）
+    b.set(x, y, z, lid)
+    b.set(x + 1, y, z, lid)
+    # 下面的窖室：3×3、深 3
+    for yy in range(y - 3, y):
+        b.fill(x - 1, yy, z - 1, x + 1, yy, z + 1, AIR)
+    b.fill(x - 1, y - 4, z - 1, x + 1, y - 4, z + 1, "minecraft:stone_bricks")
+    # 梯子就放在盖板正下方（背面靠着东边的土墙），爬上去掀开盖子就能出来
+    ladder(b, x + 1, z, y - 3, y - 1, facing="west")
+    b.set(x - 1, y - 3, z + 1, "minecraft:chest")
+    b.set(x - 1, y - 3, z - 1, "dongbei_delight:sweet_potato_crate")
+    b.set(x, y - 3, z - 1, "minecraft:barrel")
+    b.set(x - 1, y - 3, z, B("minecraft:lantern", hanging="false"))
 
 
 def pig_pen(b, x1, z1, x2, z2, y=ON, rail="minecraft:oak_fence"):
@@ -249,17 +330,34 @@ def pig_pen(b, x1, z1, x2, z2, y=ON, rail="minecraft:oak_fence"):
     b.shed_roof(x1 + 1, x1 + w // 2, z1, z1 + 3, y + 2, y + 4, "thatch", axis="x")
     b.set(x2 - 1, y + 1, z2 - 1, "minecraft:cauldron")
     b.set(x2 - 2, y + 1, z2 - 1, "minecraft:water_cauldron")
+    # 猪棚下面吊一盏灯，晚上喂猪也看得见
+    b.set(x1 + 1, y + 1, z1 + 2, B("minecraft:lantern", hanging="true"))
 
 
 def chicken_coop(b, x, z, y=ON):
-    """鸡架：立柱撑起来的小木棚 + 下蛋窝。"""
+    """鸡架：立柱撑起的小木棚，南面敞开给鸡进出。
+
+    里面只放一个**草窝**（棕色羊毛，就一格，不是塞满），外加一个饮水盆和一根歇脚横杆，
+    这样一眼就能看出是养鸡用的，而不是一坨羊毛。
+    """
+    # 四根立柱
     for (dx, dz) in ((0, 0), (2, 0), (0, 2), (2, 2)):
         b.set(x + dx, y, z + dz, "minecraft:oak_log")
         b.set(x + dx, y + 1, z + dz, "minecraft:oak_log")
+    # 三面矮栏杆（北、西、东），南面留门
+    b.set(x + 1, y + 1, z, "minecraft:oak_fence")
+    b.set(x, y + 1, z + 1, "minecraft:oak_fence")
+    b.set(x + 2, y + 1, z + 1, "minecraft:oak_fence")
+    # 顶棚（木板 + 外伸的台阶檐）
     b.fill(x, y + 2, z, x + 2, y + 2, z + 2, "minecraft:oak_planks")
     b.fill(x - 1, y + 3, z - 1, x + 3, y + 3, z + 3, "minecraft:spruce_slab")
+    # 棚里：草窝一个、饮水盆一个
     b.set(x + 1, y, z + 1, NEST)
-    b.set(x + 1, y + 1, z + 1, NEST)
+    b.set(x + 1, y, z, "minecraft:water_cauldron")
+    # 门口的歇脚横杆：鸡晚上站上去睡觉，也把南面收成一个门洞
+    b.set(x + 1, y + 1, z + 2, "minecraft:oak_fence")
+    # 棚里挂一盏灯：晚上也能看清鸡窝
+    b.set(x + 1, y + 1, z + 1, B("minecraft:lantern", hanging="true"))
 
 
 def dog_house(b, x, z, y=ON):
@@ -268,6 +366,8 @@ def dog_house(b, x, z, y=ON):
     b.shell(x, y + 1, z, x + 1, y + 2, z + 1, "minecraft:spruce_planks")
     b.fill(x, y + 1, z + 1, x + 1, y + 2, z + 1, AIR)
     b.fill(x - 1, y + 3, z - 1, x + 2, y + 3, z + 2, "minecraft:spruce_slab")
+    # 门口挂一盏小灯
+    b.set(x, y + 2, z, B("minecraft:lantern", hanging="true"))
 
 
 def sauce_jars(b, x, z, y=1, count=3, liquid="dongbei_delight:vat"):
@@ -360,6 +460,8 @@ def outdoor_kitchen(b, x, z, y=ON, style="thatch", loot_table=None):
     b.set(x + 1, y, z + 2, "minecraft:crafting_table")
     if loot_table:
         loot_barrel(b, x + 2, y, z + 2, loot_table)
+    # 灶台上方吊一盏灯，晚上做饭也看得见
+    b.set(x + 2, y + 1, z + 1, B("minecraft:lantern", hanging="true"))
 
 
 def grain_bin(b, x, z, y=ON):
@@ -371,6 +473,8 @@ def grain_bin(b, x, z, y=ON):
     b.set(x + 2, y + 1, z, "dongbei_delight:soybean_sack")
     b.set(x, y + 1, z + 2, "dongbei_delight:peanut_sack")
     b.fill(x, y + 3, z, x + 2, y + 3, z + 2, "minecraft:spruce_slab")
+    # 顶上吊一盏灯，晚上来舀粮也看得见
+    b.set(x + 1, y + 2, z + 1, B("minecraft:lantern", hanging="true"))
 
 
 def corn_crib(b, x, z, y=ON, w=6, d=6, post="minecraft:spruce_log",
@@ -389,14 +493,21 @@ def corn_crib(b, x, z, y=ON, w=6, d=6, post="minecraft:spruce_log",
         for zz in range(z + 1, z + d - 1, 2):
             b.set(x, yy, zz, AIR)
             b.set(x + w - 1, yy, zz, AIR)
-    b.fill(x + 1, y + 3, z + 1, x + w - 2, y + 3, z + d - 2,
-           "dongbei_delight:corn_seeds_sack")
-    b.set(x + 1, y + 4, z + 1, "dongbei_delight:corn_seeds_sack")
-    b.set(x + w - 2, y + 4, z + 1, "dongbei_delight:corn_seeds_sack")
-    b.set(x + 1, y + 4, z + d - 2, "dongbei_delight:buckwheat_sack")
-    b.gable_roof(x, x + w - 1, z, z + d - 1, y + 6, style, overhang=1)
-    # 梯子：从地面一直搭到楼板（梯子自己会在楼板上占出一格口）
-    ladder(b, x + 1, z + d, y - 1, y + 3, facing="north")
+        # 楼板就是 y+2 那层平台，粮袋直接堆在楼板上
+        b.set(x + 1, y + 3, z + 1, "dongbei_delight:corn_seeds_sack")
+        b.set(x + w - 2, y + 3, z + 1, "dongbei_delight:corn_seeds_sack")
+        b.set(x + 1, y + 3, z + d - 2, "dongbei_delight:buckwheat_sack")
+        b.gable_roof(x, x + w - 1, z, z + d - 1, y + 6, style, overhang=1)
+        # 仓里吊一盏灯
+        b.set(x + w // 2, y + 5, z + d // 2, B("minecraft:lantern", hanging="true"))
+        # 梯子：贴在粮仓南面。最下一格**比院子地面高一格**（不是插进地里），
+        # 下面先垫一根立柱当支撑（不然梯子没有靠面会被游戏弹掉）；
+        # 南墙上开两格高的门洞，爬上去能直接进仓。
+        b.set(x + 1, y, z + d - 1, post)
+        b.set(x + 1, y + 1, z + d - 1, post)
+        ladder(b, x + 1, z + d, y, y + 2, facing="south")
+        b.set(x + 1, y + 3, z + d - 1, AIR)
+        b.set(x + 1, y + 4, z + d - 1, AIR)
 
 
 def hay_rick(b, x, z, y=ON, size=3):
@@ -413,17 +524,18 @@ def wood_stack(b, x, z, y=ON, length=6, rows=4, use="minecraft:stripped_oak_log"
 
 
 def clothesline(b, x1, z1, x2, z2, y=ON + 1, post="minecraft:oak_fence"):
-    """晾衣绳：两根杆子 + 中间一道绊线（用栅栏当绳）。"""
-    b.set(x1, y - 1, z1, post)
-    b.set(x1, y, z1, post)
-    b.set(x2, y - 1, z2, post)
-    b.set(x2, y, z2, post)
+    """晾衣架：两根 3 格高的木杆 + 三道**绳栅栏**（农夫乐事）当晾衣绳。"""
+    for (px, pz) in ((x1, z1), (x2, z2)):
+        for yy in range(y - 1, y + 2):
+            b.set(px, yy, pz, post)
     if z1 == z2:
-        for x in range(min(x1, x2) + 1, max(x1, x2)):
-            b.set(x, y, z1, "minecraft:tripwire")
+        for yy in range(y - 1, y + 2):
+            for x in range(min(x1, x2) + 1, max(x1, x2)):
+                b.set(x, yy, z1, ROPE_FENCE)
     else:
-        for z in range(min(z1, z2) + 1, max(z1, z2)):
-            b.set(x1, y, z, "minecraft:tripwire")
+        for yy in range(y - 1, y + 2):
+            for z in range(min(z1, z2) + 1, max(z1, z2)):
+                b.set(x1, yy, z, ROPE_FENCE)
 
 
 def well(b, x, z, ground=GROUND, block="minecraft:cobblestone"):
@@ -440,6 +552,8 @@ def well(b, x, z, ground=GROUND, block="minecraft:cobblestone"):
     b.fill(x - 1, ground + 3, z - 1, x + 1, ground + 3, z + 1, "minecraft:oak_planks")
     b.set(x, ground + 2, z - 1, "minecraft:oak_fence")
     b.set(x + 1, ground + 1, z + 1, "minecraft:cauldron")
+    # 井架上放一盏灯
+    b.set(x, ground + 4, z - 1, B("minecraft:lantern", hanging="false"))
 
 
 def ladder(b, x, z, y_from, y_to, facing="north"):
@@ -467,11 +581,15 @@ def garden(b, x1, z1, x2, z2, ground=GROUND, crops=(), water_every=4, fence=True
 
     ground 是地面那一层（默认 1），作物在它上面一格。
     """
+    mid_z = (z1 + z2) // 2
     for z in range(z1, z2 + 1):
         crop = crops[(z - z1) % len(crops)]
         for x in range(x1, x2 + 1):
-            if water_every and (x - x1) % water_every == water_every - 1:
-                b.set(x, ground, z, "minecraft:water")
+            # 浇水口只在菜园中间那一行放一格「含水的木活板门」：
+            # 冷地方不会像水那样冻成冰，照样能给周围 9×9 的耕地保湿
+            if water_every and (x - x1) % water_every == water_every - 1 and z == mid_z:
+                b.set(x, ground, z, B("minecraft:spruce_trapdoor", facing="up", half="bottom",
+                                      open="false", waterlogged="true"))
                 continue
             b.set(x, ground, z, B("minecraft:farmland", moisture=7))
             age = CROP_MAX_AGE.get(crop, 7)
@@ -499,28 +617,48 @@ def toilet(b, x, z, y=ON):
     b.shell(x, y, z, x + 1, y + 2, z + 1, "minecraft:bricks")
     b.fill(x, y, z + 1, x + 1, y + 1, z + 1, AIR)
     b.fill(x - 1, y + 3, z - 1, x + 2, y + 3, z + 2, "minecraft:brick_slab")
+    # 屋顶上一盏灯
+    b.set(x, y + 4, z, B("minecraft:lantern", hanging="false"))
+
+
+def side_door(b, x, y, z, facing="west", door="minecraft:oak_door",
+              frame="minecraft:spruce_planks"):
+    """在**南北走向**的墙上开一扇侧门（kit.door 只能开东西走向的墙）。
+
+    门框沿着 z 方向排，门开好后外面记得再补一级半砖台阶，不然要跳着进门。
+    """
+    b.set(x, y, z, B(door, facing=facing, half="lower", hinge="left"))
+    b.set(x, y + 1, z, B(door, facing=facing, half="upper", hinge="left"))
+    for dz in (-1, 1):
+        b.set(x, y, z + dz, frame)
+        b.set(x, y + 1, z + dz, frame)
+    b.set(x, y + 2, z, frame)
 
 
 def front_gate(b, x1, x2, z, y=ON, post="minecraft:spruce_log", style="tile_gray",
                wall_block=None):
-    """门楼：掏门洞 + 两根柱子 + 小瓦顶 + 双开栅栏门。"""
-    b.fill(x1, 1, z, x2, 5, z, AIR)
+    """门楼：掏门洞 + 两根柱子（**落到地面层**）+ 小瓦顶 + 双开栅栏门。"""
+    b.fill(x1, ON, z, x2, 5, z, AIR)          # 只掏地面之上，别把地面挖穿
     if wall_block:
-        b.fill(x1 - 1, 1, z, x1 - 1, 4, z, wall_block)
-        b.fill(x2 + 1, 1, z, x2 + 1, 4, z, wall_block)
-    b.fill(x1, y, z, x2, y, z, "minecraft:stone_bricks")
+        b.fill(x1 - 1, GROUND, z, x1 - 1, 4, z, wall_block)
+        b.fill(x2 + 1, GROUND, z, x2 + 1, 4, z, wall_block)
+    # 门槛用**半砖**（台阶），不是楼梯：走出去只抬半格
+    for x in range(x1, x2 + 1):
+        b.set(x, y, z, B("minecraft:stone_brick_slab", type="bottom", waterlogged="false"))
     for x in (x1, x2):
-        for yy in range(y, y + 4):
+        for yy in range(y - 1, y + 4):
             b.set(x, yy, z, post)
     b.fill(x1 - 1, y + 4, z, x2 + 1, y + 4, z, "minecraft:spruce_planks")
     for x in range(x1 - 2, x2 + 3):
         b.set(x, y + 5, z - 1, B("minecraft:spruce_stairs", facing="south", half="bottom"))
-        b.set(x, y + 5, z + 1, B("minecraft:spruce_stairs", facing="north", half="bottom"))
         b.set(x, y + 6, z, "minecraft:spruce_slab")
     for x in range(x1 + 1, x2):
         b.set(x, y + 1, z, B("minecraft:oak_fence_gate", facing="south"))
         b.set(x, y + 2, z, B("minecraft:oak_fence_gate", facing="south"))
         b.set(x, y + 3, z, "minecraft:oak_fence")
+    # 门楼两边各挂一盏灯，晚上回家看得见路
+    b.set(x1, y + 5, z, B("minecraft:lantern", hanging="false"))
+    b.set(x2, y + 5, z, B("minecraft:lantern", hanging="false"))
 
 
 def screen_wall(b, x1, x2, z, y=ON, block="minecraft:bricks"):

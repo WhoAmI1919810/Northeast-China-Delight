@@ -7,10 +7,8 @@
     "minecraft:old_growth_pine_taiga",
     "minecraft:old_growth_spruce_taiga",
     "minecraft:snowy_plains",
-    "minecraft:ice_spikes",
     "minecraft:snowy_beach",
     "minecraft:grove",
-    "minecraft:snowy_slopes",
-    "minecraft:frozen_river"
+    "minecraft:snowy_slopes"
   ]
 }

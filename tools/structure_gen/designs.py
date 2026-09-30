@@ -30,13 +30,16 @@ def _ground(b, w, d, block="minecraft:dirt"):
 
 
 def _yard(b, w, d, block="minecraft:grass_block"):
-    """院子地面：草方块。"""
-    b.fill(1, GROUND, 1, w - 2, GROUND, d - 2, block)
+    """院子地面：草方块。
+
+    整块地基都要铺满（包括最外圈），不然写进模板的"空气"会把院墙脚下的地面挖空。
+    """
+    b.fill(0, GROUND, 0, w - 1, GROUND, d - 1, block)
 
 
 def _brick_wall(b, w, d, h=3, block="minecraft:bricks", cap="minecraft:stone_brick_slab"):
-    """砖院墙：从地面之上那一层起砌，顶上压瓦。"""
-    b.shell(0, ON, 0, w - 1, ON + h - 1, d - 1, block)
+    """砖院墙：**从地面那一层起砌**（往下多压一格，墙不悬空），顶上压瓦。"""
+    b.shell(0, GROUND, 0, w - 1, ON + h - 1, d - 1, block)
     for x in range(w):
         b.set(x, ON + h, 0, B(cap, type="bottom"))
         b.set(x, ON + h, d - 1, B(cap, type="bottom"))
@@ -63,7 +66,8 @@ def red_brick_garden():
             porch=True, loot_house="courtyard_house", loot_kitchen="courtyard_kitchen")
 
     P.stone_path(b, 17, 15, 20, 35)
-    P.stone_path(b, 12, 22, 26, 23)
+    # 东西向小路从菜园东边起步，别横穿菜园（会盖掉围栏和作物）
+    P.stone_path(b, 16, 22, 26, 23)
 
     # 菜园 16 × 14（草地翻成耕地）
     # 菜园往西缩一点，给正房门口留出通道（门口 3 格宽内不能有围栏/作物）
@@ -73,7 +77,8 @@ def red_brick_garden():
     P.vat(b, 21, ON, 16, layers=0)
     P.vat(b, 22, ON, 16, layers=2)
     P.corn_crib(b, 26, 17, ON, w=7, d=7, style="wood")
-    P.grain_bin(b, 33, 21, ON)
+    # 粮囤挪到院子东南角：原来贴着苞米楼子，两者会互相盖方块
+    P.grain_bin(b, 34, 27, ON)
     P.wood_stack(b, 3, 34, ON, length=7, rows=4)
     P.wood_stack(b, 3, 35, ON, length=5, rows=2, use="minecraft:spruce_log")
     P.well(b, 22, 27)
@@ -95,7 +100,7 @@ def mud_livestock():
     w, d = 36, 35
     _ground(b, w, d)
     _yard(b, w, d)
-    P.zhangzi_fence(b, 0, 0, w - 1, d - 1, ON, post="minecraft:oak_log",
+    P.zhangzi_fence(b, 0, 0, w - 1, d - 1, GROUND, post="minecraft:oak_log",
                     rail="minecraft:oak_fence", every=4)
     P.front_gate(b, 15, 20, d - 1)
 
@@ -107,27 +112,33 @@ def mud_livestock():
     P.stone_path(b, 16, 14, 18, 34)
     P.pig_pen(b, 25, 16, 34, 24, ON)
     P.chicken_coop(b, 5, 16)
-    P.chicken_coop(b, 9, 16)
-    # 牛棚：立柱 + 单坡草顶 + 食槽（垫料用陶瓦，不用干草捆）
+    # 两个鸡窝之间隔一格，别叠在一起
+    P.chicken_coop(b, 10, 16)
+    # 牛棚：立柱 + 单坡草顶 + 食槽。
+    # 地板（木板）直接铺在**院子地面那一层**上，和外面的草地齐平；
+    # 水槽、料槽、饲料桶都摆在地板上，不会像以前那样半个桶埋进木板里。
     for (dx, dz) in ((4, 25), (4, 31), (11, 25), (11, 31)):
         for yy in range(ON, ON + 3):
             b.set(dx, yy, dz, "minecraft:spruce_log")
     b.shed_roof(3, 12, 24, 32, ON + 2, ON + 4, "thatch", axis="x")
-    b.fill(5, GROUND, 27, 10, GROUND, 30, "minecraft:coarse_dirt")
-    b.fill(5, ON, 27, 10, ON, 30, "minecraft:spruce_planks")
+    b.fill(5, GROUND, 27, 10, GROUND, 30, "minecraft:spruce_planks")
     b.set(5, ON, 26, "minecraft:cauldron")
     b.set(10, ON, 26, "minecraft:water_cauldron")
+    # 牛棚里也挂两盏灯，晚上喂牛不用摸黑
+    b.set(6, ON + 1, 28, B("minecraft:lantern", hanging="true"))
+    b.set(9, ON + 1, 28, B("minecraft:lantern", hanging="true"))
     P.wood_stack(b, 19, 25, ON, length=5, rows=3)
     # 菜园往东挪，别压在大门通道上
-    P.garden(b, 23, 31, 30, 33, GROUND, CROPS_MIX, water_every=4)
+    P.garden(b, 23, 30, 30, 32, GROUND, CROPS_MIX, water_every=4)
     P.well(b, 30, 27)
     P.mill(b, 27, 31)
     P.millstone(b, 29, ON, 31)
     P.vat(b, 31, ON, 13, layers=3)
     P.vat(b, 32, ON, 13, layers=0)
     P.dog_house(b, 3, 21)
-    P.wood_stack(b, 32, 16, ON, length=4, rows=3)
-    P.outdoor_kitchen(b, 21, 19, ON, "thatch", loot_table="courtyard_kitchen")
+    # 柴垛从猪圈里挪出来，灶棚再往西一格，别啃到猪圈围栏
+    P.wood_stack(b, 22, 16, ON, length=3, rows=3)
+    P.outdoor_kitchen(b, 20, 19, ON, "thatch", loot_table="courtyard_kitchen")
     P.loot_barrel(b, 6, ON, 29, "courtyard_granary")
     return b
 
@@ -149,7 +160,8 @@ def corn_crib_yard():
             porch=True, loot_house="courtyard_house", loot_kitchen="courtyard_kitchen")
     P.stone_path(b, 18, 15, 21, 37)
 
-    P.drying_yard(b, 8, 18, 20, 30, GROUND)
+    # 晾晒场往西缩，给中间那条石板路让道
+    P.drying_yard(b, 8, 18, 16, 30)
     # 玉米地：草地翻成耕地，两格高
     for z in range(18, 31):
         for x in range(23, 34):
@@ -169,8 +181,9 @@ def corn_crib_yard():
     P.millstone(b, 31, ON, 35)
     P.outdoor_kitchen(b, 25, 33, ON, "thatch", loot_table="courtyard_kitchen")
     P.wood_stack(b, 8, 34, ON, length=6, rows=4)
-    P.cellar(b, 22, 35)
-    P.dog_house(b, 35, 16)
+    # 菜窖挪到西南角（原来压在路上），狗窝挪到大门口西侧
+    P.cellar(b, 11, 36)
+    P.dog_house(b, 35, 14)
     P.loot_barrel(b, 5, ON + 5, 18, "courtyard_granary")
     P.loot_barrel(b, 5, ON + 4, 23, "courtyard_granary")
     return b
@@ -200,7 +213,10 @@ def big_compound():
     b.shell(38, ON + 1, 19, 46, ON + 5, 33, "minecraft:bricks")
     b.fill(39, ON + 1, 20, 45, ON + 5, 32, "minecraft:air")
     P.shutter_window(b, 41, 43, ON + 2, 33, height=2)
-    b.door(40, ON + 1, 33)
+    # 门开在西墙、朝着院子（原来朝南对着院角，出门就是围墙根）
+    P.side_door(b, 38, ON + 1, 26, facing="west")
+    b.set(37, ON, 26, B("minecraft:stone_brick_slab", type="bottom", waterlogged="false"))
+    b.set(42, ON + 5, 26, B("minecraft:lantern", hanging="true"))
     b.shed_roof(37, 47, 18, 34, ON + 6, ON + 9, "tile_gray", axis="x")
     P.grain_bin(b, 40, 22, ON + 1)
     P.grain_bin(b, 43, 27, ON + 1)
@@ -211,7 +227,10 @@ def big_compound():
     b.fill(1, ON, 19, 9, ON, 33, "minecraft:spruce_planks")
     b.shell(1, ON + 1, 19, 9, ON + 5, 33, "minecraft:bricks")
     b.fill(2, ON + 1, 20, 8, ON + 5, 32, "minecraft:air")
-    b.door(8, ON + 1, 33)
+    # 西厢房的门同样改到东墙（朝院子），补台阶 + 吊灯
+    P.side_door(b, 9, ON + 1, 26, facing="east")
+    b.set(10, ON, 26, B("minecraft:stone_brick_slab", type="bottom", waterlogged="false"))
+    b.set(5, ON + 5, 26, B("minecraft:lantern", hanging="true"))
     b.shed_roof(0, 10, 18, 34, ON + 6, ON + 9, "tile_gray", axis="x")
     b.kang(2, 21, 7, 21, ON + 1)
     b.stove(2, ON + 1, 31)
@@ -219,7 +238,9 @@ def big_compound():
 
     P.screen_wall(b, 22, 25, 41)
     P.stone_path(b, 22, 16, 25, 41)
-    P.stone_path(b, 4, 35, 43, 36)
+    # 东西向小路在菜园处断开，别从菜地里穿过去
+    P.stone_path(b, 4, 35, 10, 36)
+    P.stone_path(b, 22, 35, 43, 36)
 
     P.well(b, 18, 31)
     P.mill(b, 27, 31)
@@ -231,14 +252,16 @@ def big_compound():
     P.vat(b, 15, ON, 31, layers=2)
     P.garden(b, 12, 35, 20, 44, GROUND, CROPS_VEG, water_every=5)
     P.wood_stack(b, 30, 39, ON, length=5, rows=3)
-    P.wood_stack(b, 40, 39, ON, length=6, rows=4)
+    # 柴垛别堆进猪圈里
+    P.wood_stack(b, 33, 43, ON, length=6, rows=4)
     P.cellar(b, 2, 39)
     P.toilet(b, 2, 43)
     P.dog_house(b, 45, 37)
     P.clothesline(b, 30, 21, 34, 21)
     P.pig_pen(b, 41, 39, 46, 44, ON)
     P.outdoor_kitchen(b, 30, 31, ON, "tile_gray", loot_table="courtyard_kitchen")
-    P.chicken_coop(b, 44, 21)
+    # 鸡架从东厢房里搬出来：原来卡在厢房的墙和火炕上
+    P.chicken_coop(b, 26, 37)
     P.wood_stack(b, 30, 25, ON, length=4, rows=2, use="minecraft:spruce_log")
     b.set(26, ON, 23, "minecraft:stonecutter")
     P.loot_chest(b, 42, ON + 1, 28, "courtyard_granary", facing="west")
@@ -256,7 +279,7 @@ def log_cabin():
     w, d = 30, 31
     _ground(b, w, d, block="minecraft:podzol")
     _yard(b, w, d)
-    P.zhangzi_fence(b, 0, 0, w - 1, d - 1, ON, post="minecraft:spruce_log",
+    P.zhangzi_fence(b, 0, 0, w - 1, d - 1, GROUND, post="minecraft:spruce_log",
                     rail="minecraft:spruce_fence", every=4)
     P.front_gate(b, 13, 18, d - 1, post="minecraft:spruce_log")
 
@@ -277,6 +300,8 @@ def log_cabin():
     P.shutter_window(b, 15, 17, ON + 2, z2, frame="minecraft:spruce_planks", height=2)
     b.gable_roof(x1, x2, z1, z2, ON + 5, "wood", overhang=2)
     P.chimney(b, 23, 4, ON + 5, ON + 9, block="minecraft:stone_bricks")
+    # 门口半砖台阶（木刻楞是自己搭的门，这里单独铺，1 格宽）
+    b.set(12, ON, z2 + 1, B("minecraft:stone_brick_slab", type="bottom", waterlogged="false"))
     for x in range(x1 - 2, x2 + 3):
         for z in (z1 - 3, z2 + 3):
             b.set(x, ON + 5, z, B("minecraft:snow", layers=4))
@@ -291,11 +316,12 @@ def log_cabin():
     P.wood_stack(b, 23, 21, ON, length=5, rows=3, use="minecraft:stripped_spruce_log")
     P.well(b, 7, 18)
     # 菜园往西缩，给大门留通道
-    P.garden(b, 3, 20, 11, 27, GROUND, CROPS_MIX, water_every=4)
-    P.dog_house(b, 17, 21)
+    P.garden(b, 3, 21, 11, 27, GROUND, CROPS_MIX, water_every=4)
+    # 狗窝从灶棚边上挪开
+    P.dog_house(b, 21, 18)
     P.millstone(b, 20, ON, 18)
     P.vat(b, 22, ON, 18, layers=2)
-    P.outdoor_kitchen(b, 21, 26, ON, "thatch", loot_table="courtyard_kitchen")
+    P.outdoor_kitchen(b, 20, 24, ON, "thatch", loot_table="courtyard_kitchen")
     P.toilet(b, 25, 26)
     P.cellar(b, 17, 26)
     for (x, z, n) in ((20, 27, 6), (22, 29, 4), (28, 19, 5), (3, 14, 3), (14, 29, 4)):
@@ -322,7 +348,7 @@ def metal_roof_house():
             door_x=15, windows=((7, 10), (20, 23)), gable_chimney_x=28,
             porch=True, loot_house="courtyard_house", loot_kitchen="courtyard_kitchen")
     P.stone_path(b, 15, 15, 17, 32)
-    P.stone_path(b, 6, 23, 28, 24)
+    P.stone_path(b, 12, 23, 16, 24)
 
     # 仓房
     b.fill(24, GROUND, 17, 30, GROUND, 23, "minecraft:stone_bricks")
@@ -330,23 +356,29 @@ def metal_roof_house():
     b.shell(24, ON + 1, 17, 30, ON + 4, 23, "minecraft:bricks")
     b.fill(25, ON + 1, 18, 29, ON + 4, 22, "minecraft:air")
     b.door(27, ON + 1, 23)
+    # 仓房门口补一级半砖台阶，屋里吊一盏灯
+    b.set(27, ON, 24, B("minecraft:stone_brick_slab", type="bottom", waterlogged="false"))
+    b.set(27, ON + 4, 20, B("minecraft:lantern", hanging="true"))
     b.shed_roof(23, 31, 16, 24, ON + 5, ON + 7, "metal", axis="x")
     P.grain_bin(b, 25, 19, ON + 1)
     b.set(29, ON + 1, 21, "minecraft:barrel")
     P.loot_chest(b, 26, ON + 1, 21, "courtyard_granary", facing="south")
 
-    P.garden(b, 3, 19, 11, 30, GROUND, ["cucumber_crop", "green_pepper_crop",
+    P.garden(b, 3, 19, 10, 30, GROUND, ["cucumber_crop", "green_pepper_crop",
                                         "napa_cabbage_crop"], water_every=5)
-    P.wood_stack(b, 4, 15, ON, length=7, rows=4)
-    P.wood_stack(b, 4, 16, ON, length=5, rows=2, use="minecraft:spruce_log")
+    # 柴垛从房基上挪出来一格，贴着墙根码
+    P.wood_stack(b, 4, 16, ON, length=7, rows=4)
+    P.wood_stack(b, 4, 17, ON, length=5, rows=2, use="minecraft:spruce_log")
     P.pig_pen(b, 19, 26, 25, 31, ON)
-    P.well(b, 21, 20)
-    P.mill(b, 28, 29)
+    # 水井放到东北角：既别挡正房门口，也别挡仓房门口
+    P.well(b, 30, 6)
+    P.mill(b, 27, 28)
     P.millstone(b, 26, ON, 29)
     P.vat(b, 12, ON, 17, layers=3)
     P.vat(b, 13, ON, 17, layers=0)
-    P.outdoor_kitchen(b, 18, 16, ON, "metal", loot_table="courtyard_kitchen")
-    P.dog_house(b, 29, 16)
+    # 灶棚从正房门斗里挪出来：原来整个插进正房的墙和屋檐里
+    P.outdoor_kitchen(b, 18, 20, ON, "metal", loot_table="courtyard_kitchen")
+    P.dog_house(b, 29, 13)
     return b
 
 

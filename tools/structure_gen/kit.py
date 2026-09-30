@@ -64,6 +64,9 @@ class Build:
         self.name = name
         self.note = note
         self.cells = {}
+        # 被显式挖成空气的格子（地窖之类）。出 NBT 时底部垫土要跳过这些格子，
+        # 不然垫土会把挖好的窖室重新填死。
+        self.carved = set()
 
     # ---------- 基础写入 ----------
 
@@ -73,6 +76,7 @@ class Build:
         key = (int(x), int(y), int(z))
         if name == "minecraft:air":
             self.cells.pop(key, None)
+            self.carved.add(key)
             return
         self.cells[key] = (name, dict(props), dict(nbt) if nbt else None)
 
@@ -268,8 +272,9 @@ class Build:
         self.set(x + 1, y + 1, z, "minecraft:campfire")
 
     def table(self, x, y, z):
+        """细木腿 + 石板面的小桌（以前用活板门当桌面，看着像随手糊上去的）。"""
         self.set(x, y, z, "minecraft:oak_fence")
-        self.set(x, y + 1, z, B("minecraft:oak_trapdoor", half="top", facing="north"))
+        self.set(x, y + 1, z, B("minecraft:spruce_slab", type="bottom"))
 
     def storage_sacks(self, x, y, z, ids):
         for i, sid in enumerate(ids):
@@ -315,11 +320,14 @@ class Build:
         mz = max(k[2] for k in self.cells)
         return (mx + 1, my + 1, mz + 1)
 
-    def to_nbt(self, data_version=3955, base_y=0):
+    def to_nbt(self, data_version=3955, base_y=0, fill_air=True,
+               ground_y=0, ground_block="minecraft:grass_block"):
         """出 NBT。
 
         base_y：在院子地面以下再垫几层土，这样地形起伏时院子不会整块悬空。
         垫完之后所有 y 坐标统一上移 base_y，最低点保证是 0。
+        fill_air：把模板范围内的空格子写成空气。结构放下去时空气会**替换掉原本的地形**
+        （树、山包都会被推平），不写空气的话只有实体方块会盖上去、地面还是原样。
         """
         cells = dict(self.cells)
         if base_y > 0:
@@ -327,11 +335,32 @@ class Build:
             for x in range(w):
                 for z in range(d):
                     for k in range(base_y):
-                        cells[(x, k - base_y, z)] = ("minecraft:dirt", {}, None)
+                        # 只补空位：设计里已经挖好的地窖（y 为负）不会被填掉
+                        if (x, k - base_y, z) in self.carved:
+                            continue
+                        cells.setdefault((x, k - base_y, z), ("minecraft:dirt", {}, None))
+        # 最底下那层（院子地面）整块铺满：屋檐之类伸出院墙的地方，地面层原本是空的，
+        # 写进模板就会变成一条沟，这里统一补成草地。
+        max_x_all = max(k[0] for k in cells) + 1
+        max_z_all = max(k[2] for k in cells) + 1
+        for x in range(max_x_all):
+            for z in range(max_z_all):
+                if (x, ground_y, z) not in cells:
+                    cells[(x, ground_y, z)] = (ground_block, {}, None)
         palette = []
         index = {}
         blocks = []
         shifted = {k: v for k, v in cells.items()}
+        min_x = min(k[0] for k in shifted)
+        min_y = min(k[1] for k in shifted)
+        min_z = min(k[2] for k in shifted)
+        if min_y + base_y < 0:
+            raise ValueError("有方块比 base_y 还低：min_y=%d base_y=%d（把 base_y 调大）"
+                             % (min_y, base_y))
+        max_x = max(k[0] for k in shifted) + 1 - min_x
+        # y 是按 base_y 往上平移的（地窖在 y<0），所以高度不再减 min_y
+        max_y = max(k[1] for k in shifted) + base_y + 1
+        max_z = max(k[2] for k in shifted) + 1 - min_z
         for pos in sorted(shifted):
             name, props, nbt = shifted[pos]
             key = (name, tuple(sorted(props.items())), repr(sorted(nbt.items())) if nbt else "")
@@ -341,13 +370,23 @@ class Build:
                 if props:
                     entry["Properties"] = {k: str(v) for k, v in sorted(props.items())}
                 palette.append(entry)
-            out = {"pos": [pos[0], pos[1] + base_y, pos[2]], "state": index[key]}
+            out = {"pos": [pos[0] - min_x, pos[1] + base_y, pos[2] - min_z], "state": index[key]}
             if nbt:
                 out["nbt"] = nbt
             blocks.append(out)
-        max_x = max(k[0] for k in shifted) + 1
-        max_y = max(k[1] for k in shifted) + base_y + 1
-        max_z = max(k[2] for k in shifted) + 1
+        if fill_air:
+            air_key = ("minecraft:air", ())
+            if air_key not in index:
+                index[air_key] = len(palette)
+                palette.append({"Name": "minecraft:air"})
+            air_id = index[air_key]
+            # 注意：这里必须用**没平移前**的坐标去查 cells，
+            # 否则 base_y>0 时空气会盖到别的位置上（门的上半截会莫名其妙消失）
+            for x in range(min_x, min_x + max_x):
+                for y in range(min_y, min_y + max_y - base_y):
+                    for z in range(min_z, min_z + max_z):
+                        if (x, y, z) not in shifted:
+                            blocks.append({"pos": [x - min_x, y + base_y, z - min_z], "state": air_id})
         return {
             "DataVersion": data_version,
             "size": [max_x, max_y, max_z],

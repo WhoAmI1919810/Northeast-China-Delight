@@ -6,8 +6,10 @@
   效果图 -> docs/结构渲染图/建筑单体/<中文名>.png
 
 用法：H:\\miniconda3\\python.exe tools\\structure_gen\\build_parts.py
+      … build_parts.py --no-render   # 只更新 NBT，不动 docs 里的效果图
 """
 
+import argparse
 import os
 import sys
 
@@ -303,17 +305,28 @@ PARTS = [
 
 
 def main():
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--no-render", action="store_true", help="只写 NBT，不重新渲染效果图")
+    args = ap.parse_args()
+
     os.makedirs(NBT_OUT, exist_ok=True)
-    os.makedirs(IMG_OUT, exist_ok=True)
+    if not args.no_render:
+        os.makedirs(IMG_OUT, exist_ok=True)
     for pid, cn, fn in PARTS:
         build = fn()
-        tag = build.to_nbt()
+        # 有地窖的单体（比如菜窖）会挖到 y<0，给它足够的垫土层，别让方块漏出模板
+        lowest = min(k[1] for k in build.cells) if build.cells else 0
+        tag = build.to_nbt(base_y=max(0, -lowest))
         nbt_path = os.path.join(NBT_OUT, pid + ".nbt")
         nbt_io.write_nbt(nbt_path, tag)
-        png_path = os.path.join(IMG_OUT, cn + ".png")
-        render(nbt_path, png_path, scale=14)
-        print("%-22s %-14s %2dx%2dx%-2d %5d blocks -> %s" % (
-            pid, cn, tag["size"][0], tag["size"][1], tag["size"][2], len(tag["blocks"]), png_path))
+        if args.no_render:
+            print("%-22s %-14s %2dx%2dx%-2d %5d blocks -> %s" % (
+                pid, cn, tag["size"][0], tag["size"][1], tag["size"][2], len(tag["blocks"]), nbt_path))
+        else:
+            png_path = os.path.join(IMG_OUT, cn + ".png")
+            render(nbt_path, png_path, scale=14)
+            print("%-22s %-14s %2dx%2dx%-2d %5d blocks -> %s" % (
+                pid, cn, tag["size"][0], tag["size"][1], tag["size"][2], len(tag["blocks"]), png_path))
 
 
 if __name__ == "__main__":

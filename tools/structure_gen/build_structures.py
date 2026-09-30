@@ -31,7 +31,9 @@ def main():
         if args.only and args.only not in name:
             continue
         build = fn()
-        tag = build.to_nbt()
+        # base_y=4：院子地面以下多垫 4 层土，用来挖菜窖（地面层在模板的第 4 层，
+        # 这个数字必须和 DongbeiCourtyardStructure.GROUND_LAYER_IN_TEMPLATE 保持一致）
+        tag = build.to_nbt(base_y=4)
         path = os.path.join(args.out, name + ".nbt")
         nbt_io.write_nbt(path, tag)
         size = tag["size"]

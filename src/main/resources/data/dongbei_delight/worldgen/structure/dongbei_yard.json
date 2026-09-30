@@ -5,7 +5,8 @@
   "biomes": "#dongbei_delight:has_dongbei_yard",
   "__说明_生成阶段": "top_layer_modification 是最后一个阶段（比种树晚），这样小院才能把树清掉、保证院内上方净空",
   "step": "top_layer_modification",
-  "terrain_adaptation": "beard_thin",
+  "__说明_地形适配": "必须用 none：beard_thin 会把院子周围的地形往下削一圈，导致「院内比院外高一格」并且削出坑；地基由模组自己的清场件负责填",
+  "terrain_adaptation": "none",
   "spawn_overrides": {},
 
   "__说明_院子列表": "往数组里加一行就能加一种小院（NBT 放在 data/dongbei_delight/structure/）",
@@ -36,11 +37,25 @@
   "black_soil_radius": 18,
   "black_soil_density": 0.12,
 
-  "__说明_净空与朝向": "clear_above=院子正上方要留多少格空气（默认30）；clear_radius=院子外扩多少格清树和地物（默认20）；check_gate_front=是否检查门口朝向；gate_check_depth/width=门口前方检查的范围；max_gate_slope=门口地形高差容忍度，超了就换朝向，两个朝向都不行就不生成",
-  "clear_above": 30,
-  "clear_radius": 20,
+  "__说明_净空与朝向": "clear.above=院子正上方要留多少格空气（默认30）；clear.radius=院子外扩多少格清树和地物（默认20）；check_gate_front=是否检查门口朝向；gate_check_depth/width=门口前方检查的范围；max_gate_slope=门口地形高差容忍度，超了就换朝向，两个朝向都不行就不生成",
+  "clear": {
+    "radius": 20,
+    "above": 30
+  },
   "check_gate_front": true,
   "gate_check_depth": 12,
   "gate_check_width": 18,
-  "max_gate_slope": 4
+  "max_gate_slope": 4,
+
+  "__说明_避开村庄": "avoid.structures=不想和它挤在一起的结构集（默认原版五种村庄）；avoid.margin=小院和这些结构至少隔开多少格（默认 64）。世界生成时问不到「村里到底生成了没」，所以照原版 exclusion_zone 的思路：先用放置算法算出村庄可能落在哪些区块，再看那里的群系对不对得上，两个都满足就换地方（这一户不生成）。",
+  "avoid": {
+    "structures": [
+      "minecraft:village_plains",
+      "minecraft:village_desert",
+      "minecraft:village_savanna",
+      "minecraft:village_snowy",
+      "minecraft:village_taiga"
+    ],
+    "margin": 64
+  }
 }

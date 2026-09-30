@@ -56,6 +56,7 @@ minecraft:chest minecraft:barrel minecraft:crafting_table minecraft:grindstone m
 minecraft:red_wool minecraft:white_wool minecraft:gray_concrete minecraft:white_concrete
 minecraft:birch_planks minecraft:deepslate_tile_stairs minecraft:deepslate_tiles
 minecraft:polished_blackstone_stairs minecraft:polished_blackstone
+farmersdelight:rope_fence farmersdelight:rope_fence_gate farmersdelight:rope
 dongbei_delight:vat
 dongbei_delight:corn_seeds_sack dongbei_delight:soybean_sack dongbei_delight:red_bean_sack
 dongbei_delight:buckwheat_sack dongbei_delight:peanut_sack dongbei_delight:ginseng_sack
@@ -219,9 +220,11 @@ def check(path):
     for z, facings in sorted(by_z.items()):
         if len(facings) > 1:
             warnings.append("z=%d 这一排楼梯朝向不一致：%s" % (z, sorted(facings)))
-    # 双坡屋顶：最北那排楼梯应该朝南升、最南那排应该朝北升
-    slope = {z: sorted(f) for z, f in by_z.items()}
-    if slope:
+    # 双坡屋顶：最北那排楼梯应该朝南升、最南那排应该朝北升。
+    # 门楼/灶棚这类小屋面贴着院墙，不参与"主屋坡向"判断，所以只取中间那段。
+    z_lo, z_hi = 6, tag["size"][2] - 7
+    slope = {z: sorted(f) for z, f in by_z.items() if z_lo <= z <= z_hi}
+    if len(slope) >= 3:      # 只有一排楼梯（比如整片实心顶）时不做坡向判断
         zs = sorted(slope)
         north_row = slope[zs[0]]
         south_row = slope[zs[-1]]

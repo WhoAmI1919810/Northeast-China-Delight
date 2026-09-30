@@ -62,11 +62,34 @@ REMAP = {
 
 # 门外的台阶（jigsaw 的 final_state），按群系给个像样的
 DOOR_STEP = {
-    "plains": "minecraft:stone_brick_stairs[facing=south,half=bottom,shape=straight,waterlogged=false]",
-    "savanna": "minecraft:acacia_stairs[facing=south,half=bottom,shape=straight,waterlogged=false]",
-    "desert": "minecraft:sandstone_stairs[facing=south,half=bottom,shape=straight,waterlogged=false]",
-    "snowy": "minecraft:stone_brick_stairs[facing=south,half=bottom,shape=straight,waterlogged=false]",
-    "taiga": "minecraft:stone_brick_stairs[facing=south,half=bottom,shape=straight,waterlogged=false]",
+    "plains": "minecraft:stone_brick_stairs[facing=north,half=bottom,shape=straight,waterlogged=false]",
+    "savanna": "minecraft:acacia_stairs[facing=north,half=bottom,shape=straight,waterlogged=false]",
+    "desert": "minecraft:sandstone_stairs[facing=north,half=bottom,shape=straight,waterlogged=false]",
+    "snowy": "minecraft:stone_brick_stairs[facing=north,half=bottom,shape=straight,waterlogged=false]",
+    "taiga": "minecraft:stone_brick_stairs[facing=north,half=bottom,shape=straight,waterlogged=false]",
+}
+
+# 门口第二格台阶（和 jigsaw 那格拼成 2 格宽，正好和双开门同宽）
+STEP_BLOCK = {
+    "plains": ("minecraft:stone_brick_stairs",
+               {"facing": "north", "half": "bottom", "shape": "straight", "waterlogged": "false"}),
+    "savanna": ("minecraft:acacia_stairs",
+                {"facing": "north", "half": "bottom", "shape": "straight", "waterlogged": "false"}),
+    "desert": ("minecraft:sandstone_stairs",
+               {"facing": "north", "half": "bottom", "shape": "straight", "waterlogged": "false"}),
+    "snowy": ("minecraft:stone_brick_stairs",
+              {"facing": "north", "half": "bottom", "shape": "straight", "waterlogged": "false"}),
+    "taiga": ("minecraft:stone_brick_stairs",
+              {"facing": "north", "half": "bottom", "shape": "straight", "waterlogged": "false"}),
+}
+
+# 每个群系一个专属色：店里那两块桌布换成对应颜色，进村一眼认得出
+CLOTH = {
+    "plains": "create:red_table_cloth",
+    "savanna": "create:orange_table_cloth",
+    "desert": "create:yellow_table_cloth",
+    "snowy": "create:light_blue_table_cloth",
+    "taiga": "create:green_table_cloth",
 }
 FLOOR = {
     "plains": "minecraft:smooth_sandstone",
@@ -126,11 +149,20 @@ def build(src_file, biome):
     if goods:
         for entry in palette:
             entry["Name"] = goods.get(entry["Name"], entry["Name"])
-    blocks = [e for e in tag["blocks"] if palette[e["state"]]["Name"] != "minecraft:air"]
+    cloth = CLOTH.get(biome)
+    if cloth:
+        for entry in palette:
+            if entry["Name"].endswith("_table_cloth"):
+                entry["Name"] = cloth
+    # 空气要保留：结构放下去时空气会把原本的树/地形顶掉
+    blocks = list(tag["blocks"])
 
     def add(name, props, pos, nbt):
         palette.append({"Name": name, "Properties": props})
-        blocks.append({"pos": list(pos), "state": len(palette) - 1, "nbt": nbt})
+        entry = {"pos": list(pos), "state": len(palette) - 1}
+        if nbt:
+            entry["nbt"] = nbt
+        blocks.append(entry)
 
     # 门口：让村庄的街道能接上来
     add("minecraft:jigsaw", {"orientation": "south_up"}, (DOOR_X, 0, OUTSIDE_Z), {
@@ -141,6 +173,9 @@ def build(src_file, biome):
         "joint": "aligned",
         "final_state": DOOR_STEP[biome],
     })
+    # 补上双开门另一半的台阶
+    step_name, step_props = STEP_BLOCK[biome]
+    add(step_name, step_props, (DOOR_X + 1, 0, OUTSIDE_Z), None)
     # 屋里：刷一个村民（他会去认领店里的大缸，变成副食商）
     add("minecraft:jigsaw", {"orientation": "up_north"}, VILLAGER_POS, {
         "id": "minecraft:jigsaw",
