@@ -205,61 +205,66 @@ public class VatRecipeCategory implements IRecipeCategory<VatJeiRecipe> {
         return (HEIGHT - total) / 2;
     }
 
-    /** 每一行的 y（和 {@link #rowCount} 的顺序一致），给引线用 */
-    private static List<Integer> rowYs(VatJeiRecipe.State state) {
-        int rows = rowCount(state);
-        List<Integer> ys = new ArrayList<>(rows);
-        int y = firstRowY(rows);
-        for (int i = 0; i < rows; i++) {
-            ys.add(y);
-            y += ROW_STEP;
-        }
-        return ys;
+    /**
+     * 左侧的一行：纵坐标 + 是不是并排两格 + 引线连到缸上哪一点。
+     *
+     * <p>槽位摆放、引线绘制都读同一份 {@link #rowsOf}，
+     * 所以"行数"和"引线条数"不可能再对不上（以前辣白菜那一页就因此越界崩过）。
+     */
+    private record Row(int y, boolean pair, int targetX, int targetY) {
     }
 
-    /** 那一行是不是并排两格（右侧边界更靠右） */
-    private static boolean isPairRow(VatJeiRecipe.State state, int index) {
-        int row = 0;
+    /** 把一页配方左侧的每一行算出来（封口物 → 配料 → 食材 → 缸底液体，整列上下居中） */
+    private static List<Row> rowsOf(VatJeiRecipe.State state) {
+        List<Row> rows = new ArrayList<>();
+        int y = firstRowY(rowCount(state));
         if (!state.seal().isEmpty()) {
-            if (row++ == index) {
-                return false;
-            }
+            rows.add(new Row(y, false, LEADER_MOUTH_X, LEADER_MOUTH_Y));
+            y += ROW_STEP;
         }
-        for (List<List<ItemStack>> layer : List.of(state.seasoning(), state.primary())) {
-            int layerRows = layerRows(layer.size());
-            if (index >= row && index < row + layerRows) {
-                List<List<List<ItemStack>>> rows = splitRows(layer);
-                return rows.get(index - row).size() > 1;
-            }
-            row += layerRows;
+        y = addLayerRows(rows, state.seasoning(), y);
+        y = addLayerRows(rows, state.primary(), y);
+        if (state.hasLiquid()) {
+            rows.add(new Row(y, false, LEADER_BOTTOM_X, LEADER_BOTTOM_Y));
         }
-        return false;
+        return rows;
+    }
+
+    /** 一层占几行就补几行引线；行数多了以后引线落点往下挪几像素，免得两条线完全重叠 */
+    private static int addLayerRows(List<Row> rows, List<List<ItemStack>> layer, int y) {
+        List<List<List<ItemStack>>> split = splitRows(layer);
+        for (int i = 0; i < split.size(); i++) {
+            rows.add(new Row(y, split.get(i).size() > 1,
+                    LEADER_SIDE_X, LEADER_SIDE_Y + Math.min(i, 3) * 3));
+            y += ROW_STEP;
+        }
+        return y;
     }
 
     @Override
     public void setRecipe(IRecipeLayoutBuilder builder, VatJeiRecipe recipe, IFocusGroup focuses) {
         VatJeiRecipe.State state = recipe.first();
-        int y = firstRowY(rowCount(state));
+        List<Row> rows = rowsOf(state);
+        int row = 0;
 
         // 顶部：封缸物
         if (!state.seal().isEmpty()) {
-            builder.addSlot(RecipeIngredientRole.INPUT, INPUT_X, y)
+            builder.addSlot(RecipeIngredientRole.INPUT, INPUT_X, rows.get(row++).y())
                     .addItemStacks(state.seal())
                     .setSlotName(SLOT_SEAL)
                     .setStandardSlotBackground();
-            y += ROW_STEP;
         }
         // 配料
         if (!state.seasoning().isEmpty()) {
-            y = addLayer(builder, state.seasoning(), y, SEASONING_SLOTS);
+            row = addLayer(builder, state.seasoning(), rows, row, SEASONING_SLOTS);
         }
         // 食材
         if (!state.primary().isEmpty()) {
-            y = addLayer(builder, state.primary(), y, PRIMARY_SLOTS);
+            row = addLayer(builder, state.primary(), rows, row, PRIMARY_SLOTS);
         }
         // 缸底：液体（缸口里另外会画一层液面，这里的格子是给 JEI 查配方用的）
         if (state.hasLiquid()) {
-            builder.addSlot(RecipeIngredientRole.INPUT, INPUT_X, y)
+            builder.addSlot(RecipeIngredientRole.INPUT, INPUT_X, rows.get(row).y())
                     .addFluidStack(state.liquid(), state.liquidMb())
                     .setFluidRenderer(state.liquidCapacityMb(), false, SLOT, SLOT)
                     .setSlotName(SLOT_LIQUID)
@@ -288,19 +293,17 @@ public class VatRecipeCategory implements IRecipeCategory<VatJeiRecipe> {
     }
 
     /**
-     * 一行里的槽：一个就放单列位置，两个就并排（整体仍以单列为中心线）。
-     */
-    /**
      * 画一层槽位：每行最多两个，超过两个就往下再排一行。
      * 只有一格时居中，两格并排 —— 一格一行的老配方看起来和以前完全一样。
      *
-     * @return 下一层的 y
+     * @return 下一层从第几行开始
      */
-    private static int addLayer(IRecipeLayoutBuilder builder, List<List<ItemStack>> layer, int y,
-                                String[] names) {
-        List<List<List<ItemStack>>> rows = splitRows(layer);
-        for (int r = 0; r < rows.size(); r++) {
-            List<List<ItemStack>> row = rows.get(r);
+    private static int addLayer(IRecipeLayoutBuilder builder, List<List<ItemStack>> layer, List<Row> rows,
+                                int rowIndex, String[] names) {
+        List<List<List<ItemStack>>> split = splitRows(layer);
+        for (int r = 0; r < split.size(); r++) {
+            List<List<ItemStack>> row = split.get(r);
+            int y = rows.get(rowIndex + r).y();
             for (int c = 0; c < row.size(); c++) {
                 List<ItemStack> items = row.get(c);
                 if (items.isEmpty()) {
@@ -313,9 +316,8 @@ public class VatRecipeCategory implements IRecipeCategory<VatJeiRecipe> {
                         .setSlotName(names[index])
                         .setStandardSlotBackground();
             }
-            y += ROW_STEP;
         }
-        return y;
+        return rowIndex + split.size();
     }
 
     @Override
@@ -379,15 +381,11 @@ public class VatRecipeCategory implements IRecipeCategory<VatJeiRecipe> {
             }
             this.vatIcon.draw(graphics, VAT_X, VAT_Y);
             // 每个材料格引一条线到缸上对应的位置
-            List<Integer> ys = rowYs(this.states.get(0));
-            List<int[]> targets = leaderTargets(this.states.get(0));
-            for (int i = 0; i < ys.size(); i++) {
-                int rowY = ys.get(i);
-                int right = isPairRow(this.states.get(0), i) ? ROW_RIGHT_PAIR : ROW_RIGHT_SINGLE;
-                int centerY = rowY + SLOT / 2;
-                int[] target = targets.get(i);
+            for (Row row : rowsOf(this.states.get(0))) {
+                int right = row.pair() ? ROW_RIGHT_PAIR : ROW_RIGHT_SINGLE;
+                int centerY = row.y() + SLOT / 2;
                 graphics.fill(right + 1, centerY, LEADER_BUS_X + 1, centerY + 1, LEADER_COLOR);
-                drawLine(graphics, LEADER_BUS_X, centerY, target[0], target[1], LEADER_COLOR);
+                drawLine(graphics, LEADER_BUS_X, centerY, row.targetX(), row.targetY(), LEADER_COLOR);
             }
             // 箭头：从缸指向产物
             this.arrow.draw(graphics, ARROW_X, ARROW_Y);
@@ -481,24 +479,6 @@ public class VatRecipeCategory implements IRecipeCategory<VatJeiRecipe> {
     }
 
     // ===== 画图小工具 =====
-
-    /** 每一行的引线落点，顺序和 {@link #rowYs} 一致：封缸物 → 缸口，食材/调料 → 侧面，液体 → 缸底 */
-    private static List<int[]> leaderTargets(VatJeiRecipe.State state) {
-        List<int[]> targets = new ArrayList<>(4);
-        if (!state.seal().isEmpty()) {
-            targets.add(new int[]{LEADER_MOUTH_X, LEADER_MOUTH_Y});
-        }
-        if (!state.seasoning().isEmpty()) {
-            targets.add(new int[]{LEADER_SIDE_X, LEADER_SIDE_Y});
-        }
-        if (!state.primary().isEmpty()) {
-            targets.add(new int[]{LEADER_SIDE_X, LEADER_SIDE_Y});
-        }
-        if (state.hasLiquid()) {
-            targets.add(new int[]{LEADER_BOTTOM_X, LEADER_BOTTOM_Y});
-        }
-        return targets;
-    }
 
     /**
      * 在缸口里画一层液面：直接拿这种液体的静止贴图，按行铺进菱形里（用多少液体都画，只表示「缸里有这种东西」）。

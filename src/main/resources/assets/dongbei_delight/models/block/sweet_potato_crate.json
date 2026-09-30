@@ -1,0 +1,8 @@
+{
+  "parent": "minecraft:block/cube_bottom_top",
+  "textures": {
+    "top": "dongbei_delight:block/sweet_potato_crate_top",
+    "bottom": "dongbei_delight:block/crate_bottom",
+    "side": "dongbei_delight:block/sweet_potato_crate_side"
+  }
+}

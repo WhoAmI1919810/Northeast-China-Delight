@@ -15,7 +15,6 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.function.Predicate;
 
 /**
  * 大缸在 JEI 里展示的全部配方 —— **从 {@link VatRecipes#REGISTRY} 自动生成**，
@@ -51,6 +50,11 @@ public final class VatJeiRecipes {
             recipes = build();
         }
         return recipes;
+    }
+
+    /** 单独一条配方展开出来的页面（抽查 / 测试用） */
+    public static List<VatJeiRecipe> pagesFor(VatRecipe recipe) {
+        return expand(recipe);
     }
 
     private static List<VatJeiRecipe> build() {
@@ -206,40 +210,19 @@ public final class VatJeiRecipes {
     // ===== 数量、候选物品、产物 =====
 
     /**
-     * 这一格要几份：把配方的数量规则按当前水位跑一遍。
+     * 这一格要几份：直接问配方（{@link VatRecipe#displayedCounts(int)}）。
      *
-     * <p>规则之间会互相引用（盐数 = 肉数），所以多跑两遍让它们收敛。
+     * <p>"份数怎么算"只有那一份实现，所以 JEI 页面上写的数和配方自检算出来的数不会各算各的。
+     * 这里只补一件事：这一格在 JEI 里没有候选物品（比如绑了没装的模组的物品）时按 0 记。
      */
     private static int[] resolveCounts(VatRecipe recipe, List<List<ItemStack>> candidates, int level) {
-        int size = recipe.slots().size();
-        int[] counts = new int[size];
-        for (int i = 0; i < size; i++) {
-            counts[i] = candidates.get(i).isEmpty()
-                    ? 0 : Math.max(1, candidates.get(i).get(0).getCount());
-        }
-        Counts view = new Counts(recipe, level, counts);
-        for (int pass = 0; pass < 3; pass++) {
-            for (int i = 0; i < size; i++) {
-                VatRecipe.Bounds bounds = recipe.slots().get(i).bounds().get(view);
-                int want = bounds.max() == Integer.MAX_VALUE ? Math.max(1, bounds.min()) : bounds.max();
-                counts[i] = Math.max(0, Math.min(bounds.max(), Math.max(bounds.min(), want)));
+        int[] counts = recipe.displayedCounts(level);
+        for (int i = 0; i < counts.length; i++) {
+            if (candidates.get(i).isEmpty()) {
+                counts[i] = 0;
             }
         }
         return counts;
-    }
-
-    /** 按槽位号取数量的"缸内情况"，给数量规则用（格子之间靠匹配器认亲） */
-    private record Counts(VatRecipe recipe, int water, int[] counts) implements VatRecipe.Counts {
-
-        @Override
-        public int count(Predicate<ItemStack> matcher) {
-            for (int i = 0; i < this.recipe.slots().size(); i++) {
-                if (this.recipe.slots().get(i).matcher() == matcher) {
-                    return this.counts[i];
-                }
-            }
-            return 0;
-        }
     }
 
     /** 扫物品表，找出这一格收得下的东西 */

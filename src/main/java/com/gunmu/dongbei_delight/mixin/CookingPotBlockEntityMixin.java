@@ -8,6 +8,7 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.neoforged.neoforge.items.ItemStackHandler;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
@@ -32,6 +33,20 @@ import vectorwing.farmersdelight.common.crafting.CookingPotRecipe;
 @Mixin(CookingPotBlockEntity.class)
 public abstract class CookingPotBlockEntityMixin {
 
+    /** 这一次下锅做的菜（在 {@code processCooking} 开头记下来，扣调料时要用它判断"是不是油炸菜"） */
+    @Unique
+    private ItemStack dongbei$cookingResult = ItemStack.EMPTY;
+
+    /** 记住这一锅做的是什么（油要用它判断是不是油炸菜） */
+    @Inject(method = "processCooking", at = @At("HEAD"))
+    private void dongbei$rememberCookingResult(RecipeHolder<CookingPotRecipe> recipe, CookingPotBlockEntity pot,
+                                               CallbackInfoReturnable<Boolean> cir) {
+        Level level = pot.getLevel();
+        this.dongbei$cookingResult = level == null
+                ? ItemStack.EMPTY
+                : recipe.value().getResultItem(level.registryAccess()).copy();
+    }
+
     /** 调料瓶不弹出锅外，留在锅里下一锅接着用 */
     @Redirect(
             method = "processCooking",
@@ -52,6 +67,13 @@ public abstract class CookingPotBlockEntityMixin {
     private void dongbei$useOneDose(ItemStack stack, int amount) {
         if (!SeasoningBottleItem.isBottle(stack)) {
             stack.shrink(amount);
+            return;
+        }
+        // 油炸菜里的油一次用光：整瓶扣掉，只把空玻璃瓶还给玩家
+        if (stack.is(ModItems.DEEP_FRY_OILS) && this.dongbei$cookingResult.is(ModItems.DEEP_FRIED_DISHES)) {
+            stack.shrink(amount);
+            ((CookingPotBlockEntityInvoker) this)
+                    .dongbei$ejectIngredientRemainder(new ItemStack(Items.GLASS_BOTTLE));
             return;
         }
         ItemStack used = SeasoningBottleItem.useOnce(stack);

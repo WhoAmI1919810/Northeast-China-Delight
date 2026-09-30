@@ -56,7 +56,13 @@ $map = @{
     'F1' = 0x70; 'F2' = 0x71; 'F3' = 0x72; 'F5' = 0x73
     'E' = 0x45; 'ESC' = 0x1B; 'T' = 0x54; 'ENTER' = 0x0D; 'SPACE' = 0x20
     'SHIFT' = 0x10; 'CTRL' = 0x11; 'W' = 0x57; 'A' = 0x41; 'S' = 0x53; 'D' = 0x44
+    # 常用按键：JEI 的 R（配方）/ U（用途）、背包、数字栏、Q 丢弃、F 换副手
+    'R' = 0x52; 'U' = 0x55; 'Q' = 0x51; 'F' = 0x46; 'H' = 0x48; 'B' = 0x42
+    'PLUS' = 0xBB; 'MINUS' = 0xBD
+    'TAB' = 0x09; 'BACKSPACE' = 0x08; 'DELETE' = 0x2E
 }
+# 数字键 1~9：切快捷栏、给 JEI 的配方页翻页都用得上（0 也一起给上）
+for ($i = 0; $i -le 9; $i++) { $map["$i"] = 0x30 + $i }
 $vk = $map[$Key.ToUpper()]
 if (-not $vk) { throw "没定义这个键：$Key" }
 

@@ -1,0 +1,6 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [ { "item": "dongbei_delight:corn_seeds_sack" } ],
+  "result": { "count": 9, "id": "dongbei_delight:corn_seeds" }
+}

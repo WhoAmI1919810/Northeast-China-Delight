@@ -12,6 +12,9 @@ import com.gunmu.dongbei_delight.effect.ModEffects;
 import com.gunmu.dongbei_delight.fluid.ModFluids;
 import com.gunmu.dongbei_delight.item.ModItems;
 import com.gunmu.dongbei_delight.loot.ModLootModifiers;
+import com.gunmu.dongbei_delight.villager.ModVillagerProfessions;
+import com.gunmu.dongbei_delight.villager.SideDishMerchantTrades;
+import com.gunmu.dongbei_delight.worldgen.ModWorldGen;
 import com.mojang.logging.LogUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BiomeColors;
@@ -64,6 +67,8 @@ public class DongbeiDelight
         ModCreativeTabs.register(modEventBus);
         ModLootModifiers.register(modEventBus);
         ModEffects.register(modEventBus);
+        ModVillagerProfessions.register(modEventBus);
+        ModWorldGen.register(modEventBus);
 
         // 将物品添加到本模组的创造模式物品栏
         modEventBus.addListener(this::addItemsToCreativeTab);
@@ -73,6 +78,8 @@ public class DongbeiDelight
         // 注册服务器及其他游戏事件
         NeoForge.EVENT_BUS.register(this);
         NeoForge.EVENT_BUS.register(DishEffectEvents.class);
+        // 副食商的交易表（每次数据包重载时重新填一遍）
+        NeoForge.EVENT_BUS.addListener(SideDishMerchantTrades::addTrades);
     }
 
     private void addItemsToCreativeTab(@NotNull BuildCreativeModeTabContentsEvent event)
@@ -84,6 +91,10 @@ public class DongbeiDelight
         else if (event.getTabKey().equals(ModCreativeTabs.DISHES_TAB_KEY))
         {
             ModItems.DISH_TAB_ITEMS.forEach(item -> event.accept(item.get()));
+        }
+        else if (event.getTabKey().equals(ModCreativeTabs.BLOCKS_TAB_KEY))
+        {
+            ModItems.BLOCK_TAB_ITEMS.forEach(item -> event.accept(item.get()));
         }
     }
 

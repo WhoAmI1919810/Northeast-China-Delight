@@ -127,10 +127,10 @@ public final class GrillRecipes {
                 new ItemStack(ModItems.GRILLED_OIL_EDGE.get()),
                 25));
 
-        // 烤冷面：冷面片打鸡蛋、刷辣椒酱
+        // 烤冷面：冷面片打鸡蛋、刷辣椒酱，再撒糖、淋醋（甜酸口才像街边那味儿）
         list.add(new Recipe(
                 Ingredient.of(ModItems.COLD_NOODLE_SHEET.get()),
-                List.of(ModItems.CHILI_SAUCE.get(), Items.EGG),
+                List.of(ModItems.CHILI_SAUCE.get(), Items.EGG, Items.SUGAR, ModItems.VINEGAR.get()),
                 new ItemStack(ModItems.GRILLED_COLD_NOODLES.get()),
                 30));
 

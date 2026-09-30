@@ -99,6 +99,13 @@ for ($i = 0; $i -lt 26; $i++) {
     $code = 0x41 + $i
     $map[[char]$code] = @($code, $false)
 }
+# 字母：虚拟键码只有 A~Z（0x41~0x5A）这一套 —— 大写要按住 Shift，小写不按。
+# （之前把小写字符当成 0x61 的 VK 发出去，游戏收到的是一堆乱码）
+for ($i = 0; $i -lt 26; $i++) {
+    $vk = 0x41 + $i
+    $map[[char](0x41 + $i)] = @($vk, $true)
+    $map[[char](0x61 + $i)] = @($vk, $false)
+}
 for ($i = 0; $i -lt 10; $i++) {
     $code = 0x30 + $i
     $map[[char]$code] = @($code, $false)
@@ -116,6 +123,14 @@ $map['}']  = @(0xDD, $true)
 $map['[']  = @(0xDB, $false)
 $map[']']  = @(0xDD, $false)
 $map['"']  = @(0xDE, $true)
+$map['.']  = @(0xBE, $false)
+$map['@']  = @(0x32, $true)
+
+# 上面的符号是用字符串字面量当键写的，而下面查表用的是 [char] ——
+# PowerShell 的哈希表里 String 键和 Char 键不相等，符号会被整段跳过，所以统一转成 [char]。
+$charMap = @{}
+foreach ($k in $map.Keys) { $charMap[[char]$k] = $map[$k] }
+$map = $charMap
 
 $proc = Get-Process | Where-Object { $_.MainWindowTitle -like $Title } | Select-Object -First 1
 if (-not $proc) { throw "没找到标题匹配 $Title 的窗口" }
@@ -124,18 +139,20 @@ if (-not $proc) { throw "没找到标题匹配 $Title 的窗口" }
 Start-Sleep -Milliseconds 400
 
 foreach ($ch in $Text.ToCharArray()) {
+    if ($Post) {
+        # 投递模式：GLFW 的 charTyped 走 WM_CHAR，所以直接把字符投给窗口最稳
+        # （SendInput 的 Unicode 输入在部分环境里进不了游戏的输入框，两者都发一遍）
+        [Win32Post]::PostChar($proc.MainWindowHandle, [int]$ch)
+        [Win32Post]::SendUnicode($proc.MainWindowHandle, [int]$ch)
+        Start-Sleep -Milliseconds $DelayMs
+        continue
+    }
     if (-not $map.ContainsKey($ch)) {
         Write-Warning "跳过不支持的字符：$ch"
         continue
     }
     $vk = [byte]$map[$ch][0]
     $needShift = [bool]$map[$ch][1]
-    if ($Post) {
-        # 投递模式：SendInput + Unicode，输入法/键盘布局都拦不住
-        [Win32Post]::SendUnicode($proc.MainWindowHandle, [int]$ch)
-        Start-Sleep -Milliseconds $DelayMs
-        continue
-    }
     if ($needShift) { [Win32Type]::Down($shift); Start-Sleep -Milliseconds 10 }
     [Win32Type]::Down($vk)
     Start-Sleep -Milliseconds $DelayMs

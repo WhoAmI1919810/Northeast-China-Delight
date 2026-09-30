@@ -85,9 +85,12 @@ public final class VatBrewing {
         int sour = vat.sourWaterMb();
         boolean bottled = hasBottledProduct(vat);
         boolean sourPot = sour > 0;
-        // 正在发酵的那一缸只收"同一条配方"的料（泡菜中途还能再塞菜，但不许中途改酿大酱）
+        // 正在发酵的那一缸只收"同一条配方"的料（泡菜中途还能再塞菜，但不许中途改酿大酱）。
+        // 注意这里必须排掉"已经做完"的缸：完成时 PROGRESS 会写到 MAX_PROGRESS，
+        // 把 FERMENTED 的缸也算成"发酵中"的话，二次发酵（泡菜→白醋、酱渣→醋、大酱加小麦→酱油）
+        // 就永远投不进料了 —— 那几条正是本轮要修的玩法。
         boolean processing = vat.getBlockState()
-                .getValue(com.gunmu.dongbei_delight.block.Vat.PROGRESS) > 0;
+                .getValue(com.gunmu.dongbei_delight.block.Vat.PROGRESS) > 0 && !vat.isFermented();
 
         VatRecipe best = null;
         int[] bestScore = null;

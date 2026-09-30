@@ -1,5 +1,6 @@
 package com.gunmu.dongbei_delight.crafting;
 
+import com.mojang.logging.LogUtils;
 import com.gunmu.dongbei_delight.item.ModItems;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
@@ -8,6 +9,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import org.jetbrains.annotations.Nullable;
+import org.slf4j.Logger;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -22,6 +24,8 @@ import java.util.function.Predicate;
  * 之后要做成自定义配方类型时把这张表换成 JSON 读取即可。
  */
 public final class VatRecipes {
+
+    private static final Logger LOGGER = LogUtils.getLogger();
 
     private VatRecipes() {
     }
@@ -321,8 +325,9 @@ public final class VatRecipes {
                 .seconds(MEAT_SECONDS)
                 .slot(VatRecipe.Slot.keep(of(meatInput()),
                         VatRecipe.BoundsRule.between(1, MAX_MEATS), VatRecipe.Converter.to(meatResult())))
+                // 第 0 格（肉）几块，盐就要几份 —— 按槽位号引用，JEI 那边也算得出来
                 .slot(VatRecipe.Slot.absorb(salt(),
-                        VatRecipe.BoundsRule.sameAs(of(meatInput()), 1)).seasoning())
+                        VatRecipe.BoundsRule.sameAs(0, 1)).seasoning())
                 .build());
 
         // ----- 咸鱼：任意生鱼与盐一比一，最多 6 条，压缸石 -----
@@ -333,8 +338,9 @@ public final class VatRecipes {
                 .slot(VatRecipe.Slot.keep(VatRecipes::isRawFish,
                         VatRecipe.BoundsRule.between(1, MAX_SALTED_FISH),
                         VatRecipe.Converter.to(saltedFishResult())))
+                // 同上：第 0 格（鱼）几条，盐就要几份
                 .slot(VatRecipe.Slot.absorb(salt(),
-                        VatRecipe.BoundsRule.sameAs(VatRecipes::isRawFish, 1)).seasoning())
+                        VatRecipe.BoundsRule.sameAs(0, 1)).seasoning())
                 .build());
 
         // ----- 大酱：满水 + 3 酱块 + 3 盐，蒙羊毛地毯；酱块变酱渣、出 10 碗大酱 -----
@@ -437,7 +443,37 @@ public final class VatRecipes {
                 .build());
 
         list.sort((a, b) -> Integer.compare(b.priority(), a.priority()));
-        return List.copyOf(list);
+        List<VatRecipe> built = List.copyOf(list);
+        selfCheck(built);
+        return built;
+    }
+
+    /**
+     * 注册表建好后跑一遍自检（规则见 {@link VatRecipeValidator}）。
+     *
+     * <p>以后加配方时踩坑（份数算不出来、JEI 一页画不下、两个格子重叠、超过大缸容量…）
+     * 不用等到进游戏试，日志里会直接点名是哪一条配方、哪一格。
+     * 自检本身出错也只是记一条日志 —— 它不该把游戏拦下来。
+     */
+    private static void selfCheck(List<VatRecipe> built) {
+        List<String> problems;
+        try {
+            problems = VatRecipeValidator.check(built);
+        } catch (RuntimeException e) {
+            LOGGER.warn("[大缸配方] 自检没能跑完", e);
+            return;
+        }
+        if (problems.isEmpty()) {
+            LOGGER.info("[大缸配方] 自检通过：{} 条配方", built.size());
+            return;
+        }
+        for (String problem : problems) {
+            if (problem.startsWith("WARN")) {
+                LOGGER.warn("[大缸配方] {}", problem);
+            } else {
+                LOGGER.error("[大缸配方] {}", problem);
+            }
+        }
     }
 
     /** 醋瓶 */
@@ -498,18 +534,44 @@ public final class VatRecipes {
     /**
      * 腌制/发酵完成后，缸里应该显示成品的模型而不是原料的模型。
      * 没有对应成品的物品（比如盐）返回 null。
+     *
+     * <p>不写死任何物品映射：直接问这一缸对应的那条配方里"留着等取货"的格子
+     * （{@link VatRecipe.Fate#KEEP} + {@link VatRecipe.Slot#converter()}），
+     * 所以以后新增"腌好后换个样子"的配方不需要再动渲染这边。
+     * 缸里那份东西不属于当前配方时（比如腌好的泡菜缸接着酿白醋，缸里还剩白菜），
+     * 再去别的配方里找一遍。
      */
     @Nullable
-    public static Item resultFor(Item input) {
-        Item pickle = pickles().get(input);
-        if (pickle != null) {
-            return pickle;
+    public static Item resultFor(Kind kind, Item input) {
+        Item found = keepResult(recipeOf(kind), input);
+        if (found != null) {
+            return found;
         }
-        if (input == meatInput()) {
-            return meatResult();
+        for (VatRecipe other : all()) {
+            found = keepResult(other, input);
+            if (found != null) {
+                return found;
+            }
         }
-        if (input.builtInRegistryHolder().is(RAW_FISH)) {
-            return saltedFishResult();
+        return null;
+    }
+
+    /** 这条配方里，缸里那一份 input 取出来会变成什么（没变化 / 不归它管时返回 null） */
+    @Nullable
+    private static Item keepResult(@Nullable VatRecipe recipe, Item input) {
+        if (recipe == null) {
+            return null;
+        }
+        ItemStack stack = new ItemStack(input);
+        for (VatRecipe.Slot slot : recipe.keepSlots()) {
+            if (!slot.matcher().test(stack)) {
+                continue;
+            }
+            if (slot.converter() == null) {
+                return null;
+            }
+            Item result = slot.converter().apply(stack.copyWithCount(1)).getItem();
+            return result == input ? null : result;
         }
         return null;
     }

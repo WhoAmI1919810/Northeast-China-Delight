@@ -1,0 +1,7 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "building",
+  "pattern": [ "XXX", "XXX", "XXX" ],
+  "key": { "X": { "item": "dongbei_delight:green_radish" } },
+  "result": { "count": 1, "id": "dongbei_delight:green_radish_crate" }
+}

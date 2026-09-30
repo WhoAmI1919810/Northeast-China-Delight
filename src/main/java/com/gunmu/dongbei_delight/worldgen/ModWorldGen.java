@@ -1,0 +1,45 @@
+package com.gunmu.dongbei_delight.worldgen;
+
+import com.gunmu.dongbei_delight.DongbeiDelight;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.world.level.levelgen.structure.StructureType;
+import net.minecraft.world.level.levelgen.structure.pieces.StructurePieceType;
+import net.neoforged.bus.api.IEventBus;
+import net.neoforged.neoforge.registries.DeferredHolder;
+import net.neoforged.neoforge.registries.DeferredRegister;
+
+/** 世界生成相关的注册表：结构类型 + 结构片段类型。 */
+public class ModWorldGen
+{
+    public static final DeferredRegister<StructureType<?>> STRUCTURE_TYPES =
+            DeferredRegister.create(Registries.STRUCTURE_TYPE, DongbeiDelight.MODID);
+    public static final DeferredRegister<StructurePieceType> PIECE_TYPES =
+            DeferredRegister.create(Registries.STRUCTURE_PIECE, DongbeiDelight.MODID);
+
+    public static final DeferredHolder<StructureType<?>, StructureType<DongbeiCourtyardStructure>> COURTYARD_TYPE =
+            STRUCTURE_TYPES.register("dongbei_courtyard", () -> () -> DongbeiCourtyardStructure.CODEC);
+
+    public static final DeferredHolder<StructurePieceType, StructurePieceType> COURTYARD_PIECE =
+            PIECE_TYPES.register("dongbei_courtyard",
+                    () -> (StructurePieceType.StructureTemplateType) CourtyardPiece::new);
+
+    /** 小院周围的「黑土地」（农夫乐事沃土）散布器 */
+    public static final DeferredHolder<StructurePieceType, StructurePieceType> BLACK_SOIL_PIECE =
+            PIECE_TYPES.register("dongbei_black_soil",
+                    () -> (StructurePieceType.ContextlessType) BlackSoilPiece::new);
+
+    /** 小院周边的清场（上方净空 + 半径内地物） */
+    public static final DeferredHolder<StructurePieceType, StructurePieceType> CLEARING_PIECE =
+            PIECE_TYPES.register("dongbei_clearing",
+                    () -> (StructurePieceType.ContextlessType) YardClearingPiece::new);
+
+    private ModWorldGen()
+    {
+    }
+
+    public static void register(IEventBus eventBus)
+    {
+        STRUCTURE_TYPES.register(eventBus);
+        PIECE_TYPES.register(eventBus);
+    }
+}

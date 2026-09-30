@@ -2,7 +2,7 @@
   "type": "farmersdelight:cooking",
   "container": {
     "count": 1,
-    "id": "minecraft:bowl"
+    "id": "dongbei_delight:brass_bowl"
   },
   "experience": 0.35,
   "ingredients": [

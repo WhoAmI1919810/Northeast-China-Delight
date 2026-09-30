@@ -5,6 +5,7 @@ import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.function.Predicate;
 
@@ -127,6 +128,20 @@ public final class VatRecipe {
 
         /** 缸里的清水层数（一层 = 1000 mB） */
         int water();
+
+        /**
+         * 缸里**第 slotIndex 格**现在有几份 —— 供"跟着另一格走"的数量规则（{@link BoundsRule#sameAs}）用。
+         *
+         * <p>这里刻意按**槽位号**问，而不是按匹配器问：匹配器是 lambda，
+         * 同一段匹配逻辑写在两个地方就是两个不同的对象，用 {@code ==} 认亲在别人的
+         * {@code Counts} 实现里必然认不出来（症状是"盐数"被算成 0，再被钳成 1）。
+         * 经 {@link VatRecipe#boundsOf(int, Counts)} 进来时会自动包一层 {@link SlotCounts}，
+         * 所以正常调用方不用自己实现这个方法。
+         */
+        default int countOfSlot(int slotIndex) {
+            throw new UnsupportedOperationException(
+                    "Counts 要么经 VatRecipe#boundsOf 使用，要么自己实现 countOfSlot");
+        }
     }
 
     /** 数量区间 */
@@ -137,7 +152,34 @@ public final class VatRecipe {
 
         /** 这一格至少要几份（JEI 展示用） */
         public int want() {
-            return this.max == Integer.MAX_VALUE ? this.min : this.max;
+            return this.max == Integer.MAX_VALUE ? Math.max(1, this.min) : this.max;
+        }
+    }
+
+    /**
+     * 一份"按格子假定份数"的缸内情况 —— JEI 展开与配方自检这类
+     * "先假定一个缸内状态、再按数量规则算份数"的地方用。
+     *
+     * <p>{@link #count} 是按匹配器**引用**认亲的（只认这条配方里那几格的匹配器实例，
+     * {@link VatRecipe#materialsReady} 就是这么问的）；
+     * "跟着另一格走"（{@link BoundsRule#sameAs}）那类跨格规则走 {@link #countOfSlot}，
+     * 按槽位号取值，不存在认亲问题。
+     */
+    public record AssumedCounts(int water, int[] counts, VatRecipe recipe) implements Counts {
+
+        @Override
+        public int count(Predicate<ItemStack> matcher) {
+            for (int i = 0; i < this.recipe.slots.size(); i++) {
+                if (this.recipe.slots.get(i).matcher() == matcher) {
+                    return this.counts[i];
+                }
+            }
+            return 0;
+        }
+
+        @Override
+        public int countOfSlot(int slotIndex) {
+            return slotIndex >= 0 && slotIndex < this.counts.length ? this.counts[slotIndex] : 0;
         }
     }
 
@@ -183,14 +225,16 @@ public final class VatRecipe {
         }
 
         /**
-         * 数量跟着**另一格**走（盐数 = 肉数）：下限 = ratio × 那一格的数量。
+         * 数量跟着**另一格**走（盐数 = 肉数）：下限 = ratio × 第 slotIndex 格的数量。
          *
          * <p>上限给到 ratio，好让"先放盐后放肉"也放得进去（放满 6 块肉时盐正好也是 6 份）；
          * 但"能不能开工"仍然要求上下限都满足，所以盐少了照样不开工。
+         *
+         * @param slotIndex 被跟随的那一格在 {@link VatRecipe#slots()} 里的下标
          */
-        static BoundsRule sameAs(Predicate<ItemStack> other, int ratio) {
+        static BoundsRule sameAs(int slotIndex, int ratio) {
             return counts -> {
-                int n = counts.count(other) * ratio;
+                int n = counts.countOfSlot(slotIndex) * ratio;
                 return new Bounds(n, Math.max(n, ratio));
             };
         }
@@ -331,6 +375,28 @@ public final class VatRecipe {
         return this.secondsPerLayer ? this.seconds * Math.max(1, waterLevel) : this.seconds;
     }
 
+    /**
+     * "这一档水位下，每一格应该放几份" —— 数量规则之间会互相引用（盐数 = 肉数），
+     * 所以从"每格 1 份"出发多跑几遍让它收敛。
+     *
+     * <p>JEI 页面拿它显示投料量，配方自检（{@link VatRecipeValidator}）反过来用它验一遍
+     * "照这个数投料到底能不能开工"，所以两边不会各算各的。
+     */
+    public int[] displayedCounts(int waterLevel) {
+        int size = this.slots.size();
+        int[] counts = new int[size];
+        Arrays.fill(counts, 1);
+        Counts view = new AssumedCounts(waterLevel, counts, this);
+        for (int pass = 0; pass < 3; pass++) {
+            for (int i = 0; i < size; i++) {
+                Bounds bounds = this.slots.get(i).bounds().get(view);
+                int want = bounds.want();
+                counts[i] = Math.max(0, Math.min(bounds.max(), Math.max(bounds.min(), want)));
+            }
+        }
+        return counts;
+    }
+
     /** 完成后产出的液体量（mB），按水位配比的配方会乘上水位 */
     public int productMbFor(int waterLevel) {
         return this.liquid.productPerLayer
@@ -348,7 +414,36 @@ public final class VatRecipe {
 
     /** 这一格现在允许放几个 */
     public Bounds boundsOf(int slotIndex, Counts counts) {
-        return this.slots.get(slotIndex).bounds().get(counts);
+        return this.slots.get(slotIndex).bounds().get(new SlotCounts(counts, this));
+    }
+
+    /**
+     * 把"缸内情况"补上"按槽位号取数量"的能力。
+     *
+     * <p>"盐数 = 肉数"这类规则要跨格引用，靠匹配器实例认亲不可靠（lambda 在不同调用点是不同对象，
+     * JEI 那份 {@code Counts} 就是因此把肉数算成 0 的），所以统一在这里翻译：
+     * 槽位号 → 那一格的匹配器 → 数量。
+     */
+    private record SlotCounts(Counts delegate, VatRecipe recipe) implements Counts {
+
+        @Override
+        public int count(Predicate<ItemStack> matcher) {
+            return this.delegate.count(matcher);
+        }
+
+        @Override
+        public int water() {
+            return this.delegate.water();
+        }
+
+        @Override
+        public int countOfSlot(int slotIndex) {
+            if (slotIndex < 0 || slotIndex >= this.recipe.slots.size()) {
+                throw new IllegalArgumentException("配方 " + this.recipe.id
+                        + " 的数量规则引用了不存在的槽位 " + slotIndex);
+            }
+            return this.delegate.count(this.recipe.slots.get(slotIndex).matcher());
+        }
     }
 
     /** 这一格收不收这种东西 */

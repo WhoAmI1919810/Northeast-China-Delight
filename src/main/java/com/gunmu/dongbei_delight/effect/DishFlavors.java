@@ -6,7 +6,9 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * 菜肴的"口味"表：决定吃完给什么状态效果、持续多久。
@@ -41,6 +43,31 @@ public final class DishFlavors {
 
     private static Map<Item, Info> table;
 
+    /**
+     * 汤类料理：除了各自的口味效果，还会额外给「暖身」——
+     * 寒冷覆雪的群系里跑得动（+5%×等级 移动速度），也不会陷进细雪。
+     *
+     * <p>想给某道汤加上/去掉，只要改这一份名单。
+     */
+    private static final Set<String> SOUP_PATHS = Set.of(
+            "da_jiang_tang",              // 大酱汤
+            "hai_xian_dou_fu_tang",       // 大虾豆腐汤
+            "hai_shen_dou_fu_tang",       // 海参豆腐汤
+            "suan_cai_hai_xian_guo",      // 酸菜海鲜锅
+            "la_niu_rou_tang_fan",        // 辣牛肉汤
+            "la_bai_cai_tang_fan",        // 辣白菜豆腐汤
+            "shen_ji_tang",               // 参鸡汤
+            "bai_cai_dou_fu_dun_fen_tiao",// 白菜豆腐炖粉条
+            "de_mo_li_dun_yu",            // 得莫利炖鱼
+            "su_bo_tang",                 // 苏波汤
+            "xia_jiang_dun_dou_fu",       // 虾酱炖豆腐
+            "cha_zi_zhou",                // 碴子粥
+            "sweet_potato_porridge",      // 地瓜粥
+            "sour_tangzi"                 // 酸汤子
+    );
+
+    private static Set<Item> soupTable;
+
     private DishFlavors() {
     }
 
@@ -55,6 +82,19 @@ public final class DishFlavors {
     public static Flavor flavorOf(Item item) {
         Info info = of(item);
         return info == null ? null : info.flavor();
+    }
+
+    /** 这道菜是不是汤类（决定要不要额外给「暖身」） */
+    public static boolean isSoup(Item item) {
+        if (soupTable == null) {
+            Set<Item> set = new HashSet<>();
+            for (String path : SOUP_PATHS) {
+                set.add(BuiltInRegistries.ITEM.get(
+                        ResourceLocation.fromNamespaceAndPath(DongbeiDelight.MODID, path)));
+            }
+            soupTable = Set.copyOf(set);
+        }
+        return soupTable.contains(item);
     }
 
     private static Map<Item, Info> build() {
@@ -130,7 +170,8 @@ public final class DishFlavors {
         put(map, Flavor.BALANCED, 5, "shen_ji_tang");
         put(map, Flavor.BALANCED, 4, "xiao_ji_dun_mo_gu_bowl");
         put(map, Flavor.BALANCED, 6, "bibimbap");
-        put(map, Flavor.BALANCED, 3, "grilled_cold_noodles");
+        // 烤冷面：冷面片 + 鸡蛋 + 辣椒酱 + 糖 + 醋 = 5 种材料
+        put(map, Flavor.BALANCED, 5, "grilled_cold_noodles");
 
         return Map.copyOf(map);
     }

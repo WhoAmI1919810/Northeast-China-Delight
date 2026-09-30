@@ -1,0 +1,13 @@
+{
+  "values": {
+    "dongbei_delight:corn_stalk": {
+      "burn_time": 200
+    },
+    "dongbei_delight:animal_oil": {
+      "burn_time": 800
+    },
+    "dongbei_delight:animal_oil_block": {
+      "burn_time": 3200
+    }
+  }
+}

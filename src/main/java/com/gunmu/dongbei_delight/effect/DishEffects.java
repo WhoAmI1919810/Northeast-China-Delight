@@ -62,4 +62,11 @@ public final class DishEffects {
                 .ifPresent(effect -> list.add(new Applied(effect, 100, 0)));
         return list;
     }
+
+    /** 汤类额外给的「暖身」：时长跟这道菜自己的效果一致 */
+    public static List<Applied> soupWarmth(int durationTicks) {
+        List<Applied> list = new ArrayList<>();
+        list.add(new Applied(ModEffects.WARMTH, durationTicks, 0));
+        return list;
+    }
 }

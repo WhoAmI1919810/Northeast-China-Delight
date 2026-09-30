@@ -25,6 +25,14 @@ public class ModEffects {
     public static final DeferredHolder<MobEffect, MobEffect> REFRESHING =
             EFFECTS.register("refreshing", () -> new SimpleEffect(MobEffectCategory.BENEFICIAL, 0x7AC74F));
 
+    /**
+     * 暖身：汤类料理的效果。在寒冷覆雪的生物群系里移动速度 +5%×等级，并且不会陷进细雪。
+     * 具体机制在 {@link DishEffectEvents} 里实现（按等级挂移动速度修饰符），
+     * 「不会陷细雪」由 mixin 打在原版细雪方块上。
+     */
+    public static final DeferredHolder<MobEffect, MobEffect> WARMTH =
+            EFFECTS.register("warmth", () -> new SimpleEffect(MobEffectCategory.BENEFICIAL, 0xFF8A3D));
+
     public static void register(IEventBus eventBus) {
         EFFECTS.register(eventBus);
     }

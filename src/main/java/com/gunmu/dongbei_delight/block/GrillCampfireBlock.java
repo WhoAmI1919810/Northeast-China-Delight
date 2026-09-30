@@ -1,6 +1,7 @@
 package com.gunmu.dongbei_delight.block;
 
 import com.gunmu.dongbei_delight.crafting.GrillRecipes;
+import com.gunmu.dongbei_delight.item.GrillSeasonings;
 import com.gunmu.dongbei_delight.item.ModItems;
 import com.gunmu.dongbei_delight.item.SeasoningBottleItem;
 import com.mojang.serialization.MapCodec;
@@ -190,7 +191,7 @@ public class GrillCampfireBlock extends CampfireBlock {
             hint(player, "message.dongbei_delight.grill.not_needed");
             return ItemInteractionResult.sidedSuccess(false);
         }
-        if (SeasoningBottleItem.isBottle(seasoning) && !brushing) {
+        if (GrillSeasonings.needsBrush(seasoning) && !brushing) {
             hint(player, "message.dongbei_delight.grill.need_brush");
             return ItemInteractionResult.sidedSuccess(false);
         }
@@ -199,7 +200,13 @@ public class GrillCampfireBlock extends CampfireBlock {
             return ItemInteractionResult.sidedSuccess(false);
         }
 
-        if (SeasoningBottleItem.isBottle(seasoning)) {
+        if (GrillSeasonings.isSauce(seasoning)) {
+            // 厚酱（辣椒酱）：一份酱抹一份食材，创造模式不扣
+            if (!player.hasInfiniteMaterials()) {
+                seasoning.consume(1, player);
+            }
+            hint(player, "message.dongbei_delight.grill.brushed_sauce", seasoning.getHoverName());
+        } else if (SeasoningBottleItem.isBottle(seasoning)) {
             // 给一份食材刷一次只花 10 mB；创造模式不扣（和盐、糖这些直接消耗的调料保持一致）
             if (!player.hasInfiniteMaterials()) {
                 player.setItemInHand(InteractionHand.OFF_HAND,

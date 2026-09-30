@@ -2,6 +2,7 @@ package com.gunmu.dongbei_delight.compat.jei;
 
 import com.gunmu.dongbei_delight.block.ModBlocks;
 import com.gunmu.dongbei_delight.client.GrillRackGeometry;
+import com.gunmu.dongbei_delight.item.GrillSeasonings;
 import com.gunmu.dongbei_delight.item.SeasoningBottleItem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
@@ -202,14 +203,22 @@ public class GrillRecipeCategory implements IRecipeCategory<GrillJeiRecipe> {
         @Override
         public void drawWidget(GuiGraphics graphics, double mouseX, double mouseY) {
             Font font = Minecraft.getInstance().font;
-            Component text = Component.translatable("jei.dongbei_delight.grill.seasoning_amount",
+            Component bottleText = Component.translatable("jei.dongbei_delight.grill.seasoning_amount",
                     SeasoningBottleItem.GRILL_DOSE_MB);
-            float textWidth = font.width(text) * AMOUNT_TEXT_SCALE;
+            // 厚酱（辣椒酱）没有 mB 概念：写「1 份 · 需刷子」提示它也要用刷子抹
+            Component sauceText = Component.translatable("jei.dongbei_delight.grill.seasoning_sauce");
             PoseStack pose = graphics.pose();
             for (int i = 0; i < this.seasonings.size() && i < MAX_SEASONINGS; i++) {
-                if (!(this.seasonings.get(i).getItem() instanceof SeasoningBottleItem)) {
+                ItemStack seasoning = this.seasonings.get(i);
+                Component text;
+                if (GrillSeasonings.isSauce(seasoning)) {
+                    text = sauceText;
+                } else if (seasoning.getItem() instanceof SeasoningBottleItem) {
+                    text = bottleText;
+                } else {
                     continue;
                 }
+                float textWidth = font.width(text) * AMOUNT_TEXT_SCALE;
                 float x = SEASONING_X + i * STEP + (SLOT - textWidth) / 2.0F;
                 pose.pushPose();
                 pose.translate(x, AMOUNT_Y, 0.0F);

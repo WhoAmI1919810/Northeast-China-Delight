@@ -574,6 +574,10 @@ public class VatBlockEntity extends BlockEntity implements IFluidHandler {
     /**
      * 当前能被管道抽走的液体。
      * 还在发酵、没酿好、蒙着盖布或者已经抽空时都返回 null。
+     *
+     * <p>这里的 {@code switch} 故意不写 {@code default}：大缸以后新增一种
+     * {@link VatRecipes.Kind} 时，编译器会强制你在这里明确表态
+     * （"这种缸到底出不出液体"），而不是悄悄落进 default、表现为"管道抽不出来"。
      */
     private Fluid productFluid() {
         if (!this.getBlockState().getValue(Vat.FERMENTED) || this.isCovered()) {
@@ -589,7 +593,8 @@ public class VatBlockEntity extends BlockEntity implements IFluidHandler {
             // 格瓦斯暂时不接流体管道：缸里按 mB 记账，玩家用玻璃瓶一瓶一瓶取
             case KVASS -> null;
             case PICKLE, SPICY_PICKLE -> this.sourWaterMb > 0 ? ModFluids.sourWaterSource() : null;
-            default -> null;
+            // 没有成品液体的那几种缸
+            case NONE, MEAT, SALTED_FISH, BEAN_SPROUTS, SOUR_CORN -> null;
         };
     }
 
@@ -603,7 +608,7 @@ public class VatBlockEntity extends BlockEntity implements IFluidHandler {
             case SHRIMP_PASTE -> this.shrimpPasteMb;
             case PICKLE, SPICY_PICKLE -> this.sourWaterMb;
             case KVASS -> this.kvassMb;
-            default -> 0;
+            case NONE, MEAT, SALTED_FISH, BEAN_SPROUTS, SOUR_CORN -> 0;
         };
     }
 
@@ -663,7 +668,8 @@ public class VatBlockEntity extends BlockEntity implements IFluidHandler {
                     this.sourWaterMb -= drained;
                     this.refreshLiquidLevel();
                 }
-                default -> {
+                // 上面 productFluid() 已经挡掉了"没有液体产物"的缸，这里只是让 switch 完整
+                case NONE, MEAT, SALTED_FISH, BEAN_SPROUTS, SOUR_CORN, KVASS -> {
                 }
             }
             // 液体抽空后酱渣还留在缸里，等玩家取走（所以这里不能 reset）

@@ -66,6 +66,12 @@ public class DishEffectEvents {
         for (DishEffects.Applied applied : DishEffects.of(info)) {
             player.addEffect(applied.instance());
         }
+        // 汤类：额外给「暖身」（寒冷群系加速 + 不陷细雪）
+        if (DishFlavors.isSoup(stack.getItem())) {
+            for (DishEffects.Applied applied : DishEffects.soupWarmth(info.durationTicks())) {
+                player.addEffect(applied.instance());
+            }
+        }
         // 新派橙汁锅包肉：额外带上橘子汁本身的 5 秒生命恢复与解毒
         if (stack.is(ModItems.ORANGE_GUO_BAO_ROU.get())) {
             for (DishEffects.Applied applied : DishEffects.orangeJuiceExtras()) {
@@ -92,11 +98,19 @@ public class DishEffectEvents {
                             SeasoningBottleItem.remainingUses(stack))
                     .withStyle(ChatFormatting.GRAY));
         }
+        // 植物油 / 动物油：油炸菜一次烧完一整瓶，别的做法照常按 50 mB 扣
+        if (stack.is(ModItems.DEEP_FRY_OILS)) {
+            event.getToolTip().add(Component.translatable("tooltip.dongbei_delight.deep_fry_oil")
+                    .withStyle(ChatFormatting.GRAY));
+        }
         DishFlavors.Info info = DishFlavors.of(stack.getItem());
         if (info == null) {
             return;
         }
         List<DishEffects.Applied> effects = new ArrayList<>(DishEffects.of(info));
+        if (DishFlavors.isSoup(stack.getItem())) {
+            effects.addAll(DishEffects.soupWarmth(info.durationTicks()));
+        }
         if (stack.is(ModItems.ORANGE_GUO_BAO_ROU.get())) {
             effects.addAll(DishEffects.orangeJuiceExtras());
         }
@@ -178,6 +192,7 @@ public class DishEffectEvents {
 
         // 爽口：回血更快（照常消耗饥饿值）
         MobEffectInstance refreshing = player.getEffect(ModEffects.REFRESHING);
+        applyWarmthSpeed(player);
         if (refreshing == null || player.getHealth() >= player.getMaxHealth() || food.getFoodLevel() < 18) {
             REGEN_CREDIT.remove(id);
             return;
@@ -200,5 +215,55 @@ public class DishEffectEvents {
         UUID id = event.getEntity().getUUID();
         LAST_EXHAUSTION.remove(id);
         REGEN_CREDIT.remove(id);
+    }
+
+    // ===== 暖身：寒冷覆雪群系里跑得动 =====
+
+    /** 移动速度修饰符的 id（每次 tick 按需刷新，离开寒冷群系立刻撤掉） */
+    private static final net.minecraft.resources.ResourceLocation WARMTH_SPEED_ID =
+            net.minecraft.resources.ResourceLocation.fromNamespaceAndPath(
+                    com.gunmu.dongbei_delight.DongbeiDelight.MODID, "warmth_speed");
+    /** 每级加多少移动速度：5% */
+    public static final double WARMTH_SPEED_PER_LEVEL = 0.05D;
+    /**
+     * 「寒冷覆雪」的判定阈值：生物群系基础温度低于它就生效。
+     * 想改生效范围（比如连温带针叶林也算），改这一个数就行。
+     */
+    public static final float COLD_TEMPERATURE = 0.15F;
+
+    private static void applyWarmthSpeed(Player player) {
+        net.minecraft.world.entity.ai.attributes.AttributeInstance attribute =
+                player.getAttribute(net.minecraft.world.entity.ai.attributes.Attributes.MOVEMENT_SPEED);
+        if (attribute == null) {
+            return;
+        }
+        MobEffectInstance warmth = player.getEffect(ModEffects.WARMTH);
+        int level = warmth == null ? 0 : warmth.getAmplifier() + 1;
+        boolean cold = level > 0 && isColdBiome(player);
+        net.minecraft.world.entity.ai.attributes.AttributeModifier existing =
+                attribute.getModifier(WARMTH_SPEED_ID);
+        if (!cold) {
+            if (existing != null) {
+                attribute.removeModifier(WARMTH_SPEED_ID);
+            }
+            return;
+        }
+        double amount = WARMTH_SPEED_PER_LEVEL * level;
+        if (existing != null && Math.abs(existing.amount() - amount) < 1.0E-6D) {
+            return;
+        }
+        if (existing != null) {
+            attribute.removeModifier(WARMTH_SPEED_ID);
+        }
+        attribute.addTransientModifier(new net.minecraft.world.entity.ai.attributes.AttributeModifier(
+                WARMTH_SPEED_ID, amount,
+                net.minecraft.world.entity.ai.attributes.AttributeModifier.Operation.ADD_MULTIPLIED_BASE));
+    }
+
+    /** 寒冷覆雪的生物群系：按生物群系基础温度判断 */
+    public static boolean isColdBiome(Player player) {
+        Holder<net.minecraft.world.level.biome.Biome> biome =
+                player.level().getBiome(player.blockPosition());
+        return biome.value().getBaseTemperature() <= COLD_TEMPERATURE;
     }
 }

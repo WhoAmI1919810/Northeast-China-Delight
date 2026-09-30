@@ -1,0 +1,16 @@
+{
+  "__说明": "东北小院允许生成的生物群系。想让它出现在别的群系，就往这个数组里加；想只在更冷的地方，就删掉几行。",
+  "values": [
+    "#minecraft:is_taiga",
+    "minecraft:taiga",
+    "minecraft:snowy_taiga",
+    "minecraft:old_growth_pine_taiga",
+    "minecraft:old_growth_spruce_taiga",
+    "minecraft:snowy_plains",
+    "minecraft:ice_spikes",
+    "minecraft:snowy_beach",
+    "minecraft:grove",
+    "minecraft:snowy_slopes",
+    "minecraft:frozen_river"
+  ]
+}

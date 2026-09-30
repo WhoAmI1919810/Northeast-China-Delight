@@ -1,6 +1,7 @@
 {
   "itemGroup.dongbei_delight.ingredients": "Northeast China Delight: Ingredients & Sundries",
   "itemGroup.dongbei_delight.dishes": "Northeast China Delight: Dishes",
+  "itemGroup.dongbei_delight.blocks": "Northeast China Delight: Blocks",
 
   "item.dongbei_delight.soybean": "Soybean",
   "item.dongbei_delight.eggplant": "Eggplant",
@@ -243,6 +244,9 @@
   "effect.dongbei_delight.greasy.description": "Eating is slower, but hunger and saturation drain slower.",
   "effect.dongbei_delight.refreshing": "Refreshing",
   "effect.dongbei_delight.refreshing.description": "Eating is slower, but you regenerate health faster (hunger is still consumed).",
+
+  "effect.dongbei_delight.warmth": "Warmth",
+  "effect.dongbei_delight.warmth.description": "+5% movement speed per level in cold, snowy biomes, and you no longer sink into powder snow.",
   "item.dongbei_delight.la_pi": "La Pi",
   "item.dongbei_delight.large_basin": "Large Basin",
   "item.dongbei_delight.grill_rack": "Grill Rack",
@@ -284,8 +288,39 @@
   "message.dongbei_delight.grill.sprinkled": "Sprinkled %s",
   "message.dongbei_delight.grill.no_food_here": "There's nothing on that spot",
   "message.dongbei_delight.grill.no_food": "There's no food on the grill yet",
+  "message.dongbei_delight.grill.brushed_sauce": "Brushed %s onto that piece",
+  "jei.dongbei_delight.grill.seasoning_sauce": "1 pc · use brush",
   "tooltip.dongbei_delight.bottle_amount": "%s / %s mB left (%s uses)",
+  "tooltip.dongbei_delight.deep_fry_oil": "Deep-fried dishes burn a whole bottle; stir-fried, stewed and pan-fried dishes use 50 mB",
   "message.dongbei_delight.vat.bottle_full": "This bottle is already full",
   "message.dongbei_delight.vat.bottle_mismatch": "The vat doesn't hold that kind of liquid",
-  "message.dongbei_delight.vat.bottle_empty": "The vat has nothing left to pour"
+  "message.dongbei_delight.vat.bottle_empty": "The vat has nothing left to pour",
+
+  "block.dongbei_delight.napa_cabbage_crate": "Crate of Napa Cabbage",
+  "block.dongbei_delight.cucumber_crate": "Crate of Cucumbers",
+  "block.dongbei_delight.green_radish_crate": "Crate of Green Radishes",
+  "block.dongbei_delight.green_onion_crate": "Crate of Green Onions",
+  "block.dongbei_delight.eggplant_crate": "Crate of Eggplants",
+  "block.dongbei_delight.green_pepper_crate": "Crate of Green Peppers",
+  "block.dongbei_delight.red_chili_crate": "Crate of Red Chilies",
+  "block.dongbei_delight.green_beans_crate": "Crate of Green Beans",
+  "block.dongbei_delight.corn_crate": "Crate of Corn",
+  "block.dongbei_delight.sweet_potato_crate": "Crate of Sweet Potatoes",
+  "block.dongbei_delight.sour_cabbage_crate": "Crate of Pickled Cabbage",
+  "block.dongbei_delight.spicy_cabbage_crate": "Crate of Spicy Cabbage",
+  "block.dongbei_delight.pickled_cucumber_crate": "Crate of Pickled Cucumbers",
+  "block.dongbei_delight.pickled_carrot_crate": "Crate of Pickled Carrots",
+  "block.dongbei_delight.pickled_green_radish_crate": "Crate of Pickled Green Radishes",
+
+  "block.dongbei_delight.corn_seeds_sack": "Sack of Corn Kernels",
+  "block.dongbei_delight.buckwheat_sack": "Sack of Buckwheat",
+  "block.dongbei_delight.soybean_sack": "Sack of Soybeans",
+  "block.dongbei_delight.red_bean_sack": "Sack of Red Beans",
+  "block.dongbei_delight.peanut_sack": "Sack of Peanuts",
+  "block.dongbei_delight.hazelnut_sack": "Sack of Hazelnuts",
+  "block.dongbei_delight.hazel_mushroom_sack": "Sack of Hazel Mushrooms",
+  "block.dongbei_delight.wood_ear_sack": "Sack of Wood Ear",
+  "block.dongbei_delight.ginseng_sack": "Sack of Ginseng",
+
+  "entity.minecraft.villager.dongbei_delight.side_dish_merchant": "Side Dish Merchant"
 }

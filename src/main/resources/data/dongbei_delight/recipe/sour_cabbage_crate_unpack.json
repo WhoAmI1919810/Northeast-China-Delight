@@ -1,0 +1,6 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [ { "item": "dongbei_delight:sour_cabbage_crate" } ],
+  "result": { "count": 9, "id": "dongbei_delight:sour_cabbage" }
+}

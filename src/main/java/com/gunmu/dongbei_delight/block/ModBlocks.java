@@ -16,10 +16,48 @@ import net.neoforged.neoforge.registries.DeferredBlock;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
 import java.util.function.Supplier;
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 public class ModBlocks {
 
     public static final DeferredRegister.Blocks BLOCKS = DeferredRegister.createBlocks(DongbeiDelight.MODID);
+
+    // ===== 方块：箱装 / 袋装 =====
+    // 9 个材料压成 1 个方块，方块也能拆回 9 个（配方见 tools\generate_food_storage.ps1 生成的文件）。
+    // 贴图、方块状态、模型、掉落表都由那个脚本按下面的清单生成。
+
+    /** 箱装：蔬菜与腌菜，木头质感 */
+    public static final List<String> CRATE_IDS = List.of(
+            "napa_cabbage_crate", "cucumber_crate", "green_radish_crate", "green_onion_crate",
+            "eggplant_crate", "green_pepper_crate", "red_chili_crate", "green_beans_crate",
+            "corn_crate", "sweet_potato_crate", "sour_cabbage_crate", "spicy_cabbage_crate",
+            "pickled_cucumber_crate", "pickled_carrot_crate", "pickled_green_radish_crate"
+    );
+
+    /** 袋装：谷物与山珍，麻袋质感 */
+    public static final List<String> SACK_IDS = List.of(
+            "corn_seeds_sack", "buckwheat_sack", "soybean_sack", "red_bean_sack", "peanut_sack",
+            "hazelnut_sack", "hazel_mushroom_sack", "wood_ear_sack", "ginseng_sack"
+    );
+
+    public static final Map<String, DeferredBlock<Block>> CRATES = storageBlocks(CRATE_IDS, SoundType.WOOD);
+    public static final Map<String, DeferredBlock<Block>> SACKS = storageBlocks(SACK_IDS, SoundType.WOOL);
+
+    /** 这些方块都是普通方块：只负责装东西，没有方块实体 */
+    private static Map<String, DeferredBlock<Block>> storageBlocks(List<String> ids, SoundType sound) {
+        Map<String, DeferredBlock<Block>> map = new LinkedHashMap<>();
+        for (String id : ids) {
+            map.put(id, BLOCKS.registerBlock(id, Block::new,
+                    BlockBehaviour.Properties.of()
+                            .mapColor(MapColor.WOOD)
+                            .strength(1.0F)
+                            .sound(sound)));
+        }
+        return Collections.unmodifiableMap(map);
+    }
 
     // ===== 作物 =====
     // 种子用延迟取值的方式传入，避免 ModItems / ModBlocks 之间的类初始化死循环

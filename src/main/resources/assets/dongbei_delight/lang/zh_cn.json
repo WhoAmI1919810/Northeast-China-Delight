@@ -1,6 +1,7 @@
 {
   "itemGroup.dongbei_delight.ingredients": "东北乐事：食材与杂项",
   "itemGroup.dongbei_delight.dishes": "东北乐事：菜肴",
+  "itemGroup.dongbei_delight.blocks": "东北乐事：方块",
 
   "item.dongbei_delight.soybean": "大豆",
   "item.dongbei_delight.eggplant": "茄子",
@@ -261,6 +262,9 @@
   "effect.dongbei_delight.greasy.description": "进食变慢，但饱食度与饱和度下降得更慢。",
   "effect.dongbei_delight.refreshing": "爽口",
   "effect.dongbei_delight.refreshing.description": "进食变慢，但回血更快（照常消耗饥饿值）。",
+
+  "effect.dongbei_delight.warmth": "暖身",
+  "effect.dongbei_delight.warmth.description": "在寒冷覆雪的群系里移动速度 +5%×等级，并且不会陷进细雪。",
   "item.dongbei_delight.la_pi": "拉皮",
   "item.dongbei_delight.large_basin": "大脸盆",
   "item.dongbei_delight.grill_rack": "烧烤架",
@@ -302,8 +306,40 @@
   "message.dongbei_delight.grill.sprinkled": "撒上 %s",
   "message.dongbei_delight.grill.no_food_here": "这一格上没有食材",
   "message.dongbei_delight.grill.no_food": "烤架上还没有食材",
+  "message.dongbei_delight.grill.brushed_sauce": "给这份食材刷上了 %s",
+  "jei.dongbei_delight.grill.seasoning_sauce": "1 份·需刷子",
   "tooltip.dongbei_delight.bottle_amount": "剩余 %s / %s mB（还能用 %s 次）",
+  "tooltip.dongbei_delight.deep_fry_oil": "油炸菜会一次用光一整瓶；炒、炖、煎照常每次 50 mB",
   "message.dongbei_delight.vat.bottle_full": "这瓶调料还是满的",
   "message.dongbei_delight.vat.bottle_mismatch": "缸里的液体和这个瓶子对不上",
   "message.dongbei_delight.vat.bottle_empty": "缸里已经没有能装的液体了"
+  ,
+
+  "block.dongbei_delight.napa_cabbage_crate": "箱装大白菜",
+  "block.dongbei_delight.cucumber_crate": "箱装黄瓜",
+  "block.dongbei_delight.green_radish_crate": "箱装青萝卜",
+  "block.dongbei_delight.green_onion_crate": "箱装大葱",
+  "block.dongbei_delight.eggplant_crate": "箱装茄子",
+  "block.dongbei_delight.green_pepper_crate": "箱装青椒",
+  "block.dongbei_delight.red_chili_crate": "箱装红辣椒",
+  "block.dongbei_delight.green_beans_crate": "箱装豆角",
+  "block.dongbei_delight.corn_crate": "箱装玉米",
+  "block.dongbei_delight.sweet_potato_crate": "箱装地瓜",
+  "block.dongbei_delight.sour_cabbage_crate": "箱装酸菜",
+  "block.dongbei_delight.spicy_cabbage_crate": "箱装辣白菜",
+  "block.dongbei_delight.pickled_cucumber_crate": "箱装酸黄瓜",
+  "block.dongbei_delight.pickled_carrot_crate": "箱装腌胡萝卜",
+  "block.dongbei_delight.pickled_green_radish_crate": "箱装腌青萝卜",
+
+  "block.dongbei_delight.corn_seeds_sack": "袋装玉米粒",
+  "block.dongbei_delight.buckwheat_sack": "袋装荞麦",
+  "block.dongbei_delight.soybean_sack": "袋装大豆",
+  "block.dongbei_delight.red_bean_sack": "袋装红豆",
+  "block.dongbei_delight.peanut_sack": "袋装花生",
+  "block.dongbei_delight.hazelnut_sack": "袋装榛子",
+  "block.dongbei_delight.hazel_mushroom_sack": "袋装榛蘑",
+  "block.dongbei_delight.wood_ear_sack": "袋装木耳",
+  "block.dongbei_delight.ginseng_sack": "袋装人参",
+
+  "entity.minecraft.villager.dongbei_delight.side_dish_merchant": "副食商"
 }

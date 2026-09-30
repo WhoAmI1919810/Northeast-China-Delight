@@ -2,6 +2,7 @@ package com.gunmu.dongbei_delight.client;
 
 import com.gunmu.dongbei_delight.block.GrillBlockEntity;
 import com.gunmu.dongbei_delight.item.BottleColors;
+import com.gunmu.dongbei_delight.item.GrillSeasonings;
 import com.gunmu.dongbei_delight.item.ModItems;
 import com.gunmu.dongbei_delight.item.SeasoningBottleItem;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -56,8 +57,21 @@ public class GrillCampfireRenderer implements BlockEntityRenderer<GrillBlockEnti
      * 所以抬 0.006 是不够的 —— 白点和颜色层会被埋在食材贴片内部，根本看不见。
      */
     private static final float SEASON_LIFT = 0.0135F;
-    /** 颜色层的透明度：淡淡的就好 */
+    /** 颜色层的透明度：淡淡的就好（瓶装调料那种"刷一层油"） */
     private static final float SEASON_ALPHA = 0.32F;
+
+    // ===== 辣椒酱这类"厚酱"：颜色更浓 + 粗颗粒的辣椒碎，和糖霜的白点完全不是一回事 =====
+
+    /** 厚酱的红：比辣椒油更沉、更暗一点，看着像酱而不是油 */
+    private static final int SAUCE_TINT = 0xB5321C;
+    /** 厚酱颜色层的透明度（比瓶装调料厚） */
+    private static final float SAUCE_ALPHA = 0.55F;
+    /** 酱里的辣椒碎：深红发褐 */
+    private static final int SAUCE_FLECK_COLOR = 0x7A1A0C;
+    private static final float SAUCE_FLECK_ALPHA = 0.9F;
+    /** 辣椒碎的个数与大小（都比糖粒大一圈，能看出"碎辣椒"的感觉） */
+    private static final int SAUCE_FLECK_COUNT = 7;
+    private static final float SAUCE_FLECK_HALF_PX = 0.9F;
 
     /** 撒几个白点 */
     private static final int SPECK_COUNT = 4;
@@ -113,11 +127,30 @@ public class GrillCampfireRenderer implements BlockEntityRenderer<GrillBlockEnti
                 pose.popPose();
             }
 
-            // 盐、糖这类：在食材的实心像素上撒几个白点
-            boolean hasDrySeasoning = applied.stream().anyMatch(item -> !(item instanceof SeasoningBottleItem));
+            // 辣椒酱这类厚酱：再叠一层浓红，并撒几粒深红的辣椒碎
+            boolean hasSauce = applied.stream().anyMatch(GrillSeasonings::isSauce);
+            if (hasSauce) {
+                MultiBufferSource sauce = new TintBufferSource(buffer,
+                        ((SAUCE_TINT >> 16) & 0xFF) / 255.0F,
+                        ((SAUCE_TINT >> 8) & 0xFF) / 255.0F,
+                        (SAUCE_TINT & 0xFF) / 255.0F,
+                        SAUCE_ALPHA);
+                pose.pushPose();
+                pose.translate(0.0F, SEASON_LIFT, 0.0F);
+                translateToItem(pose, direction);
+                drawItem(stack, sauce, pose, packedLight, packedOverlay, grill, seed + slot);
+                pose.popPose();
+                renderSpecks(pose, buffer, stack, direction, grill.getLevel(), seed + slot,
+                        packedLight, packedOverlay,
+                        SAUCE_FLECK_COLOR, SAUCE_FLECK_ALPHA, SAUCE_FLECK_HALF_PX, SAUCE_FLECK_COUNT);
+            }
+
+            // 盐、糖这类干调料：在食材的实心像素上撒几个白点
+            boolean hasDrySeasoning = applied.stream().anyMatch(item -> !GrillSeasonings.needsBrush(new ItemStack(item)));
             if (hasDrySeasoning) {
                 renderSpecks(pose, buffer, stack, direction, grill.getLevel(), seed + slot,
-                        packedLight, packedOverlay);
+                        packedLight, packedOverlay,
+                        0xFFFFFF, SPECK_ALPHA, SPECK_HALF_PX, SPECK_COUNT);
             }
         }
 
@@ -164,14 +197,18 @@ public class GrillCampfireRenderer implements BlockEntityRenderer<GrillBlockEnti
     }
 
     /**
-     * 盐 / 糖：在食材贴图的**实心像素**上撒几个白点。
+     * 在食材贴图的**实心像素**上撒几粒小点。
      *
-     * 点的位置直接从贴图像素里挑，UV 也取同一个像素，所以：
+     * <p>盐、糖是白色小点；辣椒酱用同一套取点逻辑，但换成深红的粗颗粒（看着像碎辣椒），
+     * 所以两种调料一眼能分出来。
+     *
+     * <p>点的位置直接从贴图像素里挑，UV 也取同一个像素，所以：
      * 食材轮廓以外的透明区域不会出现点，点也不会悬空。
      */
     private void renderSpecks(PoseStack pose, MultiBufferSource buffer, ItemStack stack, Direction direction,
                               net.minecraft.world.level.Level level, int seed,
-                              int packedLight, int packedOverlay) {
+                              int packedLight, int packedOverlay,
+                              int color, float alpha, float halfPx, int count) {
         BakedModel model = this.itemRenderer.getModel(stack, level, null, seed);
         RandomSource random = RandomSource.create(42L);
         List<BakedQuad> quads = model.getQuads(null, null, random);
@@ -197,27 +234,31 @@ public class GrillCampfireRenderer implements BlockEntityRenderer<GrillBlockEnti
         // 白点用**不带贴图**的纯色渲染类型画，所以它真的是白的；
         // 位置仍然取自食材的实心像素，所以不会跑到轮廓外面去。
         VertexConsumer consumer = buffer.getBuffer(RenderType.debugQuads());
+        float red = ((color >> 16) & 0xFF) / 255.0F;
+        float green = ((color >> 8) & 0xFF) / 255.0F;
+        float blue = (color & 0xFF) / 255.0F;
         pose.pushPose();
         translateToItemLocal(pose, direction);
         PoseStack.Pose last = pose.last();
-        for (int i = 0; i < SPECK_COUNT; i++) {
-            int[] pixel = candidates.get((int) ((long) i * candidates.size() / SPECK_COUNT) % candidates.size());
-            float x0 = (pixel[0] + 0.5F - SPECK_HALF_PX) / width - 0.5F;
-            float x1 = (pixel[0] + 0.5F + SPECK_HALF_PX) / width - 0.5F;
-            float y0 = (pixel[1] + 0.5F - SPECK_HALF_PX) / height - 0.5F;
-            float y1 = (pixel[1] + 0.5F + SPECK_HALF_PX) / height - 0.5F;
-            addWhiteQuad(consumer, last, x0, y0, x1, y1);
+        for (int i = 0; i < count; i++) {
+            int[] pixel = candidates.get((int) ((long) i * candidates.size() / count) % candidates.size());
+            float x0 = (pixel[0] + 0.5F - halfPx) / width - 0.5F;
+            float x1 = (pixel[0] + 0.5F + halfPx) / width - 0.5F;
+            float y0 = (pixel[1] + 0.5F - halfPx) / height - 0.5F;
+            float y1 = (pixel[1] + 0.5F + halfPx) / height - 0.5F;
+            addSpeckQuad(consumer, last, x0, y0, x1, y1, red, green, blue, alpha);
         }
         pose.popPose();
     }
 
-    /** 一个纯白的小四边形（POSITION_COLOR 格式：不需要贴图、光照、法线，也不会被背面剔除） */
-    private static void addWhiteQuad(VertexConsumer consumer, PoseStack.Pose pose,
-                                     float x0, float y0, float x1, float y1) {
-        consumer.addVertex(pose, x0, y0, 0.0F).setColor(1.0F, 1.0F, 1.0F, SPECK_ALPHA);
-        consumer.addVertex(pose, x1, y0, 0.0F).setColor(1.0F, 1.0F, 1.0F, SPECK_ALPHA);
-        consumer.addVertex(pose, x1, y1, 0.0F).setColor(1.0F, 1.0F, 1.0F, SPECK_ALPHA);
-        consumer.addVertex(pose, x0, y1, 0.0F).setColor(1.0F, 1.0F, 1.0F, SPECK_ALPHA);
+    /** 一粒小点（POSITION_COLOR 格式：不需要贴图、光照、法线，也不会被背面剔除） */
+    private static void addSpeckQuad(VertexConsumer consumer, PoseStack.Pose pose,
+                                     float x0, float y0, float x1, float y1,
+                                     float red, float green, float blue, float alpha) {
+        consumer.addVertex(pose, x0, y0, 0.0F).setColor(red, green, blue, alpha);
+        consumer.addVertex(pose, x1, y0, 0.0F).setColor(red, green, blue, alpha);
+        consumer.addVertex(pose, x1, y1, 0.0F).setColor(red, green, blue, alpha);
+        consumer.addVertex(pose, x0, y1, 0.0F).setColor(red, green, blue, alpha);
     }
 
     /** 把底层缓冲包一层，把所有颜色换成调料色（位置、UV、光照、法线照原样传下去） */

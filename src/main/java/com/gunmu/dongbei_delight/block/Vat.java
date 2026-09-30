@@ -111,8 +111,15 @@ public class Vat extends Block implements EntityBlock {
      * 能不能把瓶装酸引水倒进这个缸。
      * 注意：第一瓶倒进空缸后，缸的状态会变成「泡菜缸」但还没腌制，
      * 所以泡菜缸不能要求 fermented，否则只能倒一瓶。
+     *
+     * <p>缸里就装得下 {@link ModBlockStateProperties#VAT_MAX_WATER} 层（3000 mB）液体，
+     * 所以先卡一道总容量：满了就不再收，免得液面显示停在 3 层、实际却越积越多。
      */
     private static boolean canPourSourWater(VatBlockEntity vat, BlockState state) {
+        int capacity = ModBlockStateProperties.VAT_MAX_WATER * VatRecipes.WATER_MB_PER_LEVEL;
+        if (vat.waterMb() + vat.sourWaterMb() + VatRecipes.SERVING_MB > capacity) {
+            return false;
+        }
         return switch (vat.kind()) {
             // 空缸：倒进去就成了一缸酸引水（状态记为泡菜缸）。
             // 缸里已经有清水就不许倒 —— 酸引水和清水不能混，混了水位会被算错、水还会凭空少掉。
@@ -260,6 +267,9 @@ public class Vat extends Block implements EntityBlock {
                 level.playSound(null, pos, SoundEvents.BUCKET_EMPTY, SoundSource.BLOCKS, 1.0F, 1.0F);
                 // 加了水之后盐可能又不够了，需要重新判定
                 refreshSalted(level, pos, vat);
+                // 水也是配方的一部分：先放料、后倒水（或者先盖好盖布再倒水）时，
+                // 这一下同样要让条件齐了的配方开工，否则缸会一直停在"材料没配齐"
+                tryStart(level, pos, vat);
             }
             return ItemInteractionResult.sidedSuccess(level.isClientSide());
         }
@@ -278,6 +288,8 @@ public class Vat extends Block implements EntityBlock {
             consume(player, stack);
             give(player, new ItemStack(Items.GLASS_BOTTLE));
             playFill(level, pos);
+            // 同理：白醋差的就是这一瓶酸引水时，倒进去就该开工
+            tryStart(level, pos, vat);
             return ItemInteractionResult.sidedSuccess(false);
         }
 
@@ -413,9 +425,14 @@ public class Vat extends Block implements EntityBlock {
             return InteractionResult.sidedSuccess(level.isClientSide());
         }
 
-        if (vat.isCovered() && state.getValue(FERMENTED)) {
+        // 盖布和压缸石一样是"锁"：随时可以把盖布取回来。
+        // 没腌好就取等于中断（进度清零重新开始），腌好了取就是开缸取货。
+        if (vat.isCovered()) {
             if (!level.isClientSide) {
                 give(player, vat.takeCover());
+                if (!state.getValue(FERMENTED)) {
+                    level.setBlock(pos, state.setValue(PROGRESS, 0), 3);
+                }
                 level.playSound(null, pos, SoundEvents.BUCKET_FILL, SoundSource.BLOCKS, 1.0F, 1.0F);
             }
             return InteractionResult.sidedSuccess(level.isClientSide());

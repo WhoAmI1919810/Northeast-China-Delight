@@ -2,6 +2,9 @@ package com.gunmu.dongbei_delight.item;
 
 import com.gunmu.dongbei_delight.DongbeiDelight;
 import com.gunmu.dongbei_delight.block.ModBlocks;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
@@ -12,7 +15,11 @@ import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredItem;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
+import java.util.Collections;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Supplier;
 
 /**
@@ -24,6 +31,13 @@ import java.util.function.Supplier;
 public class ModItems {
 
     public static final DeferredRegister.Items ITEMS = DeferredRegister.createItems(DongbeiDelight.MODID);
+
+    /** 油炸时一次烧完一整瓶的油：植物油、动物油（厨锅按这个标签判断） */
+    public static final TagKey<Item> DEEP_FRY_OILS = TagKey.create(Registries.ITEM,
+            ResourceLocation.fromNamespaceAndPath(DongbeiDelight.MODID, "deep_fry_oils"));
+    /** 油炸菜：用油时一次用光一整瓶（煎、炒、炖还是按 50 mB 扣） */
+    public static final TagKey<Item> DEEP_FRIED_DISHES = TagKey.create(Registries.ITEM,
+            ResourceLocation.fromNamespaceAndPath(DongbeiDelight.MODID, "deep_fried_dishes"));
 
     // ===== 农作物 =====
 
@@ -73,12 +87,14 @@ public class ModItems {
     public static final DeferredItem<Item> SOY_PASTE_CHUNK = simple("soy_paste_chunk");
     /** 酱渣：大酱 / 酱油酿好后留在缸里的渣，可以继续酿醋 */
     public static final DeferredItem<Item> SOY_RESIDUE = simple("soy_residue");
-    /** 玉米茎秆：破坏玉米植株得到，可以当燃料 */
-    public static final DeferredItem<Item> CORN_STALK = ITEMS.registerItem(
-            "corn_stalk",
-            properties -> new FuelItem(properties, 200),
-            new Item.Properties()
-    );
+    /**
+     * 玉米茎秆：破坏玉米植株得到。
+     *
+     * <p>燃烧时长写在数据表里（{@code data/neoforge/data_maps/item/furnace_fuels.json}，
+     * 和动物油、动物油块放在一起）—— 熔炉 / 烟熏炉 / 高炉都认，
+     * 机械动力的烈焰燃烧器走的是同一个 {@code getBurnTime}，所以也认。
+     */
+    public static final DeferredItem<Item> CORN_STALK = simple("corn_stalk");
     /** 盐：目前只用于大缸腌制，来源待定 */
     public static final DeferredItem<Item> SALT = simple("salt");
     /** 盐渍猪肉 */
@@ -98,8 +114,15 @@ public class ModItems {
     public static final DeferredItem<Item> DRIED_TOFU = food("dried_tofu");
     /** 豆腐：由豆浆压制（配方待定） */
     public static final DeferredItem<Item> TOFU = food("tofu");
-    /** 食用油：炒菜用（来源与配方待定） */
-    public static final DeferredItem<Item> COOKING_OIL = simple("cooking_oil");
+    /**
+     * 植物油：动力冲压机压熟花生米挤出来，再用注液器灌进玻璃瓶。
+     *
+     * <p>和其它瓶装调料一样一瓶 250 mB、一次扣 50 mB（耐久条就是剩余量）；
+     * 但**油炸菜**（见标签 {@code dongbei_delight:deep_fried_dishes}）会一次用光一整瓶 ——
+     * 一锅油下去了，剩下的油没法接着炒菜。标签 {@code dongbei_delight:deep_fry_oils} 里
+     * 列的就是"炸菜会烧完"的这几种油。
+     */
+    public static final DeferredItem<Item> COOKING_OIL = bottled("cooking_oil");
     /** 辣椒油：一瓶食用油 + 两个红辣椒在厨锅里炸成，玻璃瓶装 */
     public static final DeferredItem<Item> CHILI_OIL = bottled("chili_oil");
     /** 动物油：2 份肥肉在厨锅里熬出来，玻璃瓶装（白色偏微黄） */
@@ -184,8 +207,13 @@ public class ModItems {
     public static final DeferredItem<Item> BRAISED_PORK_STRIPS = bowlFood("braised_pork_strips");
     /** 醋瓶：用玻璃瓶从大缸里装出 */
     public static final DeferredItem<Item> VINEGAR = bottledFood("vinegar");
-    /** 酸引水瓶：泡菜腌好后缸里的那缸水，装瓶后可以酿白醋 */
-    public static final DeferredItem<Item> SOUR_WATER = bottled("sour_water");
+    /**
+     * 酸引水瓶：泡菜腌好后缸里的那缸水。
+     *
+     * <p>它是**酿白醋的原料**、也是往大缸里添酸引水用的，不是拿来炒菜的调料，
+     * 所以不按 mB 记账、**没有耐久条** —— 一瓶就是一瓶，倒进缸里/酿成白醋就还一个空玻璃瓶。
+     */
+    public static final DeferredItem<Item> SOUR_WATER = bottledLiquid("sour_water");
     /** 白醋瓶：酸引水 + 谷物二次发酵得到 */
     public static final DeferredItem<Item> WHITE_VINEGAR = bottledFood("white_vinegar");
     /** 鱼露瓶：大缸里 6 份生鱼 + 3 份盐发酵出的少量液体 */
@@ -233,7 +261,8 @@ public class ModItems {
     public static final DeferredItem<Item> BUCKWHEAT_COLD_NOODLES = brassBowlFood("buckwheat_cold_noodles");
     public static final DeferredItem<Item> LIANG_BAN_XIAN_CAI = bowlFood("liang_ban_xian_cai");
     /** 朝鲜族菜：黄铜碗盛 */
-    public static final DeferredItem<Item> MING_TAI_YU_SI = brassBowlFood("ming_tai_yu_si");
+    /** 明太鱼丝：普通碗装（不是朝鲜族那几道用黄铜碗的） */
+    public static final DeferredItem<Item> MING_TAI_YU_SI = bowlFood("ming_tai_yu_si");
     // 工作台凉菜 / 小吃
     public static final DeferredItem<Item> ZHAN_JIANG_CAI = bowlFood("zhan_jiang_cai");
     public static final DeferredItem<Item> DA_FAN_BAO = food("da_fan_bao");
@@ -360,10 +389,44 @@ public class ModItems {
             VERMICELLI, LA_PI, CRACKLINGS, COLD_NOODLE_SHEET, BEAN_SPROUTS, SOUR_CORN_KERNELS, ROASTED_PEANUTS,
             CORN_STALK,
             // 厨具与容器
-            LARGE_BASIN, GRILL_RACK, BRASS_BOWL, ANIMAL_OIL_BLOCK_ITEM,
-            // 方块
-            UNFIRED_VAT_BLANK, VAT
+            LARGE_BASIN, BRASS_BOWL, ANIMAL_OIL_BLOCK_ITEM,
+            // 方块（大缸与烧烤架归到「方块」那一项里，见 BLOCK_TAB_ITEMS）
+            UNFIRED_VAT_BLANK
     );
+
+    /**
+     * 「方块」物品栏：大缸、烧烤架，以及食物方块（箱装 / 袋装）。
+     *
+     * <p>顺序：大缸 → 烧烤架 → 箱装（{@link com.gunmu.dongbei_delight.block.ModBlocks#CRATE_IDS}，
+     * 蔬菜在前、腌菜在后）→ 袋装（{@code SACK_IDS}，谷物在前、山珍在后）。
+     */
+    public static final Map<String, DeferredItem<Item>> STORAGE_BLOCK_ITEMS = storageBlockItems();
+
+    private static Map<String, DeferredItem<Item>> storageBlockItems() {
+        Map<String, DeferredItem<Item>> map = new LinkedHashMap<>();
+        for (var entry : ModBlocks.CRATES.entrySet()) {
+            map.put(entry.getKey(), blockItem(entry.getKey(), entry.getValue()));
+        }
+        for (var entry : ModBlocks.SACKS.entrySet()) {
+            map.put(entry.getKey(), blockItem(entry.getKey(), entry.getValue()));
+        }
+        return Collections.unmodifiableMap(map);
+    }
+
+    private static DeferredItem<Item> blockItem(String id, Supplier<? extends Block> block) {
+        return ITEMS.registerItem(id, properties -> new BlockItem(block.get(), properties), new Item.Properties());
+    }
+
+    /** 「方块」物品栏的展示顺序：大缸 → 烧烤架 → 箱装 → 袋装 */
+    public static final List<Supplier<? extends Item>> BLOCK_TAB_ITEMS = blockTabItems();
+
+    private static List<Supplier<? extends Item>> blockTabItems() {
+        List<Supplier<? extends Item>> list = new ArrayList<>();
+        list.add(VAT);
+        list.add(GRILL_RACK);
+        list.addAll(STORAGE_BLOCK_ITEMS.values());
+        return List.copyOf(list);
+    }
 
     /**
      * 「菜肴」物品栏的展示顺序。
@@ -442,6 +505,15 @@ public class ModItems {
         return ITEMS.registerItem(id, Item::new, new Item.Properties()
                 .craftRemainder(Items.GLASS_BOTTLE)
                 .food(steakFood().usingConvertsTo(Items.GLASS_BOTTLE).build()));
+    }
+
+    /**
+     * 玻璃瓶装的**非调料液体**（酸引水这类"倒进大缸用的原料"）：
+     * 一瓶就是一瓶，不按 mB 记账、**没有耐久条**，用掉之后返还空玻璃瓶。
+     */
+    private static DeferredItem<Item> bottledLiquid(String id) {
+        return ITEMS.registerItem(id, Item::new, new Item.Properties()
+                .craftRemainder(Items.GLASS_BOTTLE));
     }
 
     /**

@@ -135,13 +135,10 @@ public class VatRenderer implements BlockEntityRenderer<VatBlockEntity> {
             // 腌好后缸里显示的是成品的样子
             ItemStack display = content;
             if (done) {
-                if (vat.kind() == VatRecipes.Kind.SPICY_PICKLE && VatRecipes.isPickleIngredient(content)) {
-                    display = new ItemStack(ModItems.SPICY_CABBAGE.get());
-                } else {
-                    Item result = VatRecipes.resultFor(content.getItem());
-                    if (result != null) {
-                        display = new ItemStack(result);
-                    }
+                // 问这一缸对应的配方：这一份取出来会变成什么（新增配方不用再改渲染）
+                Item result = VatRecipes.resultFor(vat.kind(), content.getItem());
+                if (result != null) {
+                    display = new ItemStack(result);
                 }
             }
 
