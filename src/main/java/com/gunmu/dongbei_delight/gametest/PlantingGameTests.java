@@ -1,0 +1,78 @@
+package com.gunmu.dongbei_delight.gametest;
+
+import com.gunmu.dongbei_delight.DongbeiDelight;
+import com.gunmu.dongbei_delight.block.HazelnutBushBlock;
+import com.gunmu.dongbei_delight.block.ModBlocks;
+import com.gunmu.dongbei_delight.item.ModItems;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.gametest.framework.GameTest;
+import net.minecraft.gametest.framework.GameTestHelper;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.context.BlockPlaceContext;
+import net.minecraft.world.level.GameType;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.Vec3;
+import net.neoforged.neoforge.gametest.GameTestHolder;
+import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
+
+/**
+ * 雪地种植的回归测试。
+ *
+ * <p>要的行为是「榛子丛**长在雪里**」：底下那格仍然是草方块，榛子丛和薄雪片**占同一格**
+ * （把雪片顶掉但自带雪面），所以放下之后应当看到：</p>
+ * <ul>
+ *   <li>雪片那一格变成榛子丛（雪片本体没了，由模型里的雪面代替）；</li>
+ *   <li>榛子丛的 {@code snowy=true}；</li>
+ *   <li>它下面那格还是草方块。</li>
+ * </ul>
+ */
+@GameTestHolder(DongbeiDelight.MODID)
+@PrefixGameTestTemplate(false)
+public final class PlantingGameTests
+{
+    private PlantingGameTests()
+    {
+    }
+
+    @GameTest(template = "empty")
+    public static void hazelnutGrowsInsideTheSnowLayer(GameTestHelper helper)
+    {
+        ServerLevel level = helper.getLevel();
+        BlockPos ground = helper.absolutePos(new BlockPos(1, 1, 1));
+        BlockPos snowPos = ground.above();
+
+        level.setBlockAndUpdate(ground, Blocks.GRASS_BLOCK.defaultBlockState());
+        level.setBlockAndUpdate(snowPos, Blocks.SNOW.defaultBlockState());
+
+        Player player = helper.makeMockPlayer(GameType.SURVIVAL);
+        placeOn(level, player, ModItems.HAZELNUT.get(), snowPos);
+
+        helper.assertTrue(level.getBlockState(ground).is(Blocks.GRASS_BLOCK),
+                "榛子丛下面那格应该还是草方块");
+        helper.assertTrue(level.getBlockState(snowPos).is(ModBlocks.HAZELNUT_BUSH.get()),
+                "榛子丛应该和雪片占同一格");
+        helper.assertTrue(level.getBlockState(snowPos).getValue(HazelnutBushBlock.SNOWY),
+                "这样种出来的榛子丛应该是覆雪形态（自带雪面）");
+        helper.succeed();
+    }
+
+    /** 模拟玩家右键点住 clickedPos 这个方块（顶面），拿着 item 去种 */
+    private static void placeOn(ServerLevel level, Player player, Item item, BlockPos clickedPos)
+    {
+        ItemStack stack = new ItemStack(item);
+        BlockHitResult hit = new BlockHitResult(
+                Vec3.atCenterOf(clickedPos).add(0.0, 0.5, 0.0), Direction.UP, clickedPos, false);
+        BlockPlaceContext context = new BlockPlaceContext(level, player, InteractionHand.MAIN_HAND, stack, hit);
+        if (item instanceof BlockItem blockItem)
+        {
+            blockItem.place(context);
+        }
+    }
+}

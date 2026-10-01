@@ -18,13 +18,9 @@ public class ModLootModifiers {
     public static final DeferredHolder<MapCodec<? extends IGlobalLootModifier>, MapCodec<PigOffalLootModifier>> PIG_OFFAL =
             LOOT_MODIFIERS.register("pig_offal", () -> PigOffalLootModifier.CODEC);
 
-    /** 榛子：破坏大型蕨时 12.5% 概率掉落 */
-    public static final DeferredHolder<MapCodec<? extends IGlobalLootModifier>, MapCodec<HazelnutLootModifier>> HAZELNUT =
-            LOOT_MODIFIERS.register("hazelnut", () -> HazelnutLootModifier.CODEC);
-
-    /** 带鱼：冷水深海钓鱼时，宝藏 100% 换成带鱼 */
-    public static final DeferredHolder<MapCodec<? extends IGlobalLootModifier>, MapCodec<HairtailFishingLootModifier>> HAIRTAIL_FISHING =
-            LOOT_MODIFIERS.register("hairtail_fishing", () -> HairtailFishingLootModifier.CODEC);
+    /** 三张钓鱼表：带鱼（冷水深海）、生蚝（河口近海）、大虾（其它任何水域） */
+    public static final DeferredHolder<MapCodec<? extends IGlobalLootModifier>, MapCodec<DongbeiFishingLootModifier>> FISHING =
+            LOOT_MODIFIERS.register("fishing", () -> DongbeiFishingLootModifier.CODEC);
 
     public static void register(IEventBus eventBus) {
         LOOT_MODIFIERS.register(eventBus);

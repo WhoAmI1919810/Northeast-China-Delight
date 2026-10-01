@@ -1,0 +1,10 @@
+{
+  "__说明": "榛子丛的「较少」地带：针叶林、原始松木针叶林、原始云杉针叶林、雪林、积雪针叶林",
+  "values": [
+    "minecraft:taiga",
+    "minecraft:old_growth_pine_taiga",
+    "minecraft:old_growth_spruce_taiga",
+    "minecraft:grove",
+    "minecraft:snowy_taiga"
+  ]
+}

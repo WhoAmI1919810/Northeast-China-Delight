@@ -126,6 +126,27 @@ public class ModBlocks {
                     .pushReaction(PushReaction.DESTROY)
     );
 
+    /** 榛蘑（单株）：行为照抄原版蘑菇 */
+    public static final DeferredBlock<Block> HAZEL_MUSHROOM = BLOCKS.registerBlock(
+            "hazel_mushroom",
+            HazelMushroomBlock::new,
+            mushroomProperties()
+    );
+
+    /** 榛蘑簇：行为照抄农夫乐事的蘑菇菌簇 */
+    public static final DeferredBlock<Block> HAZEL_MUSHROOM_COLONY = BLOCKS.registerBlock(
+            "hazel_mushroom_colony",
+            HazelMushroomColonyBlock::new,
+            mushroomProperties()
+    );
+
+    /** 人参：8 个生长阶段，自带覆雪状态 */
+    public static final DeferredBlock<Block> GINSENG_CROP = BLOCKS.registerBlock(
+            "ginseng_crop",
+            GinsengCropBlock::new,
+            plantProperties().randomTicks()
+    );
+
     // ===== 功能方块 =====
 
     // registerBlock 会自动把注册名绑定为方块的 id（1.21.4 起方块必须带 id）
@@ -175,6 +196,26 @@ public class ModBlocks {
     // ===== 流体方块 =====
 
     // ===== 大盆菜的方块形式（一放就是一整盆，右键取一份）=====
+
+    // ===== 单份菜肴的方块形式（右键吃、潜行右键摆）=====
+    // 容器几何与 display-delight 一致：碗 8×8 高 4、大盘 14×14 高 2。
+    // 建模好的菜在这里登记一个方块，物品那边用 DishBlockItem（见 ModItems.dishBowl / dishTray）。
+
+    /** 老派锅包肉：现实里是大盘菜，所以用大盘（14×14、高 2）而不是碗 */
+    public static final DeferredBlock<Block> OLD_STYLE_GUO_BAO_ROU = dishBlock("old_style_guo_bao_rou", DishBlock.TRAY_SHAPE);
+
+    private static DeferredBlock<Block> dishBlock(String name, net.minecraft.world.phys.shapes.VoxelShape shape) {
+        return BLOCKS.registerBlock(name,
+                properties -> new DishBlock(properties, shape),
+                BlockBehaviour.Properties.of()
+                        .mapColor(MapColor.WOOD)
+                        .strength(0.3F)
+                        .sound(SoundType.WOOD)
+                        .noOcclusion()
+                        .instabreak()
+                        .pushReaction(PushReaction.DESTROY));
+    }
+
     // 做法见 DdFeastBlock：两个方块状态属性（朝向 + 剩余份数），没有方块实体。
 
     public static final DeferredBlock<Block> DA_FENG_SHOU_POT =
@@ -260,6 +301,17 @@ public class ModBlocks {
                 .noCollission()
                 .instabreak()
                 .sound(SoundType.CROP)
+                .pushReaction(PushReaction.DESTROY);
+    }
+
+    /** 蘑菇类方块：和原版的蘑菇、农夫乐事的菌簇同一套属性（怕光、一碰就碎、会随机刻） */
+    private static BlockBehaviour.Properties mushroomProperties() {
+        return BlockBehaviour.Properties.of()
+                .mapColor(MapColor.PLANT)
+                .randomTicks()
+                .noCollission()
+                .instabreak()
+                .sound(SoundType.GRASS)
                 .pushReaction(PushReaction.DESTROY);
     }
 

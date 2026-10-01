@@ -1,0 +1,10 @@
+{
+  "__说明": "会长榛蘑的树种所在地：黑森林（深色橡木）、森林与繁花森林（橡木）、白桦林（白桦）",
+  "values": [
+    "minecraft:forest",
+    "minecraft:flower_forest",
+    "minecraft:birch_forest",
+    "minecraft:old_growth_birch_forest",
+    "minecraft:dark_forest"
+  ]
+}

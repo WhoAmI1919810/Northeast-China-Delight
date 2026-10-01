@@ -1,0 +1,142 @@
+{
+  "credit": "Northeast China Delight - generated",
+  "render_type": "minecraft:cutout",
+  "textures": {
+    "particle": "dongbei_delight:block/orange_guo_bao_rou_top",
+    "salad_bowl": "dongbei_delight:block/container_bowl",
+    "brass_bowl": "dongbei_delight:block/brass_bowl",
+    "tray_top": "dongbei_delight:block/container_tray_top",
+    "tray_bottom": "dongbei_delight:block/container_tray_bottom",
+    "small_plate": "dongbei_delight:block/container_small_plate",
+    "food_top": "dongbei_delight:block/orange_guo_bao_rou_top",
+    "food_side": "dongbei_delight:block/orange_guo_bao_rou_side",
+    "food_slice": "dongbei_delight:block/orange_guo_bao_rou_slice"
+  },
+  "elements": [{"name":"tray","from":[1,0,1],"to":[15,2,15],"faces":{"north":{"uv":[1,11,15,13],"texture":"#tray_bottom"},"east":{"uv":[1,11,15,13],"texture":"#tray_bottom"},"south":{"uv":[1,11,15,13],"texture":"#tray_bottom"},"west":{"uv":[1,11,15,13],"texture":"#tray_bottom"},"up":{"uv":[1,1,15,15],"texture":"#tray_top"},"down":{"uv":[1,1,15,15],"texture":"#tray_top","cullface":"down"}}},
+{
+  "from": [6.82, 1.6, 6.39],
+  "to": [11.65, 2.18, 9.64],
+  "faces": {
+    "north": {"uv": [0, 0, 5, 1], "texture": "#food_slice"},
+    "east": {"uv": [0, 0, 3, 1], "texture": "#food_slice"},
+    "south": {"uv": [0, 0, 5, 1], "texture": "#food_slice"},
+    "west": {"uv": [0, 0, 3, 1], "texture": "#food_slice"},
+    "up": {"uv": [0, 0, 5, 3], "texture": "#food_slice"}}
+},
+{
+  "from": [6.34, 1.6, 10.29],
+  "to": [11.26, 2.18, 13.34],
+  "faces": {
+    "north": {"uv": [0, 0, 5, 1], "texture": "#food_slice"},
+    "east": {"uv": [0, 0, 3, 1], "texture": "#food_slice"},
+    "south": {"uv": [0, 0, 5, 1], "texture": "#food_slice"},
+    "west": {"uv": [0, 0, 3, 1], "texture": "#food_slice"},
+    "up": {"uv": [0, 0, 5, 3], "texture": "#food_slice"}}
+},
+{
+  "from": [6.52, 1.6, 6.64],
+  "to": [11.39, 2.18, 9.56],
+  "faces": {
+    "north": {"uv": [0, 0, 5, 1], "texture": "#food_slice"},
+    "east": {"uv": [0, 0, 3, 1], "texture": "#food_slice"},
+    "south": {"uv": [0, 0, 5, 1], "texture": "#food_slice"},
+    "west": {"uv": [0, 0, 3, 1], "texture": "#food_slice"},
+    "up": {"uv": [0, 0, 5, 3], "texture": "#food_slice"}}
+},
+{
+  "from": [3.19, 1.6, 5.53],
+  "to": [7.79, 2.18, 8.46],
+  "faces": {
+    "north": {"uv": [0, 0, 5, 1], "texture": "#food_slice"},
+    "east": {"uv": [0, 0, 3, 1], "texture": "#food_slice"},
+    "south": {"uv": [0, 0, 5, 1], "texture": "#food_slice"},
+    "west": {"uv": [0, 0, 3, 1], "texture": "#food_slice"},
+    "up": {"uv": [0, 0, 5, 3], "texture": "#food_slice"}}
+},
+{
+  "from": [8.99, 2.32, 10.04],
+  "to": [12.98, 2.9, 13.13],
+  "rotation": {"angle": -22.5, "axis": "y", "origin": [10.99, 2.32, 11.58], "rescale": false},
+  "faces": {
+    "north": {"uv": [0, 0, 4, 1], "texture": "#food_slice"},
+    "east": {"uv": [0, 0, 3, 1], "texture": "#food_slice"},
+    "south": {"uv": [0, 0, 4, 1], "texture": "#food_slice"},
+    "west": {"uv": [0, 0, 3, 1], "texture": "#food_slice"},
+    "up": {"uv": [0, 0, 4, 3], "texture": "#food_slice"}}
+},
+{
+  "from": [5.6, 2.32, 6.77],
+  "to": [10.53, 2.9, 9.72],
+  "rotation": {"angle": -22.5, "axis": "y", "origin": [8.06, 2.32, 8.25], "rescale": false},
+  "faces": {
+    "north": {"uv": [0, 0, 5, 1], "texture": "#food_slice"},
+    "east": {"uv": [0, 0, 3, 1], "texture": "#food_slice"},
+    "south": {"uv": [0, 0, 5, 1], "texture": "#food_slice"},
+    "west": {"uv": [0, 0, 3, 1], "texture": "#food_slice"},
+    "up": {"uv": [0, 0, 5, 3], "texture": "#food_slice"}}
+},
+{
+  "from": [6.22, 2.32, 4.82],
+  "to": [10.34, 2.9, 8.3],
+  "rotation": {"angle": -22.5, "axis": "y", "origin": [8.28, 2.32, 6.56], "rescale": false},
+  "faces": {
+    "north": {"uv": [0, 0, 4, 1], "texture": "#food_slice"},
+    "east": {"uv": [0, 0, 3, 1], "texture": "#food_slice"},
+    "south": {"uv": [0, 0, 4, 1], "texture": "#food_slice"},
+    "west": {"uv": [0, 0, 3, 1], "texture": "#food_slice"},
+    "up": {"uv": [0, 0, 4, 3], "texture": "#food_slice"}}
+},
+{
+  "from": [6.82, 2.32, 4.75],
+  "to": [10.92, 2.9, 7.61],
+  "rotation": {"angle": 22.5, "axis": "y", "origin": [8.87, 2.32, 6.18], "rescale": false},
+  "faces": {
+    "north": {"uv": [0, 0, 4, 1], "texture": "#food_slice"},
+    "east": {"uv": [0, 0, 3, 1], "texture": "#food_slice"},
+    "south": {"uv": [0, 0, 4, 1], "texture": "#food_slice"},
+    "west": {"uv": [0, 0, 3, 1], "texture": "#food_slice"},
+    "up": {"uv": [0, 0, 4, 3], "texture": "#food_slice"}}
+},
+{
+  "from": [6.68, 3.04, 9.61],
+  "to": [11.97, 3.62, 13.17],
+  "rotation": {"angle": -22.5, "axis": "y", "origin": [9.32, 3.04, 11.39], "rescale": false},
+  "faces": {
+    "north": {"uv": [0, 0, 5, 1], "texture": "#food_slice"},
+    "east": {"uv": [0, 0, 4, 1], "texture": "#food_slice"},
+    "south": {"uv": [0, 0, 5, 1], "texture": "#food_slice"},
+    "west": {"uv": [0, 0, 4, 1], "texture": "#food_slice"},
+    "up": {"uv": [0, 0, 5, 4], "texture": "#food_slice"}}
+},
+{
+  "from": [7.97, 3.04, 8.36],
+  "to": [12.74, 3.62, 11.55],
+  "rotation": {"angle": 22.5, "axis": "y", "origin": [10.35, 3.04, 9.95], "rescale": false},
+  "faces": {
+    "north": {"uv": [0, 0, 5, 1], "texture": "#food_slice"},
+    "east": {"uv": [0, 0, 3, 1], "texture": "#food_slice"},
+    "south": {"uv": [0, 0, 5, 1], "texture": "#food_slice"},
+    "west": {"uv": [0, 0, 3, 1], "texture": "#food_slice"},
+    "up": {"uv": [0, 0, 5, 3], "texture": "#food_slice"}}
+},
+{
+  "from": [4.53, 3.04, 3.9],
+  "to": [9.7, 3.62, 6.74],
+  "faces": {
+    "north": {"uv": [0, 0, 5, 1], "texture": "#food_slice"},
+    "east": {"uv": [0, 0, 3, 1], "texture": "#food_slice"},
+    "south": {"uv": [0, 0, 5, 1], "texture": "#food_slice"},
+    "west": {"uv": [0, 0, 3, 1], "texture": "#food_slice"},
+    "up": {"uv": [0, 0, 5, 3], "texture": "#food_slice"}}
+},
+{
+  "from": [7.12, 3.04, 4.72],
+  "to": [12.37, 3.62, 7.95],
+  "faces": {
+    "north": {"uv": [0, 0, 5, 1], "texture": "#food_slice"},
+    "east": {"uv": [0, 0, 3, 1], "texture": "#food_slice"},
+    "south": {"uv": [0, 0, 5, 1], "texture": "#food_slice"},
+    "west": {"uv": [0, 0, 3, 1], "texture": "#food_slice"},
+    "up": {"uv": [0, 0, 5, 3], "texture": "#food_slice"}}
+}]
+}

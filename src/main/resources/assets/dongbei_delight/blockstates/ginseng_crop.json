@@ -1,0 +1,20 @@
+{
+  "variants": {
+    "age=0,snowy=false": { "model": "dongbei_delight:block/ginseng_crop_stage0" },
+    "age=0,snowy=true": { "model": "dongbei_delight:block/ginseng_crop_stage0_snowy" },
+    "age=1,snowy=false": { "model": "dongbei_delight:block/ginseng_crop_stage1" },
+    "age=1,snowy=true": { "model": "dongbei_delight:block/ginseng_crop_stage1_snowy" },
+    "age=2,snowy=false": { "model": "dongbei_delight:block/ginseng_crop_stage2" },
+    "age=2,snowy=true": { "model": "dongbei_delight:block/ginseng_crop_stage2_snowy" },
+    "age=3,snowy=false": { "model": "dongbei_delight:block/ginseng_crop_stage3" },
+    "age=3,snowy=true": { "model": "dongbei_delight:block/ginseng_crop_stage3_snowy" },
+    "age=4,snowy=false": { "model": "dongbei_delight:block/ginseng_crop_stage4" },
+    "age=4,snowy=true": { "model": "dongbei_delight:block/ginseng_crop_stage4_snowy" },
+    "age=5,snowy=false": { "model": "dongbei_delight:block/ginseng_crop_stage5" },
+    "age=5,snowy=true": { "model": "dongbei_delight:block/ginseng_crop_stage5_snowy" },
+    "age=6,snowy=false": { "model": "dongbei_delight:block/ginseng_crop_stage6" },
+    "age=6,snowy=true": { "model": "dongbei_delight:block/ginseng_crop_stage6_snowy" },
+    "age=7,snowy=false": { "model": "dongbei_delight:block/ginseng_crop_stage7" },
+    "age=7,snowy=true": { "model": "dongbei_delight:block/ginseng_crop_stage7_snowy" }
+  }
+}

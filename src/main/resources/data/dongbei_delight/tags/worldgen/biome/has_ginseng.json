@@ -1,0 +1,9 @@
+{
+  "__说明": "野山参只在雪地里：积雪山坡、雪林、积雪针叶林、冰封山峰",
+  "values": [
+    "minecraft:snowy_slopes",
+    "minecraft:grove",
+    "minecraft:snowy_taiga",
+    "minecraft:frozen_peaks"
+  ]
+}

@@ -76,6 +76,8 @@ public class ModItems {
     public static final DeferredItem<Item> RED_CHILI_SEEDS = seeds("red_chili_seeds", () -> ModBlocks.RED_CHILI_CROP.get());
     public static final DeferredItem<Item> GREEN_ONION_SEEDS = seeds("green_onion_seeds", () -> ModBlocks.GREEN_ONION_CROP.get());
     public static final DeferredItem<Item> GREEN_RADISH_SEEDS = seeds("green_radish_seeds", () -> ModBlocks.GREEN_RADISH_CROP.get());
+    /** 参籽：人参的种子，种下去长成人参植株（种在雪片上时，参苗会和雪片共用一格） */
+    public static final DeferredItem<Item> GINSENG_SEEDS = seeds("ginseng_seeds", () -> ModBlocks.GINSENG_CROP.get());
 
     // ===== 食材（含加工品）=====
 
@@ -165,13 +167,21 @@ public class ModItems {
 
     // ===== 山珍与海味 =====
 
-    /** 榛子：破坏大型蕨时有 12.5% 概率掉落；自己也是种子，种下去长成榛子丛 */
+    /** 榛子：长在榛子丛上（右键采摘）；自己也是种子，种下去长成榛子丛 */
     public static final DeferredItem<Item> HAZELNUT = selfSeedingFood("hazelnut", () -> ModBlocks.HAZELNUT_BUSH.get());
-    /** 榛蘑、木耳：山珍，获取方式待定 */
-    public static final DeferredItem<Item> HAZEL_MUSHROOM = food("hazel_mushroom");
+    /** 榛蘑：长在榛子丛和阔叶树周围，自己也能种下去（右键地面就是种一株） */
+    public static final DeferredItem<Item> HAZEL_MUSHROOM = selfSeedingFood("hazel_mushroom", () -> ModBlocks.HAZEL_MUSHROOM.get());
+    /** 榛蘑簇：农夫乐事那套菌簇，撒骨粉能把单株榛蘑催成一丛 */
+    public static final DeferredItem<Item> HAZEL_MUSHROOM_COLONY = ITEMS.registerItem(
+            "hazel_mushroom_colony",
+            properties -> new HazelMushroomColonyItem(ModBlocks.HAZEL_MUSHROOM_COLONY.get(), properties),
+            new Item.Properties());
+    /** 木耳：给原木去皮时有概率掉 */
     public static final DeferredItem<Item> WOOD_EAR = food("wood_ear");
-    /** 人参：山珍，用于参鸡汤，获取方式待定 */
+    /** 人参：埋在雪地里的药材，空手刨开它脚下的土才能挖到 */
     public static final DeferredItem<Item> GINSENG = food("ginseng");
+    /** 冻梨：拿果园乐事的梨当兜底素材，暂时没有合成配方 */
+    public static final DeferredItem<Item> FROZEN_PEAR = food("frozen_pear");
     /** 带鱼、生蚝：海味，获取方式待定 */
     public static final DeferredItem<Item> HAIRTAIL = food("hairtail");
     public static final DeferredItem<Item> OYSTER = food("oyster");
@@ -227,7 +237,9 @@ public class ModItems {
     public static final DeferredItem<Item> SOY_MILK = bowlFood("soy_milk");
     // 菜类与汤类都用碗盛装：吃完返还空碗
     /** 锅包肉拆成两派：老派用糖 + 白醋，新派用番茄酱 */
-    public static final DeferredItem<Item> OLD_STYLE_GUO_BAO_ROU = bowlFood("old_style_guo_bao_rou");
+    /** 老派锅包肉：碗装菜，右键吃、潜行右键摆成方块（方块建模见 data/assets 里同名模型） */
+    public static final DeferredItem<Item> OLD_STYLE_GUO_BAO_ROU =
+            dishBowl("old_style_guo_bao_rou", () -> ModBlocks.OLD_STYLE_GUO_BAO_ROU.get());
     public static final DeferredItem<Item> NEW_STYLE_GUO_BAO_ROU = bowlFood("new_style_guo_bao_rou");
     public static final DeferredItem<Item> DI_SAN_XIAN = bowlFood("di_san_xian");
     public static final DeferredItem<Item> JIAN_JIAO_GAN_DOU_FU = bowlFood("jian_jiao_gan_dou_fu");
@@ -363,13 +375,16 @@ public class ModItems {
             // 种子
             EGGPLANT_SEEDS, GREEN_PEPPER_SEEDS, CORN_SEEDS, GREEN_BEANS_SEEDS,
             NAPA_CABBAGE_SEEDS, CUCUMBER_SEEDS, RED_CHILI_SEEDS, GREEN_ONION_SEEDS, GREEN_RADISH_SEEDS,
+            GINSENG_SEEDS,
             // 蔬菜
             NAPA_CABBAGE, CUCUMBER, EGGPLANT, GREEN_PEPPER, GREEN_ONION, RED_CHILI,
             GREEN_BEANS, CORN, SWEET_POTATO, GREEN_RADISH,
             // 豆类与杂粮
             SOYBEAN, PEANUT, RED_BEAN, BUCKWHEAT,
             // 山珍
-            HAZELNUT, HAZEL_MUSHROOM, WOOD_EAR, GINSENG,
+            HAZELNUT, HAZEL_MUSHROOM, HAZEL_MUSHROOM_COLONY, WOOD_EAR, GINSENG,
+            // 水果
+            FROZEN_PEAR,
             // 肉类与水产
             PORK_RIBS, PORK_INTESTINE, PORK_HOCK, PIG_BLOOD, PIG_LIVER, PORK_FAT, OIL_EDGE, CHICKEN_FRAME,
             SHRIMP, HAIRTAIL, OYSTER, SEA_CUCUMBER,
@@ -549,6 +564,18 @@ public class ModItems {
         return ITEMS.registerItem(id, Item::new, new Item.Properties()
                 .craftRemainder(Items.BOWL)
                 .food(steakFood().usingConvertsTo(Items.BOWL).build()));
+    }
+
+    /**
+     * 碗装菜肴：物品形态既能吃、也能摆。
+     * 右键 = 吃；潜行右键 = 摆成方块（方块形态由 {@code DishBlockItem} + 配置开关控制）。
+     */
+    private static DeferredItem<Item> dishBowl(String id, Supplier<? extends Block> block) {
+        return ITEMS.registerItem(id,
+                properties -> new DishBlockItem(block.get(), properties),
+                new Item.Properties()
+                        .craftRemainder(Items.BOWL)
+                        .food(steakFood().usingConvertsTo(Items.BOWL).build()));
     }
 
     /**

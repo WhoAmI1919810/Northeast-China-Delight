@@ -1,0 +1,8 @@
+{
+  "__说明": "榛蘑簇能往上长的地面：沃土 + 普通土壤系",
+  "values": [
+    "#minecraft:dirt",
+    "minecraft:moss_block",
+    "farmersdelight:rich_soil"
+  ]
+}

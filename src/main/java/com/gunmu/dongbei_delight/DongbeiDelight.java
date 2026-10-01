@@ -8,11 +8,17 @@ import com.gunmu.dongbei_delight.block.VatBlockEntity;
 import com.gunmu.dongbei_delight.client.GrillCampfireRenderer;
 import com.gunmu.dongbei_delight.client.VatRenderer;
 import com.gunmu.dongbei_delight.effect.DishEffectEvents;
+import com.gunmu.dongbei_delight.event.ModGameplayEvents;
 import com.gunmu.dongbei_delight.effect.ModEffects;
 import com.gunmu.dongbei_delight.fluid.ModFluids;
 import com.gunmu.dongbei_delight.item.ModItems;
 import com.gunmu.dongbei_delight.loot.ModLootModifiers;
 import com.gunmu.dongbei_delight.villager.ModVillagerProfessions;
+import com.gunmu.dongbei_delight.villager.ModButcherTrades;
+import com.gunmu.dongbei_delight.villager.ModCartographerTrades;
+import com.gunmu.dongbei_delight.villager.ModFarmerTrades;
+import com.gunmu.dongbei_delight.villager.ModFishermanTrades;
+import com.gunmu.dongbei_delight.villager.ModWandererTrades;
 import com.gunmu.dongbei_delight.villager.SideDishMerchantTrades;
 import com.gunmu.dongbei_delight.worldgen.ModWorldGen;
 import com.mojang.logging.LogUtils;
@@ -69,6 +75,8 @@ public class DongbeiDelight
         ModEffects.register(modEventBus);
         ModVillagerProfessions.register(modEventBus);
         ModWorldGen.register(modEventBus);
+        // 模组配置（菜肴方块形态的总开关）
+        modContainer.registerConfig(net.neoforged.fml.config.ModConfig.Type.COMMON, DongbeiConfig.SPEC);
 
         // 将物品添加到本模组的创造模式物品栏
         modEventBus.addListener(this::addItemsToCreativeTab);
@@ -78,8 +86,16 @@ public class DongbeiDelight
         // 注册服务器及其他游戏事件
         NeoForge.EVENT_BUS.register(this);
         NeoForge.EVENT_BUS.register(DishEffectEvents.class);
+        // 木耳（给原木去皮）与人参（空手刨土）的钩子
+        NeoForge.EVENT_BUS.register(ModGameplayEvents.class);
         // 副食商的交易表（每次数据包重载时重新填一遍）
         NeoForge.EVENT_BUS.addListener(SideDishMerchantTrades::addTrades);
+        // 原版各职业的交易表：农民 / 屠夫 / 渔夫 / 制图师 / 流浪商人
+        NeoForge.EVENT_BUS.addListener(ModFarmerTrades::addTrades);
+        NeoForge.EVENT_BUS.addListener(ModButcherTrades::addTrades);
+        NeoForge.EVENT_BUS.addListener(ModFishermanTrades::addTrades);
+        NeoForge.EVENT_BUS.addListener(ModCartographerTrades::addTrades);
+        NeoForge.EVENT_BUS.addListener(ModWandererTrades::addTrades);
     }
 
     private void addItemsToCreativeTab(@NotNull BuildCreativeModeTabContentsEvent event)

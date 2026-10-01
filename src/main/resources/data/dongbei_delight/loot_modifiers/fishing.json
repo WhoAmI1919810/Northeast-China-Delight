@@ -1,5 +1,6 @@
 {
-  "type": "dongbei_delight:hairtail_fishing",
+  "__说明": "三张钓鱼表（带鱼/生蚝/大虾）都走这一个修改器，按水域自己挑表",
+  "type": "dongbei_delight:fishing",
   "conditions": [
     {
       "condition": "minecraft:entity_properties",

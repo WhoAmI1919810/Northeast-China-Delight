@@ -2,7 +2,6 @@
   "itemGroup.dongbei_delight.ingredients": "东北乐事：食材与杂项",
   "itemGroup.dongbei_delight.dishes": "东北乐事：菜肴",
   "itemGroup.dongbei_delight.blocks": "东北乐事：方块",
-
   "item.dongbei_delight.soybean": "大豆",
   "item.dongbei_delight.eggplant": "茄子",
   "item.dongbei_delight.green_pepper": "青椒",
@@ -29,7 +28,6 @@
   "item.dongbei_delight.fish_sauce": "鱼露瓶",
   "item.dongbei_delight.shrimp_paste": "虾酱瓶",
   "item.dongbei_delight.buckwheat_cold_noodles": "荞麦冷面",
-
   "item.dongbei_delight.eggplant_seeds": "茄子种子",
   "item.dongbei_delight.green_pepper_seeds": "青椒种子",
   "item.dongbei_delight.corn_seeds": "玉米粒",
@@ -38,7 +36,6 @@
   "item.dongbei_delight.cucumber_seeds": "黄瓜种子",
   "item.dongbei_delight.red_chili_seeds": "红辣椒种子",
   "item.dongbei_delight.green_onion_seeds": "大葱种子",
-
   "block.dongbei_delight.soybean_crop": "大豆",
   "block.dongbei_delight.eggplant_crop": "茄子",
   "block.dongbei_delight.green_pepper_crop": "青椒",
@@ -54,7 +51,6 @@
   "block.dongbei_delight.fish_sauce": "鱼露",
   "block.dongbei_delight.shrimp_paste": "虾酱",
   "block.dongbei_delight.corn_stalk": "玉米茎秆",
-
   "item.dongbei_delight.sour_cabbage": "酸菜",
   "item.dongbei_delight.soul_cabbage": "灵魂酸菜",
   "item.dongbei_delight.soy_paste": "大酱",
@@ -85,7 +81,6 @@
   "item.dongbei_delight.white_vinegar": "白醋瓶",
   "item.dongbei_delight.braised_pork_hock": "扒肘子",
   "item.dongbei_delight.braised_pork_strips": "扒肉条",
-
   "item.dongbei_delight.soy_milk": "豆浆",
   "item.dongbei_delight.old_style_guo_bao_rou": "老派锅包肉",
   "item.dongbei_delight.new_style_guo_bao_rou": "新派锅包肉",
@@ -111,18 +106,15 @@
   "item.dongbei_delight.suan_huang_gua_chao_rou_si": "酸黄瓜炒肉丝",
   "item.dongbei_delight.sour_tangzi": "酸汤子",
   "item.dongbei_delight.egg_soy_paste": "鸡蛋焖子",
-
   "block.dongbei_delight.vat": "大缸",
   "item.dongbei_delight.unfired_vat_blank": "缸坯",
   "item.dongbei_delight.vat": "大缸",
-
   "block.dongbei_delight.soy_sauce": "酱油",
   "block.dongbei_delight.soy_paste": "大酱",
   "block.dongbei_delight.soy_milk": "豆浆",
   "block.dongbei_delight.vinegar": "醋",
   "block.dongbei_delight.sour_water": "酸引水",
   "block.dongbei_delight.white_vinegar": "白醋",
-
   "fluid_type.dongbei_delight.soy_sauce": "酱油",
   "fluid_type.dongbei_delight.soy_paste": "大酱",
   "fluid_type.dongbei_delight.soy_milk": "豆浆",
@@ -131,7 +123,6 @@
   "fluid_type.dongbei_delight.shrimp_paste": "虾酱",
   "fluid_type.dongbei_delight.sour_water": "酸引水",
   "fluid_type.dongbei_delight.white_vinegar": "白醋",
-
   "jade.dongbei_delight.vat.kind.none": "空缸",
   "jade.dongbei_delight.vat.kind.pickle": "泡菜",
   "jade.dongbei_delight.vat.kind.meat": "腊肉",
@@ -177,7 +168,6 @@
   "jade.dongbei_delight.vat.kvass_amount": "格瓦斯：%s 瓶（%s mB）",
   "jade.dongbei_delight.vat.shrimp_paste_amount": "虾酱：%s 瓶（%s mB）",
   "config.jade.plugin_dongbei_delight.vat": "大缸",
-
   "message.dongbei_delight.vat.need_container": "需要手持碗才能盛出大酱",
   "message.dongbei_delight.vat.need_bottle": "需要手持玻璃瓶才能装酱油",
   "message.dongbei_delight.vat.need_bottle_vinegar": "需要手持玻璃瓶才能装醋",
@@ -262,7 +252,6 @@
   "effect.dongbei_delight.greasy.description": "进食变慢，但饱食度与饱和度下降得更慢。",
   "effect.dongbei_delight.refreshing": "爽口",
   "effect.dongbei_delight.refreshing.description": "进食变慢，但回血更快（照常消耗饥饿值）。",
-
   "effect.dongbei_delight.warmth": "暖身",
   "effect.dongbei_delight.warmth.description": "在寒冷覆雪的群系里移动速度 +5%×等级，并且不会陷进细雪。",
   "item.dongbei_delight.la_pi": "拉皮",
@@ -288,14 +277,12 @@
   "item.dongbei_delight.suan_cai_hai_xian_guo": "酸菜海鲜锅",
   "item.dongbei_delight.shen_ji_tang": "参鸡汤",
   "item.dongbei_delight.xiao_ji_dun_mo_gu": "小鸡炖蘑菇",
-
   "jei.dongbei_delight.vat": "大缸",
   "jei.dongbei_delight.grill": "烧烤",
   "jei.dongbei_delight.grill.seasoning_amount": "%s mB",
   "jei.dongbei_delight.time.seconds": "%s 秒",
   "jei.dongbei_delight.time.minutes": "%s 分钟",
   "jei.dongbei_delight.time.minutes_seconds": "%s 分 %s 秒",
-
   "message.dongbei_delight.grill.not_grillable": "这个放上去烤不了",
   "message.dongbei_delight.grill.not_needed": "这道菜还不需要这样调料",
   "message.dongbei_delight.grill.full": "烤架已经放满了",
@@ -312,9 +299,7 @@
   "tooltip.dongbei_delight.deep_fry_oil": "油炸菜会一次用光一整瓶；炒、炖、煎照常每次 50 mB",
   "message.dongbei_delight.vat.bottle_full": "这瓶调料还是满的",
   "message.dongbei_delight.vat.bottle_mismatch": "缸里的液体和这个瓶子对不上",
-  "message.dongbei_delight.vat.bottle_empty": "缸里已经没有能装的液体了"
-  ,
-
+  "message.dongbei_delight.vat.bottle_empty": "缸里已经没有能装的液体了",
   "block.dongbei_delight.napa_cabbage_crate": "箱装大白菜",
   "block.dongbei_delight.cucumber_crate": "箱装黄瓜",
   "block.dongbei_delight.green_radish_crate": "箱装青萝卜",
@@ -330,7 +315,6 @@
   "block.dongbei_delight.pickled_cucumber_crate": "箱装酸黄瓜",
   "block.dongbei_delight.pickled_carrot_crate": "箱装腌胡萝卜",
   "block.dongbei_delight.pickled_green_radish_crate": "箱装腌青萝卜",
-
   "block.dongbei_delight.corn_seeds_sack": "袋装玉米粒",
   "block.dongbei_delight.buckwheat_sack": "袋装荞麦",
   "block.dongbei_delight.soybean_sack": "袋装大豆",
@@ -340,6 +324,12 @@
   "block.dongbei_delight.hazel_mushroom_sack": "袋装榛蘑",
   "block.dongbei_delight.wood_ear_sack": "袋装木耳",
   "block.dongbei_delight.ginseng_sack": "袋装人参",
-
-  "entity.minecraft.villager.dongbei_delight.side_dish_merchant": "副食商"
+  "entity.minecraft.villager.dongbei_delight.side_dish_merchant": "副食商",
+  "item.dongbei_delight.frozen_pear": "冻梨",
+  "filled_map.dongbei_yard": "小院地图",
+  "block.dongbei_delight.hazel_mushroom": "榛蘑",
+  "block.dongbei_delight.hazel_mushroom_colony": "榛蘑簇",
+  "block.dongbei_delight.ginseng_crop": "人参",
+  "item.dongbei_delight.ginseng_seeds": "参籽",
+  "tooltip.dongbei_delight.ginseng": "长得极慢，只长在寒冷、有树荫、附近有雪的地方；空手刨开它脚下的土才能挖出人参"
 }

@@ -1,0 +1,9 @@
+{
+  "__说明": "人参能扎根的地面：灰化土、泥土、苔藓块（野山参按需求还会长在盖雪的草方块上）",
+  "values": [
+    "minecraft:podzol",
+    "minecraft:dirt",
+    "minecraft:moss_block",
+    "minecraft:grass_block"
+  ]
+}

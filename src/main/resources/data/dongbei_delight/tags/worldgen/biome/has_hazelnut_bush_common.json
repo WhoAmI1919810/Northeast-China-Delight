@@ -1,0 +1,10 @@
+{
+  "__说明": "榛子丛的「常见」地带：森林、白桦森林、原始白桦森林、繁花森林、黑森林",
+  "values": [
+    "minecraft:forest",
+    "minecraft:birch_forest",
+    "minecraft:old_growth_birch_forest",
+    "minecraft:flower_forest",
+    "minecraft:dark_forest"
+  ]
+}

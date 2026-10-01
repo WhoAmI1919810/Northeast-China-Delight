@@ -1,0 +1,8 @@
+{
+  "__说明": "算作「附近有雪」的方块，也用来判断植株是不是覆雪形态",
+  "values": [
+    "minecraft:snow",
+    "minecraft:snow_block",
+    "minecraft:powder_snow"
+  ]
+}

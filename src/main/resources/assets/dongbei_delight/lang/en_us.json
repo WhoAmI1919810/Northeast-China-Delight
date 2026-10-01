@@ -2,7 +2,6 @@
   "itemGroup.dongbei_delight.ingredients": "Northeast China Delight: Ingredients & Sundries",
   "itemGroup.dongbei_delight.dishes": "Northeast China Delight: Dishes",
   "itemGroup.dongbei_delight.blocks": "Northeast China Delight: Blocks",
-
   "item.dongbei_delight.soybean": "Soybean",
   "item.dongbei_delight.eggplant": "Eggplant",
   "item.dongbei_delight.green_pepper": "Green Pepper",
@@ -29,7 +28,6 @@
   "item.dongbei_delight.fish_sauce": "Fish Sauce Bottle",
   "item.dongbei_delight.shrimp_paste": "Shrimp Paste Bottle",
   "item.dongbei_delight.buckwheat_cold_noodles": "Buckwheat Cold Noodles",
-
   "item.dongbei_delight.eggplant_seeds": "Eggplant Seeds",
   "item.dongbei_delight.green_pepper_seeds": "Green Pepper Seeds",
   "item.dongbei_delight.corn_seeds": "Corn Kernels",
@@ -38,7 +36,6 @@
   "item.dongbei_delight.cucumber_seeds": "Cucumber Seeds",
   "item.dongbei_delight.red_chili_seeds": "Red Chili Seeds",
   "item.dongbei_delight.green_onion_seeds": "Green Onion Seeds",
-
   "block.dongbei_delight.soybean_crop": "Soybeans",
   "block.dongbei_delight.eggplant_crop": "Eggplants",
   "block.dongbei_delight.green_pepper_crop": "Green Peppers",
@@ -54,7 +51,6 @@
   "block.dongbei_delight.fish_sauce": "Fish Sauce",
   "block.dongbei_delight.shrimp_paste": "Shrimp Paste",
   "block.dongbei_delight.corn_stalk": "Corn Stalk",
-
   "item.dongbei_delight.sour_cabbage": "Sour Cabbage",
   "item.dongbei_delight.soul_cabbage": "Soul Cabbage",
   "item.dongbei_delight.soy_paste": "Soy Paste",
@@ -85,7 +81,6 @@
   "item.dongbei_delight.white_vinegar": "White Vinegar Bottle",
   "item.dongbei_delight.braised_pork_hock": "Braised Pork Hock",
   "item.dongbei_delight.braised_pork_strips": "Braised Pork Strips",
-
   "item.dongbei_delight.soy_milk": "Soy Milk",
   "item.dongbei_delight.old_style_guo_bao_rou": "Old-Style Guo Bao Rou",
   "item.dongbei_delight.new_style_guo_bao_rou": "New-Style Guo Bao Rou",
@@ -111,18 +106,15 @@
   "item.dongbei_delight.suan_huang_gua_chao_rou_si": "Shredded Pork with Pickled Cucumber",
   "item.dongbei_delight.sour_tangzi": "Sour Tangzi",
   "item.dongbei_delight.egg_soy_paste": "Egg Menzi",
-
   "block.dongbei_delight.vat": "Vat",
   "item.dongbei_delight.unfired_vat_blank": "Unfired Vat Blank",
   "item.dongbei_delight.vat": "Vat",
-
   "block.dongbei_delight.soy_sauce": "Soy Sauce",
   "block.dongbei_delight.soy_paste": "Soy Paste",
   "block.dongbei_delight.soy_milk": "Soy Milk",
   "block.dongbei_delight.vinegar": "Vinegar",
   "block.dongbei_delight.sour_water": "Sour Water",
   "block.dongbei_delight.white_vinegar": "White Vinegar",
-
   "fluid_type.dongbei_delight.soy_sauce": "Soy Sauce",
   "fluid_type.dongbei_delight.soy_paste": "Soy Paste",
   "fluid_type.dongbei_delight.soy_milk": "Soy Milk",
@@ -131,7 +123,6 @@
   "fluid_type.dongbei_delight.shrimp_paste": "Shrimp Paste",
   "fluid_type.dongbei_delight.sour_water": "Sour Water",
   "fluid_type.dongbei_delight.white_vinegar": "White Vinegar",
-
   "jade.dongbei_delight.vat.kind.none": "Empty Vat",
   "jade.dongbei_delight.vat.kind.pickle": "Pickles",
   "jade.dongbei_delight.vat.kind.meat": "Cured Meat",
@@ -177,7 +168,6 @@
   "jade.dongbei_delight.vat.kvass_amount": "Kvass: %s bottles (%s mB)",
   "jade.dongbei_delight.vat.shrimp_paste_amount": "Shrimp paste: %s bottles (%s mB)",
   "config.jade.plugin_dongbei_delight.vat": "Vat",
-
   "message.dongbei_delight.vat.need_container": "Hold a bowl to scoop the paste",
   "message.dongbei_delight.vat.need_bottle": "Hold a glass bottle to collect the soy sauce",
   "message.dongbei_delight.vat.need_bottle_vinegar": "Hold a glass bottle to collect the vinegar",
@@ -244,7 +234,6 @@
   "effect.dongbei_delight.greasy.description": "Eating is slower, but hunger and saturation drain slower.",
   "effect.dongbei_delight.refreshing": "Refreshing",
   "effect.dongbei_delight.refreshing.description": "Eating is slower, but you regenerate health faster (hunger is still consumed).",
-
   "effect.dongbei_delight.warmth": "Warmth",
   "effect.dongbei_delight.warmth.description": "+5% movement speed per level in cold, snowy biomes, and you no longer sink into powder snow.",
   "item.dongbei_delight.la_pi": "La Pi",
@@ -270,14 +259,12 @@
   "item.dongbei_delight.suan_cai_hai_xian_guo": "Sour Cabbage Seafood Pot",
   "item.dongbei_delight.shen_ji_tang": "Ginseng Chicken Soup",
   "item.dongbei_delight.xiao_ji_dun_mo_gu": "Chicken Stewed with Hazel Mushrooms",
-
   "jei.dongbei_delight.vat": "Vat",
   "jei.dongbei_delight.grill": "Barbecue",
   "jei.dongbei_delight.grill.seasoning_amount": "%s mB",
   "jei.dongbei_delight.time.seconds": "%s s",
   "jei.dongbei_delight.time.minutes": "%s min",
   "jei.dongbei_delight.time.minutes_seconds": "%s min %s s",
-
   "message.dongbei_delight.grill.not_grillable": "This can't be grilled",
   "message.dongbei_delight.grill.not_needed": "This dish doesn't need that seasoning",
   "message.dongbei_delight.grill.full": "The grill is full",
@@ -295,7 +282,6 @@
   "message.dongbei_delight.vat.bottle_full": "This bottle is already full",
   "message.dongbei_delight.vat.bottle_mismatch": "The vat doesn't hold that kind of liquid",
   "message.dongbei_delight.vat.bottle_empty": "The vat has nothing left to pour",
-
   "block.dongbei_delight.napa_cabbage_crate": "Crate of Napa Cabbage",
   "block.dongbei_delight.cucumber_crate": "Crate of Cucumbers",
   "block.dongbei_delight.green_radish_crate": "Crate of Green Radishes",
@@ -311,7 +297,6 @@
   "block.dongbei_delight.pickled_cucumber_crate": "Crate of Pickled Cucumbers",
   "block.dongbei_delight.pickled_carrot_crate": "Crate of Pickled Carrots",
   "block.dongbei_delight.pickled_green_radish_crate": "Crate of Pickled Green Radishes",
-
   "block.dongbei_delight.corn_seeds_sack": "Sack of Corn Kernels",
   "block.dongbei_delight.buckwheat_sack": "Sack of Buckwheat",
   "block.dongbei_delight.soybean_sack": "Sack of Soybeans",
@@ -321,6 +306,12 @@
   "block.dongbei_delight.hazel_mushroom_sack": "Sack of Hazel Mushrooms",
   "block.dongbei_delight.wood_ear_sack": "Sack of Wood Ear",
   "block.dongbei_delight.ginseng_sack": "Sack of Ginseng",
-
-  "entity.minecraft.villager.dongbei_delight.side_dish_merchant": "Side Dish Merchant"
+  "entity.minecraft.villager.dongbei_delight.side_dish_merchant": "Side Dish Merchant",
+  "item.dongbei_delight.frozen_pear": "Frozen Pear",
+  "filled_map.dongbei_yard": "Yard Map",
+  "block.dongbei_delight.hazel_mushroom": "Hazel Mushroom",
+  "block.dongbei_delight.hazel_mushroom_colony": "Hazel Mushroom Colony",
+  "block.dongbei_delight.ginseng_crop": "Ginseng",
+  "item.dongbei_delight.ginseng_seeds": "Ginseng Seeds",
+  "tooltip.dongbei_delight.ginseng": "Grows very slowly in cold, shaded, snowy spots; dig the soil under it bare-handed to get the root"
 }

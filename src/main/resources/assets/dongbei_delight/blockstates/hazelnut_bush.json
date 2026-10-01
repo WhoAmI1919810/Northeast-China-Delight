@@ -1,16 +1,12 @@
 {
   "variants": {
-    "age=0": {
-      "model": "dongbei_delight:block/hazelnut_bush_stage0"
-    },
-    "age=1": {
-      "model": "dongbei_delight:block/hazelnut_bush_stage1"
-    },
-    "age=2": {
-      "model": "dongbei_delight:block/hazelnut_bush_stage2"
-    },
-    "age=3": {
-      "model": "dongbei_delight:block/hazelnut_bush_stage3"
-    }
+    "age=0,snowy=false": { "model": "dongbei_delight:block/hazelnut_bush_stage0" },
+    "age=0,snowy=true": { "model": "dongbei_delight:block/hazelnut_bush_stage0_snowy" },
+    "age=1,snowy=false": { "model": "dongbei_delight:block/hazelnut_bush_stage1" },
+    "age=1,snowy=true": { "model": "dongbei_delight:block/hazelnut_bush_stage1_snowy" },
+    "age=2,snowy=false": { "model": "dongbei_delight:block/hazelnut_bush_stage2" },
+    "age=2,snowy=true": { "model": "dongbei_delight:block/hazelnut_bush_stage2_snowy" },
+    "age=3,snowy=false": { "model": "dongbei_delight:block/hazelnut_bush_stage3" },
+    "age=3,snowy=true": { "model": "dongbei_delight:block/hazelnut_bush_stage3_snowy" }
   }
 }

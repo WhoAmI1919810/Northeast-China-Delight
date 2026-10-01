@@ -2,6 +2,8 @@ package com.gunmu.dongbei_delight.worldgen;
 
 import com.gunmu.dongbei_delight.DongbeiDelight;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.world.level.levelgen.feature.Feature;
+import net.minecraft.world.level.levelgen.feature.configurations.NoneFeatureConfiguration;
 import net.minecraft.world.level.levelgen.structure.StructureType;
 import net.minecraft.world.level.levelgen.structure.pieces.StructurePieceType;
 import net.neoforged.bus.api.IEventBus;
@@ -11,6 +13,20 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 /** 世界生成相关的注册表：结构类型 + 结构片段类型。 */
 public class ModWorldGen
 {
+    /** 本模组自己的地物（榛子丛、树脚下的榛蘑、野生人参） */
+    public static final DeferredRegister<Feature<?>> FEATURES =
+            DeferredRegister.create(Registries.FEATURE, DongbeiDelight.MODID);
+
+    public static final DeferredHolder<Feature<?>, HazelnutBushFeature> HAZELNUT_BUSH_FEATURE =
+            FEATURES.register("hazelnut_bush", () -> new HazelnutBushFeature(NoneFeatureConfiguration.CODEC));
+
+    public static final DeferredHolder<Feature<?>, HazelMushroomAroundTreeFeature> HAZEL_MUSHROOM_TREE_FEATURE =
+            FEATURES.register("hazel_mushroom_around_tree",
+                    () -> new HazelMushroomAroundTreeFeature(NoneFeatureConfiguration.CODEC));
+
+    public static final DeferredHolder<Feature<?>, GinsengPatchFeature> GINSENG_PATCH_FEATURE =
+            FEATURES.register("ginseng_patch", () -> new GinsengPatchFeature(NoneFeatureConfiguration.CODEC));
+
     public static final DeferredRegister<StructureType<?>> STRUCTURE_TYPES =
             DeferredRegister.create(Registries.STRUCTURE_TYPE, DongbeiDelight.MODID);
     public static final DeferredRegister<StructurePieceType> PIECE_TYPES =
@@ -39,6 +55,7 @@ public class ModWorldGen
 
     public static void register(IEventBus eventBus)
     {
+        FEATURES.register(eventBus);
         STRUCTURE_TYPES.register(eventBus);
         PIECE_TYPES.register(eventBus);
     }
