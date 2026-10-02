@@ -23,7 +23,7 @@ public final class DongbeiConfig
         DISH_PLACEMENT_ENABLED = builder
                 .comment("允许玩家潜行右键把菜肴摆成方块。",
                         "设为 false 时彻底关闭这个功能：潜行右键不会放置，也不会有任何提示文字。")
-                .define("dish_placement_enabled", true);
+                .define("dish_placement_enabled", false);
         builder.pop();
         SPEC = builder.build();
     }

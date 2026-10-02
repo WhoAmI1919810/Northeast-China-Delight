@@ -74,6 +74,7 @@ public class DongbeiDelight
         ModLootModifiers.register(modEventBus);
         ModEffects.register(modEventBus);
         ModVillagerProfessions.register(modEventBus);
+        ModMapDecorations.register(modEventBus);
         ModWorldGen.register(modEventBus);
         // 模组配置（菜肴方块形态的总开关）
         modContainer.registerConfig(net.neoforged.fml.config.ModConfig.Type.COMMON, DongbeiConfig.SPEC);

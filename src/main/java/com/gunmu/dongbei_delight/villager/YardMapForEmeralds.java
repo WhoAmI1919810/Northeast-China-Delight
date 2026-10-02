@@ -1,7 +1,9 @@
 package com.gunmu.dongbei_delight.villager;
 
 import com.gunmu.dongbei_delight.DongbeiDelight;
+import com.gunmu.dongbei_delight.ModMapDecorations;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Holder;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
@@ -17,7 +19,8 @@ import net.minecraft.world.item.MapItem;
 import net.minecraft.world.item.trading.ItemCost;
 import net.minecraft.world.item.trading.MerchantOffer;
 import net.minecraft.world.level.levelgen.structure.Structure;
-import net.minecraft.world.level.saveddata.maps.MapDecorationTypes;
+
+import net.minecraft.world.level.saveddata.maps.MapDecorationType;
 import net.minecraft.world.level.saveddata.maps.MapItemSavedData;
 
 import javax.annotation.Nullable;
@@ -72,7 +75,7 @@ public class YardMapForEmeralds implements VillagerTrades.ItemListing
         }
         ItemStack map = MapItem.create(serverLevel, yardPos.getX(), yardPos.getZ(), MAP_SCALE, true, true);
         MapItem.renderBiomePreviewMap(serverLevel, map);
-        MapItemSavedData.addTargetDecoration(map, yardPos, DECORATION_LABEL, MapDecorationTypes.TARGET_X);
+        MapItemSavedData.addTargetDecoration(map, yardPos, DECORATION_LABEL, ModMapDecorations.DONGBEI_YARD);
         map.set(DataComponents.ITEM_NAME, Component.translatable(DISPLAY_NAME));
         return new MerchantOffer(new ItemCost(Items.EMERALD, this.emeraldCost), Optional.of(new ItemCost(Items.COMPASS)),
                 map, this.maxUses, this.villagerXp, 0.2F);

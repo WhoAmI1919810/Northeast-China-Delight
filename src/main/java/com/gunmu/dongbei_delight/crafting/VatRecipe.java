@@ -321,9 +321,19 @@ public final class VatRecipe {
     private final List<Slot> slots;
     private final int seconds;
     private final boolean secondsPerLayer;
+    /** 这条配方要求大缸所在的生物群系是「会下雪的」 —— 冻梨那种天冷才做得出来的东西才填 true */
+    private final boolean requiresSnowyBiome;
+    /** 这条配方要求缸顶压的是哪一种封口物（null = 不限 / 由 seal 决定）。冻梨的"压一块雪"走这个。 */
+    @Nullable
+    private final java.util.function.Predicate<ItemStack> requiredSealItem;
+    /** 各生物群系温度带的时长倍率：null = 所有群系都按基准时长 */
+    @Nullable
+    private final java.util.EnumMap<BiomeBand, Float> biomeSecondsMultiplier;
 
     private VatRecipe(String id, VatRecipes.Kind kind, int priority, Seal seal, Liquid liquid, List<Slot> slots,
-                      int seconds, boolean secondsPerLayer) {
+                      int seconds, boolean secondsPerLayer, boolean requiresSnowyBiome,
+                      @Nullable java.util.function.Predicate<ItemStack> requiredSealItem,
+                      @Nullable java.util.EnumMap<BiomeBand, Float> biomeSecondsMultiplier) {
         this.id = id;
         this.kind = kind;
         this.priority = priority;
@@ -332,6 +342,39 @@ public final class VatRecipe {
         this.slots = List.copyOf(slots);
         this.seconds = seconds;
         this.secondsPerLayer = secondsPerLayer;
+        this.requiresSnowyBiome = requiresSnowyBiome;
+        this.requiredSealItem = requiredSealItem;
+        this.biomeSecondsMultiplier = biomeSecondsMultiplier == null ? null : new java.util.EnumMap<>(biomeSecondsMultiplier);
+    }
+
+    /**
+     * 生物群系温度带：按 {@code getBaseTemperature()} 分四档。
+     *
+     * 分带的好处是 JEi / 提示里能一句话说明（"温暖群系酿得更快"），
+     * 不用给玩家读一个浮点温度。
+     */
+    public enum BiomeBand {
+        /** 会下雪（基准温度 < 0.15）：泡菜慢一倍、冻梨只能在这做 */
+        COLD,
+        /** 不冷不热（0.15 ~ 0.7）：基准时长 */
+        TEMPERATE,
+        /** 暖和（0.7 ~ 0.95）：发酵快一半 */
+        WARM,
+        /** 炎热（≥ 0.95，沙漠 / 热带 / 下界）：发酵最快、腊肉反而要防霉 */
+        HOT;
+
+        public static BiomeBand of(float baseTemperature) {
+            if (baseTemperature < 0.15F) {
+                return COLD;
+            }
+            if (baseTemperature < 0.7F) {
+                return TEMPERATE;
+            }
+            if (baseTemperature < 0.95F) {
+                return WARM;
+            }
+            return HOT;
+        }
     }
 
     // ===== 只读访问 =====
@@ -370,9 +413,45 @@ public final class VatRecipe {
         return this.secondsPerLayer;
     }
 
+    /** 这条配方要不要求缸所在的地方是会下雪的生物群系（冻梨要、别的不要） */
+    public boolean requiresSnowyBiome() {
+        return this.requiresSnowyBiome;
+    }
+
+    /**
+     * 缸顶要压的具体封口物（null = 只看 {@link #seal()}，不限定具体物品）。
+     * 冻梨的「顶上压一块雪」走这个：seal=PRESS（要压东西）+ requiredSealItem=雪块。
+     */
+    @Nullable
+    public java.util.function.Predicate<ItemStack> requiredSealItem() {
+        return this.requiredSealItem;
+    }
+
     /** 时长（秒）：按水位配比的配方会乘上水位 */
     public int secondsFor(int waterLevel) {
         return this.secondsPerLayer ? this.seconds * Math.max(1, waterLevel) : this.seconds;
+    }
+
+    /**
+     * 这条配方在某个温度带里的实际时长（秒）。
+     * 没有指定倍率的配方（咸鱼、腊肉这种"在哪都一样"的）直接返回基准时长。
+     */
+    public int secondsFor(int waterLevel, BiomeBand band) {
+        int base = secondsFor(waterLevel);
+        if (this.biomeSecondsMultiplier == null) {
+            return base;
+        }
+        Float mul = this.biomeSecondsMultiplier.get(band);
+        return mul == null ? base : Math.max(1, Math.round(base * mul));
+    }
+
+    /**
+     * 某个温度带的时长倍率；null = 这配方不分群系。
+     * 给 JEI / 调试展示用（"在暖和群系×0.5"）。
+     */
+    @Nullable
+    public Float biomeMultiplier(BiomeBand band) {
+        return this.biomeSecondsMultiplier == null ? null : this.biomeSecondsMultiplier.get(band);
     }
 
     /**
@@ -547,6 +626,9 @@ public final class VatRecipe {
         private final List<Slot> slots = new ArrayList<>();
         private int seconds = 2;
         private boolean secondsPerLayer;
+        private boolean requiresSnowyBiome;
+        private java.util.function.Predicate<ItemStack> requiredSealItem;
+        private java.util.EnumMap<BiomeBand, Float> biomeSecondsMultiplier;
 
         private Builder(VatRecipes.Kind kind, String id) {
             this.kind = kind;
@@ -626,6 +708,29 @@ public final class VatRecipe {
             return this;
         }
 
+        /** 这缸只能放在「会下雪的生物群系」里开工（冻梨那种要冻起来的东西） */
+        public Builder requiresSnowyBiome() {
+            this.requiresSnowyBiome = true;
+            return this;
+        }
+
+        /** 缸顶封口物必须是指定的那一种（冻梨要压雪块） */
+        public Builder requiredSealItem(java.util.function.Predicate<ItemStack> matcher) {
+            this.requiredSealItem = matcher;
+            return this;
+        }
+
+        /**
+         * 不同温度带的时长倍率：冷带×2 / 温带×1 / 暖带×0.5 / 热带×0.25 这样写。
+         * 没写的带按基准时长算（倍率 1）。
+         */
+        public Builder biomeSeconds(java.util.function.Consumer<java.util.EnumMap<BiomeBand, Float>> fill) {
+            java.util.EnumMap<BiomeBand, Float> map = new java.util.EnumMap<>(BiomeBand.class);
+            fill.accept(map);
+            this.biomeSecondsMultiplier = map;
+            return this;
+        }
+
         public Builder slot(Slot slot) {
             this.slots.add(slot);
             return this;
@@ -633,7 +738,8 @@ public final class VatRecipe {
 
         public VatRecipe build() {
             return new VatRecipe(this.id, this.kind, this.priority, this.seal, this.liquid,
-                    this.slots, this.seconds, this.secondsPerLayer);
+                    this.slots, this.seconds, this.secondsPerLayer, this.requiresSnowyBiome,
+                    this.requiredSealItem, this.biomeSecondsMultiplier);
         }
     }
 }

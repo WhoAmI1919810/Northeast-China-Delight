@@ -1,7 +1,1 @@
-{
-  "variants": {
-    "": {
-      "model": "dongbei_delight:block/soy_milk"
-    }
-  }
-}
+{"variants": {"": {"model": "dongbei_delight:block/soy_milk"}}}

@@ -49,7 +49,8 @@ $crates = @(
     @{ id = 'spicy_cabbage_crate';        cn = '辣白菜';   item = 'spicy_cabbage' },
     @{ id = 'pickled_cucumber_crate';     cn = '酸黄瓜';   item = 'pickled_cucumber' },
     @{ id = 'pickled_carrot_crate';       cn = '腌胡萝卜'; item = 'pickled_carrot' },
-    @{ id = 'pickled_green_radish_crate'; cn = '腌青萝卜'; item = 'pickled_green_radish' }
+    @{ id = 'pickled_green_radish_crate'; cn = '腌青萝卜'; item = 'pickled_green_radish' },
+    @{ id = 'frozen_pear_crate';            cn = '冻梨';     item = 'frozen_pear' }
 )
 
 # 袋装：id / 中文名（对应 zip 里的贴图名）/ 装的是什么物品

@@ -594,7 +594,7 @@ public class VatBlockEntity extends BlockEntity implements IFluidHandler {
             case KVASS -> null;
             case PICKLE, SPICY_PICKLE -> this.sourWaterMb > 0 ? ModFluids.sourWaterSource() : null;
             // 没有成品液体的那几种缸
-            case NONE, MEAT, SALTED_FISH, BEAN_SPROUTS, SOUR_CORN -> null;
+            case NONE, MEAT, SALTED_FISH, BEAN_SPROUTS, SOUR_CORN, FROZEN_PEAR -> null;
         };
     }
 
@@ -608,7 +608,7 @@ public class VatBlockEntity extends BlockEntity implements IFluidHandler {
             case SHRIMP_PASTE -> this.shrimpPasteMb;
             case PICKLE, SPICY_PICKLE -> this.sourWaterMb;
             case KVASS -> this.kvassMb;
-            case NONE, MEAT, SALTED_FISH, BEAN_SPROUTS, SOUR_CORN -> 0;
+            case NONE, MEAT, SALTED_FISH, BEAN_SPROUTS, SOUR_CORN, FROZEN_PEAR -> 0;
         };
     }
 

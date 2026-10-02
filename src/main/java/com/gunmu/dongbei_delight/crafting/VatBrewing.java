@@ -55,6 +55,15 @@ public final class VatBrewing {
         }
     }
 
+    /** 大缸所在的地方是不是「会下雪的生物群系」：基准温度 < 0.15（和落雪的阈值一条线） */
+    private static boolean isSnowyBiome(VatBlockEntity vat) {
+        var level = vat.getLevel();
+        if (level == null) {
+            return false;
+        }
+        return level.getBiome(vat.getBlockPos()).value().getBaseTemperature() < 0.15F;
+    }
+
     /** 缸里的"成品液体"（不含酸引水 —— 酸引水是白醋的原料，不算成品） */
     private static boolean hasBottledProduct(VatBlockEntity vat) {
         return vat.pasteMb() > 0 || vat.soySauceMb() > 0 || vat.vinegarMb() > 0
@@ -135,7 +144,11 @@ public final class VatBrewing {
         VatRecipe best = null;
         int[] bestScore = null;
         for (VatRecipe recipe : VatRecipes.all()) {
-            if (!recipe.materialsReady(counts, sour) || !sealMatches(vat, recipe.seal())) {
+            if (!recipe.materialsReady(counts, sour) || !sealMatches(vat, recipe)) {
+                continue;
+            }
+            // 这条配方要求「会下雪的群系」（冻梨）：缸不在那种地方就不开工
+            if (recipe.requiresSnowyBiome() && !isSnowyBiome(vat)) {
                 continue;
             }
             // 缸里已经有酸引水：只有"拿酸引水当原料"的配方能开工（白醋）
@@ -185,6 +198,22 @@ public final class VatBrewing {
             case CLOTH -> vat.isCovered() && vat.isClothCover();
             case CARPET -> vat.isCovered() && !vat.isClothCover();
         };
+    }
+
+    /**
+     * 封口物既要符合「哪种封口」（压缸石 / 毯子 / 布）这种大类要求，
+     * 也要符合「压的必须是哪一种具体物品」（冻梨的"顶上压雪块"）这种专属要求。
+     */
+    public static boolean sealMatches(VatBlockEntity vat, VatRecipe recipe) {
+        if (!sealMatches(vat, recipe.seal())) {
+            return false;
+        }
+        var matcher = recipe.requiredSealItem();
+        if (matcher == null) {
+            return true;
+        }
+        // requiredSealItem 只查「缸顶压的那一坨」（press 槽位）：毯子那条路天然走不通
+        return matcher.test(vat.press());
     }
 
     /**
@@ -421,10 +450,20 @@ public final class VatBrewing {
 
     // ===== 时长 =====
 
-    /** 每走一格进度条要多少刻 */
+    /** 每走一格进度条要多少刻（会带上群系温度带的快慢） */
     public static int stepTicks(VatRecipe recipe, VatBlockEntity vat) {
-        int total = recipe.secondsFor(Math.max(1, vat.waterLayers())) * VatRecipes.TICKS_PER_SECOND;
+        int total = recipe.secondsFor(Math.max(1, vat.waterLayers()), biomeBand(vat))
+                * VatRecipes.TICKS_PER_SECOND;
         return Math.max(1, total / com.gunmu.dongbei_delight.block.Vat.MAX_PROGRESS);
+    }
+
+    /** 大缸所在群系的温度带；取不到世界时按温带算 */
+    private static VatRecipe.BiomeBand biomeBand(VatBlockEntity vat) {
+        var level = vat.getLevel();
+        if (level == null) {
+            return VatRecipe.BiomeBand.TEMPERATE;
+        }
+        return VatRecipe.BiomeBand.of(level.getBiome(vat.getBlockPos()).value().getBaseTemperature());
     }
 
 }

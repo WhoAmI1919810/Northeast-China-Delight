@@ -55,7 +55,9 @@ public record VatJeiRecipe(List<State> states) {
             long resultFluidMb,
             long resultFluidCapacityMb,
             /** 这一档的发酵时长（秒），显示在箭头下方 */
-            int seconds) {
+            int seconds,
+            /** 额外条件注记（冻梨的"要在会下雪的群系"），写在时长下方；null 表示没有 */
+            @Nullable net.minecraft.network.chat.Component note) {
 
         public boolean hasLiquid() {
             return this.liquid != null && this.liquidMb > 0;

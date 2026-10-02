@@ -2,6 +2,7 @@ package com.gunmu.dongbei_delight.gametest;
 
 import com.gunmu.dongbei_delight.DongbeiDelight;
 import com.gunmu.dongbei_delight.block.HazelnutBushBlock;
+import com.gunmu.dongbei_delight.block.GinsengCropBlock;
 import com.gunmu.dongbei_delight.block.ModBlocks;
 import com.gunmu.dongbei_delight.item.ModItems;
 import net.minecraft.core.BlockPos;
@@ -60,6 +61,49 @@ public final class PlantingGameTests
                 "榛子丛应该和雪片占同一格");
         helper.assertTrue(level.getBlockState(snowPos).getValue(HazelnutBushBlock.SNOWY),
                 "这样种出来的榛子丛应该是覆雪形态（自带雪面）");
+        helper.succeed();
+    }
+
+    @GameTest(template = "empty")
+    public static void hazelnutOnBareSoilIsNotSnowy(GameTestHelper helper)
+    {
+        ServerLevel level = helper.getLevel();
+        BlockPos ground = helper.absolutePos(new BlockPos(1, 1, 1));
+        BlockPos plant = ground.above();
+        level.setBlockAndUpdate(ground, Blocks.GRASS_BLOCK.defaultBlockState());
+        Player player = helper.makeMockPlayer(GameType.SURVIVAL);
+        placeOn(level, player, ModItems.HAZELNUT.get(), plant);
+        helper.assertTrue(level.getBlockState(plant).is(ModBlocks.HAZELNUT_BUSH.get()),
+                "榛子丛应该能种在裸土上");
+        helper.assertFalse(level.getBlockState(plant).getValue(HazelnutBushBlock.SNOWY),
+                "裸土上的榛子丛不应该覆雪");
+        helper.succeed();
+    }
+
+    @GameTest(template = "empty")
+    public static void ginsengOnBareSoilIsNotSnowy(GameTestHelper helper)
+    {
+        ServerLevel level = helper.getLevel();
+        BlockPos ground = helper.absolutePos(new BlockPos(1, 1, 1));
+        BlockPos plant = ground.above();
+        level.setBlockAndUpdate(ground, Blocks.GRASS_BLOCK.defaultBlockState());
+        for (int dx = -3; dx <= 3; dx++) {
+            for (int dz = -3; dz <= 3; dz++) {
+                if (Math.abs(dx) > 1 || Math.abs(dz) > 1) {
+                    level.setBlockAndUpdate(ground.offset(dx, 0, dz), Blocks.SNOW.defaultBlockState());
+                }
+            }
+        }
+        for (int y = 2; y <= 6; y++) {
+            level.setBlockAndUpdate(plant.above(y), Blocks.OAK_LEAVES.defaultBlockState());
+        }
+        level.setBlockAndUpdate(ground.offset(4, 0, 0), Blocks.SNOW.defaultBlockState());
+        Player player = helper.makeMockPlayer(GameType.SURVIVAL);
+        placeOn(level, player, ModItems.GINSENG_SEEDS.get(), plant);
+        helper.assertTrue(level.getBlockState(plant).is(ModBlocks.GINSENG_CROP.get()),
+                "人参应该能种下");
+        helper.assertFalse(level.getBlockState(plant).getValue(GinsengCropBlock.SNOWY),
+                "裸土上的人参不应该覆雪");
         helper.succeed();
     }
 

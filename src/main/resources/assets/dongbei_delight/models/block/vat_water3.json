@@ -6,10 +6,21 @@
   },
   "elements": [
     {
-      "from": [2, 13.98, 2],
-      "to": [14, 14, 14],
+      "from": [
+        2,
+        13.98,
+        2
+      ],
+      "to": [
+        14,
+        14,
+        14
+      ],
       "faces": {
-        "up": { "texture": "#water", "tintindex": 0 }
+        "up": {
+          "texture": "#water",
+          "tintindex": 0
+        }
       }
     }
   ]

@@ -15,9 +15,14 @@ public final class ModBlockTags
             TagKey.create(Registries.BLOCK,
                     ResourceLocation.fromNamespaceAndPath(DongbeiDelight.MODID, "hazel_mushroom_colony_growable_on"));
 
-    /** 农夫乐事的刀（榛蘑簇可以一刀割完） */
+    /** 农夫乐事的刀（榛蘑菌落可以一刀割完） */
     public static final TagKey<Item> KNIVES =
             TagKey.create(Registries.ITEM, ResourceLocation.fromNamespaceAndPath("farmersdelight", "tools/knives"));
+
+    /** 踩在这种方块上的榛蘑会随机刻长成菌落（对齐农夫乐事的沃土设定） */
+    public static final TagKey<Block> RICH_SOIL_CONVERTS_TO_COLONY =
+            TagKey.create(Registries.BLOCK,
+                    ResourceLocation.fromNamespaceAndPath(DongbeiDelight.MODID, "rich_soil_converts_to_colony"));
 
     /** 人参能种的地面：灰化土、泥土、苔藓块 */
     public static final TagKey<Block> GINSENG_PLANTABLE_ON =

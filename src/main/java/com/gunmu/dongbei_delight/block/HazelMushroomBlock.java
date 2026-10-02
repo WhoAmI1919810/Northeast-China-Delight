@@ -71,6 +71,17 @@ public class HazelMushroomBlock extends BushBlock implements BonemealableBlock
     @Override
     protected void randomTick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random)
     {
+        // 种在沃土上的榛蘑有概率原地长成榛蘑菌落（对齐农夫乐事：蘑菇菌落不是撒骨粉变出来的，
+        // 是蘑菇种在沃土上一段时间后自动变成的）
+        if (level.getBlockState(pos.below()).is(ModBlockTags.RICH_SOIL_CONVERTS_TO_COLONY)
+                && random.nextInt(4) == 0)
+        {
+            if (ModBlocks.HAZEL_MUSHROOM_COLONY.get().defaultBlockState().canSurvive(level, pos))
+            {
+                level.setBlock(pos, ModBlocks.HAZEL_MUSHROOM_COLONY.get().defaultBlockState(), 2);
+            }
+            return;
+        }
         // 太亮就不蔓延（原版蘑菇的「怕光」）
         if (level.getRawBrightness(pos, 0) >= MAX_LIGHT)
         {
@@ -126,21 +137,22 @@ public class HazelMushroomBlock extends BushBlock implements BonemealableBlock
         return soil.isDefault() ? this.mayPlaceOn(belowState, level, below) : soil.isTrue();
     }
 
+    // 榛蘑不吃骨粉 —— 原版蘑菇也是不能撒骨粉催大的。
+    // 想拿到榛蘑菌落：把它种在农夫乐事的沃土（rich_soil）上，等随机刻。
     @Override
     public boolean isValidBonemealTarget(LevelReader level, BlockPos pos, BlockState state)
     {
-        return ModBlocks.HAZEL_MUSHROOM_COLONY.get().defaultBlockState().canSurvive(level, pos);
+        return false;
     }
 
     @Override
     public boolean isBonemealSuccess(net.minecraft.world.level.Level level, RandomSource random, BlockPos pos, BlockState state)
     {
-        return true;
+        return false;
     }
 
     @Override
     public void performBonemeal(ServerLevel level, RandomSource random, BlockPos pos, BlockState state)
     {
-        level.setBlock(pos, ModBlocks.HAZEL_MUSHROOM_COLONY.get().defaultBlockState(), 2);
     }
 }

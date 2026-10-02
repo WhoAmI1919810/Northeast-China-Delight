@@ -95,8 +95,10 @@ public class HazelMushroomColonyBlock extends BushBlock implements BonemealableB
         {
             return true;
         }
-        // 和榛蘑一样，只挑地面不挑亮度：亮处的菌簇不会因为方块更新而被清掉
-        return soil.isDefault() ? this.mayPlaceOn(belowState, level, below) : soil.isTrue();
+        // 照抄农夫乐事的蘑菇菌簇：亮度到 13 就不能存活（会被方块更新清掉）
+        return soil.isDefault()
+                ? level.getRawBrightness(pos, 0) < MAX_LIGHT && this.mayPlaceOn(belowState, level, below)
+                : soil.isTrue();
     }
 
     @Override

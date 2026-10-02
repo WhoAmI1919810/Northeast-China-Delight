@@ -100,6 +100,11 @@ public class Vat extends Block implements EntityBlock {
         return stack.getItem() instanceof BlockItem blockItem
                 && blockItem.getBlock().defaultBlockState().is(PRESS_STONES);
     }
+    /** 手里拿的正好是这条配方点名要压的那件东西（比如冻梨配方的雪块） */
+    private static boolean matchesRequiredSealItem(VatRecipe recipe, ItemStack stack) {
+        var matcher = recipe.requiredSealItem();
+        return matcher != null && matcher.test(stack);
+    }
 
     /** 手里拿的是不是农夫乐事的粗布毯（酿醋盖缸用） */
     public static boolean isClothRug(ItemStack stack) {
@@ -381,7 +386,8 @@ public class Vat extends Block implements EntityBlock {
         if (recipe == null) {
             return false;
         }
-        boolean press = recipe.seal() == VatRecipe.Seal.PRESS && isPressStone(stack) && !vat.isPressed();
+        boolean press = recipe.seal() == VatRecipe.Seal.PRESS && !vat.isPressed()
+                && (isPressStone(stack) || matchesRequiredSealItem(recipe, stack));
         boolean carpet = recipe.seal() == VatRecipe.Seal.CARPET && stack.is(ItemTags.WOOL_CARPETS)
                 && !vat.isCovered();
         boolean cloth = recipe.seal() == VatRecipe.Seal.CLOTH && isClothRug(stack) && !vat.isCovered();

@@ -3,9 +3,12 @@ package com.gunmu.dongbei_delight.gametest;
 import com.gunmu.dongbei_delight.DongbeiConfig;
 import com.gunmu.dongbei_delight.DongbeiDelight;
 import com.gunmu.dongbei_delight.block.ModBlocks;
+import com.gunmu.dongbei_delight.event.ModGameplayEvents;
 import com.gunmu.dongbei_delight.item.ModItems;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.server.level.ServerLevel;
@@ -65,6 +68,48 @@ public final class DishPlacementGameTests
         finally
         {
             DongbeiConfig.DISH_PLACEMENT_ENABLED.set(old);
+        }
+        helper.succeed();
+    }
+
+    @GameTest(template = "empty")
+    public static void everyRegisteredDishUsesTheSamePlacementPath(GameTestHelper helper)
+    {
+        ServerLevel level = helper.getLevel();
+        BlockPos ground = helper.absolutePos(new BlockPos(1, 1, 1));
+        BlockPos target = ground.above();
+        level.setBlockAndUpdate(ground, Blocks.STONE.defaultBlockState());
+
+        Player player = helper.makeMockPlayer(GameType.SURVIVAL);
+        player.setShiftKeyDown(true);
+        boolean oldPlacement = DongbeiConfig.DISH_PLACEMENT_ENABLED.get();
+        DongbeiConfig.DISH_PLACEMENT_ENABLED.set(true);
+        try
+        {
+            for (String id : ModBlocks.DISH_BLOCK_IDS)
+            {
+                level.setBlockAndUpdate(target, Blocks.AIR.defaultBlockState());
+                var dishBlock = ModBlocks.DISH_BLOCKS.get(id);
+                helper.assertTrue(dishBlock != null, "料理方块未注册: " + id);
+
+                var item = BuiltInRegistries.ITEM.get(
+                        ResourceLocation.fromNamespaceAndPath(DongbeiDelight.MODID, id));
+                helper.assertTrue(item != net.minecraft.world.item.Items.AIR,
+                        "料理物品未注册: " + id);
+                player.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(item));
+                BlockHitResult hit = new BlockHitResult(
+                        Vec3.atCenterOf(ground).add(0.0, 0.5, 0.0), Direction.UP, ground, false);
+
+                ModGameplayEvents.onDishRightClick(
+                        new net.neoforged.neoforge.event.entity.player.PlayerInteractEvent.RightClickBlock(
+                                player, InteractionHand.MAIN_HAND, ground, hit));
+                helper.assertTrue(level.getBlockState(target).is(dishBlock.get()),
+                        "料理未沿用统一的潜行右键放置路径: " + id);
+            }
+        }
+        finally
+        {
+            DongbeiConfig.DISH_PLACEMENT_ENABLED.set(oldPlacement);
         }
         helper.succeed();
     }

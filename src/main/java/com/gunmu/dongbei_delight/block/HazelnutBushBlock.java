@@ -75,14 +75,12 @@ public class HazelnutBushBlock extends BushBlock implements BonemealableBlock {
 
     /**
      * 这一株该不该是覆雪形态：
-     * 自己这一格是雪片（也就是刚把它顶掉）、脚下踩着雪，或者**这块地本来就该落雪**
-     * —— 最后一条是给世界生成用的：落雪那一步排在植被之后，地物生成时地上还没有雪片，
-     * 只能按生物群系判断「这里将来会被雪盖住」。
+     * 自己这一格是雪片（也就是刚把它顶掉）或脚下实际有雪。
+     * 不能按生物群系气候推断，否则无雪地面种植也会显示覆雪。
      */
     public static boolean isSnowyAt(LevelReader level, BlockPos pos) {
         return isSnow(level.getBlockState(pos))
-                || isSnow(level.getBlockState(pos.below()))
-                || level.getBiome(pos).value().shouldSnow(level, pos);
+                || isSnow(level.getBlockState(pos.below()));
     }
 
     /** 种下去的时候看准：点到雪片上、把它换成榛子丛，这一丛就是覆雪的 */

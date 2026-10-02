@@ -11,6 +11,7 @@ import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.properties.NoteBlockInstrument;
 import net.minecraft.world.level.material.MapColor;
 import net.minecraft.world.level.material.PushReaction;
+import net.minecraft.world.phys.shapes.VoxelShape;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredBlock;
 import net.neoforged.neoforge.registries.DeferredRegister;
@@ -34,7 +35,7 @@ public class ModBlocks {
             "napa_cabbage_crate", "cucumber_crate", "green_radish_crate", "green_onion_crate",
             "eggplant_crate", "green_pepper_crate", "red_chili_crate", "green_beans_crate",
             "corn_crate", "sweet_potato_crate", "sour_cabbage_crate", "spicy_cabbage_crate",
-            "pickled_cucumber_crate", "pickled_carrot_crate", "pickled_green_radish_crate"
+            "pickled_cucumber_crate", "pickled_carrot_crate", "pickled_green_radish_crate", "frozen_pear_crate"
     );
 
     /** 袋装：谷物与山珍，麻袋质感 */
@@ -199,10 +200,67 @@ public class ModBlocks {
 
     // ===== 单份菜肴的方块形式（右键吃、潜行右键摆）=====
     // 容器几何与 display-delight 一致：碗 8×8 高 4、大盘 14×14 高 2。
-    // 建模好的菜在这里登记一个方块，物品那边用 DishBlockItem（见 ModItems.dishBowl / dishTray）。
+    // 这些方块只负责承载渲染和碰撞箱，食用/放置由 ModGameplayEvents 统一处理，
+    // 这样普通 Item 的 craftRemainder / FoodProperties 不会因为换成 BlockItem 而改变。
 
-    /** 老派锅包肉：现实里是大盘菜，所以用大盘（14×14、高 2）而不是碗 */
-    public static final DeferredBlock<Block> OLD_STYLE_GUO_BAO_ROU = dishBlock("old_style_guo_bao_rou", DishBlock.TRAY_SHAPE);
+    /** 需要单份方块模型的料理。大盆整锅料理不在这里，它们已有独立的 DdFeastBlock。 */
+    public static final List<String> DISH_BLOCK_IDS = List.of(
+            "new_style_guo_bao_rou", "orange_guo_bao_rou", "liu_rou_duan", "di_san_xian",
+            "hong_shao_pai_gu", "di_guo_ji_bowl", "di_guo_pai_gu_bowl", "sha_zhu_cai_bowl",
+            "old_style_guo_bao_rou", "jiang_da_gu", "jiang_niu_rou", "braised_pork_hock",
+            "braised_pork_strips", "ba_si_tu_dou", "xun_jiang_pin_pan", "snowy_bean_paste",
+            "candied_peanuts", "grilled_oil_edge", "tu_dou_bing", "yu_mi_lao", "xian_yu_bing_zi",
+            "kimchi_pancake", "suan_cai_chao_fen_tiao", "jian_jiao_gan_dou_fu",
+            "bai_cai_dou_fu_dun_fen_tiao", "la_bai_cai_tang_fan", "suan_huang_gua_chao_rou_si",
+            "liang_ban_xian_cai", "liang_ban_hua_cai", "jia_xian_huang_gua_pao_cai",
+            "zhan_jiang_cai", "ming_tai_yu_si", "buckwheat_cold_noodles", "sour_tangzi",
+            "cha_zi_zhou", "sweet_potato_porridge", "da_jiang_tang", "tiger_salad",
+            "egg_soy_paste", "suan_cai_dun_gu_tou_bowl", "zhu_rou_dun_fen_tiao_bowl",
+            "la_niu_rou_tang_fan", "la_bai_cai_chao_fan", "xia_jiang_chao_ji_dan",
+            "xia_jiang_dun_dou_fu", "hai_xian_dou_fu_tang", "jiang_ban_la_pi",
+            "cong_shao_hai_shen", "hai_shen_dou_fu_tang", "la_rou_dun_dou_jiao",
+            "da_feng_shou_bowl", "de_mo_li_dun_yu", "su_bo_tang", "shen_ji_tang",
+            "xiao_ji_dun_mo_gu_bowl", "suan_cai_hai_xian_guo_bowl", "bibimbap",
+            "grilled_cold_noodles", "baked_sweet_potato", "da_fan_bao", "nian_dou_bao",
+            "grilled_chicken_frame", "grilled_corn", "suan_cai_jiao_zi",
+            "xia_ren_zhu_rou_xian_shui_jiao", "san_xian_xian_shui_jiao"
+    );
+
+    /** 没有固定容器的菜允许使用 display-delight 同尺寸的大盘。 */
+    public static final List<String> TRAY_DISH_IDS = List.of(
+            "old_style_guo_bao_rou", "new_style_guo_bao_rou", "orange_guo_bao_rou",
+            "liu_rou_duan", "di_san_xian", "hong_shao_pai_gu", "jiang_da_gu", "jiang_niu_rou",
+            "ba_si_tu_dou", "xun_jiang_pin_pan", "snowy_bean_paste", "candied_peanuts",
+            "grilled_oil_edge", "tu_dou_bing", "yu_mi_lao", "xian_yu_bing_zi", "kimchi_pancake",
+            "de_mo_li_dun_yu", "grilled_cold_noodles", "baked_sweet_potato", "da_fan_bao",
+            "nian_dou_bao", "grilled_chicken_frame", "grilled_corn", "suan_cai_jiao_zi",
+            "xia_ren_zhu_rou_xian_shui_jiao", "san_xian_xian_shui_jiao"
+    );
+
+    /** 黄铜碗料理必须复用 brass_bowl 的 8×8×4 像素边界。 */
+    public static final List<String> BRASS_BOWL_DISH_IDS = List.of(
+            "buckwheat_cold_noodles", "la_niu_rou_tang_fan", "la_bai_cai_chao_fan",
+            "la_bai_cai_tang_fan", "da_jiang_tang", "shen_ji_tang", "bibimbap"
+    );
+
+    public static final Map<String, DeferredBlock<Block>> DISH_BLOCKS = registerDishBlocks();
+
+    /** 保留这个公开字段，兼容旧存档、测试和现有数据生成脚本。 */
+    public static final DeferredBlock<Block> OLD_STYLE_GUO_BAO_ROU =
+            DISH_BLOCKS.get("old_style_guo_bao_rou");
+
+    private static Map<String, DeferredBlock<Block>> registerDishBlocks()
+    {
+        Map<String, DeferredBlock<Block>> map = new LinkedHashMap<>();
+        for (String id : DISH_BLOCK_IDS)
+        {
+            VoxelShape shape = TRAY_DISH_IDS.contains(id)
+                    ? DishBlock.TRAY_SHAPE
+                    : DishBlock.BOWL_SHAPE;
+            map.put(id, dishBlock(id, shape));
+        }
+        return Collections.unmodifiableMap(map);
+    }
 
     private static DeferredBlock<Block> dishBlock(String name, net.minecraft.world.phys.shapes.VoxelShape shape) {
         return BLOCKS.registerBlock(name,

@@ -167,10 +167,10 @@ public final class VatJeiRecipes {
 
         return new VatJeiRecipe.State(
                 base, baseMb, Math.max(baseMb, (long) liquid.waterMax() * ONE_LAYER),
-                List.copyOf(seasoning), List.copyOf(primary), sealOf(recipe.seal()),
+                List.copyOf(seasoning), List.copyOf(primary), sealOf(recipe),
                 result, product, productMb,
                 Math.max(productMb, VatRecipes.PRODUCT_CAPACITY_MB),
-                recipe.secondsFor(level));
+                recipe.secondsFor(level), noteOf(recipe));
     }
 
     /** 缸底液体的流体：水位配方画水，酸引水配方画酸引水 */
@@ -278,8 +278,13 @@ public final class VatJeiRecipes {
 
     // ===== 封口物 =====
 
-    private static List<ItemStack> sealOf(VatRecipe.Seal seal) {
-        return switch (seal) {
+    private static List<ItemStack> sealOf(VatRecipe recipe) {
+        // 配方点名要压的具体物品（冻梨的"顶上压雪块"）直接展示那件东西
+        var matcher = recipe.requiredSealItem();
+        if (matcher != null) {
+            return sealCandidatesOf(matcher);
+        }
+        return switch (recipe.seal()) {
             // 压缸石：任意石头类方块，这里挑几个代表
             case PRESS -> oneOf(Items.STONE, Items.STONE_BRICKS, Items.COBBLESTONE, Items.DEEPSLATE);
             // 蒙缸用的羊毛地毯
@@ -295,5 +300,40 @@ public final class VatJeiRecipes {
 
     private static List<ItemStack> oneOf(Item... items) {
         return Arrays.stream(items).map(ItemStack::new).toList();
+    }
+    /** 扫物品表，找出这个封口匹配器收得下的东西（雪块就只有它自己） */
+    private static List<ItemStack> sealCandidatesOf(java.util.function.Predicate<ItemStack> matcher) {
+        List<ItemStack> list = new ArrayList<>();
+        for (Item item : BuiltInRegistries.ITEM) {
+            ItemStack stack = new ItemStack(item);
+            if (!stack.isEmpty() && matcher.test(stack)) {
+                list.add(stack);
+                if (list.size() >= MAX_CANDIDATES) {
+                    break;
+                }
+            }
+        }
+        return list;
+    }
+
+    /**
+     * 这条配方有没有要额外说明的条件。
+     * 冻梨：要在会下雪的群系；其他配方如果随温度带改变时长，标"时长随气温变化"。
+     */
+    @Nullable
+    private static net.minecraft.network.chat.Component noteOf(VatRecipe recipe) {
+        if (recipe.requiresSnowyBiome()) {
+            return net.minecraft.network.chat.Component.translatable("jei.dongbei_delight.vat.snowy_biome");
+        }
+        boolean varies = false;
+        for (VatRecipe.BiomeBand band : VatRecipe.BiomeBand.values()) {
+            if (recipe.biomeMultiplier(band) != null) {
+                varies = true;
+                break;
+            }
+        }
+        return varies
+                ? net.minecraft.network.chat.Component.translatable("jei.dongbei_delight.vat.biome_time")
+                : null;
     }
 }

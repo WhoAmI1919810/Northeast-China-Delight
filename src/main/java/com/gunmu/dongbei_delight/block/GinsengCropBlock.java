@@ -55,14 +55,14 @@ public class GinsengCropBlock extends BushBlock implements BonemealableBlock
     private static final int SNOW_RANGE = 3;
 
     private static final VoxelShape[] SHAPE_BY_AGE = new VoxelShape[]{
-            Block.box(0.0, 0.0, 0.0, 16.0, 3.0, 16.0),
-            Block.box(0.0, 0.0, 0.0, 16.0, 5.0, 16.0),
-            Block.box(0.0, 0.0, 0.0, 16.0, 7.0, 16.0),
-            Block.box(0.0, 0.0, 0.0, 16.0, 9.0, 16.0),
-            Block.box(0.0, 0.0, 0.0, 16.0, 11.0, 16.0),
-            Block.box(0.0, 0.0, 0.0, 16.0, 13.0, 16.0),
-            Block.box(0.0, 0.0, 0.0, 16.0, 15.0, 16.0),
-            Block.box(0.0, 0.0, 0.0, 16.0, 16.0, 16.0)
+            Block.box(5.0, 0.0, 5.0, 11.0, 3.0, 11.0),
+            Block.box(5.0, 0.0, 5.0, 11.0, 5.0, 11.0),
+            Block.box(5.0, 0.0, 5.0, 11.0, 7.0, 11.0),
+            Block.box(4.0, 0.0, 4.0, 11.0, 9.0, 11.0),
+            Block.box(3.0, 0.0, 3.0, 12.0, 11.0, 12.0),
+            Block.box(3.0, 0.0, 3.0, 12.0, 13.0, 12.0),
+            Block.box(3.0, 0.0, 3.0, 12.0, 15.0, 12.0),
+            Block.box(3.0, 0.0, 3.0, 12.0, 15.0, 12.0)
     };
 
     public GinsengCropBlock(BlockBehaviour.Properties properties)
@@ -113,14 +113,13 @@ public class GinsengCropBlock extends BushBlock implements BonemealableBlock
     }
 
     /**
-     * 这一株该不该是覆雪形态：自己这一格是雪片、脚下踩着雪，或者**这块地本来就该落雪**
-     * —— 最后一条是给世界生成用的（落雪排在植被之后，地物生成时地上还没有雪片）。
+     * 这一株该不该是覆雪形态：只有实际占用的种植格或脚下土块有雪。
+     * 生物群系气候不能作为判定，否则在无雪地面种植也会错误显示覆雪。
      */
     public static boolean isSnowyAt(LevelReader level, BlockPos pos)
     {
         return isSnow(level.getBlockState(pos))
-                || isSnow(level.getBlockState(pos.below()))
-                || level.getBiome(pos).value().shouldSnow(level, pos);
+                || isSnow(level.getBlockState(pos.below()));
     }
 
     // ===== 生长条件 =====
@@ -153,7 +152,14 @@ public class GinsengCropBlock extends BushBlock implements BonemealableBlock
     /** 寒冷生物群系：基准温度低于 0.15（原版「会下雪」的那条线） */
     private static boolean hasColdBiome(LevelReader level, BlockPos pos)
     {
-        return level.getBiome(pos).value().getBaseTemperature() < 0.15F;
+        // 世界生成阶段（WorldGenLevel 里的 canSurvive 检查）不能走 getBiome ——
+        // 它会去算"贴壁"的邻块，触发邻近 chunk 的懒加载，正在生成的 chunk 又会反过来要这块，
+        // 最终抛出 Requested chunk unavailable during world generation 把整个服务器打挂。
+        // 改用 getUncachedNoiseBiome：这条路径直接问 BiomeSource，不读已生成的方块。
+        var biome = level instanceof net.minecraft.world.level.WorldGenLevel
+                ? level.getUncachedNoiseBiome(pos.getX() >> 2, pos.getY() >> 2, pos.getZ() >> 2)
+                : level.getBiome(pos);
+        return biome.value().getBaseTemperature() < 0.15F;
     }
 
     /** 头顶要有树叶遮阴 */

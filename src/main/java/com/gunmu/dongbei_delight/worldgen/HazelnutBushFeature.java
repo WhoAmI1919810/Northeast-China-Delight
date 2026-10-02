@@ -29,13 +29,13 @@ import net.minecraft.world.level.levelgen.feature.configurations.NoneFeatureConf
 public class HazelnutBushFeature extends Feature<NoneFeatureConfiguration>
 {
     /** 榛蘑的基础概率 */
-    public static final float BASE_CHANCE = 0.03F;
+    public static final float BASE_CHANCE = 0.015F;
     /** 周围有深色橡木时额外加的概率 */
-    public static final float DARK_OAK_CHANCE = 0.015F;
+    public static final float DARK_OAK_CHANCE = 0.0075F;
     /** 周围有橡木时额外加的概率 */
-    public static final float OAK_CHANCE = 0.01F;
+    public static final float OAK_CHANCE = 0.005F;
     /** 周围有白桦时额外加的概率 */
-    public static final float BIRCH_CHANCE = 0.006F;
+    public static final float BIRCH_CHANCE = 0.003F;
 
     /** 榛子丛影响榛蘑的水平半径 */
     public static final int BUSH_RADIUS = 10;

@@ -1,0 +1,7 @@
+{
+  "__说明": "种在这种方块上的榛蘑随机刻会变成榛蘑菌落（对齐农夫乐事的沃土）",
+  "values": [
+    "farmersdelight:rich_soil",
+    "farmersdelight:rich_soil_farmland"
+  ]
+}

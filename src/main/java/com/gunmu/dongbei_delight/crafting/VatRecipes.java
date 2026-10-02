@@ -2,6 +2,7 @@ package com.gunmu.dongbei_delight.crafting;
 
 import com.mojang.logging.LogUtils;
 import com.gunmu.dongbei_delight.item.ModItems;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
@@ -59,7 +60,9 @@ public final class VatRecipes {
         /** 酸玉米粒：每 1 层水配 2 份玉米粒，蒙粗布毯发酵 */
         SOUR_CORN,
         /** 格瓦斯：6 个面包 + 3 份水（满水），蒙粗布毯发酵成瓶装饮料 */
-        KVASS
+        KVASS,
+        /** 冻梨：一缸梨 + 顶面压雪块 + 寒冷群系，开缸就是冻梨 */
+        FROZEN_PEAR
     }
 
     /** 每一份水能泡几份蔬菜（一份水配两份菜） */
@@ -126,38 +129,73 @@ public final class VatRecipes {
         return Items.WHEAT;
     }
 
+    /** 冻梨用的梨：果园乐事的梨子（物品 ID fruitsdelight:pear） */
+    public static Item pearInput() {
+        return net.minecraft.core.registries.BuiltInRegistries.ITEM
+                .get(ResourceLocation.fromNamespaceAndPath("fruitsdelight", "pear"));
+    }
+
     // ===== 发酵时长 =====
     // 每个配方自己的时长都写在下面这张表里（单位：秒）。
     // 按水位配比的配方写「每层多少秒」，其余写一个固定值。
     // 改这里，游戏里的计时和 JEI 里显示的时长会一起变。
 
-    /** 泡菜：每层水位的发酵秒数 */
-    public static final int PICKLE_SECONDS_PER_LAYER = 2;
+    // 时长定标（1 个 MC 日 = 1200 秒）：
+    //   现实里泡菜/辣白菜 ≈ 1~3 天、腊肉咸鱼 ≈ 3~7 天、大酱酱油 ≈ 一个月、
+    //   醋 ≈ 20 天、鱼露虾酱 ≈ 数月 —— 全部按比例压进 MC 的"几天"里，
+    //   再用群系温度带做快慢：乳酸菌越冷越慢、越热越快；
+    //   咸鱼腊肉在热带反而要捂出霉味 → 多给 50%。
+    /** 泡菜：每层水位的发酵秒数（基准 = 1 个 MC 日） */
+    public static final int PICKLE_SECONDS_PER_LAYER = 1200;
     /** 辣白菜：每层水位的发酵秒数 */
-    public static final int SPICY_PICKLE_SECONDS_PER_LAYER = 2;
-    /** 咸腊肉 */
-    public static final int MEAT_SECONDS = 2;
-    /** 咸鱼 */
-    public static final int SALTED_FISH_SECONDS = 2;
-    /** 大酱 */
-    public static final int PASTE_SECONDS = 2;
-    /** 酱油 */
-    public static final int SOY_SAUCE_SECONDS = 2;
-    /** 醋 */
-    public static final int VINEGAR_SECONDS = 2;
-    /** 白醋 */
-    public static final int WHITE_VINEGAR_SECONDS = 2;
-    /** 鱼露 */
-    public static final int FISH_SAUCE_SECONDS = 2;
-    /** 虾酱 */
-    public static final int SHRIMP_PASTE_SECONDS = 2;
-    /** 豆芽 */
-    public static final int BEAN_SPROUTS_SECONDS = 2;
-    /** 酸玉米粒 */
-    public static final int SOUR_CORN_SECONDS = 2;
-    /** 格瓦斯 */
-    public static final int KVASS_SECONDS = 2;
+    public static final int SPICY_PICKLE_SECONDS_PER_LAYER = 1200;
+    /** 咸腊肉：基准 2 天 */
+    public static final int MEAT_SECONDS = 2400;
+    /** 咸鱼：基准 2 天 */
+    public static final int SALTED_FISH_SECONDS = 2400;
+    /** 大酱：基准 5 天（现实一个月压缩到 5 天） */
+    public static final int PASTE_SECONDS = 6000;
+    /** 酱油：基准 5 天 */
+    public static final int SOY_SAUCE_SECONDS = 6000;
+    /** 醋：基准 4 天 */
+    public static final int VINEGAR_SECONDS = 4800;
+    /** 白醋：基准 3 天 */
+    public static final int WHITE_VINEGAR_SECONDS = 3600;
+    /** 鱼露：基准 4 天 */
+    public static final int FISH_SAUCE_SECONDS = 4800;
+    /** 虾酱：基准 4 天 */
+    public static final int SHRIMP_PASTE_SECONDS = 4800;
+    /** 豆芽：半天 */
+    public static final int BEAN_SPROUTS_SECONDS = 600;
+    /** 酸玉米粒：基准 1 天/层 */
+    public static final int SOUR_CORN_SECONDS = 1200;
+    /** 格瓦斯：基准 1 天 */
+    public static final int KVASS_SECONDS = 1200;
+    /** 冻梨：半天（雪地里冻一天就黑透了） */
+    public static final int FROZEN_PEAR_SECONDS = 600;
 
+    // ===== 各温度带的时长倍率 =====
+    // 1.0 = 基准时长；越小越快。
+    // 乳酸菌发酵（泡菜/辣白菜/酸玉米/大酱/酱油/醋/白醋/鱼露/虾酱/格瓦斯）：
+    //   冷带慢一倍、温带基准、暖带快一半、热带再快一倍。
+    // 豆芽要温度但怕烫伤：冷带慢一倍、热带略快。
+    // 咸鱼腊肉不放倍率表（哪都能做、也不用更慢），
+    //   只在热带加 50%（现实里大热天腊肉容易捂坏，咸货更吃工夫）。
+    /** 乳酸菌发酵类（泡菜/辣白菜/酸玉米） */
+    private static final java.util.function.Consumer<java.util.EnumMap<VatRecipe.BiomeBand, Float>> FERMENT =
+            m -> { m.put(VatRecipe.BiomeBand.COLD, 2.0F); m.put(VatRecipe.BiomeBand.WARM, 0.5F); m.put(VatRecipe.BiomeBand.HOT, 0.25F); };
+    /** 酱酵类（大酱/酱油/醋/白醋/鱼露/虾酱）：热带不减半那么多，防止过快 */
+    private static final java.util.function.Consumer<java.util.EnumMap<VatRecipe.BiomeBand, Float>> BREW =
+            m -> { m.put(VatRecipe.BiomeBand.COLD, 1.5F); m.put(VatRecipe.BiomeBand.WARM, 0.5F); m.put(VatRecipe.BiomeBand.HOT, 0.5F); };
+    /** 豆芽：冷带慢一倍、暖带基准、热带稍快 */
+    private static final java.util.function.Consumer<java.util.EnumMap<VatRecipe.BiomeBand, Float>> SPROUT =
+            m -> { m.put(VatRecipe.BiomeBand.COLD, 2.0F); m.put(VatRecipe.BiomeBand.HOT, 0.75F); };
+    /** 格瓦斯：冷带慢一半、暖热带稍快 */
+    private static final java.util.function.Consumer<java.util.EnumMap<VatRecipe.BiomeBand, Float>> YEAST =
+            m -> { m.put(VatRecipe.BiomeBand.COLD, 1.5F); m.put(VatRecipe.BiomeBand.WARM, 0.75F); m.put(VatRecipe.BiomeBand.HOT, 0.75F); };
+    /** 咸货在热带更费劲 */
+    private static final java.util.function.Consumer<java.util.EnumMap<VatRecipe.BiomeBand, Float>> SALTED =
+            m -> { m.put(VatRecipe.BiomeBand.HOT, 1.5F); };
     /** 一秒钟多少游戏刻 */
     public static final int TICKS_PER_SECOND = 20;
 
@@ -209,7 +247,20 @@ public final class VatRecipes {
             ResourceLocation.fromNamespaceAndPath("c", "foods/raw_fish"));
 
     public static boolean isRawFish(ItemStack stack) {
-        return stack.is(RAW_FISH);
+        // 咸鱼只用整条的鱼：农夫乐事的生鳕鱼片 / 生鲑鱼片是切好的食材，不收
+        return stack.is(RAW_FISH)
+                && !stack.is(FarmersDelightItems.COD_SLICE)
+                && !stack.is(FarmersDelightItems.SALMON_SLICE);
+    }
+
+    /** 农夫乐事的两种生鱼片（腌咸鱼不收，免得切好的鱼片拿去腌又变回整条） */
+    private static final class FarmersDelightItems {
+        private static final Item COD_SLICE = item("farmersdelight", "cod_slice");
+        private static final Item SALMON_SLICE = item("farmersdelight", "salmon_slice");
+
+        private static Item item(String namespace, String path) {
+            return BuiltInRegistries.ITEM.get(ResourceLocation.fromNamespaceAndPath(namespace, path));
+        }
     }
 
     /** 大酱 / 酱油酿好后留在缸里的酱渣 */
@@ -291,7 +342,7 @@ public final class VatRecipes {
                 .priority(10).seal(press)
                 .water(1, 3, VatRecipe.LiquidAfter.KEEP)
                 .waterBecomesSourWater()
-                .seconds(PICKLE_SECONDS_PER_LAYER).perLayerSeconds()
+                .seconds(PICKLE_SECONDS_PER_LAYER).perLayerSeconds().biomeSeconds(FERMENT)
                 .slot(VatRecipe.Slot.keep(VatRecipes::isPickleIngredient,
                         VatRecipe.BoundsRule.minWithPerLayerMax(1, VEGETABLES_PER_WATER),
                         pickleConverter()))
@@ -304,7 +355,7 @@ public final class VatRecipes {
                 .priority(20).seal(press)
                 .water(1, 3, VatRecipe.LiquidAfter.KEEP)
                 .waterBecomesSourWater()
-                .seconds(SPICY_PICKLE_SECONDS_PER_LAYER).perLayerSeconds()
+                .seconds(SPICY_PICKLE_SECONDS_PER_LAYER).perLayerSeconds().biomeSeconds(FERMENT)
                 .slot(VatRecipe.Slot.keep(VatRecipes::isPickleIngredient,
                         VatRecipe.BoundsRule.minWithPerLayerMax(1, VEGETABLES_PER_WATER),
                         spicyPickleConverter()))
@@ -322,7 +373,7 @@ public final class VatRecipes {
         list.add(VatRecipe.of(Kind.MEAT, "salted_pork")
                 .priority(10).seal(press)
                 .dry()
-                .seconds(MEAT_SECONDS)
+                .seconds(MEAT_SECONDS).biomeSeconds(SALTED)
                 .slot(VatRecipe.Slot.keep(of(meatInput()),
                         VatRecipe.BoundsRule.between(1, MAX_MEATS), VatRecipe.Converter.to(meatResult())))
                 // 第 0 格（肉）几块，盐就要几份 —— 按槽位号引用，JEI 那边也算得出来
@@ -334,7 +385,7 @@ public final class VatRecipes {
         list.add(VatRecipe.of(Kind.SALTED_FISH, "salted_fish")
                 .priority(10).seal(press)
                 .dry()
-                .seconds(SALTED_FISH_SECONDS)
+                .seconds(SALTED_FISH_SECONDS).biomeSeconds(SALTED)
                 .slot(VatRecipe.Slot.keep(VatRecipes::isRawFish,
                         VatRecipe.BoundsRule.between(1, MAX_SALTED_FISH),
                         VatRecipe.Converter.to(saltedFishResult())))
@@ -348,7 +399,7 @@ public final class VatRecipes {
                 .priority(10).seal(carpet)
                 .water(3, 3, VatRecipe.LiquidAfter.CLEAR)
                 .product(VatRecipe.Fluid.PASTE, PRODUCT_CAPACITY_MB, false)
-                .seconds(PASTE_SECONDS)
+                .seconds(PASTE_SECONDS).biomeSeconds(BREW)
                 .slot(VatRecipe.Slot.convert(of(ModItems.SOY_PASTE_CHUNK.get()),
                         VatRecipe.BoundsRule.exact(PASTE_CHUNKS), residue()))
                 .slot(VatRecipe.Slot.consume(salt(), VatRecipe.BoundsRule.exact(PASTE_SALT))
@@ -360,7 +411,7 @@ public final class VatRecipes {
                 .priority(30).seal(carpet)
                 .water(3, 3, VatRecipe.LiquidAfter.CLEAR)
                 .product(VatRecipe.Fluid.SOY_SAUCE, PRODUCT_CAPACITY_MB, false)
-                .seconds(SOY_SAUCE_SECONDS)
+                .seconds(SOY_SAUCE_SECONDS).biomeSeconds(BREW)
                 .slot(VatRecipe.Slot.convert(of(ModItems.SOY_PASTE_CHUNK.get()),
                         VatRecipe.BoundsRule.exact(PASTE_CHUNKS), residue()))
                 .slot(VatRecipe.Slot.consume(salt(), VatRecipe.BoundsRule.exact(PASTE_SALT))
@@ -374,7 +425,7 @@ public final class VatRecipes {
                 .priority(20).seal(cloth)
                 .water(1, 3, VatRecipe.LiquidAfter.CLEAR)
                 .product(VatRecipe.Fluid.VINEGAR, PRODUCT_CAPACITY_MB, false)
-                .seconds(VINEGAR_SECONDS)
+                .seconds(VINEGAR_SECONDS).biomeSeconds(BREW)
                 .slot(VatRecipe.Slot.consume(of(residue()), VatRecipe.BoundsRule.exact(RESIDUE_COUNT)))
                 .slot(VatRecipe.Slot.consume(VatRecipes::isVinegarGrain,
                         VatRecipe.BoundsRule.exact(VINEGAR_GRAIN_COUNT)).seasoning())
@@ -386,7 +437,7 @@ public final class VatRecipes {
                 .dry()
                 .sourWater(SOUR_WATER_MB, VatRecipe.LiquidAfter.DRAIN_REQUIRED)
                 .product(VatRecipe.Fluid.WHITE_VINEGAR, PRODUCT_CAPACITY_MB, false)
-                .seconds(WHITE_VINEGAR_SECONDS)
+                .seconds(WHITE_VINEGAR_SECONDS).biomeSeconds(BREW)
                 .slot(VatRecipe.Slot.consume(VatRecipes::isVinegarGrain,
                         VatRecipe.BoundsRule.exact(VINEGAR_GRAIN_COUNT)).seasoning())
                 .build());
@@ -396,7 +447,7 @@ public final class VatRecipes {
                 .priority(40).seal(press)
                 .dry()
                 .product(VatRecipe.Fluid.FISH_SAUCE, FISH_SAUCE_SERVINGS * SERVING_MB, false)
-                .seconds(FISH_SAUCE_SECONDS)
+                .seconds(FISH_SAUCE_SECONDS).biomeSeconds(BREW)
                 .slot(VatRecipe.Slot.consume(VatRecipes::isRawFish,
                         VatRecipe.BoundsRule.exact(FISH_SAUCE_FISH)))
                 .slot(VatRecipe.Slot.consume(salt(), VatRecipe.BoundsRule.exact(FISH_SAUCE_SALT))
@@ -408,7 +459,7 @@ public final class VatRecipes {
                 .priority(40).seal(press)
                 .dry()
                 .product(VatRecipe.Fluid.SHRIMP_PASTE, SHRIMP_PASTE_SERVINGS * SERVING_MB, false)
-                .seconds(SHRIMP_PASTE_SECONDS)
+                .seconds(SHRIMP_PASTE_SECONDS).biomeSeconds(BREW)
                 .slot(VatRecipe.Slot.consume(of(ModItems.SHRIMP.get()),
                         VatRecipe.BoundsRule.exact(SHRIMP_PASTE_SHRIMP)))
                 .slot(VatRecipe.Slot.consume(salt(), VatRecipe.BoundsRule.exact(SHRIMP_PASTE_SALT))
@@ -419,7 +470,7 @@ public final class VatRecipes {
         list.add(VatRecipe.of(Kind.BEAN_SPROUTS, "bean_sprouts")
                 .priority(20).seal(cloth)
                 .water(1, 1, VatRecipe.LiquidAfter.CLEAR)
-                .seconds(BEAN_SPROUTS_SECONDS)
+                .seconds(BEAN_SPROUTS_SECONDS).biomeSeconds(SPROUT)
                 .slot(VatRecipe.Slot.convert(of(ModItems.SOYBEAN.get()),
                         VatRecipe.BoundsRule.between(1, SPROUT_SOYBEAN_MAX), beanSprouts()))
                 .build());
@@ -428,7 +479,7 @@ public final class VatRecipes {
         list.add(VatRecipe.of(Kind.SOUR_CORN, "sour_corn")
                 .priority(20).seal(cloth)
                 .water(1, 3, VatRecipe.LiquidAfter.CLEAR)
-                .seconds(SOUR_CORN_SECONDS)
+                .seconds(SOUR_CORN_SECONDS).biomeSeconds(FERMENT)
                 .slot(VatRecipe.Slot.convert(of(cornKernels()),
                         VatRecipe.BoundsRule.perLayerExact(SOUR_CORN_PER_WATER), sourCornKernels()))
                 .build());
@@ -438,8 +489,21 @@ public final class VatRecipes {
                 .priority(20).seal(cloth)
                 .water(KVASS_WATER_LEVEL, KVASS_WATER_LEVEL, VatRecipe.LiquidAfter.CLEAR)
                 .product(VatRecipe.Fluid.KVASS, KVASS_SERVINGS * SERVING_MB, false)
-                .seconds(KVASS_SECONDS)
+                .seconds(KVASS_SECONDS).biomeSeconds(YEAST)
                 .slot(VatRecipe.Slot.consume(of(kvassBread()), VatRecipe.BoundsRule.exact(KVASS_BREAD)))
+                .build());
+
+        // ----- 冻梨：一缸梨 + 缸顶压一块雪块 + 寒冷群系 -----
+        // 借用「压缸石」这个槽位放雪块：seal=PRESS 表示"顶上要压东西"，
+        // requiredSealItem 把"压什么"收窄到雪块（雪球和雪片都不行）。
+        list.add(VatRecipe.of(Kind.FROZEN_PEAR, "frozen_pear")
+                .priority(10).seal(press)
+                .requiresSnowyBiome()
+                .requiredSealItem(stack -> stack.is(Items.SNOW_BLOCK))
+                .dry()
+                .seconds(FROZEN_PEAR_SECONDS)
+                .slot(VatRecipe.Slot.convert(of(pearInput()),
+                        VatRecipe.BoundsRule.between(1, 6), ModItems.FROZEN_PEAR.get()))
                 .build());
 
         list.sort((a, b) -> Integer.compare(b.priority(), a.priority()));

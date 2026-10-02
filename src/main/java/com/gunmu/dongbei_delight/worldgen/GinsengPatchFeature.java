@@ -87,13 +87,13 @@ public class GinsengPatchFeature extends Feature<NoneFeatureConfiguration>
             {
                 continue;
             }
-            if (!here.is(Blocks.SNOW) && !level.getBiome(plantPos).value().shouldSnow(level, plantPos))
+            if (!here.is(Blocks.SNOW))
             {
                 continue;
             }
             BlockState ginseng = ModBlocks.GINSENG_CROP.get().defaultBlockState()
                     .setValue(GinsengCropBlock.AGE, GinsengCropBlock.MAX_AGE)
-                    .setValue(GinsengCropBlock.SNOWY, Boolean.TRUE);
+                    .setValue(GinsengCropBlock.SNOWY, GinsengCropBlock.isSnowyAt(level, plantPos));
             if (!ginseng.canSurvive(level, plantPos))
             {
                 continue;
