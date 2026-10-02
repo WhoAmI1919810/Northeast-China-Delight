@@ -5,7 +5,7 @@
     临时素材/relish_savanna.nbt   热带草原副食店
 
 输出：
-    data/dongbei_delight/structure/village/relish_<biome>.nbt
+    data/northeast_china_delight/structure/village/relish_<biome>.nbt
         plains / savanna —— 直接复用玩家那两张（补上村庄要用的 jigsaw 接口）
         desert / snowy / taiga —— 按平原版换材质生成
 
@@ -21,9 +21,9 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 import nbt_io
 
-ROOT = r"H:\IdeaProjects\dongbei_delight1.21.1"
+ROOT = r"H:\IdeaProjects\northeast_china_delight1.21.1"
 SRC = os.path.join(ROOT, "临时素材")
-OUT = os.path.join(ROOT, "src", "main", "resources", "data", "dongbei_delight",
+OUT = os.path.join(ROOT, "src", "main", "resources", "data", "northeast_china_delight",
                    "structure", "village")
 
 # 平原版用到的材质 → 各生物群系怎么换
@@ -113,17 +113,17 @@ NO_PROPS = {
 GOODS = {
     # 沙漠：耐旱的辣椒 + 花生，箱装 + 袋装各一
     "desert": {
-        "dongbei_delight:napa_cabbage_crate": "dongbei_delight:red_chili_crate",
-        "dongbei_delight:sweet_potato_crate": "dongbei_delight:peanut_sack",
+        "northeast_china_delight:napa_cabbage_crate": "northeast_china_delight:red_chili_crate",
+        "northeast_china_delight:sweet_potato_crate": "northeast_china_delight:peanut_sack",
     },
     # 雪原：冬天窖里的青萝卜 + 荞麦
     "snowy": {
-        "dongbei_delight:napa_cabbage_crate": "dongbei_delight:green_radish_crate",
-        "dongbei_delight:sweet_potato_crate": "dongbei_delight:buckwheat_sack",
+        "northeast_china_delight:napa_cabbage_crate": "northeast_china_delight:green_radish_crate",
+        "northeast_china_delight:sweet_potato_crate": "northeast_china_delight:buckwheat_sack",
     },
     # 针叶林：大白菜 + 林子里采的榛蘑
     "taiga": {
-        "dongbei_delight:sweet_potato_crate": "dongbei_delight:hazel_mushroom_sack",
+        "northeast_china_delight:sweet_potato_crate": "northeast_china_delight:hazel_mushroom_sack",
     },
 }
 

@@ -14,7 +14,7 @@
     用法： pwsh -File tools/generate_animal_oil_assets.ps1
 #>
 param(
-    [string]$AssetsRoot = (Join-Path $PSScriptRoot '..\src\main\resources\assets\dongbei_delight')
+    [string]$AssetsRoot = (Join-Path $PSScriptRoot '..\src\main\resources\assets\northeast_china_delight')
 )
 
 Add-Type -AssemblyName System.Drawing
@@ -101,7 +101,7 @@ New-OilBlockTexture -Path (Join-Path $textureDir 'animal_oil_block_bottom.png') 
     -Base '#E4D294' -Light '#F2E7BC' -Dark '#BFA85E' -Seed 20261013
 
 # 方块状态：单一方块，只有一种形态
-([ordered]@{ variants = [ordered]@{ '' = [ordered]@{ model = 'dongbei_delight:block/animal_oil_block' } } }) |
+([ordered]@{ variants = [ordered]@{ '' = [ordered]@{ model = 'northeast_china_delight:block/animal_oil_block' } } }) |
     ConvertTo-Json -Depth 6 | Set-Content -Path (Join-Path $blockStateDir 'animal_oil_block.json') -Encoding utf8
 
 # 方块模型：外圈 16³ + 内圈 14³ 两层壳（照抄原版蜂蜜块的做法）
@@ -109,10 +109,10 @@ $model = [ordered]@{
     parent      = 'block/block'
     render_type = 'minecraft:translucent'
     textures    = [ordered]@{
-        particle = 'dongbei_delight:block/animal_oil_block_top'
-        down     = 'dongbei_delight:block/animal_oil_block_bottom'
-        up       = 'dongbei_delight:block/animal_oil_block_top'
-        side     = 'dongbei_delight:block/animal_oil_block_side'
+        particle = 'northeast_china_delight:block/animal_oil_block_top'
+        down     = 'northeast_china_delight:block/animal_oil_block_bottom'
+        up       = 'northeast_china_delight:block/animal_oil_block_top'
+        side     = 'northeast_china_delight:block/animal_oil_block_side'
     }
     elements    = @(
         [ordered]@{
@@ -144,13 +144,13 @@ $model = [ordered]@{
 $model | ConvertTo-Json -Depth 12 | Set-Content -Path (Join-Path $blockModelDir 'animal_oil_block.json') -Encoding utf8
 
 # 方块物品：直接继承方块模型
-([ordered]@{ parent = 'dongbei_delight:block/animal_oil_block' }) |
+([ordered]@{ parent = 'northeast_china_delight:block/animal_oil_block' }) |
     ConvertTo-Json -Depth 4 | Set-Content -Path (Join-Path $AssetsRoot 'models\item\animal_oil_block.json') -Encoding utf8
 
 # 流体方块（管道里的动物油倒出来会变成这个方块）：状态 + 极简模型，和植物油那套一致
-([ordered]@{ variants = [ordered]@{ '' = [ordered]@{ model = 'dongbei_delight:block/animal_oil' } } }) |
+([ordered]@{ variants = [ordered]@{ '' = [ordered]@{ model = 'northeast_china_delight:block/animal_oil' } } }) |
     ConvertTo-Json -Depth 6 | Set-Content -Path (Join-Path $blockStateDir 'animal_oil.json') -Encoding utf8
-([ordered]@{ textures = [ordered]@{ particle = 'dongbei_delight:block/animal_oil_still' } }) |
+([ordered]@{ textures = [ordered]@{ particle = 'northeast_china_delight:block/animal_oil_still' } }) |
     ConvertTo-Json -Depth 6 | Set-Content -Path (Join-Path $blockModelDir 'animal_oil.json') -Encoding utf8
 
 Write-Host '已生成动物油的流体贴图、动物油块贴图与模型' -ForegroundColor Green

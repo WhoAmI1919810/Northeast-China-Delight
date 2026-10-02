@@ -9,12 +9,12 @@
     用法： pwsh -File tools\generate_pot_food_textures.ps1
 #>
 param(
-    [string]$Root = 'H:\IdeaProjects\dongbei_delight1.21.1'
+    [string]$Root = 'H:\IdeaProjects\northeast_china_delight1.21.1'
 )
 
 $ErrorActionPreference = 'Stop'
 Add-Type -AssemblyName System.Drawing.Common
-$outDir = Join-Path $Root 'src\main\resources\assets\dongbei_delight\textures\block'
+$outDir = Join-Path $Root 'src\main\resources\assets\northeast_china_delight\textures\block'
 
 function C([string]$hex, [int]$a = 255) {
     $c = [System.Drawing.ColorTranslator]::FromHtml($hex)

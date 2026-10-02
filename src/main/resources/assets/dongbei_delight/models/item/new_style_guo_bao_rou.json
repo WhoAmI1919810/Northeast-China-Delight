@@ -1,6 +1,0 @@
-{
-  "parent": "minecraft:item/generated",
-  "textures": {
-    "layer0": "dongbei_delight:item/new_style_guo_bao_rou"
-  }
-}

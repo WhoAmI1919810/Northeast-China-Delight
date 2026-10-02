@@ -1,6 +1,0 @@
-{
-  "parent": "minecraft:item/generated",
-  "textures": {
-    "layer0": "dongbei_delight:item/suan_cai_hai_xian_guo_bowl"
-  }
-}

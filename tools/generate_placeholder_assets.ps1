@@ -12,7 +12,7 @@
     否则会把正式贴图覆盖回占位图。
 #>
 param(
-    [string]$AssetsRoot = (Join-Path $PSScriptRoot '..\src\main\resources\assets\dongbei_delight'),
+    [string]$AssetsRoot = (Join-Path $PSScriptRoot '..\src\main\resources\assets\northeast_china_delight'),
     [string[]]$Only = @()
 )
 
@@ -366,7 +366,7 @@ foreach ($id in $ids) {
     } else {
         $model = [ordered]@{
             parent   = 'item/generated'
-            textures = [ordered]@{ layer0 = "dongbei_delight:item/$id" }
+            textures = [ordered]@{ layer0 = "northeast_china_delight:item/$id" }
         }
     }
     $model | ConvertTo-Json -Depth 5 | Set-Content -Path (Join-Path $modelDir "$id.json") -Encoding utf8

@@ -12,13 +12,13 @@
     用法： pwsh -File tools\draw_cucumber_fruit.ps1
 #>
 param(
-    [string]$Root = 'H:\IdeaProjects\dongbei_delight1.21.1'
+    [string]$Root = 'H:\IdeaProjects\northeast_china_delight1.21.1'
 )
 
 $ErrorActionPreference = 'Stop'
 Add-Type -AssemblyName System.Drawing.Common
 
-$texDir = Join-Path $Root 'src\main\resources\assets\dongbei_delight\textures\block'
+$texDir = Join-Path $Root 'src\main\resources\assets\northeast_china_delight\textures\block'
 
 function Col([string]$hex) { [System.Drawing.ColorTranslator]::FromHtml($hex) }
 

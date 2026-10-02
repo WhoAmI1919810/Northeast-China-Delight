@@ -18,8 +18,8 @@
     用法： pwsh -File tools\generate_feast_blocks.ps1
 #>
 param(
-    [string]$AssetsRoot = (Join-Path $PSScriptRoot '..\src\main\resources\assets\dongbei_delight'),
-    [string]$DataRoot = (Join-Path $PSScriptRoot '..\src\main\resources\data\dongbei_delight')
+    [string]$AssetsRoot = (Join-Path $PSScriptRoot '..\src\main\resources\assets\northeast_china_delight'),
+    [string]$DataRoot = (Join-Path $PSScriptRoot '..\src\main\resources\data\northeast_china_delight')
 )
 
 $blockStateDir = Join-Path $AssetsRoot 'blockstates'
@@ -69,11 +69,11 @@ function New-FeastBlockAssets {
     }
 
     $textures = [ordered]@{
-        particle    = "dongbei_delight:item/$Id"
-        food_top    = "dongbei_delight:item/$Id"
-        food_side   = "dongbei_delight:item/$Id"
-        basin       = 'dongbei_delight:item/large_basin'
-        basin_inner = 'dongbei_delight:item/large_basin'
+        particle    = "northeast_china_delight:item/$Id"
+        food_top    = "northeast_china_delight:item/$Id"
+        food_side   = "northeast_china_delight:item/$Id"
+        basin       = 'northeast_china_delight:item/large_basin'
+        basin_inner = 'northeast_china_delight:item/large_basin'
     }
 
     # 5 档份数：4 = 堆得冒尖，越取越少，0 = 只剩空盆
@@ -108,8 +108,8 @@ function New-FeastBlockAssets {
         parent      = 'block/block'
         render_type = 'minecraft:cutout'
         textures    = [ordered]@{
-            particle = 'dongbei_delight:item/large_basin'
-            basin    = 'dongbei_delight:item/large_basin'
+            particle = 'northeast_china_delight:item/large_basin'
+            basin    = 'northeast_china_delight:item/large_basin'
         }
         elements    = @($basin)
     }
@@ -118,7 +118,7 @@ function New-FeastBlockAssets {
     $variants = [ordered]@{}
     foreach ($facing in @(@{ name = 'north'; y = 0 }, @{ name = 'east'; y = 90 }, @{ name = 'south'; y = 180 }, @{ name = 'west'; y = 270 })) {
         for ($servings = 0; $servings -le 4; $servings++) {
-            $model = "dongbei_delight:block/${blockId}_servings$servings"
+            $model = "northeast_china_delight:block/${blockId}_servings$servings"
             $variant = [ordered]@{ model = $model }
             if ($facing.y -ne 0) { $variant['y'] = $facing.y }
             $variants["facing=$($facing.name),servings=$servings"] = $variant
@@ -128,7 +128,7 @@ function New-FeastBlockAssets {
 
     $itemModel = [ordered]@{
         parent   = 'item/generated'
-        textures = [ordered]@{ layer0 = "dongbei_delight:item/$Id" }
+        textures = [ordered]@{ layer0 = "northeast_china_delight:item/$Id" }
     }
     $itemModel | ConvertTo-Json -Depth 5 | Set-Content -Path (Join-Path $itemModelDir "${blockId}.json") -Encoding utf8
 
@@ -138,25 +138,25 @@ function New-FeastBlockAssets {
             rolls      = 1.0
             conditions = @([ordered]@{
                 condition  = 'minecraft:block_state_property'
-                block      = "dongbei_delight:$blockId"
+                block      = "northeast_china_delight:$blockId"
                 properties = [ordered]@{ servings = "$servings" }
             })
-            entries    = @([ordered]@{ type = 'minecraft:item'; name = "dongbei_delight:$Id" })
+            entries    = @([ordered]@{ type = 'minecraft:item'; name = "northeast_china_delight:$Id" })
         }
     }
     $pools += [ordered]@{
         rolls      = 1.0
         conditions = @([ordered]@{
             condition  = 'minecraft:block_state_property'
-            block      = "dongbei_delight:$blockId"
+            block      = "northeast_china_delight:$blockId"
             properties = [ordered]@{ servings = '0' }
         })
-        entries    = @([ordered]@{ type = 'minecraft:item'; name = 'dongbei_delight:large_basin' })
+        entries    = @([ordered]@{ type = 'minecraft:item'; name = 'northeast_china_delight:large_basin' })
     }
     $loot = [ordered]@{
         type            = 'minecraft:block'
         pools           = $pools
-        random_sequence = "dongbei_delight:blocks/$blockId"
+        random_sequence = "northeast_china_delight:blocks/$blockId"
     }
     $loot | ConvertTo-Json -Depth 12 | Set-Content -Path (Join-Path $lootDir "$blockId.json") -Encoding utf8
 }

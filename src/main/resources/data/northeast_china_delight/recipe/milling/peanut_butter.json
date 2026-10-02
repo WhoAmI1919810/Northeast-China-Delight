@@ -1,0 +1,13 @@
+{
+  "type": "create:milling",
+  "ingredients": [
+    {
+      "item": "northeast_china_delight:roasted_peanuts"
+    }
+  ],
+  "results": [
+    {
+      "id": "northeast_china_delight:peanut_butter"
+    }
+  ]
+}

@@ -9,7 +9,7 @@
     用法： pwsh -File tools\preview_vat_shapes.ps1 [-Out vat_shapes.png]
 #>
 param(
-    [string]$Out = 'H:\IdeaProjects\dongbei_delight1.21.1\vat_shapes_preview.png',
+    [string]$Out = 'H:\IdeaProjects\northeast_china_delight1.21.1\vat_shapes_preview.png',
     [int]$Tile = 190,
     [double]$Scale = 9
 )
@@ -17,9 +17,9 @@ param(
 $ErrorActionPreference = 'Stop'
 Add-Type -AssemblyName System.Drawing.Common
 
-$root = 'H:\IdeaProjects\dongbei_delight1.21.1'
-$javaFile = Join-Path $root 'src\main\java\com\gunmu\dongbei_delight\client\VatItemShapes.java'
-$assets = Join-Path $root 'src\main\resources\assets\dongbei_delight'
+$root = 'H:\IdeaProjects\northeast_china_delight1.21.1'
+$javaFile = Join-Path $root 'src\main\java\com\gunmu\northeast_china_delight\client\VatItemShapes.java'
+$assets = Join-Path $root 'src\main\resources\assets\northeast_china_delight'
 $renderer = Join-Path $root 'tools\render_model.ps1'
 # 临时文件一律放 E:\codex\dd_tmp（用户要求：不许往 C 盘写东西）
 $tmpDir = 'E:\codex\dd_tmp\vat_shapes'
@@ -65,7 +65,7 @@ foreach ($part in $parts) {
     $tex = $null
     $mm = [regex]::Match($pre, 'ModItems\.([A-Z0-9_]+)')
     if ($mm.Success) {
-        $tex = 'dongbei_delight:item/' + $mm.Groups[1].Value.ToLower()
+        $tex = 'northeast_china_delight:item/' + $mm.Groups[1].Value.ToLower()
     } else {
         $mm = [regex]::Match($pre, 'Items\.([A-Z0-9_]+)')
         if ($mm.Success) { $tex = 'minecraft:item/' + $mm.Groups[1].Value.ToLower() }

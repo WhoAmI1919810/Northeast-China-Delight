@@ -24,7 +24,7 @@ param(
     [int]$Tile = 340,
     [double]$PanX = 0,
     [double]$PanY = 0,
-    [string]$AssetsRoot = 'H:\IdeaProjects\dongbei_delight1.21.1\src\main\resources\assets',
+    [string]$AssetsRoot = 'H:\IdeaProjects\northeast_china_delight1.21.1\src\main\resources\assets',
     [string]$VanillaJar = 'C:\Users\wcs\.gradle\caches\neoformruntime\artifacts\minecraft_1.21.1_client.jar',
     [string]$Label = ''
 )

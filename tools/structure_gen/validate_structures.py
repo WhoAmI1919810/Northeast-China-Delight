@@ -19,8 +19,8 @@ import nbt_io
 from designs import DESIGNS
 
 DEFAULT_NBT = os.path.join(
-    r"H:\IdeaProjects\dongbei_delight1.21.1",
-    "src", "main", "resources", "data", "dongbei_delight", "structure",
+    r"H:\IdeaProjects\northeast_china_delight1.21.1",
+    "src", "main", "resources", "data", "northeast_china_delight", "structure",
 )
 
 DIRECTIONS = ["north", "south", "east", "west", "up", "down"]
@@ -57,23 +57,23 @@ minecraft:red_wool minecraft:white_wool minecraft:gray_concrete minecraft:white_
 minecraft:birch_planks minecraft:deepslate_tile_stairs minecraft:deepslate_tiles
 minecraft:polished_blackstone_stairs minecraft:polished_blackstone
 farmersdelight:rope_fence farmersdelight:rope_fence_gate farmersdelight:rope
-dongbei_delight:vat
-dongbei_delight:corn_seeds_sack dongbei_delight:soybean_sack dongbei_delight:red_bean_sack
-dongbei_delight:buckwheat_sack dongbei_delight:peanut_sack dongbei_delight:ginseng_sack
-dongbei_delight:hazelnut_sack dongbei_delight:hazel_mushroom_sack dongbei_delight:wood_ear_sack
-dongbei_delight:napa_cabbage_crate dongbei_delight:cucumber_crate dongbei_delight:green_radish_crate
-dongbei_delight:green_onion_crate dongbei_delight:eggplant_crate dongbei_delight:green_pepper_crate
-dongbei_delight:red_chili_crate dongbei_delight:green_beans_crate dongbei_delight:corn_crate
-dongbei_delight:sweet_potato_crate dongbei_delight:sour_cabbage_crate dongbei_delight:spicy_cabbage_crate
-dongbei_delight:pickled_cucumber_crate dongbei_delight:pickled_carrot_crate
-dongbei_delight:pickled_green_radish_crate dongbei_delight:grill_rack
-dongbei_delight:grill_campfire
+northeast_china_delight:vat
+northeast_china_delight:corn_seeds_sack northeast_china_delight:soybean_sack northeast_china_delight:red_bean_sack
+northeast_china_delight:buckwheat_sack northeast_china_delight:peanut_sack northeast_china_delight:ginseng_sack
+northeast_china_delight:hazelnut_sack northeast_china_delight:hazel_mushroom_sack northeast_china_delight:wood_ear_sack
+northeast_china_delight:napa_cabbage_crate northeast_china_delight:cucumber_crate northeast_china_delight:green_radish_crate
+northeast_china_delight:green_onion_crate northeast_china_delight:eggplant_crate northeast_china_delight:green_pepper_crate
+northeast_china_delight:red_chili_crate northeast_china_delight:green_beans_crate northeast_china_delight:corn_crate
+northeast_china_delight:sweet_potato_crate northeast_china_delight:sour_cabbage_crate northeast_china_delight:spicy_cabbage_crate
+northeast_china_delight:pickled_cucumber_crate northeast_china_delight:pickled_carrot_crate
+northeast_china_delight:pickled_green_radish_crate northeast_china_delight:grill_rack
+northeast_china_delight:grill_campfire
 create:millstone
-dongbei_delight:napa_cabbage_crop dongbei_delight:cucumber_crop dongbei_delight:green_radish_crop
-dongbei_delight:green_onion_crop dongbei_delight:eggplant_crop dongbei_delight:green_pepper_crop
-dongbei_delight:red_chili_crop dongbei_delight:green_beans_crop dongbei_delight:corn_crop
-dongbei_delight:corn_stalk dongbei_delight:soybean_crop dongbei_delight:peanut_crop
-dongbei_delight:red_bean_crop dongbei_delight:sweet_potato_crop dongbei_delight:buckwheat_crop
+northeast_china_delight:napa_cabbage_crop northeast_china_delight:cucumber_crop northeast_china_delight:green_radish_crop
+northeast_china_delight:green_onion_crop northeast_china_delight:eggplant_crop northeast_china_delight:green_pepper_crop
+northeast_china_delight:red_chili_crop northeast_china_delight:green_beans_crop northeast_china_delight:corn_crop
+northeast_china_delight:corn_stalk northeast_china_delight:soybean_crop northeast_china_delight:peanut_crop
+northeast_china_delight:red_bean_crop northeast_china_delight:sweet_potato_crop northeast_china_delight:buckwheat_crop
 """.split())
 
 PROP_VALUES = {
@@ -208,9 +208,9 @@ def check(path):
                 pass  # 结构底面之外的耕地由结构自己带，缺了才报
             elif below[0] != "minecraft:farmland":
                 warnings.append("作物下面不是耕地 %s @%s" % (below[0], pos))
-        if name == "dongbei_delight:corn_stalk":
+        if name == "northeast_china_delight:corn_stalk":
             below = cells.get((pos[0], pos[1] - 1, pos[2]))
-            if not below or below[0] != "dongbei_delight:corn_crop":
+            if not below or below[0] != "northeast_china_delight:corn_crop":
                 errors.append("玉米上截下面没有玉米下截 @%s" % (pos,))
     # 屋顶坡向：同一 z 上的楼梯 facing 应该一致，且南北坡相反
     by_z = {}

@@ -166,8 +166,8 @@ def corn_crib_yard():
     for z in range(18, 31):
         for x in range(23, 34):
             b.set(x, GROUND, z, B("minecraft:farmland", moisture=7))
-            b.set(x, GROUND + 1, z, B("dongbei_delight:corn_crop", age=7))
-            b.set(x, GROUND + 2, z, B("dongbei_delight:corn_stalk", stage=2))
+            b.set(x, GROUND + 1, z, B("northeast_china_delight:corn_crop", age=7))
+            b.set(x, GROUND + 2, z, B("northeast_china_delight:corn_stalk", stage=2))
     P.zhangzi_fence(b, 22, 17, 35, 31, ON, every=4)
 
     P.corn_crib(b, 3, 17, ON, w=7, d=7, style="wood")

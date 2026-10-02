@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "   ",
+    "ABA",
+    " A "
+  ],
+  "key": {
+    "A": {
+      "item": "create:iron_sheet"
+    },
+    "B": {
+      "item": "minecraft:red_dye"
+    }
+  },
+  "result": {
+    "count": 1,
+    "id": "northeast_china_delight:large_basin"
+  }
+}

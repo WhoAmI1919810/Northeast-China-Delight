@@ -1,0 +1,18 @@
+{
+  "type": "farmersdelight:cooking",
+  "container": {
+    "count": 1,
+    "id": "northeast_china_delight:brass_bowl"
+  },
+  "experience": 0.35,
+  "ingredients": [
+    { "item": "northeast_china_delight:soy_paste" },
+    { "item": "minecraft:water_bucket" },
+    { "item": "northeast_china_delight:tofu" }
+  ],
+  "recipe_book_tab": "meals",
+  "result": {
+    "count": 1,
+    "id": "northeast_china_delight:soy_paste_soup"
+  }
+}

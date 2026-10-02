@@ -1,0 +1,12 @@
+{
+  "type": "farmersdelight:cooking",
+  "container": { "count": 1, "id": "minecraft:bowl" },
+  "experience": 1.0,
+  "ingredients": [
+    { "item": "northeast_china_delight:soy_sauce" },
+    { "item": "northeast_china_delight:pork_hock" },
+    { "item": "farmersdelight:cabbage_leaf" }
+  ],
+  "recipe_book_tab": "meals",
+  "result": { "count": 1, "id": "northeast_china_delight:braised_pork_hock" }
+}

@@ -1,0 +1,14 @@
+{
+  "type": "farmersdelight:cooking",
+  "experience": 0.35,
+  "ingredients": [
+    { "item": "minecraft:glass_bottle" },
+    { "item": "northeast_china_delight:pork_fat" },
+    { "item": "northeast_china_delight:pork_fat" }
+  ],
+  "recipe_book_tab": "misc",
+  "result": {
+    "count": 1,
+    "id": "northeast_china_delight:animal_oil"
+  }
+}

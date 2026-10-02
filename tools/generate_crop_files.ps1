@@ -3,7 +3,7 @@
     为 8 种作物生成：方块状态、模型、占位贴图（4 个生长阶段）、种子贴图与模型，以及掉落表。
 
     贴图是开发期占位用的，正式美术直接覆盖
-    assets/dongbei_delight/textures/block/<作物>_crop_stage<N>.png 即可。
+    assets/northeast_china_delight/textures/block/<作物>_crop_stage<N>.png 即可。
     掉落规则（产量、抢夺加成）也由本脚本生成，调整产量时改下面的 PLACEHOLDER 段。
 
     用法： pwsh -File tools/generate_crop_files.ps1
@@ -13,8 +13,8 @@
     否则会把正式贴图覆盖回占位图。
 #>
 param(
-    [string]$AssetsRoot = (Join-Path $PSScriptRoot '..\src\main\resources\assets\dongbei_delight'),
-    [string]$DataRoot = (Join-Path $PSScriptRoot '..\src\main\resources\data\dongbei_delight'),
+    [string]$AssetsRoot = (Join-Path $PSScriptRoot '..\src\main\resources\assets\northeast_china_delight'),
+    [string]$DataRoot = (Join-Path $PSScriptRoot '..\src\main\resources\data\northeast_china_delight'),
     [string[]]$Only = @(),
     # 种子贴图多数已经交付正式素材，默认**不覆盖**已有的种子贴图；确实要重画时加 -ForceSeeds
     [switch]$ForceSeeds
@@ -314,24 +314,24 @@ function Draw-GreenOnion($g, [int]$stage) {
 #   wholePlant 是否整棵长在地上（大白菜）
 $crops = [ordered]@{
     'soybean' = @{
-        produce = 'dongbei_delight:soybean'; seed = $null
+        produce = 'northeast_china_delight:soybean'; seed = $null
         leaf = '#4E8A32'; fruit = '#E4D5A0'; seedColor = '#D8C88A'
         trellis = $false; wholePlant = $false
     }
     'eggplant' = @{
-        produce = 'dongbei_delight:eggplant'; seed = 'eggplant_seeds'
+        produce = 'northeast_china_delight:eggplant'; seed = 'eggplant_seeds'
         leaf = '#4E8A32'; fruit = '#6A3E9E'; seedColor = '#C9B06A'
         trellis = $false; wholePlant = $false
         stages = 8
     }
     'green_pepper' = @{
-        produce = 'dongbei_delight:green_pepper'; seed = 'green_pepper_seeds'
+        produce = 'northeast_china_delight:green_pepper'; seed = 'green_pepper_seeds'
         leaf = '#3E7A2A'; fruit = '#4E9A3D'; seedColor = '#D8C98A'
         trellis = $false; wholePlant = $false
         stages = 8
     }
     'corn' = @{
-        produce = 'dongbei_delight:corn'; seed = 'corn_seeds'
+        produce = 'northeast_china_delight:corn'; seed = 'corn_seeds'
         leaf = '#6BA83A'; fruit = '#F0C93F'; seedColor = '#E8C860'
         trellis = $false; wholePlant = $false
         # 玉米一次收获 2 个
@@ -339,58 +339,58 @@ $crops = [ordered]@{
         stages = 8
     }
     'green_beans' = @{
-        produce = 'dongbei_delight:green_beans'; seed = 'green_beans_seeds'
+        produce = 'northeast_china_delight:green_beans'; seed = 'green_beans_seeds'
         leaf = '#4E8A32'; fruit = '#5F9E3A'; seedColor = '#C9B06A'
         trellis = $false; wholePlant = $false
     }
     'buckwheat' = @{
-        produce = 'dongbei_delight:buckwheat'; seed = $null
+        produce = 'northeast_china_delight:buckwheat'; seed = $null
         leaf = '#5F9E3A'; fruit = '#9A6B3A'; seedColor = '#8A6B3A'
         trellis = $false; wholePlant = $false
         stages = 8
     }
     'napa_cabbage' = @{
-        produce = 'dongbei_delight:napa_cabbage'; seed = 'napa_cabbage_seeds'
+        produce = 'northeast_china_delight:napa_cabbage'; seed = 'napa_cabbage_seeds'
         leaf = '#7A8C55'; fruit = '#DCE8C0'; seedColor = '#6A5A3A'
         trellis = $false; wholePlant = $true
         stages = 8
     }
     'cucumber' = @{
-        produce = 'dongbei_delight:cucumber'; seed = 'cucumber_seeds'
+        produce = 'northeast_china_delight:cucumber'; seed = 'cucumber_seeds'
         leaf = '#3E7A2A'; fruit = '#4F9B3F'; seedColor = '#E8DCAA'
         trellis = $true; wholePlant = $false
         stages = 8
     }
     'sweet_potato' = @{
-        produce = 'dongbei_delight:sweet_potato'; seed = $null
+        produce = 'northeast_china_delight:sweet_potato'; seed = $null
         leaf = '#4E8A32'; fruit = '#B5623C'; seedColor = '#B5623C'
         trellis = $false; wholePlant = $false
     }
     'red_chili' = @{
-        produce = 'dongbei_delight:red_chili'; seed = 'red_chili_seeds'
+        produce = 'northeast_china_delight:red_chili'; seed = 'red_chili_seeds'
         leaf = '#3E7A2A'; fruit = '#C42A1E'; seedColor = '#E8DCAA'
         trellis = $false; wholePlant = $false
         stages = 8
     }
     'peanut' = @{
-        produce = 'dongbei_delight:peanut'; seed = $null
+        produce = 'northeast_china_delight:peanut'; seed = $null
         leaf = '#4E8A32'; fruit = '#C9A05A'; seedColor = '#C9A05A'
         trellis = $false; wholePlant = $false
         stages = 8
     }
     'red_bean' = @{
-        produce = 'dongbei_delight:red_bean'; seed = $null
+        produce = 'northeast_china_delight:red_bean'; seed = $null
         leaf = '#4E8A32'; fruit = '#B5301A'; seedColor = '#B5301A'
         trellis = $false; wholePlant = $false
         stages = 8
     }
     'green_onion' = @{
-        produce = 'dongbei_delight:green_onion'; seed = 'green_onion_seeds'
+        produce = 'northeast_china_delight:green_onion'; seed = 'green_onion_seeds'
         leaf = '#6BA83A'; fruit = '#F2F6E4'; seedColor = '#E8DCAA'
         trellis = $false; wholePlant = $false
     }
     'green_radish' = @{
-        produce = 'dongbei_delight:green_radish'; seed = 'green_radish_seeds'
+        produce = 'northeast_china_delight:green_radish'; seed = 'green_radish_seeds'
         leaf = '#4E8A32'; fruit = '#BFE0A8'; seedColor = '#D8C88A'
         trellis = $false; wholePlant = $false
     }
@@ -418,7 +418,7 @@ foreach ($cropId in $cropIds) {
     $produce = $crop.produce
     $selfSeeding = $null -eq $crop.seed
     # 自身即种子的作物，掉落表里的「种子」就是产物本身
-    $seedDrop = if ($selfSeeding) { $produce } else { "dongbei_delight:$($crop.seed)" }
+    $seedDrop = if ($selfSeeding) { $produce } else { "northeast_china_delight:$($crop.seed)" }
     $blockId = "${cropId}_crop"
     $stages = if ($crop.ContainsKey('stages')) { [int]$crop.stages } else { 4 }
     $stageByAge = Get-StageByAge $stages
@@ -447,7 +447,7 @@ foreach ($cropId in $cropIds) {
         $model = [ordered]@{
             parent      = 'minecraft:block/crop'
             render_type = 'minecraft:cutout'
-            textures    = [ordered]@{ crop = "dongbei_delight:block/${blockId}_stage$stage" }
+            textures    = [ordered]@{ crop = "northeast_china_delight:block/${blockId}_stage$stage" }
         }
         $model | ConvertTo-Json -Depth 5 | Set-Content -Path (Join-Path $blockModelDir "${blockId}_stage$stage.json") -Encoding utf8
     }
@@ -455,7 +455,7 @@ foreach ($cropId in $cropIds) {
     # --- 方块状态 ---
     $variants = [ordered]@{}
     for ($age = 0; $age -lt 8; $age++) {
-        $variants["age=$age"] = [ordered]@{ model = "dongbei_delight:block/${blockId}_stage$($stageByAge[$age])" }
+        $variants["age=$age"] = [ordered]@{ model = "northeast_china_delight:block/${blockId}_stage$($stageByAge[$age])" }
     }
     ([ordered]@{ variants = $variants }) | ConvertTo-Json -Depth 8 | Set-Content -Path (Join-Path $blockStateDir "$blockId.json") -Encoding utf8
 
@@ -475,7 +475,7 @@ foreach ($cropId in $cropIds) {
 
         $seedModel = [ordered]@{
             parent   = 'item/generated'
-            textures = [ordered]@{ layer0 = "dongbei_delight:item/$seedId" }
+            textures = [ordered]@{ layer0 = "northeast_china_delight:item/$seedId" }
         }
         $seedModel | ConvertTo-Json -Depth 5 | Set-Content -Path (Join-Path $itemModelDir "$seedId.json") -Encoding utf8
     }
@@ -484,7 +484,7 @@ foreach ($cropId in $cropIds) {
     # 成熟（age=7）掉产物 + 种子（受抢夺影响），未成熟只掉 1 个种子，与原版小麦一致
     $mature = [ordered]@{
         condition  = 'minecraft:block_state_property'
-        block      = "dongbei_delight:$blockId"
+        block      = "northeast_china_delight:$blockId"
         properties = [ordered]@{ age = '7' }
     }
     # 收获数量：大部分作物 1 个，玉米 2 个
@@ -531,7 +531,7 @@ foreach ($cropId in $cropIds) {
                 )
             }
         )
-        random_sequence = "dongbei_delight:blocks/$blockId"
+        random_sequence = "northeast_china_delight:blocks/$blockId"
     }
     $loot | ConvertTo-Json -Depth 12 | Set-Content -Path (Join-Path $lootDir "$blockId.json") -Encoding utf8
 
@@ -542,7 +542,7 @@ foreach ($cropId in $cropIds) {
             rolls       = 1.0
             conditions  = @($mature)
             entries     = @(
-                [ordered]@{ type = 'minecraft:item'; name = 'dongbei_delight:corn_stalk' }
+                [ordered]@{ type = 'minecraft:item'; name = 'northeast_china_delight:corn_stalk' }
             )
         }
         $loot | ConvertTo-Json -Depth 12 | Set-Content -Path (Join-Path $lootDir "$blockId.json") -Encoding utf8
@@ -570,21 +570,21 @@ $canvas.Bitmap.Dispose()
 $stalkModel = [ordered]@{
     parent      = 'minecraft:block/crop'
     render_type = 'minecraft:cutout'
-    textures    = [ordered]@{ crop = 'dongbei_delight:block/corn_stalk' }
+    textures    = [ordered]@{ crop = 'northeast_china_delight:block/corn_stalk' }
 }
 $stalkModel | ConvertTo-Json -Depth 5 | Set-Content -Path (Join-Path $blockModelDir 'corn_stalk.json') -Encoding utf8
 
 $youngStalkModel = [ordered]@{
     parent      = 'minecraft:block/crop'
     render_type = 'minecraft:cutout'
-    textures    = [ordered]@{ crop = 'dongbei_delight:block/corn_stalk_young' }
+    textures    = [ordered]@{ crop = 'northeast_china_delight:block/corn_stalk_young' }
 }
 $youngStalkModel | ConvertTo-Json -Depth 5 | Set-Content -Path (Join-Path $blockModelDir 'corn_stalk_young.json') -Encoding utf8
 
 # 上半格分「没结穗 / 结穗成熟」两种状态
 ([ordered]@{ variants = [ordered]@{
-    'has_corn=false' = [ordered]@{ model = 'dongbei_delight:block/corn_stalk_young' }
-    'has_corn=true'  = [ordered]@{ model = 'dongbei_delight:block/corn_stalk' }
+    'has_corn=false' = [ordered]@{ model = 'northeast_china_delight:block/corn_stalk_young' }
+    'has_corn=true'  = [ordered]@{ model = 'northeast_china_delight:block/corn_stalk' }
 } }) |
     ConvertTo-Json -Depth 8 | Set-Content -Path (Join-Path $blockStateDir 'corn_stalk.json') -Encoding utf8
 
@@ -593,7 +593,7 @@ $youngStalkModel | ConvertTo-Json -Depth 5 | Set-Content -Path (Join-Path $block
 $stalkLoot = [ordered]@{
     type            = 'minecraft:block'
     pools           = @()
-    random_sequence = 'dongbei_delight:blocks/corn_stalk'
+    random_sequence = 'northeast_china_delight:blocks/corn_stalk'
 }
 $stalkLoot | ConvertTo-Json -Depth 5 | Set-Content -Path (Join-Path $lootDir 'corn_stalk.json') -Encoding utf8
 
@@ -606,7 +606,7 @@ $canvas.Bitmap.Dispose()
 
 $stalkItemModel = [ordered]@{
     parent   = 'item/generated'
-    textures = [ordered]@{ layer0 = 'dongbei_delight:item/corn_stalk' }
+    textures = [ordered]@{ layer0 = 'northeast_china_delight:item/corn_stalk' }
 }
 $stalkItemModel | ConvertTo-Json -Depth 5 | Set-Content -Path (Join-Path $itemModelDir 'corn_stalk.json') -Encoding utf8
 }

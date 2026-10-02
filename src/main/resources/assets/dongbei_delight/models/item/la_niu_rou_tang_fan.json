@@ -1,6 +1,0 @@
-{
-  "parent": "minecraft:item/generated",
-  "textures": {
-    "layer0": "dongbei_delight:item/la_niu_rou_tang_fan"
-  }
-}

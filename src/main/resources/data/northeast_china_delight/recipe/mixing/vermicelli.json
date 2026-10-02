@@ -1,0 +1,30 @@
+{
+  "type": "create:mixing",
+  "ingredients": [
+    {
+      "item": "northeast_china_delight:sweet_potato_starch"
+    },
+    {
+      "item": "northeast_china_delight:sweet_potato_starch"
+    },
+    {
+      "item": "northeast_china_delight:sweet_potato_starch"
+    },
+    {
+      "item": "northeast_china_delight:sweet_potato_starch"
+    },
+    {
+      "item": "northeast_china_delight:salt"
+    },
+    {
+      "type": "neoforge:single",
+      "amount": 1000,
+      "fluid": "minecraft:water"
+    }
+  ],
+  "results": [
+    {
+      "id": "northeast_china_delight:vermicelli"
+    }
+  ]
+}

@@ -1,0 +1,16 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    { "item": "minecraft:bowl" },
+    { "item": "northeast_china_delight:red_sausage" },
+    { "item": "northeast_china_delight:smoked_pork_hock" },
+    { "item": "northeast_china_delight:smoked_pig_liver" },
+    { "item": "northeast_china_delight:braised_pork_bone_sauce" },
+    { "item": "northeast_china_delight:braised_beef_sauce" }
+  ],
+  "result": {
+    "count": 1,
+    "id": "northeast_china_delight:smoked_meat_platter"
+  }
+}

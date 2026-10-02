@@ -1,0 +1,15 @@
+{
+  "type": "farmersdelight:cooking",
+  "experience": 0.35,
+  "ingredients": [
+    { "item": "northeast_china_delight:shrimp" },
+    { "item": "minecraft:porkchop" },
+    { "item": "northeast_china_delight:napa_cabbage" },
+    { "item": "farmersdelight:wheat_dough" }
+  ],
+  "recipe_book_tab": "misc",
+  "result": {
+    "count": 1,
+    "id": "northeast_china_delight:shrimp_pork_dumpling"
+  }
+}

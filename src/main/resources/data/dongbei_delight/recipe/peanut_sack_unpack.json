@@ -1,6 +1,0 @@
-{
-  "type": "minecraft:crafting_shapeless",
-  "category": "misc",
-  "ingredients": [ { "item": "dongbei_delight:peanut_sack" } ],
-  "result": { "count": 9, "id": "dongbei_delight:peanut" }
-}

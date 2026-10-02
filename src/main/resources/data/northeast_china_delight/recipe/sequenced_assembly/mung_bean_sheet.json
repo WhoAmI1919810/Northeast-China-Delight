@@ -1,0 +1,48 @@
+{
+  "type": "create:sequenced_assembly",
+  "ingredient": {
+    "item": "northeast_china_delight:sweet_potato_starch"
+  },
+  "loops": 1,
+  "results": [
+    {
+      "id": "northeast_china_delight:mung_bean_sheet"
+    }
+  ],
+  "sequence": [
+    {
+      "type": "create:filling",
+      "ingredients": [
+        {
+          "item": "northeast_china_delight:sweet_potato_starch"
+        },
+        {
+          "type": "neoforge:single",
+          "amount": 200,
+          "fluid": "minecraft:water"
+        }
+      ],
+      "results": [
+        {
+          "id": "northeast_china_delight:sweet_potato_starch"
+        }
+      ]
+    },
+    {
+      "type": "create:pressing",
+      "ingredients": [
+        {
+          "item": "northeast_china_delight:sweet_potato_starch"
+        }
+      ],
+      "results": [
+        {
+          "id": "northeast_china_delight:sweet_potato_starch"
+        }
+      ]
+    }
+  ],
+  "transitional_item": {
+    "id": "northeast_china_delight:sweet_potato_starch"
+  }
+}

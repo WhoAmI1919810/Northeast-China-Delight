@@ -1,6 +1,0 @@
-{
-  "parent": "minecraft:item/generated",
-  "textures": {
-    "layer0": "dongbei_delight:item/jia_xian_huang_gua_pao_cai"
-  }
-}

@@ -4,7 +4,7 @@
 
     素材来源：临时素材\食物方块.zip（先解压成 <SourceRoot>\方块\箱装\*.png 与 方块\袋装\*.png）
     产出：
-      · 贴图   assets\dongbei_delight\textures\block\<id>_side.png / <id>_top.png 等
+      · 贴图   assets\northeast_china_delight\textures\block\<id>_side.png / <id>_top.png 等
       · 方块状态 / 方块模型 / 物品模型 / 掉落表 / 配方（9→1 与 1→9）
 
     代码侧的注册（ModBlocks.CRATES / SACKS、ModItems 的方块物品与第三个创造模式物品栏）
@@ -20,8 +20,8 @@ param(
 
 $ErrorActionPreference = 'Stop'
 $projectRoot = (Resolve-Path (Join-Path $PSScriptRoot '..')).Path
-$assets = Join-Path $projectRoot 'src\main\resources\assets\dongbei_delight'
-$data = Join-Path $projectRoot 'src\main\resources\data\dongbei_delight'
+$assets = Join-Path $projectRoot 'src\main\resources\assets\northeast_china_delight'
+$data = Join-Path $projectRoot 'src\main\resources\data\northeast_china_delight'
 $texDir = Join-Path $assets 'textures\block'
 $blockStateDir = Join-Path $assets 'blockstates'
 $blockModelDir = Join-Path $assets 'models\block'
@@ -93,7 +93,7 @@ foreach ($c in $crates) {
     Write-Json (Join-Path $blockStateDir "$id.json") @"
 {
   "variants": {
-    "": { "model": "dongbei_delight:block/$id" }
+    "": { "model": "northeast_china_delight:block/$id" }
   }
 }
 "@
@@ -102,16 +102,16 @@ foreach ($c in $crates) {
 {
   "parent": "minecraft:block/cube_bottom_top",
   "textures": {
-    "top": "dongbei_delight:block/${id}_top",
-    "bottom": "dongbei_delight:block/crate_bottom",
-    "side": "dongbei_delight:block/${id}_side"
+    "top": "northeast_china_delight:block/${id}_top",
+    "bottom": "northeast_china_delight:block/crate_bottom",
+    "side": "northeast_china_delight:block/${id}_side"
   }
 }
 "@
 
     Write-Json (Join-Path $itemModelDir "$id.json") @"
 {
-  "parent": "dongbei_delight:block/$id"
+  "parent": "northeast_china_delight:block/$id"
 }
 "@
 
@@ -122,7 +122,7 @@ foreach ($c in $crates) {
     {
       "rolls": 1,
       "bonus_rolls": 0,
-      "entries": [ { "type": "minecraft:item", "name": "dongbei_delight:$id" } ],
+      "entries": [ { "type": "minecraft:item", "name": "northeast_china_delight:$id" } ],
       "conditions": [ { "condition": "minecraft:survives_explosion" } ]
     }
   ]
@@ -134,8 +134,8 @@ foreach ($c in $crates) {
   "type": "minecraft:crafting_shaped",
   "category": "building",
   "pattern": [ "XXX", "XXX", "XXX" ],
-  "key": { "X": { "item": "dongbei_delight:$($c.item)" } },
-  "result": { "count": 1, "id": "dongbei_delight:$id" }
+  "key": { "X": { "item": "northeast_china_delight:$($c.item)" } },
+  "result": { "count": 1, "id": "northeast_china_delight:$id" }
 }
 "@
 
@@ -143,8 +143,8 @@ foreach ($c in $crates) {
 {
   "type": "minecraft:crafting_shapeless",
   "category": "misc",
-  "ingredients": [ { "item": "dongbei_delight:$id" } ],
-  "result": { "count": 9, "id": "dongbei_delight:$($c.item)" }
+  "ingredients": [ { "item": "northeast_china_delight:$id" } ],
+  "result": { "count": 9, "id": "northeast_china_delight:$($c.item)" }
 }
 "@
     $written += 6
@@ -159,7 +159,7 @@ foreach ($s in $sacks) {
     Write-Json (Join-Path $blockStateDir "$id.json") @"
 {
   "variants": {
-    "": { "model": "dongbei_delight:block/$id" }
+    "": { "model": "northeast_china_delight:block/$id" }
   }
 }
 "@
@@ -169,11 +169,11 @@ foreach ($s in $sacks) {
 {
   "parent": "minecraft:block/block",
   "textures": {
-    "particle": "dongbei_delight:block/sack_side",
-    "top": "dongbei_delight:block/${id}_top",
-    "bottom": "dongbei_delight:block/sack_bottom",
-    "side": "dongbei_delight:block/sack_side",
-    "rope": "dongbei_delight:block/sack_side_rope"
+    "particle": "northeast_china_delight:block/sack_side",
+    "top": "northeast_china_delight:block/${id}_top",
+    "bottom": "northeast_china_delight:block/sack_bottom",
+    "side": "northeast_china_delight:block/sack_side",
+    "rope": "northeast_china_delight:block/sack_side_rope"
   },
   "elements": [
     {
@@ -194,7 +194,7 @@ foreach ($s in $sacks) {
 
     Write-Json (Join-Path $itemModelDir "$id.json") @"
 {
-  "parent": "dongbei_delight:block/$id"
+  "parent": "northeast_china_delight:block/$id"
 }
 "@
 
@@ -205,7 +205,7 @@ foreach ($s in $sacks) {
     {
       "rolls": 1,
       "bonus_rolls": 0,
-      "entries": [ { "type": "minecraft:item", "name": "dongbei_delight:$id" } ],
+      "entries": [ { "type": "minecraft:item", "name": "northeast_china_delight:$id" } ],
       "conditions": [ { "condition": "minecraft:survives_explosion" } ]
     }
   ]
@@ -217,8 +217,8 @@ foreach ($s in $sacks) {
   "type": "minecraft:crafting_shaped",
   "category": "building",
   "pattern": [ "XXX", "XXX", "XXX" ],
-  "key": { "X": { "item": "dongbei_delight:$($s.item)" } },
-  "result": { "count": 1, "id": "dongbei_delight:$id" }
+  "key": { "X": { "item": "northeast_china_delight:$($s.item)" } },
+  "result": { "count": 1, "id": "northeast_china_delight:$id" }
 }
 "@
 
@@ -226,8 +226,8 @@ foreach ($s in $sacks) {
 {
   "type": "minecraft:crafting_shapeless",
   "category": "misc",
-  "ingredients": [ { "item": "dongbei_delight:$id" } ],
-  "result": { "count": 9, "id": "dongbei_delight:$($s.item)" }
+  "ingredients": [ { "item": "northeast_china_delight:$id" } ],
+  "result": { "count": 9, "id": "northeast_china_delight:$($s.item)" }
 }
 "@
     $written += 6

@@ -1,0 +1,6 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [ { "item": "northeast_china_delight:sweet_potato_crate" } ],
+  "result": { "count": 9, "id": "northeast_china_delight:sweet_potato" }
+}

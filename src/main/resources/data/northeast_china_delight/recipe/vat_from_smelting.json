@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:smelting",
+  "category": "misc",
+  "cookingtime": 200,
+  "experience": 0.35,
+  "ingredient": {
+    "item": "northeast_china_delight:unfired_vat_blank"
+  },
+  "result": {
+    "count": 1,
+    "id": "northeast_china_delight:vat"
+  }
+}

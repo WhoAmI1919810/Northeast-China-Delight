@@ -1,0 +1,14 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    { "item": "northeast_china_delight:red_chili" },
+    { "item": "northeast_china_delight:red_chili" },
+    { "item": "northeast_china_delight:salt" },
+    { "item": "minecraft:bowl" }
+  ],
+  "result": {
+    "count": 1,
+    "id": "northeast_china_delight:chili_sauce"
+  }
+}

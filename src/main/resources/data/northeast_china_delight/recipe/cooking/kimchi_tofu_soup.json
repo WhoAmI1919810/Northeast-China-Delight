@@ -1,0 +1,21 @@
+{
+  "type": "farmersdelight:cooking",
+  "container": {
+    "count": 1,
+    "id": "northeast_china_delight:brass_bowl"
+  },
+  "experience": 0.35,
+  "ingredients": [
+    { "item": "northeast_china_delight:spicy_cabbage" },
+    { "item": "northeast_china_delight:tofu" },
+    { "item": "northeast_china_delight:bean_sprouts" },
+    { "item": "northeast_china_delight:green_pepper" },
+    { "item": "minecraft:water_bucket" },
+    { "item": "farmersdelight:cooked_rice" }
+  ],
+  "recipe_book_tab": "meals",
+  "result": {
+    "count": 1,
+    "id": "northeast_china_delight:kimchi_tofu_soup"
+  }
+}

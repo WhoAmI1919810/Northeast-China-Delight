@@ -15,8 +15,8 @@ import nbt_io
 from designs import DESIGNS
 
 DEFAULT_OUT = os.path.join(
-    r"H:\IdeaProjects\dongbei_delight1.21.1",
-    "src", "main", "resources", "data", "dongbei_delight", "structure",
+    r"H:\IdeaProjects\northeast_china_delight1.21.1",
+    "src", "main", "resources", "data", "northeast_china_delight", "structure",
 )
 
 

@@ -1,0 +1,44 @@
+{
+  "parent": "minecraft:block/block",
+  "textures": {
+    "particle": "northeast_china_delight:block/sack_side",
+    "top": "northeast_china_delight:block/corn_seeds_sack_top",
+    "bottom": "northeast_china_delight:block/sack_bottom",
+    "side": "northeast_china_delight:block/sack_side",
+    "rope": "northeast_china_delight:block/sack_side_rope"
+  },
+  "elements": [
+    {
+      "from": [
+        0,
+        0,
+        0
+      ],
+      "to": [
+        16,
+        16,
+        16
+      ],
+      "faces": {
+        "up": {
+          "texture": "#top"
+        },
+        "down": {
+          "texture": "#bottom"
+        },
+        "north": {
+          "texture": "#rope"
+        },
+        "south": {
+          "texture": "#side"
+        },
+        "west": {
+          "texture": "#side"
+        },
+        "east": {
+          "texture": "#side"
+        }
+      }
+    }
+  ]
+}

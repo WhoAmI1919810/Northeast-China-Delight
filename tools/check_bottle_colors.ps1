@@ -20,7 +20,7 @@ param(
 $ErrorActionPreference = 'Stop'
 Add-Type -AssemblyName System.IO.Compression.FileSystem
 
-$bottleSrcPath = Join-Path $ProjectRoot 'src\main\java\com\gunmu\dongbei_delight\item\BottleColors.java'
+$bottleSrcPath = Join-Path $ProjectRoot 'src\main\java\com\gunmu\northeast_china_delight\item\BottleColors.java'
 if (-not (Test-Path -LiteralPath $bottleSrcPath)) { throw "找不到 $bottleSrcPath" }
 
 $jarPath = Get-ChildItem -Path (Join-Path $ProjectRoot 'build\moddev\artifacts') -Filter 'neoforge-*-sources.jar' -ErrorAction SilentlyContinue |

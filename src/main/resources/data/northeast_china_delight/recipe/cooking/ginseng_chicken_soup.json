@@ -1,0 +1,20 @@
+{
+  "type": "farmersdelight:cooking",
+  "container": {
+    "count": 1,
+    "id": "northeast_china_delight:brass_bowl"
+  },
+  "experience": 1.0,
+  "ingredients": [
+    { "item": "northeast_china_delight:ginseng" },
+    { "item": "minecraft:chicken" },
+    { "item": "farmersdelight:rice" },
+    { "item": "northeast_china_delight:salt" },
+    { "item": "minecraft:water_bucket" }
+  ],
+  "recipe_book_tab": "meals",
+  "result": {
+    "count": 1,
+    "id": "northeast_china_delight:ginseng_chicken_soup"
+  }
+}

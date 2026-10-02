@@ -1,0 +1,96 @@
+{
+  "type": "minecraft:block",
+  "pools": [
+    {
+      "rolls": 1.0,
+      "conditions": [
+        {
+          "condition": "minecraft:block_state_property",
+          "block": "northeast_china_delight:slaughter_feast_pot",
+          "properties": {
+            "servings": "1"
+          }
+        }
+      ],
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "northeast_china_delight:slaughter_feast"
+        }
+      ]
+    },
+    {
+      "rolls": 1.0,
+      "conditions": [
+        {
+          "condition": "minecraft:block_state_property",
+          "block": "northeast_china_delight:slaughter_feast_pot",
+          "properties": {
+            "servings": "2"
+          }
+        }
+      ],
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "northeast_china_delight:slaughter_feast"
+        }
+      ]
+    },
+    {
+      "rolls": 1.0,
+      "conditions": [
+        {
+          "condition": "minecraft:block_state_property",
+          "block": "northeast_china_delight:slaughter_feast_pot",
+          "properties": {
+            "servings": "3"
+          }
+        }
+      ],
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "northeast_china_delight:slaughter_feast"
+        }
+      ]
+    },
+    {
+      "rolls": 1.0,
+      "conditions": [
+        {
+          "condition": "minecraft:block_state_property",
+          "block": "northeast_china_delight:slaughter_feast_pot",
+          "properties": {
+            "servings": "4"
+          }
+        }
+      ],
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "northeast_china_delight:slaughter_feast"
+        }
+      ]
+    },
+    {
+      "rolls": 1.0,
+      "conditions": [
+        {
+          "condition": "minecraft:block_state_property",
+          "block": "northeast_china_delight:slaughter_feast_pot",
+          "properties": {
+            "servings": "0"
+          }
+        }
+      ],
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "northeast_china_delight:large_basin"
+        }
+      ]
+    }
+  ],
+  "random_sequence": "northeast_china_delight:blocks/sha_zhu_cai_pot"
+}

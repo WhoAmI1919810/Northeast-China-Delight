@@ -1,7 +1,7 @@
 """把院子里的每种「建筑单体」单独生成 NBT，并渲染一张效果图。
 
 产物：
-  NBT  -> src/main/resources/data/dongbei_delight/structure/parts/<id>.nbt
+  NBT  -> src/main/resources/data/northeast_china_delight/structure/parts/<id>.nbt
           （可以直接在游戏里用 结构方块 / /place template 摆出来）
   效果图 -> docs/结构渲染图/建筑单体/<中文名>.png
 
@@ -21,8 +21,8 @@ from kit import Build
 from mcblocks import B
 from render_structure import render
 
-ROOT = r"H:\IdeaProjects\dongbei_delight1.21.1"
-NBT_OUT = os.path.join(ROOT, "src", "main", "resources", "data", "dongbei_delight", "structure", "parts")
+ROOT = r"H:\IdeaProjects\northeast_china_delight1.21.1"
+NBT_OUT = os.path.join(ROOT, "src", "main", "resources", "data", "northeast_china_delight", "structure", "parts")
 IMG_OUT = os.path.join(ROOT, "docs", "结构渲染图", "建筑单体")
 
 X, Z, Y = 2, 2, 1

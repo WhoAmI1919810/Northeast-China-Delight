@@ -335,7 +335,7 @@
     {
       "element": {
         "element_type": "minecraft:legacy_single_pool_element",
-        "location": "dongbei_delight:village/relish_snowy",
+        "location": "northeast_china_delight:village/relish_snowy",
         "processors": {
           "processors": []
         },

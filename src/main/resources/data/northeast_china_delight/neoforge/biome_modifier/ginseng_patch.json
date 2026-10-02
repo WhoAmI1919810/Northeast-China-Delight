@@ -1,0 +1,6 @@
+{
+  "type": "neoforge:add_features",
+  "biomes": "#northeast_china_delight:has_ginseng",
+  "features": "northeast_china_delight:ginseng_patch",
+  "step": "vegetal_decoration"
+}

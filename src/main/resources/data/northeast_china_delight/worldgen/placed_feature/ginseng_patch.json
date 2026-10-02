@@ -1,0 +1,20 @@
+{
+  "__说明": "野生人参：每区块只试一次，真正决定生不生、生几棵的是 feature 里的 2×2 区块规则",
+  "feature": "northeast_china_delight:ginseng_patch",
+  "placement": [
+    {
+      "type": "minecraft:count",
+      "count": 1
+    },
+    {
+      "type": "minecraft:in_square"
+    },
+    {
+      "type": "minecraft:heightmap",
+      "heightmap": "MOTION_BLOCKING"
+    },
+    {
+      "type": "minecraft:biome"
+    }
+  ]
+}

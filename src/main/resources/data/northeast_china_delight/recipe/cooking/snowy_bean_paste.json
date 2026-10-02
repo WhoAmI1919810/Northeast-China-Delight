@@ -1,0 +1,16 @@
+{
+  "type": "farmersdelight:cooking",
+  "experience": 0.35,
+  "ingredients": [
+    { "item": "northeast_china_delight:red_bean" },
+    { "item": "minecraft:sugar" },
+    { "item": "minecraft:egg" },
+    { "item": "northeast_china_delight:sweet_potato_starch" },
+    { "item": "northeast_china_delight:animal_oil" }
+  ],
+  "recipe_book_tab": "misc",
+  "result": {
+    "count": 1,
+    "id": "northeast_china_delight:snowy_bean_paste"
+  }
+}

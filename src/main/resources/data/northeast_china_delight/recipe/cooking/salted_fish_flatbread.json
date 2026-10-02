@@ -1,0 +1,15 @@
+{
+  "type": "farmersdelight:cooking",
+  "experience": 0.35,
+  "ingredients": [
+    { "item": "northeast_china_delight:salted_fish" },
+    { "item": "northeast_china_delight:salted_fish" },
+    { "item": "farmersdelight:wheat_dough" },
+    { "item": "farmersdelight:wheat_dough" }
+  ],
+  "recipe_book_tab": "meals",
+  "result": {
+    "count": 1,
+    "id": "northeast_china_delight:salted_fish_flatbread"
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "type": "create:compacting",
+  "ingredients": [
+    {
+      "item": "northeast_china_delight:roasted_peanuts"
+    }
+  ],
+  "results": [
+    {
+      "amount": 50,
+      "id": "northeast_china_delight:vegetable_oil"
+    }
+  ]
+}

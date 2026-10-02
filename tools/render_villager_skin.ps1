@@ -10,7 +10,7 @@
 
     用法：
       # 渲染自己的皮肤（叠在 plains 基础皮肤上）
-      pwsh -File tools\render_villager_skin.ps1 -Skin src\main\resources\assets\dongbei_delight\textures\entity\villager\profession\fushi_merchant.png
+      pwsh -File tools\render_villager_skin.ps1 -Skin src\main\resources\assets\northeast_china_delight\textures\entity\villager\profession\fushi_merchant.png
 
       # 想先看看脚本效果：直接渲染原版职业皮肤
       pwsh -File tools\render_villager_skin.ps1 -Profession farmer

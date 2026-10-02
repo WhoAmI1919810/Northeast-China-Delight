@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    { "item": "northeast_china_delight:cucumber" },
+    { "item": "minecraft:potato" },
+    { "item": "northeast_china_delight:dried_tofu" },
+    { "item": "minecraft:sugar" },
+    { "item": "northeast_china_delight:salt" },
+    { "item": "northeast_china_delight:red_chili" },
+    { "item": "northeast_china_delight:roasted_peanuts" },
+    { "item": "minecraft:bowl" }
+  ],
+  "result": {
+    "count": 1,
+    "id": "northeast_china_delight:mixed_vegetable_salad"
+  }
+}

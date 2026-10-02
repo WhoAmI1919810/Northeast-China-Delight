@@ -1,6 +1,0 @@
-{
-  "type": "neoforge:add_features",
-  "biomes": "#dongbei_delight:has_hazel_mushroom_trees",
-  "features": "dongbei_delight:hazel_mushroom_around_tree",
-  "step": "vegetal_decoration"
-}

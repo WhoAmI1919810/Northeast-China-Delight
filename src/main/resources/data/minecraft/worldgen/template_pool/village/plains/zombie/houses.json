@@ -324,7 +324,7 @@
     {
       "element": {
         "element_type": "minecraft:legacy_single_pool_element",
-        "location": "dongbei_delight:village/relish_plains",
+        "location": "northeast_china_delight:village/relish_plains",
         "processors": "minecraft:mossify_10_percent",
         "projection": "rigid"
       },

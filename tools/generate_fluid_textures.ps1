@@ -10,7 +10,7 @@
     用法： pwsh -File tools/generate_fluid_textures.ps1
 #>
 param(
-    [string]$AssetsRoot = (Join-Path $PSScriptRoot '..\src\main\resources\assets\dongbei_delight')
+    [string]$AssetsRoot = (Join-Path $PSScriptRoot '..\src\main\resources\assets\northeast_china_delight')
 )
 
 Add-Type -AssemblyName System.Drawing

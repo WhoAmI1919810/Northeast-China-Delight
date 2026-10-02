@@ -1,0 +1,30 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "type": "neoforge:components",
+      "items": "northeast_china_delight:animal_oil",
+      "components": { "minecraft:damage": 0 }
+    },
+    {
+      "type": "neoforge:components",
+      "items": "northeast_china_delight:animal_oil",
+      "components": { "minecraft:damage": 0 }
+    },
+    {
+      "type": "neoforge:components",
+      "items": "northeast_china_delight:animal_oil",
+      "components": { "minecraft:damage": 0 }
+    },
+    {
+      "type": "neoforge:components",
+      "items": "northeast_china_delight:animal_oil",
+      "components": { "minecraft:damage": 0 }
+    }
+  ],
+  "result": {
+    "count": 1,
+    "id": "northeast_china_delight:animal_oil_block"
+  }
+}

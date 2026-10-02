@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "northeast_china_delight:item/xiao_ji_dun_mo_gu_bowl"
+  }
+}

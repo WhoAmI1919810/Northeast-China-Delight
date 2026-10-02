@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "northeast_china_delight:item/hai_xian_dou_fu_tang"
+  }
+}

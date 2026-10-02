@@ -149,7 +149,7 @@ publishing {
 
 // 构建完成后，把 jar 也复制到工程根目录的 lib/ 和 libs/：
 // 这两个文件夹是「拿去测试 / 分享」的落脚点，省得每次都翻 versions/<版本>/build/libs。
-// 每个游戏版本各留一份，文件名带版本号（dongbei_delight-<mod_version>+<mc_version>.jar）。
+// 每个游戏版本各留一份，文件名带版本号（northeast_china_delight-<mod_version>+<mc_version>.jar）。
 ['lib', 'libs'].each { folder ->
     def copyJar = tasks.register("copyJarTo${folder.capitalize()}", Copy) {
         dependsOn tasks.named('jar')

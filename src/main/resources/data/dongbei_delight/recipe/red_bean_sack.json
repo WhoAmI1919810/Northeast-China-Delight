@@ -1,7 +1,0 @@
-{
-  "type": "minecraft:crafting_shaped",
-  "category": "building",
-  "pattern": [ "XXX", "XXX", "XXX" ],
-  "key": { "X": { "item": "dongbei_delight:red_bean" } },
-  "result": { "count": 1, "id": "dongbei_delight:red_bean_sack" }
-}

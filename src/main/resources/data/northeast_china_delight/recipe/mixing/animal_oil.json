@@ -1,0 +1,21 @@
+{
+  "type": "create:mixing",
+  "heat_requirement": "heated",
+  "ingredients": [
+    {
+      "item": "northeast_china_delight:pork_fat"
+    },
+    {
+      "item": "northeast_china_delight:pork_fat"
+    }
+  ],
+  "results": [
+    {
+      "amount": 250,
+      "id": "northeast_china_delight:animal_oil"
+    },
+    {
+      "id": "northeast_china_delight:cracklings"
+    }
+  ]
+}

@@ -14,7 +14,7 @@
       pwsh -File tools\generate_basin_models.ps1 -RefreshBasinTextures   # 顺手重画盆体占位贴图
 #>
 param(
-    [string]$Root = 'H:\IdeaProjects\dongbei_delight1.21.1',
+    [string]$Root = 'H:\IdeaProjects\northeast_china_delight1.21.1',
     [string]$Only = '',
     [switch]$SkipTextures,
     [switch]$RefreshBasinTextures
@@ -23,7 +23,7 @@ param(
 $ErrorActionPreference = 'Stop'
 Add-Type -AssemblyName System.Drawing.Common
 
-$assets = Join-Path $Root 'src\main\resources\assets\dongbei_delight'
+$assets = Join-Path $Root 'src\main\resources\assets\northeast_china_delight'
 $modelsDir = Join-Path $assets 'models\block'
 $blockTexDir = Join-Path $assets 'textures\block'
 $itemTexDir = Join-Path $assets 'textures\item'
@@ -688,15 +688,15 @@ foreach ($dish in $dishes) {
         # 每种食材自己的小贴图（pot_corn / pot_rib / ...）：脚本里材质名直接写贴图名，
         # Get-FaceTexture 的 default 分支会返回 '#'+材质名，所以这里必须逐个登记成模型材质键。
         $texTable = [ordered]@{
-            particle     = "dongbei_delight:item/$($dish.item)"
-            basin        = 'dongbei_delight:block/basin_side'
-            basin_inner  = 'dongbei_delight:block/basin_top'
-            basin_bottom = 'dongbei_delight:block/basin_bottom'
-            stew         = "dongbei_delight:block/${id}_pot_stew"
+            particle     = "northeast_china_delight:item/$($dish.item)"
+            basin        = 'northeast_china_delight:block/basin_side'
+            basin_inner  = 'northeast_china_delight:block/basin_top'
+            basin_bottom = 'northeast_china_delight:block/basin_bottom'
+            stew         = "northeast_china_delight:block/${id}_pot_stew"
         }
         foreach ($f in (Get-ChildItem -LiteralPath $blockTexDir -Filter 'pot_*.png')) {
             $n = [System.IO.Path]::GetFileNameWithoutExtension($f.Name)
-            $texTable[$n] = "dongbei_delight:block/$n"
+            $texTable[$n] = "northeast_china_delight:block/$n"
         }
         $model = [ordered]@{
             parent      = 'block/block'

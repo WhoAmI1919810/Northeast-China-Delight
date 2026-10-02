@@ -1,0 +1,19 @@
+{
+  "type": "create:emptying",
+  "ingredients": [
+    {
+      "type": "neoforge:components",
+      "items": "northeast_china_delight:soy_sauce",
+      "components": { "minecraft:damage": 0 }
+    }
+  ],
+  "results": [
+    {
+      "id": "minecraft:glass_bottle"
+    },
+    {
+      "amount": 250,
+      "id": "northeast_china_delight:soy_sauce"
+    }
+  ]
+}

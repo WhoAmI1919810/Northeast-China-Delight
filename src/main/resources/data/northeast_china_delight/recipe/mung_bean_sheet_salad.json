@@ -1,0 +1,15 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    { "item": "minecraft:bowl" },
+    { "item": "northeast_china_delight:mung_bean_sheet" },
+    { "item": "northeast_china_delight:peanut_butter" },
+    { "item": "northeast_china_delight:cucumber" },
+    { "item": "farmersdelight:tomato" }
+  ],
+  "result": {
+    "count": 1,
+    "id": "northeast_china_delight:mung_bean_sheet_salad"
+  }
+}

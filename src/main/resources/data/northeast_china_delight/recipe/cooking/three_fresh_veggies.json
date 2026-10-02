@@ -1,0 +1,18 @@
+{
+  "type": "farmersdelight:cooking",
+  "container": {
+    "count": 1,
+    "id": "minecraft:bowl"
+  },
+  "experience": 1.0,
+  "ingredients": [
+    { "item": "minecraft:potato" },
+    { "item": "northeast_china_delight:eggplant" },
+    { "item": "northeast_china_delight:green_pepper" }
+  ],
+  "recipe_book_tab": "meals",
+  "result": {
+    "count": 1,
+    "id": "northeast_china_delight:three_fresh_veggies"
+  }
+}

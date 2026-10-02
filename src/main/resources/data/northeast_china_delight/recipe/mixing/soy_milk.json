@@ -1,0 +1,23 @@
+{
+  "type": "create:mixing",
+  "heat_requirement": "heated",
+  "ingredients": [
+    {
+      "item": "northeast_china_delight:soybean"
+    },
+    {
+      "item": "northeast_china_delight:soybean"
+    },
+    {
+      "type": "neoforge:single",
+      "amount": 1000,
+      "fluid": "minecraft:water"
+    }
+  ],
+  "results": [
+    {
+      "amount": 1000,
+      "id": "northeast_china_delight:soy_milk"
+    }
+  ]
+}

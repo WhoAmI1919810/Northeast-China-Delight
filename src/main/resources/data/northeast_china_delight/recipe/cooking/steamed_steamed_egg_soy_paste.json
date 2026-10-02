@@ -1,0 +1,18 @@
+{
+  "type": "farmersdelight:cooking",
+  "container": {
+    "count": 1,
+    "id": "minecraft:bowl"
+  },
+  "experience": 1.0,
+  "ingredients": [
+    { "item": "northeast_china_delight:green_pepper" },
+    { "item": "minecraft:egg" },
+    { "item": "northeast_china_delight:soy_paste" }
+  ],
+  "recipe_book_tab": "meals",
+  "result": {
+    "count": 1,
+    "id": "northeast_china_delight:steamed_egg_soy_paste"
+  }
+}

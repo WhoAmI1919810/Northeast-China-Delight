@@ -248,8 +248,8 @@ def interior_three_bay(b, x1, z1, x2, z2, y, wall="minecraft:bricks",
     b.set(ex2, floor + 1, iz1, "minecraft:chest")
     b.set(ex2 - 1, floor, iz1, "minecraft:barrel")
     b.set(ex2, floor, iz1 + 1, "minecraft:barrel")
-    b.set(ex2, floor, iz1 + 2, "dongbei_delight:cucumber_crate")
-    b.set(ex2 - 1, floor, iz1 + 2, "dongbei_delight:corn_crate")
+    b.set(ex2, floor, iz1 + 2, "northeast_china_delight:cucumber_crate")
+    b.set(ex2 - 1, floor, iz1 + 2, "northeast_china_delight:corn_crate")
     b.storage_sacks(ex1, floor, iz2 - 1, ["soybean_sack", "red_bean_sack"])
     vat(b, ex2, floor, iz2 - 1, layers=1)
     b.set((ex1 + ex2) // 2, cy - 1, door_z, B("minecraft:lantern", hanging="true"))
@@ -310,7 +310,7 @@ def cellar(b, x, z, y=GROUND):
     # 梯子就放在盖板正下方（背面靠着东边的土墙），爬上去掀开盖子就能出来
     ladder(b, x + 1, z, y - 3, y - 1, facing="west")
     b.set(x - 1, y - 3, z + 1, "minecraft:chest")
-    b.set(x - 1, y - 3, z - 1, "dongbei_delight:sweet_potato_crate")
+    b.set(x - 1, y - 3, z - 1, "northeast_china_delight:sweet_potato_crate")
     b.set(x, y - 3, z - 1, "minecraft:barrel")
     b.set(x - 1, y - 3, z, B("minecraft:lantern", hanging="false"))
 
@@ -370,7 +370,7 @@ def dog_house(b, x, z, y=ON):
     b.set(x, y + 2, z, B("minecraft:lantern", hanging="true"))
 
 
-def sauce_jars(b, x, z, y=1, count=3, liquid="dongbei_delight:vat"):
+def sauce_jars(b, x, z, y=1, count=3, liquid="northeast_china_delight:vat"):
     """酱缸 / 酸菜缸阵：模组的大缸排一排。"""
     for i in range(count):
         b.set(x + i, y, z, liquid)
@@ -382,14 +382,14 @@ def vat(b, x, y, z, layers=0, kind="NONE"):
     方块状态里的 water_level 和方块实体里的 water_mb 必须一致，不然液面会画错。
     """
     layers = max(0, min(3, layers))
-    b.set(x, y, z, B("dongbei_delight:vat", water_level=layers,
+    b.set(x, y, z, B("northeast_china_delight:vat", water_level=layers,
                      fermented="false", salted="false", progress=0),
-          nbt={"id": "dongbei_delight:vat", "water_mb": layers * 1000, "kind": kind})
+          nbt={"id": "northeast_china_delight:vat", "water_mb": layers * 1000, "kind": kind})
 
 
 def grill(b, x, y, z, facing="north"):
     """烤架（架在营火上的那种方块）。facing 决定营火的朝向。"""
-    b.set(x, y, z, B("dongbei_delight:grill_campfire", facing=facing, lit="true",
+    b.set(x, y, z, B("northeast_china_delight:grill_campfire", facing=facing, lit="true",
                      signal_fire="false", waterlogged="false", grill_progress=0))
 
 
@@ -402,14 +402,14 @@ def loot_chest(b, x, y, z, table, facing="south"):
     """带战利品表的箱子：开出来是随机的东西。"""
     b.set(x, y, z, B("minecraft:chest", facing=facing, type="single"),
           nbt={"id": "minecraft:chest",
-               "LootTable": "dongbei_delight:chests/" + table})
+               "LootTable": "northeast_china_delight:chests/" + table})
 
 
 def loot_barrel(b, x, y, z, table):
     """带战利品表的木桶（桶没有朝向）。"""
     b.set(x, y, z, "minecraft:barrel",
           nbt={"id": "minecraft:barrel",
-               "LootTable": "dongbei_delight:chests/" + table})
+               "LootTable": "northeast_china_delight:chests/" + table})
 
 
 # ---------------------------------------------------------------- 院里的树与歇脚处
@@ -469,9 +469,9 @@ def grain_bin(b, x, z, y=ON):
     b.fill(x, y - 1, z, x + 2, y - 1, z + 2, "minecraft:spruce_planks")
     b.fill(x, y, z, x + 2, y, z + 2, "minecraft:spruce_planks")
     b.shell(x, y + 1, z, x + 2, y + 2, z + 2, "minecraft:oak_fence")
-    b.set(x, y + 1, z, "dongbei_delight:corn_seeds_sack")
-    b.set(x + 2, y + 1, z, "dongbei_delight:soybean_sack")
-    b.set(x, y + 1, z + 2, "dongbei_delight:peanut_sack")
+    b.set(x, y + 1, z, "northeast_china_delight:corn_seeds_sack")
+    b.set(x + 2, y + 1, z, "northeast_china_delight:soybean_sack")
+    b.set(x, y + 1, z + 2, "northeast_china_delight:peanut_sack")
     b.fill(x, y + 3, z, x + 2, y + 3, z + 2, "minecraft:spruce_slab")
     # 顶上吊一盏灯，晚上来舀粮也看得见
     b.set(x + 1, y + 2, z + 1, B("minecraft:lantern", hanging="true"))
@@ -494,9 +494,9 @@ def corn_crib(b, x, z, y=ON, w=6, d=6, post="minecraft:spruce_log",
             b.set(x, yy, zz, AIR)
             b.set(x + w - 1, yy, zz, AIR)
         # 楼板就是 y+2 那层平台，粮袋直接堆在楼板上
-        b.set(x + 1, y + 3, z + 1, "dongbei_delight:corn_seeds_sack")
-        b.set(x + w - 2, y + 3, z + 1, "dongbei_delight:corn_seeds_sack")
-        b.set(x + 1, y + 3, z + d - 2, "dongbei_delight:buckwheat_sack")
+        b.set(x + 1, y + 3, z + 1, "northeast_china_delight:corn_seeds_sack")
+        b.set(x + w - 2, y + 3, z + 1, "northeast_china_delight:corn_seeds_sack")
+        b.set(x + 1, y + 3, z + d - 2, "northeast_china_delight:buckwheat_sack")
         b.gable_roof(x, x + w - 1, z, z + d - 1, y + 6, style, overhang=1)
         # 仓里吊一盏灯
         b.set(x + w // 2, y + 5, z + d // 2, B("minecraft:lantern", hanging="true"))
@@ -593,7 +593,7 @@ def garden(b, x1, z1, x2, z2, ground=GROUND, crops=(), water_every=4, fence=True
                 continue
             b.set(x, ground, z, B("minecraft:farmland", moisture=7))
             age = CROP_MAX_AGE.get(crop, 7)
-            b.set(x, ground + 1, z, B("dongbei_delight:" + crop, age=age))
+            b.set(x, ground + 1, z, B("northeast_china_delight:" + crop, age=age))
     if fence:
         for yy in (ground + 1, ground + 2):
             b.fence_line(x1 - 1, z1 - 1, x2 + 1, z2 + 1, yy, block=rail, post_every=5)

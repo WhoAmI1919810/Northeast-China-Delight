@@ -12,7 +12,7 @@ import os
 import sys
 import zipfile
 
-ROOT = r"H:\IdeaProjects\dongbei_delight1.21.1"
+ROOT = r"H:\IdeaProjects\northeast_china_delight1.21.1"
 CLIENT_JAR = r"C:\Users\wcs\.gradle\caches\neoformruntime\artifacts\minecraft_1.21.1_client.jar"
 OUT_ROOT = os.path.join(ROOT, "src", "main", "resources", "data", "minecraft",
                         "worldgen", "template_pool", "village")
@@ -28,7 +28,7 @@ def shop_element(biome):
     return {
         "element": {
             "element_type": "minecraft:legacy_single_pool_element",
-            "location": "dongbei_delight:village/relish_%s" % biome,
+            "location": "northeast_china_delight:village/relish_%s" % biome,
             "processors": processors,
             "projection": "rigid",
         },

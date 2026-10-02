@@ -1,0 +1,18 @@
+{
+  "type": "create:filling",
+  "ingredients": [
+    {
+      "item": "minecraft:bowl"
+    },
+    {
+      "type": "neoforge:single",
+      "amount": 250,
+      "fluid": "northeast_china_delight:soy_milk"
+    }
+  ],
+  "results": [
+    {
+      "id": "northeast_china_delight:soy_milk"
+    }
+  ]
+}

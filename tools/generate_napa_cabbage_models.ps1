@@ -11,7 +11,7 @@
     用法： pwsh -File tools\generate_napa_cabbage_models.ps1
 #>
 param(
-    [string]$AssetsRoot = (Join-Path $PSScriptRoot '..\src\main\resources\assets\dongbei_delight')
+    [string]$AssetsRoot = (Join-Path $PSScriptRoot '..\src\main\resources\assets\northeast_china_delight')
 )
 
 $modelDir = Join-Path $AssetsRoot 'models\block'
@@ -19,10 +19,10 @@ New-Item -ItemType Directory -Force -Path $modelDir | Out-Null
 
 for ($stage = 0; $stage -le 7; $stage++) {
     $model = [ordered]@{
-        parent      = 'dongbei_delight:block/template_crop_cross'
+        parent      = 'northeast_china_delight:block/template_crop_cross'
         render_type = 'minecraft:cutout'
         textures    = [ordered]@{
-            cross = "dongbei_delight:block/napa_cabbage_crop_stage$stage"
+            cross = "northeast_china_delight:block/napa_cabbage_crop_stage$stage"
         }
     }
     $model | ConvertTo-Json -Depth 8 | Set-Content -Path (Join-Path $modelDir "napa_cabbage_crop_stage$stage.json") -Encoding utf8

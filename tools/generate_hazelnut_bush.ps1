@@ -4,14 +4,14 @@
 
     榛子丛照搬原版甜浆果丛：4 个生长年龄（0~3），贴图是十字交叉的 cross 模型。
     这里的贴图只是开发期占位，正式美术直接覆盖
-    assets/dongbei_delight/textures/block/hazelnut_bush_stage<N>.png 即可。
+    assets/northeast_china_delight/textures/block/hazelnut_bush_stage<N>.png 即可。
 
     用法： pwsh -File tools/generate_hazelnut_bush.ps1
     （只动 hazelnut_bush 自己的文件，不会碰其它作物素材）
 #>
 param(
-    [string]$AssetsRoot = (Join-Path $PSScriptRoot '..\src\main\resources\assets\dongbei_delight'),
-    [string]$DataRoot = (Join-Path $PSScriptRoot '..\src\main\resources\data\dongbei_delight')
+    [string]$AssetsRoot = (Join-Path $PSScriptRoot '..\src\main\resources\assets\northeast_china_delight'),
+    [string]$DataRoot = (Join-Path $PSScriptRoot '..\src\main\resources\data\northeast_china_delight')
 )
 
 Add-Type -AssemblyName System.Drawing
@@ -109,14 +109,14 @@ for ($stage = 0; $stage -le 3; $stage++) {
     $model = [ordered]@{
         parent      = 'minecraft:block/cross'
         render_type = 'minecraft:cutout'
-        textures    = [ordered]@{ cross = "dongbei_delight:block/hazelnut_bush_stage$stage" }
+        textures    = [ordered]@{ cross = "northeast_china_delight:block/hazelnut_bush_stage$stage" }
     }
     $model | ConvertTo-Json -Depth 5 | Set-Content -Path (Join-Path $blockModelDir "hazelnut_bush_stage$stage.json") -Encoding utf8
 }
 
 $variants = [ordered]@{}
 for ($age = 0; $age -le 3; $age++) {
-    $variants["age=$age"] = [ordered]@{ model = "dongbei_delight:block/hazelnut_bush_stage$age" }
+    $variants["age=$age"] = [ordered]@{ model = "northeast_china_delight:block/hazelnut_bush_stage$age" }
 }
 ([ordered]@{ variants = $variants }) | ConvertTo-Json -Depth 8 |
     Set-Content -Path (Join-Path $blockStateDir 'hazelnut_bush.json') -Encoding utf8
@@ -129,7 +129,7 @@ $loot = [ordered]@{
     type      = 'minecraft:block'
     functions = @([ordered]@{ function = 'minecraft:explosion_decay' })
     pools     = @()
-    random_sequence = 'dongbei_delight:blocks/hazelnut_bush'
+    random_sequence = 'northeast_china_delight:blocks/hazelnut_bush'
 }
 
 foreach ($entry in @(@{ age = '3'; min = 2.0; max = 3.0 }, @{ age = '2'; min = 1.0; max = 2.0 })) {
@@ -137,12 +137,12 @@ foreach ($entry in @(@{ age = '3'; min = 2.0; max = 3.0 }, @{ age = '2'; min = 1
         bonus_rolls = 0.0
         conditions  = @(
             [ordered]@{
-                block      = 'dongbei_delight:hazelnut_bush'
+                block      = 'northeast_china_delight:hazelnut_bush'
                 condition  = 'minecraft:block_state_property'
                 properties = [ordered]@{ age = $entry.age }
             }
         )
-        entries     = @([ordered]@{ type = 'minecraft:item'; name = 'dongbei_delight:hazelnut' })
+        entries     = @([ordered]@{ type = 'minecraft:item'; name = 'northeast_china_delight:hazelnut' })
         functions   = @(
             [ordered]@{
                 add      = $false

@@ -3,12 +3,12 @@
     生成「黄铜碗」的占位贴图与物品模型（16×16）。
 
     只是开发期占位：正式美术做好后直接用同名文件覆盖
-    assets/dongbei_delight/textures/item/brass_bowl.png 即可，不用改代码。
+    assets/northeast_china_delight/textures/item/brass_bowl.png 即可，不用改代码。
 
     用法： pwsh -File tools\generate_brass_bowl.ps1
 #>
 param(
-    [string]$AssetsRoot = (Join-Path $PSScriptRoot '..\src\main\resources\assets\dongbei_delight')
+    [string]$AssetsRoot = (Join-Path $PSScriptRoot '..\src\main\resources\assets\northeast_china_delight')
 )
 
 Add-Type -AssemblyName System.Drawing
@@ -60,7 +60,7 @@ $bitmap.Dispose()
 
 $model = [ordered]@{
     parent   = 'item/generated'
-    textures = [ordered]@{ layer0 = 'dongbei_delight:item/brass_bowl' }
+    textures = [ordered]@{ layer0 = 'northeast_china_delight:item/brass_bowl' }
 }
 $model | ConvertTo-Json -Depth 5 | Set-Content -Path (Join-Path $modelDir 'brass_bowl.json') -Encoding utf8
 

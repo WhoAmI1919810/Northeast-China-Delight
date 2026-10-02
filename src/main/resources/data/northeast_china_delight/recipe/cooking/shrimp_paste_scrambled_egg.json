@@ -1,0 +1,18 @@
+{
+  "type": "farmersdelight:cooking",
+  "container": {
+    "count": 1,
+    "id": "minecraft:bowl"
+  },
+  "experience": 0.35,
+  "ingredients": [
+    { "item": "northeast_china_delight:shrimp_paste" },
+    { "item": "minecraft:egg" },
+    { "item": "northeast_china_delight:green_pepper" }
+  ],
+  "recipe_book_tab": "meals",
+  "result": {
+    "count": 1,
+    "id": "northeast_china_delight:shrimp_paste_scrambled_egg"
+  }
+}

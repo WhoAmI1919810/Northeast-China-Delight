@@ -110,41 +110,41 @@ COLORS = {
     "minecraft:smoker_top": ((104, 104, 104), (92, 92, 92)),
 }
 
-# 模组方块（dongbei_delight）—— 结构里用来做「粮食囤 / 酸菜缸 / 挂的菜」
+# 模组方块（northeast_china_delight）—— 结构里用来做「粮食囤 / 酸菜缸 / 挂的菜」
 MOD_COLORS = {
-    "dongbei_delight:vat": ((120, 112, 104), (104, 96, 90)),
-    "dongbei_delight:corn_seeds_sack": ((222, 206, 168), (206, 190, 154)),
-    "dongbei_delight:soybean_sack": ((214, 198, 162), (198, 182, 148)),
-    "dongbei_delight:red_bean_sack": ((206, 188, 156), (190, 172, 142)),
-    "dongbei_delight:buckwheat_sack": ((206, 192, 160), (190, 176, 146)),
-    "dongbei_delight:peanut_sack": ((214, 196, 156), (198, 180, 142)),
-    "dongbei_delight:napa_cabbage_crate": ((196, 188, 150), (170, 150, 108)),
-    "dongbei_delight:red_chili_crate": ((176, 78, 56), (156, 68, 50)),
-    "dongbei_delight:corn_crate": ((214, 184, 82), (186, 158, 70)),
-    "dongbei_delight:cucumber_crate": ((126, 158, 78), (140, 120, 74)),
+    "northeast_china_delight:vat": ((120, 112, 104), (104, 96, 90)),
+    "northeast_china_delight:corn_seeds_sack": ((222, 206, 168), (206, 190, 154)),
+    "northeast_china_delight:soybean_sack": ((214, 198, 162), (198, 182, 148)),
+    "northeast_china_delight:red_bean_sack": ((206, 188, 156), (190, 172, 142)),
+    "northeast_china_delight:buckwheat_sack": ((206, 192, 160), (190, 176, 146)),
+    "northeast_china_delight:peanut_sack": ((214, 196, 156), (198, 180, 142)),
+    "northeast_china_delight:napa_cabbage_crate": ((196, 188, 150), (170, 150, 108)),
+    "northeast_china_delight:red_chili_crate": ((176, 78, 56), (156, 68, 50)),
+    "northeast_china_delight:corn_crate": ((214, 184, 82), (186, 158, 70)),
+    "northeast_china_delight:cucumber_crate": ((126, 158, 78), (140, 120, 74)),
 }
 
 for _name, _id in (
-    ("napa_cabbage_crop", "dongbei_delight:napa_cabbage_crop"),
-    ("cucumber_crop", "dongbei_delight:cucumber_crop"),
-    ("green_radish_crop", "dongbei_delight:green_radish_crop"),
-    ("green_onion_crop", "dongbei_delight:green_onion_crop"),
-    ("eggplant_crop", "dongbei_delight:eggplant_crop"),
-    ("green_pepper_crop", "dongbei_delight:green_pepper_crop"),
-    ("red_chili_crop", "dongbei_delight:red_chili_crop"),
-    ("green_beans_crop", "dongbei_delight:green_beans_crop"),
-    ("corn_crop", "dongbei_delight:corn_crop"),
-    ("corn_stalk", "dongbei_delight:corn_stalk"),
-    ("soybean_crop", "dongbei_delight:soybean_crop"),
-    ("peanut_crop", "dongbei_delight:peanut_crop"),
-    ("red_bean_crop", "dongbei_delight:red_bean_crop"),
-    ("sweet_potato_crop", "dongbei_delight:sweet_potato_crop"),
-    ("buckwheat_crop", "dongbei_delight:buckwheat_crop"),
+    ("napa_cabbage_crop", "northeast_china_delight:napa_cabbage_crop"),
+    ("cucumber_crop", "northeast_china_delight:cucumber_crop"),
+    ("green_radish_crop", "northeast_china_delight:green_radish_crop"),
+    ("green_onion_crop", "northeast_china_delight:green_onion_crop"),
+    ("eggplant_crop", "northeast_china_delight:eggplant_crop"),
+    ("green_pepper_crop", "northeast_china_delight:green_pepper_crop"),
+    ("red_chili_crop", "northeast_china_delight:red_chili_crop"),
+    ("green_beans_crop", "northeast_china_delight:green_beans_crop"),
+    ("corn_crop", "northeast_china_delight:corn_crop"),
+    ("corn_stalk", "northeast_china_delight:corn_stalk"),
+    ("soybean_crop", "northeast_china_delight:soybean_crop"),
+    ("peanut_crop", "northeast_china_delight:peanut_crop"),
+    ("red_bean_crop", "northeast_china_delight:red_bean_crop"),
+    ("sweet_potato_crop", "northeast_china_delight:sweet_potato_crop"),
+    ("buckwheat_crop", "northeast_china_delight:buckwheat_crop"),
 ):
     MOD_COLORS[_id] = ((112, 156, 72), (96, 136, 62))
 
 
 def color_of(block):
-    if block.startswith("dongbei_delight:"):
+    if block.startswith("northeast_china_delight:"):
         return MOD_COLORS.get(block, ((150, 150, 150), (135, 135, 135)))
     return COLORS.get(block, ((150, 150, 150), (135, 135, 135)))

@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:block/cross",
+  "render_type": "minecraft:cutout",
+  "textures": {
+    "cross": "northeast_china_delight:block/hazel_mushroom_colony_stage3"
+  }
+}

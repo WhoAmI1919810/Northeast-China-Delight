@@ -1,0 +1,14 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "com.gunmu.northeast_china_delight.mixin",
+  "compatibilityLevel": "JAVA_21",
+  "mixins": [
+    "CookingPotBlockEntityInvoker",
+    "CookingPotBlockEntityMixin",
+    "PowderSnowBlockMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

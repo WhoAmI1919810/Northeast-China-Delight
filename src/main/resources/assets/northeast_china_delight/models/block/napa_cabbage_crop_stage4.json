@@ -1,0 +1,7 @@
+{
+  "parent": "northeast_china_delight:block/template_crop_cross",
+  "render_type": "minecraft:cutout",
+  "textures": {
+    "cross": "northeast_china_delight:block/napa_cabbage_crop_stage4"
+  }
+}

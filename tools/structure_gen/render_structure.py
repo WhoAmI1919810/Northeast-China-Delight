@@ -25,8 +25,8 @@ from mcblocks import color_of
 from designs import DESIGNS
 
 DEFAULT_NBT = os.path.join(
-    r"H:\IdeaProjects\dongbei_delight1.21.1",
-    "src", "main", "resources", "data", "dongbei_delight", "structure",
+    r"H:\IdeaProjects\northeast_china_delight1.21.1",
+    "src", "main", "resources", "data", "northeast_china_delight", "structure",
 )
 DEFAULT_OUT = r"E:\codex\dd_tmp\render"
 

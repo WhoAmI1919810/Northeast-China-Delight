@@ -1,0 +1,15 @@
+{
+  "type": "farmersdelight:cooking",
+  "container": { "count": 1, "id": "northeast_china_delight:large_basin" },
+  "experience": 1.0,
+  "ingredients": [
+    { "item": "northeast_china_delight:sour_cabbage" },
+    { "item": "northeast_china_delight:pork_ribs" },
+    { "item": "northeast_china_delight:pork_ribs" }
+  ],
+  "recipe_book_tab": "meals",
+  "result": {
+    "count": 1,
+    "id": "northeast_china_delight:sauerkraut_bone_stew"
+  }
+}

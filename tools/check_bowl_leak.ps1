@@ -20,7 +20,7 @@ New-Item -ItemType Directory -Force -Path $OutDir | Out-Null
 
 $mdl = Get-Content -Raw $Model | ConvertFrom-Json
 # 见证盒：放在盆内，故意给一个不存在的贴图 → 渲染器会画成洋红
-$mdl.textures | Add-Member -NotePropertyName witness -NotePropertyValue 'dongbei_delight:block/__missing_witness__' -Force
+$mdl.textures | Add-Member -NotePropertyName witness -NotePropertyValue 'northeast_china_delight:block/__missing_witness__' -Force
 $faces = [ordered]@{}
 foreach ($f in @('up', 'down', 'north', 'south', 'west', 'east')) {
     $faces[$f] = [ordered]@{ texture = '#witness' }

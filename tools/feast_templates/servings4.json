@@ -2,11 +2,11 @@
   "parent": "block/block",
   "render_type": "minecraft:cutout",
   "textures": {
-    "particle": "dongbei_delight:item/__DISH__",
-    "food_top": "dongbei_delight:item/__DISH__",
-    "food_side": "dongbei_delight:item/__DISH__",
-    "basin": "dongbei_delight:item/large_basin",
-    "basin_inner": "dongbei_delight:item/large_basin"
+    "particle": "northeast_china_delight:item/__DISH__",
+    "food_top": "northeast_china_delight:item/__DISH__",
+    "food_side": "northeast_china_delight:item/__DISH__",
+    "basin": "northeast_china_delight:item/large_basin",
+    "basin_inner": "northeast_china_delight:item/large_basin"
   },
   "elements": [
     {

@@ -1,0 +1,7 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "building",
+  "pattern": [ "XXX", "XXX", "XXX" ],
+  "key": { "X": { "item": "northeast_china_delight:red_bean" } },
+  "result": { "count": 1, "id": "northeast_china_delight:red_bean_sack" }
+}

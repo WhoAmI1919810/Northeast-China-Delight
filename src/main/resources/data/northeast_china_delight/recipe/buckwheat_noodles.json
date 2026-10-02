@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    { "item": "northeast_china_delight:buckwheat" },
+    { "item": "minecraft:water_bucket" }
+  ],
+  "result": {
+    "count": 1,
+    "id": "northeast_china_delight:buckwheat_noodles"
+  }
+}

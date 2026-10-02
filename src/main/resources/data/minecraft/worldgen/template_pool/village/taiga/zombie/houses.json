@@ -243,7 +243,7 @@
     {
       "element": {
         "element_type": "minecraft:legacy_single_pool_element",
-        "location": "dongbei_delight:village/relish_taiga",
+        "location": "northeast_china_delight:village/relish_taiga",
         "processors": "minecraft:mossify_10_percent",
         "projection": "rigid"
       },

@@ -1,0 +1,18 @@
+{
+  "type": "farmersdelight:cooking",
+  "container": { "count": 1, "id": "minecraft:bowl" },
+  "experience": 1.0,
+  "ingredients": [
+    { "tag": "c:foods/raw_fish" },
+    { "item": "northeast_china_delight:tofu" },
+    { "item": "northeast_china_delight:vermicelli" },
+    { "item": "northeast_china_delight:napa_cabbage" },
+    { "item": "northeast_china_delight:hazel_mushroom" },
+    { "item": "minecraft:porkchop" }
+  ],
+  "recipe_book_tab": "meals",
+  "result": {
+    "count": 1,
+    "id": "northeast_china_delight:demoli_fish_stew"
+  }
+}

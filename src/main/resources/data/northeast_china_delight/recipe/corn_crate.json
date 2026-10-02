@@ -1,0 +1,7 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "building",
+  "pattern": [ "XXX", "XXX", "XXX" ],
+  "key": { "X": { "item": "northeast_china_delight:corn" } },
+  "result": { "count": 1, "id": "northeast_china_delight:corn_crate" }
+}

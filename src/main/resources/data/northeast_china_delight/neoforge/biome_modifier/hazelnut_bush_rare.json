@@ -1,0 +1,6 @@
+{
+  "type": "neoforge:add_features",
+  "biomes": "#northeast_china_delight:has_hazelnut_bush_rare",
+  "features": "northeast_china_delight:hazelnut_bush_rare",
+  "step": "vegetal_decoration"
+}

@@ -1,0 +1,14 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    { "item": "farmersdelight:cabbage_leaf" },
+    { "item": "farmersdelight:cooked_rice" },
+    { "item": "northeast_china_delight:steamed_egg_soy_paste" },
+    { "item": "minecraft:baked_potato" }
+  ],
+  "result": {
+    "count": 1,
+    "id": "northeast_china_delight:northeast_rice_wrap"
+  }
+}

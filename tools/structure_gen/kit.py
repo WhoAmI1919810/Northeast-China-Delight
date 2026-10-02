@@ -278,7 +278,7 @@ class Build:
 
     def storage_sacks(self, x, y, z, ids):
         for i, sid in enumerate(ids):
-            self.set(x + i, y, z, "dongbei_delight:" + sid)
+            self.set(x + i, y, z, "northeast_china_delight:" + sid)
 
     def well(self, x, y, z):
         """水井：石圈 + 水 + 木架 + 辘轳。"""
@@ -308,7 +308,7 @@ class Build:
                     self.set(x, y, z, AIR)
                     continue
                 self.set(x, y - 1, z, B("minecraft:farmland", moisture=7))
-                self.set(x, y, z, B("dongbei_delight:" + crop, age=7))
+                self.set(x, y, z, B("northeast_china_delight:" + crop, age=7))
 
     # ---------- 输出 ----------
 

@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    { "item": "farmersdelight:cod_slice" },
+    { "item": "farmersdelight:cod_slice" },
+    { "item": "northeast_china_delight:salt" },
+    { "item": "minecraft:sugar" },
+    { "item": "northeast_china_delight:chili_sauce" },
+    { "item": "minecraft:bowl" },
+    { "item": "northeast_china_delight:green_pepper" }
+  ],
+  "result": {
+    "count": 1,
+    "id": "northeast_china_delight:shredded_pollack"
+  }
+}

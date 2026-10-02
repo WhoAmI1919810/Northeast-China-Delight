@@ -1,0 +1,19 @@
+{
+  "type": "create:mixing",
+  "heat_requirement": "heated",
+  "ingredients": [
+    {
+      "item": "northeast_china_delight:pork_ribs"
+    },
+    {
+      "type": "neoforge:single",
+      "amount": 50,
+      "fluid": "northeast_china_delight:soy_sauce"
+    }
+  ],
+  "results": [
+    {
+      "id": "northeast_china_delight:braised_pork_bone_sauce"
+    }
+  ]
+}

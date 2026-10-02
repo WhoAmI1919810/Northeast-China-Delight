@@ -1,8 +1,0 @@
-{
-  "parent": "minecraft:block/cube_bottom_top",
-  "textures": {
-    "top": "dongbei_delight:block/pickled_green_radish_crate_top",
-    "bottom": "dongbei_delight:block/crate_bottom",
-    "side": "dongbei_delight:block/pickled_green_radish_crate_side"
-  }
-}

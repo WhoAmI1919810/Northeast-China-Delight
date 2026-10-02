@@ -1,0 +1,17 @@
+{
+  "type": "farmersdelight:cooking",
+  "experience": 1.0,
+  "ingredients": [
+    { "item": "northeast_china_delight:soybean" },
+    { "item": "northeast_china_delight:soybean" },
+    { "item": "northeast_china_delight:soybean" },
+    { "item": "northeast_china_delight:soybean" },
+    { "item": "northeast_china_delight:soybean" },
+    { "item": "northeast_china_delight:soybean" }
+  ],
+  "recipe_book_tab": "meals",
+  "result": {
+    "count": 1,
+    "id": "northeast_china_delight:soy_paste_chunk"
+  }
+}

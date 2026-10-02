@@ -1,0 +1,8 @@
+{
+  "parent": "minecraft:block/cube_bottom_top",
+  "textures": {
+    "top": "northeast_china_delight:block/cucumber_crate_top",
+    "bottom": "northeast_china_delight:block/crate_bottom",
+    "side": "northeast_china_delight:block/cucumber_crate_side"
+  }
+}

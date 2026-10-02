@@ -1,0 +1,13 @@
+{
+  "type": "farmersdelight:cooking",
+  "container": { "count": 1, "id": "minecraft:bowl" },
+  "experience": 1.0,
+  "ingredients": [
+    { "item": "minecraft:porkchop" },
+    { "item": "northeast_china_delight:green_pepper" },
+    { "item": "northeast_china_delight:cooking_oil" },
+    { "item": "northeast_china_delight:salt" }
+  ],
+  "recipe_book_tab": "meals",
+  "result": { "count": 1, "id": "northeast_china_delight:crispy_pork_strips" }
+}

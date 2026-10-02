@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:smoking",
+  "category": "food",
+  "cookingtime": 100,
+  "experience": 0.35,
+  "ingredient": {
+    "item": "northeast_china_delight:pork_hock"
+  },
+  "result": {
+    "count": 1,
+    "id": "northeast_china_delight:smoked_pork_hock"
+  }
+}

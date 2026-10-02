@@ -1,0 +1,26 @@
+{
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "fruitsdelight"
+    }
+  ],
+  "type": "farmersdelight:cooking",
+  "container": {
+    "count": 1,
+    "id": "minecraft:bowl"
+  },
+  "experience": 1.0,
+  "ingredients": [
+    { "item": "fruitsdelight:orange_juice" },
+    { "item": "minecraft:porkchop" },
+    { "item": "northeast_china_delight:sweet_potato_starch" },
+    { "item": "northeast_china_delight:cooking_oil" },
+    { "item": "northeast_china_delight:white_vinegar" }
+  ],
+  "recipe_book_tab": "meals",
+  "result": {
+    "count": 1,
+    "id": "northeast_china_delight:orange_crispy_pork"
+  }
+}

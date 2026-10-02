@@ -1,0 +1,14 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    { "item": "northeast_china_delight:pickled_cucumber" },
+    { "item": "northeast_china_delight:spicy_cabbage" },
+    { "item": "farmersdelight:onion" },
+    { "item": "northeast_china_delight:salt" }
+  ],
+  "result": {
+    "count": 1,
+    "id": "northeast_china_delight:stuffed_cucumber_pickle"
+  }
+}

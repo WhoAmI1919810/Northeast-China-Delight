@@ -11,9 +11,9 @@
     用法： pwsh -File tools\compare_basin.ps1 [-Model <json>] [-Icon <png>] [-Out <png>] [-Yaw 45] [-Pitch 25]
 #>
 param(
-    [string]$Model = 'H:\IdeaProjects\dongbei_delight1.21.1\src\main\resources\assets\dongbei_delight\models\block\da_feng_shou_pot_servings0.json',
-    [string]$Icon = 'H:\IdeaProjects\dongbei_delight1.21.1\src\main\resources\assets\dongbei_delight\textures\item\large_basin.png',
-    [string]$Out = 'H:\IdeaProjects\dongbei_delight1.21.1\basin_vs_icon.png',
+    [string]$Model = 'H:\IdeaProjects\northeast_china_delight1.21.1\src\main\resources\assets\northeast_china_delight\models\block\da_feng_shou_pot_servings0.json',
+    [string]$Icon = 'H:\IdeaProjects\northeast_china_delight1.21.1\src\main\resources\assets\northeast_china_delight\textures\item\large_basin.png',
+    [string]$Out = 'H:\IdeaProjects\northeast_china_delight1.21.1\basin_vs_icon.png',
     [double]$Yaw = 45,
     [double]$Pitch = 25,
     [int]$Panel = 360

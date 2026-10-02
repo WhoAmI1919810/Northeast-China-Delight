@@ -1,0 +1,11 @@
+{
+  "type": "minecraft:block",
+  "pools": [
+    {
+      "bonus_rolls": 0.0,
+      "entries": [ { "type": "minecraft:item", "name": "northeast_china_delight:old_style_crispy_pork" } ],
+      "rolls": 1.0
+    }
+  ],
+  "random_sequence": "northeast_china_delight:blocks/old_style_guo_bao_rou"
+}
