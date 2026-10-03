@@ -2,7 +2,7 @@
   "parent": "block/block",
   "render_type": "minecraft:cutout",
   "textures": {
-    "particle": "northeast_china_delight:item/zhu_rou_dun_fen_tiao",
+    "particle": "northeast_china_delight:item/pork_vermicelli_stew",
     "basin": "northeast_china_delight:block/basin_side",
     "basin_inner": "northeast_china_delight:block/basin_top",
     "basin_bottom": "northeast_china_delight:block/basin_bottom",

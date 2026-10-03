@@ -1,6 +1,6 @@
 {
   "parent": "minecraft:item/generated",
   "textures": {
-    "layer0": "northeast_china_delight:item/suan_cai_chao_fen_tiao"
+    "layer0": "northeast_china_delight:item/sauerkraut_fried_vermicelli"
   }
 }

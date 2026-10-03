@@ -2,9 +2,9 @@
   "parent": "block/block",
   "render_type": "minecraft:cutout",
   "textures": {
-    "particle": "northeast_china_delight:item/di_guo_pai_gu",
-    "food_top": "northeast_china_delight:item/di_guo_pai_gu",
-    "food_side": "northeast_china_delight:item/di_guo_pai_gu",
+    "particle": "northeast_china_delight:item/ground_pot_ribs",
+    "food_top": "northeast_china_delight:item/ground_pot_ribs",
+    "food_side": "northeast_china_delight:item/ground_pot_ribs",
     "basin": "northeast_china_delight:item/large_basin"
   },
   "elements": [

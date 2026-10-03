@@ -1,0 +1,10 @@
+{
+  "type": "create:filling",
+  "ingredients": [
+    { "item": "minecraft:glass_bottle" },
+    { "type": "neoforge:single", "amount": 250, "fluid": "northeast_china_delight:chili_oil" }
+  ],
+  "results": [
+    { "id": "northeast_china_delight:chili_oil" }
+  ]
+}

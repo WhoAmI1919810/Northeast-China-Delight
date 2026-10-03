@@ -1,0 +1,29 @@
+{
+  "type": "create:mixing",
+  "heat_requirement": "heated",
+  "ingredients": [
+    {
+      "item": "northeast_china_delight:soybean"
+    },
+    {
+      "item": "northeast_china_delight:soybean"
+    },
+    {
+      "item": "northeast_china_delight:soybean"
+    },
+    {
+      "item": "northeast_china_delight:soybean"
+    },
+    {
+      "item": "northeast_china_delight:soybean"
+    },
+    {
+      "item": "northeast_china_delight:soybean"
+    }
+  ],
+  "results": [
+    {
+      "id": "northeast_china_delight:soy_paste_chunk"
+    }
+  ]
+}

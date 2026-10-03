@@ -1,0 +1,23 @@
+{
+  "type": "create:mixing",
+  "heat_requirement": "heated",
+  "ingredients": [
+    {
+      "type": "neoforge:single",
+      "amount": 250,
+      "fluid": "northeast_china_delight:vegetable_oil"
+    },
+    {
+      "item": "northeast_china_delight:red_chili"
+    },
+    {
+      "item": "northeast_china_delight:red_chili"
+    }
+  ],
+  "results": [
+    {
+      "amount": 250,
+      "id": "northeast_china_delight:chili_oil"
+    }
+  ]
+}

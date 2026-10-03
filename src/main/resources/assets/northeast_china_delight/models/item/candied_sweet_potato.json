@@ -1,6 +1,6 @@
 {
   "parent": "minecraft:item/generated",
   "textures": {
-    "layer0": "northeast_china_delight:item/ba_si_tu_dou"
+    "layer0": "northeast_china_delight:item/candied_sweet_potato"
   }
 }

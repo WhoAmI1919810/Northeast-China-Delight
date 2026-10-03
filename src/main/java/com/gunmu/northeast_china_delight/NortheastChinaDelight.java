@@ -144,7 +144,8 @@ public class NortheastChinaDelight
         Level level = event.getLevel();
         BlockPos pos = event.getPos();
         BlockState state = level.getBlockState(pos);
-        if (!state.is(Blocks.CAMPFIRE) || !(level.getBlockEntity(pos) instanceof CampfireBlockEntity fire))
+        if (!(state.is(Blocks.CAMPFIRE) || state.is(Blocks.SOUL_CAMPFIRE))
+                || !(level.getBlockEntity(pos) instanceof CampfireBlockEntity fire))
         {
             return;
         }
@@ -419,6 +420,66 @@ public class NortheastChinaDelight
                     return ResourceLocation.fromNamespaceAndPath(MODID, "block/animal_oil_flow");
                 }
             }, ModFluids.ANIMAL_OIL_TYPE);
+
+            event.registerFluidType(new IClientFluidTypeExtensions()
+            {
+                @Override
+                public ResourceLocation getStillTexture()
+                {
+                    return ResourceLocation.fromNamespaceAndPath(MODID, "block/peanut_butter_still");
+                }
+
+                @Override
+                public ResourceLocation getFlowingTexture()
+                {
+                    return ResourceLocation.fromNamespaceAndPath(MODID, "block/peanut_butter_flow");
+                }
+            }, ModFluids.PEANUT_BUTTER_TYPE);
+
+            event.registerFluidType(new IClientFluidTypeExtensions()
+            {
+                @Override
+                public ResourceLocation getStillTexture()
+                {
+                    return ResourceLocation.fromNamespaceAndPath(MODID, "block/chili_oil_still");
+                }
+
+                @Override
+                public ResourceLocation getFlowingTexture()
+                {
+                    return ResourceLocation.fromNamespaceAndPath(MODID, "block/chili_oil_flow");
+                }
+            }, ModFluids.CHILI_OIL_TYPE);
+
+            event.registerFluidType(new IClientFluidTypeExtensions()
+            {
+                @Override
+                public ResourceLocation getStillTexture()
+                {
+                    return ResourceLocation.fromNamespaceAndPath(MODID, "block/chili_sauce_still");
+                }
+
+                @Override
+                public ResourceLocation getFlowingTexture()
+                {
+                    return ResourceLocation.fromNamespaceAndPath(MODID, "block/chili_sauce_flow");
+                }
+            }, ModFluids.CHILI_SAUCE_TYPE);
+
+            event.registerFluidType(new IClientFluidTypeExtensions()
+            {
+                @Override
+                public ResourceLocation getStillTexture()
+                {
+                    return ResourceLocation.fromNamespaceAndPath(MODID, "block/kvass_still");
+                }
+
+                @Override
+                public ResourceLocation getFlowingTexture()
+                {
+                    return ResourceLocation.fromNamespaceAndPath(MODID, "block/kvass_flow");
+                }
+            }, ModFluids.KVASS_TYPE);
         }
     }
 }

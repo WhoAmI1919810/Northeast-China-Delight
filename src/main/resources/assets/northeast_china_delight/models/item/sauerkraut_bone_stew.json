@@ -1,6 +1,6 @@
 {
   "parent": "item/generated",
   "textures": {
-    "layer0": "northeast_china_delight:item/suan_cai_dun_gu_tou"
+    "layer0": "northeast_china_delight:item/sauerkraut_bone_stew"
   }
 }

@@ -1,6 +1,6 @@
 {
   "parent": "minecraft:item/generated",
   "textures": {
-    "layer0": "northeast_china_delight:item/xia_jiang_chao_ji_dan"
+    "layer0": "northeast_china_delight:item/shrimp_paste_scrambled_egg"
   }
 }

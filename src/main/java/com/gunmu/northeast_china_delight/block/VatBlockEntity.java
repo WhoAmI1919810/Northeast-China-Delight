@@ -590,8 +590,7 @@ public class VatBlockEntity extends BlockEntity implements IFluidHandler {
             case WHITE_VINEGAR -> this.whiteVinegarMb > 0 ? ModFluids.whiteVinegarSource() : null;
             case FISH_SAUCE -> this.fishSauceMb > 0 ? ModFluids.fishSauceSource() : null;
             case SHRIMP_PASTE -> this.shrimpPasteMb > 0 ? ModFluids.shrimpPasteSource() : null;
-            // 格瓦斯暂时不接流体管道：缸里按 mB 记账，玩家用玻璃瓶一瓶一瓶取
-            case KVASS -> null;
+            case KVASS -> this.kvassMb > 0 ? ModFluids.kvassSource() : null;
             case PICKLE, SPICY_PICKLE -> this.sourWaterMb > 0 ? ModFluids.sourWaterSource() : null;
             // 没有成品液体的那几种缸
             case NONE, MEAT, SALTED_FISH, BEAN_SPROUTS, SOUR_CORN, FROZEN_PEAR -> null;
@@ -669,7 +668,8 @@ public class VatBlockEntity extends BlockEntity implements IFluidHandler {
                     this.refreshLiquidLevel();
                 }
                 // 上面 productFluid() 已经挡掉了"没有液体产物"的缸，这里只是让 switch 完整
-                case NONE, MEAT, SALTED_FISH, BEAN_SPROUTS, SOUR_CORN, KVASS -> {
+                case KVASS -> this.kvassMb -= drained;
+                case NONE, MEAT, SALTED_FISH, BEAN_SPROUTS, SOUR_CORN, FROZEN_PEAR -> {
                 }
             }
             // 液体抽空后酱渣还留在缸里，等玩家取走（所以这里不能 reset）

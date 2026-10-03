@@ -1,6 +1,6 @@
 {
   "parent": "minecraft:item/generated",
   "textures": {
-    "layer0": "northeast_china_delight:item/hai_shen_dou_fu_tang"
+    "layer0": "northeast_china_delight:item/sea_cucumber_tofu_soup"
   }
 }

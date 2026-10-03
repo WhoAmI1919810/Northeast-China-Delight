@@ -1,6 +1,6 @@
 {
   "parent": "minecraft:item/generated",
   "textures": {
-    "layer0": "northeast_china_delight:item/jiang_niu_rou"
+    "layer0": "northeast_china_delight:item/braised_beef_sauce"
   }
 }

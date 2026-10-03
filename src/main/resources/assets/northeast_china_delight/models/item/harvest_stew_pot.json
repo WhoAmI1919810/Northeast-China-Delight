@@ -1,6 +1,6 @@
 {
   "parent": "item/generated",
   "textures": {
-    "layer0": "northeast_china_delight:item/da_feng_shou"
+    "layer0": "northeast_china_delight:item/harvest_stew"
   }
 }

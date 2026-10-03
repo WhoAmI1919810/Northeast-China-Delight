@@ -439,6 +439,166 @@ public final class ModFluids {
     public static final DeferredHolder<Fluid, BaseFlowingFluid.Flowing> FLOWING_ANIMAL_OIL =
             FLUIDS.register("flowing_animal_oil", ModFluids::animalOilFlowing);
 
+    // ===== 花生酱 =====
+    // 注：这瓶「酱」是能流动的液体 —— 大缸里虾酱 6 虾 3 盐出一瓶，
+    // 花生酱就是把花生熬出油的稠酱，物理上跟油差不多。
+
+    public static final FluidType PEANUT_BUTTER_TYPE = new FluidType(FluidType.Properties.create()
+            .descriptionId("fluid_type.northeast_china_delight.peanut_butter")
+            .density(1400)
+            .viscosity(6000)
+            .motionScale(0.004D));
+
+    private static final BaseFlowingFluid.Properties PEANUT_BUTTER_PROPERTIES =
+            new BaseFlowingFluid.Properties(() -> PEANUT_BUTTER_TYPE,
+                    ModFluids::peanutButterSource, ModFluids::peanutButterFlowing)
+                    .slopeFindDistance(2)
+                    .levelDecreasePerBlock(2)
+                    .tickRate(12);
+
+    private static BaseFlowingFluid.Source peanutButterSource;
+    private static BaseFlowingFluid.Flowing peanutButterFlowing;
+
+    public static BaseFlowingFluid.Source peanutButterSource() {
+        if (peanutButterSource == null) {
+            peanutButterSource = new BaseFlowingFluid.Source(PEANUT_BUTTER_PROPERTIES);
+        }
+        return peanutButterSource;
+    }
+
+    public static BaseFlowingFluid.Flowing peanutButterFlowing() {
+        if (peanutButterFlowing == null) {
+            peanutButterFlowing = new BaseFlowingFluid.Flowing(PEANUT_BUTTER_PROPERTIES);
+        }
+        return peanutButterFlowing;
+    }
+
+    public static final DeferredHolder<FluidType, FluidType> PEANUT_BUTTER_TYPE_HOLDER =
+            FLUID_TYPES.register("peanut_butter", () -> PEANUT_BUTTER_TYPE);
+    public static final DeferredHolder<Fluid, BaseFlowingFluid.Source> PEANUT_BUTTER =
+            FLUIDS.register("peanut_butter", ModFluids::peanutButterSource);
+    public static final DeferredHolder<Fluid, BaseFlowingFluid.Flowing> FLOWING_PEANUT_BUTTER =
+            FLUIDS.register("flowing_peanut_butter", ModFluids::peanutButterFlowing);
+
+    // ===== 辣椒油 =====
+
+    public static final FluidType CHILI_OIL_TYPE = new FluidType(FluidType.Properties.create()
+            .descriptionId("fluid_type.northeast_china_delight.chili_oil")
+            .density(920)
+            .viscosity(1600)
+            .motionScale(0.006D));
+
+    private static final BaseFlowingFluid.Properties CHILI_OIL_PROPERTIES =
+            new BaseFlowingFluid.Properties(() -> CHILI_OIL_TYPE,
+                    ModFluids::chiliOilSource, ModFluids::chiliOilFlowing)
+                    .slopeFindDistance(3)
+                    .levelDecreasePerBlock(1)
+                    .tickRate(7);
+
+    private static BaseFlowingFluid.Source chiliOilSource;
+    private static BaseFlowingFluid.Flowing chiliOilFlowing;
+
+    public static BaseFlowingFluid.Source chiliOilSource() {
+        if (chiliOilSource == null) {
+            chiliOilSource = new BaseFlowingFluid.Source(CHILI_OIL_PROPERTIES);
+        }
+        return chiliOilSource;
+    }
+
+    public static BaseFlowingFluid.Flowing chiliOilFlowing() {
+        if (chiliOilFlowing == null) {
+            chiliOilFlowing = new BaseFlowingFluid.Flowing(CHILI_OIL_PROPERTIES);
+        }
+        return chiliOilFlowing;
+    }
+
+    public static final DeferredHolder<FluidType, FluidType> CHILI_OIL_TYPE_HOLDER =
+            FLUID_TYPES.register("chili_oil", () -> CHILI_OIL_TYPE);
+    public static final DeferredHolder<Fluid, BaseFlowingFluid.Source> CHILI_OIL =
+            FLUIDS.register("chili_oil", ModFluids::chiliOilSource);
+    public static final DeferredHolder<Fluid, BaseFlowingFluid.Flowing> FLOWING_CHILI_OIL =
+            FLUIDS.register("flowing_chili_oil", ModFluids::chiliOilFlowing);
+
+    // ===== 辣椒酱 =====
+    // 碗装的稠调料：2 个红辣椒 + 盐捣出来的糊，稠度跟虾酱一个量级。
+
+    public static final FluidType CHILI_SAUCE_TYPE = new FluidType(FluidType.Properties.create()
+            .descriptionId("fluid_type.northeast_china_delight.chili_sauce")
+            .density(1350)
+            .viscosity(4000)
+            .motionScale(0.005D));
+
+    private static final BaseFlowingFluid.Properties CHILI_SAUCE_PROPERTIES =
+            new BaseFlowingFluid.Properties(() -> CHILI_SAUCE_TYPE,
+                    ModFluids::chiliSauceSource, ModFluids::chiliSauceFlowing)
+                    .slopeFindDistance(2)
+                    .levelDecreasePerBlock(2)
+                    .tickRate(18);
+
+    private static BaseFlowingFluid.Source chiliSauceSource;
+    private static BaseFlowingFluid.Flowing chiliSauceFlowing;
+
+    public static BaseFlowingFluid.Source chiliSauceSource() {
+        if (chiliSauceSource == null) {
+            chiliSauceSource = new BaseFlowingFluid.Source(CHILI_SAUCE_PROPERTIES);
+        }
+        return chiliSauceSource;
+    }
+
+    public static BaseFlowingFluid.Flowing chiliSauceFlowing() {
+        if (chiliSauceFlowing == null) {
+            chiliSauceFlowing = new BaseFlowingFluid.Flowing(CHILI_SAUCE_PROPERTIES);
+        }
+        return chiliSauceFlowing;
+    }
+
+    public static final DeferredHolder<FluidType, FluidType> CHILI_SAUCE_TYPE_HOLDER =
+            FLUID_TYPES.register("chili_sauce", () -> CHILI_SAUCE_TYPE);
+    public static final DeferredHolder<Fluid, BaseFlowingFluid.Source> CHILI_SAUCE =
+            FLUIDS.register("chili_sauce", ModFluids::chiliSauceSource);
+    public static final DeferredHolder<Fluid, BaseFlowingFluid.Flowing> FLOWING_CHILI_SAUCE =
+            FLUIDS.register("flowing_chili_sauce", ModFluids::chiliSauceFlowing);
+
+    // ===== 格瓦斯 =====
+    // 大缸里发酵出来的饮料，比水稠一点点，颜色像焦糖。
+
+    public static final FluidType KVASS_TYPE = new FluidType(FluidType.Properties.create()
+            .descriptionId("fluid_type.northeast_china_delight.kvass")
+            .density(1050)
+            .viscosity(1100)
+            .motionScale(0.007D));
+
+    private static final BaseFlowingFluid.Properties KVASS_PROPERTIES =
+            new BaseFlowingFluid.Properties(() -> KVASS_TYPE,
+                    ModFluids::kvassSource, ModFluids::kvassFlowing)
+                    .slopeFindDistance(4)
+                    .levelDecreasePerBlock(1)
+                    .tickRate(5);
+
+    private static BaseFlowingFluid.Source kvassSource;
+    private static BaseFlowingFluid.Flowing kvassFlowing;
+
+    public static BaseFlowingFluid.Source kvassSource() {
+        if (kvassSource == null) {
+            kvassSource = new BaseFlowingFluid.Source(KVASS_PROPERTIES);
+        }
+        return kvassSource;
+    }
+
+    public static BaseFlowingFluid.Flowing kvassFlowing() {
+        if (kvassFlowing == null) {
+            kvassFlowing = new BaseFlowingFluid.Flowing(KVASS_PROPERTIES);
+        }
+        return kvassFlowing;
+    }
+
+    public static final DeferredHolder<FluidType, FluidType> KVASS_TYPE_HOLDER =
+            FLUID_TYPES.register("kvass", () -> KVASS_TYPE);
+    public static final DeferredHolder<Fluid, BaseFlowingFluid.Source> KVASS =
+            FLUIDS.register("kvass", ModFluids::kvassSource);
+    public static final DeferredHolder<Fluid, BaseFlowingFluid.Flowing> FLOWING_KVASS =
+            FLUIDS.register("flowing_kvass", ModFluids::kvassFlowing);
+
     public static void register(IEventBus eventBus) {
         FLUID_TYPES.register(eventBus);
         FLUIDS.register(eventBus);

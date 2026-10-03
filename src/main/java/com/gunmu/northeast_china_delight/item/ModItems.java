@@ -136,7 +136,7 @@ public class ModItems {
     /** 熟花生米：花生在厨锅里炒熟 */
     public static final DeferredItem<Item> ROASTED_PEANUTS = food("roasted_peanuts", 4, 0.5F);
     /** 辣椒酱：2 红辣椒 + 盐 + 碗，工作台合成 */
-    public static final DeferredItem<Item> CHILI_SAUCE = plain("chili_sauce");
+    public static final DeferredItem<Item> CHILI_SAUCE = seasoningBowl("chili_sauce");
     /** 豆芽：大缸里 1 层水 + 黄豆蒙粗布毯发出来 */
     public static final DeferredItem<Item> BEAN_SPROUTS = food("bean_sprouts", 2, 0.3F);
     /** 酸玉米粒：大缸里玉米粒配水蒙粗布毯发酵而成，磨一磨就是水面团 */
@@ -146,7 +146,7 @@ public class ModItems {
     /** 粉条：红薯淀粉 + 水 + 盐在厨锅里煮成 */
     public static final DeferredItem<Item> VERMICELLI = plain("vermicelli");
     /** 拉皮：淀粉浆用动力冲压机压出来 */
-    public static final DeferredItem<Item> LA_PI = food("mung_bean_sheet", 3, 0.4F);
+    public static final DeferredItem<Item> LA_PI = plain("mung_bean_sheet");
     /** 油滋了：熬动物油时锅里留下的油渣，也能直接吃 */
     public static final DeferredItem<Item> CRACKLINGS = food("cracklings", 4, 0.6F);
     /** 冷面片：3 份面团在动力冲压机 + 工作盆里压出来（不用加热），烤冷面用 */
@@ -543,6 +543,12 @@ public class ModItems {
     private static DeferredItem<Item> bottledLiquid(String id) {
         return ITEMS.registerItem(id, Item::new, new Item.Properties()
                 .craftRemainder(Items.GLASS_BOTTLE));
+    }
+
+    /** 碗装的调料：用完返还空碗（跟 bowlFood 一样，但不可食用） */
+    private static DeferredItem<Item> seasoningBowl(String id) {
+        return ITEMS.registerItem(id, Item::new, new Item.Properties()
+                .craftRemainder(Items.BOWL));
     }
 
     /**

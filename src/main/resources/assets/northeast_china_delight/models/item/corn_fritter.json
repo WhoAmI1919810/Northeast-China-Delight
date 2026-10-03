@@ -1,6 +1,6 @@
 {
   "parent": "minecraft:item/generated",
   "textures": {
-    "layer0": "northeast_china_delight:item/yu_mi_lao"
+    "layer0": "northeast_china_delight:item/corn_fritter"
   }
 }

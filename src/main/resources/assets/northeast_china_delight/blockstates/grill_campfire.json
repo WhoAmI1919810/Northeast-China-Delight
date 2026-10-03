@@ -1,12 +1,20 @@
 {
   "variants": {
-    "facing=east,lit=false": { "model": "northeast_china_delight:block/grill_campfire_off", "y": 270 },
-    "facing=east,lit=true": { "model": "northeast_china_delight:block/grill_campfire", "y": 270 },
-    "facing=north,lit=false": { "model": "northeast_china_delight:block/grill_campfire_off", "y": 180 },
-    "facing=north,lit=true": { "model": "northeast_china_delight:block/grill_campfire", "y": 180 },
-    "facing=south,lit=false": { "model": "northeast_china_delight:block/grill_campfire_off" },
-    "facing=south,lit=true": { "model": "northeast_china_delight:block/grill_campfire" },
-    "facing=west,lit=false": { "model": "northeast_china_delight:block/grill_campfire_off", "y": 90 },
-    "facing=west,lit=true": { "model": "northeast_china_delight:block/grill_campfire", "y": 90 }
+    "facing=east,lit=false,soul=false": { "model": "northeast_china_delight:block/grill_campfire_off", "y": 270 },
+    "facing=east,lit=false,soul=true":  { "model": "northeast_china_delight:block/grill_campfire_off", "y": 270 },
+    "facing=east,lit=true,soul=false":  { "model": "northeast_china_delight:block/grill_campfire", "y": 270 },
+    "facing=east,lit=true,soul=true":   { "model": "northeast_china_delight:block/grill_campfire", "y": 270 },
+    "facing=north,lit=false,soul=false": { "model": "northeast_china_delight:block/grill_campfire_off", "y": 180 },
+    "facing=north,lit=false,soul=true":  { "model": "northeast_china_delight:block/grill_campfire_off", "y": 180 },
+    "facing=north,lit=true,soul=false":  { "model": "northeast_china_delight:block/grill_campfire", "y": 180 },
+    "facing=north,lit=true,soul=true":   { "model": "northeast_china_delight:block/grill_campfire", "y": 180 },
+    "facing=south,lit=false,soul=false": { "model": "northeast_china_delight:block/grill_campfire_off" },
+    "facing=south,lit=false,soul=true":  { "model": "northeast_china_delight:block/grill_campfire_off" },
+    "facing=south,lit=true,soul=false":  { "model": "northeast_china_delight:block/grill_campfire" },
+    "facing=south,lit=true,soul=true":   { "model": "northeast_china_delight:block/grill_campfire" },
+    "facing=west,lit=false,soul=false": { "model": "northeast_china_delight:block/grill_campfire_off", "y": 90 },
+    "facing=west,lit=false,soul=true":  { "model": "northeast_china_delight:block/grill_campfire_off", "y": 90 },
+    "facing=west,lit=true,soul=false":  { "model": "northeast_china_delight:block/grill_campfire", "y": 90 },
+    "facing=west,lit=true,soul=true":   { "model": "northeast_china_delight:block/grill_campfire", "y": 90 }
   }
 }

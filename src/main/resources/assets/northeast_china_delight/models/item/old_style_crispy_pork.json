@@ -1,6 +1,6 @@
 {
   "parent": "minecraft:item/generated",
   "textures": {
-    "layer0": "northeast_china_delight:item/old_style_guo_bao_rou"
+    "layer0": "northeast_china_delight:item/old_style_crispy_pork"
   }
 }

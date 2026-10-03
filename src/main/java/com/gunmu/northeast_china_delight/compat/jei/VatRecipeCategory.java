@@ -402,11 +402,9 @@ public class VatRecipeCategory implements IRecipeCategory<VatJeiRecipe> {
             // 额外条件注记（"要在会下雪的群系里酿"），小一号字写在时长下面
             Component note = state.note();
             if (note != null) {
-                int noteX = VAT_X + (VAT_ICON_SIZE + 40 - font.width(note)) / 2;
-                if (noteX < 0) {
-                    noteX = 0;
-                }
-                graphics.drawString(font, note, noteX, TIME_Y + 10, 0xFF666666, false);
+                // 底部水平居中，避开缸身和引线
+                int noteX = (WIDTH - font.width(note)) / 2;
+                graphics.drawString(font, note, noteX, HEIGHT - 10, 0xFF666666, false);
             }
         }
 

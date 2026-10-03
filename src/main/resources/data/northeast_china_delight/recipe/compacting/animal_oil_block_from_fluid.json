@@ -1,0 +1,15 @@
+{
+  "type": "create:compacting",
+  "ingredients": [
+    {
+      "type": "neoforge:single",
+      "amount": 1000,
+      "fluid": "northeast_china_delight:animal_oil"
+    }
+  ],
+  "results": [
+    {
+      "id": "northeast_china_delight:animal_oil_block"
+    }
+  ]
+}

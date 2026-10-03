@@ -1,6 +1,6 @@
 {
   "parent": "minecraft:item/generated",
   "textures": {
-    "layer0": "northeast_china_delight:item/bai_cai_dou_fu_dun_fen_tiao"
+    "layer0": "northeast_china_delight:item/cabbage_tofu_vermicelli_stew"
   }
 }

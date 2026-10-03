@@ -2,9 +2,9 @@
   "parent": "block/block",
   "render_type": "minecraft:cutout",
   "textures": {
-    "particle": "northeast_china_delight:item/sha_zhu_cai",
-    "food_top": "northeast_china_delight:item/sha_zhu_cai",
-    "food_side": "northeast_china_delight:item/sha_zhu_cai",
+    "particle": "northeast_china_delight:item/slaughter_feast",
+    "food_top": "northeast_china_delight:item/slaughter_feast",
+    "food_side": "northeast_china_delight:item/slaughter_feast",
     "basin": "northeast_china_delight:item/large_basin"
   },
   "elements": [

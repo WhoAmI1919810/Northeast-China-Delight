@@ -2,7 +2,7 @@
   "parent": "block/block",
   "render_type": "minecraft:cutout",
   "textures": {
-    "particle": "northeast_china_delight:item/xiao_ji_dun_mo_gu",
+    "particle": "northeast_china_delight:item/chicken_mushroom_stew",
     "basin": "northeast_china_delight:block/basin_side",
     "basin_inner": "northeast_china_delight:block/basin_top",
     "basin_bottom": "northeast_china_delight:block/basin_bottom",

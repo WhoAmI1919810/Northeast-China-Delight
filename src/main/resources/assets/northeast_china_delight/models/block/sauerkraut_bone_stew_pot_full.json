@@ -2,9 +2,9 @@
   "parent": "block/block",
   "render_type": "minecraft:cutout",
   "textures": {
-    "particle": "northeast_china_delight:item/suan_cai_dun_gu_tou",
-    "food_top": "northeast_china_delight:item/suan_cai_dun_gu_tou",
-    "food_side": "northeast_china_delight:item/suan_cai_dun_gu_tou",
+    "particle": "northeast_china_delight:item/sauerkraut_bone_stew",
+    "food_top": "northeast_china_delight:item/sauerkraut_bone_stew",
+    "food_side": "northeast_china_delight:item/sauerkraut_bone_stew",
     "basin": "northeast_china_delight:item/large_basin"
   },
   "elements": [

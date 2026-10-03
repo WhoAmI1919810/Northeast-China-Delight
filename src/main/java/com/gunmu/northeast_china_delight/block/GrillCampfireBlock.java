@@ -55,6 +55,9 @@ public class GrillCampfireBlock extends CampfireBlock {
 
     public static final MapCodec<GrillCampfireBlock> CODEC = simpleCodec(GrillCampfireBlock::new);
 
+    /** 底下的火是灵魂营火（拆烤架时还原回灵魂营火） */
+    public static final net.minecraft.world.level.block.state.properties.BooleanProperty SOUL =
+            net.minecraft.world.level.block.state.properties.BooleanProperty.create("soul");
     public static final IntegerProperty PROGRESS = ModBlockStateProperties.GRILL_PROGRESS;
     public static final int MAX_PROGRESS = ModBlockStateProperties.GRILL_MAX_PROGRESS;
 
@@ -63,7 +66,7 @@ public class GrillCampfireBlock extends CampfireBlock {
 
     public GrillCampfireBlock(Properties properties) {
         super(true, 1, properties);
-        registerDefaultState(defaultBlockState().setValue(PROGRESS, 0));
+        registerDefaultState(defaultBlockState().setValue(PROGRESS, 0).setValue(SOUL, false));
     }
 
     @SuppressWarnings({"unchecked", "rawtypes"})
@@ -76,6 +79,7 @@ public class GrillCampfireBlock extends CampfireBlock {
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
         super.createBlockStateDefinition(builder);
         builder.add(PROGRESS);
+        builder.add(SOUL);
     }
 
     @Override
@@ -114,6 +118,12 @@ public class GrillCampfireBlock extends CampfireBlock {
             level.addParticle(ParticleTypes.LAVA,
                     pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5,
                     random.nextFloat() / 2.0F, 5.0E-5, random.nextFloat() / 2.0F);
+        }
+        // 灵魂营火：顶上冒灵魂火粒子（和普通营火对应位置一样在方块中心）
+        if (state.getValue(SOUL) && random.nextInt(10) == 0) {
+            level.addParticle(ParticleTypes.SOUL_FIRE_FLAME,
+                    pos.getX() + 0.5, pos.getY() + 0.8, pos.getZ() + 0.5,
+                    0.0, 0.0, 0.0);
         }
     }
 
@@ -403,6 +413,7 @@ public class GrillCampfireBlock extends CampfireBlock {
                 .setValue(SIGNAL_FIRE, campfire.getValue(SIGNAL_FIRE))
                 .setValue(WATERLOGGED, campfire.getValue(WATERLOGGED))
                 .setValue(FACING, campfire.getValue(FACING))
+                .setValue(SOUL, campfire.is(Blocks.SOUL_CAMPFIRE))
                 .setValue(PROGRESS, 0);
         level.setBlock(pos, grilled, 3);
 
@@ -421,7 +432,9 @@ public class GrillCampfireBlock extends CampfireBlock {
 
     /** 收走烤架，变回普通营火 */
     private static BlockState withoutGrill(BlockState state) {
-        return Blocks.CAMPFIRE.defaultBlockState()
+        // 装烤架之前是灵魂营火就还回灵魂营火，普通营火就还回普通营火
+        Block base = state.getValue(SOUL) ? Blocks.SOUL_CAMPFIRE : Blocks.CAMPFIRE;
+        return base.defaultBlockState()
                 .setValue(LIT, state.getValue(LIT))
                 .setValue(SIGNAL_FIRE, state.getValue(SIGNAL_FIRE))
                 .setValue(WATERLOGGED, state.getValue(WATERLOGGED))

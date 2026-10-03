@@ -1,6 +1,6 @@
 {
   "parent": "minecraft:item/generated",
   "textures": {
-    "layer0": "northeast_china_delight:item/cong_shao_hai_shen"
+    "layer0": "northeast_china_delight:item/braised_sea_cucumber_scallion"
   }
 }

@@ -2,9 +2,9 @@
   "parent": "block/block",
   "render_type": "minecraft:cutout",
   "textures": {
-    "particle": "northeast_china_delight:item/da_feng_shou",
-    "food_top": "northeast_china_delight:item/da_feng_shou",
-    "food_side": "northeast_china_delight:item/da_feng_shou",
+    "particle": "northeast_china_delight:item/harvest_stew",
+    "food_top": "northeast_china_delight:item/harvest_stew",
+    "food_side": "northeast_china_delight:item/harvest_stew",
     "basin": "northeast_china_delight:item/large_basin"
   },
   "elements": [
