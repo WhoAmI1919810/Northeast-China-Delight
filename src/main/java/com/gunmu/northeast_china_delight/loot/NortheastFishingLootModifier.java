@@ -27,7 +27,7 @@ import net.neoforged.neoforge.common.loot.LootModifier;
  * 钓鱼的「鱼」这一类在本模组里有三张表，按浮漂所在的水域来挑：
  *
  * <ol>
- *   <li><b>带鱼表</b>（最优先）：冷水深海 / 冰冻深海，而且水面四个方向各 200 格、往下 20 格都是水 ——
+ *   <li><b>带鱼表</b>（最优先）：冷水深海 / 冰冻深海，而且水面四个方向各 150 格内是水/冰/浮冰/蓝冰/含水方块、往下 10 格是水 ——
  *       鳕鱼 25%、鲑鱼 25%、带鱼 25%、<b>海参 25%</b>；</li>
  *   <li><b>生蚝表</b>：浮漂 30 格内同时有河流和任意海洋生物群系 ——
  *       鳕鱼 30%、鲑鱼 25%、河豚 13%、热带鱼 2%、<b>大虾 15%、生蚝 15%</b>；</li>
@@ -40,7 +40,7 @@ import net.neoforged.neoforge.common.loot.LootModifier;
 public class NortheastFishingLootModifier extends LootModifier
 {
     /** 带鱼表的水面延伸范围 */
-    public static final int HAIRTAIL_HORIZONTAL_RANGE = 200;
+    public static final int HAIRTAIL_HORIZONTAL_RANGE = 150;
     /** 带鱼表的水深 */
     public static final int HAIRTAIL_VERTICAL_RANGE = 20;
     /** 生蚝表的检测半径 */
@@ -95,8 +95,24 @@ public class NortheastFishingLootModifier extends LootModifier
             return generatedLoot;
         }
 
+        // 调试：每次抛竿都在物品栏上方显示当前水域判定详情
+        boolean deepOcean = isColdDeepOcean(level, surface);
+        boolean openWater = isOpenWater(level, surface);
+        int depth = waterDepth(level, surface);
+        String biomeName = level.getBiome(surface).unwrapKey().map(k -> k.location().toString()).orElse("unknown");
+        // 浮漂是 FishingHook 不是玩家，从钓点位置找最近的玩家发消息
+        net.minecraft.world.entity.player.Player player = level.getNearestPlayer(
+                bobber.getX(), bobber.getY(), bobber.getZ(), 8.0D, false);
+        if (player != null)
+        {
+            player.displayClientMessage(
+                    net.minecraft.network.chat.Component.literal(String.format(
+                            "§7[东北乐事] §f开阔水面: %s §f(150格内水/冰/含水方块) §f水深: %d 群系: %s",
+                            openWater ? "§a是" : "§c否", depth, biomeName)), true);
+        }
+
         Entry[] table;
-        if (isColdDeepOcean(level, surface) && isOpenWater(level, surface))
+        if (deepOcean && openWater)
         {
             table = HAIRTAIL;
         }
@@ -168,20 +184,20 @@ public class NortheastFishingLootModifier extends LootModifier
         return isWater(level, below) ? below : null;
     }
 
-    private static boolean isColdDeepOcean(ServerLevel level, BlockPos pos)
+    public static boolean isColdDeepOcean(ServerLevel level, BlockPos pos)
     {
         Holder<Biome> biome = level.getBiome(pos);
         return biome.is(Biomes.DEEP_COLD_OCEAN) || biome.is(Biomes.DEEP_FROZEN_OCEAN);
     }
 
-    private static boolean isOpenWater(ServerLevel level, BlockPos surface)
+    public static boolean isOpenWater(ServerLevel level, BlockPos surface)
     {
         for (Direction direction : Direction.Plane.HORIZONTAL)
         {
             BlockPos.MutableBlockPos cursor = surface.mutable();
             for (int i = 0; i < HAIRTAIL_HORIZONTAL_RANGE; i++)
             {
-                if (!isWater(level, cursor.move(direction)))
+                if (!isWaterOrIce(level, cursor.move(direction)))
                 {
                     return false;
                 }
@@ -198,10 +214,55 @@ public class NortheastFishingLootModifier extends LootModifier
         return true;
     }
 
+    /** 水平方向放宽：水、冰、浮冰、蓝冰、或其他含水方块都算"开阔水面" */
+    private static boolean isWaterOrIce(ServerLevel level, BlockPos pos)
+    {
+        BlockState state = level.getBlockState(pos);
+        // 流体是水 → 通过
+        if (state.getFluidState().is(FluidTags.WATER))
+        {
+            return true;
+        }
+        // 实体冰块（冰、浮冰、蓝冰）→ 通过
+        if (state.is(net.minecraft.world.level.block.Blocks.ICE)
+                || state.is(net.minecraft.world.level.block.Blocks.PACKED_ICE)
+                || state.is(net.minecraft.world.level.block.Blocks.BLUE_ICE)
+                || state.is(net.minecraft.world.level.block.Blocks.FROSTED_ICE))
+        {
+            return true;
+        }
+        // 含水方块（半砖、楼梯、栅栏、墙、树叶等 waterlogged=true）→ 通过
+        if (state.hasProperty(net.minecraft.world.level.block.state.properties.BlockStateProperties.WATERLOGGED)
+                && state.getValue(net.minecraft.world.level.block.state.properties.BlockStateProperties.WATERLOGGED))
+        {
+            return true;
+        }
+        return false;
+    }
+
+    /** 垂直方向只看是不是水（冰层在水面上，底下还是水就行） */
+    /** 水面以下连续有多少格是水（最多查 30 格） */
+    public static int waterDepth(ServerLevel level, BlockPos surface)
+    {
+        int depth = 0;
+        BlockPos.MutableBlockPos cursor = surface.mutable();
+        for (int i = 0; i < 30; i++)
+        {
+            if (!isWater(level, cursor.move(Direction.DOWN)))
+            {
+                break;
+            }
+            depth++;
+        }
+        return depth;
+    }
+
     private static boolean isWater(ServerLevel level, BlockPos pos)
     {
         BlockState state = level.getBlockState(pos);
-        return state.getFluidState().is(FluidTags.WATER);
+        return state.getFluidState().is(FluidTags.WATER)
+                || (state.hasProperty(net.minecraft.world.level.block.state.properties.BlockStateProperties.WATERLOGGED)
+                        && state.getValue(net.minecraft.world.level.block.state.properties.BlockStateProperties.WATERLOGGED));
     }
 
     private static int indexOfFish(ObjectArrayList<ItemStack> loot)

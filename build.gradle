@@ -100,6 +100,13 @@ dependencies {
     compileOnly "mezz.jei:jei-1.21.1-neoforge-api:${jei_version}"
     localRuntime "mezz.jei:jei-1.21.1-neoforge:${jei_version}"
 
+    // Create 的 catnip GUI 渲染库（在 Ponder jar 里，Create 用 jarjar 内嵌）
+    // 编译期必须显式依赖才能拿到 net.createmod.catnip.* 的类
+    compileOnly files(
+        "${rootDir}/libs/ponder-neoforge-1.0.82+mc1.21.1.jar",
+        "${rootDir}/libs/flywheel-neoforge-1.21.1-1.0.6.jar",
+        "${rootDir}/libs/Registrate-MC1.21-1.3.0+67.jar")
+
     // 需要联动其它模组时在此声明，例如：
     // compileOnly "mezz.jei:jei-${minecraft_version}-common-api:${jei_version}"
     // localRuntime "mezz.jei:jei-${minecraft_version}-neoforge:${jei_version}"

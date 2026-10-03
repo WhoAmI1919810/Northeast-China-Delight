@@ -580,6 +580,21 @@ public final class VatRecipe {
         return n;
     }
 
+    /**
+     * 每一格都已满足、且缸内数量恰好等于该格要求的最小份数（一份都不多）。
+     * 用来区分"刚好命中 exact 配方"（鱼露 6 鱼 3 盐）和"弹性配方多投了料"（咸鱼 6 鱼 3 盐）。
+     */
+    public boolean allSlotsExact(Counts counts) {
+        for (int i = 0; i < this.slots.size(); i++) {
+            Bounds b = this.boundsOf(i, counts);
+            int have = counts.count(this.slots.get(i).matcher());
+            if (!b.satisfied(have) || have != b.min()) {
+                return false;
+            }
+        }
+        return true;
+    }
+
     /** 所有格子"最少要几份"的合计（越小说明这条配方越容易被满足） */
     public int minimumTotal(Counts counts) {
         int n = 0;

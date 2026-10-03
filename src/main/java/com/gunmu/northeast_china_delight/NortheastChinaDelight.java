@@ -9,6 +9,7 @@ import com.gunmu.northeast_china_delight.client.GrillCampfireRenderer;
 import com.gunmu.northeast_china_delight.client.VatRenderer;
 import com.gunmu.northeast_china_delight.effect.DishEffectEvents;
 import com.gunmu.northeast_china_delight.event.ModGameplayEvents;
+import com.gunmu.northeast_china_delight.compat.create.ModFanProcessingTypes;
 import com.gunmu.northeast_china_delight.effect.ModEffects;
 import com.gunmu.northeast_china_delight.fluid.ModFluids;
 import com.gunmu.northeast_china_delight.item.ModItems;
@@ -73,6 +74,7 @@ public class NortheastChinaDelight
         ModCreativeTabs.register(modEventBus);
         ModLootModifiers.register(modEventBus);
         ModEffects.register(modEventBus);
+        ModFanProcessingTypes.register(modEventBus);
         ModVillagerProfessions.register(modEventBus);
         ModMapDecorations.register(modEventBus);
         ModWorldGen.register(modEventBus);
@@ -83,6 +85,8 @@ public class NortheastChinaDelight
         modEventBus.addListener(this::addItemsToCreativeTab);
         // 大缸的流体能力：让流体管道能把酱油 / 大酱抽进储罐
         modEventBus.addListener(this::registerCapabilities);
+        // 通用设置：堆肥、可燃性等
+        modEventBus.addListener(this::onCommonSetup);
 
         // 注册服务器及其他游戏事件
         NeoForge.EVENT_BUS.register(this);
@@ -97,6 +101,16 @@ public class NortheastChinaDelight
         NeoForge.EVENT_BUS.addListener(ModFishermanTrades::addTrades);
         NeoForge.EVENT_BUS.addListener(ModCartographerTrades::addTrades);
         NeoForge.EVENT_BUS.addListener(ModWandererTrades::addTrades);
+    }
+
+    /** 通用设置：往原版堆里塞数据 —— 玉米茎秆能堆肥。 */
+    private void onCommonSetup(@NotNull net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent event)
+    {
+        event.enqueueWork(() -> {
+            // 玉米茎秆：晒干的秸秆，堆肥效率比普通作物高（0.65 一档）
+            net.minecraft.world.level.block.ComposterBlock.COMPOSTABLES.put(
+                    ModItems.CORN_STALK.get(), 0.65F);
+        });
     }
 
     private void addItemsToCreativeTab(@NotNull BuildCreativeModeTabContentsEvent event)

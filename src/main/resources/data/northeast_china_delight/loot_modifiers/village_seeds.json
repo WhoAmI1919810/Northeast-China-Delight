@@ -1,0 +1,18 @@
+{
+  "type": "neoforge:loot_table_id",
+  "conditions": [
+    { "condition": "neoforge:loot_table_id", "loot_table_id": "minecraft:chests/village/village_plains_house" }
+  ],
+  "entries": [
+    { "type": "minecraft:item", "name": "northeast_china_delight:corn_seeds", "weight": 8, "functions": [{ "function": "minecraft:set_count", "count": { "min": 1, "max": 3 } }] },
+    { "type": "minecraft:item", "name": "northeast_china_delight:soybean", "weight": 8, "functions": [{ "function": "minecraft:set_count", "count": { "min": 1, "max": 3 } }] },
+    { "type": "minecraft:item", "name": "northeast_china_delight:buckwheat", "weight": 6, "functions": [{ "function": "minecraft:set_count", "count": { "min": 1, "max": 2 } }] },
+    { "type": "minecraft:item", "name": "northeast_china_delight:red_bean", "weight": 6, "functions": [{ "function": "minecraft:set_count", "count": { "min": 1, "max": 2 } }] },
+    { "type": "minecraft:item", "name": "northeast_china_delight:napa_cabbage_seeds", "weight": 7, "functions": [{ "function": "minecraft:set_count", "count": { "min": 1, "max": 3 } }] },
+    { "type": "minecraft:item", "name": "northeast_china_delight:cucumber_seeds", "weight": 7, "functions": [{ "function": "minecraft:set_count", "count": { "min": 1, "max": 3 } }] },
+    { "type": "minecraft:item", "name": "northeast_china_delight:green_radish_seeds", "weight": 7, "functions": [{ "function": "minecraft:set_count", "count": { "min": 1, "max": 3 } }] },
+    { "type": "minecraft:item", "name": "northeast_china_delight:green_onion_seeds", "weight": 7, "functions": [{ "function": "minecraft:set_count", "count": { "min": 1, "max": 3 } }] },
+    { "type": "minecraft:item", "name": "northeast_china_delight:peanut", "weight": 6, "functions": [{ "function": "minecraft:set_count", "count": { "min": 1, "max": 2 } }] },
+    { "type": "minecraft:item", "name": "northeast_china_delight:sweet_potato", "weight": 5, "functions": [{ "function": "minecraft:set_count", "count": { "min": 1, "max": 2 } }] }
+  ]
+}

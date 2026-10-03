@@ -354,10 +354,11 @@ public class Vat extends Block implements EntityBlock {
         if (vat.isFermented()) {
             level.setBlock(pos, level.getBlockState(pos).setValue(FERMENTED, false).setValue(PROGRESS, 0), 3);
         }
-        if (recipe.kind() != vat.kind()) {
-            vat.setKind(recipe.kind());
-        }
+        // 投料阶段不认领 kind：此时材料未必配齐（先放盐的缸会暂时像鱼露）。
+        // kind 只由 tryStart→ready 在材料+封口真正凑齐时设置，避免中途误认后翻不回来。
         VatRecipe.Slot recipeSlot = recipe.slots().get(slot);
+        // 把这份东西记进缸里：渲染器和 Jade 都从 contents 读，光扣玩家物品不记账缸里就永远是空的
+        vat.addContent(stack);
         if (recipeSlot.perDose() && SeasoningBottleItem.isBottle(stack)) {
             // 带余量的瓶装调料（鱼露、虾酱）：缸里只记一份剂量，
             // 瓶子扣一份之后直接放回玩家手里（不走 give，避免跳到别的格子）；
@@ -433,7 +434,7 @@ public class Vat extends Block implements EntityBlock {
                 if (!state.getValue(FERMENTED)) {
                     level.setBlock(pos, state.setValue(PROGRESS, 0), 3);
                 }
-                level.playSound(null, pos, SoundEvents.BUCKET_FILL, SoundSource.BLOCKS, 1.0F, 1.0F);
+                level.playSound(null, pos, SoundEvents.STONE_BREAK, SoundSource.BLOCKS, 1.0F, 1.0F);
             }
             return InteractionResult.sidedSuccess(level.isClientSide());
         }

@@ -1,0 +1,6 @@
+{
+  "type": "northeast_china_delight:fisherman_loot",
+  "conditions": [
+    { "condition": "neoforge:loot_table_id", "loot_table_id": "minecraft:chests/village/village_fisher" }
+  ]
+}

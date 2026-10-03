@@ -89,7 +89,8 @@ public enum VatComponentProvider implements IBlockComponentProvider {
             // 按大缸在做的东西换说法：泡菜「发酵」、腊肉/咸鱼「腌制」、大酱/酱油「酿造」
             String stage = switch (kind) {
                 case MEAT, SALTED_FISH -> "curing";
-                case PASTE, SOY_SAUCE -> "brewing";
+                case PASTE, SOY_SAUCE, FISH_SAUCE, SHRIMP_PASTE -> "brewing";
+                case FROZEN_PEAR -> "making";
                 case BEAN_SPROUTS -> "sprouting";
                 default -> "fermenting";
             };

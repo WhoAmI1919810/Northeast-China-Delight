@@ -36,7 +36,7 @@ public class GrillBlockEntity extends BlockEntity {
     /** 一个烤架能放几份食材 */
     public static final int SLOTS = 4;
     /** 每份食材最多刷几样调料 */
-    public static final int SEASONINGS_PER_SLOT = 3;
+    public static final int SEASONINGS_PER_SLOT = 4;
 
     /** 四份食材在方块里的水平偏移（和原版营火摆 4 份食物的位置一致） */
     private static final float CORNER = 0.3125F;

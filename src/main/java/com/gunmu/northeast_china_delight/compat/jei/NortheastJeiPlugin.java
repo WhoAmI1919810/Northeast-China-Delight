@@ -33,6 +33,9 @@ public class NortheastJeiPlugin implements IModPlugin {
     public static final RecipeType<GrillJeiRecipe> GRILL_TYPE =
             RecipeType.create(NortheastChinaDelight.MODID, "grill", GrillJeiRecipe.class);
 
+    public static final RecipeType<DryingJeiRecipe> DRYING_TYPE =
+            RecipeType.create(NortheastChinaDelight.MODID, "drying", DryingJeiRecipe.class);
+
     private static final ResourceLocation PLUGIN_UID =
             ResourceLocation.fromNamespaceAndPath(NortheastChinaDelight.MODID, "jei_plugin");
 
@@ -46,12 +49,14 @@ public class NortheastJeiPlugin implements IModPlugin {
         IGuiHelper guiHelper = registration.getJeiHelpers().getGuiHelper();
         registration.addRecipeCategories(new VatRecipeCategory(guiHelper));
         registration.addRecipeCategories(new GrillRecipeCategory(guiHelper));
+        registration.addRecipeCategories(new DryingRecipeCategory(guiHelper));
     }
 
     @Override
     public void registerRecipes(IRecipeRegistration registration) {
         registration.addRecipes(VAT_TYPE, VatJeiRecipes.all());
         registration.addRecipes(GRILL_TYPE, GrillJeiRecipes.all());
+        registration.addRecipes(DRYING_TYPE, DryingJeiRecipes.all());
     }
 
     /**
@@ -69,5 +74,6 @@ public class NortheastJeiPlugin implements IModPlugin {
     public void registerRecipeCatalysts(IRecipeCatalystRegistration registration) {
         registration.addRecipeCatalyst(ModItems.VAT.get(), VAT_TYPE);
         registration.addRecipeCatalyst(ModItems.GRILL_RACK.get(), GRILL_TYPE);
+        registration.addRecipeCatalyst(new net.minecraft.world.item.ItemStack(net.minecraft.core.registries.BuiltInRegistries.BLOCK.get(net.minecraft.resources.ResourceLocation.fromNamespaceAndPath("create", "encased_fan"))), DRYING_TYPE);
     }
 }

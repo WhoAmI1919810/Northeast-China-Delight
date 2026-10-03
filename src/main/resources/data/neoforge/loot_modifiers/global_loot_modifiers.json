@@ -2,6 +2,14 @@
   "replace": false,
   "entries": [
     "northeast_china_delight:pig_offal",
-    "northeast_china_delight:fishing"
+    "northeast_china_delight:fishing",
+    "northeast_china_delight:structure_seeds",
+    "northeast_china_delight:butcher_loot",
+    "northeast_china_delight:fisherman_loot",
+    "northeast_china_delight:village_seeds_plains",
+    "northeast_china_delight:village_seeds_savanna",
+    "northeast_china_delight:village_seeds_snowy",
+    "northeast_china_delight:village_seeds_taiga",
+    "northeast_china_delight:village_seeds_desert"
   ]
 }

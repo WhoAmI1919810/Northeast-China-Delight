@@ -39,48 +39,53 @@ public final class SideDishMerchantTrades
         Int2ObjectMap<List<VillagerTrades.ItemListing>> trades = event.getTrades();
 
         // ===== 1 级：新手小货郎 =====
-        trades.get(1).add(sell(1, ModItems.SALT.get(), 4, 16, 2));                 // 盐 4 个换 1
-        trades.get(1).add(sell(1, Items.SUGAR, 6, 16, 2));                          // 糖 6 个换 1
-        trades.get(1).add(sell(1, ModItems.TOFU.get(), 3, 16, 2));                  // 豆腐 3 个换 1
-        trades.get(1).add(sellWithUses(ModItems.SOY_SAUCE.get(), 1, 1, 16, 2));     // 酱油（只剩 1 次的量）
-        trades.get(1).add(buy(ModItems.SOYBEAN.get(), 20, 16, 2));                  // 收大豆 20 换 1
+        // 基础食材按「n 绿宝石 → 1 个」定价，比你自己种地便宜一点
+        trades.get(1).add(sell(2, ModItems.SALT.get(), 1, 16, 2));                  // 盐：2 绿宝石 1 个
+        trades.get(1).add(sell(3, Items.SUGAR, 1, 16, 2));                          // 糖：3 绿宝石 1 个
+        trades.get(1).add(sell(4, ModItems.TOFU.get(), 1, 16, 2));                  // 豆腐：4 绿宝石 1 块（=2 大豆+水）
+        trades.get(1).add(sellWithUses(ModItems.SOY_SAUCE.get(), 1, 3, 16, 2));     // 酱油（剩 1 次）：3 绿宝石
+        trades.get(1).add(buy(ModItems.SOYBEAN.get(), 24, 16, 2));                  // 收大豆 24 换 1
 
         // ===== 2 级：学徒 =====
-        trades.get(2).add(sell(1, ModItems.DRIED_TOFU.get(), 3, 16, 5));            // 干豆腐 3 个换 1
-        trades.get(2).add(sell(1, ModItems.VERMICELLI.get(), 2, 16, 5));            // 粉条 2 个换 1
-        trades.get(2).add(sell(1, ModItems.SOY_PASTE_CHUNK.get(), 2, 16, 5));       // 大酱块 2 个换 1
-        trades.get(2).add(coldOnly(sellWithUses(ModItems.SOY_PASTE.get(), 2, 1, 12, 5))); // 大酱（寒冷群系，剩 2 次）
-        trades.get(2).add(buy(ModItems.NAPA_CABBAGE.get(), 16, 16, 5));             // 收大白菜 16 换 1
+        trades.get(2).add(sell(6, ModItems.DRIED_TOFU.get(), 1, 16, 5));            // 干豆腐：6 绿宝石 1 个（≈豆浆+风干）
+        trades.get(2).add(sell(8, ModItems.VERMICELLI.get(), 1, 16, 5));            // 粉条：8 绿宝石 1 个（淀粉+水）
+        trades.get(2).add(sell(5, ModItems.SOY_PASTE_CHUNK.get(), 1, 16, 5));       // 大酱块：5 绿宝石 1 个（黄豆+盐+时间）
+        trades.get(2).add(coldOnly(sellWithUses(ModItems.SOY_PASTE.get(), 2, 4, 12, 5))); // 大酱（剩 2 次）：4 绿宝石
+        trades.get(2).add(buy(ModItems.NAPA_CABBAGE.get(), 18, 16, 5));             // 收大白菜 18 换 1
 
         // ===== 3 级：行家（酱料区） =====
-        trades.get(3).add(sellWithUses(ModItems.VINEGAR.get(), 2, 1, 12, 10));      // 醋（剩 2 次）
-        trades.get(3).add(sellWithUses(ModItems.WHITE_VINEGAR.get(), 2, 1, 12, 10));// 白醋（剩 2 次）
-        trades.get(3).add(sellWithUses(ModItems.CHILI_SAUCE.get(), 2, 1, 12, 10));  // 辣椒酱（剩 2 次）
-        trades.get(3).add(coldOnly(sell(2, ModItems.PICKLED_GREEN_RADISH.get(), 2, 12, 10))); // 腌青萝卜
-        trades.get(3).add(coldOnly(sell(2, ModItems.SOUR_CABBAGE.get(), 2, 12, 10)));         // 酸菜
-        trades.get(3).add(coldOnly(sell(2, ModItems.SPICY_CABBAGE.get(), 2, 12, 10)));        // 辣白菜
-        trades.get(3).add(buy(ModItems.RED_CHILI.get(), 16, 16, 10));               // 收红辣椒 16 换 1
+        trades.get(3).add(sellWithUses(ModItems.VINEGAR.get(), 2, 4, 12, 10));      // 醋（剩 2 次）：4 绿宝石
+        trades.get(3).add(sellWithUses(ModItems.WHITE_VINEGAR.get(), 2, 4, 12, 10));// 白醋（剩 2 次）：4 绿宝石
+        trades.get(3).add(sellWithUses(ModItems.CHILI_SAUCE.get(), 2, 5, 12, 10));  // 辣椒酱（剩 2 次）：5 绿宝石
+        // 酸菜 = 大白菜 + 盐 + 时间 → 食材总价 1+2+人工 ≈ 6~7，卖 5
+        trades.get(3).add(coldOnly(sell(5, ModItems.PICKLED_GREEN_RADISH.get(), 1, 12, 10))); // 腌青萝卜：5 绿宝石
+        trades.get(3).add(coldOnly(sell(6, ModItems.SOUR_CABBAGE.get(), 1, 12, 10)));         // 酸菜：6 绿宝石
+        // 辣白菜 = 大白菜 + 盐 + 辣椒酱 + 鱼露 → 食材总价 1+2+5+3 ≈ 11，卖 9
+        trades.get(3).add(coldOnly(sell(9, ModItems.SPICY_CABBAGE.get(), 1, 12, 10)));        // 辣白菜：9 绿宝石
+        trades.get(3).add(buy(ModItems.RED_CHILI.get(), 18, 16, 10));               // 收红辣椒 18 换 1
 
         // ===== 4 级：老掌柜（整瓶调料 + 加工品） =====
-        trades.get(4).add(sellFull(ModItems.SOY_SAUCE.get(), 2, 12, 15));           // 整瓶酱油 2 换 1
-        trades.get(4).add(sellFull(ModItems.CHILI_OIL.get(), 2, 12, 15));           // 整瓶辣椒油 2 换 1
-        trades.get(4).add(sellFull(ModItems.FISH_SAUCE.get(), 2, 12, 15));          // 整瓶鱼露 2 换 1
-        trades.get(4).add(sell(1, ModItems.LA_PI.get(), 2, 12, 15));                // 拉皮 2 个换 1
-        trades.get(4).add(sell(1, ModItems.COLD_NOODLE_SHEET.get(), 2, 12, 15));    // 冷面片 2 个换 1
-        trades.get(4).add(buy(ModItems.CORN.get(), 16, 16, 15));                    // 收玉米 16 换 1
+        trades.get(4).add(sellFull(ModItems.SOY_SAUCE.get(), 8, 12, 15));           // 整瓶酱油 250mB：8 绿宝石
+        trades.get(4).add(sellFull(ModItems.CHILI_OIL.get(), 10, 12, 15));          // 整瓶辣椒油 250mB：10 绿宝石
+        trades.get(4).add(sellFull(ModItems.FISH_SAUCE.get(), 9, 12, 15));          // 整瓶鱼露 250mB：9 绿宝石
+        // 拉皮 = 淀粉 + 水 + 时间，冷面片 = 面粉 + 鸡蛋 → 食材总价高，卖 12/10
+        trades.get(4).add(sell(12, ModItems.LA_PI.get(), 1, 12, 15));               // 拉皮：12 绿宝石 1 个
+        trades.get(4).add(sell(10, ModItems.COLD_NOODLE_SHEET.get(), 1, 12, 15));   // 冷面片：10 绿宝石 1 张
+        trades.get(4).add(buy(ModItems.CORN.get(), 20, 16, 15));                    // 收玉米 20 换 1
 
         // ===== 5 级：大掌柜 =====
-        trades.get(5).add(sellFull(ModItems.SHRIMP_PASTE.get(), 2, 12, 30));        // 整瓶虾酱 2 换 1
-        trades.get(5).add(sellFull(ModItems.ANIMAL_OIL.get(), 2, 12, 30));          // 整瓶动物油 2 换 1
-        trades.get(5).add(sell(1, ModItems.SWEET_POTATO_STARCH.get(), 4, 12, 30));  // 淀粉 4 个换 1
-        trades.get(5).add(sell(1, ModItems.ROASTED_PEANUTS.get(), 3, 12, 30));      // 熟花生米 3 个换 1
-        trades.get(5).add(sell(1, ModItems.BEAN_SPROUTS.get(), 4, 12, 30));         // 豆芽 4 个换 1
-        trades.get(5).add(sell(1, ModItems.BUCKWHEAT_COLD_NOODLES.get(), 1, 8, 30));// 荞麦冷面 1 碗换 1
-        trades.get(5).add(sell(1, ModItems.CANDIED_PEANUTS.get(), 2, 12, 30));      // 糖花生
-        trades.get(5).add(sell(1, ModItems.NIAN_DOU_BAO.get(), 2, 12, 30));         // 粘豆包
-        trades.get(5).add(sell(1, ModItems.SOY_MILK.get(), 2, 12, 30));             // 豆浆
-        trades.get(5).add(sell(1, ModItems.KVASS.get(), 2, 12, 30));                // 格瓦斯
-        trades.get(5).add(buy(ModItems.PEANUT.get(), 20, 16, 30));                  // 收花生 20 换 1
+        trades.get(5).add(sellFull(ModItems.SHRIMP_PASTE.get(), 12, 12, 30));       // 整瓶虾酱 250mB：12 绿宝石
+        trades.get(5).add(sellFull(ModItems.ANIMAL_OIL.get(), 10, 12, 30));         // 整瓶动物油 250mB：10 绿宝石
+        trades.get(5).add(sell(6, ModItems.SWEET_POTATO_STARCH.get(), 1, 12, 30));  // 淀粉：6 绿宝石 1 个（地瓜磨的）
+        trades.get(5).add(sell(4, ModItems.ROASTED_PEANUTS.get(), 1, 12, 30));      // 熟花生米：4 绿宝石 1 个
+        trades.get(5).add(sell(5, ModItems.BEAN_SPROUTS.get(), 1, 12, 30));         // 豆芽：5 绿宝石 1 个（豆子泡的）
+        // 荞麦冷面 = 荞麦 + 水 + 鸡蛋，粘豆包 = 玉米面 + 红豆 + 糖 → 食材总价高
+        trades.get(5).add(sell(14, ModItems.BUCKWHEAT_COLD_NOODLES.get(), 1, 8, 30));// 荞麦冷面：14 绿宝石 1 碗
+        trades.get(5).add(sell(7, ModItems.CANDIED_PEANUTS.get(), 1, 12, 30));      // 糖花生：7 绿宝石 1 个（花生+糖）
+        trades.get(5).add(sell(9, ModItems.NIAN_DOU_BAO.get(), 1, 12, 30));         // 粘豆包：9 绿宝石 1 个（玉米面+红豆+糖）
+        trades.get(5).add(sell(6, ModItems.SOY_MILK.get(), 1, 12, 30));             // 豆浆：6 绿宝石 1 碗（8 黄豆）
+        trades.get(5).add(sell(8, ModItems.KVASS.get(), 1, 12, 30));                // 格瓦斯：8 绿宝石 1 瓶（面包+水+时间）
+        trades.get(5).add(buy(ModItems.PEANUT.get(), 22, 16, 30));                  // 收花生 22 换 1
     }
 
     /**

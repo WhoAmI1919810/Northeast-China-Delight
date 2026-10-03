@@ -88,6 +88,8 @@ public class VatRenderer implements BlockEntityRenderer<VatBlockEntity> {
         // ===== 内容物：一层三个，立体小模型 =====
         boolean done = vat.getBlockState().getValue(Vat.FERMENTED);
         List<ItemStack> contents = vat.contents();
+        org.slf4j.LoggerFactory.getLogger(VatRenderer.class).info("[VatRenderer] pos={} contents={} count={}",
+                vat.getBlockPos(), contents.stream().map(s -> s.isEmpty() ? "empty" : s.getItem().toString()).toList(), contents.size());
         ItemRenderer itemRenderer = Minecraft.getInstance().getItemRenderer();
         // 干腌时抹上去的盐：让肉 / 鱼 的模型发白，而不是把盐本身画成一件东西
         float saltCoat = 0.0F;

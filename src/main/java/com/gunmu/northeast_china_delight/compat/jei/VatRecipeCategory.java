@@ -1,7 +1,10 @@
 package com.gunmu.northeast_china_delight.compat.jei;
 
 import com.gunmu.northeast_china_delight.NortheastChinaDelight;
+import com.gunmu.northeast_china_delight.block.ModBlocks;
 import com.gunmu.northeast_china_delight.item.ModItems;
+import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.math.Axis;
 import mezz.jei.api.gui.builder.IIngredientConsumer;
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
 import mezz.jei.api.gui.drawable.IDrawable;
@@ -18,6 +21,10 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.navigation.ScreenPosition;
+import net.minecraft.client.renderer.LightTexture;
+import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.renderer.texture.TextureAtlas;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.network.chat.Component;
@@ -26,6 +33,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.Fluids;
 import net.neoforged.neoforge.client.extensions.common.IClientFluidTypeExtensions;
+import net.neoforged.neoforge.client.model.data.ModelData;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -101,7 +109,7 @@ public class VatRecipeCategory implements IRecipeCategory<VatJeiRecipe> {
     private static final int OUTPUT_ONLY_Y = CENTER_Y - SLOT / 2;
 
     /** 发酵时长写在箭头下方 */
-    private static final int TIME_Y = 58;
+    private static final int TIME_Y = 70;
     private static final int TIME_COLOR = 0xFF3F3F3F;
     /** 时长文字最远画到这里，避免压到右边的产物格 */
     private static final int TIME_MAX_RIGHT = OUTPUT_X - 2;
@@ -128,16 +136,10 @@ public class VatRecipeCategory implements IRecipeCategory<VatJeiRecipe> {
 
     private final IDrawable icon;
     private final IDrawable arrow;
-    private final IDrawable vatIcon;
 
     public VatRecipeCategory(IGuiHelper guiHelper) {
         this.icon = guiHelper.createDrawableItemLike(ModItems.VAT.get());
         this.arrow = guiHelper.getRecipeArrow();
-        this.vatIcon = guiHelper.drawableBuilder(
-                        ResourceLocation.fromNamespaceAndPath(NortheastChinaDelight.MODID, "textures/gui/jei_vat.png"),
-                        0, 0, VAT_ICON_SIZE, VAT_ICON_SIZE)
-                .setTextureSize(VAT_ICON_SIZE, VAT_ICON_SIZE)
-                .build();
     }
 
     @Override
@@ -323,7 +325,7 @@ public class VatRecipeCategory implements IRecipeCategory<VatJeiRecipe> {
     @Override
     public void createRecipeExtras(IRecipeExtrasBuilder builder, VatJeiRecipe recipe, IFocusGroup focuses) {
         builder.addWidget(new VatWidget(recipe.states(), builder.getRecipeSlots(),
-                this.arrow, this.vatIcon));
+                this.arrow));
     }
 
     /**
@@ -339,16 +341,15 @@ public class VatRecipeCategory implements IRecipeCategory<VatJeiRecipe> {
         private final List<VatJeiRecipe.State> states;
         private final IRecipeSlotDrawablesView slots;
         private final IDrawable arrow;
-        private final IDrawable vatIcon;
+
         private int ticks;
         private int index;
 
         private VatWidget(List<VatJeiRecipe.State> states, IRecipeSlotDrawablesView slots,
-                          IDrawable arrow, IDrawable vatIcon) {
+                          IDrawable arrow) {
             this.states = states;
             this.slots = slots;
             this.arrow = arrow;
-            this.vatIcon = vatIcon;
         }
 
         @Override
@@ -379,7 +380,7 @@ public class VatRecipeCategory implements IRecipeCategory<VatJeiRecipe> {
                 drawFluidRhombus(graphics, state.liquid(), MOUTH_X, MOUTH_Y,
                         MOUTH_HALF_WIDTH, MOUTH_HALF_HEIGHT);
             }
-            this.vatIcon.draw(graphics, VAT_X, VAT_Y);
+            drawVatBlock(graphics, VAT_X + VAT_ICON_SIZE / 2F, VAT_Y + VAT_ICON_SIZE / 2F + 2, 22.0F);
             // 每个材料格引一条线到缸上对应的位置
             for (Row row : rowsOf(this.states.get(0))) {
                 int right = row.pair() ? ROW_RIGHT_PAIR : ROW_RIGHT_SINGLE;
@@ -529,6 +530,29 @@ public class VatRecipeCategory implements IRecipeCategory<VatJeiRecipe> {
         return IClientFluidTypeExtensions.of(fluid).getTintColor();
     }
 
+    /**
+     * 在 JEI 页里画真实的大缸方块（不是预制 PNG）。
+     * 变换用「物品栏视角」：30° 俯角 + 225° 水平角，缸中心对齐 (centerX, centerY)。
+     */
+    private static void drawVatBlock(GuiGraphics graphics, float centerX, float centerY, float scale) {
+        Minecraft minecraft = Minecraft.getInstance();
+        net.minecraft.world.level.block.state.BlockState state = ModBlocks.VAT.get().defaultBlockState();
+
+        PoseStack pose = graphics.pose();
+        MultiBufferSource.BufferSource buffers = graphics.bufferSource();
+        pose.pushPose();
+        pose.translate(centerX, centerY, 100.0F);
+        pose.scale(scale, -scale, scale);
+        pose.mulPose(Axis.XP.rotationDegrees(30.0F));
+        pose.mulPose(Axis.YP.rotationDegrees(225.0F));
+        pose.translate(-0.5F, -0.5F, -0.5F);
+
+        minecraft.getBlockRenderer().renderSingleBlock(state, pose, buffers,
+                LightTexture.FULL_BRIGHT, OverlayTexture.NO_OVERLAY, ModelData.EMPTY, RenderType.cutout());
+        buffers.endBatch();
+        pose.popPose();
+    }
+
     /** 画一条细线（逐点填充，够用就好） */
     private static void drawLine(GuiGraphics graphics, int x1, int y1, int x2, int y2, int color) {
         int steps = Math.max(Math.abs(x2 - x1), Math.abs(y2 - y1));
@@ -542,18 +566,25 @@ public class VatRecipeCategory implements IRecipeCategory<VatJeiRecipe> {
         }
     }
 
-    /** 发酵时长：不足一分钟写「N 秒」，整分钟写「N 分钟」，其余写「N 分 M 秒」 */
+    /**
+     * 发酵时长用游戏日表示（1 个 MC 日 = 24000 tick = 1200 秒）：
+     *   - 不到一天 → 「N 秒」
+     *   - 整天     → 「N 天」
+     *   - 带零头   → 「N 天 M 秒」
+     */
     private static Component timeText(int seconds) {
         if (seconds <= 0) {
             return Component.empty();
         }
-        if (seconds < 60) {
+        final int SECONDS_PER_DAY = 1200;
+        int days = seconds / SECONDS_PER_DAY;
+        int rest = seconds % SECONDS_PER_DAY;
+        if (days == 0) {
             return Component.translatable("jei.northeast_china_delight.time.seconds", seconds);
         }
-        if (seconds % 60 == 0) {
-            return Component.translatable("jei.northeast_china_delight.time.minutes", seconds / 60);
+        if (rest == 0) {
+            return Component.translatable("jei.northeast_china_delight.time.days", days);
         }
-        return Component.translatable("jei.northeast_china_delight.time.minutes_seconds",
-                seconds / 60, seconds % 60);
+        return Component.translatable("jei.northeast_china_delight.time.days_seconds", days, rest);
     }
 }

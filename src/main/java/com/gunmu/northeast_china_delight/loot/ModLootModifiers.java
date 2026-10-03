@@ -22,6 +22,22 @@ public class ModLootModifiers {
     public static final DeferredHolder<MapCodec<? extends IGlobalLootModifier>, MapCodec<NortheastFishingLootModifier>> FISHING =
             LOOT_MODIFIERS.register("fishing", () -> NortheastFishingLootModifier.CODEC);
 
+    /** 结构宝箱（神殿/前哨站/矿井/神庙/沉船/雪屋/海底废墟/村庄非住宅）小概率塞种子 */
+    public static final DeferredHolder<MapCodec<? extends IGlobalLootModifier>, MapCodec<StructureSeedsLootModifier>> STRUCTURE_SEEDS =
+            LOOT_MODIFIERS.register("structure_seeds", () -> StructureSeedsLootModifier.CODEC);
+
+    /** 屠夫箱：小概率塞肉类食材和肉菜 */
+    public static final DeferredHolder<MapCodec<? extends IGlobalLootModifier>, MapCodec<ButcherLootModifier>> BUTCHER =
+            LOOT_MODIFIERS.register("butcher_loot", () -> ButcherLootModifier.CODEC);
+
+    /** 渔夫箱：小概率塞水产食材和海味菜 */
+    public static final DeferredHolder<MapCodec<? extends IGlobalLootModifier>, MapCodec<FishermanLootModifier>> FISHERMAN =
+            LOOT_MODIFIERS.register("fisherman_loot", () -> FishermanLootModifier.CODEC);
+
+    /** 村庄住宅箱子：按群系塞东北乐事的种子和谷物 */
+    public static final DeferredHolder<MapCodec<? extends IGlobalLootModifier>, MapCodec<VillageSeedsLootModifier>> VILLAGE_SEEDS =
+            LOOT_MODIFIERS.register("village_seeds", () -> VillageSeedsLootModifier.CODEC);
+
     public static void register(IEventBus eventBus) {
         LOOT_MODIFIERS.register(eventBus);
     }
