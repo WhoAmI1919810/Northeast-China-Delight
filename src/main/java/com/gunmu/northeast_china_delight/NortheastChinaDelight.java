@@ -311,7 +311,7 @@ public class NortheastChinaDelight
                 @Override
                 public ResourceLocation getFlowingTexture()
                 {
-                    return ResourceLocation.fromNamespaceAndPath(MODID, "block/soy_paste_flow");
+                    return ResourceLocation.fromNamespaceAndPath(MODID, "block/soy_paste_still");
                 }
             }, ModFluids.SOY_PASTE_TYPE);
 
@@ -401,7 +401,7 @@ public class NortheastChinaDelight
                 @Override
                 public ResourceLocation getFlowingTexture()
                 {
-                    return ResourceLocation.fromNamespaceAndPath(MODID, "block/shrimp_paste_flow");
+                    return ResourceLocation.fromNamespaceAndPath(MODID, "block/shrimp_paste_still");
                 }
             }, ModFluids.SHRIMP_PASTE_TYPE);
 
@@ -446,7 +446,7 @@ public class NortheastChinaDelight
                 @Override
                 public ResourceLocation getFlowingTexture()
                 {
-                    return ResourceLocation.fromNamespaceAndPath(MODID, "block/peanut_butter_flow");
+                    return ResourceLocation.fromNamespaceAndPath(MODID, "block/peanut_butter_still");
                 }
             }, ModFluids.PEANUT_BUTTER_TYPE);
 
@@ -476,7 +476,7 @@ public class NortheastChinaDelight
                 @Override
                 public ResourceLocation getFlowingTexture()
                 {
-                    return ResourceLocation.fromNamespaceAndPath(MODID, "block/chili_sauce_flow");
+                    return ResourceLocation.fromNamespaceAndPath(MODID, "block/chili_sauce_still");
                 }
             }, ModFluids.CHILI_SAUCE_TYPE);
 

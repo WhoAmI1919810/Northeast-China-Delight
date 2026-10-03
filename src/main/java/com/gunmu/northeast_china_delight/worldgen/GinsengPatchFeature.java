@@ -76,6 +76,8 @@ public class GinsengPatchFeature extends Feature<NoneFeatureConfiguration>
             int surfaceY = level.getHeight(Heightmap.Types.MOTION_BLOCKING, x, z);
             BlockPos plantPos = new BlockPos(x, surfaceY, z);
             BlockState here = level.getBlockState(plantPos);
+            // 落雪在 vegetal_decoration 之后，这里地面多半还是空的（canBeReplaced）。
+            // 接受空气/可替换格，人参直接长在将来会被雪盖住的格子上（自带雪面形态）。
             if (!here.canBeReplaced() && !here.is(Blocks.SNOW))
             {
                 continue;
@@ -84,10 +86,6 @@ public class GinsengPatchFeature extends Feature<NoneFeatureConfiguration>
             // 雪林、积雪山坡的地表是一整块雪，真正的土在它下面一层
             BlockState soil = ground.is(Blocks.SNOW_BLOCK) ? level.getBlockState(plantPos.below(2)) : ground;
             if (!(soil.is(Blocks.GRASS_BLOCK) || soil.is(Blocks.DIRT) || soil.is(Blocks.PODZOL)))
-            {
-                continue;
-            }
-            if (!here.is(Blocks.SNOW))
             {
                 continue;
             }

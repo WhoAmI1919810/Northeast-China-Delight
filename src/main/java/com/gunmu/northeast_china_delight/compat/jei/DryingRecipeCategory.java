@@ -33,8 +33,12 @@ public class DryingRecipeCategory implements IRecipeCategory<DryingJeiRecipe> {
     private static final int ARROW_X = 54, ARROW_Y = 51;
 
     // 风扇位置：页面正中偏左（Create 是 (56, 33)，但我们没有 attached block，居中摆）
-    private static final int FAN_X = 88;
-    private static final int FAN_Y = 36;
+    // 风扇视觉中心想在页面的水平正中（177/2≈88）。
+    // 但 GuiGameElement 经 22.5 度 Y 旋转后，渲染出的投影中心比 translate 锚点偏右约 22px，
+    // 所以 translate 用 FAN_VCX-22 才能把风扇真正摆到正中。
+    private static final int FAN_VCX = 88;
+    private static final int FAN_X = FAN_VCX - 14;
+    private static final int FAN_Y = 30;
     private static final int FAN_SCALE = 24;
 
     // 第二个输出与主输出并排
@@ -99,7 +103,7 @@ public class DryingRecipeCategory implements IRecipeCategory<DryingJeiRecipe> {
             blitWidget(graphics, LARROW_U, LARROW_V, LARROW_W, LARROW_H, ARROW_X, ARROW_Y);
             // 风扇正下方的白色椭圆阴影（Create JEI_SHADOW）
             blitWidget(graphics, SHADOW_U, SHADOW_V, SHADOW_W, SHADOW_H,
-                    FAN_X - SHADOW_W / 2, FAN_Y + 14);
+                    FAN_VCX - SHADOW_W / 2, FAN_Y + 14);
 
             var pose = graphics.pose();
             pose.pushPose();
