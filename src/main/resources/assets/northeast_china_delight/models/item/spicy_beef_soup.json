@@ -1,6 +1,6 @@
 {
   "parent": "minecraft:item/generated",
   "textures": {
-    "layer0": "northeast_china_delight:item/spicy_beef_soup_rice"
+    "layer0": "northeast_china_delight:item/spicy_beef_soup"
   }
 }

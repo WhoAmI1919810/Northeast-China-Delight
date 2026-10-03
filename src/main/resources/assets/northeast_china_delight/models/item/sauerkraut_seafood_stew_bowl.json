@@ -1,6 +1,6 @@
 {
   "parent": "minecraft:item/generated",
   "textures": {
-    "layer0": "northeast_china_delight:item/suan_cai_hai_xian_guo_bowl"
+    "layer0": "northeast_china_delight:item/sauerkraut_seafood_stew_bowl"
   }
 }
