@@ -131,7 +131,6 @@ public final class VatBrewing {
         }
         return best;
     }
-
     /**
      * 现在这缸能开工的那条配方：材料配齐 + 液体对 + 封口物对。
      *
@@ -227,9 +226,11 @@ public final class VatBrewing {
                                VatRecipes.Kind current) {
         boolean ready = recipe.materialsReady(counts, sourWaterMb);
         int satisfied = recipe.satisfiedSlots(counts);
+        // 缸已经认准了哪种加工（kind 已设），同种配方优先 —— 放盐进咸鱼缸继续走咸鱼，
+        // 而不是被 satisfied 更多的辣白菜抢走
         int sticky = recipe.kind() == current ? 1 : 0;
         int liquid = recipe.liquidFits(counts.water(), sourWaterMb) ? 1 : 0;
-        return new int[] { satisfied, ready ? 1 : 0, sticky, liquid, -recipe.minimumTotal(counts),
+        return new int[] { sticky, satisfied, ready ? 1 : 0, liquid, -recipe.minimumTotal(counts),
                 recipe.priority() };
     }
 

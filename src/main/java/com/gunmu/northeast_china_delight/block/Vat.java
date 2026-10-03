@@ -332,7 +332,7 @@ public class Vat extends Block implements EntityBlock {
 
         // 投料：收不收、放哪一格、放进去变成哪条配方，全由配方表说了算
         VatRecipe forInsert = VatBrewing.forInsert(vat, stack);
-        if (forInsert != null && insert(level, pos, vat, player, stack, forInsert)) {
+        if (forInsert != null && insert(level, pos, vat, player, stack, forInsert, hand)) {
             return ItemInteractionResult.sidedSuccess(false);
         }
 
@@ -345,13 +345,9 @@ public class Vat extends Block implements EntityBlock {
 
     /** 把一份材料放进缸里（数量够不够、收不收，进来之前已经由配方表判断过） */
     private static boolean insert(Level level, BlockPos pos, VatBlockEntity vat, Player player,
-                                  ItemStack stack, VatRecipe recipe) {
+                                  ItemStack stack, VatRecipe recipe, InteractionHand hand) {
         int slot = recipe.findSlotFor(stack, VatBrewing.counts(vat, null));
         if (slot < 0) {
-            return false;
-        }
-        if (!vat.addContent(stack)) {
-            return false;
         }
         // 从"已经做完"的上一条配方转过来（泡菜→辣白菜、大酱→酱油、泡菜→白醋、酱渣→醋）：
         // 先把完成标记清掉，重新计时
@@ -361,12 +357,23 @@ public class Vat extends Block implements EntityBlock {
         if (recipe.kind() != vat.kind()) {
             vat.setKind(recipe.kind());
         }
-        // 连瓶 / 连碗扔进来的调料（辣椒酱、鱼露、虾酱）：空容器当场还给玩家
-        Item refund = recipe.slots().get(slot).refund();
-        if (refund != null && !player.getAbilities().instabuild) {
-            give(player, new ItemStack(refund));
+        VatRecipe.Slot recipeSlot = recipe.slots().get(slot);
+        if (recipeSlot.perDose() && SeasoningBottleItem.isBottle(stack)) {
+            // 带余量的瓶装调料（鱼露、虾酱）：缸里只记一份剂量，
+            // 瓶子扣一份之后直接放回玩家手里（不走 give，避免跳到别的格子）；
+            // 正好用空就变成空玻璃瓶
+            if (!player.getAbilities().instabuild) {
+                player.setItemInHand(hand, SeasoningBottleItem.use(stack, SeasoningBottleItem.DOSE_MB));
+            }
+            consume(player, stack);
+        } else {
+            // 连瓶 / 连碗扔进来的调料（辣椒酱）：空容器当场还给玩家
+            Item refund = recipeSlot.refund();
+            if (refund != null && !player.getAbilities().instabuild) {
+                give(player, new ItemStack(refund));
+            }
+            consume(player, stack);
         }
-        consume(player, stack);
         playFill(level, pos);
         refreshSalted(level, pos, vat);
         tryStart(level, pos, vat);
@@ -503,17 +510,40 @@ public class Vat extends Block implements EntityBlock {
         }
     }
 
-    /** 大缸被破坏时把里面的东西都吐出来 */
+    /** 大缸被破坏时把里面的东西吐出来 —— 除了已经"被吸收"的调料（盐、辣椒酱、鱼露、虾酱） */
     @Override
     public BlockState playerWillDestroy(Level level, BlockPos pos, BlockState state, Player player) {
         if (!level.isClientSide && vatAt(level, pos) instanceof VatBlockEntity vat) {
             for (ItemStack content : vat.contents()) {
+                if (isAbsorbedSeasoning(content)) {
+                    continue;
+                }
                 popResource(level, pos, content);
             }
             give(player, vat.takePress());
             give(player, vat.takeCover());
         }
         return super.playerWillDestroy(level, pos, state, player);
+    }
+
+    /**
+     * 这份内容物是不是"投进去就已经溶进缸里"的调料：
+     * 盐在任何配方里都是调料；ABSORB / CONSUME 的格子（辣椒酱、鱼露、虾酱、小麦、谷物…）
+     * 也都已经被大缸吸收，不该在破坏时掉出来。
+     */
+    private static boolean isAbsorbedSeasoning(ItemStack stack) {
+        if (stack.is(ModItems.SALT.get())) {
+            return true;
+        }
+        for (VatRecipe recipe : VatRecipes.all()) {
+            for (VatRecipe.Slot slot : recipe.slots()) {
+                if (slot.fate() != VatRecipe.Fate.KEEP && slot.fate() != VatRecipe.Fate.CONVERT
+                        && slot.matcher().test(stack)) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     private static void consume(Player player, ItemStack stack) {

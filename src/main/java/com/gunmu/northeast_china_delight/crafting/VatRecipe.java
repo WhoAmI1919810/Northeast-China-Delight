@@ -249,42 +249,53 @@ public final class VatRecipe {
      * @param converter {@code KEEP} 时：取货换算（null = 原样）
      * @param product   {@code CONVERT} 时：变成什么
      * @param refund    连瓶 / 连碗扔进缸的那种调料：投料时先把空容器还给玩家
+     * @param perDose     这一格收的是带余量的瓶装调料：投入时只扣一份剂量（不整瓶收进去），
+     *                  缸里按"一份"记账，瓶子（或余量不足时的空玻璃瓶）还给玩家
      * @param layer     JEI 画在食材排还是配料排
      */
     public record Slot(Predicate<ItemStack> matcher, BoundsRule bounds, Fate fate,
                        @Nullable Converter converter, @Nullable Item product, @Nullable Item refund,
-                       Layer layer) {
+                       boolean perDose, Layer layer) {
 
         /** 留着，取货时换成 converter 的结果 */
         public static Slot keep(Predicate<ItemStack> matcher, BoundsRule bounds, Converter converter) {
-            return new Slot(matcher, bounds, Fate.KEEP, converter, null, null, Layer.INGREDIENT);
+            return new Slot(matcher, bounds, Fate.KEEP, converter, null, null, false, Layer.INGREDIENT);
         }
 
         /** 完成时变成 product，之后玩家取出的就是 product */
         public static Slot convert(Predicate<ItemStack> matcher, BoundsRule bounds, Item product) {
-            return new Slot(matcher, bounds, Fate.CONVERT, null, product, null, Layer.INGREDIENT);
+            return new Slot(matcher, bounds, Fate.CONVERT, null, product, null, false, Layer.INGREDIENT);
         }
 
         /** 完成时被吸收 / 消耗 */
         public static Slot consume(Predicate<ItemStack> matcher, BoundsRule bounds) {
-            return new Slot(matcher, bounds, Fate.CONSUME, null, null, null, Layer.INGREDIENT);
+            return new Slot(matcher, bounds, Fate.CONSUME, null, null, null, false, Layer.INGREDIENT);
         }
 
         /** 完成时仍留在缸里影响外观，玩家取货时才消失 */
         public static Slot absorb(Predicate<ItemStack> matcher, BoundsRule bounds) {
-            return new Slot(matcher, bounds, Fate.ABSORB, null, null, null, Layer.INGREDIENT);
+            return new Slot(matcher, bounds, Fate.ABSORB, null, null, null, false, Layer.INGREDIENT);
         }
 
         /** 这种调料是连瓶 / 连碗一起扔进缸的：投料时先把空容器还给玩家 */
         public Slot refund(Item container) {
             return new Slot(this.matcher, this.bounds, this.fate, this.converter, this.product,
-                    container, this.layer);
+                    container, this.perDose, this.layer);
+        }
+
+        /**
+         * 这种调料按剂量扣（{@link com.gunmu.northeast_china_delight.item.SeasoningBottleItem}）：
+         * 投进缸里只算一份剂量，瓶子还剩多少还给玩家多少，用空了就还个玻璃瓶。
+         */
+        public Slot dosed() {
+            return new Slot(this.matcher, this.bounds, this.fate, this.converter, this.product,
+                    this.refund, true, this.layer);
         }
 
         /** 这一格算「配料」（盐、小麦、辣椒酱、鱼露…），JEI 里画在食材上面那一排 */
         public Slot seasoning() {
             return new Slot(this.matcher, this.bounds, this.fate, this.converter, this.product,
-                    this.refund, Layer.SEASONING);
+                    this.refund, this.perDose, Layer.SEASONING);
         }
 
     }
@@ -586,7 +597,8 @@ public final class VatRecipe {
         if (!slot.matcher().test(stack)) {
             return false;
         }
-        Bounds bounds = slot.bounds().get(counts);
+        // 必须经 boundsOf 包装（SlotCounts），sameAs 这类跨格规则才能拿到 countOfSlot
+        Bounds bounds = boundsOf(slotIndex, counts);
         return counts.count(slot.matcher()) < bounds.max();
     }
 

@@ -93,10 +93,19 @@ public enum VatComponentProvider implements IBlockComponentProvider {
                 case BEAN_SPROUTS -> "sprouting";
                 default -> "fermenting";
             };
-            Component text = fermented
-                    ? Component.translatable("jade.northeast_china_delight.vat.done." + stage)
-                    : Component.translatable("jade.northeast_china_delight.vat.progress." + stage,
-                            Math.round(ratio * 100.0F));
+            Component text;
+            if (fermented) {
+                text = Component.translatable("jade.northeast_china_delight.vat.done." + stage);
+            } else {
+                // 材料 + 封口都凑齐了（压缸石一压、地毯一蒙）就算"已经开始"，
+                // 哪怕第一步还没走完（咸腊肉一步要 2 分钟）也别显示"等待投料"
+                boolean started = progress > 0 || com.gunmu.northeast_china_delight.crafting.VatBrewing
+                        .ready(vat) != null;
+                text = started
+                        ? Component.translatable("jade.northeast_china_delight.vat.progress." + stage,
+                                Math.round(ratio * 100.0F))
+                        : Component.translatable("jade.northeast_china_delight.vat.waiting");
+            }
             // 进度条上的文字用白色，避免默认的自动取色在浅色条上看不清
             ProgressStyle style = helper.progressStyle().textColor(0xFFFFFF);
             tooltip.add(helper.progress(ratio, text, style, BoxStyle.getNestedBox(), false));

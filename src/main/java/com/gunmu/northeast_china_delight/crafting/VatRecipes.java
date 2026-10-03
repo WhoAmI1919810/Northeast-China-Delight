@@ -305,6 +305,11 @@ public final class VatRecipes {
         return stack -> stack.is(ModItems.SALT.get());
     }
 
+    /** 单独给盐用的匹配器：盐被撒进缸里就算"被吸收"，不靠任何配方格子 */
+    public static boolean isSalt(ItemStack stack) {
+        return stack.is(ModItems.SALT.get());
+    }
+
     private static Predicate<ItemStack> of(Item item) {
         return stack -> stack.is(item);
     }
@@ -366,7 +371,7 @@ public final class VatRecipes {
                 .slot(VatRecipe.Slot.absorb(
                         stack -> stack.is(ModItems.FISH_SAUCE.get()) || stack.is(ModItems.SHRIMP_PASTE.get()),
                         VatRecipe.BoundsRule.minByWater(new int[] { 0, 1, 1, 2 }, SPICY_SEASONING_MAX))
-                        .refund(Items.GLASS_BOTTLE).seasoning())
+                        .dosed().seasoning())
                 .build());
 
         // ----- 咸腊肉：肉与盐一比一，最多 6 块，压缸石；取出即咸腊肉 -----

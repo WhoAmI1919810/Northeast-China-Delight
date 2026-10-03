@@ -160,6 +160,7 @@
   "jade.northeast_china_delight.vat.done.curing": "Curing complete",
   "jade.northeast_china_delight.vat.done.brewing": "Brewing complete",
   "jade.northeast_china_delight.vat.done.sprouting": "Sprouting complete",
+  "jade.northeast_china_delight.vat.waiting": "Waiting for ingredients",
   "jade.northeast_china_delight.vat.paste_amount": "Soy paste: %s bowls (%s mB)",
   "jade.northeast_china_delight.vat.soy_sauce_amount": "Soy sauce: %s bottles (%s mB)",
   "jade.northeast_china_delight.vat.vinegar_amount": "Vinegar: %s bottles (%s mB)",

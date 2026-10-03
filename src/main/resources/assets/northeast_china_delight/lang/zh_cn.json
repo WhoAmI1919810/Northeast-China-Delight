@@ -160,6 +160,7 @@
   "jade.northeast_china_delight.vat.done.curing": "腌制完成",
   "jade.northeast_china_delight.vat.done.brewing": "酿造完成",
   "jade.northeast_china_delight.vat.done.sprouting": "发芽完成",
+  "jade.northeast_china_delight.vat.waiting": "等待投料",
   "jade.northeast_china_delight.vat.paste_amount": "大酱：%s 碗（%s mB）",
   "jade.northeast_china_delight.vat.soy_sauce_amount": "酱油：%s 瓶（%s mB）",
   "jade.northeast_china_delight.vat.vinegar_amount": "醋：%s 瓶（%s mB）",
