@@ -145,6 +145,8 @@ public class ModItems {
     public static final DeferredItem<Item> SWEET_POTATO_STARCH = simple("sweet_potato_starch");
     /** 粉条：红薯淀粉 + 水 + 盐在厨锅里煮成 */
     public static final DeferredItem<Item> VERMICELLI = plain("vermicelli");
+    /** 玉米面：玉米粒用动力磨磨出来，做粘豆包/玉米面饼子用 */
+    public static final DeferredItem<Item> CORN_FLOUR = plain("corn_flour");
     /** 拉皮：淀粉浆用动力冲压机压出来 */
     public static final DeferredItem<Item> LA_PI = plain("mung_bean_sheet");
     /** 油滋了：熬动物油时锅里留下的油渣，也能直接吃 */
@@ -401,7 +403,7 @@ public class ModItems {
             SOY_PASTE_CHUNK, SOY_RESIDUE,
             // 主食与半成品
             WATER_DOUGH, BUCKWHEAT_NOODLES, DRIED_TOFU, TOFU, SWEET_POTATO_STARCH,
-            VERMICELLI, LA_PI, CRACKLINGS, COLD_NOODLE_SHEET, BEAN_SPROUTS, SOUR_CORN_KERNELS, ROASTED_PEANUTS,
+            VERMICELLI, LA_PI, CORN_FLOUR, CRACKLINGS, COLD_NOODLE_SHEET, BEAN_SPROUTS, SOUR_CORN_KERNELS, ROASTED_PEANUTS,
             CORN_STALK,
             // 厨具与容器
             LARGE_BASIN, BRASS_BOWL, ANIMAL_OIL_BLOCK_ITEM,
@@ -453,34 +455,36 @@ public class ModItems {
     public static final List<Supplier<? extends Item>> DISH_TAB_ITEMS = List.of(
             // 饮品
             SOY_MILK, KVASS,
-            // 油腻（吃多了腻，给油腻效果）
-            OLD_STYLE_GUO_BAO_ROU, NEW_STYLE_GUO_BAO_ROU, ORANGE_GUO_BAO_ROU, LIU_ROU_DUAN,
-            DI_SAN_XIAN, HONG_SHAO_PAI_GU,
-            // 大盆菜：方块形式 + 碗装的一份
-            DI_GUO_JI, DI_GUO_JI_BOWL, DI_GUO_PAI_GU, DI_GUO_PAI_GU_BOWL, SHA_ZHU_CAI, SHA_ZHU_CAI_BOWL,
-            JIANG_DA_GU, JIANG_NIU_ROU, BRAISED_PORK_HOCK, BRAISED_PORK_STRIPS,
-            BA_SI_TU_DOU, XUN_JIANG_PIN_PAN, SNOWY_BEAN_PASTE, CANDIED_PEANUTS, GRILLED_OIL_EDGE,
-            TU_DOU_BING, YU_MI_LAO, XIAN_YU_BING_ZI, KIMCHI_PANCAKE,
-            // 清爽（给爽口效果）
-            SUAN_CAI_CHAO_FEN_TIAO, JIAN_JIAO_GAN_DOU_FU, BAI_CAI_DOU_FU_DUN_FEN_TIAO,
-            LA_BAI_CAI_TANG_FAN, SUAN_HUANG_GUA_CHAO_ROU_SI, LIANG_BAN_XIAN_CAI, LIANG_BAN_HUA_CAI,
-            JIA_XIAN_HUANG_GUA_PAO_CAI, ZHAN_JIANG_CAI, MING_TAI_YU_SI, BUCKWHEAT_COLD_NOODLES,
-            SOUR_TANGZI, CHA_ZI_ZHOU, SWEET_POTATO_PORRIDGE, DA_JIANG_TANG,
-            TIGER_SALAD,
-            // 荤素搭配（给滋养效果）
-            EGG_SOY_PASTE,
-            SUAN_CAI_DUN_GU_TOU, SUAN_CAI_DUN_GU_TOU_BOWL, ZHU_ROU_DUN_FEN_TIAO, ZHU_ROU_DUN_FEN_TIAO_BOWL,
-            LA_NIU_ROU_TANG_FAN,
-            LA_BAI_CAI_CHAO_FAN, XIA_JIANG_CHAO_JI_DAN, XIA_JIANG_DUN_DOU_FU, HAI_XIAN_DOU_FU_TANG,
-            JIANG_BAN_LA_PI, CONG_SHAO_HAI_SHEN, HAI_SHEN_DOU_FU_TANG, LA_ROU_DUN_DOU_JIAO,
-            DA_FENG_SHOU, DA_FENG_SHOU_BOWL,
-            DE_MO_LI_DUN_YU, SU_BO_TANG, SHEN_JI_TANG,
-            XIAO_JI_DUN_MO_GU, XIAO_JI_DUN_MO_GU_BOWL,
-            SUAN_CAI_HAI_XIAN_GUO, SUAN_CAI_HAI_XIAN_GUO_BOWL,
-            BIBIMBAP, GRILLED_COLD_NOODLES,
-            // 不需要带餐具（直接拿在手里吃）
-            BAKED_SWEET_POTATO, DA_FAN_BAO, NIAN_DOU_BAO, GRILLED_CHICKEN_FRAME, GRILLED_CORN,
-            // 饺子（一碟一碟的）
+            // ===== 不用容器装：拿在手里 / 放桌上的盘子 =====
+            BAKED_SWEET_POTATO, DA_FAN_BAO, NIAN_DOU_BAO,
+            GRILLED_CHICKEN_FRAME, GRILLED_CORN, GRILLED_OIL_EDGE, GRILLED_COLD_NOODLES,
+            OLD_STYLE_GUO_BAO_ROU,
+            // ===== 碗装：端着碗吃 =====
+            NEW_STYLE_GUO_BAO_ROU, ORANGE_GUO_BAO_ROU,
+            LIU_ROU_DUAN, HONG_SHAO_PAI_GU, BRAISED_PORK_HOCK, BRAISED_PORK_STRIPS,
+            DI_SAN_XIAN, JIAN_JIAO_GAN_DOU_FU, BA_SI_TU_DOU,
+            SUAN_CAI_CHAO_FEN_TIAO, BAI_CAI_DOU_FU_DUN_FEN_TIAO, LA_ROU_DUN_DOU_JIAO,
+            SUAN_HUANG_GUA_CHAO_ROU_SI, LIANG_BAN_XIAN_CAI, LIANG_BAN_HUA_CAI,
+            JIA_XIAN_HUANG_GUA_PAO_CAI, ZHAN_JIANG_CAI, MING_TAI_YU_SI, TIGER_SALAD,
+            SOUR_TANGZI, CHA_ZI_ZHOU, SWEET_POTATO_PORRIDGE,
+            EGG_SOY_PASTE, XIA_JIANG_CHAO_JI_DAN, XIA_JIANG_DUN_DOU_FU,
+            HAI_XIAN_DOU_FU_TANG, CONG_SHAO_HAI_SHEN, HAI_SHEN_DOU_FU_TANG,
+            XIAN_YU_BING_ZI, YU_MI_LAO, KIMCHI_PANCAKE, TU_DOU_BING,
+            XUN_JIANG_PIN_PAN, SNOWY_BEAN_PASTE, CANDIED_PEANUTS,
+            DE_MO_LI_DUN_YU, SU_BO_TANG, JIANG_DA_GU, JIANG_NIU_ROU,
+            JIANG_BAN_LA_PI,
+            // 大盆菜分出来的小份碗装
+            DI_GUO_JI_BOWL, DI_GUO_PAI_GU_BOWL, SHA_ZHU_CAI_BOWL,
+            SUAN_CAI_DUN_GU_TOU_BOWL, ZHU_ROU_DUN_FEN_TIAO_BOWL,
+            XIAO_JI_DUN_MO_GU_BOWL, SUAN_CAI_HAI_XIAN_GUO_BOWL, DA_FENG_SHOU_BOWL,
+            // ===== 黄铜碗装 =====
+            LA_NIU_ROU_TANG_FAN, LA_BAI_CAI_CHAO_FAN, LA_BAI_CAI_TANG_FAN,
+            DA_JIANG_TANG, SHEN_JI_TANG, BUCKWHEAT_COLD_NOODLES, BIBIMBAP,
+            // ===== 盆装 / 锅装 =====
+            DI_GUO_JI, DI_GUO_PAI_GU, SHA_ZHU_CAI, DA_FENG_SHOU,
+            SUAN_CAI_DUN_GU_TOU, ZHU_ROU_DUN_FEN_TIAO,
+            XIAO_JI_DUN_MO_GU, SUAN_CAI_HAI_XIAN_GUO,
+            // ===== 饺子 =====
             SUAN_CAI_JIAO_ZI, XIA_REN_ZHU_ROU_XIAN_SHUI_JIAO, SAN_XIAN_XIAN_SHUI_JIAO
     );
 

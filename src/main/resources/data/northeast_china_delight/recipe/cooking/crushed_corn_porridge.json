@@ -6,10 +6,15 @@
   },
   "experience": 0.35,
   "ingredients": [
-    { "item": "northeast_china_delight:corn_seeds" },
-    { "item": "northeast_china_delight:corn_seeds" },
-    { "item": "minecraft:water_bucket" },
-    { "item": "northeast_china_delight:red_bean" }
+    {
+      "item": "northeast_china_delight:corn_seeds"
+    },
+    {
+      "item": "minecraft:water_bucket"
+    },
+    {
+      "item": "northeast_china_delight:red_bean"
+    }
   ],
   "recipe_book_tab": "meals",
   "result": {

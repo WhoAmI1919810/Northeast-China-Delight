@@ -119,11 +119,23 @@ public class GrillCampfireBlock extends CampfireBlock {
                     pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5,
                     random.nextFloat() / 2.0F, 5.0E-5, random.nextFloat() / 2.0F);
         }
-        // 灵魂营火：顶上冒灵魂火粒子（和普通营火对应位置一样在方块中心）
-        if (state.getValue(SOUL) && random.nextInt(10) == 0) {
-            level.addParticle(ParticleTypes.SOUL_FIRE_FLAME,
-                    pos.getX() + 0.5, pos.getY() + 0.8, pos.getZ() + 0.5,
-                    0.0, 0.0, 0.0);
+        // 灵魂营火：沿用原版灵魂营火的粒子（灵魂火 + 灵魂烟），
+        // 位置跟普通营火的烟柱同一个高度，不然视觉上就是「变成了普通营火」。
+        if (state.getValue(SOUL)) {
+            // 灵魂火苗：比普通的 flame 少，原版 10 次出 1 次
+            if (random.nextInt(10) == 0) {
+                level.addParticle(ParticleTypes.SOUL_FIRE_FLAME,
+                        pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5,
+                        0.0, 0.0, 0.0);
+            }
+            // 灵魂烟：和普通营火同频
+            if (random.nextInt(5) == 0) {
+                for (int i = 0; i < random.nextInt(1) + 1; ++i) {
+                    level.addParticle(ParticleTypes.SOUL,
+                            pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5,
+                            (random.nextFloat() / 2.0F), 5.0E-5, (random.nextFloat() / 2.0F));
+                }
+            }
         }
     }
 

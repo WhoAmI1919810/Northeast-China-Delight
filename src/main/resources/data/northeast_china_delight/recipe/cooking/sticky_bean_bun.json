@@ -2,9 +2,18 @@
   "type": "farmersdelight:cooking",
   "experience": 0.35,
   "ingredients": [
-    { "item": "farmersdelight:wheat_dough" },
-    { "item": "northeast_china_delight:red_bean" },
-    { "item": "minecraft:sugar" }
+    {
+      "item": "northeast_china_delight:corn_flour"
+    },
+    {
+      "item": "northeast_china_delight:corn_flour"
+    },
+    {
+      "item": "northeast_china_delight:red_bean"
+    },
+    {
+      "item": "minecraft:sugar"
+    }
   ],
   "recipe_book_tab": "misc",
   "result": {

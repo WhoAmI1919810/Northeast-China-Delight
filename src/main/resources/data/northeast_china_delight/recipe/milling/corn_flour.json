@@ -1,0 +1,13 @@
+{
+  "type": "create:milling",
+  "ingredients": [
+    {
+      "item": "northeast_china_delight:corn_seeds"
+    }
+  ],
+  "results": [
+    {
+      "id": "northeast_china_delight:corn_flour"
+    }
+  ]
+}

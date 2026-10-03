@@ -1,6 +1,6 @@
 {
   "parent": "minecraft:item/generated",
   "textures": {
-    "layer0": "northeast_china_delight:item/steamed_steamed_egg_soy_paste"
+    "layer0": "northeast_china_delight:item/steamed_egg_soy_paste"
   }
 }
