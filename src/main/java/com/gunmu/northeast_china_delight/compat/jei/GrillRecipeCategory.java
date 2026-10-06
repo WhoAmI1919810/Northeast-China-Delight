@@ -203,7 +203,7 @@ public class GrillRecipeCategory implements IRecipeCategory<GrillJeiRecipe> {
         @Override
         public void drawWidget(GuiGraphics graphics, double mouseX, double mouseY) {
             Font font = Minecraft.getInstance().font;
-            Component bottleText = Component.translatable("jei.northeast_china_delight.grill.seasoning_amount",
+            Component bottleText = Component.translatable("jei.northeast_china_delight.grill.seasoning_amount_brush",
                     SeasoningBottleItem.GRILL_DOSE_MB);
             // 厚酱（辣椒酱）没有 mB 概念：写「1 份 · 需刷子」提示它也要用刷子抹
             Component sauceText = Component.translatable("jei.northeast_china_delight.grill.seasoning_sauce");

@@ -62,6 +62,10 @@ public class YardClearingPiece extends StructurePiece
                 new BoundingBox(yardOrigin.getX() - radius, yardOrigin.getY() - 8, yardOrigin.getZ() - radius,
                         yardOrigin.getX() + sizeX - 1 + radius, yardOrigin.getY() + clearAbove + 8,
                         yardOrigin.getZ() + sizeZ - 1 + radius));
+        // 清场件的包围盒外扩了 radius 格，而 minecraft:location / getStructureWithPieceAt
+        // 会把任意 piece 的包围盒当成「在结构里」。把它换成探测不到的盒子，
+        // 「快乐老家」之类的进度判定就只认院子本体（CourtyardPiece）那一小块。
+        this.boundingBox = new DetectionFreeBoundingBox(this.boundingBox);
         this.groundY = groundY;
         this.radius = radius;
         this.clearAbove = clearAbove;
@@ -75,6 +79,8 @@ public class YardClearingPiece extends StructurePiece
     public YardClearingPiece(CompoundTag tag)
     {
         super(ModWorldGen.CLEARING_PIECE.get(), tag);
+        // 同上：存档读回来的 boundingBox 是普通 BoundingBox，重新包一层
+        this.boundingBox = new DetectionFreeBoundingBox(this.boundingBox);
         this.groundY = tag.getInt("GroundY");
         this.radius = tag.getInt("Radius");
         this.clearAbove = tag.getInt("ClearAbove");
@@ -196,6 +202,34 @@ public class YardClearingPiece extends StructurePiece
     {
         return state.is(Blocks.ICE) || state.is(Blocks.PACKED_ICE)
                 || state.is(Blocks.BLUE_ICE) || state.is(Blocks.FROSTED_ICE);
+    }
+
+    /**
+     * 探测无效的包围盒：isInside 永远 false。
+     *
+     * <p>{@code StructureManager.structureHasPieceAt} 只问每个 piece 的包围盒是否包住玩家，
+     * 清场件外扩了 20 格就会被误认为「人在院里」。换成这个盒子后清场件照常按包围盒
+     * 调度/写块（postProcess 用的是 intersects，不受影响），但进度的 location 判定
+     * 不会再把院子的外围缓冲区算进去。</p>
+     */
+    private static final class DetectionFreeBoundingBox extends BoundingBox
+    {
+        DetectionFreeBoundingBox(BoundingBox src)
+        {
+            super(src.minX(), src.minY(), src.minZ(), src.maxX(), src.maxY(), src.maxZ());
+        }
+
+        @Override
+        public boolean isInside(net.minecraft.core.Vec3i v)
+        {
+            return false;
+        }
+
+        @Override
+        public boolean isInside(int x, int y, int z)
+        {
+            return false;
+        }
     }
 
     /** 树、灌木、花草、作物这类「地物」，不是地形本身 */

@@ -1,0 +1,5 @@
+{
+  "parent": "northeast_china_delight:northeast_yard",
+  "display": {"icon": {"id": "minecraft:emerald"}, "title": {"translate": "advancements.northeast_china_delight.trade_ginseng.title"}, "description": {"translate": "advancements.northeast_china_delight.trade_ginseng.description"}, "frame": "goal", "show_toast": true, "announce_to_chat": true},
+  "criteria": {"trade": {"trigger": "minecraft:villager_trade", "conditions": {"villager": {"type": "minecraft:wandering_trader"}, "item": {"items": ["northeast_china_delight:ginseng"]}}}}
+}

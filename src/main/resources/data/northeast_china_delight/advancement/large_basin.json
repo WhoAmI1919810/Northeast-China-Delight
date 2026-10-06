@@ -1,0 +1,5 @@
+{
+  "parent": "northeast_china_delight:northeast_yard",
+  "display": {"icon": {"id": "northeast_china_delight:large_basin"}, "title": {"translate": "advancements.northeast_china_delight.large_basin.title"}, "description": {"translate": "advancements.northeast_china_delight.large_basin.description"}, "frame": "task", "show_toast": true, "announce_to_chat": true},
+  "criteria": {"item": {"trigger": "minecraft:inventory_changed", "conditions": {"items": [{"items": ["northeast_china_delight:large_basin"]}]}}}
+}

@@ -4,23 +4,31 @@ import com.gunmu.northeast_china_delight.block.GinsengCropBlock;
 import com.gunmu.northeast_china_delight.block.ModBlocks;
 import com.gunmu.northeast_china_delight.NortheastChinaConfig;
 import com.gunmu.northeast_china_delight.item.ModItems;
+import com.gunmu.northeast_china_delight.item.SeaWaterBucketItem;
+import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
+import net.minecraft.stats.Stats;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.ItemUtils;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.biome.Biomes;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.BucketPickup;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.gameevent.GameEvent;
+import net.minecraft.tags.FluidTags;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.sounds.SoundSource;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -46,6 +54,46 @@ public final class ModGameplayEvents
 
     private ModGameplayEvents()
     {
+    }
+
+    @SubscribeEvent
+    public static void onWaterBucketPickup(PlayerInteractEvent.RightClickBlock event)
+    {
+        ItemStack stack = event.getItemStack();
+        if (!stack.is(Items.WATER_BUCKET))
+        {
+            return;
+        }
+        BlockPos pos = event.getPos();
+        BlockState state = event.getLevel().getBlockState(pos);
+        if (!state.getFluidState().is(FluidTags.WATER) || !state.getFluidState().isSource()
+                || !(state.getBlock() instanceof BucketPickup pickup)
+                || !SeaWaterBucketItem.isValidOceanColumn(event.getLevel(), pos))
+        {
+            return;
+        }
+
+        event.setCanceled(true);
+        event.setCancellationResult(InteractionResult.SUCCESS);
+        if (event.getLevel().isClientSide())
+        {
+            return;
+        }
+        ItemStack picked = pickup.pickupBlock(event.getEntity(), event.getLevel(), pos, state);
+        if (picked.isEmpty())
+        {
+            return;
+        }
+        ItemStack seaBucket = ItemUtils.createFilledResult(
+                stack, event.getEntity(), new ItemStack(ModItems.SEA_WATER_BUCKET.get()));
+        event.getEntity().setItemInHand(event.getHand(), seaBucket);
+        event.getEntity().awardStat(Stats.ITEM_USED.get(Items.WATER_BUCKET));
+        pickup.getPickupSound(state).ifPresent(sound -> event.getEntity().playSound(sound, 1.0F, 1.0F));
+        event.getLevel().gameEvent(event.getEntity(), GameEvent.FLUID_PICKUP, pos);
+        if (event.getEntity() instanceof ServerPlayer serverPlayer)
+        {
+            CriteriaTriggers.FILLED_BUCKET.trigger(serverPlayer, picked);
+        }
     }
 
     /**

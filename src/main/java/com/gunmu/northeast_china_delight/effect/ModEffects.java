@@ -33,6 +33,10 @@ public class ModEffects {
     public static final DeferredHolder<MobEffect, MobEffect> WARMTH =
             EFFECTS.register("warmth", () -> new SimpleEffect(MobEffectCategory.BENEFICIAL, 0xFF8A3D));
 
+    /** 养生：参鸡汤的效果，按当前血量分档回血（见 {@link NourishingEffect}） */
+    public static final DeferredHolder<MobEffect, MobEffect> NOURISHING =
+            EFFECTS.register("nourishing", NourishingEffect::new);
+
     public static void register(IEventBus eventBus) {
         EFFECTS.register(eventBus);
     }

@@ -72,6 +72,12 @@ public class DishEffectEvents {
                 player.addEffect(applied.instance());
             }
         }
+        // 参鸡汤：额外带「养生」（按血量分档回血）
+        if (stack.is(ModItems.SHEN_JI_TANG.get())) {
+            for (DishEffects.Applied applied : DishEffects.ginsengSoupExtras()) {
+                player.addEffect(applied.instance());
+            }
+        }
         // 新派橙汁锅包肉：额外带上橘子汁本身的 5 秒生命恢复与解毒
         if (stack.is(ModItems.ORANGE_GUO_BAO_ROU.get())) {
             for (DishEffects.Applied applied : DishEffects.orangeJuiceExtras()) {
@@ -110,6 +116,9 @@ public class DishEffectEvents {
         List<DishEffects.Applied> effects = new ArrayList<>(DishEffects.of(info));
         if (DishFlavors.isSoup(stack.getItem())) {
             effects.addAll(DishEffects.soupWarmth(info.durationTicks()));
+        }
+        if (stack.is(ModItems.SHEN_JI_TANG.get())) {
+            effects.addAll(DishEffects.ginsengSoupExtras());
         }
         if (stack.is(ModItems.ORANGE_GUO_BAO_ROU.get())) {
             effects.addAll(DishEffects.orangeJuiceExtras());

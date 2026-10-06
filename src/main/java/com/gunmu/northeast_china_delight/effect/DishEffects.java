@@ -63,6 +63,13 @@ public final class DishEffects {
         return list;
     }
 
+    /** 参鸡汤额外给的「养生」：固定 10 秒（200 tick），效果本身按血量分档回血 */
+    public static List<Applied> ginsengSoupExtras() {
+        List<Applied> list = new ArrayList<>();
+        list.add(new Applied(ModEffects.NOURISHING, 200, 0));
+        return list;
+    }
+
     /** 汤类额外给的「暖身」：时长跟这道菜自己的效果一致 */
     public static List<Applied> soupWarmth(int durationTicks) {
         List<Applied> list = new ArrayList<>();

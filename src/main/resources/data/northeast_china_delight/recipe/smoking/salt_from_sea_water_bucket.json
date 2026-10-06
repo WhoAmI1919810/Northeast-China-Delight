@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:smoking",
+  "category": "misc",
+  "cookingtime": 100,
+  "experience": 0.35,
+  "ingredient": {
+    "item": "northeast_china_delight:sea_water_bucket"
+  },
+  "result": {
+    "count": 1,
+    "id": "northeast_china_delight:salt"
+  }
+}

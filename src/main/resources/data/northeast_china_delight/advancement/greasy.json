@@ -1,0 +1,5 @@
+{
+  "parent": "northeast_china_delight:northeast_yard",
+  "display": {"icon": {"id": "northeast_china_delight:new_style_crispy_pork"}, "title": {"translate": "advancements.northeast_china_delight.greasy.title"}, "description": {"translate": "advancements.northeast_china_delight.greasy.description"}, "frame": "task", "show_toast": true, "announce_to_chat": true},
+  "criteria": {"eat": {"trigger": "minecraft:consume_item", "conditions": {"item": {"items": ["northeast_china_delight:new_style_crispy_pork", "northeast_china_delight:old_style_crispy_pork", "northeast_china_delight:orange_crispy_pork"]}}}}
+}

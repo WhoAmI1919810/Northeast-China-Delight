@@ -1,1 +1,5161 @@
-{"credit":"northeast_china_delight dish (display-delight style)","render_type":"minecraft:cutout","textures":{"particle":"northeast_china_delight:block/braised_beef_sauce","flat":"northeast_china_delight:block/jiang_niu_rou_flat","peak1":"northeast_china_delight:block/jiang_niu_rou_p1","peak2":"northeast_china_delight:block/jiang_niu_rou_p2","peak3":"northeast_china_delight:block/jiang_niu_rou_p3","tray_top":"northeast_china_delight:block/container_tray_top","tray_side":"northeast_china_delight:block/container_tray_bottom"},"elements":[{"name":"tray","from":[1,0,1],"to":[15,2,15],"faces":{"north":{"uv":[1,11,15,13],"texture":"#tray_side"},"east":{"uv":[1,11,15,13],"texture":"#tray_side"},"south":{"uv":[1,11,15,13],"texture":"#tray_side"},"west":{"uv":[1,11,15,13],"texture":"#tray_side"},"up":{"uv":[1,1,15,15],"texture":"#tray_top"},"down":{"uv":[1,1,15,15],"texture":"#tray_side","cullface":"down"}}},{"name":"f","from":[3.0,2.05,3.0],"to":[13.0,3.0,13.0],"faces":{"north":{"uv":[0,0,16,16],"texture":"#flat"},"south":{"uv":[0,0,16,16],"texture":"#flat"},"east":{"uv":[0,0,16,16],"texture":"#flat"},"west":{"uv":[0,0,16,16],"texture":"#flat"},"up":{"uv":[0,0,16,16],"texture":"#flat"},"down":{"uv":[0,0,16,16],"texture":"#flat"}}},{"name":"f","from":[8.489246827233258,3.0,7.200938445854156],"to":[10.340675256469526,3.910562636551891,9.834535494992895],"faces":{"north":{"uv":[0,4,16,16],"texture":"#peak1"},"south":{"uv":[0,4,16,16],"texture":"#peak1"},"east":{"uv":[0,4,16,16],"texture":"#peak1"},"west":{"uv":[0,4,16,16],"texture":"#peak1"},"up":{"uv":[0,0,16,16],"texture":"#peak1"},"down":{"uv":[0,4,16,16],"texture":"#peak1"}}},{"name":"f","from":[6.899160104474547,3.0,8.046609592571025],"to":[9.46516744546938,3.778880554090792,10.104936214087259],"faces":{"north":{"uv":[0,4,16,16],"texture":"#peak2"},"south":{"uv":[0,4,16,16],"texture":"#peak2"},"east":{"uv":[0,4,16,16],"texture":"#peak2"},"west":{"uv":[0,4,16,16],"texture":"#peak2"},"up":{"uv":[0,0,16,16],"texture":"#peak2"},"down":{"uv":[0,4,16,16],"texture":"#peak2"}}},{"name":"f","from":[8.594708900828314,3.0,5.8822832095072775],"to":[11.16495148440413,3.6832959696244916,7.710037140220899],"faces":{"north":{"uv":[0,4,16,16],"texture":"#peak3"},"south":{"uv":[0,4,16,16],"texture":"#peak3"},"east":{"uv":[0,4,16,16],"texture":"#peak3"},"west":{"uv":[0,4,16,16],"texture":"#peak3"},"up":{"uv":[0,0,16,16],"texture":"#peak3"},"down":{"uv":[0,4,16,16],"texture":"#peak3"}}},{"name":"f","from":[8.699834668981866,3.0,4.239979637425739],"to":[10.656108279557424,4.117664192029764,6.033004747315905],"faces":{"north":{"uv":[0,4,16,16],"texture":"#peak1"},"south":{"uv":[0,4,16,16],"texture":"#peak1"},"east":{"uv":[0,4,16,16],"texture":"#peak1"},"west":{"uv":[0,4,16,16],"texture":"#peak1"},"up":{"uv":[0,0,16,16],"texture":"#peak1"},"down":{"uv":[0,4,16,16],"texture":"#peak1"}}}],"gui_light":"front","display":{"thirdperson_righthand":{"rotation":[63,142,0],"translation":[0.5,3.75,2],"scale":[0.7,0.7,0.7]},"thirdperson_lefthand":{"rotation":[63,142,0],"translation":[0.5,3.75,2],"scale":[0.7,0.7,0.7]},"firstperson_righthand":{"rotation":[4,0,0],"translation":[0,7,0]},"firstperson_lefthand":{"rotation":[4,0,0],"translation":[0,7,0]},"ground":{"translation":[0,2.5,0],"scale":[0.5,0.5,0.5]},"gui":{"rotation":[37,44,0],"translation":[0,4,0],"scale":[0.8,0.8,0.8]},"head":{"rotation":[0,0,90],"translation":[0,-4.25,-7]},"fixed":{"rotation":[-90,0,0],"translation":[0,0,-16],"scale":[2,2,2]}}}
+{
+  "credit": "northeast_china_delight dish rebuild r9: filled display-delight containers with dish-specific voxel silhouettes",
+  "render_type": "minecraft:cutout",
+  "textures": {
+    "particle": "northeast_china_delight:item/braised_beef_sauce",
+    "food": "northeast_china_delight:item/braised_beef_sauce",
+    "food_side": "northeast_china_delight:block/dish_generated/braised_beef_sauce_side",
+    "container": "northeast_china_delight:block/container_tray_top",
+    "face_0": "northeast_china_delight:block/container_tray_bottom",
+    "face_1": "northeast_china_delight:block/dish_generated/r9_braise_gloss",
+    "face_2": "northeast_china_delight:block/dish_generated/r9_braise",
+    "face_3": "northeast_china_delight:block/dish_generated/r9_fat",
+    "face_4": "northeast_china_delight:block/dish_generated/r5_component_side_northeast_china_delight_green_onion",
+    "face_5": "northeast_china_delight:block/dish_generated/top_northeast_china_delight_item_green_onion"
+  },
+  "elements": [
+    {
+      "name": "display_delight_tray",
+      "from": [
+        1,
+        0,
+        1
+      ],
+      "to": [
+        15,
+        2,
+        15
+      ],
+      "faces": {
+        "north": {
+          "texture": "#face_0",
+          "uv": [
+            1,
+            11,
+            15,
+            13
+          ]
+        },
+        "east": {
+          "texture": "#face_0",
+          "uv": [
+            1,
+            11,
+            15,
+            13
+          ]
+        },
+        "south": {
+          "texture": "#face_0",
+          "uv": [
+            1,
+            11,
+            15,
+            13
+          ]
+        },
+        "west": {
+          "texture": "#face_0",
+          "uv": [
+            1,
+            11,
+            15,
+            13
+          ]
+        },
+        "up": {
+          "texture": "#container",
+          "uv": [
+            1,
+            1,
+            15,
+            15
+          ]
+        },
+        "down": {
+          "texture": "#face_0",
+          "uv": [
+            1,
+            11,
+            15,
+            13
+          ]
+        }
+      }
+    },
+    {
+      "name": "beef_sauce_0",
+      "from": [
+        6.12,
+        2.17,
+        3.162
+      ],
+      "to": [
+        9.88,
+        2.26,
+        4.237
+      ],
+      "faces": {
+        "north": {
+          "texture": "#face_1"
+        },
+        "east": {
+          "texture": "#face_1"
+        },
+        "south": {
+          "texture": "#face_1"
+        },
+        "west": {
+          "texture": "#face_1"
+        },
+        "up": {
+          "texture": "#face_1",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        },
+        "down": {
+          "texture": "#face_1"
+        }
+      }
+    },
+    {
+      "name": "beef_sauce_1",
+      "from": [
+        4.41,
+        2.17,
+        4.237
+      ],
+      "to": [
+        11.59,
+        2.26,
+        5.312
+      ],
+      "faces": {
+        "north": {
+          "texture": "#face_1"
+        },
+        "east": {
+          "texture": "#face_1"
+        },
+        "south": {
+          "texture": "#face_1"
+        },
+        "west": {
+          "texture": "#face_1"
+        },
+        "up": {
+          "texture": "#face_1",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        },
+        "down": {
+          "texture": "#face_1"
+        }
+      }
+    },
+    {
+      "name": "beef_sauce_2",
+      "from": [
+        3.299,
+        2.17,
+        5.312
+      ],
+      "to": [
+        12.701,
+        2.26,
+        6.387
+      ],
+      "faces": {
+        "north": {
+          "texture": "#face_1"
+        },
+        "east": {
+          "texture": "#face_1"
+        },
+        "south": {
+          "texture": "#face_1"
+        },
+        "west": {
+          "texture": "#face_1"
+        },
+        "up": {
+          "texture": "#face_1",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        },
+        "down": {
+          "texture": "#face_1"
+        }
+      }
+    },
+    {
+      "name": "beef_sauce_3",
+      "from": [
+        2.744,
+        2.17,
+        6.387
+      ],
+      "to": [
+        13.256,
+        2.26,
+        7.462
+      ],
+      "faces": {
+        "north": {
+          "texture": "#face_1"
+        },
+        "east": {
+          "texture": "#face_1"
+        },
+        "south": {
+          "texture": "#face_1"
+        },
+        "west": {
+          "texture": "#face_1"
+        },
+        "up": {
+          "texture": "#face_1",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        },
+        "down": {
+          "texture": "#face_1"
+        }
+      }
+    },
+    {
+      "name": "beef_sauce_4",
+      "from": [
+        2.572,
+        2.17,
+        7.462
+      ],
+      "to": [
+        13.428,
+        2.26,
+        8.538
+      ],
+      "faces": {
+        "north": {
+          "texture": "#face_1"
+        },
+        "east": {
+          "texture": "#face_1"
+        },
+        "south": {
+          "texture": "#face_1"
+        },
+        "west": {
+          "texture": "#face_1"
+        },
+        "up": {
+          "texture": "#face_1",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        },
+        "down": {
+          "texture": "#face_1"
+        }
+      }
+    },
+    {
+      "name": "beef_sauce_5",
+      "from": [
+        2.744,
+        2.17,
+        8.538
+      ],
+      "to": [
+        13.256,
+        2.26,
+        9.613
+      ],
+      "faces": {
+        "north": {
+          "texture": "#face_1"
+        },
+        "east": {
+          "texture": "#face_1"
+        },
+        "south": {
+          "texture": "#face_1"
+        },
+        "west": {
+          "texture": "#face_1"
+        },
+        "up": {
+          "texture": "#face_1",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        },
+        "down": {
+          "texture": "#face_1"
+        }
+      }
+    },
+    {
+      "name": "beef_sauce_6",
+      "from": [
+        3.299,
+        2.17,
+        9.613
+      ],
+      "to": [
+        12.701,
+        2.26,
+        10.688
+      ],
+      "faces": {
+        "north": {
+          "texture": "#face_1"
+        },
+        "east": {
+          "texture": "#face_1"
+        },
+        "south": {
+          "texture": "#face_1"
+        },
+        "west": {
+          "texture": "#face_1"
+        },
+        "up": {
+          "texture": "#face_1",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        },
+        "down": {
+          "texture": "#face_1"
+        }
+      }
+    },
+    {
+      "name": "beef_sauce_7",
+      "from": [
+        4.41,
+        2.17,
+        10.688
+      ],
+      "to": [
+        11.59,
+        2.26,
+        11.763
+      ],
+      "faces": {
+        "north": {
+          "texture": "#face_1"
+        },
+        "east": {
+          "texture": "#face_1"
+        },
+        "south": {
+          "texture": "#face_1"
+        },
+        "west": {
+          "texture": "#face_1"
+        },
+        "up": {
+          "texture": "#face_1",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        },
+        "down": {
+          "texture": "#face_1"
+        }
+      }
+    },
+    {
+      "name": "beef_sauce_8",
+      "from": [
+        6.12,
+        2.17,
+        11.763
+      ],
+      "to": [
+        9.88,
+        2.26,
+        12.838
+      ],
+      "faces": {
+        "north": {
+          "texture": "#face_1"
+        },
+        "east": {
+          "texture": "#face_1"
+        },
+        "south": {
+          "texture": "#face_1"
+        },
+        "west": {
+          "texture": "#face_1"
+        },
+        "up": {
+          "texture": "#face_1",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        },
+        "down": {
+          "texture": "#face_1"
+        }
+      }
+    },
+    {
+      "name": "beef_chunk_0_body_0",
+      "from": [
+        4.83,
+        2.31,
+        4.377
+      ],
+      "to": [
+        5.742,
+        2.769,
+        4.721
+      ],
+      "faces": {
+        "north": {
+          "texture": "#face_2"
+        },
+        "east": {
+          "texture": "#face_2"
+        },
+        "south": {
+          "texture": "#face_2"
+        },
+        "west": {
+          "texture": "#face_2"
+        },
+        "up": {
+          "texture": "#face_2",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        },
+        "down": {
+          "texture": "#face_2"
+        }
+      }
+    },
+    {
+      "name": "beef_chunk_0_body_1",
+      "from": [
+        4.304,
+        2.31,
+        4.721
+      ],
+      "to": [
+        6.268,
+        2.769,
+        5.065
+      ],
+      "faces": {
+        "north": {
+          "texture": "#face_2"
+        },
+        "east": {
+          "texture": "#face_2"
+        },
+        "south": {
+          "texture": "#face_2"
+        },
+        "west": {
+          "texture": "#face_2"
+        },
+        "up": {
+          "texture": "#face_2",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        },
+        "down": {
+          "texture": "#face_2"
+        }
+      }
+    },
+    {
+      "name": "beef_chunk_0_body_2",
+      "from": [
+        4.044,
+        2.31,
+        5.065
+      ],
+      "to": [
+        6.528,
+        2.769,
+        5.409
+      ],
+      "faces": {
+        "north": {
+          "texture": "#face_2"
+        },
+        "east": {
+          "texture": "#face_2"
+        },
+        "south": {
+          "texture": "#face_2"
+        },
+        "west": {
+          "texture": "#face_2"
+        },
+        "up": {
+          "texture": "#face_2",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        },
+        "down": {
+          "texture": "#face_2"
+        }
+      }
+    },
+    {
+      "name": "beef_chunk_0_body_3",
+      "from": [
+        3.969,
+        2.31,
+        5.409
+      ],
+      "to": [
+        6.603,
+        2.769,
+        5.753
+      ],
+      "faces": {
+        "north": {
+          "texture": "#face_2"
+        },
+        "east": {
+          "texture": "#face_2"
+        },
+        "south": {
+          "texture": "#face_2"
+        },
+        "west": {
+          "texture": "#face_2"
+        },
+        "up": {
+          "texture": "#face_2",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        },
+        "down": {
+          "texture": "#face_2"
+        }
+      }
+    },
+    {
+      "name": "beef_chunk_0_body_4",
+      "from": [
+        4.044,
+        2.31,
+        5.753
+      ],
+      "to": [
+        6.528,
+        2.769,
+        6.097
+      ],
+      "faces": {
+        "north": {
+          "texture": "#face_2"
+        },
+        "east": {
+          "texture": "#face_2"
+        },
+        "south": {
+          "texture": "#face_2"
+        },
+        "west": {
+          "texture": "#face_2"
+        },
+        "up": {
+          "texture": "#face_2",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        },
+        "down": {
+          "texture": "#face_2"
+        }
+      }
+    },
+    {
+      "name": "beef_chunk_0_body_5",
+      "from": [
+        4.304,
+        2.31,
+        6.097
+      ],
+      "to": [
+        6.268,
+        2.769,
+        6.441
+      ],
+      "faces": {
+        "north": {
+          "texture": "#face_2"
+        },
+        "east": {
+          "texture": "#face_2"
+        },
+        "south": {
+          "texture": "#face_2"
+        },
+        "west": {
+          "texture": "#face_2"
+        },
+        "up": {
+          "texture": "#face_2",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        },
+        "down": {
+          "texture": "#face_2"
+        }
+      }
+    },
+    {
+      "name": "beef_chunk_0_body_6",
+      "from": [
+        4.83,
+        2.31,
+        6.441
+      ],
+      "to": [
+        5.742,
+        2.769,
+        6.785
+      ],
+      "faces": {
+        "north": {
+          "texture": "#face_2"
+        },
+        "east": {
+          "texture": "#face_2"
+        },
+        "south": {
+          "texture": "#face_2"
+        },
+        "west": {
+          "texture": "#face_2"
+        },
+        "up": {
+          "texture": "#face_2",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        },
+        "down": {
+          "texture": "#face_2"
+        }
+      }
+    },
+    {
+      "name": "beef_chunk_0_top_0",
+      "from": [
+        4.939,
+        2.695,
+        4.69
+      ],
+      "to": [
+        5.633,
+        2.991,
+        5.047
+      ],
+      "faces": {
+        "north": {
+          "texture": "#face_2"
+        },
+        "east": {
+          "texture": "#face_2"
+        },
+        "south": {
+          "texture": "#face_2"
+        },
+        "west": {
+          "texture": "#face_2"
+        },
+        "up": {
+          "texture": "#face_2",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        },
+        "down": {
+          "texture": "#face_2"
+        }
+      }
+    },
+    {
+      "name": "beef_chunk_0_top_1",
+      "from": [
+        4.419,
+        2.695,
+        5.047
+      ],
+      "to": [
+        6.153,
+        2.991,
+        5.403
+      ],
+      "faces": {
+        "north": {
+          "texture": "#face_2"
+        },
+        "east": {
+          "texture": "#face_2"
+        },
+        "south": {
+          "texture": "#face_2"
+        },
+        "west": {
+          "texture": "#face_2"
+        },
+        "up": {
+          "texture": "#face_2",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        },
+        "down": {
+          "texture": "#face_2"
+        }
+      }
+    },
+    {
+      "name": "beef_chunk_0_top_2",
+      "from": [
+        4.285,
+        2.695,
+        5.403
+      ],
+      "to": [
+        6.287,
+        2.991,
+        5.759
+      ],
+      "faces": {
+        "north": {
+          "texture": "#face_2"
+        },
+        "east": {
+          "texture": "#face_2"
+        },
+        "south": {
+          "texture": "#face_2"
+        },
+        "west": {
+          "texture": "#face_2"
+        },
+        "up": {
+          "texture": "#face_2",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        },
+        "down": {
+          "texture": "#face_2"
+        }
+      }
+    },
+    {
+      "name": "beef_chunk_0_top_3",
+      "from": [
+        4.419,
+        2.695,
+        5.759
+      ],
+      "to": [
+        6.153,
+        2.991,
+        6.115
+      ],
+      "faces": {
+        "north": {
+          "texture": "#face_2"
+        },
+        "east": {
+          "texture": "#face_2"
+        },
+        "south": {
+          "texture": "#face_2"
+        },
+        "west": {
+          "texture": "#face_2"
+        },
+        "up": {
+          "texture": "#face_2",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        },
+        "down": {
+          "texture": "#face_2"
+        }
+      }
+    },
+    {
+      "name": "beef_chunk_0_top_4",
+      "from": [
+        4.939,
+        2.695,
+        6.115
+      ],
+      "to": [
+        5.633,
+        2.991,
+        6.472
+      ],
+      "faces": {
+        "north": {
+          "texture": "#face_2"
+        },
+        "east": {
+          "texture": "#face_2"
+        },
+        "south": {
+          "texture": "#face_2"
+        },
+        "west": {
+          "texture": "#face_2"
+        },
+        "up": {
+          "texture": "#face_2",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        },
+        "down": {
+          "texture": "#face_2"
+        }
+      }
+    },
+    {
+      "name": "beef_fat_0",
+      "from": [
+        4.479,
+        2.89,
+        5.227
+      ],
+      "to": [
+        4.809,
+        2.95,
+        6.324
+      ],
+      "faces": {
+        "north": {
+          "texture": "#face_3"
+        },
+        "east": {
+          "texture": "#face_3"
+        },
+        "south": {
+          "texture": "#face_3"
+        },
+        "west": {
+          "texture": "#face_3"
+        },
+        "up": {
+          "texture": "#face_3",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        },
+        "down": {
+          "texture": "#face_3"
+        }
+      },
+      "rotation": {
+        "angle": 22.5,
+        "axis": "y",
+        "origin": [
+          4.644,
+          2.89,
+          5.776
+        ],
+        "rescale": false
+      }
+    },
+    {
+      "name": "beef_chunk_1_body_0",
+      "from": [
+        7.375,
+        2.355,
+        3.627
+      ],
+      "to": [
+        8.389,
+        2.901,
+        4.017
+      ],
+      "faces": {
+        "north": {
+          "texture": "#face_2"
+        },
+        "east": {
+          "texture": "#face_2"
+        },
+        "south": {
+          "texture": "#face_2"
+        },
+        "west": {
+          "texture": "#face_2"
+        },
+        "up": {
+          "texture": "#face_2",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        },
+        "down": {
+          "texture": "#face_2"
+        }
+      }
+    },
+    {
+      "name": "beef_chunk_1_body_1",
+      "from": [
+        6.791,
+        2.355,
+        4.017
+      ],
+      "to": [
+        8.973,
+        2.901,
+        4.406
+      ],
+      "faces": {
+        "north": {
+          "texture": "#face_2"
+        },
+        "east": {
+          "texture": "#face_2"
+        },
+        "south": {
+          "texture": "#face_2"
+        },
+        "west": {
+          "texture": "#face_2"
+        },
+        "up": {
+          "texture": "#face_2",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        },
+        "down": {
+          "texture": "#face_2"
+        }
+      }
+    },
+    {
+      "name": "beef_chunk_1_body_2",
+      "from": [
+        6.502,
+        2.355,
+        4.406
+      ],
+      "to": [
+        9.262,
+        2.901,
+        4.796
+      ],
+      "faces": {
+        "north": {
+          "texture": "#face_2"
+        },
+        "east": {
+          "texture": "#face_2"
+        },
+        "south": {
+          "texture": "#face_2"
+        },
+        "west": {
+          "texture": "#face_2"
+        },
+        "up": {
+          "texture": "#face_2",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        },
+        "down": {
+          "texture": "#face_2"
+        }
+      }
+    },
+    {
+      "name": "beef_chunk_1_body_3",
+      "from": [
+        6.419,
+        2.355,
+        4.796
+      ],
+      "to": [
+        9.345,
+        2.901,
+        5.186
+      ],
+      "faces": {
+        "north": {
+          "texture": "#face_2"
+        },
+        "east": {
+          "texture": "#face_2"
+        },
+        "south": {
+          "texture": "#face_2"
+        },
+        "west": {
+          "texture": "#face_2"
+        },
+        "up": {
+          "texture": "#face_2",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        },
+        "down": {
+          "texture": "#face_2"
+        }
+      }
+    },
+    {
+      "name": "beef_chunk_1_body_4",
+      "from": [
+        6.502,
+        2.355,
+        5.186
+      ],
+      "to": [
+        9.262,
+        2.901,
+        5.576
+      ],
+      "faces": {
+        "north": {
+          "texture": "#face_2"
+        },
+        "east": {
+          "texture": "#face_2"
+        },
+        "south": {
+          "texture": "#face_2"
+        },
+        "west": {
+          "texture": "#face_2"
+        },
+        "up": {
+          "texture": "#face_2",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        },
+        "down": {
+          "texture": "#face_2"
+        }
+      }
+    },
+    {
+      "name": "beef_chunk_1_body_5",
+      "from": [
+        6.791,
+        2.355,
+        5.576
+      ],
+      "to": [
+        8.973,
+        2.901,
+        5.965
+      ],
+      "faces": {
+        "north": {
+          "texture": "#face_2"
+        },
+        "east": {
+          "texture": "#face_2"
+        },
+        "south": {
+          "texture": "#face_2"
+        },
+        "west": {
+          "texture": "#face_2"
+        },
+        "up": {
+          "texture": "#face_2",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        },
+        "down": {
+          "texture": "#face_2"
+        }
+      }
+    },
+    {
+      "name": "beef_chunk_1_body_6",
+      "from": [
+        7.375,
+        2.355,
+        5.965
+      ],
+      "to": [
+        8.389,
+        2.901,
+        6.355
+      ],
+      "faces": {
+        "north": {
+          "texture": "#face_2"
+        },
+        "east": {
+          "texture": "#face_2"
+        },
+        "south": {
+          "texture": "#face_2"
+        },
+        "west": {
+          "texture": "#face_2"
+        },
+        "up": {
+          "texture": "#face_2",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        },
+        "down": {
+          "texture": "#face_2"
+        }
+      }
+    },
+    {
+      "name": "beef_chunk_1_top_0",
+      "from": [
+        7.497,
+        2.813,
+        3.982
+      ],
+      "to": [
+        8.267,
+        3.165,
+        4.385
+      ],
+      "faces": {
+        "north": {
+          "texture": "#face_2"
+        },
+        "east": {
+          "texture": "#face_2"
+        },
+        "south": {
+          "texture": "#face_2"
+        },
+        "west": {
+          "texture": "#face_2"
+        },
+        "up": {
+          "texture": "#face_2",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        },
+        "down": {
+          "texture": "#face_2"
+        }
+      }
+    },
+    {
+      "name": "beef_chunk_1_top_1",
+      "from": [
+        6.919,
+        2.813,
+        4.385
+      ],
+      "to": [
+        8.845,
+        3.165,
+        4.789
+      ],
+      "faces": {
+        "north": {
+          "texture": "#face_2"
+        },
+        "east": {
+          "texture": "#face_2"
+        },
+        "south": {
+          "texture": "#face_2"
+        },
+        "west": {
+          "texture": "#face_2"
+        },
+        "up": {
+          "texture": "#face_2",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        },
+        "down": {
+          "texture": "#face_2"
+        }
+      }
+    },
+    {
+      "name": "beef_chunk_1_top_2",
+      "from": [
+        6.77,
+        2.813,
+        4.789
+      ],
+      "to": [
+        8.994,
+        3.165,
+        5.193
+      ],
+      "faces": {
+        "north": {
+          "texture": "#face_2"
+        },
+        "east": {
+          "texture": "#face_2"
+        },
+        "south": {
+          "texture": "#face_2"
+        },
+        "west": {
+          "texture": "#face_2"
+        },
+        "up": {
+          "texture": "#face_2",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        },
+        "down": {
+          "texture": "#face_2"
+        }
+      }
+    },
+    {
+      "name": "beef_chunk_1_top_3",
+      "from": [
+        6.919,
+        2.813,
+        5.193
+      ],
+      "to": [
+        8.845,
+        3.165,
+        5.597
+      ],
+      "faces": {
+        "north": {
+          "texture": "#face_2"
+        },
+        "east": {
+          "texture": "#face_2"
+        },
+        "south": {
+          "texture": "#face_2"
+        },
+        "west": {
+          "texture": "#face_2"
+        },
+        "up": {
+          "texture": "#face_2",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        },
+        "down": {
+          "texture": "#face_2"
+        }
+      }
+    },
+    {
+      "name": "beef_chunk_1_top_4",
+      "from": [
+        7.497,
+        2.813,
+        5.597
+      ],
+      "to": [
+        8.267,
+        3.165,
+        6.0
+      ],
+      "faces": {
+        "north": {
+          "texture": "#face_2"
+        },
+        "east": {
+          "texture": "#face_2"
+        },
+        "south": {
+          "texture": "#face_2"
+        },
+        "west": {
+          "texture": "#face_2"
+        },
+        "up": {
+          "texture": "#face_2",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        },
+        "down": {
+          "texture": "#face_2"
+        }
+      }
+    },
+    {
+      "name": "beef_chunk_2_body_0",
+      "from": [
+        10.106,
+        2.4,
+        4.259
+      ],
+      "to": [
+        10.968,
+        2.834,
+        4.603
+      ],
+      "faces": {
+        "north": {
+          "texture": "#face_2"
+        },
+        "east": {
+          "texture": "#face_2"
+        },
+        "south": {
+          "texture": "#face_2"
+        },
+        "west": {
+          "texture": "#face_2"
+        },
+        "up": {
+          "texture": "#face_2",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        },
+        "down": {
+          "texture": "#face_2"
+        }
+      }
+    },
+    {
+      "name": "beef_chunk_2_body_1",
+      "from": [
+        9.61,
+        2.4,
+        4.603
+      ],
+      "to": [
+        11.464,
+        2.834,
+        4.947
+      ],
+      "faces": {
+        "north": {
+          "texture": "#face_2"
+        },
+        "east": {
+          "texture": "#face_2"
+        },
+        "south": {
+          "texture": "#face_2"
+        },
+        "west": {
+          "texture": "#face_2"
+        },
+        "up": {
+          "texture": "#face_2",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        },
+        "down": {
+          "texture": "#face_2"
+        }
+      }
+    },
+    {
+      "name": "beef_chunk_2_body_2",
+      "from": [
+        9.364,
+        2.4,
+        4.947
+      ],
+      "to": [
+        11.71,
+        2.834,
+        5.291
+      ],
+      "faces": {
+        "north": {
+          "texture": "#face_2"
+        },
+        "east": {
+          "texture": "#face_2"
+        },
+        "south": {
+          "texture": "#face_2"
+        },
+        "west": {
+          "texture": "#face_2"
+        },
+        "up": {
+          "texture": "#face_2",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        },
+        "down": {
+          "texture": "#face_2"
+        }
+      }
+    },
+    {
+      "name": "beef_chunk_2_body_3",
+      "from": [
+        9.293,
+        2.4,
+        5.291
+      ],
+      "to": [
+        11.781,
+        2.834,
+        5.635
+      ],
+      "faces": {
+        "north": {
+          "texture": "#face_2"
+        },
+        "east": {
+          "texture": "#face_2"
+        },
+        "south": {
+          "texture": "#face_2"
+        },
+        "west": {
+          "texture": "#face_2"
+        },
+        "up": {
+          "texture": "#face_2",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        },
+        "down": {
+          "texture": "#face_2"
+        }
+      }
+    },
+    {
+      "name": "beef_chunk_2_body_4",
+      "from": [
+        9.364,
+        2.4,
+        5.635
+      ],
+      "to": [
+        11.71,
+        2.834,
+        5.979
+      ],
+      "faces": {
+        "north": {
+          "texture": "#face_2"
+        },
+        "east": {
+          "texture": "#face_2"
+        },
+        "south": {
+          "texture": "#face_2"
+        },
+        "west": {
+          "texture": "#face_2"
+        },
+        "up": {
+          "texture": "#face_2",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        },
+        "down": {
+          "texture": "#face_2"
+        }
+      }
+    },
+    {
+      "name": "beef_chunk_2_body_5",
+      "from": [
+        9.61,
+        2.4,
+        5.979
+      ],
+      "to": [
+        11.464,
+        2.834,
+        6.323
+      ],
+      "faces": {
+        "north": {
+          "texture": "#face_2"
+        },
+        "east": {
+          "texture": "#face_2"
+        },
+        "south": {
+          "texture": "#face_2"
+        },
+        "west": {
+          "texture": "#face_2"
+        },
+        "up": {
+          "texture": "#face_2",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        },
+        "down": {
+          "texture": "#face_2"
+        }
+      }
+    },
+    {
+      "name": "beef_chunk_2_body_6",
+      "from": [
+        10.106,
+        2.4,
+        6.323
+      ],
+      "to": [
+        10.968,
+        2.834,
+        6.667
+      ],
+      "faces": {
+        "north": {
+          "texture": "#face_2"
+        },
+        "east": {
+          "texture": "#face_2"
+        },
+        "south": {
+          "texture": "#face_2"
+        },
+        "west": {
+          "texture": "#face_2"
+        },
+        "up": {
+          "texture": "#face_2",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        },
+        "down": {
+          "texture": "#face_2"
+        }
+      }
+    },
+    {
+      "name": "beef_chunk_2_top_0",
+      "from": [
+        10.21,
+        2.764,
+        4.572
+      ],
+      "to": [
+        10.864,
+        3.044,
+        4.929
+      ],
+      "faces": {
+        "north": {
+          "texture": "#face_2"
+        },
+        "east": {
+          "texture": "#face_2"
+        },
+        "south": {
+          "texture": "#face_2"
+        },
+        "west": {
+          "texture": "#face_2"
+        },
+        "up": {
+          "texture": "#face_2",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        },
+        "down": {
+          "texture": "#face_2"
+        }
+      }
+    },
+    {
+      "name": "beef_chunk_2_top_1",
+      "from": [
+        9.718,
+        2.764,
+        4.929
+      ],
+      "to": [
+        11.356,
+        3.044,
+        5.285
+      ],
+      "faces": {
+        "north": {
+          "texture": "#face_2"
+        },
+        "east": {
+          "texture": "#face_2"
+        },
+        "south": {
+          "texture": "#face_2"
+        },
+        "west": {
+          "texture": "#face_2"
+        },
+        "up": {
+          "texture": "#face_2",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        },
+        "down": {
+          "texture": "#face_2"
+        }
+      }
+    },
+    {
+      "name": "beef_chunk_2_top_2",
+      "from": [
+        9.592,
+        2.764,
+        5.285
+      ],
+      "to": [
+        11.482,
+        3.044,
+        5.641
+      ],
+      "faces": {
+        "north": {
+          "texture": "#face_2"
+        },
+        "east": {
+          "texture": "#face_2"
+        },
+        "south": {
+          "texture": "#face_2"
+        },
+        "west": {
+          "texture": "#face_2"
+        },
+        "up": {
+          "texture": "#face_2",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        },
+        "down": {
+          "texture": "#face_2"
+        }
+      }
+    },
+    {
+      "name": "beef_chunk_2_top_3",
+      "from": [
+        9.718,
+        2.764,
+        5.641
+      ],
+      "to": [
+        11.356,
+        3.044,
+        5.997
+      ],
+      "faces": {
+        "north": {
+          "texture": "#face_2"
+        },
+        "east": {
+          "texture": "#face_2"
+        },
+        "south": {
+          "texture": "#face_2"
+        },
+        "west": {
+          "texture": "#face_2"
+        },
+        "up": {
+          "texture": "#face_2",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        },
+        "down": {
+          "texture": "#face_2"
+        }
+      }
+    },
+    {
+      "name": "beef_chunk_2_top_4",
+      "from": [
+        10.21,
+        2.764,
+        5.997
+      ],
+      "to": [
+        10.864,
+        3.044,
+        6.354
+      ],
+      "faces": {
+        "north": {
+          "texture": "#face_2"
+        },
+        "east": {
+          "texture": "#face_2"
+        },
+        "south": {
+          "texture": "#face_2"
+        },
+        "west": {
+          "texture": "#face_2"
+        },
+        "up": {
+          "texture": "#face_2",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        },
+        "down": {
+          "texture": "#face_2"
+        }
+      }
+    },
+    {
+      "name": "beef_fat_2",
+      "from": [
+        9.775,
+        2.99,
+        5.109
+      ],
+      "to": [
+        10.105,
+        3.05,
+        6.206
+      ],
+      "faces": {
+        "north": {
+          "texture": "#face_3"
+        },
+        "east": {
+          "texture": "#face_3"
+        },
+        "south": {
+          "texture": "#face_3"
+        },
+        "west": {
+          "texture": "#face_3"
+        },
+        "up": {
+          "texture": "#face_3",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        },
+        "down": {
+          "texture": "#face_3"
+        }
+      },
+      "rotation": {
+        "angle": 22.5,
+        "axis": "y",
+        "origin": [
+          9.94,
+          2.99,
+          5.658
+        ],
+        "rescale": false
+      }
+    },
+    {
+      "name": "beef_chunk_3_body_0",
+      "from": [
+        5.757,
+        2.31,
+        6.438
+      ],
+      "to": [
+        6.821,
+        2.893,
+        6.85
+      ],
+      "faces": {
+        "north": {
+          "texture": "#face_2"
+        },
+        "east": {
+          "texture": "#face_2"
+        },
+        "south": {
+          "texture": "#face_2"
+        },
+        "west": {
+          "texture": "#face_2"
+        },
+        "up": {
+          "texture": "#face_2",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        },
+        "down": {
+          "texture": "#face_2"
+        }
+      }
+    },
+    {
+      "name": "beef_chunk_3_body_1",
+      "from": [
+        5.144,
+        2.31,
+        6.85
+      ],
+      "to": [
+        7.434,
+        2.893,
+        7.263
+      ],
+      "faces": {
+        "north": {
+          "texture": "#face_2"
+        },
+        "east": {
+          "texture": "#face_2"
+        },
+        "south": {
+          "texture": "#face_2"
+        },
+        "west": {
+          "texture": "#face_2"
+        },
+        "up": {
+          "texture": "#face_2",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        },
+        "down": {
+          "texture": "#face_2"
+        }
+      }
+    },
+    {
+      "name": "beef_chunk_3_body_2",
+      "from": [
+        4.841,
+        2.31,
+        7.263
+      ],
+      "to": [
+        7.737,
+        2.893,
+        7.676
+      ],
+      "faces": {
+        "north": {
+          "texture": "#face_2"
+        },
+        "east": {
+          "texture": "#face_2"
+        },
+        "south": {
+          "texture": "#face_2"
+        },
+        "west": {
+          "texture": "#face_2"
+        },
+        "up": {
+          "texture": "#face_2",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        },
+        "down": {
+          "texture": "#face_2"
+        }
+      }
+    },
+    {
+      "name": "beef_chunk_3_body_3",
+      "from": [
+        4.753,
+        2.31,
+        7.676
+      ],
+      "to": [
+        7.825,
+        2.893,
+        8.088
+      ],
+      "faces": {
+        "north": {
+          "texture": "#face_2"
+        },
+        "east": {
+          "texture": "#face_2"
+        },
+        "south": {
+          "texture": "#face_2"
+        },
+        "west": {
+          "texture": "#face_2"
+        },
+        "up": {
+          "texture": "#face_2",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        },
+        "down": {
+          "texture": "#face_2"
+        }
+      }
+    },
+    {
+      "name": "beef_chunk_3_body_4",
+      "from": [
+        4.841,
+        2.31,
+        8.088
+      ],
+      "to": [
+        7.737,
+        2.893,
+        8.501
+      ],
+      "faces": {
+        "north": {
+          "texture": "#face_2"
+        },
+        "east": {
+          "texture": "#face_2"
+        },
+        "south": {
+          "texture": "#face_2"
+        },
+        "west": {
+          "texture": "#face_2"
+        },
+        "up": {
+          "texture": "#face_2",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        },
+        "down": {
+          "texture": "#face_2"
+        }
+      }
+    },
+    {
+      "name": "beef_chunk_3_body_5",
+      "from": [
+        5.144,
+        2.31,
+        8.501
+      ],
+      "to": [
+        7.434,
+        2.893,
+        8.914
+      ],
+      "faces": {
+        "north": {
+          "texture": "#face_2"
+        },
+        "east": {
+          "texture": "#face_2"
+        },
+        "south": {
+          "texture": "#face_2"
+        },
+        "west": {
+          "texture": "#face_2"
+        },
+        "up": {
+          "texture": "#face_2",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        },
+        "down": {
+          "texture": "#face_2"
+        }
+      }
+    },
+    {
+      "name": "beef_chunk_3_body_6",
+      "from": [
+        5.757,
+        2.31,
+        8.914
+      ],
+      "to": [
+        6.821,
+        2.893,
+        9.326
+      ],
+      "faces": {
+        "north": {
+          "texture": "#face_2"
+        },
+        "east": {
+          "texture": "#face_2"
+        },
+        "south": {
+          "texture": "#face_2"
+        },
+        "west": {
+          "texture": "#face_2"
+        },
+        "up": {
+          "texture": "#face_2",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        },
+        "down": {
+          "texture": "#face_2"
+        }
+      }
+    },
+    {
+      "name": "beef_chunk_3_top_0",
+      "from": [
+        5.885,
+        2.799,
+        6.813
+      ],
+      "to": [
+        6.693,
+        3.175,
+        7.241
+      ],
+      "faces": {
+        "north": {
+          "texture": "#face_2"
+        },
+        "east": {
+          "texture": "#face_2"
+        },
+        "south": {
+          "texture": "#face_2"
+        },
+        "west": {
+          "texture": "#face_2"
+        },
+        "up": {
+          "texture": "#face_2",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        },
+        "down": {
+          "texture": "#face_2"
+        }
+      }
+    },
+    {
+      "name": "beef_chunk_3_top_1",
+      "from": [
+        5.278,
+        2.799,
+        7.241
+      ],
+      "to": [
+        7.3,
+        3.175,
+        7.668
+      ],
+      "faces": {
+        "north": {
+          "texture": "#face_2"
+        },
+        "east": {
+          "texture": "#face_2"
+        },
+        "south": {
+          "texture": "#face_2"
+        },
+        "west": {
+          "texture": "#face_2"
+        },
+        "up": {
+          "texture": "#face_2",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        },
+        "down": {
+          "texture": "#face_2"
+        }
+      }
+    },
+    {
+      "name": "beef_chunk_3_top_2",
+      "from": [
+        5.121,
+        2.799,
+        7.668
+      ],
+      "to": [
+        7.457,
+        3.175,
+        8.096
+      ],
+      "faces": {
+        "north": {
+          "texture": "#face_2"
+        },
+        "east": {
+          "texture": "#face_2"
+        },
+        "south": {
+          "texture": "#face_2"
+        },
+        "west": {
+          "texture": "#face_2"
+        },
+        "up": {
+          "texture": "#face_2",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        },
+        "down": {
+          "texture": "#face_2"
+        }
+      }
+    },
+    {
+      "name": "beef_chunk_3_top_3",
+      "from": [
+        5.278,
+        2.799,
+        8.096
+      ],
+      "to": [
+        7.3,
+        3.175,
+        8.523
+      ],
+      "faces": {
+        "north": {
+          "texture": "#face_2"
+        },
+        "east": {
+          "texture": "#face_2"
+        },
+        "south": {
+          "texture": "#face_2"
+        },
+        "west": {
+          "texture": "#face_2"
+        },
+        "up": {
+          "texture": "#face_2",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        },
+        "down": {
+          "texture": "#face_2"
+        }
+      }
+    },
+    {
+      "name": "beef_chunk_3_top_4",
+      "from": [
+        5.885,
+        2.799,
+        8.523
+      ],
+      "to": [
+        6.693,
+        3.175,
+        8.951
+      ],
+      "faces": {
+        "north": {
+          "texture": "#face_2"
+        },
+        "east": {
+          "texture": "#face_2"
+        },
+        "south": {
+          "texture": "#face_2"
+        },
+        "west": {
+          "texture": "#face_2"
+        },
+        "up": {
+          "texture": "#face_2",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        },
+        "down": {
+          "texture": "#face_2"
+        }
+      }
+    },
+    {
+      "name": "beef_chunk_4_body_0",
+      "from": [
+        8.622,
+        2.355,
+        6.084
+      ],
+      "to": [
+        9.738,
+        2.987,
+        6.496
+      ],
+      "faces": {
+        "north": {
+          "texture": "#face_2"
+        },
+        "east": {
+          "texture": "#face_2"
+        },
+        "south": {
+          "texture": "#face_2"
+        },
+        "west": {
+          "texture": "#face_2"
+        },
+        "up": {
+          "texture": "#face_2",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        },
+        "down": {
+          "texture": "#face_2"
+        }
+      }
+    },
+    {
+      "name": "beef_chunk_4_body_1",
+      "from": [
+        7.98,
+        2.355,
+        6.496
+      ],
+      "to": [
+        10.38,
+        2.987,
+        6.909
+      ],
+      "faces": {
+        "north": {
+          "texture": "#face_2"
+        },
+        "east": {
+          "texture": "#face_2"
+        },
+        "south": {
+          "texture": "#face_2"
+        },
+        "west": {
+          "texture": "#face_2"
+        },
+        "up": {
+          "texture": "#face_2",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        },
+        "down": {
+          "texture": "#face_2"
+        }
+      }
+    },
+    {
+      "name": "beef_chunk_4_body_2",
+      "from": [
+        7.663,
+        2.355,
+        6.909
+      ],
+      "to": [
+        10.697,
+        2.987,
+        7.322
+      ],
+      "faces": {
+        "north": {
+          "texture": "#face_2"
+        },
+        "east": {
+          "texture": "#face_2"
+        },
+        "south": {
+          "texture": "#face_2"
+        },
+        "west": {
+          "texture": "#face_2"
+        },
+        "up": {
+          "texture": "#face_2",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        },
+        "down": {
+          "texture": "#face_2"
+        }
+      }
+    },
+    {
+      "name": "beef_chunk_4_body_3",
+      "from": [
+        7.57,
+        2.355,
+        7.322
+      ],
+      "to": [
+        10.79,
+        2.987,
+        7.734
+      ],
+      "faces": {
+        "north": {
+          "texture": "#face_2"
+        },
+        "east": {
+          "texture": "#face_2"
+        },
+        "south": {
+          "texture": "#face_2"
+        },
+        "west": {
+          "texture": "#face_2"
+        },
+        "up": {
+          "texture": "#face_2",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        },
+        "down": {
+          "texture": "#face_2"
+        }
+      }
+    },
+    {
+      "name": "beef_chunk_4_body_4",
+      "from": [
+        7.663,
+        2.355,
+        7.734
+      ],
+      "to": [
+        10.697,
+        2.987,
+        8.147
+      ],
+      "faces": {
+        "north": {
+          "texture": "#face_2"
+        },
+        "east": {
+          "texture": "#face_2"
+        },
+        "south": {
+          "texture": "#face_2"
+        },
+        "west": {
+          "texture": "#face_2"
+        },
+        "up": {
+          "texture": "#face_2",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        },
+        "down": {
+          "texture": "#face_2"
+        }
+      }
+    },
+    {
+      "name": "beef_chunk_4_body_5",
+      "from": [
+        7.98,
+        2.355,
+        8.147
+      ],
+      "to": [
+        10.38,
+        2.987,
+        8.56
+      ],
+      "faces": {
+        "north": {
+          "texture": "#face_2"
+        },
+        "east": {
+          "texture": "#face_2"
+        },
+        "south": {
+          "texture": "#face_2"
+        },
+        "west": {
+          "texture": "#face_2"
+        },
+        "up": {
+          "texture": "#face_2",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        },
+        "down": {
+          "texture": "#face_2"
+        }
+      }
+    },
+    {
+      "name": "beef_chunk_4_body_6",
+      "from": [
+        8.622,
+        2.355,
+        8.56
+      ],
+      "to": [
+        9.738,
+        2.987,
+        8.972
+      ],
+      "faces": {
+        "north": {
+          "texture": "#face_2"
+        },
+        "east": {
+          "texture": "#face_2"
+        },
+        "south": {
+          "texture": "#face_2"
+        },
+        "west": {
+          "texture": "#face_2"
+        },
+        "up": {
+          "texture": "#face_2",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        },
+        "down": {
+          "texture": "#face_2"
+        }
+      }
+    },
+    {
+      "name": "beef_chunk_4_top_0",
+      "from": [
+        8.756,
+        2.885,
+        6.459
+      ],
+      "to": [
+        9.604,
+        3.293,
+        6.887
+      ],
+      "faces": {
+        "north": {
+          "texture": "#face_2"
+        },
+        "east": {
+          "texture": "#face_2"
+        },
+        "south": {
+          "texture": "#face_2"
+        },
+        "west": {
+          "texture": "#face_2"
+        },
+        "up": {
+          "texture": "#face_2",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        },
+        "down": {
+          "texture": "#face_2"
+        }
+      }
+    },
+    {
+      "name": "beef_chunk_4_top_1",
+      "from": [
+        8.121,
+        2.885,
+        6.887
+      ],
+      "to": [
+        10.239,
+        3.293,
+        7.314
+      ],
+      "faces": {
+        "north": {
+          "texture": "#face_2"
+        },
+        "east": {
+          "texture": "#face_2"
+        },
+        "south": {
+          "texture": "#face_2"
+        },
+        "west": {
+          "texture": "#face_2"
+        },
+        "up": {
+          "texture": "#face_2",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        },
+        "down": {
+          "texture": "#face_2"
+        }
+      }
+    },
+    {
+      "name": "beef_chunk_4_top_2",
+      "from": [
+        7.957,
+        2.885,
+        7.314
+      ],
+      "to": [
+        10.403,
+        3.293,
+        7.742
+      ],
+      "faces": {
+        "north": {
+          "texture": "#face_2"
+        },
+        "east": {
+          "texture": "#face_2"
+        },
+        "south": {
+          "texture": "#face_2"
+        },
+        "west": {
+          "texture": "#face_2"
+        },
+        "up": {
+          "texture": "#face_2",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        },
+        "down": {
+          "texture": "#face_2"
+        }
+      }
+    },
+    {
+      "name": "beef_chunk_4_top_3",
+      "from": [
+        8.121,
+        2.885,
+        7.742
+      ],
+      "to": [
+        10.239,
+        3.293,
+        8.169
+      ],
+      "faces": {
+        "north": {
+          "texture": "#face_2"
+        },
+        "east": {
+          "texture": "#face_2"
+        },
+        "south": {
+          "texture": "#face_2"
+        },
+        "west": {
+          "texture": "#face_2"
+        },
+        "up": {
+          "texture": "#face_2",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        },
+        "down": {
+          "texture": "#face_2"
+        }
+      }
+    },
+    {
+      "name": "beef_chunk_4_top_4",
+      "from": [
+        8.756,
+        2.885,
+        8.169
+      ],
+      "to": [
+        9.604,
+        3.293,
+        8.597
+      ],
+      "faces": {
+        "north": {
+          "texture": "#face_2"
+        },
+        "east": {
+          "texture": "#face_2"
+        },
+        "south": {
+          "texture": "#face_2"
+        },
+        "west": {
+          "texture": "#face_2"
+        },
+        "up": {
+          "texture": "#face_2",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        },
+        "down": {
+          "texture": "#face_2"
+        }
+      }
+    },
+    {
+      "name": "beef_fat_4",
+      "from": [
+        8.194,
+        2.94,
+        7.103
+      ],
+      "to": [
+        8.524,
+        3.0,
+        8.42
+      ],
+      "faces": {
+        "north": {
+          "texture": "#face_3"
+        },
+        "east": {
+          "texture": "#face_3"
+        },
+        "south": {
+          "texture": "#face_3"
+        },
+        "west": {
+          "texture": "#face_3"
+        },
+        "up": {
+          "texture": "#face_3",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        },
+        "down": {
+          "texture": "#face_3"
+        }
+      },
+      "rotation": {
+        "angle": 22.5,
+        "axis": "y",
+        "origin": [
+          8.359,
+          2.94,
+          7.762
+        ],
+        "rescale": false
+      }
+    },
+    {
+      "name": "beef_chunk_5_body_0",
+      "from": [
+        11.135,
+        2.4,
+        6.855
+      ],
+      "to": [
+        11.945,
+        2.884,
+        7.199
+      ],
+      "faces": {
+        "north": {
+          "texture": "#face_2"
+        },
+        "east": {
+          "texture": "#face_2"
+        },
+        "south": {
+          "texture": "#face_2"
+        },
+        "west": {
+          "texture": "#face_2"
+        },
+        "up": {
+          "texture": "#face_2",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        },
+        "down": {
+          "texture": "#face_2"
+        }
+      }
+    },
+    {
+      "name": "beef_chunk_5_body_1",
+      "from": [
+        10.668,
+        2.4,
+        7.199
+      ],
+      "to": [
+        12.412,
+        2.884,
+        7.543
+      ],
+      "faces": {
+        "north": {
+          "texture": "#face_2"
+        },
+        "east": {
+          "texture": "#face_2"
+        },
+        "south": {
+          "texture": "#face_2"
+        },
+        "west": {
+          "texture": "#face_2"
+        },
+        "up": {
+          "texture": "#face_2",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        },
+        "down": {
+          "texture": "#face_2"
+        }
+      }
+    },
+    {
+      "name": "beef_chunk_5_body_2",
+      "from": [
+        10.436,
+        2.4,
+        7.543
+      ],
+      "to": [
+        12.644,
+        2.884,
+        7.887
+      ],
+      "faces": {
+        "north": {
+          "texture": "#face_2"
+        },
+        "east": {
+          "texture": "#face_2"
+        },
+        "south": {
+          "texture": "#face_2"
+        },
+        "west": {
+          "texture": "#face_2"
+        },
+        "up": {
+          "texture": "#face_2",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        },
+        "down": {
+          "texture": "#face_2"
+        }
+      }
+    },
+    {
+      "name": "beef_chunk_5_body_3",
+      "from": [
+        10.369,
+        2.4,
+        7.887
+      ],
+      "to": [
+        12.711,
+        2.884,
+        8.231
+      ],
+      "faces": {
+        "north": {
+          "texture": "#face_2"
+        },
+        "east": {
+          "texture": "#face_2"
+        },
+        "south": {
+          "texture": "#face_2"
+        },
+        "west": {
+          "texture": "#face_2"
+        },
+        "up": {
+          "texture": "#face_2",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        },
+        "down": {
+          "texture": "#face_2"
+        }
+      }
+    },
+    {
+      "name": "beef_chunk_5_body_4",
+      "from": [
+        10.436,
+        2.4,
+        8.231
+      ],
+      "to": [
+        12.644,
+        2.884,
+        8.575
+      ],
+      "faces": {
+        "north": {
+          "texture": "#face_2"
+        },
+        "east": {
+          "texture": "#face_2"
+        },
+        "south": {
+          "texture": "#face_2"
+        },
+        "west": {
+          "texture": "#face_2"
+        },
+        "up": {
+          "texture": "#face_2",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        },
+        "down": {
+          "texture": "#face_2"
+        }
+      }
+    },
+    {
+      "name": "beef_chunk_5_body_5",
+      "from": [
+        10.668,
+        2.4,
+        8.575
+      ],
+      "to": [
+        12.412,
+        2.884,
+        8.919
+      ],
+      "faces": {
+        "north": {
+          "texture": "#face_2"
+        },
+        "east": {
+          "texture": "#face_2"
+        },
+        "south": {
+          "texture": "#face_2"
+        },
+        "west": {
+          "texture": "#face_2"
+        },
+        "up": {
+          "texture": "#face_2",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        },
+        "down": {
+          "texture": "#face_2"
+        }
+      }
+    },
+    {
+      "name": "beef_chunk_5_body_6",
+      "from": [
+        11.135,
+        2.4,
+        8.919
+      ],
+      "to": [
+        11.945,
+        2.884,
+        9.263
+      ],
+      "faces": {
+        "north": {
+          "texture": "#face_2"
+        },
+        "east": {
+          "texture": "#face_2"
+        },
+        "south": {
+          "texture": "#face_2"
+        },
+        "west": {
+          "texture": "#face_2"
+        },
+        "up": {
+          "texture": "#face_2",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        },
+        "down": {
+          "texture": "#face_2"
+        }
+      }
+    },
+    {
+      "name": "beef_chunk_5_top_0",
+      "from": [
+        11.232,
+        2.806,
+        7.168
+      ],
+      "to": [
+        11.848,
+        3.118,
+        7.525
+      ],
+      "faces": {
+        "north": {
+          "texture": "#face_2"
+        },
+        "east": {
+          "texture": "#face_2"
+        },
+        "south": {
+          "texture": "#face_2"
+        },
+        "west": {
+          "texture": "#face_2"
+        },
+        "up": {
+          "texture": "#face_2",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        },
+        "down": {
+          "texture": "#face_2"
+        }
+      }
+    },
+    {
+      "name": "beef_chunk_5_top_1",
+      "from": [
+        10.77,
+        2.806,
+        7.525
+      ],
+      "to": [
+        12.31,
+        3.118,
+        7.881
+      ],
+      "faces": {
+        "north": {
+          "texture": "#face_2"
+        },
+        "east": {
+          "texture": "#face_2"
+        },
+        "south": {
+          "texture": "#face_2"
+        },
+        "west": {
+          "texture": "#face_2"
+        },
+        "up": {
+          "texture": "#face_2",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        },
+        "down": {
+          "texture": "#face_2"
+        }
+      }
+    },
+    {
+      "name": "beef_chunk_5_top_2",
+      "from": [
+        10.65,
+        2.806,
+        7.881
+      ],
+      "to": [
+        12.43,
+        3.118,
+        8.237
+      ],
+      "faces": {
+        "north": {
+          "texture": "#face_2"
+        },
+        "east": {
+          "texture": "#face_2"
+        },
+        "south": {
+          "texture": "#face_2"
+        },
+        "west": {
+          "texture": "#face_2"
+        },
+        "up": {
+          "texture": "#face_2",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        },
+        "down": {
+          "texture": "#face_2"
+        }
+      }
+    },
+    {
+      "name": "beef_chunk_5_top_3",
+      "from": [
+        10.77,
+        2.806,
+        8.237
+      ],
+      "to": [
+        12.31,
+        3.118,
+        8.593
+      ],
+      "faces": {
+        "north": {
+          "texture": "#face_2"
+        },
+        "east": {
+          "texture": "#face_2"
+        },
+        "south": {
+          "texture": "#face_2"
+        },
+        "west": {
+          "texture": "#face_2"
+        },
+        "up": {
+          "texture": "#face_2",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        },
+        "down": {
+          "texture": "#face_2"
+        }
+      }
+    },
+    {
+      "name": "beef_chunk_5_top_4",
+      "from": [
+        11.232,
+        2.806,
+        8.593
+      ],
+      "to": [
+        11.848,
+        3.118,
+        8.95
+      ],
+      "faces": {
+        "north": {
+          "texture": "#face_2"
+        },
+        "east": {
+          "texture": "#face_2"
+        },
+        "south": {
+          "texture": "#face_2"
+        },
+        "west": {
+          "texture": "#face_2"
+        },
+        "up": {
+          "texture": "#face_2",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        },
+        "down": {
+          "texture": "#face_2"
+        }
+      }
+    },
+    {
+      "name": "beef_chunk_6_body_0",
+      "from": [
+        4.897,
+        2.31,
+        9.451
+      ],
+      "to": [
+        5.911,
+        2.818,
+        9.795
+      ],
+      "faces": {
+        "north": {
+          "texture": "#face_2"
+        },
+        "east": {
+          "texture": "#face_2"
+        },
+        "south": {
+          "texture": "#face_2"
+        },
+        "west": {
+          "texture": "#face_2"
+        },
+        "up": {
+          "texture": "#face_2",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        },
+        "down": {
+          "texture": "#face_2"
+        }
+      }
+    },
+    {
+      "name": "beef_chunk_6_body_1",
+      "from": [
+        4.313,
+        2.31,
+        9.795
+      ],
+      "to": [
+        6.495,
+        2.818,
+        10.139
+      ],
+      "faces": {
+        "north": {
+          "texture": "#face_2"
+        },
+        "east": {
+          "texture": "#face_2"
+        },
+        "south": {
+          "texture": "#face_2"
+        },
+        "west": {
+          "texture": "#face_2"
+        },
+        "up": {
+          "texture": "#face_2",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        },
+        "down": {
+          "texture": "#face_2"
+        }
+      }
+    },
+    {
+      "name": "beef_chunk_6_body_2",
+      "from": [
+        4.024,
+        2.31,
+        10.139
+      ],
+      "to": [
+        6.784,
+        2.818,
+        10.483
+      ],
+      "faces": {
+        "north": {
+          "texture": "#face_2"
+        },
+        "east": {
+          "texture": "#face_2"
+        },
+        "south": {
+          "texture": "#face_2"
+        },
+        "west": {
+          "texture": "#face_2"
+        },
+        "up": {
+          "texture": "#face_2",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        },
+        "down": {
+          "texture": "#face_2"
+        }
+      }
+    },
+    {
+      "name": "beef_chunk_6_body_3",
+      "from": [
+        3.941,
+        2.31,
+        10.483
+      ],
+      "to": [
+        6.867,
+        2.818,
+        10.827
+      ],
+      "faces": {
+        "north": {
+          "texture": "#face_2"
+        },
+        "east": {
+          "texture": "#face_2"
+        },
+        "south": {
+          "texture": "#face_2"
+        },
+        "west": {
+          "texture": "#face_2"
+        },
+        "up": {
+          "texture": "#face_2",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        },
+        "down": {
+          "texture": "#face_2"
+        }
+      }
+    },
+    {
+      "name": "beef_chunk_6_body_4",
+      "from": [
+        4.024,
+        2.31,
+        10.827
+      ],
+      "to": [
+        6.784,
+        2.818,
+        11.171
+      ],
+      "faces": {
+        "north": {
+          "texture": "#face_2"
+        },
+        "east": {
+          "texture": "#face_2"
+        },
+        "south": {
+          "texture": "#face_2"
+        },
+        "west": {
+          "texture": "#face_2"
+        },
+        "up": {
+          "texture": "#face_2",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        },
+        "down": {
+          "texture": "#face_2"
+        }
+      }
+    },
+    {
+      "name": "beef_chunk_6_body_5",
+      "from": [
+        4.313,
+        2.31,
+        11.171
+      ],
+      "to": [
+        6.495,
+        2.818,
+        11.515
+      ],
+      "faces": {
+        "north": {
+          "texture": "#face_2"
+        },
+        "east": {
+          "texture": "#face_2"
+        },
+        "south": {
+          "texture": "#face_2"
+        },
+        "west": {
+          "texture": "#face_2"
+        },
+        "up": {
+          "texture": "#face_2",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        },
+        "down": {
+          "texture": "#face_2"
+        }
+      }
+    },
+    {
+      "name": "beef_chunk_6_body_6",
+      "from": [
+        4.897,
+        2.31,
+        11.515
+      ],
+      "to": [
+        5.911,
+        2.818,
+        11.859
+      ],
+      "faces": {
+        "north": {
+          "texture": "#face_2"
+        },
+        "east": {
+          "texture": "#face_2"
+        },
+        "south": {
+          "texture": "#face_2"
+        },
+        "west": {
+          "texture": "#face_2"
+        },
+        "up": {
+          "texture": "#face_2",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        },
+        "down": {
+          "texture": "#face_2"
+        }
+      }
+    },
+    {
+      "name": "beef_chunk_6_top_0",
+      "from": [
+        5.019,
+        2.736,
+        9.764
+      ],
+      "to": [
+        5.789,
+        3.064,
+        10.121
+      ],
+      "faces": {
+        "north": {
+          "texture": "#face_2"
+        },
+        "east": {
+          "texture": "#face_2"
+        },
+        "south": {
+          "texture": "#face_2"
+        },
+        "west": {
+          "texture": "#face_2"
+        },
+        "up": {
+          "texture": "#face_2",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        },
+        "down": {
+          "texture": "#face_2"
+        }
+      }
+    },
+    {
+      "name": "beef_chunk_6_top_1",
+      "from": [
+        4.441,
+        2.736,
+        10.121
+      ],
+      "to": [
+        6.367,
+        3.064,
+        10.477
+      ],
+      "faces": {
+        "north": {
+          "texture": "#face_2"
+        },
+        "east": {
+          "texture": "#face_2"
+        },
+        "south": {
+          "texture": "#face_2"
+        },
+        "west": {
+          "texture": "#face_2"
+        },
+        "up": {
+          "texture": "#face_2",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        },
+        "down": {
+          "texture": "#face_2"
+        }
+      }
+    },
+    {
+      "name": "beef_chunk_6_top_2",
+      "from": [
+        4.292,
+        2.736,
+        10.477
+      ],
+      "to": [
+        6.516,
+        3.064,
+        10.833
+      ],
+      "faces": {
+        "north": {
+          "texture": "#face_2"
+        },
+        "east": {
+          "texture": "#face_2"
+        },
+        "south": {
+          "texture": "#face_2"
+        },
+        "west": {
+          "texture": "#face_2"
+        },
+        "up": {
+          "texture": "#face_2",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        },
+        "down": {
+          "texture": "#face_2"
+        }
+      }
+    },
+    {
+      "name": "beef_chunk_6_top_3",
+      "from": [
+        4.441,
+        2.736,
+        10.833
+      ],
+      "to": [
+        6.367,
+        3.064,
+        11.189
+      ],
+      "faces": {
+        "north": {
+          "texture": "#face_2"
+        },
+        "east": {
+          "texture": "#face_2"
+        },
+        "south": {
+          "texture": "#face_2"
+        },
+        "west": {
+          "texture": "#face_2"
+        },
+        "up": {
+          "texture": "#face_2",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        },
+        "down": {
+          "texture": "#face_2"
+        }
+      }
+    },
+    {
+      "name": "beef_chunk_6_top_4",
+      "from": [
+        5.019,
+        2.736,
+        11.189
+      ],
+      "to": [
+        5.789,
+        3.064,
+        11.546
+      ],
+      "faces": {
+        "north": {
+          "texture": "#face_2"
+        },
+        "east": {
+          "texture": "#face_2"
+        },
+        "south": {
+          "texture": "#face_2"
+        },
+        "west": {
+          "texture": "#face_2"
+        },
+        "up": {
+          "texture": "#face_2",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        },
+        "down": {
+          "texture": "#face_2"
+        }
+      }
+    },
+    {
+      "name": "beef_fat_6",
+      "from": [
+        4.507,
+        2.89,
+        10.301
+      ],
+      "to": [
+        4.838,
+        2.95,
+        11.398
+      ],
+      "faces": {
+        "north": {
+          "texture": "#face_3"
+        },
+        "east": {
+          "texture": "#face_3"
+        },
+        "south": {
+          "texture": "#face_3"
+        },
+        "west": {
+          "texture": "#face_3"
+        },
+        "up": {
+          "texture": "#face_3",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        },
+        "down": {
+          "texture": "#face_3"
+        }
+      },
+      "rotation": {
+        "angle": 22.5,
+        "axis": "y",
+        "origin": [
+          4.672,
+          2.89,
+          10.85
+        ],
+        "rescale": false
+      }
+    },
+    {
+      "name": "beef_chunk_7_body_0",
+      "from": [
+        7.796,
+        2.355,
+        9.291
+      ],
+      "to": [
+        8.912,
+        2.95,
+        9.681
+      ],
+      "faces": {
+        "north": {
+          "texture": "#face_2"
+        },
+        "east": {
+          "texture": "#face_2"
+        },
+        "south": {
+          "texture": "#face_2"
+        },
+        "west": {
+          "texture": "#face_2"
+        },
+        "up": {
+          "texture": "#face_2",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        },
+        "down": {
+          "texture": "#face_2"
+        }
+      }
+    },
+    {
+      "name": "beef_chunk_7_body_1",
+      "from": [
+        7.154,
+        2.355,
+        9.681
+      ],
+      "to": [
+        9.554,
+        2.95,
+        10.07
+      ],
+      "faces": {
+        "north": {
+          "texture": "#face_2"
+        },
+        "east": {
+          "texture": "#face_2"
+        },
+        "south": {
+          "texture": "#face_2"
+        },
+        "west": {
+          "texture": "#face_2"
+        },
+        "up": {
+          "texture": "#face_2",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        },
+        "down": {
+          "texture": "#face_2"
+        }
+      }
+    },
+    {
+      "name": "beef_chunk_7_body_2",
+      "from": [
+        6.837,
+        2.355,
+        10.07
+      ],
+      "to": [
+        9.871,
+        2.95,
+        10.46
+      ],
+      "faces": {
+        "north": {
+          "texture": "#face_2"
+        },
+        "east": {
+          "texture": "#face_2"
+        },
+        "south": {
+          "texture": "#face_2"
+        },
+        "west": {
+          "texture": "#face_2"
+        },
+        "up": {
+          "texture": "#face_2",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        },
+        "down": {
+          "texture": "#face_2"
+        }
+      }
+    },
+    {
+      "name": "beef_chunk_7_body_3",
+      "from": [
+        6.744,
+        2.355,
+        10.46
+      ],
+      "to": [
+        9.964,
+        2.95,
+        10.85
+      ],
+      "faces": {
+        "north": {
+          "texture": "#face_2"
+        },
+        "east": {
+          "texture": "#face_2"
+        },
+        "south": {
+          "texture": "#face_2"
+        },
+        "west": {
+          "texture": "#face_2"
+        },
+        "up": {
+          "texture": "#face_2",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        },
+        "down": {
+          "texture": "#face_2"
+        }
+      }
+    },
+    {
+      "name": "beef_chunk_7_body_4",
+      "from": [
+        6.837,
+        2.355,
+        10.85
+      ],
+      "to": [
+        9.871,
+        2.95,
+        11.24
+      ],
+      "faces": {
+        "north": {
+          "texture": "#face_2"
+        },
+        "east": {
+          "texture": "#face_2"
+        },
+        "south": {
+          "texture": "#face_2"
+        },
+        "west": {
+          "texture": "#face_2"
+        },
+        "up": {
+          "texture": "#face_2",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        },
+        "down": {
+          "texture": "#face_2"
+        }
+      }
+    },
+    {
+      "name": "beef_chunk_7_body_5",
+      "from": [
+        7.154,
+        2.355,
+        11.24
+      ],
+      "to": [
+        9.554,
+        2.95,
+        11.629
+      ],
+      "faces": {
+        "north": {
+          "texture": "#face_2"
+        },
+        "east": {
+          "texture": "#face_2"
+        },
+        "south": {
+          "texture": "#face_2"
+        },
+        "west": {
+          "texture": "#face_2"
+        },
+        "up": {
+          "texture": "#face_2",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        },
+        "down": {
+          "texture": "#face_2"
+        }
+      }
+    },
+    {
+      "name": "beef_chunk_7_body_6",
+      "from": [
+        7.796,
+        2.355,
+        11.629
+      ],
+      "to": [
+        8.912,
+        2.95,
+        12.019
+      ],
+      "faces": {
+        "north": {
+          "texture": "#face_2"
+        },
+        "east": {
+          "texture": "#face_2"
+        },
+        "south": {
+          "texture": "#face_2"
+        },
+        "west": {
+          "texture": "#face_2"
+        },
+        "up": {
+          "texture": "#face_2",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        },
+        "down": {
+          "texture": "#face_2"
+        }
+      }
+    },
+    {
+      "name": "beef_chunk_7_top_0",
+      "from": [
+        7.93,
+        2.854,
+        9.646
+      ],
+      "to": [
+        8.778,
+        3.238,
+        10.049
+      ],
+      "faces": {
+        "north": {
+          "texture": "#face_2"
+        },
+        "east": {
+          "texture": "#face_2"
+        },
+        "south": {
+          "texture": "#face_2"
+        },
+        "west": {
+          "texture": "#face_2"
+        },
+        "up": {
+          "texture": "#face_2",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        },
+        "down": {
+          "texture": "#face_2"
+        }
+      }
+    },
+    {
+      "name": "beef_chunk_7_top_1",
+      "from": [
+        7.295,
+        2.854,
+        10.049
+      ],
+      "to": [
+        9.413,
+        3.238,
+        10.453
+      ],
+      "faces": {
+        "north": {
+          "texture": "#face_2"
+        },
+        "east": {
+          "texture": "#face_2"
+        },
+        "south": {
+          "texture": "#face_2"
+        },
+        "west": {
+          "texture": "#face_2"
+        },
+        "up": {
+          "texture": "#face_2",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        },
+        "down": {
+          "texture": "#face_2"
+        }
+      }
+    },
+    {
+      "name": "beef_chunk_7_top_2",
+      "from": [
+        7.131,
+        2.854,
+        10.453
+      ],
+      "to": [
+        9.577,
+        3.238,
+        10.857
+      ],
+      "faces": {
+        "north": {
+          "texture": "#face_2"
+        },
+        "east": {
+          "texture": "#face_2"
+        },
+        "south": {
+          "texture": "#face_2"
+        },
+        "west": {
+          "texture": "#face_2"
+        },
+        "up": {
+          "texture": "#face_2",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        },
+        "down": {
+          "texture": "#face_2"
+        }
+      }
+    },
+    {
+      "name": "beef_chunk_7_top_3",
+      "from": [
+        7.295,
+        2.854,
+        10.857
+      ],
+      "to": [
+        9.413,
+        3.238,
+        11.261
+      ],
+      "faces": {
+        "north": {
+          "texture": "#face_2"
+        },
+        "east": {
+          "texture": "#face_2"
+        },
+        "south": {
+          "texture": "#face_2"
+        },
+        "west": {
+          "texture": "#face_2"
+        },
+        "up": {
+          "texture": "#face_2",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        },
+        "down": {
+          "texture": "#face_2"
+        }
+      }
+    },
+    {
+      "name": "beef_chunk_7_top_4",
+      "from": [
+        7.93,
+        2.854,
+        11.261
+      ],
+      "to": [
+        8.778,
+        3.238,
+        11.664
+      ],
+      "faces": {
+        "north": {
+          "texture": "#face_2"
+        },
+        "east": {
+          "texture": "#face_2"
+        },
+        "south": {
+          "texture": "#face_2"
+        },
+        "west": {
+          "texture": "#face_2"
+        },
+        "up": {
+          "texture": "#face_2",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        },
+        "down": {
+          "texture": "#face_2"
+        }
+      }
+    },
+    {
+      "name": "beef_chunk_8_body_0",
+      "from": [
+        10.612,
+        2.4,
+        9.827
+      ],
+      "to": [
+        11.524,
+        2.871,
+        10.148
+      ],
+      "faces": {
+        "north": {
+          "texture": "#face_2"
+        },
+        "east": {
+          "texture": "#face_2"
+        },
+        "south": {
+          "texture": "#face_2"
+        },
+        "west": {
+          "texture": "#face_2"
+        },
+        "up": {
+          "texture": "#face_2",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        },
+        "down": {
+          "texture": "#face_2"
+        }
+      }
+    },
+    {
+      "name": "beef_chunk_8_body_1",
+      "from": [
+        10.086,
+        2.4,
+        10.148
+      ],
+      "to": [
+        12.05,
+        2.871,
+        10.469
+      ],
+      "faces": {
+        "north": {
+          "texture": "#face_2"
+        },
+        "east": {
+          "texture": "#face_2"
+        },
+        "south": {
+          "texture": "#face_2"
+        },
+        "west": {
+          "texture": "#face_2"
+        },
+        "up": {
+          "texture": "#face_2",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        },
+        "down": {
+          "texture": "#face_2"
+        }
+      }
+    },
+    {
+      "name": "beef_chunk_8_body_2",
+      "from": [
+        9.826,
+        2.4,
+        10.469
+      ],
+      "to": [
+        12.31,
+        2.871,
+        10.79
+      ],
+      "faces": {
+        "north": {
+          "texture": "#face_2"
+        },
+        "east": {
+          "texture": "#face_2"
+        },
+        "south": {
+          "texture": "#face_2"
+        },
+        "west": {
+          "texture": "#face_2"
+        },
+        "up": {
+          "texture": "#face_2",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        },
+        "down": {
+          "texture": "#face_2"
+        }
+      }
+    },
+    {
+      "name": "beef_chunk_8_body_3",
+      "from": [
+        9.751,
+        2.4,
+        10.79
+      ],
+      "to": [
+        12.385,
+        2.871,
+        11.11
+      ],
+      "faces": {
+        "north": {
+          "texture": "#face_2"
+        },
+        "east": {
+          "texture": "#face_2"
+        },
+        "south": {
+          "texture": "#face_2"
+        },
+        "west": {
+          "texture": "#face_2"
+        },
+        "up": {
+          "texture": "#face_2",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        },
+        "down": {
+          "texture": "#face_2"
+        }
+      }
+    },
+    {
+      "name": "beef_chunk_8_body_4",
+      "from": [
+        9.826,
+        2.4,
+        11.11
+      ],
+      "to": [
+        12.31,
+        2.871,
+        11.431
+      ],
+      "faces": {
+        "north": {
+          "texture": "#face_2"
+        },
+        "east": {
+          "texture": "#face_2"
+        },
+        "south": {
+          "texture": "#face_2"
+        },
+        "west": {
+          "texture": "#face_2"
+        },
+        "up": {
+          "texture": "#face_2",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        },
+        "down": {
+          "texture": "#face_2"
+        }
+      }
+    },
+    {
+      "name": "beef_chunk_8_body_5",
+      "from": [
+        10.086,
+        2.4,
+        11.431
+      ],
+      "to": [
+        12.05,
+        2.871,
+        11.752
+      ],
+      "faces": {
+        "north": {
+          "texture": "#face_2"
+        },
+        "east": {
+          "texture": "#face_2"
+        },
+        "south": {
+          "texture": "#face_2"
+        },
+        "west": {
+          "texture": "#face_2"
+        },
+        "up": {
+          "texture": "#face_2",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        },
+        "down": {
+          "texture": "#face_2"
+        }
+      }
+    },
+    {
+      "name": "beef_chunk_8_body_6",
+      "from": [
+        10.612,
+        2.4,
+        11.752
+      ],
+      "to": [
+        11.524,
+        2.871,
+        12.073
+      ],
+      "faces": {
+        "north": {
+          "texture": "#face_2"
+        },
+        "east": {
+          "texture": "#face_2"
+        },
+        "south": {
+          "texture": "#face_2"
+        },
+        "west": {
+          "texture": "#face_2"
+        },
+        "up": {
+          "texture": "#face_2",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        },
+        "down": {
+          "texture": "#face_2"
+        }
+      }
+    },
+    {
+      "name": "beef_chunk_8_top_0",
+      "from": [
+        10.721,
+        2.795,
+        10.119
+      ],
+      "to": [
+        11.415,
+        3.099,
+        10.451
+      ],
+      "faces": {
+        "north": {
+          "texture": "#face_2"
+        },
+        "east": {
+          "texture": "#face_2"
+        },
+        "south": {
+          "texture": "#face_2"
+        },
+        "west": {
+          "texture": "#face_2"
+        },
+        "up": {
+          "texture": "#face_2",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        },
+        "down": {
+          "texture": "#face_2"
+        }
+      }
+    },
+    {
+      "name": "beef_chunk_8_top_1",
+      "from": [
+        10.201,
+        2.795,
+        10.451
+      ],
+      "to": [
+        11.935,
+        3.099,
+        10.784
+      ],
+      "faces": {
+        "north": {
+          "texture": "#face_2"
+        },
+        "east": {
+          "texture": "#face_2"
+        },
+        "south": {
+          "texture": "#face_2"
+        },
+        "west": {
+          "texture": "#face_2"
+        },
+        "up": {
+          "texture": "#face_2",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        },
+        "down": {
+          "texture": "#face_2"
+        }
+      }
+    },
+    {
+      "name": "beef_chunk_8_top_2",
+      "from": [
+        10.067,
+        2.795,
+        10.784
+      ],
+      "to": [
+        12.069,
+        3.099,
+        11.116
+      ],
+      "faces": {
+        "north": {
+          "texture": "#face_2"
+        },
+        "east": {
+          "texture": "#face_2"
+        },
+        "south": {
+          "texture": "#face_2"
+        },
+        "west": {
+          "texture": "#face_2"
+        },
+        "up": {
+          "texture": "#face_2",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        },
+        "down": {
+          "texture": "#face_2"
+        }
+      }
+    },
+    {
+      "name": "beef_chunk_8_top_3",
+      "from": [
+        10.201,
+        2.795,
+        11.116
+      ],
+      "to": [
+        11.935,
+        3.099,
+        11.449
+      ],
+      "faces": {
+        "north": {
+          "texture": "#face_2"
+        },
+        "east": {
+          "texture": "#face_2"
+        },
+        "south": {
+          "texture": "#face_2"
+        },
+        "west": {
+          "texture": "#face_2"
+        },
+        "up": {
+          "texture": "#face_2",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        },
+        "down": {
+          "texture": "#face_2"
+        }
+      }
+    },
+    {
+      "name": "beef_chunk_8_top_4",
+      "from": [
+        10.721,
+        2.795,
+        11.449
+      ],
+      "to": [
+        11.415,
+        3.099,
+        11.781
+      ],
+      "faces": {
+        "north": {
+          "texture": "#face_2"
+        },
+        "east": {
+          "texture": "#face_2"
+        },
+        "south": {
+          "texture": "#face_2"
+        },
+        "west": {
+          "texture": "#face_2"
+        },
+        "up": {
+          "texture": "#face_2",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        },
+        "down": {
+          "texture": "#face_2"
+        }
+      }
+    },
+    {
+      "name": "beef_fat_8",
+      "from": [
+        10.261,
+        2.99,
+        10.62
+      ],
+      "to": [
+        10.591,
+        3.05,
+        11.644
+      ],
+      "faces": {
+        "north": {
+          "texture": "#face_3"
+        },
+        "east": {
+          "texture": "#face_3"
+        },
+        "south": {
+          "texture": "#face_3"
+        },
+        "west": {
+          "texture": "#face_3"
+        },
+        "up": {
+          "texture": "#face_3",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        },
+        "down": {
+          "texture": "#face_3"
+        }
+      },
+      "rotation": {
+        "angle": 22.5,
+        "axis": "y",
+        "origin": [
+          10.426,
+          2.99,
+          11.132
+        ],
+        "rescale": false
+      }
+    },
+    {
+      "name": "beef_scallion_0",
+      "from": [
+        5.05,
+        3.09,
+        5.404
+      ],
+      "to": [
+        5.333,
+        3.155,
+        8.708
+      ],
+      "faces": {
+        "north": {
+          "texture": "#face_4"
+        },
+        "east": {
+          "texture": "#face_4"
+        },
+        "south": {
+          "texture": "#face_4"
+        },
+        "west": {
+          "texture": "#face_4"
+        },
+        "up": {
+          "texture": "#face_5",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        },
+        "down": {
+          "texture": "#face_4"
+        }
+      },
+      "rotation": {
+        "angle": 22.5,
+        "axis": "y",
+        "origin": [
+          5.192,
+          3.09,
+          7.056
+        ],
+        "rescale": false
+      }
+    },
+    {
+      "name": "beef_scallion_1",
+      "from": [
+        7.882,
+        3.09,
+        5.994
+      ],
+      "to": [
+        8.142,
+        3.155,
+        9.062
+      ],
+      "faces": {
+        "north": {
+          "texture": "#face_4"
+        },
+        "east": {
+          "texture": "#face_4"
+        },
+        "south": {
+          "texture": "#face_4"
+        },
+        "west": {
+          "texture": "#face_4"
+        },
+        "up": {
+          "texture": "#face_5",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        },
+        "down": {
+          "texture": "#face_4"
+        }
+      },
+      "rotation": {
+        "angle": -22.5,
+        "axis": "y",
+        "origin": [
+          8.012,
+          3.09,
+          7.528
+        ],
+        "rescale": false
+      }
+    },
+    {
+      "name": "beef_scallion_2",
+      "from": [
+        10.006,
+        3.09,
+        8.708
+      ],
+      "to": [
+        10.242,
+        3.155,
+        11.304
+      ],
+      "faces": {
+        "north": {
+          "texture": "#face_4"
+        },
+        "east": {
+          "texture": "#face_4"
+        },
+        "south": {
+          "texture": "#face_4"
+        },
+        "west": {
+          "texture": "#face_4"
+        },
+        "up": {
+          "texture": "#face_5",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        },
+        "down": {
+          "texture": "#face_4"
+        }
+      },
+      "rotation": {
+        "angle": 22.5,
+        "axis": "y",
+        "origin": [
+          10.124,
+          3.09,
+          10.006
+        ],
+        "rescale": false
+      }
+    }
+  ],
+  "gui_light": "front",
+  "display": {
+    "thirdperson_righthand": {
+      "rotation": [
+        63,
+        142,
+        0
+      ],
+      "translation": [
+        0.5,
+        3.75,
+        2
+      ],
+      "scale": [
+        0.7,
+        0.7,
+        0.7
+      ]
+    },
+    "thirdperson_lefthand": {
+      "rotation": [
+        63,
+        142,
+        0
+      ],
+      "translation": [
+        0.5,
+        3.75,
+        2
+      ],
+      "scale": [
+        0.7,
+        0.7,
+        0.7
+      ]
+    },
+    "firstperson_righthand": {
+      "rotation": [
+        4,
+        0,
+        0
+      ],
+      "translation": [
+        0,
+        7,
+        0
+      ]
+    },
+    "firstperson_lefthand": {
+      "rotation": [
+        4,
+        0,
+        0
+      ],
+      "translation": [
+        0,
+        7,
+        0
+      ]
+    },
+    "ground": {
+      "translation": [
+        0,
+        2.5,
+        0
+      ],
+      "scale": [
+        0.5,
+        0.5,
+        0.5
+      ]
+    },
+    "gui": {
+      "rotation": [
+        37,
+        44,
+        0
+      ],
+      "translation": [
+        0,
+        4,
+        0
+      ],
+      "scale": [
+        0.8,
+        0.8,
+        0.8
+      ]
+    },
+    "head": {
+      "rotation": [
+        0,
+        0,
+        90
+      ],
+      "translation": [
+        0,
+        -4.25,
+        -7
+      ]
+    },
+    "fixed": {
+      "rotation": [
+        -90,
+        0,
+        0
+      ],
+      "translation": [
+        0,
+        0,
+        -16
+      ],
+      "scale": [
+        2,
+        2,
+        2
+      ]
+    }
+  }
+}

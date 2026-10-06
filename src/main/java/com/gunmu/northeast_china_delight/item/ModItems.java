@@ -99,6 +99,10 @@ public class ModItems {
     public static final DeferredItem<Item> CORN_STALK = simple("corn_stalk");
     /** 盐：目前只用于大缸腌制，来源待定 */
     public static final DeferredItem<Item> SALT = simple("salt");
+    /** 海水桶：只在海洋中干净的水柱里取水，倒回海洋后才能继续使用。 */
+    public static final DeferredItem<Item> SEA_WATER_BUCKET = ITEMS.registerItem(
+            "sea_water_bucket", SeaWaterBucketItem::new,
+            new Item.Properties().stacksTo(1).craftRemainder(Items.BUCKET));
     /** 盐渍猪肉 */
     public static final DeferredItem<Item> SALTED_PORK = food("salted_pork", 5, 0.5F);
     /** 咸鱼：大缸里用任意生鱼 + 等量盐腌成（和咸腊肉一个路子，最多 5 条） */
@@ -303,6 +307,8 @@ public class ModItems {
     public static final DeferredItem<Item> YU_MI_LAO = bowlFood("corn_fritter", 7, 0.6F);
     public static final DeferredItem<Item> CHA_ZI_ZHOU = bowlFood("crushed_corn_porridge", 6, 0.5F);
     public static final DeferredItem<Item> NIAN_DOU_BAO = food("sticky_bean_bun", 7, 0.6F);
+    /** 榛子糖火烧：榛子、糖、面团和植物油做成的无容器点心 */
+    public static final DeferredItem<Item> HAZELNUT_SUGAR_FIRE_BUN = food("hazelnut_sugar_fire_bun", 7, 0.6F);
     public static final DeferredItem<Item> XUN_JIANG_PIN_PAN = bowlFood("smoked_meat_platter", 10, 0.7F);
     /** 果园乐事联动：橘子汁做的新派橙汁锅包肉 */
     public static final DeferredItem<Item> ORANGE_GUO_BAO_ROU = bowlFood("orange_crispy_pork", 9, 0.7F);
@@ -314,6 +320,10 @@ public class ModItems {
     public static final DeferredItem<Item> HAI_SHEN_DOU_FU_TANG = bowlFood("sea_cucumber_tofu_soup", 7, 0.6F);
     /** 咸鱼饼子：2 咸鱼 + 2 面团，碗装 */
     public static final DeferredItem<Item> XIAN_YU_BING_ZI = bowlFood("salted_fish_flatbread", 8, 0.6F);
+    /** 干炸带鱼：盘装菜 */
+    public static final DeferredItem<Item> DRY_FRIED_HAIRTAIL = bowlFood("dry_fried_hairtail", 8, 0.6F);
+    /** 红烧带鱼：盘装菜 */
+    public static final DeferredItem<Item> BRAISED_HAIRTAIL = bowlFood("braised_hairtail", 8, 0.6F);
     /** 朝鲜族菜：黄铜碗盛 */
     public static final DeferredItem<Item> DA_JIANG_TANG = brassBowlFood("soy_paste_soup", 6, 0.5F);
     /** 得莫利炖鱼：分量大，用大脸盆盛 */
@@ -365,6 +375,17 @@ public class ModItems {
             new Item.Properties()
     );
 
+    public static final DeferredItem<Item> CORN_SKEWER = ITEMS.registerItem(
+            "corn_skewer",
+            properties -> new SkewerItem(ModBlocks.CORN_SKEWER.get(), properties),
+            new Item.Properties()
+    );
+    public static final DeferredItem<Item> CHILI_SKEWER = ITEMS.registerItem(
+            "chili_skewer",
+            properties -> new SkewerItem(ModBlocks.CHILI_SKEWER.get(), properties),
+            new Item.Properties()
+    );
+
     /**
      * 「食材与调料」物品栏的展示顺序。
      *
@@ -397,7 +418,7 @@ public class ModItems {
             SOUR_CABBAGE, SPICY_CABBAGE, PICKLED_CUCUMBER, PICKLED_CARROT, PICKLED_GREEN_RADISH,
             SALTED_PORK, SALTED_FISH,
             // 调料
-            SALT, SOY_PASTE, CHILI_SAUCE, SOY_SAUCE, VINEGAR, SOUR_WATER, WHITE_VINEGAR,
+            SALT, SEA_WATER_BUCKET, SOY_PASTE, CHILI_SAUCE, SOY_SAUCE, VINEGAR, SOUR_WATER, WHITE_VINEGAR,
             FISH_SAUCE, SHRIMP_PASTE, CHILI_OIL, PEANUT_BUTTER, COOKING_OIL, ANIMAL_OIL,
             // 酿造原料
             SOY_PASTE_CHUNK, SOY_RESIDUE,
@@ -441,39 +462,40 @@ public class ModItems {
         List<Supplier<? extends Item>> list = new ArrayList<>();
         list.add(VAT);
         list.add(GRILL_RACK);
+        list.add(CORN_SKEWER);
+        list.add(CHILI_SKEWER);
         list.addAll(STORAGE_BLOCK_ITEMS.values());
         return List.copyOf(list);
     }
 
     /**
-     * 「菜肴」物品栏的展示顺序。
-     *
-     * 按「吃完给什么效果 / 要不要餐具」分组排列，方便在创造栏里找：
-     * 饮品 → 油腻 → 清爽 → 荤素搭配 → 不需要带餐具（非碗装）→ 饺子。
-     * 一道菜只出现在一组里：既是油腻又是非碗装的（比如土豆饼）就归到「不需要带餐具」那组。
+     * 「菜肴」物品栏的展示顺序：格瓦斯 → 盘装 → 无容器 → 普通碗装 → 黄铜碗装 → 盆装。
+     * 无容器菜单独列出，不能因为借用餐盘模型就误归入碗装。
      */
     public static final List<Supplier<? extends Item>> DISH_TAB_ITEMS = List.of(
-            // 饮品
-            SOY_MILK, KVASS,
-            // ===== 不用容器装：拿在手里 / 放桌上的盘子 =====
-            BAKED_SWEET_POTATO, DA_FAN_BAO, NIAN_DOU_BAO,
-            GRILLED_CHICKEN_FRAME, GRILLED_CORN, GRILLED_OIL_EDGE, GRILLED_COLD_NOODLES,
-            OLD_STYLE_GUO_BAO_ROU,
-            // ===== 碗装：端着碗吃 =====
-            NEW_STYLE_GUO_BAO_ROU, ORANGE_GUO_BAO_ROU,
-            LIU_ROU_DUAN, HONG_SHAO_PAI_GU, BRAISED_PORK_HOCK, BRAISED_PORK_STRIPS,
-            DI_SAN_XIAN, JIAN_JIAO_GAN_DOU_FU, BA_SI_TU_DOU,
-            SUAN_CAI_CHAO_FEN_TIAO, BAI_CAI_DOU_FU_DUN_FEN_TIAO, LA_ROU_DUN_DOU_JIAO,
-            SUAN_HUANG_GUA_CHAO_ROU_SI, LIANG_BAN_XIAN_CAI, LIANG_BAN_HUA_CAI,
-            JIA_XIAN_HUANG_GUA_PAO_CAI, ZHAN_JIANG_CAI, MING_TAI_YU_SI, TIGER_SALAD,
-            SOUR_TANGZI, CHA_ZI_ZHOU, SWEET_POTATO_PORRIDGE,
-            EGG_SOY_PASTE, XIA_JIANG_CHAO_JI_DAN, XIA_JIANG_DUN_DOU_FU,
-            HAI_XIAN_DOU_FU_TANG, CONG_SHAO_HAI_SHEN, HAI_SHEN_DOU_FU_TANG,
-            XIAN_YU_BING_ZI, YU_MI_LAO, KIMCHI_PANCAKE, TU_DOU_BING,
+            // ===== 唯一的瓶装菜肴 =====
+            KVASS,
+            // ===== 盘装 =====
+            OLD_STYLE_GUO_BAO_ROU, NEW_STYLE_GUO_BAO_ROU, ORANGE_GUO_BAO_ROU,
+            LIU_ROU_DUAN, HONG_SHAO_PAI_GU, DI_SAN_XIAN, JIAN_JIAO_GAN_DOU_FU,
+            BRAISED_PORK_HOCK, BRAISED_PORK_STRIPS, BA_SI_TU_DOU,
             XUN_JIANG_PIN_PAN, SNOWY_BEAN_PASTE, CANDIED_PEANUTS,
-            DE_MO_LI_DUN_YU, SU_BO_TANG, JIANG_DA_GU, JIANG_NIU_ROU,
-            JIANG_BAN_LA_PI,
-            // 大盆菜分出来的小份碗装
+            TU_DOU_BING, YU_MI_LAO, XIAN_YU_BING_ZI, KIMCHI_PANCAKE,
+            SUAN_CAI_CHAO_FEN_TIAO, SUAN_HUANG_GUA_CHAO_ROU_SI,
+            LIANG_BAN_XIAN_CAI, LIANG_BAN_HUA_CAI, JIA_XIAN_HUANG_GUA_PAO_CAI,
+            ZHAN_JIANG_CAI, MING_TAI_YU_SI, TIGER_SALAD, XIA_JIANG_CHAO_JI_DAN,
+            JIANG_BAN_LA_PI, CONG_SHAO_HAI_SHEN, LA_ROU_DUN_DOU_JIAO,
+            DRY_FRIED_HAIRTAIL, BRAISED_HAIRTAIL,
+            // ===== 无容器（单独列出，不归入碗装） =====
+            BAKED_SWEET_POTATO, DA_FAN_BAO, NIAN_DOU_BAO, HAZELNUT_SUGAR_FIRE_BUN,
+            GRILLED_CHICKEN_FRAME, GRILLED_CORN, GRILLED_OIL_EDGE, GRILLED_COLD_NOODLES,
+            SUAN_CAI_JIAO_ZI, XIA_REN_ZHU_ROU_XIAN_SHUI_JIAO, SAN_XIAN_XIAN_SHUI_JIAO,
+            JIANG_DA_GU, JIANG_NIU_ROU,
+            // ===== 普通碗装 =====
+            SOY_MILK, SOUR_TANGZI, CHA_ZI_ZHOU, SWEET_POTATO_PORRIDGE,
+            EGG_SOY_PASTE, XIA_JIANG_DUN_DOU_FU, HAI_XIAN_DOU_FU_TANG,
+            HAI_SHEN_DOU_FU_TANG, DE_MO_LI_DUN_YU, SU_BO_TANG,
+            BAI_CAI_DOU_FU_DUN_FEN_TIAO,
             DI_GUO_JI_BOWL, DI_GUO_PAI_GU_BOWL, SHA_ZHU_CAI_BOWL,
             SUAN_CAI_DUN_GU_TOU_BOWL, ZHU_ROU_DUN_FEN_TIAO_BOWL,
             XIAO_JI_DUN_MO_GU_BOWL, SUAN_CAI_HAI_XIAN_GUO_BOWL, DA_FENG_SHOU_BOWL,
@@ -483,9 +505,7 @@ public class ModItems {
             // ===== 盆装 / 锅装 =====
             DI_GUO_JI, DI_GUO_PAI_GU, SHA_ZHU_CAI, DA_FENG_SHOU,
             SUAN_CAI_DUN_GU_TOU, ZHU_ROU_DUN_FEN_TIAO,
-            XIAO_JI_DUN_MO_GU, SUAN_CAI_HAI_XIAN_GUO,
-            // ===== 饺子 =====
-            SUAN_CAI_JIAO_ZI, XIA_REN_ZHU_ROU_XIAN_SHUI_JIAO, SAN_XIAN_XIAN_SHUI_JIAO
+            XIAO_JI_DUN_MO_GU, SUAN_CAI_HAI_XIAN_GUO
     );
 
     /** 登记一个只有默认属性的普通物品 */

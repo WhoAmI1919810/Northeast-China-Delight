@@ -148,6 +148,17 @@ public class ModBlocks {
             plantProperties().randomTicks()
     );
 
+    public static final DeferredBlock<SkewerBlock> CORN_SKEWER = BLOCKS.registerBlock(
+            "corn_skewer",
+            properties -> new SkewerBlock(properties, () -> ModItems.CORN.get()),
+            skewerProperties()
+    );
+    public static final DeferredBlock<SkewerBlock> CHILI_SKEWER = BLOCKS.registerBlock(
+            "chili_skewer",
+            properties -> new SkewerBlock(properties, () -> ModItems.RED_CHILI.get()),
+            skewerProperties()
+    );
+
     // ===== 功能方块 =====
 
     // registerBlock 会自动把注册名绑定为方块的 id（1.21.4 起方块必须带 id）
@@ -223,18 +234,28 @@ public class ModBlocks {
             "chicken_mushroom_stew_bowl", "sauerkraut_seafood_stew_bowl", "bibimbap",
             "grilled_cold_noodles", "baked_sweet_potato", "northeast_rice_wrap", "sticky_bean_bun",
             "grilled_chicken_frame", "grilled_corn", "sauerkraut_crackling_dumpling",
-            "shrimp_pork_dumpling", "three_delicacy_dumpling"
+            "shrimp_pork_dumpling", "three_delicacy_dumpling", "dry_fried_hairtail",
+            "braised_hairtail", "hazelnut_sugar_fire_bun"
     );
 
-    /** 没有固定容器的菜允许使用 display-delight 同尺寸的大盘。 */
+    /** 真实以餐盘盛装的单份料理。 */
     public static final List<String> TRAY_DISH_IDS = List.of(
-            "old_style_crispy_pork", "new_style_crispy_pork", "orange_crispy_pork",
-            "crispy_pork_strips", "three_fresh_veggies", "braised_pork_ribs", "braised_pork_bone_sauce", "braised_beef_sauce",
-            "candied_sweet_potato", "smoked_meat_platter", "snowy_bean_paste", "candied_peanuts",
-            "grilled_oil_edge", "potato_pancake", "corn_fritter", "salted_fish_flatbread", "kimchi_pancake",
-            "demoli_fish_stew", "grilled_cold_noodles", "baked_sweet_potato", "northeast_rice_wrap",
+            "new_style_crispy_pork", "orange_crispy_pork", "crispy_pork_strips", "three_fresh_veggies",
+            "braised_pork_ribs", "old_style_crispy_pork", "braised_pork_bone_sauce", "braised_beef_sauce",
+            "braised_pork_hock", "braised_pork_strips", "candied_sweet_potato", "smoked_meat_platter",
+            "snowy_bean_paste", "candied_peanuts", "potato_pancake", "corn_fritter", "salted_fish_flatbread",
+            "kimchi_pancake", "sauerkraut_fried_vermicelli", "pepper_dried_tofu", "pickled_cucumber_pork_stirfry",
+            "pickled_veggie_salad", "mixed_vegetable_salad", "stuffed_cucumber_pickle", "dip_veggie_platter",
+            "shredded_pollack", "tiger_salad", "shrimp_paste_scrambled_egg", "mung_bean_sheet_salad",
+            "braised_sea_cucumber_scallion", "cured_pork_bean_stew", "dry_fried_hairtail",
+            "braised_hairtail"
+    );
+
+    /** 本身不带独立碗或盘；模型只借用展示餐盘承载体积，不能归入盘装菜。 */
+    public static final List<String> NO_CONTAINER_DISH_IDS = List.of(
+            "grilled_oil_edge", "grilled_cold_noodles", "baked_sweet_potato", "northeast_rice_wrap",
             "sticky_bean_bun", "grilled_chicken_frame", "grilled_corn", "sauerkraut_crackling_dumpling",
-            "shrimp_pork_dumpling", "three_delicacy_dumpling"
+            "shrimp_pork_dumpling", "three_delicacy_dumpling", "hazelnut_sugar_fire_bun"
     );
 
     /** 黄铜碗料理必须复用 brass_bowl 的 8×8×4 像素边界。 */
@@ -255,6 +276,8 @@ public class ModBlocks {
         for (String id : DISH_BLOCK_IDS)
         {
             VoxelShape shape = TRAY_DISH_IDS.contains(id)
+                    ? DishBlock.TRAY_SHAPE
+                    : NO_CONTAINER_DISH_IDS.contains(id)
                     ? DishBlock.TRAY_SHAPE
                     : DishBlock.BOWL_SHAPE;
             map.put(id, dishBlock(id, shape));
@@ -371,6 +394,17 @@ public class ModBlocks {
                 .instabreak()
                 .sound(SoundType.GRASS)
                 .pushReaction(PushReaction.DESTROY);
+    }
+
+    private static BlockBehaviour.Properties skewerProperties() {
+        return BlockBehaviour.Properties.of()
+                .mapColor(MapColor.PLANT)
+                .noCollission()
+                .noOcclusion()
+                .instabreak()
+                .sound(SoundType.CROP)
+                .pushReaction(PushReaction.DESTROY)
+                .noLootTable();
     }
 
     public static void register(IEventBus eventBus) {

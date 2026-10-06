@@ -1,0 +1,11 @@
+{
+  "parent": "northeast_china_delight:ginseng",
+  "display": {"icon": {"id": "northeast_china_delight:ginseng"}, "title": {"translate": "advancements.northeast_china_delight.mountain_goods.title"}, "description": {"translate": "advancements.northeast_china_delight.mountain_goods.description"}, "frame": "goal", "show_toast": true, "announce_to_chat": true},
+  "criteria": {
+    "ginseng": {"trigger": "minecraft:inventory_changed", "conditions": {"items": [{"items": ["northeast_china_delight:ginseng"]}]}},
+    "hazelnut": {"trigger": "minecraft:inventory_changed", "conditions": {"items": [{"items": ["northeast_china_delight:hazelnut"]}]}},
+    "wood_ear": {"trigger": "minecraft:inventory_changed", "conditions": {"items": [{"items": ["northeast_china_delight:wood_ear"]}]}},
+    "hazel_mushroom": {"trigger": "minecraft:inventory_changed", "conditions": {"items": [{"items": ["northeast_china_delight:hazel_mushroom"]}]}}
+  },
+  "requirements": [["ginseng"], ["hazelnut"], ["wood_ear"], ["hazel_mushroom"]]
+}

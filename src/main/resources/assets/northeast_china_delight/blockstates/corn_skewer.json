@@ -1,0 +1,12 @@
+{
+  "variants": {
+    "part=top,age=0": { "model": "northeast_china_delight:block/corn_skewer_top_stage1" },
+    "part=top,age=1": { "model": "northeast_china_delight:block/corn_skewer_top_stage2" },
+    "part=top,age=2": { "model": "northeast_china_delight:block/corn_skewer_top_stage3" },
+    "part=top,age=3": { "model": "northeast_china_delight:block/corn_skewer_top_stage4" },
+    "part=bottom,age=0": { "model": "northeast_china_delight:block/corn_skewer_bottom_stage1" },
+    "part=bottom,age=1": { "model": "northeast_china_delight:block/corn_skewer_bottom_stage2" },
+    "part=bottom,age=2": { "model": "northeast_china_delight:block/corn_skewer_bottom_stage3" },
+    "part=bottom,age=3": { "model": "northeast_china_delight:block/corn_skewer_bottom_stage4" }
+  }
+}

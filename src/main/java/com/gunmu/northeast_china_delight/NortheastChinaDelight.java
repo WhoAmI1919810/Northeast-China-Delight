@@ -313,6 +313,12 @@ public class NortheastChinaDelight
                 {
                     return ResourceLocation.fromNamespaceAndPath(MODID, "block/soy_paste_still");
                 }
+
+                @Override
+                public int getTintColor()
+                {
+                    return 0xFF9A672E;
+                }
             }, ModFluids.SOY_PASTE_TYPE);
 
             event.registerFluidType(new IClientFluidTypeExtensions()
@@ -403,6 +409,12 @@ public class NortheastChinaDelight
                 {
                     return ResourceLocation.fromNamespaceAndPath(MODID, "block/shrimp_paste_still");
                 }
+
+                @Override
+                public int getTintColor()
+                {
+                    return 0xFF8A4A34;
+                }
             }, ModFluids.SHRIMP_PASTE_TYPE);
 
             event.registerFluidType(new IClientFluidTypeExtensions()
@@ -448,6 +460,12 @@ public class NortheastChinaDelight
                 {
                     return ResourceLocation.fromNamespaceAndPath(MODID, "block/peanut_butter_still");
                 }
+
+                @Override
+                public int getTintColor()
+                {
+                    return 0xFFC9A05A;
+                }
             }, ModFluids.PEANUT_BUTTER_TYPE);
 
             event.registerFluidType(new IClientFluidTypeExtensions()
@@ -477,6 +495,12 @@ public class NortheastChinaDelight
                 public ResourceLocation getFlowingTexture()
                 {
                     return ResourceLocation.fromNamespaceAndPath(MODID, "block/chili_sauce_still");
+                }
+
+                @Override
+                public int getTintColor()
+                {
+                    return 0xFFE04A1F;
                 }
             }, ModFluids.CHILI_SAUCE_TYPE);
 

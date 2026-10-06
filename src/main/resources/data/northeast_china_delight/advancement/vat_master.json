@@ -1,0 +1,21 @@
+{
+  "parent": "northeast_china_delight:sauerkraut",
+  "display": {"icon": {"id": "northeast_china_delight:spicy_cabbage"}, "title": {"translate": "advancements.northeast_china_delight.vat_master.title"}, "description": {"translate": "advancements.northeast_china_delight.vat_master.description"}, "frame": "challenge", "show_toast": true, "announce_to_chat": true},
+  "criteria": {
+    "pickle": {"trigger": "minecraft:inventory_changed", "conditions": {"items": [{"items": ["northeast_china_delight:sour_cabbage", "northeast_china_delight:pickled_cucumber", "northeast_china_delight:pickled_carrot", "northeast_china_delight:pickled_green_radish"]}]}},
+    "spicy_pickle": {"trigger": "minecraft:inventory_changed", "conditions": {"items": [{"items": ["northeast_china_delight:spicy_cabbage"]}]}},
+    "meat": {"trigger": "minecraft:inventory_changed", "conditions": {"items": [{"items": ["northeast_china_delight:salted_pork"]}]}},
+    "salted_fish": {"trigger": "minecraft:inventory_changed", "conditions": {"items": [{"items": ["northeast_china_delight:salted_fish"]}]}},
+    "paste": {"trigger": "minecraft:inventory_changed", "conditions": {"items": [{"items": ["northeast_china_delight:soy_paste"]}]}},
+    "soy_sauce": {"trigger": "minecraft:inventory_changed", "conditions": {"items": [{"items": ["northeast_china_delight:soy_sauce"]}]}},
+    "vinegar": {"trigger": "minecraft:inventory_changed", "conditions": {"items": [{"items": ["northeast_china_delight:vinegar"]}]}},
+    "white_vinegar": {"trigger": "minecraft:inventory_changed", "conditions": {"items": [{"items": ["northeast_china_delight:white_vinegar"]}]}},
+    "fish_sauce": {"trigger": "minecraft:inventory_changed", "conditions": {"items": [{"items": ["northeast_china_delight:fish_sauce"]}]}},
+    "shrimp_paste": {"trigger": "minecraft:inventory_changed", "conditions": {"items": [{"items": ["northeast_china_delight:shrimp_paste"]}]}},
+    "bean_sprouts": {"trigger": "minecraft:inventory_changed", "conditions": {"items": [{"items": ["northeast_china_delight:bean_sprouts"]}]}},
+    "sour_corn": {"trigger": "minecraft:inventory_changed", "conditions": {"items": [{"items": ["northeast_china_delight:sour_corn_kernels"]}]}},
+    "kvass": {"trigger": "minecraft:inventory_changed", "conditions": {"items": [{"items": ["northeast_china_delight:kvass"]}]}},
+    "frozen_pear": {"trigger": "minecraft:inventory_changed", "conditions": {"items": [{"items": ["northeast_china_delight:frozen_pear"]}]}}
+  },
+  "requirements": [["pickle"], ["spicy_pickle"], ["meat"], ["salted_fish"], ["paste"], ["soy_sauce"], ["vinegar"], ["white_vinegar"], ["fish_sauce"], ["shrimp_paste"], ["bean_sprouts"], ["sour_corn"], ["kvass"], ["frozen_pear"]]
+}

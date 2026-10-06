@@ -1,0 +1,5 @@
+{
+  "parent": "northeast_china_delight:vat_fluid",
+  "display": {"icon": {"id": "create:mechanical_pump"}, "title": {"translate": "advancements.northeast_china_delight.pump_seasoning.title"}, "description": {"translate": "advancements.northeast_china_delight.pump_seasoning.description"}, "frame": "goal", "show_toast": true, "announce_to_chat": true},
+  "criteria": {"pump": {"trigger": "minecraft:impossible"}}
+}

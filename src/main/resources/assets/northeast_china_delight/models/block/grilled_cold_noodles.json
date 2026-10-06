@@ -1,1 +1,2322 @@
-{"credit":"northeast_china_delight dish (display-delight style)","render_type":"minecraft:cutout","textures":{"particle":"northeast_china_delight:block/grilled_cold_noodles","flat":"northeast_china_delight:block/grilled_cold_noodles_flat","peak1":"northeast_china_delight:block/grilled_cold_noodles_p1","peak2":"northeast_china_delight:block/grilled_cold_noodles_p2","peak3":"northeast_china_delight:block/grilled_cold_noodles_p3","tray_top":"northeast_china_delight:block/container_tray_top","tray_side":"northeast_china_delight:block/container_tray_bottom"},"elements":[{"name":"tray","from":[1,0,1],"to":[15,2,15],"faces":{"north":{"uv":[1,11,15,13],"texture":"#tray_side"},"east":{"uv":[1,11,15,13],"texture":"#tray_side"},"south":{"uv":[1,11,15,13],"texture":"#tray_side"},"west":{"uv":[1,11,15,13],"texture":"#tray_side"},"up":{"uv":[1,1,15,15],"texture":"#tray_top"},"down":{"uv":[1,1,15,15],"texture":"#tray_side","cullface":"down"}}},{"name":"f","from":[3.5,2.05,4.0],"to":[12.5,2.75,12.0],"faces":{"north":{"uv":[2,8,14,14],"texture":"#flat"},"south":{"uv":[2,8,14,14],"texture":"#flat"},"east":{"uv":[2,8,14,14],"texture":"#flat"},"west":{"uv":[2,8,14,14],"texture":"#flat"},"up":{"uv":[0,0,16,16],"texture":"#flat"},"down":{"uv":[2,8,14,14],"texture":"#flat"}}},{"name":"f","from":[4.0,2.75,3.6],"to":[13.0,3.45,11.6],"faces":{"north":{"uv":[2,8,14,14],"texture":"#flat"},"south":{"uv":[2,8,14,14],"texture":"#flat"},"east":{"uv":[2,8,14,14],"texture":"#flat"},"west":{"uv":[2,8,14,14],"texture":"#flat"},"up":{"uv":[0,0,16,16],"texture":"#flat"},"down":{"uv":[2,8,14,14],"texture":"#flat"}}},{"name":"f","from":[3.0,3.4499999999999997,4.5],"to":[12.0,4.15,12.5],"faces":{"north":{"uv":[2,8,14,14],"texture":"#flat"},"south":{"uv":[2,8,14,14],"texture":"#flat"},"east":{"uv":[2,8,14,14],"texture":"#flat"},"west":{"uv":[2,8,14,14],"texture":"#flat"},"up":{"uv":[0,0,16,16],"texture":"#flat"},"down":{"uv":[2,8,14,14],"texture":"#flat"}}}],"gui_light":"front","display":{"thirdperson_righthand":{"rotation":[63,142,0],"translation":[0.5,3.75,2],"scale":[0.7,0.7,0.7]},"thirdperson_lefthand":{"rotation":[63,142,0],"translation":[0.5,3.75,2],"scale":[0.7,0.7,0.7]},"firstperson_righthand":{"rotation":[4,0,0],"translation":[0,7,0]},"firstperson_lefthand":{"rotation":[4,0,0],"translation":[0,7,0]},"ground":{"translation":[0,2.5,0],"scale":[0.5,0.5,0.5]},"gui":{"rotation":[37,44,0],"translation":[0,4,0],"scale":[0.8,0.8,0.8]},"head":{"rotation":[0,0,90],"translation":[0,-4.25,-7]},"fixed":{"rotation":[-90,0,0],"translation":[0,0,-16],"scale":[2,2,2]}}}
+{
+  "credit": "northeast_china_delight dish rebuild r9: filled display-delight containers with dish-specific voxel silhouettes",
+  "render_type": "minecraft:cutout",
+  "textures": {
+    "particle": "northeast_china_delight:item/grilled_cold_noodles",
+    "food": "northeast_china_delight:item/grilled_cold_noodles",
+    "food_side": "northeast_china_delight:block/dish_generated/grilled_cold_noodles_side",
+    "container": "northeast_china_delight:block/container_tray_top",
+    "face_0": "northeast_china_delight:block/container_tray_bottom",
+    "face_1": "northeast_china_delight:block/dish_generated/r9_noodle_dark",
+    "face_2": "northeast_china_delight:block/dish_generated/r9_braise",
+    "face_3": "northeast_china_delight:block/dish_generated/r5_component_side_minecraft_egg",
+    "face_4": "northeast_china_delight:block/dish_generated/top_minecraft_item_egg",
+    "face_5": "northeast_china_delight:block/dish_generated/r5_component_side_northeast_china_delight_spicy_cabbage",
+    "face_6": "northeast_china_delight:block/dish_generated/top_northeast_china_delight_item_spicy_cabbage"
+  },
+  "elements": [
+    {
+      "name": "display_delight_tray",
+      "from": [
+        1,
+        0,
+        1
+      ],
+      "to": [
+        15,
+        2,
+        15
+      ],
+      "faces": {
+        "north": {
+          "texture": "#face_0",
+          "uv": [
+            1,
+            11,
+            15,
+            13
+          ]
+        },
+        "east": {
+          "texture": "#face_0",
+          "uv": [
+            1,
+            11,
+            15,
+            13
+          ]
+        },
+        "south": {
+          "texture": "#face_0",
+          "uv": [
+            1,
+            11,
+            15,
+            13
+          ]
+        },
+        "west": {
+          "texture": "#face_0",
+          "uv": [
+            1,
+            11,
+            15,
+            13
+          ]
+        },
+        "up": {
+          "texture": "#container",
+          "uv": [
+            1,
+            1,
+            15,
+            15
+          ]
+        },
+        "down": {
+          "texture": "#face_0",
+          "uv": [
+            1,
+            11,
+            15,
+            13
+          ]
+        }
+      }
+    },
+    {
+      "name": "cold_noodle_base_0",
+      "from": [
+        6.12,
+        2.17,
+        3.162
+      ],
+      "to": [
+        9.88,
+        2.21,
+        4.237
+      ],
+      "faces": {
+        "north": {
+          "texture": "#face_1"
+        },
+        "east": {
+          "texture": "#face_1"
+        },
+        "south": {
+          "texture": "#face_1"
+        },
+        "west": {
+          "texture": "#face_1"
+        },
+        "up": {
+          "texture": "#face_1",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        },
+        "down": {
+          "texture": "#face_1"
+        }
+      }
+    },
+    {
+      "name": "cold_noodle_base_1",
+      "from": [
+        4.41,
+        2.17,
+        4.237
+      ],
+      "to": [
+        11.59,
+        2.21,
+        5.312
+      ],
+      "faces": {
+        "north": {
+          "texture": "#face_1"
+        },
+        "east": {
+          "texture": "#face_1"
+        },
+        "south": {
+          "texture": "#face_1"
+        },
+        "west": {
+          "texture": "#face_1"
+        },
+        "up": {
+          "texture": "#face_1",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        },
+        "down": {
+          "texture": "#face_1"
+        }
+      }
+    },
+    {
+      "name": "cold_noodle_base_2",
+      "from": [
+        3.299,
+        2.17,
+        5.312
+      ],
+      "to": [
+        12.701,
+        2.21,
+        6.387
+      ],
+      "faces": {
+        "north": {
+          "texture": "#face_1"
+        },
+        "east": {
+          "texture": "#face_1"
+        },
+        "south": {
+          "texture": "#face_1"
+        },
+        "west": {
+          "texture": "#face_1"
+        },
+        "up": {
+          "texture": "#face_1",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        },
+        "down": {
+          "texture": "#face_1"
+        }
+      }
+    },
+    {
+      "name": "cold_noodle_base_3",
+      "from": [
+        2.744,
+        2.17,
+        6.387
+      ],
+      "to": [
+        13.256,
+        2.21,
+        7.462
+      ],
+      "faces": {
+        "north": {
+          "texture": "#face_1"
+        },
+        "east": {
+          "texture": "#face_1"
+        },
+        "south": {
+          "texture": "#face_1"
+        },
+        "west": {
+          "texture": "#face_1"
+        },
+        "up": {
+          "texture": "#face_1",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        },
+        "down": {
+          "texture": "#face_1"
+        }
+      }
+    },
+    {
+      "name": "cold_noodle_base_4",
+      "from": [
+        2.572,
+        2.17,
+        7.462
+      ],
+      "to": [
+        13.428,
+        2.21,
+        8.538
+      ],
+      "faces": {
+        "north": {
+          "texture": "#face_1"
+        },
+        "east": {
+          "texture": "#face_1"
+        },
+        "south": {
+          "texture": "#face_1"
+        },
+        "west": {
+          "texture": "#face_1"
+        },
+        "up": {
+          "texture": "#face_1",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        },
+        "down": {
+          "texture": "#face_1"
+        }
+      }
+    },
+    {
+      "name": "cold_noodle_base_5",
+      "from": [
+        2.744,
+        2.17,
+        8.538
+      ],
+      "to": [
+        13.256,
+        2.21,
+        9.613
+      ],
+      "faces": {
+        "north": {
+          "texture": "#face_1"
+        },
+        "east": {
+          "texture": "#face_1"
+        },
+        "south": {
+          "texture": "#face_1"
+        },
+        "west": {
+          "texture": "#face_1"
+        },
+        "up": {
+          "texture": "#face_1",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        },
+        "down": {
+          "texture": "#face_1"
+        }
+      }
+    },
+    {
+      "name": "cold_noodle_base_6",
+      "from": [
+        3.299,
+        2.17,
+        9.613
+      ],
+      "to": [
+        12.701,
+        2.21,
+        10.688
+      ],
+      "faces": {
+        "north": {
+          "texture": "#face_1"
+        },
+        "east": {
+          "texture": "#face_1"
+        },
+        "south": {
+          "texture": "#face_1"
+        },
+        "west": {
+          "texture": "#face_1"
+        },
+        "up": {
+          "texture": "#face_1",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        },
+        "down": {
+          "texture": "#face_1"
+        }
+      }
+    },
+    {
+      "name": "cold_noodle_base_7",
+      "from": [
+        4.41,
+        2.17,
+        10.688
+      ],
+      "to": [
+        11.59,
+        2.21,
+        11.763
+      ],
+      "faces": {
+        "north": {
+          "texture": "#face_1"
+        },
+        "east": {
+          "texture": "#face_1"
+        },
+        "south": {
+          "texture": "#face_1"
+        },
+        "west": {
+          "texture": "#face_1"
+        },
+        "up": {
+          "texture": "#face_1",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        },
+        "down": {
+          "texture": "#face_1"
+        }
+      }
+    },
+    {
+      "name": "cold_noodle_base_8",
+      "from": [
+        6.12,
+        2.17,
+        11.763
+      ],
+      "to": [
+        9.88,
+        2.21,
+        12.838
+      ],
+      "faces": {
+        "north": {
+          "texture": "#face_1"
+        },
+        "east": {
+          "texture": "#face_1"
+        },
+        "south": {
+          "texture": "#face_1"
+        },
+        "west": {
+          "texture": "#face_1"
+        },
+        "up": {
+          "texture": "#face_1",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        },
+        "down": {
+          "texture": "#face_1"
+        }
+      }
+    },
+    {
+      "name": "cold_noodle_roll_0_base",
+      "from": [
+        2.336,
+        2.23,
+        3.044
+      ],
+      "to": [
+        4.696,
+        2.404,
+        4.814
+      ],
+      "faces": {
+        "north": {
+          "texture": "#face_2"
+        },
+        "east": {
+          "texture": "#face_2"
+        },
+        "south": {
+          "texture": "#face_2"
+        },
+        "west": {
+          "texture": "#face_2"
+        },
+        "up": {
+          "texture": "#face_1",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        },
+        "down": {
+          "texture": "#face_2"
+        }
+      },
+      "rotation": {
+        "angle": -22.5,
+        "axis": "y",
+        "origin": [
+          3.516,
+          2.23,
+          3.929
+        ],
+        "rescale": false
+      }
+    },
+    {
+      "name": "cold_noodle_roll_0_cap",
+      "from": [
+        2.643,
+        2.392,
+        3.274
+      ],
+      "to": [
+        4.389,
+        2.518,
+        4.584
+      ],
+      "faces": {
+        "north": {
+          "texture": "#face_2"
+        },
+        "east": {
+          "texture": "#face_2"
+        },
+        "south": {
+          "texture": "#face_2"
+        },
+        "west": {
+          "texture": "#face_2"
+        },
+        "up": {
+          "texture": "#face_1",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        },
+        "down": {
+          "texture": "#face_2"
+        }
+      },
+      "rotation": {
+        "angle": -22.5,
+        "axis": "y",
+        "origin": [
+          3.516,
+          2.392,
+          3.929
+        ],
+        "rescale": false
+      }
+    },
+    {
+      "name": "cold_noodle_egg_0",
+      "from": [
+        2.749,
+        2.54,
+        3.634
+      ],
+      "to": [
+        4.047,
+        2.66,
+        4.696
+      ],
+      "faces": {
+        "north": {
+          "texture": "#face_3"
+        },
+        "east": {
+          "texture": "#face_3"
+        },
+        "south": {
+          "texture": "#face_3"
+        },
+        "west": {
+          "texture": "#face_3"
+        },
+        "up": {
+          "texture": "#face_4",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        },
+        "down": {
+          "texture": "#face_3"
+        }
+      },
+      "rotation": {
+        "angle": -22.5,
+        "axis": "y",
+        "origin": [
+          3.398,
+          2.54,
+          4.165
+        ],
+        "rescale": false
+      }
+    },
+    {
+      "name": "cold_noodle_cabbage_0",
+      "from": [
+        3.044,
+        2.66,
+        3.811
+      ],
+      "to": [
+        3.988,
+        2.76,
+        4.519
+      ],
+      "faces": {
+        "north": {
+          "texture": "#face_5"
+        },
+        "east": {
+          "texture": "#face_5"
+        },
+        "south": {
+          "texture": "#face_5"
+        },
+        "west": {
+          "texture": "#face_5"
+        },
+        "up": {
+          "texture": "#face_6",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        },
+        "down": {
+          "texture": "#face_5"
+        }
+      },
+      "rotation": {
+        "angle": -22.5,
+        "axis": "y",
+        "origin": [
+          3.516,
+          2.66,
+          4.165
+        ],
+        "rescale": false
+      }
+    },
+    {
+      "name": "cold_noodle_roll_1_base",
+      "from": [
+        4.932,
+        2.27,
+        2.572
+      ],
+      "to": [
+        7.292,
+        2.444,
+        4.342
+      ],
+      "faces": {
+        "north": {
+          "texture": "#face_2"
+        },
+        "east": {
+          "texture": "#face_2"
+        },
+        "south": {
+          "texture": "#face_2"
+        },
+        "west": {
+          "texture": "#face_2"
+        },
+        "up": {
+          "texture": "#face_1",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        },
+        "down": {
+          "texture": "#face_2"
+        }
+      },
+      "rotation": {
+        "angle": 22.5,
+        "axis": "y",
+        "origin": [
+          6.112,
+          2.27,
+          3.457
+        ],
+        "rescale": false
+      }
+    },
+    {
+      "name": "cold_noodle_roll_1_cap",
+      "from": [
+        5.239,
+        2.432,
+        2.802
+      ],
+      "to": [
+        6.985,
+        2.558,
+        4.112
+      ],
+      "faces": {
+        "north": {
+          "texture": "#face_2"
+        },
+        "east": {
+          "texture": "#face_2"
+        },
+        "south": {
+          "texture": "#face_2"
+        },
+        "west": {
+          "texture": "#face_2"
+        },
+        "up": {
+          "texture": "#face_1",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        },
+        "down": {
+          "texture": "#face_2"
+        }
+      },
+      "rotation": {
+        "angle": 22.5,
+        "axis": "y",
+        "origin": [
+          6.112,
+          2.432,
+          3.457
+        ],
+        "rescale": false
+      }
+    },
+    {
+      "name": "cold_noodle_egg_1",
+      "from": [
+        5.345,
+        2.54,
+        3.162
+      ],
+      "to": [
+        6.643,
+        2.66,
+        4.224
+      ],
+      "faces": {
+        "north": {
+          "texture": "#face_3"
+        },
+        "east": {
+          "texture": "#face_3"
+        },
+        "south": {
+          "texture": "#face_3"
+        },
+        "west": {
+          "texture": "#face_3"
+        },
+        "up": {
+          "texture": "#face_4",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        },
+        "down": {
+          "texture": "#face_3"
+        }
+      },
+      "rotation": {
+        "angle": 22.5,
+        "axis": "y",
+        "origin": [
+          5.994,
+          2.54,
+          3.693
+        ],
+        "rescale": false
+      }
+    },
+    {
+      "name": "cold_noodle_cabbage_1",
+      "from": [
+        5.64,
+        2.66,
+        3.339
+      ],
+      "to": [
+        6.584,
+        2.76,
+        4.047
+      ],
+      "faces": {
+        "north": {
+          "texture": "#face_5"
+        },
+        "east": {
+          "texture": "#face_5"
+        },
+        "south": {
+          "texture": "#face_5"
+        },
+        "west": {
+          "texture": "#face_5"
+        },
+        "up": {
+          "texture": "#face_6",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        },
+        "down": {
+          "texture": "#face_5"
+        }
+      },
+      "rotation": {
+        "angle": 22.5,
+        "axis": "y",
+        "origin": [
+          6.112,
+          2.66,
+          3.693
+        ],
+        "rescale": false
+      }
+    },
+    {
+      "name": "cold_noodle_roll_2_base",
+      "from": [
+        7.646,
+        2.23,
+        3.044
+      ],
+      "to": [
+        10.006,
+        2.404,
+        4.814
+      ],
+      "faces": {
+        "north": {
+          "texture": "#face_2"
+        },
+        "east": {
+          "texture": "#face_2"
+        },
+        "south": {
+          "texture": "#face_2"
+        },
+        "west": {
+          "texture": "#face_2"
+        },
+        "up": {
+          "texture": "#face_1",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        },
+        "down": {
+          "texture": "#face_2"
+        }
+      },
+      "rotation": {
+        "angle": -22.5,
+        "axis": "y",
+        "origin": [
+          8.826,
+          2.23,
+          3.929
+        ],
+        "rescale": false
+      }
+    },
+    {
+      "name": "cold_noodle_roll_2_cap",
+      "from": [
+        7.953,
+        2.392,
+        3.274
+      ],
+      "to": [
+        9.699,
+        2.518,
+        4.584
+      ],
+      "faces": {
+        "north": {
+          "texture": "#face_2"
+        },
+        "east": {
+          "texture": "#face_2"
+        },
+        "south": {
+          "texture": "#face_2"
+        },
+        "west": {
+          "texture": "#face_2"
+        },
+        "up": {
+          "texture": "#face_1",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        },
+        "down": {
+          "texture": "#face_2"
+        }
+      },
+      "rotation": {
+        "angle": -22.5,
+        "axis": "y",
+        "origin": [
+          8.826,
+          2.392,
+          3.929
+        ],
+        "rescale": false
+      }
+    },
+    {
+      "name": "cold_noodle_egg_2",
+      "from": [
+        8.059,
+        2.54,
+        3.634
+      ],
+      "to": [
+        9.357,
+        2.66,
+        4.696
+      ],
+      "faces": {
+        "north": {
+          "texture": "#face_3"
+        },
+        "east": {
+          "texture": "#face_3"
+        },
+        "south": {
+          "texture": "#face_3"
+        },
+        "west": {
+          "texture": "#face_3"
+        },
+        "up": {
+          "texture": "#face_4",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        },
+        "down": {
+          "texture": "#face_3"
+        }
+      },
+      "rotation": {
+        "angle": -22.5,
+        "axis": "y",
+        "origin": [
+          8.708,
+          2.54,
+          4.165
+        ],
+        "rescale": false
+      }
+    },
+    {
+      "name": "cold_noodle_cabbage_2",
+      "from": [
+        8.354,
+        2.66,
+        3.811
+      ],
+      "to": [
+        9.298,
+        2.76,
+        4.519
+      ],
+      "faces": {
+        "north": {
+          "texture": "#face_5"
+        },
+        "east": {
+          "texture": "#face_5"
+        },
+        "south": {
+          "texture": "#face_5"
+        },
+        "west": {
+          "texture": "#face_5"
+        },
+        "up": {
+          "texture": "#face_6",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        },
+        "down": {
+          "texture": "#face_5"
+        }
+      },
+      "rotation": {
+        "angle": -22.5,
+        "axis": "y",
+        "origin": [
+          8.826,
+          2.66,
+          4.165
+        ],
+        "rescale": false
+      }
+    },
+    {
+      "name": "cold_noodle_roll_3_base",
+      "from": [
+        10.36,
+        2.27,
+        3.634
+      ],
+      "to": [
+        12.72,
+        2.444,
+        5.404
+      ],
+      "faces": {
+        "north": {
+          "texture": "#face_2"
+        },
+        "east": {
+          "texture": "#face_2"
+        },
+        "south": {
+          "texture": "#face_2"
+        },
+        "west": {
+          "texture": "#face_2"
+        },
+        "up": {
+          "texture": "#face_1",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        },
+        "down": {
+          "texture": "#face_2"
+        }
+      },
+      "rotation": {
+        "angle": 22.5,
+        "axis": "y",
+        "origin": [
+          11.54,
+          2.27,
+          4.519
+        ],
+        "rescale": false
+      }
+    },
+    {
+      "name": "cold_noodle_roll_3_cap",
+      "from": [
+        10.667,
+        2.432,
+        3.864
+      ],
+      "to": [
+        12.413,
+        2.558,
+        5.174
+      ],
+      "faces": {
+        "north": {
+          "texture": "#face_2"
+        },
+        "east": {
+          "texture": "#face_2"
+        },
+        "south": {
+          "texture": "#face_2"
+        },
+        "west": {
+          "texture": "#face_2"
+        },
+        "up": {
+          "texture": "#face_1",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        },
+        "down": {
+          "texture": "#face_2"
+        }
+      },
+      "rotation": {
+        "angle": 22.5,
+        "axis": "y",
+        "origin": [
+          11.54,
+          2.432,
+          4.519
+        ],
+        "rescale": false
+      }
+    },
+    {
+      "name": "cold_noodle_egg_3",
+      "from": [
+        10.773,
+        2.54,
+        4.224
+      ],
+      "to": [
+        12.071,
+        2.66,
+        5.286
+      ],
+      "faces": {
+        "north": {
+          "texture": "#face_3"
+        },
+        "east": {
+          "texture": "#face_3"
+        },
+        "south": {
+          "texture": "#face_3"
+        },
+        "west": {
+          "texture": "#face_3"
+        },
+        "up": {
+          "texture": "#face_4",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        },
+        "down": {
+          "texture": "#face_3"
+        }
+      },
+      "rotation": {
+        "angle": 22.5,
+        "axis": "y",
+        "origin": [
+          11.422,
+          2.54,
+          4.755
+        ],
+        "rescale": false
+      }
+    },
+    {
+      "name": "cold_noodle_cabbage_3",
+      "from": [
+        11.068,
+        2.66,
+        4.401
+      ],
+      "to": [
+        12.012,
+        2.76,
+        5.109
+      ],
+      "faces": {
+        "north": {
+          "texture": "#face_5"
+        },
+        "east": {
+          "texture": "#face_5"
+        },
+        "south": {
+          "texture": "#face_5"
+        },
+        "west": {
+          "texture": "#face_5"
+        },
+        "up": {
+          "texture": "#face_6",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        },
+        "down": {
+          "texture": "#face_5"
+        }
+      },
+      "rotation": {
+        "angle": 22.5,
+        "axis": "y",
+        "origin": [
+          11.54,
+          2.66,
+          4.755
+        ],
+        "rescale": false
+      }
+    },
+    {
+      "name": "cold_noodle_roll_4_base",
+      "from": [
+        3.044,
+        2.23,
+        7.528
+      ],
+      "to": [
+        5.404,
+        2.404,
+        9.298
+      ],
+      "faces": {
+        "north": {
+          "texture": "#face_2"
+        },
+        "east": {
+          "texture": "#face_2"
+        },
+        "south": {
+          "texture": "#face_2"
+        },
+        "west": {
+          "texture": "#face_2"
+        },
+        "up": {
+          "texture": "#face_1",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        },
+        "down": {
+          "texture": "#face_2"
+        }
+      },
+      "rotation": {
+        "angle": 22.5,
+        "axis": "y",
+        "origin": [
+          4.224,
+          2.23,
+          8.413
+        ],
+        "rescale": false
+      }
+    },
+    {
+      "name": "cold_noodle_roll_4_cap",
+      "from": [
+        3.351,
+        2.392,
+        7.758
+      ],
+      "to": [
+        5.097,
+        2.518,
+        9.068
+      ],
+      "faces": {
+        "north": {
+          "texture": "#face_2"
+        },
+        "east": {
+          "texture": "#face_2"
+        },
+        "south": {
+          "texture": "#face_2"
+        },
+        "west": {
+          "texture": "#face_2"
+        },
+        "up": {
+          "texture": "#face_1",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        },
+        "down": {
+          "texture": "#face_2"
+        }
+      },
+      "rotation": {
+        "angle": 22.5,
+        "axis": "y",
+        "origin": [
+          4.224,
+          2.392,
+          8.413
+        ],
+        "rescale": false
+      }
+    },
+    {
+      "name": "cold_noodle_egg_4",
+      "from": [
+        3.457,
+        2.54,
+        8.118
+      ],
+      "to": [
+        4.755,
+        2.66,
+        9.18
+      ],
+      "faces": {
+        "north": {
+          "texture": "#face_3"
+        },
+        "east": {
+          "texture": "#face_3"
+        },
+        "south": {
+          "texture": "#face_3"
+        },
+        "west": {
+          "texture": "#face_3"
+        },
+        "up": {
+          "texture": "#face_4",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        },
+        "down": {
+          "texture": "#face_3"
+        }
+      },
+      "rotation": {
+        "angle": 22.5,
+        "axis": "y",
+        "origin": [
+          4.106,
+          2.54,
+          8.649
+        ],
+        "rescale": false
+      }
+    },
+    {
+      "name": "cold_noodle_cabbage_4",
+      "from": [
+        3.752,
+        2.66,
+        8.295
+      ],
+      "to": [
+        4.696,
+        2.76,
+        9.003
+      ],
+      "faces": {
+        "north": {
+          "texture": "#face_5"
+        },
+        "east": {
+          "texture": "#face_5"
+        },
+        "south": {
+          "texture": "#face_5"
+        },
+        "west": {
+          "texture": "#face_5"
+        },
+        "up": {
+          "texture": "#face_6",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        },
+        "down": {
+          "texture": "#face_5"
+        }
+      },
+      "rotation": {
+        "angle": 22.5,
+        "axis": "y",
+        "origin": [
+          4.224,
+          2.66,
+          8.649
+        ],
+        "rescale": false
+      }
+    },
+    {
+      "name": "cold_noodle_roll_5_base",
+      "from": [
+        5.994,
+        2.27,
+        7.174
+      ],
+      "to": [
+        8.354,
+        2.444,
+        8.944
+      ],
+      "faces": {
+        "north": {
+          "texture": "#face_2"
+        },
+        "east": {
+          "texture": "#face_2"
+        },
+        "south": {
+          "texture": "#face_2"
+        },
+        "west": {
+          "texture": "#face_2"
+        },
+        "up": {
+          "texture": "#face_1",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        },
+        "down": {
+          "texture": "#face_2"
+        }
+      },
+      "rotation": {
+        "angle": -22.5,
+        "axis": "y",
+        "origin": [
+          7.174,
+          2.27,
+          8.059
+        ],
+        "rescale": false
+      }
+    },
+    {
+      "name": "cold_noodle_roll_5_cap",
+      "from": [
+        6.301,
+        2.432,
+        7.404
+      ],
+      "to": [
+        8.047,
+        2.558,
+        8.714
+      ],
+      "faces": {
+        "north": {
+          "texture": "#face_2"
+        },
+        "east": {
+          "texture": "#face_2"
+        },
+        "south": {
+          "texture": "#face_2"
+        },
+        "west": {
+          "texture": "#face_2"
+        },
+        "up": {
+          "texture": "#face_1",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        },
+        "down": {
+          "texture": "#face_2"
+        }
+      },
+      "rotation": {
+        "angle": -22.5,
+        "axis": "y",
+        "origin": [
+          7.174,
+          2.432,
+          8.059
+        ],
+        "rescale": false
+      }
+    },
+    {
+      "name": "cold_noodle_egg_5",
+      "from": [
+        6.407,
+        2.54,
+        7.764
+      ],
+      "to": [
+        7.705,
+        2.66,
+        8.826
+      ],
+      "faces": {
+        "north": {
+          "texture": "#face_3"
+        },
+        "east": {
+          "texture": "#face_3"
+        },
+        "south": {
+          "texture": "#face_3"
+        },
+        "west": {
+          "texture": "#face_3"
+        },
+        "up": {
+          "texture": "#face_4",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        },
+        "down": {
+          "texture": "#face_3"
+        }
+      },
+      "rotation": {
+        "angle": -22.5,
+        "axis": "y",
+        "origin": [
+          7.056,
+          2.54,
+          8.295
+        ],
+        "rescale": false
+      }
+    },
+    {
+      "name": "cold_noodle_cabbage_5",
+      "from": [
+        6.702,
+        2.66,
+        7.941
+      ],
+      "to": [
+        7.646,
+        2.76,
+        8.649
+      ],
+      "faces": {
+        "north": {
+          "texture": "#face_5"
+        },
+        "east": {
+          "texture": "#face_5"
+        },
+        "south": {
+          "texture": "#face_5"
+        },
+        "west": {
+          "texture": "#face_5"
+        },
+        "up": {
+          "texture": "#face_6",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        },
+        "down": {
+          "texture": "#face_5"
+        }
+      },
+      "rotation": {
+        "angle": -22.5,
+        "axis": "y",
+        "origin": [
+          7.174,
+          2.66,
+          8.295
+        ],
+        "rescale": false
+      }
+    },
+    {
+      "name": "cold_noodle_roll_6_base",
+      "from": [
+        8.944,
+        2.23,
+        7.764
+      ],
+      "to": [
+        11.304,
+        2.404,
+        9.534
+      ],
+      "faces": {
+        "north": {
+          "texture": "#face_2"
+        },
+        "east": {
+          "texture": "#face_2"
+        },
+        "south": {
+          "texture": "#face_2"
+        },
+        "west": {
+          "texture": "#face_2"
+        },
+        "up": {
+          "texture": "#face_1",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        },
+        "down": {
+          "texture": "#face_2"
+        }
+      },
+      "rotation": {
+        "angle": 22.5,
+        "axis": "y",
+        "origin": [
+          10.124,
+          2.23,
+          8.649
+        ],
+        "rescale": false
+      }
+    },
+    {
+      "name": "cold_noodle_roll_6_cap",
+      "from": [
+        9.251,
+        2.392,
+        7.994
+      ],
+      "to": [
+        10.997,
+        2.518,
+        9.304
+      ],
+      "faces": {
+        "north": {
+          "texture": "#face_2"
+        },
+        "east": {
+          "texture": "#face_2"
+        },
+        "south": {
+          "texture": "#face_2"
+        },
+        "west": {
+          "texture": "#face_2"
+        },
+        "up": {
+          "texture": "#face_1",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        },
+        "down": {
+          "texture": "#face_2"
+        }
+      },
+      "rotation": {
+        "angle": 22.5,
+        "axis": "y",
+        "origin": [
+          10.124,
+          2.392,
+          8.649
+        ],
+        "rescale": false
+      }
+    },
+    {
+      "name": "cold_noodle_egg_6",
+      "from": [
+        9.357,
+        2.54,
+        8.354
+      ],
+      "to": [
+        10.655,
+        2.66,
+        9.416
+      ],
+      "faces": {
+        "north": {
+          "texture": "#face_3"
+        },
+        "east": {
+          "texture": "#face_3"
+        },
+        "south": {
+          "texture": "#face_3"
+        },
+        "west": {
+          "texture": "#face_3"
+        },
+        "up": {
+          "texture": "#face_4",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        },
+        "down": {
+          "texture": "#face_3"
+        }
+      },
+      "rotation": {
+        "angle": 22.5,
+        "axis": "y",
+        "origin": [
+          10.006,
+          2.54,
+          8.885
+        ],
+        "rescale": false
+      }
+    },
+    {
+      "name": "cold_noodle_cabbage_6",
+      "from": [
+        9.652,
+        2.66,
+        8.531
+      ],
+      "to": [
+        10.596,
+        2.76,
+        9.239
+      ],
+      "faces": {
+        "north": {
+          "texture": "#face_5"
+        },
+        "east": {
+          "texture": "#face_5"
+        },
+        "south": {
+          "texture": "#face_5"
+        },
+        "west": {
+          "texture": "#face_5"
+        },
+        "up": {
+          "texture": "#face_6",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        },
+        "down": {
+          "texture": "#face_5"
+        }
+      },
+      "rotation": {
+        "angle": 22.5,
+        "axis": "y",
+        "origin": [
+          10.124,
+          2.66,
+          8.885
+        ],
+        "rescale": false
+      }
+    },
+    {
+      "name": "cold_noodle_roll_7_base",
+      "from": [
+        11.068,
+        2.27,
+        8.826
+      ],
+      "to": [
+        13.428,
+        2.444,
+        10.596
+      ],
+      "faces": {
+        "north": {
+          "texture": "#face_2"
+        },
+        "east": {
+          "texture": "#face_2"
+        },
+        "south": {
+          "texture": "#face_2"
+        },
+        "west": {
+          "texture": "#face_2"
+        },
+        "up": {
+          "texture": "#face_1",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        },
+        "down": {
+          "texture": "#face_2"
+        }
+      },
+      "rotation": {
+        "angle": -22.5,
+        "axis": "y",
+        "origin": [
+          12.248,
+          2.27,
+          9.711
+        ],
+        "rescale": false
+      }
+    },
+    {
+      "name": "cold_noodle_roll_7_cap",
+      "from": [
+        11.375,
+        2.432,
+        9.056
+      ],
+      "to": [
+        13.121,
+        2.558,
+        10.366
+      ],
+      "faces": {
+        "north": {
+          "texture": "#face_2"
+        },
+        "east": {
+          "texture": "#face_2"
+        },
+        "south": {
+          "texture": "#face_2"
+        },
+        "west": {
+          "texture": "#face_2"
+        },
+        "up": {
+          "texture": "#face_1",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        },
+        "down": {
+          "texture": "#face_2"
+        }
+      },
+      "rotation": {
+        "angle": -22.5,
+        "axis": "y",
+        "origin": [
+          12.248,
+          2.432,
+          9.711
+        ],
+        "rescale": false
+      }
+    },
+    {
+      "name": "cold_noodle_egg_7",
+      "from": [
+        11.481,
+        2.54,
+        9.416
+      ],
+      "to": [
+        12.779,
+        2.66,
+        10.478
+      ],
+      "faces": {
+        "north": {
+          "texture": "#face_3"
+        },
+        "east": {
+          "texture": "#face_3"
+        },
+        "south": {
+          "texture": "#face_3"
+        },
+        "west": {
+          "texture": "#face_3"
+        },
+        "up": {
+          "texture": "#face_4",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        },
+        "down": {
+          "texture": "#face_3"
+        }
+      },
+      "rotation": {
+        "angle": -22.5,
+        "axis": "y",
+        "origin": [
+          12.13,
+          2.54,
+          9.947
+        ],
+        "rescale": false
+      }
+    },
+    {
+      "name": "cold_noodle_cabbage_7",
+      "from": [
+        11.776,
+        2.66,
+        9.593
+      ],
+      "to": [
+        12.72,
+        2.76,
+        10.301
+      ],
+      "faces": {
+        "north": {
+          "texture": "#face_5"
+        },
+        "east": {
+          "texture": "#face_5"
+        },
+        "south": {
+          "texture": "#face_5"
+        },
+        "west": {
+          "texture": "#face_5"
+        },
+        "up": {
+          "texture": "#face_6",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        },
+        "down": {
+          "texture": "#face_5"
+        }
+      },
+      "rotation": {
+        "angle": -22.5,
+        "axis": "y",
+        "origin": [
+          12.248,
+          2.66,
+          9.947
+        ],
+        "rescale": false
+      }
+    },
+    {
+      "name": "cold_noodle_roll_8_base",
+      "from": [
+        5.404,
+        2.23,
+        10.596
+      ],
+      "to": [
+        7.764,
+        2.404,
+        12.366
+      ],
+      "faces": {
+        "north": {
+          "texture": "#face_2"
+        },
+        "east": {
+          "texture": "#face_2"
+        },
+        "south": {
+          "texture": "#face_2"
+        },
+        "west": {
+          "texture": "#face_2"
+        },
+        "up": {
+          "texture": "#face_1",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        },
+        "down": {
+          "texture": "#face_2"
+        }
+      },
+      "rotation": {
+        "angle": 22.5,
+        "axis": "y",
+        "origin": [
+          6.584,
+          2.23,
+          11.481
+        ],
+        "rescale": false
+      }
+    },
+    {
+      "name": "cold_noodle_roll_8_cap",
+      "from": [
+        5.711,
+        2.392,
+        10.826
+      ],
+      "to": [
+        7.457,
+        2.518,
+        12.136
+      ],
+      "faces": {
+        "north": {
+          "texture": "#face_2"
+        },
+        "east": {
+          "texture": "#face_2"
+        },
+        "south": {
+          "texture": "#face_2"
+        },
+        "west": {
+          "texture": "#face_2"
+        },
+        "up": {
+          "texture": "#face_1",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        },
+        "down": {
+          "texture": "#face_2"
+        }
+      },
+      "rotation": {
+        "angle": 22.5,
+        "axis": "y",
+        "origin": [
+          6.584,
+          2.392,
+          11.481
+        ],
+        "rescale": false
+      }
+    },
+    {
+      "name": "cold_noodle_egg_8",
+      "from": [
+        5.817,
+        2.54,
+        11.186
+      ],
+      "to": [
+        7.115,
+        2.66,
+        12.248
+      ],
+      "faces": {
+        "north": {
+          "texture": "#face_3"
+        },
+        "east": {
+          "texture": "#face_3"
+        },
+        "south": {
+          "texture": "#face_3"
+        },
+        "west": {
+          "texture": "#face_3"
+        },
+        "up": {
+          "texture": "#face_4",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        },
+        "down": {
+          "texture": "#face_3"
+        }
+      },
+      "rotation": {
+        "angle": 22.5,
+        "axis": "y",
+        "origin": [
+          6.466,
+          2.54,
+          11.717
+        ],
+        "rescale": false
+      }
+    },
+    {
+      "name": "cold_noodle_cabbage_8",
+      "from": [
+        6.112,
+        2.66,
+        11.363
+      ],
+      "to": [
+        7.056,
+        2.76,
+        12.071
+      ],
+      "faces": {
+        "north": {
+          "texture": "#face_5"
+        },
+        "east": {
+          "texture": "#face_5"
+        },
+        "south": {
+          "texture": "#face_5"
+        },
+        "west": {
+          "texture": "#face_5"
+        },
+        "up": {
+          "texture": "#face_6",
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ]
+        },
+        "down": {
+          "texture": "#face_5"
+        }
+      },
+      "rotation": {
+        "angle": 22.5,
+        "axis": "y",
+        "origin": [
+          6.584,
+          2.66,
+          11.717
+        ],
+        "rescale": false
+      }
+    }
+  ],
+  "gui_light": "front",
+  "display": {
+    "thirdperson_righthand": {
+      "rotation": [
+        63,
+        142,
+        0
+      ],
+      "translation": [
+        0.5,
+        3.75,
+        2
+      ],
+      "scale": [
+        0.7,
+        0.7,
+        0.7
+      ]
+    },
+    "thirdperson_lefthand": {
+      "rotation": [
+        63,
+        142,
+        0
+      ],
+      "translation": [
+        0.5,
+        3.75,
+        2
+      ],
+      "scale": [
+        0.7,
+        0.7,
+        0.7
+      ]
+    },
+    "firstperson_righthand": {
+      "rotation": [
+        4,
+        0,
+        0
+      ],
+      "translation": [
+        0,
+        7,
+        0
+      ]
+    },
+    "firstperson_lefthand": {
+      "rotation": [
+        4,
+        0,
+        0
+      ],
+      "translation": [
+        0,
+        7,
+        0
+      ]
+    },
+    "ground": {
+      "translation": [
+        0,
+        2.5,
+        0
+      ],
+      "scale": [
+        0.5,
+        0.5,
+        0.5
+      ]
+    },
+    "gui": {
+      "rotation": [
+        37,
+        44,
+        0
+      ],
+      "translation": [
+        0,
+        4,
+        0
+      ],
+      "scale": [
+        0.8,
+        0.8,
+        0.8
+      ]
+    },
+    "head": {
+      "rotation": [
+        0,
+        0,
+        90
+      ],
+      "translation": [
+        0,
+        -4.25,
+        -7
+      ]
+    },
+    "fixed": {
+      "rotation": [
+        -90,
+        0,
+        0
+      ],
+      "translation": [
+        0,
+        0,
+        -16
+      ],
+      "scale": [
+        2,
+        2,
+        2
+      ]
+    }
+  }
+}

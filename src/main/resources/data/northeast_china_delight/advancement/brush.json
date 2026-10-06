@@ -1,0 +1,5 @@
+{
+  "parent": "northeast_china_delight:grill",
+  "display": {"icon": {"id": "minecraft:brush"}, "title": {"translate": "advancements.northeast_china_delight.brush.title"}, "description": {"translate": "advancements.northeast_china_delight.brush.description"}, "frame": "task", "show_toast": true, "announce_to_chat": true},
+  "criteria": {"brush": {"trigger": "minecraft:item_used_on_block", "conditions": {"location": [{"condition": "minecraft:location_check", "predicate": {"block": {"blocks": ["northeast_china_delight:grill_campfire"]}}}, {"condition": "minecraft:match_tool", "predicate": {"items": ["minecraft:brush"]}}]}}}
+}

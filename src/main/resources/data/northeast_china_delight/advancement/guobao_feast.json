@@ -1,0 +1,10 @@
+{
+  "parent": "northeast_china_delight:greasy",
+  "display": {"icon": {"id": "northeast_china_delight:new_style_crispy_pork"}, "title": {"translate": "advancements.northeast_china_delight.guobao_feast.title"}, "description": {"translate": "advancements.northeast_china_delight.guobao_feast.description"}, "frame": "challenge", "show_toast": true, "announce_to_chat": true},
+  "criteria": {
+    "old": {"trigger": "minecraft:inventory_changed", "conditions": {"items": [{"items": ["northeast_china_delight:old_style_crispy_pork"]}]}},
+    "new": {"trigger": "minecraft:inventory_changed", "conditions": {"items": [{"items": ["northeast_china_delight:new_style_crispy_pork"]}]}},
+    "orange": {"trigger": "minecraft:inventory_changed", "conditions": {"items": [{"items": ["northeast_china_delight:orange_crispy_pork"]}]}}
+  },
+  "requirements": [["old"], ["new"], ["orange"]]
+}

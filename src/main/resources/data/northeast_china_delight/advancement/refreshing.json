@@ -1,0 +1,5 @@
+{
+  "parent": "northeast_china_delight:northeast_yard",
+  "display": {"icon": {"id": "northeast_china_delight:dip_veggie_platter"}, "title": {"translate": "advancements.northeast_china_delight.refreshing.title"}, "description": {"translate": "advancements.northeast_china_delight.refreshing.description"}, "frame": "task", "show_toast": true, "announce_to_chat": true},
+  "criteria": {"eat": {"trigger": "minecraft:consume_item", "conditions": {"item": {"items": ["northeast_china_delight:dip_veggie_platter", "northeast_china_delight:pickled_veggie_salad", "northeast_china_delight:tiger_salad"]}}}}
+}

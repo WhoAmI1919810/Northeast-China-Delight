@@ -1,0 +1,15 @@
+{
+  "parent": "northeast_china_delight:large_basin",
+  "display": {"icon": {"id": "northeast_china_delight:chicken_mushroom_stew"}, "title": {"translate": "advancements.northeast_china_delight.pack_feast.title"}, "description": {"translate": "advancements.northeast_china_delight.pack_feast.description"}, "frame": "goal", "show_toast": true, "announce_to_chat": true},
+  "criteria": {
+    "harvest": {"trigger": "minecraft:placed_block", "conditions": {"block": "northeast_china_delight:harvest_stew_pot"}},
+    "ground_chicken": {"trigger": "minecraft:placed_block", "conditions": {"block": "northeast_china_delight:ground_pot_chicken_pot"}},
+    "ground_ribs": {"trigger": "minecraft:placed_block", "conditions": {"block": "northeast_china_delight:ground_pot_ribs_pot"}},
+    "slaughter": {"trigger": "minecraft:placed_block", "conditions": {"block": "northeast_china_delight:slaughter_feast_pot"}},
+    "pork_vermicelli": {"trigger": "minecraft:placed_block", "conditions": {"block": "northeast_china_delight:pork_vermicelli_stew_pot"}},
+    "sauerkraut_bone": {"trigger": "minecraft:placed_block", "conditions": {"block": "northeast_china_delight:sauerkraut_bone_stew_pot"}},
+    "chicken_mushroom": {"trigger": "minecraft:placed_block", "conditions": {"block": "northeast_china_delight:chicken_mushroom_stew_pot"}},
+    "seafood": {"trigger": "minecraft:placed_block", "conditions": {"block": "northeast_china_delight:sauerkraut_seafood_stew_pot"}}
+  },
+  "requirements": [["harvest", "ground_chicken", "ground_ribs", "slaughter", "pork_vermicelli", "sauerkraut_bone", "chicken_mushroom", "seafood"]]
+}

@@ -1,0 +1,5 @@
+{
+  "parent": "northeast_china_delight:trade_ginseng",
+  "display": {"icon": {"id": "northeast_china_delight:ginseng_chicken_soup"}, "title": {"translate": "advancements.northeast_china_delight.ginseng_soup.title"}, "description": {"translate": "advancements.northeast_china_delight.ginseng_soup.description"}, "frame": "goal", "show_toast": true, "announce_to_chat": true},
+  "criteria": {"eat": {"trigger": "minecraft:consume_item", "conditions": {"item": {"items": ["northeast_china_delight:ginseng_chicken_soup"]}}}}
+}

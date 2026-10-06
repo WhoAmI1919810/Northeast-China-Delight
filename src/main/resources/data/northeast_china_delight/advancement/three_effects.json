@@ -1,0 +1,10 @@
+{
+  "parent": "northeast_china_delight:greasy",
+  "display": {"icon": {"id": "northeast_china_delight:vat"}, "title": {"translate": "advancements.northeast_china_delight.three_effects.title"}, "description": {"translate": "advancements.northeast_china_delight.three_effects.description"}, "frame": "challenge", "show_toast": true, "announce_to_chat": true},
+  "criteria": {
+    "greasy": {"trigger": "minecraft:effects_changed", "conditions": {"effects": {"northeast_china_delight:greasy": {}}}},
+    "refreshing": {"trigger": "minecraft:effects_changed", "conditions": {"effects": {"northeast_china_delight:refreshing": {}}}},
+    "warmth": {"trigger": "minecraft:effects_changed", "conditions": {"effects": {"northeast_china_delight:warmth": {}}}}
+  },
+  "requirements": [["greasy"], ["refreshing"], ["warmth"]]
+}

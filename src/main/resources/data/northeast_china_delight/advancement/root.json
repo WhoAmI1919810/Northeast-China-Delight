@@ -1,0 +1,17 @@
+{
+  "display": {
+    "icon": {"id": "northeast_china_delight:vat"},
+    "background": "minecraft:textures/block/bricks.png",
+    "title": {"translate": "advancements.northeast_china_delight.root.title"},
+    "description": {"translate": "advancements.northeast_china_delight.root.description"},
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "smelted": {"trigger": "minecraft:recipe_crafted", "conditions": {"recipe_id": "northeast_china_delight:vat_from_smelting"}},
+    "vat": {"trigger": "minecraft:inventory_changed", "conditions": {"items": [{"items": ["northeast_china_delight:vat"]}]}}
+  },
+  "requirements": [["smelted", "vat"]]
+}

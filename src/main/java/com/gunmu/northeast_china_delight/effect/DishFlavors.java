@@ -13,7 +13,7 @@ import java.util.Set;
 /**
  * 菜肴的"口味"表：决定吃完给什么状态效果、持续多久。
  *
- * 持续时长按配方里用了几种材料算：≤4 种给 3 分钟，>4 种给 5 分钟；
+ * 持续时长按食材数算：每种食材 10 秒（不计调料）。
  * 个别菜可以单独指定时长（比如烤鸡架只给 10 秒）。
  * 不在表里的食物（比如豆浆、烤红薯）不给任何效果。
  */
@@ -37,7 +37,8 @@ public final class DishFlavors {
             if (this.overrideTicks >= 0) {
                 return this.overrideTicks;
             }
-            return this.ingredientCount > 4 ? 6000 : 3600;
+            // 效果时长 = 食材数 × 10 秒（200 tick）。只数食材，不计调料。
+            return this.ingredientCount * 200;
         }
     }
 

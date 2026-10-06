@@ -1,8 +1,10 @@
 package com.gunmu.northeast_china_delight.block;
 
+import com.gunmu.northeast_china_delight.NortheastChinaDelight;
 import com.gunmu.northeast_china_delight.crafting.VatRecipes;
 import com.gunmu.northeast_china_delight.fluid.ModFluids;
 import com.gunmu.northeast_china_delight.item.ModItems;
+import net.minecraft.advancements.AdvancementHolder;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.NonNullList;
@@ -17,12 +19,16 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Fluid;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.resources.ResourceLocation;
 import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Predicate;
+import net.minecraft.world.phys.Vec3;
 
 /**
  * 大缸里的东西：内容物（蔬菜/肉/盐/酱块）、压着的石头、蒙着的羊毛地毯、剩余酱量。
@@ -674,8 +680,26 @@ public class VatBlockEntity extends BlockEntity implements IFluidHandler {
             }
             // 液体抽空后酱渣还留在缸里，等玩家取走（所以这里不能 reset）
             this.sync();
+            awardPumpSeasoning();
         }
         return new FluidStack(fluid, drained);
+    }
+
+    private void awardPumpSeasoning() {
+        if (!(this.level instanceof ServerLevel serverLevel)) {
+            return;
+        }
+        AdvancementHolder advancement = serverLevel.getServer().getAdvancements().get(
+                ResourceLocation.fromNamespaceAndPath(NortheastChinaDelight.MODID, "pump_seasoning"));
+        if (advancement == null) {
+            return;
+        }
+        Vec3 center = Vec3.atCenterOf(this.worldPosition);
+        for (ServerPlayer player : serverLevel.players()) {
+            if (player.distanceToSqr(center) <= 32 * 32) {
+                player.getAdvancements().award(advancement, "pump");
+            }
+        }
     }
 
     // ===== 存档与同步 =====

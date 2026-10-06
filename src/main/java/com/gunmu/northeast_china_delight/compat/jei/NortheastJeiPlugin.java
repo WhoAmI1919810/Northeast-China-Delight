@@ -12,6 +12,8 @@ import mezz.jei.api.registration.IRecipeCatalystRegistration;
 import mezz.jei.api.registration.IRecipeCategoryRegistration;
 import mezz.jei.api.registration.IRecipeRegistration;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.item.ItemStack;
 import org.slf4j.Logger;
 
 import com.mojang.logging.LogUtils;
@@ -57,6 +59,20 @@ public class NortheastJeiPlugin implements IModPlugin {
         registration.addRecipes(VAT_TYPE, VatJeiRecipes.all());
         registration.addRecipes(GRILL_TYPE, GrillJeiRecipes.all());
         registration.addRecipes(DRYING_TYPE, DryingJeiRecipes.all());
+        registration.addItemStackInfo(new ItemStack(ModItems.GINSENG.get()),
+                Component.translatable("jei.northeast_china_delight.info.ginseng"));
+        registration.addItemStackInfo(new ItemStack(ModItems.WOOD_EAR.get()),
+                Component.translatable("jei.northeast_china_delight.info.wood_ear"));
+        registration.addItemStackInfo(new ItemStack(ModItems.HAZEL_MUSHROOM.get()),
+                Component.translatable("jei.northeast_china_delight.info.hazel_mushroom"));
+        registration.addItemStackInfo(new ItemStack(ModItems.HAIRTAIL.get()),
+                Component.translatable("jei.northeast_china_delight.info.hairtail"));
+        registration.addItemStackInfo(new ItemStack(ModItems.OYSTER.get()),
+                Component.translatable("jei.northeast_china_delight.info.oyster"));
+        registration.addItemStackInfo(new ItemStack(ModItems.SEA_CUCUMBER.get()),
+                Component.translatable("jei.northeast_china_delight.info.sea_cucumber"));
+        registration.addItemStackInfo(new ItemStack(ModItems.SALT.get()),
+                Component.translatable("jei.northeast_china_delight.info.salt"));
     }
 
     /**

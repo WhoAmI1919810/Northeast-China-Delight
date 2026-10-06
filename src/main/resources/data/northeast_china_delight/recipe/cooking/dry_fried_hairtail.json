@@ -1,0 +1,17 @@
+{
+  "type": "farmersdelight:cooking",
+  "container": { "count": 1, "id": "minecraft:bowl" },
+  "experience": 1.0,
+  "ingredients": [
+    { "item": "northeast_china_delight:cooking_oil" },
+    { "item": "northeast_china_delight:hairtail" },
+    { "item": "northeast_china_delight:hairtail" },
+    { "item": "northeast_china_delight:sweet_potato_starch" },
+    { "item": "northeast_china_delight:salt" }
+  ],
+  "recipe_book_tab": "meals",
+  "result": {
+    "count": 1,
+    "id": "northeast_china_delight:dry_fried_hairtail"
+  }
+}

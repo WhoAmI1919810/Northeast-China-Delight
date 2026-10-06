@@ -1,0 +1,10 @@
+{
+  "parent": "northeast_china_delight:sauerkraut",
+  "display": {"icon": {"id": "northeast_china_delight:sauerkraut_crackling_dumpling"}, "title": {"translate": "advancements.northeast_china_delight.dumpling_feast.title"}, "description": {"translate": "advancements.northeast_china_delight.dumpling_feast.description"}, "frame": "challenge", "show_toast": true, "announce_to_chat": true},
+  "criteria": {
+    "sauerkraut": {"trigger": "minecraft:inventory_changed", "conditions": {"items": [{"items": ["northeast_china_delight:sauerkraut_crackling_dumpling"]}]}},
+    "shrimp": {"trigger": "minecraft:inventory_changed", "conditions": {"items": [{"items": ["northeast_china_delight:shrimp_pork_dumpling"]}]}},
+    "three": {"trigger": "minecraft:inventory_changed", "conditions": {"items": [{"items": ["northeast_china_delight:three_delicacy_dumpling"]}]}}
+  },
+  "requirements": [["sauerkraut"], ["shrimp"], ["three"]]
+}

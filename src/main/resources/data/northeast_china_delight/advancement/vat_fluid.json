@@ -1,0 +1,5 @@
+{
+  "parent": "northeast_china_delight:root",
+  "display": {"icon": {"id": "northeast_china_delight:soy_sauce"}, "title": {"translate": "advancements.northeast_china_delight.vat_fluid.title"}, "description": {"translate": "advancements.northeast_china_delight.vat_fluid.description"}, "frame": "task", "show_toast": true, "announce_to_chat": true},
+  "criteria": {"item": {"trigger": "minecraft:inventory_changed", "conditions": {"items": [{"items": ["northeast_china_delight:soy_sauce", "northeast_china_delight:vinegar", "northeast_china_delight:white_vinegar", "northeast_china_delight:fish_sauce", "northeast_china_delight:shrimp_paste", "northeast_china_delight:kvass"]}]}}}
+}
