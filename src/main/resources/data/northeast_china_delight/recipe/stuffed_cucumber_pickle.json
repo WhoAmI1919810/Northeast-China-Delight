@@ -2,10 +2,18 @@
   "type": "minecraft:crafting_shapeless",
   "category": "misc",
   "ingredients": [
-    { "item": "northeast_china_delight:pickled_cucumber" },
-    { "item": "northeast_china_delight:spicy_cabbage" },
-    { "item": "farmersdelight:onion" },
-    { "item": "northeast_china_delight:salt" }
+    {
+      "tag": "c:foods/pickles"
+    },
+    {
+      "tag": "c:foods/kimchi"
+    },
+    {
+      "tag": "c:crops/onion"
+    },
+    {
+      "tag": "c:foods/seasonings/salt"
+    }
   ],
   "result": {
     "count": 1,

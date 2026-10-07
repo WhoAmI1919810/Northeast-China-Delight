@@ -1,0 +1,21 @@
+{
+  "values": [
+    "northeast_china_delight:peanut",
+    {
+      "id": "croptopia:peanut",
+      "required": false
+    },
+    {
+      "id": "foodcraft:peanut",
+      "required": false
+    },
+    {
+      "id": "hearthandharvest:peanut",
+      "required": false
+    },
+    {
+      "id": "extradelight:peanuts_in_shell",
+      "required": false
+    }
+  ]
+}

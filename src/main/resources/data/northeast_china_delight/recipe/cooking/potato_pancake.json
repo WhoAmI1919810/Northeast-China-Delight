@@ -2,11 +2,21 @@
   "type": "farmersdelight:cooking",
   "experience": 0.35,
   "ingredients": [
-    { "item": "minecraft:potato" },
-    { "item": "minecraft:potato" },
-    { "item": "northeast_china_delight:sweet_potato_starch" },
-    { "item": "northeast_china_delight:cooking_oil" },
-    { "item": "northeast_china_delight:chili_sauce" }
+    {
+      "tag": "c:crops/potato"
+    },
+    {
+      "tag": "c:crops/potato"
+    },
+    {
+      "tag": "c:foods/starch"
+    },
+    {
+      "tag": "c:foods/seasonings/cooking_oil"
+    },
+    {
+      "tag": "c:foods/seasonings/chili_sauce"
+    }
   ],
   "recipe_book_tab": "misc",
   "result": {

@@ -2,14 +2,30 @@
   "type": "create:mixing",
   "heat_requirement": "heated",
   "ingredients": [
-    { "item": "northeast_china_delight:soybean" },
-    { "item": "northeast_china_delight:soybean" },
-    { "item": "northeast_china_delight:soybean" },
-    { "item": "northeast_china_delight:soybean" },
-    { "item": "northeast_china_delight:soybean" },
-    { "item": "northeast_china_delight:soybean" },
-    { "item": "northeast_china_delight:soybean" },
-    { "item": "northeast_china_delight:soybean" },
+    {
+      "tag": "c:crops/soybean"
+    },
+    {
+      "tag": "c:crops/soybean"
+    },
+    {
+      "tag": "c:crops/soybean"
+    },
+    {
+      "tag": "c:crops/soybean"
+    },
+    {
+      "tag": "c:crops/soybean"
+    },
+    {
+      "tag": "c:crops/soybean"
+    },
+    {
+      "tag": "c:crops/soybean"
+    },
+    {
+      "tag": "c:crops/soybean"
+    },
     {
       "type": "neoforge:single",
       "amount": 1000,

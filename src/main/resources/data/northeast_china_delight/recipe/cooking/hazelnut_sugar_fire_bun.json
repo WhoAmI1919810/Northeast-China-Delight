@@ -2,11 +2,21 @@
   "type": "farmersdelight:cooking",
   "experience": 0.35,
   "ingredients": [
-    { "item": "northeast_china_delight:hazelnut" },
-    { "item": "northeast_china_delight:hazelnut" },
-    { "item": "minecraft:sugar" },
-    { "item": "farmersdelight:wheat_dough" },
-    { "item": "northeast_china_delight:cooking_oil" }
+    {
+      "item": "northeast_china_delight:hazelnut"
+    },
+    {
+      "item": "northeast_china_delight:hazelnut"
+    },
+    {
+      "tag": "c:sugar"
+    },
+    {
+      "tag": "c:foods/dough/wheat"
+    },
+    {
+      "tag": "c:foods/seasonings/cooking_oil"
+    }
   ],
   "recipe_book_tab": "misc",
   "result": {

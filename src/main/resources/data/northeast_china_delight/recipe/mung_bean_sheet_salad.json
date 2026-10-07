@@ -2,11 +2,21 @@
   "type": "minecraft:crafting_shapeless",
   "category": "misc",
   "ingredients": [
-    { "item": "minecraft:bowl" },
-    { "item": "northeast_china_delight:mung_bean_sheet" },
-    { "item": "northeast_china_delight:peanut_butter" },
-    { "item": "northeast_china_delight:cucumber" },
-    { "item": "farmersdelight:tomato" }
+    {
+      "item": "minecraft:bowl"
+    },
+    {
+      "item": "northeast_china_delight:mung_bean_sheet"
+    },
+    {
+      "tag": "c:foods/seasonings/peanut_butter"
+    },
+    {
+      "tag": "c:crops/cucumber"
+    },
+    {
+      "tag": "c:crops/tomato"
+    }
   ],
   "result": {
     "count": 1,

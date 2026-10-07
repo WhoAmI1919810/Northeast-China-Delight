@@ -1,0 +1,9 @@
+{
+  "values": [
+    "northeast_china_delight:green_beans",
+    {
+      "id": "croptopia:greenbean",
+      "required": false
+    }
+  ]
+}

@@ -1,0 +1,12 @@
+{
+  "values": [
+    {
+      "id": "croptopia:garlic",
+      "required": false
+    },
+    {
+      "id": "extradelight:garlic",
+      "required": false
+    }
+  ]
+}

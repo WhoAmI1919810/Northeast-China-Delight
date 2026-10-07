@@ -1,0 +1,9 @@
+{
+  "values": [
+    {
+      "id": "foodcraft:pasta",
+      "required": false
+    },
+    "farmersdelight:raw_pasta"
+  ]
+}

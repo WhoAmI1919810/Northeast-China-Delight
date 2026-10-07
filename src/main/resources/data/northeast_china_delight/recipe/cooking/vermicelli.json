@@ -2,12 +2,24 @@
   "type": "farmersdelight:cooking",
   "experience": 0.35,
   "ingredients": [
-    { "item": "northeast_china_delight:sweet_potato_starch" },
-    { "item": "northeast_china_delight:sweet_potato_starch" },
-    { "item": "northeast_china_delight:sweet_potato_starch" },
-    { "item": "northeast_china_delight:sweet_potato_starch" },
-    { "item": "northeast_china_delight:salt" },
-    { "item": "minecraft:water_bucket" }
+    {
+      "tag": "c:foods/starch"
+    },
+    {
+      "tag": "c:foods/starch"
+    },
+    {
+      "tag": "c:foods/starch"
+    },
+    {
+      "tag": "c:foods/starch"
+    },
+    {
+      "tag": "c:foods/seasonings/salt"
+    },
+    {
+      "item": "minecraft:water_bucket"
+    }
   ],
   "recipe_book_tab": "misc",
   "result": {

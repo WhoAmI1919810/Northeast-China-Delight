@@ -2,10 +2,18 @@
   "type": "farmersdelight:cooking",
   "experience": 1.0,
   "ingredients": [
-    { "item": "northeast_china_delight:sour_cabbage" },
-    { "item": "farmersdelight:wheat_dough" },
-    { "item": "minecraft:porkchop" },
-    { "item": "northeast_china_delight:cracklings" }
+    {
+      "tag": "c:foods/sauerkraut"
+    },
+    {
+      "tag": "c:foods/dough/wheat"
+    },
+    {
+      "tag": "c:foods/raw_pork"
+    },
+    {
+      "tag": "c:foods/cracklings"
+    }
   ],
   "recipe_book_tab": "meals",
   "result": {

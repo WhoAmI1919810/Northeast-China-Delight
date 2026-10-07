@@ -1,0 +1,13 @@
+{
+  "values": [
+    "farmersdelight:rice",
+    {
+      "id": "foodcraft:rice",
+      "required": false
+    },
+    {
+      "id": "croptopia:rice",
+      "required": false
+    }
+  ]
+}

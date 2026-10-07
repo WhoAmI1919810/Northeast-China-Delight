@@ -1,12 +1,23 @@
 {
   "type": "farmersdelight:cooking",
-  "container": { "count": 1, "id": "northeast_china_delight:large_basin" },
+  "container": {
+    "count": 1,
+    "id": "northeast_china_delight:large_basin"
+  },
   "experience": 1.0,
   "ingredients": [
-    { "item": "minecraft:porkchop" },
-    { "item": "northeast_china_delight:napa_cabbage" },
-    { "item": "northeast_china_delight:vermicelli" },
-    { "item": "northeast_china_delight:tofu" }
+    {
+      "tag": "c:foods/raw_pork"
+    },
+    {
+      "tag": "c:crops/napa_cabbage"
+    },
+    {
+      "tag": "c:foods/vermicelli"
+    },
+    {
+      "tag": "c:foods/tofu"
+    }
   ],
   "recipe_book_tab": "meals",
   "result": {

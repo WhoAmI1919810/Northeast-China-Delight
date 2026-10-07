@@ -2,9 +2,15 @@
   "type": "farmersdelight:cooking",
   "experience": 0.35,
   "ingredients": [
-    { "item": "minecraft:sugar" },
-    { "item": "northeast_china_delight:roasted_peanuts" },
-    { "item": "northeast_china_delight:roasted_peanuts" }
+    {
+      "tag": "c:sugar"
+    },
+    {
+      "item": "northeast_china_delight:roasted_peanuts"
+    },
+    {
+      "item": "northeast_china_delight:roasted_peanuts"
+    }
   ],
   "recipe_book_tab": "misc",
   "result": {

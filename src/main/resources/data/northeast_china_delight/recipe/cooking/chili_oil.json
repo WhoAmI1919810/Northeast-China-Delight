@@ -2,9 +2,15 @@
   "type": "farmersdelight:cooking",
   "experience": 0.35,
   "ingredients": [
-    { "item": "northeast_china_delight:cooking_oil" },
-    { "item": "northeast_china_delight:red_chili" },
-    { "item": "northeast_china_delight:red_chili" }
+    {
+      "tag": "c:foods/seasonings/cooking_oil"
+    },
+    {
+      "tag": "c:crops/chile_pepper"
+    },
+    {
+      "tag": "c:crops/chile_pepper"
+    }
   ],
   "recipe_book_tab": "misc",
   "result": {

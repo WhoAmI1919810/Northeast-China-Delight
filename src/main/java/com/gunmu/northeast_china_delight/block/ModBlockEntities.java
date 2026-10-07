@@ -15,7 +15,7 @@ public class ModBlockEntities {
 
     public static final Supplier<BlockEntityType<VatBlockEntity>> VAT = BLOCK_ENTITIES.register(
             "vat",
-            () -> BlockEntityType.Builder.of(VatBlockEntity::new, ModBlocks.VAT.get()).build(null));
+            () -> BlockEntityType.Builder.of(VatBlockEntity::new, ModBlocks.VAT.get(), ModBlocks.CREATIVE_VAT.get()).build(null));
 
     /** 烤架营火：必须有自己的类型，不能借用原版营火的那个（类型会校验合法方块） */
     public static final Supplier<BlockEntityType<GrillBlockEntity>> GRILL_CAMPFIRE = BLOCK_ENTITIES.register(

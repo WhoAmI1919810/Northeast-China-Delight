@@ -2,13 +2,27 @@
   "type": "minecraft:crafting_shapeless",
   "category": "misc",
   "ingredients": [
-    { "item": "northeast_china_delight:brass_bowl" },
-    { "item": "farmersdelight:cooked_rice" },
-    { "item": "minecraft:carrot" },
-    { "item": "minecraft:egg" },
-    { "item": "minecraft:dried_kelp" },
-    { "item": "northeast_china_delight:spicy_cabbage" },
-    { "item": "northeast_china_delight:chili_sauce" }
+    {
+      "item": "northeast_china_delight:brass_bowl"
+    },
+    {
+      "tag": "farmersdelight:cooked_rice"
+    },
+    {
+      "tag": "c:crops/carrot"
+    },
+    {
+      "tag": "c:eggs"
+    },
+    {
+      "item": "minecraft:dried_kelp"
+    },
+    {
+      "tag": "c:foods/kimchi"
+    },
+    {
+      "tag": "c:foods/seasonings/chili_sauce"
+    }
   ],
   "result": {
     "count": 1,

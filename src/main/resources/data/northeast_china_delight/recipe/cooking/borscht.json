@@ -6,12 +6,24 @@
   },
   "experience": 1.0,
   "ingredients": [
-    { "item": "minecraft:beef" },
-    { "item": "farmersdelight:cabbage" },
-    { "item": "minecraft:potato" },
-    { "item": "farmersdelight:tomato" },
-    { "item": "farmersdelight:onion" },
-    { "item": "farmersdelight:tomato_sauce" }
+    {
+      "tag": "c:foods/raw_beef"
+    },
+    {
+      "tag": "c:crops/cabbage"
+    },
+    {
+      "tag": "c:crops/potato"
+    },
+    {
+      "tag": "c:crops/tomato"
+    },
+    {
+      "tag": "c:crops/onion"
+    },
+    {
+      "item": "farmersdelight:tomato_sauce"
+    }
   ],
   "recipe_book_tab": "meals",
   "result": {

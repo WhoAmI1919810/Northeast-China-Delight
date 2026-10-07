@@ -3,7 +3,7 @@
   "heat_requirement": "heated",
   "ingredients": [
     {
-      "item": "minecraft:beef"
+      "tag": "c:foods/raw_beef"
     },
     {
       "type": "neoforge:single",

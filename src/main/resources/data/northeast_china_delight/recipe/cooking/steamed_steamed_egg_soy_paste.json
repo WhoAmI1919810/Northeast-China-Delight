@@ -6,9 +6,15 @@
   },
   "experience": 1.0,
   "ingredients": [
-    { "item": "northeast_china_delight:green_pepper" },
-    { "item": "minecraft:egg" },
-    { "item": "northeast_china_delight:soy_paste" }
+    {
+      "tag": "c:crops/green_pepper"
+    },
+    {
+      "tag": "c:eggs"
+    },
+    {
+      "item": "northeast_china_delight:soy_paste"
+    }
   ],
   "recipe_book_tab": "meals",
   "result": {

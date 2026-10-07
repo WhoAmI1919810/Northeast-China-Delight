@@ -168,6 +168,13 @@ public class ModBlocks {
             BlockBehaviour.Properties.of().strength(3.5f)
     );
 
+    /** 创造大缸：同外观、同交互，条件凑齐就瞬间完成（没有合成配方） */
+    public static final DeferredBlock<Block> CREATIVE_VAT = BLOCKS.registerBlock(
+            "creative_vat",
+            CreativeVat::new,
+            BlockBehaviour.Properties.of().strength(3.5f)
+    );
+
     /**
      * 架上烧烤架的营火。
      *

@@ -1,0 +1,13 @@
+{
+  "values": [
+    "northeast_china_delight:green_onion",
+    {
+      "id": "foodcraft:green_onion",
+      "required": false
+    },
+    {
+      "id": "croptopia:greenonion",
+      "required": false
+    }
+  ]
+}

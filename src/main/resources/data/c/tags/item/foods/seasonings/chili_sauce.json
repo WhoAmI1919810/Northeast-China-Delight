@@ -1,0 +1,9 @@
+{
+  "values": [
+    "northeast_china_delight:chili_sauce",
+    {
+      "id": "extradelight:hot_sauce_item",
+      "required": false
+    }
+  ]
+}

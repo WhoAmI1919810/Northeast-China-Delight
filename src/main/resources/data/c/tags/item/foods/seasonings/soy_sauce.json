@@ -1,0 +1,17 @@
+{
+  "values": [
+    "northeast_china_delight:soy_sauce",
+    {
+      "id": "croptopia:soy_sauce",
+      "required": false
+    },
+    {
+      "id": "extradelight:soy_sauce_item",
+      "required": false
+    },
+    {
+      "id": "foodcraft:soy_sauce",
+      "required": false
+    }
+  ]
+}

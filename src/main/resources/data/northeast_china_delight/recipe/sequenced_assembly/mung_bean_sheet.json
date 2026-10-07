@@ -1,7 +1,7 @@
 {
   "type": "create:sequenced_assembly",
   "ingredient": {
-    "item": "northeast_china_delight:sweet_potato_starch"
+    "tag": "c:foods/starch"
   },
   "loops": 1,
   "results": [
@@ -14,7 +14,7 @@
       "type": "create:filling",
       "ingredients": [
         {
-          "item": "northeast_china_delight:sweet_potato_starch"
+          "tag": "c:foods/starch"
         },
         {
           "type": "neoforge:single",
@@ -32,7 +32,7 @@
       "type": "create:pressing",
       "ingredients": [
         {
-          "item": "northeast_china_delight:sweet_potato_starch"
+          "tag": "c:foods/starch"
         }
       ],
       "results": [

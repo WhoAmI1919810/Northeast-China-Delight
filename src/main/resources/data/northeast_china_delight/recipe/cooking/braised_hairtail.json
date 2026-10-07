@@ -1,12 +1,23 @@
 {
   "type": "farmersdelight:cooking",
-  "container": { "count": 1, "id": "minecraft:bowl" },
+  "container": {
+    "count": 1,
+    "id": "minecraft:bowl"
+  },
   "experience": 1.0,
   "ingredients": [
-    { "item": "northeast_china_delight:hairtail" },
-    { "item": "northeast_china_delight:hairtail" },
-    { "item": "northeast_china_delight:soy_sauce" },
-    { "item": "minecraft:sugar" }
+    {
+      "tag": "c:foods/raw_fish"
+    },
+    {
+      "tag": "c:foods/raw_fish"
+    },
+    {
+      "tag": "c:foods/seasonings/soy_sauce"
+    },
+    {
+      "tag": "c:sugar"
+    }
   ],
   "recipe_book_tab": "meals",
   "result": {

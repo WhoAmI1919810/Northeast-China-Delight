@@ -2,7 +2,9 @@
   "type": "farmersdelight:cooking",
   "experience": 0.35,
   "ingredients": [
-    { "item": "northeast_china_delight:soy_milk" }
+    {
+      "tag": "c:foods/soy_milk"
+    }
   ],
   "recipe_book_tab": "meals",
   "result": {

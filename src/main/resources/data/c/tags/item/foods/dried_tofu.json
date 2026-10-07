@@ -1,0 +1,9 @@
+{
+  "values": [
+    "northeast_china_delight:dried_tofu",
+    {
+      "id": "tofucraft:tofu_dried",
+      "required": false
+    }
+  ]
+}

@@ -6,9 +6,15 @@
   },
   "experience": 0.35,
   "ingredients": [
-    { "item": "northeast_china_delight:soy_paste" },
-    { "item": "minecraft:water_bucket" },
-    { "item": "northeast_china_delight:tofu" }
+    {
+      "item": "northeast_china_delight:soy_paste"
+    },
+    {
+      "item": "minecraft:water_bucket"
+    },
+    {
+      "tag": "c:foods/tofu"
+    }
   ],
   "recipe_book_tab": "meals",
   "result": {

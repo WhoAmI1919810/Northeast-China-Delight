@@ -2,9 +2,16 @@
   "type": "farmersdelight:cooking",
   "experience": 1.0,
   "ingredients": [
-    { "item": "northeast_china_delight:soy_sauce" },
-    { "item": "northeast_china_delight:pork_ribs" }
+    {
+      "tag": "c:foods/seasonings/soy_sauce"
+    },
+    {
+      "item": "northeast_china_delight:pork_ribs"
+    }
   ],
   "recipe_book_tab": "meals",
-  "result": { "count": 1, "id": "northeast_china_delight:braised_pork_bone_sauce" }
+  "result": {
+    "count": 1,
+    "id": "northeast_china_delight:braised_pork_bone_sauce"
+  }
 }

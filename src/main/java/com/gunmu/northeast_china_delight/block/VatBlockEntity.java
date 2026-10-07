@@ -4,6 +4,7 @@ import com.gunmu.northeast_china_delight.NortheastChinaDelight;
 import com.gunmu.northeast_china_delight.crafting.VatRecipes;
 import com.gunmu.northeast_china_delight.fluid.ModFluids;
 import com.gunmu.northeast_china_delight.item.ModItems;
+import com.gunmu.northeast_china_delight.ModTags;
 import net.minecraft.advancements.AdvancementHolder;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
@@ -92,7 +93,7 @@ public class VatBlockEntity extends BlockEntity implements IFluidHandler {
         return this.kind == VatRecipes.Kind.NONE && this.pasteMb <= 0 && this.soySauceMb <= 0 && this.vinegarMb <= 0
                 && this.sourWaterMb <= 0 && this.whiteVinegarMb <= 0
                 && this.fishSauceMb <= 0 && this.shrimpPasteMb <= 0 && this.kvassMb <= 0
-                && this.count(stack -> !stack.is(com.gunmu.northeast_china_delight.item.ModItems.SALT.get())) == 0;
+                && this.count(stack -> !stack.is(ModTags.FOODS_SALT)) == 0;
     }
 
     /** 缸里的生鱼数量（任意生鱼） */
@@ -171,7 +172,7 @@ public class VatBlockEntity extends BlockEntity implements IFluidHandler {
             if (stack.isEmpty()) {
                 continue;
             }
-            if (this.isSaltDissolved() && stack.is(com.gunmu.northeast_china_delight.item.ModItems.SALT.get())) {
+            if (this.isSaltDissolved() && stack.is(ModTags.FOODS_SALT)) {
                 continue;
             }
             list.add(stack);
@@ -212,7 +213,7 @@ public class VatBlockEntity extends BlockEntity implements IFluidHandler {
     }
 
     public int meatCount() {
-        return countOf(VatRecipes.meatInput());
+        return count(stack -> stack.is(ModTags.FOODS_RAW_PORK));
     }
 
     public boolean isPressed() {
@@ -540,7 +541,7 @@ public class VatBlockEntity extends BlockEntity implements IFluidHandler {
             }
             if (stack.is(ModItems.SOY_PASTE_CHUNK.get())) {
                 this.contents.set(i, new ItemStack(VatRecipes.residue()));
-            } else if (stack.is(ModItems.SALT.get()) || stack.is(VatRecipes.wheatInput())) {
+            } else if (stack.is(ModTags.FOODS_SALT) || stack.is(ModTags.CROPS_WHEAT)) {
                 this.contents.set(i, ItemStack.EMPTY);
             }
         }
@@ -681,6 +682,19 @@ public class VatBlockEntity extends BlockEntity implements IFluidHandler {
             // 液体抽空后酱渣还留在缸里，等玩家取走（所以这里不能 reset）
             this.sync();
             awardPumpSeasoning();
+            // 抽干了就把「酿好了」的标记清掉：这缸已经没成品了，
+            // 继续标 FERMENTED 的话玩家还得右键一下空瓶才能把状态清掉
+            if (productAmount() <= 0 && this.level != null) {
+                BlockState state = this.getBlockState();
+                if (state.getValue(Vat.FERMENTED)) {
+                    this.level.setBlock(this.worldPosition,
+                            state.setValue(Vat.FERMENTED, false).setValue(Vat.PROGRESS, 0), 3);
+                }
+                // 内容物也空了才算彻底干净（泡菜缸的酸引水抽完就回到空缸）
+                if (isEmpty()) {
+                    this.kind = VatRecipes.Kind.NONE;
+                }
+            }
         }
         return new FluidStack(fluid, drained);
     }
@@ -778,12 +792,13 @@ public class VatBlockEntity extends BlockEntity implements IFluidHandler {
         }
         // 兼容一种历史状态：酿好的大酱被加了小麦，kind 变成了酱油、份数却还记在大酱里，
         // 结果这缸酱看起来是空的。这里把它救成同等份数的酱油。
-        if (this.kind == VatRecipes.Kind.SOY_SAUCE && this.soySauceMb <= 0 && this.pasteMb > 0) {
+        boolean serverSide = !(this.level != null && this.level.isClientSide);
+        if (serverSide && this.kind == VatRecipes.Kind.SOY_SAUCE && this.soySauceMb <= 0 && this.pasteMb > 0) {
             this.soySauceMb = this.pasteMb;
             this.pasteMb = 0;
         }
         // 兼容旧存档：本次更新前酿好的大缸里还是酱块，这里补一次「酱块变酱渣」
-        if (this.level != null
+        if (serverSide && this.level != null
                 && this.getBlockState().getValue(Vat.FERMENTED)
                 && (this.kind == VatRecipes.Kind.PASTE || this.kind == VatRecipes.Kind.SOY_SAUCE)
                 && this.countOf(ModItems.SOY_PASTE_CHUNK.get()) > 0) {

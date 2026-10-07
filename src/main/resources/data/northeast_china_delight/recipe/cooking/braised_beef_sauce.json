@@ -2,10 +2,19 @@
   "type": "farmersdelight:cooking",
   "experience": 1.0,
   "ingredients": [
-    { "item": "minecraft:beef" },
-    { "item": "northeast_china_delight:soy_sauce" },
-    { "item": "minecraft:sugar" }
+    {
+      "tag": "c:foods/raw_beef"
+    },
+    {
+      "tag": "c:foods/seasonings/soy_sauce"
+    },
+    {
+      "tag": "c:sugar"
+    }
   ],
   "recipe_book_tab": "meals",
-  "result": { "count": 1, "id": "northeast_china_delight:braised_beef_sauce" }
+  "result": {
+    "count": 1,
+    "id": "northeast_china_delight:braised_beef_sauce"
+  }
 }

@@ -3,7 +3,7 @@
   "category": "misc",
   "key": {
     "A": {
-      "item": "create:brass_sheet"
+      "tag": "c:plates/brass"
     }
   },
   "pattern": [

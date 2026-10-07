@@ -2,10 +2,18 @@
   "type": "farmersdelight:cooking",
   "experience": 0.35,
   "ingredients": [
-    { "item": "northeast_china_delight:shrimp" },
-    { "item": "minecraft:porkchop" },
-    { "item": "northeast_china_delight:napa_cabbage" },
-    { "item": "farmersdelight:wheat_dough" }
+    {
+      "tag": "c:foods/shrimp"
+    },
+    {
+      "tag": "c:foods/raw_pork"
+    },
+    {
+      "tag": "c:crops/napa_cabbage"
+    },
+    {
+      "tag": "c:foods/dough/wheat"
+    }
   ],
   "recipe_book_tab": "misc",
   "result": {

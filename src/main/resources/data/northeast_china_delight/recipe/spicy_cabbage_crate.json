@@ -1,7 +1,18 @@
 {
   "type": "minecraft:crafting_shaped",
   "category": "building",
-  "pattern": [ "XXX", "XXX", "XXX" ],
-  "key": { "X": { "item": "northeast_china_delight:spicy_cabbage" } },
-  "result": { "count": 1, "id": "northeast_china_delight:spicy_cabbage_crate" }
+  "pattern": [
+    "XXX",
+    "XXX",
+    "XXX"
+  ],
+  "key": {
+    "X": {
+      "tag": "c:foods/kimchi"
+    }
+  },
+  "result": {
+    "count": 1,
+    "id": "northeast_china_delight:spicy_cabbage_crate"
+  }
 }

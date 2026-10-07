@@ -2,14 +2,30 @@
   "type": "minecraft:crafting_shapeless",
   "category": "misc",
   "ingredients": [
-    { "item": "northeast_china_delight:cucumber" },
-    { "item": "minecraft:potato" },
-    { "item": "northeast_china_delight:dried_tofu" },
-    { "item": "minecraft:sugar" },
-    { "item": "northeast_china_delight:salt" },
-    { "item": "northeast_china_delight:red_chili" },
-    { "item": "northeast_china_delight:roasted_peanuts" },
-    { "item": "minecraft:bowl" }
+    {
+      "tag": "c:crops/cucumber"
+    },
+    {
+      "tag": "c:crops/potato"
+    },
+    {
+      "tag": "c:foods/dried_tofu"
+    },
+    {
+      "tag": "c:sugar"
+    },
+    {
+      "tag": "c:foods/seasonings/salt"
+    },
+    {
+      "tag": "c:crops/chile_pepper"
+    },
+    {
+      "item": "northeast_china_delight:roasted_peanuts"
+    },
+    {
+      "item": "minecraft:bowl"
+    }
   ],
   "result": {
     "count": 1,

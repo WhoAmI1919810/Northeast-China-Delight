@@ -20,7 +20,8 @@ public final class GrillJeiRecipes {
                     .map(ItemStack::copy)
                     .toList();
             List<ItemStack> seasonings = recipe.seasonings().stream()
-                    .map(ItemStack::new)
+                    .flatMap(ing -> Arrays.stream(ing.getItems()))
+                    .map(ItemStack::copy)
                     .toList();
             list.add(new GrillJeiRecipe(ingredient, seasonings, recipe.result().copy(), recipe.seconds()));
         }

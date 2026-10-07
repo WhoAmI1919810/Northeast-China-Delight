@@ -1,0 +1,9 @@
+{
+  "values": [
+    "northeast_china_delight:shrimp",
+    {
+      "id": "croptopia:shrimp",
+      "required": false
+    }
+  ]
+}

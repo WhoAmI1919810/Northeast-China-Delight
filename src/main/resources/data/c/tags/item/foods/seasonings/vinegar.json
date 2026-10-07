@@ -1,0 +1,13 @@
+{
+  "values": [
+    "northeast_china_delight:vinegar",
+    {
+      "id": "extradelight:vinegar",
+      "required": false
+    },
+    {
+      "id": "foodcraft:vinegar",
+      "required": false
+    }
+  ]
+}

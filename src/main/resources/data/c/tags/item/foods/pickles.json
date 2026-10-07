@@ -1,0 +1,13 @@
+{
+  "values": [
+    "northeast_china_delight:sour_cabbage",
+    "northeast_china_delight:spicy_cabbage",
+    "northeast_china_delight:pickled_cucumber",
+    "northeast_china_delight:pickled_carrot",
+    "northeast_china_delight:pickled_green_radish",
+    {
+      "id": "croptopia:pickled_cucumber",
+      "required": false
+    }
+  ]
+}

@@ -2,8 +2,12 @@
   "type": "minecraft:crafting_shapeless",
   "category": "misc",
   "ingredients": [
-    { "item": "northeast_china_delight:buckwheat" },
-    { "item": "minecraft:water_bucket" }
+    {
+      "tag": "c:crops/buckwheat"
+    },
+    {
+      "item": "minecraft:water_bucket"
+    }
   ],
   "result": {
     "count": 1,

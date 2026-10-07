@@ -2,11 +2,21 @@
   "type": "farmersdelight:cooking",
   "experience": 0.35,
   "ingredients": [
-    { "item": "northeast_china_delight:corn_seeds" },
-    { "item": "northeast_china_delight:corn_seeds" },
-    { "item": "minecraft:sugar" },
-    { "item": "northeast_china_delight:cooking_oil" },
-    { "item": "northeast_china_delight:sweet_potato_starch" }
+    {
+      "tag": "c:seeds/corn"
+    },
+    {
+      "tag": "c:seeds/corn"
+    },
+    {
+      "tag": "c:sugar"
+    },
+    {
+      "tag": "c:foods/seasonings/cooking_oil"
+    },
+    {
+      "tag": "c:foods/starch"
+    }
   ],
   "recipe_book_tab": "misc",
   "result": {

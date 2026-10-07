@@ -6,11 +6,21 @@
   },
   "experience": 1.0,
   "ingredients": [
-    { "item": "northeast_china_delight:ginseng" },
-    { "item": "minecraft:chicken" },
-    { "item": "farmersdelight:rice" },
-    { "item": "northeast_china_delight:salt" },
-    { "item": "minecraft:water_bucket" }
+    {
+      "tag": "c:crops/ginseng"
+    },
+    {
+      "tag": "c:foods/raw_chicken"
+    },
+    {
+      "tag": "c:crops/rice"
+    },
+    {
+      "tag": "c:foods/seasonings/salt"
+    },
+    {
+      "item": "minecraft:water_bucket"
+    }
   ],
   "recipe_book_tab": "meals",
   "result": {

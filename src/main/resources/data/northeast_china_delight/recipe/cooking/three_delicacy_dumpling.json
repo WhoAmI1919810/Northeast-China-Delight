@@ -2,11 +2,21 @@
   "type": "farmersdelight:cooking",
   "experience": 0.35,
   "ingredients": [
-    { "item": "northeast_china_delight:cucumber" },
-    { "item": "minecraft:egg" },
-    { "item": "northeast_china_delight:shrimp" },
-    { "item": "northeast_china_delight:wood_ear" },
-    { "item": "farmersdelight:wheat_dough" }
+    {
+      "tag": "c:crops/cucumber"
+    },
+    {
+      "tag": "c:eggs"
+    },
+    {
+      "tag": "c:foods/shrimp"
+    },
+    {
+      "item": "northeast_china_delight:wood_ear"
+    },
+    {
+      "tag": "c:foods/dough/wheat"
+    }
   ],
   "recipe_book_tab": "misc",
   "result": {

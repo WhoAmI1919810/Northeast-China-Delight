@@ -1,10 +1,21 @@
 {
   "type": "minecraft:crafting_shaped",
   "category": "misc",
-  "pattern": ["AOA", "AOA", "AOA"],
+  "pattern": [
+    "AOA",
+    "AOA",
+    "AOA"
+  ],
   "key": {
-    "A": { "item": "northeast_china_delight:corn" },
-    "O": { "item": "minecraft:string" }
+    "A": {
+      "tag": "c:crops/corn"
+    },
+    "O": {
+      "item": "minecraft:string"
+    }
   },
-  "result": { "count": 1, "id": "northeast_china_delight:corn_skewer" }
+  "result": {
+    "count": 1,
+    "id": "northeast_china_delight:corn_skewer"
+  }
 }

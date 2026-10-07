@@ -2,10 +2,18 @@
   "type": "minecraft:crafting_shapeless",
   "category": "misc",
   "ingredients": [
-    { "item": "northeast_china_delight:red_chili" },
-    { "item": "northeast_china_delight:red_chili" },
-    { "item": "northeast_china_delight:salt" },
-    { "item": "minecraft:bowl" }
+    {
+      "tag": "c:crops/chile_pepper"
+    },
+    {
+      "tag": "c:crops/chile_pepper"
+    },
+    {
+      "tag": "c:foods/seasonings/salt"
+    },
+    {
+      "item": "minecraft:bowl"
+    }
   ],
   "result": {
     "count": 1,

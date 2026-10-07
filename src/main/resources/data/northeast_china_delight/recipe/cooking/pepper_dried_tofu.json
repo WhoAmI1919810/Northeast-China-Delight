@@ -6,9 +6,15 @@
   },
   "experience": 1.0,
   "ingredients": [
-    { "item": "northeast_china_delight:green_pepper" },
-    { "item": "northeast_china_delight:dried_tofu" },
-    { "item": "northeast_china_delight:dried_tofu" }
+    {
+      "tag": "c:crops/green_pepper"
+    },
+    {
+      "tag": "c:foods/dried_tofu"
+    },
+    {
+      "tag": "c:foods/dried_tofu"
+    }
   ],
   "recipe_book_tab": "meals",
   "result": {

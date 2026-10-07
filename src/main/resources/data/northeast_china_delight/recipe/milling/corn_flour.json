@@ -2,7 +2,7 @@
   "type": "create:milling",
   "ingredients": [
     {
-      "item": "northeast_china_delight:corn_seeds"
+      "tag": "c:seeds/corn"
     }
   ],
   "results": [

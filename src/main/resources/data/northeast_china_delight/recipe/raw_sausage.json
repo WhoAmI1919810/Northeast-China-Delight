@@ -2,8 +2,15 @@
   "type": "minecraft:crafting_shapeless",
   "category": "misc",
   "ingredients": [
-    { "item": "northeast_china_delight:pork_intestine" },
-    { "item": "minecraft:porkchop" }
+    {
+      "item": "northeast_china_delight:pork_intestine"
+    },
+    {
+      "tag": "c:foods/raw_pork"
+    }
   ],
-  "result": { "count": 1, "id": "northeast_china_delight:raw_sausage" }
+  "result": {
+    "count": 1,
+    "id": "northeast_china_delight:raw_sausage"
+  }
 }

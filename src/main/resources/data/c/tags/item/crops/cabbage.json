@@ -1,0 +1,15 @@
+{
+  "values": [
+    "farmersdelight:cabbage",
+    "farmersdelight:cabbage_leaf",
+    {
+      "id": "foodcraft:cabbage",
+      "required": false
+    },
+    {
+      "id": "croptopia:cabbage",
+      "required": false
+    },
+    "northeast_china_delight:napa_cabbage"
+  ]
+}

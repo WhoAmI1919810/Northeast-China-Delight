@@ -1,0 +1,21 @@
+{
+  "values": [
+    "northeast_china_delight:soybean",
+    {
+      "id": "croptopia:soybean",
+      "required": false
+    },
+    {
+      "id": "foodcraft:soybean",
+      "required": false
+    },
+    {
+      "id": "extradelight:soybeans",
+      "required": false
+    },
+    {
+      "id": "tofucraft:seeds_soybeans",
+      "required": false
+    }
+  ]
+}

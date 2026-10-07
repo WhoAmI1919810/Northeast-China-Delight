@@ -1,0 +1,12 @@
+{
+  "values": [
+    {
+      "id": "croptopia:soy_sauce",
+      "required": false
+    },
+    {
+      "id": "extradelight:soy_sauce_item",
+      "required": false
+    }
+  ]
+}

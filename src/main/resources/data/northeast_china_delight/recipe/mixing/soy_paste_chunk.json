@@ -3,22 +3,22 @@
   "heat_requirement": "heated",
   "ingredients": [
     {
-      "item": "northeast_china_delight:soybean"
+      "tag": "c:crops/soybean"
     },
     {
-      "item": "northeast_china_delight:soybean"
+      "tag": "c:crops/soybean"
     },
     {
-      "item": "northeast_china_delight:soybean"
+      "tag": "c:crops/soybean"
     },
     {
-      "item": "northeast_china_delight:soybean"
+      "tag": "c:crops/soybean"
     },
     {
-      "item": "northeast_china_delight:soybean"
+      "tag": "c:crops/soybean"
     },
     {
-      "item": "northeast_china_delight:soybean"
+      "tag": "c:crops/soybean"
     }
   ],
   "results": [

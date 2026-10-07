@@ -2,7 +2,9 @@
   "type": "minecraft:crafting_shapeless",
   "category": "misc",
   "ingredients": [
-    { "item": "northeast_china_delight:corn" }
+    {
+      "tag": "c:crops/corn"
+    }
   ],
   "result": {
     "count": 2,

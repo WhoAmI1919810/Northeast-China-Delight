@@ -3,7 +3,7 @@
   "heat_requirement": "heated",
   "ingredients": [
     {
-      "item": "northeast_china_delight:sweet_potato"
+      "tag": "c:crops/sweet_potato"
     },
     {
       "type": "neoforge:single",

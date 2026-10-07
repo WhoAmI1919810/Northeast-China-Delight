@@ -2,11 +2,21 @@
   "type": "farmersdelight:cooking",
   "experience": 0.35,
   "ingredients": [
-    { "item": "northeast_china_delight:spicy_cabbage" },
-    { "item": "northeast_china_delight:green_onion" },
-    { "item": "northeast_china_delight:sweet_potato_starch" },
-    { "item": "northeast_china_delight:sweet_potato_starch" },
-    { "item": "northeast_china_delight:cooking_oil" }
+    {
+      "tag": "c:foods/kimchi"
+    },
+    {
+      "tag": "c:crops/green_onion"
+    },
+    {
+      "tag": "c:foods/starch"
+    },
+    {
+      "tag": "c:foods/starch"
+    },
+    {
+      "tag": "c:foods/seasonings/cooking_oil"
+    }
   ],
   "recipe_book_tab": "misc",
   "result": {

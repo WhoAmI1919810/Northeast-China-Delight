@@ -1,12 +1,23 @@
 {
   "type": "farmersdelight:cooking",
-  "container": { "count": 1, "id": "northeast_china_delight:large_basin" },
+  "container": {
+    "count": 1,
+    "id": "northeast_china_delight:large_basin"
+  },
   "experience": 1.0,
   "ingredients": [
-    { "item": "minecraft:chicken" },
-    { "item": "minecraft:potato" },
-    { "item": "farmersdelight:wheat_dough" },
-    { "item": "northeast_china_delight:green_beans" }
+    {
+      "tag": "c:foods/raw_chicken"
+    },
+    {
+      "tag": "c:crops/potato"
+    },
+    {
+      "tag": "c:foods/dough/wheat"
+    },
+    {
+      "tag": "c:crops/green_bean"
+    }
   ],
   "recipe_book_tab": "meals",
   "result": {

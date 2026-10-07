@@ -2,12 +2,24 @@
   "type": "farmersdelight:cooking",
   "experience": 1.0,
   "ingredients": [
-    { "item": "northeast_china_delight:soybean" },
-    { "item": "northeast_china_delight:soybean" },
-    { "item": "northeast_china_delight:soybean" },
-    { "item": "northeast_china_delight:soybean" },
-    { "item": "northeast_china_delight:soybean" },
-    { "item": "northeast_china_delight:soybean" }
+    {
+      "tag": "c:crops/soybean"
+    },
+    {
+      "tag": "c:crops/soybean"
+    },
+    {
+      "tag": "c:crops/soybean"
+    },
+    {
+      "tag": "c:crops/soybean"
+    },
+    {
+      "tag": "c:crops/soybean"
+    },
+    {
+      "tag": "c:crops/soybean"
+    }
   ],
   "recipe_book_tab": "meals",
   "result": {

@@ -1,13 +1,27 @@
 {
   "type": "farmersdelight:cooking",
-  "container": { "count": 1, "id": "minecraft:bowl" },
+  "container": {
+    "count": 1,
+    "id": "minecraft:bowl"
+  },
   "experience": 1.0,
   "ingredients": [
-    { "item": "northeast_china_delight:pork_ribs" },
-    { "item": "minecraft:potato" },
-    { "item": "northeast_china_delight:soy_sauce" },
-    { "item": "minecraft:sugar" }
+    {
+      "item": "northeast_china_delight:pork_ribs"
+    },
+    {
+      "tag": "c:crops/potato"
+    },
+    {
+      "tag": "c:foods/seasonings/soy_sauce"
+    },
+    {
+      "tag": "c:sugar"
+    }
   ],
   "recipe_book_tab": "meals",
-  "result": { "count": 1, "id": "northeast_china_delight:braised_pork_ribs" }
+  "result": {
+    "count": 1,
+    "id": "northeast_china_delight:braised_pork_ribs"
+  }
 }

@@ -88,13 +88,11 @@ public class VatRenderer implements BlockEntityRenderer<VatBlockEntity> {
         // ===== 内容物：一层三个，立体小模型 =====
         boolean done = vat.getBlockState().getValue(Vat.FERMENTED);
         List<ItemStack> contents = vat.contents();
-        org.slf4j.LoggerFactory.getLogger(VatRenderer.class).info("[VatRenderer] pos={} contents={} count={}",
-                vat.getBlockPos(), contents.stream().map(s -> s.isEmpty() ? "empty" : s.getItem().toString()).toList(), contents.size());
         ItemRenderer itemRenderer = Minecraft.getInstance().getItemRenderer();
         // 干腌时抹上去的盐：让肉 / 鱼 的模型发白，而不是把盐本身画成一件东西
         float saltCoat = 0.0F;
         if (!vat.isSaltDissolved()) {
-            int salt = vat.countOf(ModItems.SALT.get());
+            int salt = vat.count(stack -> stack.is(com.gunmu.northeast_china_delight.ModTags.FOODS_SALT));
             int meaty = vat.meatCount() + vat.rawFishCount();
             if (salt > 0 && meaty > 0) {
                 saltCoat = Math.min(1.0F, salt / (float) meaty) * 0.55F;
@@ -130,7 +128,7 @@ public class VatRenderer implements BlockEntityRenderer<VatBlockEntity> {
                 if (content.is(ModItems.SOY_PASTE_CHUNK.get())) {
                     continue;
                 }
-                if (vat.kind() == VatRecipes.Kind.SOY_SAUCE && content.is(VatRecipes.wheatInput())) {
+                if (vat.kind() == VatRecipes.Kind.SOY_SAUCE && content.is(com.gunmu.northeast_china_delight.ModTags.CROPS_WHEAT)) {
                     continue;
                 }
             }
@@ -235,7 +233,7 @@ public class VatRenderer implements BlockEntityRenderer<VatBlockEntity> {
 
     /** 调料：不建模，只影响食材 / 液体的样子 */
     private static boolean isSeasoning(ItemStack stack) {
-        return stack.is(ModItems.SALT.get())
+        return stack.is(com.gunmu.northeast_china_delight.ModTags.FOODS_SALT)
                 || stack.is(ModItems.CHILI_SAUCE.get())
                 || stack.is(ModItems.FISH_SAUCE.get())
                 || stack.is(ModItems.SHRIMP_PASTE.get());

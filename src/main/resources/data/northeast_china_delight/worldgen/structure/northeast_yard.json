@@ -12,12 +12,7 @@
   "__说明_院子列表": "往数组里加一行就能加一种小院（NBT 放在 data/northeast_china_delight/structure/）",
   "templates": [
     "northeast_china_delight:northeast_yard_garden",
-    "northeast_china_delight:northeast_yard_livestock",
-    "northeast_china_delight:northeast_yard_corn",
-    "northeast_china_delight:northeast_yard_compound",
-    "northeast_china_delight:northeast_yard_cabin",
-    "northeast_china_delight:northeast_yard_metal",
-    "northeast_china_delight:northeast_yard_tree"
+    "northeast_china_delight:northeast_yard_compound"
   ],
 
   "__说明_概率与游走": "origin_chance=总概率闸门；walk_chance=第一户继续长新院的概率（之后每户 -15%，降到 20% 封底：80/65/50/35/20/20…，步长与下限是 Java 常量 WALK_CHANCE_STEP / WALK_CHANCE_MIN）；step_min/max=游走距离；step_measure=距离怎么量（gap=两院之间的空隙，推荐；center=原点直线距离）；max_houses=群落户数上限；min_gap=院子之间最小缝隙；max_slope=地形高差容忍度；allow_flip=是否允许南北两个朝向",

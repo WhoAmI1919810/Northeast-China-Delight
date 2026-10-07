@@ -16,6 +16,9 @@ public final class NortheastChinaConfig
     /** 菜肴方块形态总开关 */
     public static final ModConfigSpec.BooleanValue DISH_PLACEMENT_ENABLED;
 
+    /** 东北小院里的小零件（灶棚、鸡架、水井、菜窖等）是否生成 */
+    public static final ModConfigSpec.BooleanValue YARD_PARTS_ENABLED;
+
     static
     {
         ModConfigSpec.Builder builder = new ModConfigSpec.Builder();
@@ -24,6 +27,13 @@ public final class NortheastChinaConfig
                 .comment("允许玩家潜行右键把菜肴摆成方块。",
                         "设为 false 时彻底关闭这个功能：潜行右键不会放置，也不会有任何提示文字。")
                 .define("dish_placement_enabled", false);
+        builder.pop();
+
+        builder.comment("世界生成").push("worldgen");
+        YARD_PARTS_ENABLED = builder
+                .comment("东北小院里的小建筑（灶棚、鸡架、水井、菜窖、柴垛等）是否生成。",
+                        "设为 false 时只生成院子主体：空地、院墙、正房、门楼，不生成零件。")
+                .define("yard_parts_enabled", false);
         builder.pop();
         SPEC = builder.build();
     }

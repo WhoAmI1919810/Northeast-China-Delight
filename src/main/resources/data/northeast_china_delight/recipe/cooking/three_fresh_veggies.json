@@ -6,9 +6,15 @@
   },
   "experience": 1.0,
   "ingredients": [
-    { "item": "minecraft:potato" },
-    { "item": "northeast_china_delight:eggplant" },
-    { "item": "northeast_china_delight:green_pepper" }
+    {
+      "tag": "c:crops/potato"
+    },
+    {
+      "tag": "c:crops/eggplant"
+    },
+    {
+      "tag": "c:crops/green_pepper"
+    }
   ],
   "recipe_book_tab": "meals",
   "result": {

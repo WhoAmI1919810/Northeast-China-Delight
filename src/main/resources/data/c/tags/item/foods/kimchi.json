@@ -1,0 +1,9 @@
+{
+  "values": [
+    "northeast_china_delight:spicy_cabbage",
+    {
+      "id": "extradelight:kimchi_item",
+      "required": false
+    }
+  ]
+}

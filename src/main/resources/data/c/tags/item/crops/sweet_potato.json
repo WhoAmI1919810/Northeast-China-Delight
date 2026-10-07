@@ -1,0 +1,13 @@
+{
+  "values": [
+    "northeast_china_delight:sweet_potato",
+    {
+      "id": "croptopia:sweetpotato",
+      "required": false
+    },
+    {
+      "id": "foodcraft:sweet_potato",
+      "required": false
+    }
+  ]
+}

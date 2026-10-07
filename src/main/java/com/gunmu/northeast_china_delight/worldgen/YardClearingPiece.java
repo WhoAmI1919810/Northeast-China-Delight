@@ -36,8 +36,8 @@ public class YardClearingPiece extends StructurePiece
      * 往下再垫一层实心泥土，站在院子里往下挖就不会突然漏到洞里。
      */
     public static final int FOUNDATION_DEPTH = 32;
-    /** 地基比院墙再往外多铺几格，免得贴着墙根挖就是洞 */
-    public static final int FOUNDATION_MARGIN = 4;
+    /** 墙外只垫一圈 */
+    public static final int FOUNDATION_MARGIN = 1;
     /** 树冠比树干宽，清场半径外再补一圈专门清树叶/原木，免得留下悬空的树冠 */
     public static final int LEAF_MARGIN = 6;
     /** 门口正前方这一片也要填实（不然出门就是个洞） */
@@ -152,10 +152,11 @@ public class YardClearingPiece extends StructurePiece
                     int top = inYard ? this.groundY
                             : Math.max(this.groundY - 4, level.getHeight(Heightmap.Types.WORLD_SURFACE_WG, x, z));
                     int from = Math.max(level.getMinBuildHeight(), top - FOUNDATION_DEPTH);
-                    // 注意这里是**含**地面那一层的：以前写到 y < top，
-                    // 院墙外那一圈就少垫一层，墙外的地表比院子里低一格，
-                    // 墙根那排砖就露在外面了。
-                    int fillTo = inYard ? this.groundY : top - 1;
+                    // 以前填充到 y = groundY（含地面层），院墙外那一圈少垫一层，
+                    // 墙外的地表比院子里低一格，墙根那排砖就露在外面了。
+                    // 现在留矮一格：地面层由模板自己带（GROUND_LAYER_IN_TEMPLATE），
+                    // 这里只负责把地面下面的坑填实。
+                    int fillTo = inYard ? this.groundY - 1 : top - 1;
                     for (int y = from; y <= fillTo; y++)
                     {
                         cursor.set(x, y, z);

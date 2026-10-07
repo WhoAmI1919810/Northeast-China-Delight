@@ -1,0 +1,17 @@
+{
+  "values": [
+    "northeast_china_delight:cucumber",
+    {
+      "id": "croptopia:cucumber",
+      "required": false
+    },
+    {
+      "id": "foodcraft:cucumber",
+      "required": false
+    },
+    {
+      "id": "extradelight:cucumber",
+      "required": false
+    }
+  ]
+}

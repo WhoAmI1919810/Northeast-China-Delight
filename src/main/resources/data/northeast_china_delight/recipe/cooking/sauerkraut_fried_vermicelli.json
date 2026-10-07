@@ -6,8 +6,12 @@
   },
   "experience": 0.35,
   "ingredients": [
-    { "item": "northeast_china_delight:sour_cabbage" },
-    { "item": "northeast_china_delight:vermicelli" }
+    {
+      "tag": "c:foods/sauerkraut"
+    },
+    {
+      "tag": "c:foods/vermicelli"
+    }
   ],
   "recipe_book_tab": "meals",
   "result": {

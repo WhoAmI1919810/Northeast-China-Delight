@@ -1,6 +1,17 @@
 {
   "replace": false,
   "values": [
-    "northeast_china_delight:hairtail"
+    "northeast_china_delight:hairtail",
+    "northeast_china_delight:shrimp",
+    "northeast_china_delight:oyster",
+    "northeast_china_delight:sea_cucumber",
+    {
+      "id": "croptopia:shrimp",
+      "required": false
+    },
+    {
+      "id": "croptopia:oyster",
+      "required": false
+    }
   ]
 }

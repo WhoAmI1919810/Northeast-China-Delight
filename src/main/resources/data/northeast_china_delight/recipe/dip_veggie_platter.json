@@ -2,14 +2,30 @@
   "type": "minecraft:crafting_shapeless",
   "category": "misc",
   "ingredients": [
-    { "item": "northeast_china_delight:soy_paste" },
-    { "item": "northeast_china_delight:cucumber" },
-    { "item": "northeast_china_delight:napa_cabbage" },
-    { "item": "northeast_china_delight:dried_tofu" },
-    { "item": "northeast_china_delight:green_pepper" },
-    { "item": "farmersdelight:tomato" },
-    { "item": "northeast_china_delight:green_onion" },
-    { "item": "minecraft:carrot" }
+    {
+      "item": "northeast_china_delight:soy_paste"
+    },
+    {
+      "tag": "c:crops/cucumber"
+    },
+    {
+      "tag": "c:crops/napa_cabbage"
+    },
+    {
+      "tag": "c:foods/dried_tofu"
+    },
+    {
+      "tag": "c:crops/green_pepper"
+    },
+    {
+      "tag": "c:crops/tomato"
+    },
+    {
+      "tag": "c:crops/green_onion"
+    },
+    {
+      "tag": "c:crops/carrot"
+    }
   ],
   "result": {
     "count": 1,

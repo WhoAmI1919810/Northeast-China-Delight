@@ -1,7 +1,18 @@
 {
   "type": "minecraft:crafting_shaped",
   "category": "building",
-  "pattern": [ "XXX", "XXX", "XXX" ],
-  "key": { "X": { "item": "northeast_china_delight:buckwheat" } },
-  "result": { "count": 1, "id": "northeast_china_delight:buckwheat_sack" }
+  "pattern": [
+    "XXX",
+    "XXX",
+    "XXX"
+  ],
+  "key": {
+    "X": {
+      "tag": "c:crops/buckwheat"
+    }
+  },
+  "result": {
+    "count": 1,
+    "id": "northeast_china_delight:buckwheat_sack"
+  }
 }

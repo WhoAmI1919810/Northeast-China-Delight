@@ -6,11 +6,21 @@
   },
   "experience": 1.0,
   "ingredients": [
-    { "item": "northeast_china_delight:spicy_cabbage" },
-    { "item": "minecraft:water_bucket" },
-    { "item": "minecraft:beef" },
-    { "item": "northeast_china_delight:bean_sprouts" },
-    { "item": "farmersdelight:cooked_rice" }
+    {
+      "tag": "c:foods/kimchi"
+    },
+    {
+      "item": "minecraft:water_bucket"
+    },
+    {
+      "tag": "c:foods/raw_beef"
+    },
+    {
+      "tag": "c:foods/bean_sprouts"
+    },
+    {
+      "tag": "farmersdelight:cooked_rice"
+    }
   ],
   "recipe_book_tab": "meals",
   "result": {

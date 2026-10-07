@@ -6,8 +6,12 @@
   },
   "experience": 0.35,
   "ingredients": [
-    { "item": "northeast_china_delight:sea_cucumber" },
-    { "item": "northeast_china_delight:tofu" }
+    {
+      "tag": "c:foods/sea_cucumber"
+    },
+    {
+      "tag": "c:foods/tofu"
+    }
   ],
   "recipe_book_tab": "meals",
   "result": {

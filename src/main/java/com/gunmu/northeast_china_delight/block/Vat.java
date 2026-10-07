@@ -95,10 +95,11 @@ public class Vat extends Block implements EntityBlock {
         return level.getBlockEntity(pos) instanceof VatBlockEntity vat ? vat : null;
     }
 
-    /** 手里拿的是不是可以压缸的石头类方块 */
+    /** 手里拿的是不是可以压缸的石头类方块（必须是完整方块：台阶/墙/栅栏这种不算） */
     private static boolean isPressStone(ItemStack stack) {
         return stack.getItem() instanceof BlockItem blockItem
-                && blockItem.getBlock().defaultBlockState().is(PRESS_STONES);
+                && blockItem.getBlock().defaultBlockState().is(PRESS_STONES)
+                && blockItem.getBlock().defaultBlockState().isSolid();
     }
     /** 手里拿的正好是这条配方点名要压的那件东西（比如冻梨配方的雪块） */
     private static boolean matchesRequiredSealItem(VatRecipe recipe, ItemStack stack) {
@@ -158,7 +159,8 @@ public class Vat extends Block implements EntityBlock {
      * 这里只是"照表读一遍"，客户端渲染「发白的盐水」时也用这个判断。
      */
     public static boolean hasEnoughSalt(VatBlockEntity vat) {
-        VatRecipe recipe = VatRecipes.recipeOf(vat.kind());
+        // 投料阶段 kind 还是 NONE，得看这缸**现在最像**哪条配方
+        VatRecipe recipe = VatBrewing.current(vat);
         if (recipe == null) {
             return false;
         }
@@ -188,8 +190,9 @@ public class Vat extends Block implements EntityBlock {
      *
      * <p>"条件齐了"这句话现在完全由 {@link VatBrewing#ready} 按配方表判断：
      * 材料配齐、液体对得上、封口物也对。这里只负责把缸标成这条配方、然后排一次 tick。
+     * 创造大缸子类会覆盖这个方法，把「排 tick」换成「当场完成」。</p>
      */
-    private static void tryStart(Level level, BlockPos pos, VatBlockEntity vat) {
+    protected void tryStart(Level level, BlockPos pos, VatBlockEntity vat) {
         BlockState state = level.getBlockState(pos);
         if (state.getValue(FERMENTED) || level.getBlockState(pos).getValue(PROGRESS) > 0) {
             return;
@@ -251,6 +254,11 @@ public class Vat extends Block implements EntityBlock {
             return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
         }
 
+        // 潜行右键：优先把封口物取回来（石头 / 羊毛毯 / 粗布毯 / 雪块），一次右键取一样
+        if (player.isSecondaryUseActive() && (vat.isPressed() || vat.isCovered())) {
+            return takeSeal(level, pos, state, vat, player);
+        }
+
         // 压着石头时是「锁住」状态：不能往里放任何东西，必须先取出石头。
         // 例外：手里拿玻璃瓶 / 调料瓶时，右键是**往外取液体**，不算"往缸里加东西"，
         // 不该被压缸石挡住 —— 泡菜腌好后石头还压在缸上，酸引水就是要能这样装走的。
@@ -259,6 +267,13 @@ public class Vat extends Block implements EntityBlock {
                 hint(player, "message.northeast_china_delight.vat.locked_by_press");
             }
             return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+        }
+
+        // 还没酿好：普通右键只报进度（拿着东西也一样，免得把东西投进去才发现点错了）
+        if (!state.getValue(FERMENTED) && !stack.is(Items.WATER_BUCKET)) {
+            if (!level.isClientSide && stack.isEmpty()) {
+                showProgress(player, level, pos, state, vat);
+            }
         }
 
         // 加水：桶装水，一桶正好一层
@@ -282,6 +297,12 @@ public class Vat extends Block implements EntityBlock {
         // 客户端不做预测改动：一切判定与改动都在服务端做（和以前的写法一致）
         if (level.isClientSide) {
             return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+        }
+
+        // 手里没东西也没别的事可做：显示当前发酵进度（actionbar）
+        if (stack.isEmpty()) {
+            showProgress(player, level, pos, state, vat);
+            return ItemInteractionResult.sidedSuccess(false);
         }
 
         // 把瓶装酸引水倒回缸里：空缸会变成「泡菜缸」，腌好的泡菜缸则继续攒酸引水
@@ -344,7 +365,7 @@ public class Vat extends Block implements EntityBlock {
     }
 
     /** 把一份材料放进缸里（数量够不够、收不收，进来之前已经由配方表判断过） */
-    private static boolean insert(Level level, BlockPos pos, VatBlockEntity vat, Player player,
+    private boolean insert(Level level, BlockPos pos, VatBlockEntity vat, Player player,
                                   ItemStack stack, VatRecipe recipe, InteractionHand hand) {
         int slot = recipe.findSlotFor(stack, VatBrewing.counts(vat, null));
         if (slot < 0) {
@@ -386,7 +407,7 @@ public class Vat extends Block implements EntityBlock {
      *
      * <p>压缸石给泡菜 / 腊肉 / 咸鱼 / 鱼露 / 虾酱，羊毛地毯给大酱 / 酱油，粗布毯给醋 / 豆芽 / 酸玉米粒 / 格瓦斯。
      */
-    private static boolean seal(Level level, BlockPos pos, VatBlockEntity vat, Player player, ItemStack stack) {
+    private boolean seal(Level level, BlockPos pos, VatBlockEntity vat, Player player, ItemStack stack) {
         if (vat.isEmpty()) {
             return false;
         }
@@ -417,6 +438,61 @@ public class Vat extends Block implements EntityBlock {
         return true;
     }
 
+    /** 潜行右键：先还石头、再还盖布，一次右键取一样 */
+    private static @NotNull ItemInteractionResult takeSeal(Level level, BlockPos pos, BlockState state,
+                                                          VatBlockEntity vat, Player player) {
+        if (vat.isPressed()) {
+            if (!level.isClientSide) {
+                give(player, vat.takePress());
+                if (!state.getValue(FERMENTED)) {
+                    level.setBlock(pos, state.setValue(PROGRESS, 0), 3);
+                }
+                level.playSound(null, pos, SoundEvents.STONE_BREAK, SoundSource.BLOCKS, 1.0F, 1.0F);
+            }
+            return ItemInteractionResult.sidedSuccess(level.isClientSide());
+        }
+        if (vat.isCovered()) {
+            if (!level.isClientSide) {
+                give(player, vat.takeCover());
+                if (!state.getValue(FERMENTED)) {
+                    level.setBlock(pos, state.setValue(PROGRESS, 0), 3);
+                }
+                level.playSound(null, pos, SoundEvents.BUCKET_FILL, SoundSource.BLOCKS, 1.0F, 1.0F);
+            }
+            return ItemInteractionResult.sidedSuccess(level.isClientSide());
+        }
+        return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+    }
+
+    /** 空手右键：把当前发酵进度显示在物品栏上方 */
+    private static void showProgress(Player player, Level level, BlockPos pos, BlockState state, VatBlockEntity vat) {
+        // 已经完成：提示成品怎么处理
+        if (state.getValue(FERMENTED)) {
+            hint(player, "message.northeast_china_delight.vat.progress.done");
+            return;
+        }
+        // 还没开工：看这一缸现在像哪条配方、缺什么（认不出来就不打扰玩家）
+        VatRecipe recipe = VatBrewing.current(vat);
+        if (recipe == null || vat.kind() == VatRecipes.Kind.NONE) {
+            return;
+        }
+        int progress = state.getValue(PROGRESS);
+        int total = Vat.MAX_PROGRESS;
+        int percent = Math.min(100, progress * 100 / total);
+        int stepTicks = VatBrewing.stepTicks(recipe, vat);
+        int remainTicks = (total - progress) * stepTicks;
+        long seconds = remainTicks / 20L;
+        if (seconds >= 60) {
+            player.displayClientMessage(Component.translatable(
+                    "message.northeast_china_delight.vat.progress.hint",
+                    percent, seconds / 60, seconds % 60), true);
+        } else {
+            player.displayClientMessage(Component.translatable(
+                    "message.northeast_china_delight.vat.progress.hint_seconds",
+                    percent, seconds), true);
+        }
+    }
+
     /** 空手右键：取回石头/地毯、取出成品、逐个取泡菜 */
     @Override
     protected @NotNull InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos,
@@ -426,34 +502,43 @@ public class Vat extends Block implements EntityBlock {
             return InteractionResult.PASS;
         }
 
-        // 压着石头时右键：把石头取回来。石头是「锁」——取下来之后才能继续加东西。
-        // 如果当时还没腌好，取石头等于中断，进度清零重新开始。
-        if (vat.isPressed()) {
+        // 潜行空手右键：把封口物取回来（石头 / 羊毛毯 / 粗布毯 / 雪块），一次右键取一样
+        if (player.isSecondaryUseActive() && (vat.isPressed() || vat.isCovered())) {
             if (!level.isClientSide) {
-                give(player, vat.takePress());
+                if (vat.isPressed()) {
+                    give(player, vat.takePress());
+                    level.playSound(null, pos, SoundEvents.STONE_BREAK, SoundSource.BLOCKS, 1.0F, 1.0F);
+                } else {
+                    give(player, vat.takeCover());
+                    level.playSound(null, pos, SoundEvents.BUCKET_FILL, SoundSource.BLOCKS, 1.0F, 1.0F);
+                }
                 if (!state.getValue(FERMENTED)) {
                     level.setBlock(pos, state.setValue(PROGRESS, 0), 3);
                 }
-                level.playSound(null, pos, SoundEvents.STONE_BREAK, SoundSource.BLOCKS, 1.0F, 1.0F);
             }
             return InteractionResult.sidedSuccess(level.isClientSide());
         }
 
-        // 盖布和压缸石一样是"锁"：随时可以把盖布取回来。
-        // 没腌好就取等于中断（进度清零重新开始），腌好了取就是开缸取货。
-        if (vat.isCovered()) {
-            if (!level.isClientSide) {
-                give(player, vat.takeCover());
-                if (!state.getValue(FERMENTED)) {
-                    level.setBlock(pos, state.setValue(PROGRESS, 0), 3);
-                }
-                level.playSound(null, pos, SoundEvents.BUCKET_FILL, SoundSource.BLOCKS, 1.0F, 1.0F);
-            }
-            return InteractionResult.sidedSuccess(level.isClientSide());
-        }
-
+        // 还没酿好：普通右键只报进度，不取石头也不取货
         if (!state.getValue(FERMENTED)) {
-            return InteractionResult.PASS;
+            if (!level.isClientSide) {
+                showProgress(player, level, pos, state, vat);
+            }
+            return InteractionResult.sidedSuccess(level.isClientSide());
+        }
+
+        // 酿好了但还封着口：普通右键也能把封口物取下来（取下来才拿得到里面的东西）
+        if (vat.isPressed() || vat.isCovered()) {
+            if (!level.isClientSide) {
+                if (vat.isPressed()) {
+                    give(player, vat.takePress());
+                    level.playSound(null, pos, SoundEvents.STONE_BREAK, SoundSource.BLOCKS, 1.0F, 1.0F);
+                } else {
+                    give(player, vat.takeCover());
+                    level.playSound(null, pos, SoundEvents.BUCKET_FILL, SoundSource.BLOCKS, 1.0F, 1.0F);
+                }
+            }
+            return InteractionResult.sidedSuccess(level.isClientSide());
         }
 
         // 缸里还有成品液体（大酱 / 酱油 / 醋 / 白醋 / 鱼露 / 虾酱 / 格瓦斯）时，只能用对应的容器装。
@@ -533,7 +618,7 @@ public class Vat extends Block implements EntityBlock {
      * 也都已经被大缸吸收，不该在破坏时掉出来。
      */
     private static boolean isAbsorbedSeasoning(ItemStack stack) {
-        if (stack.is(ModItems.SALT.get())) {
+        if (VatRecipes.isSalt(stack)) {
             return true;
         }
         for (VatRecipe recipe : VatRecipes.all()) {
@@ -575,6 +660,7 @@ public class Vat extends Block implements EntityBlock {
             case FISH_SAUCE -> "message.northeast_china_delight.vat.need_bottle_fish_sauce";
             case SHRIMP_PASTE -> "message.northeast_china_delight.vat.need_bottle_shrimp_paste";
             case PICKLE, SPICY_PICKLE -> "message.northeast_china_delight.vat.need_bottle_sour_water";
+            case KVASS -> "message.northeast_china_delight.vat.need_bottle_kvass";
             default -> "message.northeast_china_delight.vat.need_bottle";
         };
     }

@@ -1,0 +1,12 @@
+{
+  "values": [
+    {
+      "id": "extradelight:vinegar",
+      "required": false
+    },
+    {
+      "id": "foodcraft:vinegar",
+      "required": false
+    }
+  ]
+}

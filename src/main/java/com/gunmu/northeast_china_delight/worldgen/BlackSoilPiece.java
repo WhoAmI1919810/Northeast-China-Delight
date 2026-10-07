@@ -75,6 +75,11 @@ public class BlackSoilPiece extends StructurePiece
         {
             for (int z = minZ; z <= maxZ; z++)
             {
+                // 只处理正在生成的这个 chunk 里的格子，别伸手到隔壁
+                if (!chunkContains(chunkPos, x, z))
+                {
+                    continue;
+                }
                 if (random.nextFloat() > this.density)
                 {
                     continue;
@@ -99,6 +104,12 @@ public class BlackSoilPiece extends StructurePiece
                 }
             }
         }
+    }
+
+    private static boolean chunkContains(ChunkPos chunk, int x, int z)
+    {
+        return chunk.getMinBlockX() <= x && x <= chunk.getMaxBlockX()
+                && chunk.getMinBlockZ() <= z && z <= chunk.getMaxBlockZ();
     }
 
     private static boolean isReplaceable(BlockState state)

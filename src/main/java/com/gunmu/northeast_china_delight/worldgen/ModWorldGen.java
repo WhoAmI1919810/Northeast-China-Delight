@@ -44,6 +44,11 @@ public class ModWorldGen
             PIECE_TYPES.register("northeast_black_soil",
                     () -> (StructurePieceType.ContextlessType) BlackSoilPiece::new);
 
+    /** 生物群系沃土：整片群系按概率铺农夫乐事的沃土 */
+    public static final DeferredHolder<StructurePieceType, StructurePieceType> BIOME_RICH_SOIL_PIECE =
+            PIECE_TYPES.register("northeast_biome_rich_soil",
+                    () -> (StructurePieceType.ContextlessType) BiomeRichSoilPiece::new);
+
     /** 小院周边的清场（上方净空 + 半径内地物） */
     public static final DeferredHolder<StructurePieceType, StructurePieceType> CLEARING_PIECE =
             PIECE_TYPES.register("northeast_clearing",

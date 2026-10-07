@@ -1,0 +1,25 @@
+{
+  "values": [
+    "northeast_china_delight:salt",
+    {
+      "id": "croptopia:salt",
+      "required": false
+    },
+    {
+      "id": "extradelight:salt",
+      "required": false
+    },
+    {
+      "id": "foodcraft:salt",
+      "required": false
+    },
+    {
+      "id": "tofucraft:salt",
+      "required": false
+    },
+    {
+      "id": "hearthandharvest:salt",
+      "required": false
+    }
+  ]
+}

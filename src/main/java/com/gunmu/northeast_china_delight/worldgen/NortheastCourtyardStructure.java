@@ -42,7 +42,7 @@ import java.util.Optional;
  *   origin_chance —— 群体总开关，0.0~1.0，越小越稀有
  *   walk_chance   —— 第一户继续长新院的概率（默认 0.80，之后每户 -15%，最低 20%）
  *   step_min/max  —— 游走距离范围（默认 20~50 格）
- *   max_houses    —— 一个群落最多几户（默认 20）
+ *   max_houses    —— 一个群落最多几户（默认不限，游走概率自己兜底）
  *   min_gap       —— 两个院子的最小间隔（格子数），防止院子叠在一起
  *   max_slope     —— 起点两侧地形高差超过这个数就不生成（防止糊在陡坡上）
  *   allow_flip    —— 是否允许院子朝南 / 朝北两种朝向
@@ -57,14 +57,10 @@ import java.util.Optional;
  */
 public class NortheastCourtyardStructure extends Structure
 {
-    /** 默认 6 种院子（顺序即抽签概率） */
+    /** 默认 2 种院子（顺序即抽签概率）；小零件暂时关闭，见 {@link #partsEnabled()} */
     public static final List<String> DEFAULT_TEMPLATES = List.of(
             "northeast_china_delight:northeast_yard_garden",
-            "northeast_china_delight:northeast_yard_livestock",
-            "northeast_china_delight:northeast_yard_corn",
-            "northeast_china_delight:northeast_yard_compound",
-            "northeast_china_delight:northeast_yard_cabin",
-            "northeast_china_delight:northeast_yard_metal"
+            "northeast_china_delight:northeast_yard_compound"
     );
 
     /**
@@ -93,6 +89,8 @@ public class NortheastCourtyardStructure extends Structure
     public static final int MAX_GATE_SLOPE = 4;
     /** 黑土地每格替换概率（改这一个数就能调密度） */
     public static final float BLACK_SOIL_DENSITY = 0.12F;
+    /** 群系沃土的密度：一户人家周围有多大一片土会变成沃土 */
+    public static final float BIOME_SOIL_DENSITY = 0.25F;
 
     /**
      * 「清场」设置：院子正上方留多少格空气、院子外扩多少格清树。
@@ -140,7 +138,7 @@ public class NortheastCourtyardStructure extends Structure
             Codec.floatRange(0.0F, 1.0F).optionalFieldOf("walk_chance", 0.80F).forGetter(s -> s.walkChance),
             Codec.intRange(1, 256).optionalFieldOf("step_min", 20).forGetter(s -> s.stepMin),
             Codec.intRange(1, 256).optionalFieldOf("step_max", 50).forGetter(s -> s.stepMax),
-            Codec.intRange(1, 64).optionalFieldOf("max_houses", 20).forGetter(s -> s.maxHouses),
+            Codec.INT.optionalFieldOf("max_houses", Integer.MAX_VALUE).forGetter(s -> s.maxHouses),
             Codec.intRange(-8, 64).optionalFieldOf("min_gap", 1).forGetter(s -> s.minGap),
             Codec.intRange(0, 32).optionalFieldOf("max_slope", 6).forGetter(s -> s.maxSlope),
             Codec.BOOL.optionalFieldOf("allow_flip", true).forGetter(s -> s.allowFlip),
@@ -246,9 +244,17 @@ public class NortheastCourtyardStructure extends Structure
                     BlockPos center = yard.pos().offset(
                             yardTemplate.getSize().getX() / 2, 0, yardTemplate.getSize().getZ() / 2);
                     builder.addPiece(new BlackSoilPiece(center, this.blackSoilRadius, BLACK_SOIL_DENSITY));
+                    // 群系沃土：这一户落点的**整片生物群系**里，土类按概率变沃土
+                    builder.addPiece(new BiomeRichSoilPiece(center, this.blackSoilRadius * 4, BIOME_SOIL_DENSITY));
                 }
             }
         }));
+    }
+
+    /** 是否生成院子里的小零件（灶棚、鸡架、水井、菜窖、柴垛等） */
+    private static boolean partsEnabled()
+    {
+        return com.gunmu.northeast_china_delight.NortheastChinaConfig.YARD_PARTS_ENABLED.get();
     }
 
     /** 游走：从第一户开始，四个方向各自掷概率、各自随机距离，长到上限为止。 */

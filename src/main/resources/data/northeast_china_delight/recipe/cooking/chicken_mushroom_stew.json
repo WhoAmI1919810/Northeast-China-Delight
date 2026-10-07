@@ -1,12 +1,23 @@
 {
   "type": "farmersdelight:cooking",
-  "container": { "count": 1, "id": "northeast_china_delight:large_basin" },
+  "container": {
+    "count": 1,
+    "id": "northeast_china_delight:large_basin"
+  },
   "experience": 1.0,
   "ingredients": [
-    { "item": "minecraft:chicken" },
-    { "item": "northeast_china_delight:hazel_mushroom" },
-    { "item": "northeast_china_delight:soy_sauce" },
-    { "item": "northeast_china_delight:vermicelli" }
+    {
+      "tag": "c:foods/raw_chicken"
+    },
+    {
+      "tag": "c:mushrooms"
+    },
+    {
+      "tag": "c:foods/seasonings/soy_sauce"
+    },
+    {
+      "tag": "c:foods/vermicelli"
+    }
   ],
   "recipe_book_tab": "meals",
   "result": {

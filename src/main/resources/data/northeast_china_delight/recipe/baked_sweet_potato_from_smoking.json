@@ -4,7 +4,7 @@
   "cookingtime": 100,
   "experience": 0.35,
   "ingredient": {
-    "item": "northeast_china_delight:sweet_potato"
+    "tag": "c:crops/sweet_potato"
   },
   "result": {
     "count": 1,

@@ -1,0 +1,9 @@
+{
+  "values": [
+    "northeast_china_delight:soy_paste",
+    {
+      "id": "tofucraft:miso",
+      "required": false
+    }
+  ]
+}

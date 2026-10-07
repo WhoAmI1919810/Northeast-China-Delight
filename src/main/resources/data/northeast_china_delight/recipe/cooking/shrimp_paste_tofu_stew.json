@@ -6,9 +6,15 @@
   },
   "experience": 0.35,
   "ingredients": [
-    { "item": "northeast_china_delight:shrimp_paste" },
-    { "item": "northeast_china_delight:tofu" },
-    { "item": "northeast_china_delight:napa_cabbage" }
+    {
+      "tag": "c:foods/seasonings/shrimp_paste"
+    },
+    {
+      "tag": "c:foods/tofu"
+    },
+    {
+      "tag": "c:crops/napa_cabbage"
+    }
   ],
   "recipe_book_tab": "meals",
   "result": {

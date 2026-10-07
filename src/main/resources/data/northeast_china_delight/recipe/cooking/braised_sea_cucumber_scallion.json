@@ -6,8 +6,12 @@
   },
   "experience": 0.35,
   "ingredients": [
-    { "item": "northeast_china_delight:green_onion" },
-    { "item": "northeast_china_delight:sea_cucumber" }
+    {
+      "tag": "c:crops/green_onion"
+    },
+    {
+      "tag": "c:foods/sea_cucumber"
+    }
   ],
   "recipe_book_tab": "meals",
   "result": {

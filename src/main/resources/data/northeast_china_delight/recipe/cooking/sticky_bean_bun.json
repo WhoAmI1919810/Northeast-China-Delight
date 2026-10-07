@@ -3,16 +3,16 @@
   "experience": 0.35,
   "ingredients": [
     {
-      "item": "northeast_china_delight:corn_flour"
+      "tag": "c:flours/corn"
     },
     {
-      "item": "northeast_china_delight:corn_flour"
+      "tag": "c:flours/corn"
     },
     {
-      "item": "northeast_china_delight:red_bean"
+      "tag": "c:crops/red_bean"
     },
     {
-      "item": "minecraft:sugar"
+      "tag": "c:sugar"
     }
   ],
   "recipe_book_tab": "misc",

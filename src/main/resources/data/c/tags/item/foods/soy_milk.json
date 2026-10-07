@@ -1,0 +1,21 @@
+{
+  "values": [
+    "northeast_china_delight:soy_milk",
+    {
+      "id": "croptopia:soy_milk",
+      "required": false
+    },
+    {
+      "id": "tofucraft:soymilk_bottle",
+      "required": false
+    },
+    {
+      "id": "foodcraft:soymilk",
+      "required": false
+    },
+    {
+      "id": "extradelight:soy_milk",
+      "required": false
+    }
+  ]
+}

@@ -6,9 +6,15 @@
   },
   "experience": 0.35,
   "ingredients": [
-    { "item": "northeast_china_delight:shrimp_paste" },
-    { "item": "minecraft:egg" },
-    { "item": "northeast_china_delight:green_pepper" }
+    {
+      "tag": "c:foods/seasonings/shrimp_paste"
+    },
+    {
+      "tag": "c:eggs"
+    },
+    {
+      "tag": "c:crops/green_pepper"
+    }
   ],
   "recipe_book_tab": "meals",
   "result": {

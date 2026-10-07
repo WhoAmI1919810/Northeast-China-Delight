@@ -1,0 +1,16 @@
+{
+  "values": [
+    "northeast_china_delight:blood_sausage",
+    "northeast_china_delight:rice_sausage",
+    "northeast_china_delight:red_sausage",
+    "northeast_china_delight:raw_sausage",
+    {
+      "id": "croptopia:sausage",
+      "required": false
+    },
+    {
+      "id": "foodcraft:sausage",
+      "required": false
+    }
+  ]
+}

@@ -8,10 +8,10 @@
       "fluid": "northeast_china_delight:vegetable_oil"
     },
     {
-      "item": "northeast_china_delight:red_chili"
+      "tag": "c:crops/chile_pepper"
     },
     {
-      "item": "northeast_china_delight:red_chili"
+      "tag": "c:crops/chile_pepper"
     }
   ],
   "results": [

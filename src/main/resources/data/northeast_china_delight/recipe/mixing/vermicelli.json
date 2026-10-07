@@ -2,19 +2,19 @@
   "type": "create:mixing",
   "ingredients": [
     {
-      "item": "northeast_china_delight:sweet_potato_starch"
+      "tag": "c:foods/starch"
     },
     {
-      "item": "northeast_china_delight:sweet_potato_starch"
+      "tag": "c:foods/starch"
     },
     {
-      "item": "northeast_china_delight:sweet_potato_starch"
+      "tag": "c:foods/starch"
     },
     {
-      "item": "northeast_china_delight:sweet_potato_starch"
+      "tag": "c:foods/starch"
     },
     {
-      "item": "northeast_china_delight:salt"
+      "tag": "c:foods/seasonings/salt"
     },
     {
       "type": "neoforge:single",

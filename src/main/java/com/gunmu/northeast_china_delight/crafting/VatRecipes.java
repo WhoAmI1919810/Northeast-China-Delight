@@ -1,6 +1,7 @@
 package com.gunmu.northeast_china_delight.crafting;
 
 import com.mojang.logging.LogUtils;
+import com.gunmu.northeast_china_delight.ModTags;
 import com.gunmu.northeast_china_delight.item.ModItems;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
@@ -124,15 +125,14 @@ public final class VatRecipes {
     public static final int RESIDUE_COUNT = 3;
     public static final int VINEGAR_GRAIN_COUNT = 3;
 
-    /** 酱油额外需要的麦子 */
-    public static Item wheatInput() {
-        return Items.WHEAT;
+    /** 酱油额外需要的麦子（c:crops/wheat，别家的小麦也算） */
+    public static boolean isWheat(ItemStack stack) {
+        return stack.is(ModTags.CROPS_WHEAT);
     }
 
-    /** 冻梨用的梨：果园乐事的梨子（物品 ID fruitsdelight:pear） */
-    public static Item pearInput() {
-        return net.minecraft.core.registries.BuiltInRegistries.ITEM
-                .get(ResourceLocation.fromNamespaceAndPath("fruitsdelight", "pear"));
+    /** 冻梨用的梨：果园乐事的梨子（c:foods/fruits/pear，别家的梨也算） */
+    public static boolean isPear(ItemStack stack) {
+        return stack.is(ModTags.FOODS_FRUITS_PEAR);
     }
 
     // ===== 发酵时长 =====
@@ -215,12 +215,30 @@ public final class VatRecipes {
     }
 
     public static boolean isPickleIngredient(ItemStack stack) {
-        return pickles().containsKey(stack.getItem());
+        return pickles().containsKey(stack.getItem())
+                || stack.is(ModTags.CROPS_NAPA_CABBAGE)
+                || stack.is(ModTags.CROPS_CABBAGE)
+                || stack.is(ModTags.CROPS_CUCUMBER)
+                || stack.is(ModTags.CROPS_CARROT)
+                || stack.is(ModTags.CROPS_RADISH);
     }
 
-    /** 腌制腊肉用的原料与成品 */
-    public static Item meatInput() {
-        return Items.PORKCHOP;
+    /** 按标签取这份菜腌完变成什么（本模组的表查不到就退化成酸菜） */
+    private static ItemStack convertPickle(ItemStack stack) {
+        Item result = pickles().get(stack.getItem());
+        if (result != null) {
+            return new ItemStack(result);
+        }
+        if (stack.is(ModTags.CROPS_CUCUMBER)) return new ItemStack(ModItems.PICKLED_CUCUMBER.get());
+        if (stack.is(ModTags.CROPS_CARROT)) return new ItemStack(ModItems.PICKLED_CARROT.get());
+        if (stack.is(ModTags.CROPS_RADISH)) return new ItemStack(ModItems.PICKLED_GREEN_RADISH.get());
+        // 大白菜或认不出来的，一律腌成酸菜
+        return new ItemStack(ModItems.SOUR_CABBAGE.get());
+    }
+
+    /** 腌制腊肉用的原料（c:foods/raw_pork：别家的生猪排也能腌） */
+    public static boolean isMeatInput(ItemStack stack) {
+        return stack.is(ModTags.FOODS_RAW_PORK);
     }
 
     public static Item meatResult() {
@@ -233,13 +251,13 @@ public final class VatRecipes {
     }
 
     /** 酸玉米粒用的玉米粒（旧的水面团配方已经删掉，这里只服务玉米粒这一条线） */
-    public static Item cornKernels() {
-        return ModItems.CORN_SEEDS.get();
+    public static boolean isCornKernels(ItemStack stack) {
+        return stack.is(ModTags.SEEDS_CORN);
     }
 
     /** 酿醋用的谷物：玉米粒或荞麦 */
     public static boolean isVinegarGrain(ItemStack stack) {
-        return stack.is(ModItems.CORN_SEEDS.get()) || stack.is(ModItems.BUCKWHEAT.get());
+        return stack.is(ModTags.SEEDS_CORN) || stack.is(ModTags.CROPS_BUCKWHEAT);
     }
 
     /** 任意生鱼：直接用 NeoForge 通用标签 c:foods/raw_fish（鳕鱼、鲑鱼以及模组生鱼片都算） */
@@ -302,12 +320,12 @@ public final class VatRecipes {
     }
 
     private static Predicate<ItemStack> salt() {
-        return stack -> stack.is(ModItems.SALT.get());
+        return stack -> stack.is(ModTags.FOODS_SALT);
     }
 
     /** 单独给盐用的匹配器：盐被撒进缸里就算"被吸收"，不靠任何配方格子 */
     public static boolean isSalt(ItemStack stack) {
-        return stack.is(ModItems.SALT.get());
+        return stack.is(ModTags.FOODS_SALT);
     }
 
     private static Predicate<ItemStack> of(Item item) {
@@ -328,11 +346,10 @@ public final class VatRecipes {
      */
     private static VatRecipe.Converter spicyPickleConverter() {
         return stack -> {
-            if (stack.is(ModItems.NAPA_CABBAGE.get())) {
+            if (stack.is(ModTags.CROPS_NAPA_CABBAGE)) {
                 return new ItemStack(spicyCabbage());
             }
-            Item result = pickles().get(stack.getItem());
-            return result == null ? stack : new ItemStack(result);
+            return convertPickle(stack);
         };
     }
 
@@ -369,7 +386,7 @@ public final class VatRecipes {
                 .slot(VatRecipe.Slot.absorb(of(chiliSauce()), VatRecipe.BoundsRule.exact(SPICY_SAUCE_MAX))
                         .refund(Items.BOWL).seasoning())
                 .slot(VatRecipe.Slot.absorb(
-                        stack -> stack.is(ModItems.FISH_SAUCE.get()) || stack.is(ModItems.SHRIMP_PASTE.get()),
+                        stack -> stack.is(ModTags.FOODS_FISH_SAUCE) || stack.is(ModTags.FOODS_SHRIMP_PASTE),
                         VatRecipe.BoundsRule.minByWater(new int[] { 0, 1, 1, 2 }, SPICY_SEASONING_MAX))
                         .dosed().seasoning())
                 .build());
@@ -379,7 +396,7 @@ public final class VatRecipes {
                 .priority(10).seal(press)
                 .dry()
                 .seconds(MEAT_SECONDS).biomeSeconds(SALTED)
-                .slot(VatRecipe.Slot.keep(of(meatInput()),
+                .slot(VatRecipe.Slot.keep(VatRecipes::isMeatInput,
                         VatRecipe.BoundsRule.between(1, MAX_MEATS), VatRecipe.Converter.to(meatResult())))
                 // 第 0 格（肉）几块，盐就要几份 —— 按槽位号引用，JEI 那边也算得出来
                 .slot(VatRecipe.Slot.absorb(salt(),
@@ -421,7 +438,7 @@ public final class VatRecipes {
                         VatRecipe.BoundsRule.exact(PASTE_CHUNKS), residue()))
                 .slot(VatRecipe.Slot.consume(salt(), VatRecipe.BoundsRule.exact(PASTE_SALT))
                         .seasoning())
-                .slot(VatRecipe.Slot.consume(of(wheatInput()), VatRecipe.BoundsRule.exact(1))
+                .slot(VatRecipe.Slot.consume(VatRecipes::isWheat, VatRecipe.BoundsRule.exact(1))
                         .seasoning())
                 .build());
 
@@ -465,7 +482,7 @@ public final class VatRecipes {
                 .dry()
                 .product(VatRecipe.Fluid.SHRIMP_PASTE, SHRIMP_PASTE_SERVINGS * SERVING_MB, false)
                 .seconds(SHRIMP_PASTE_SECONDS).biomeSeconds(BREW)
-                .slot(VatRecipe.Slot.consume(of(ModItems.SHRIMP.get()),
+                .slot(VatRecipe.Slot.consume(VatRecipes::isShrimp,
                         VatRecipe.BoundsRule.exact(SHRIMP_PASTE_SHRIMP)))
                 .slot(VatRecipe.Slot.consume(salt(), VatRecipe.BoundsRule.exact(SHRIMP_PASTE_SALT))
                         .seasoning())
@@ -476,7 +493,7 @@ public final class VatRecipes {
                 .priority(20).seal(cloth)
                 .water(1, 1, VatRecipe.LiquidAfter.CLEAR)
                 .seconds(BEAN_SPROUTS_SECONDS).biomeSeconds(SPROUT)
-                .slot(VatRecipe.Slot.convert(of(ModItems.SOYBEAN.get()),
+                .slot(VatRecipe.Slot.convert(VatRecipes::isSoybean,
                         VatRecipe.BoundsRule.between(1, SPROUT_SOYBEAN_MAX), beanSprouts()))
                 .build());
 
@@ -485,7 +502,7 @@ public final class VatRecipes {
                 .priority(20).seal(cloth)
                 .water(1, 3, VatRecipe.LiquidAfter.CLEAR)
                 .seconds(SOUR_CORN_SECONDS).biomeSeconds(FERMENT)
-                .slot(VatRecipe.Slot.convert(of(cornKernels()),
+                .slot(VatRecipe.Slot.convert(VatRecipes::isCornKernels,
                         VatRecipe.BoundsRule.perLayerExact(SOUR_CORN_PER_WATER), sourCornKernels()))
                 .build());
 
@@ -495,7 +512,7 @@ public final class VatRecipes {
                 .water(KVASS_WATER_LEVEL, KVASS_WATER_LEVEL, VatRecipe.LiquidAfter.CLEAR)
                 .product(VatRecipe.Fluid.KVASS, KVASS_SERVINGS * SERVING_MB, false)
                 .seconds(KVASS_SECONDS).biomeSeconds(YEAST)
-                .slot(VatRecipe.Slot.consume(of(kvassBread()), VatRecipe.BoundsRule.exact(KVASS_BREAD)))
+                .slot(VatRecipe.Slot.consume(VatRecipes::isBread, VatRecipe.BoundsRule.exact(KVASS_BREAD)))
                 .build());
 
         // ----- 冻梨：一缸梨 + 缸顶压一块雪块 + 寒冷群系 -----
@@ -507,7 +524,7 @@ public final class VatRecipes {
                 .requiredSealItem(stack -> stack.is(Items.SNOW_BLOCK))
                 .dry()
                 .seconds(FROZEN_PEAR_SECONDS)
-                .slot(VatRecipe.Slot.convert(of(pearInput()),
+                .slot(VatRecipe.Slot.convert(VatRecipes::isPear,
                         VatRecipe.BoundsRule.between(1, 6), ModItems.FROZEN_PEAR.get()))
                 .build());
 
@@ -570,7 +587,7 @@ public final class VatRecipes {
         return ModItems.SHRIMP_PASTE.get();
     }
 
-    /** 辣白菜 */
+    /** 辣白菜：辣椒酱必需、鱼露/虾酱按剂量 */
     public static Item spicyCabbage() {
         return ModItems.SPICY_CABBAGE.get();
     }
@@ -593,6 +610,21 @@ public final class VatRecipes {
     /** 格瓦斯用的面包（原版面包） */
     public static Item kvassBread() {
         return Items.BREAD;
+    }
+
+    /** 大虾（虾酱原料） */
+    public static boolean isShrimp(ItemStack stack) {
+        return stack.is(ModTags.FOODS_SHRIMP);
+    }
+
+    /** 黄豆（豆芽原料） */
+    public static boolean isSoybean(ItemStack stack) {
+        return stack.is(ModTags.CROPS_SOYBEAN);
+    }
+
+    /** 面包（格瓦斯原料） */
+    public static boolean isBread(ItemStack stack) {
+        return stack.is(ModTags.FOODS_BREAD);
     }
 
     /** 格瓦斯瓶 */

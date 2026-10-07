@@ -1,11 +1,20 @@
 {
   "type": "farmersdelight:cooking",
-  "container": { "count": 1, "id": "minecraft:bowl" },
+  "container": {
+    "count": 1,
+    "id": "minecraft:bowl"
+  },
   "experience": 0.35,
   "ingredients": [
-    { "item": "northeast_china_delight:napa_cabbage" },
-    { "item": "northeast_china_delight:tofu" },
-    { "item": "northeast_china_delight:vermicelli" }
+    {
+      "tag": "c:crops/napa_cabbage"
+    },
+    {
+      "tag": "c:foods/tofu"
+    },
+    {
+      "tag": "c:foods/vermicelli"
+    }
   ],
   "recipe_book_tab": "meals",
   "result": {

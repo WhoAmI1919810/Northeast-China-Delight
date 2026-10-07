@@ -19,10 +19,6 @@ public final class DishEffects {
     /** 农夫乐事的滋养（可选模组，按 id 查） */
     private static final ResourceLocation NOURISHMENT =
             ResourceLocation.fromNamespaceAndPath("farmersdelight", "nourishment");
-    /** 果园乐事的解毒（可选模组，按 id 查） */
-    private static final ResourceLocation RECOVERING =
-            ResourceLocation.fromNamespaceAndPath("fruitsdelight", "recovering");
-
     /** 一条待施加的效果 */
     public record Applied(Holder<MobEffect> effect, int durationTicks, int amplifier) {
         public MobEffectInstance instance() {
@@ -54,12 +50,10 @@ public final class DishEffects {
         return list;
     }
 
-    /** 新派橙汁锅包肉额外带的效果：橘子汁本身的 5 秒生命恢复与解毒 */
+    /** 新派橙汁锅包肉额外带的效果：橘子汁本身的 5 秒生命恢复（不含解毒） */
     public static List<Applied> orangeJuiceExtras() {
         List<Applied> list = new ArrayList<>();
         list.add(new Applied(MobEffects.REGENERATION, 100, 0));
-        BuiltInRegistries.MOB_EFFECT.getHolder(RECOVERING)
-                .ifPresent(effect -> list.add(new Applied(effect, 100, 0)));
         return list;
     }
 

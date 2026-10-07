@@ -1,0 +1,17 @@
+{
+  "values": [
+    "northeast_china_delight:cooking_oil",
+    {
+      "id": "croptopia:cooking_oil",
+      "required": false
+    },
+    {
+      "id": "foodcraft:peanut_oil",
+      "required": false
+    },
+    {
+      "id": "extradelight:cooking_oil",
+      "required": false
+    }
+  ]
+}

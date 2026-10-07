@@ -1,13 +1,26 @@
 {
   "type": "farmersdelight:cooking",
-  "container": { "count": 1, "id": "minecraft:bowl" },
+  "container": {
+    "count": 1,
+    "id": "minecraft:bowl"
+  },
   "experience": 1.0,
   "ingredients": [
-    { "item": "northeast_china_delight:cooking_oil" },
-    { "item": "northeast_china_delight:hairtail" },
-    { "item": "northeast_china_delight:hairtail" },
-    { "item": "northeast_china_delight:sweet_potato_starch" },
-    { "item": "northeast_china_delight:salt" }
+    {
+      "tag": "c:foods/seasonings/cooking_oil"
+    },
+    {
+      "tag": "c:foods/raw_fish"
+    },
+    {
+      "tag": "c:foods/raw_fish"
+    },
+    {
+      "tag": "c:foods/starch"
+    },
+    {
+      "tag": "c:foods/seasonings/salt"
+    }
   ],
   "recipe_book_tab": "meals",
   "result": {

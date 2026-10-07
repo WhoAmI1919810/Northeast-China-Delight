@@ -6,12 +6,24 @@
   },
   "experience": 1.0,
   "ingredients": [
-    { "item": "northeast_china_delight:buckwheat_noodles" },
-    { "item": "northeast_china_delight:vinegar" },
-    { "item": "northeast_china_delight:spicy_cabbage" },
-    { "item": "farmersdelight:cooked_chicken_cuts" },
-    { "item": "minecraft:sugar" },
-    { "item": "minecraft:egg" }
+    {
+      "item": "northeast_china_delight:buckwheat_noodles"
+    },
+    {
+      "tag": "c:foods/seasonings/vinegar"
+    },
+    {
+      "tag": "c:foods/kimchi"
+    },
+    {
+      "item": "farmersdelight:cooked_chicken_cuts"
+    },
+    {
+      "tag": "c:sugar"
+    },
+    {
+      "tag": "c:eggs"
+    }
   ],
   "recipe_book_tab": "meals",
   "result": {

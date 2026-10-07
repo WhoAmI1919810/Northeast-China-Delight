@@ -1,7 +1,18 @@
 {
   "type": "minecraft:crafting_shaped",
   "category": "building",
-  "pattern": [ "XXX", "XXX", "XXX" ],
-  "key": { "X": { "item": "northeast_china_delight:pickled_cucumber" } },
-  "result": { "count": 1, "id": "northeast_china_delight:pickled_cucumber_crate" }
+  "pattern": [
+    "XXX",
+    "XXX",
+    "XXX"
+  ],
+  "key": {
+    "X": {
+      "tag": "c:foods/pickles"
+    }
+  },
+  "result": {
+    "count": 1,
+    "id": "northeast_china_delight:pickled_cucumber_crate"
+  }
 }

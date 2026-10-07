@@ -2,12 +2,24 @@
   "type": "minecraft:crafting_shapeless",
   "category": "misc",
   "ingredients": [
-    { "item": "northeast_china_delight:pickled_cucumber" },
-    { "item": "northeast_china_delight:pickled_carrot" },
-    { "item": "northeast_china_delight:pickled_green_radish" },
-    { "item": "minecraft:bowl" },
-    { "item": "northeast_china_delight:white_vinegar" },
-    { "item": "northeast_china_delight:chili_oil" }
+    {
+      "tag": "c:foods/pickles"
+    },
+    {
+      "tag": "c:foods/pickles"
+    },
+    {
+      "tag": "c:foods/pickles"
+    },
+    {
+      "item": "minecraft:bowl"
+    },
+    {
+      "tag": "c:foods/seasonings/white_vinegar"
+    },
+    {
+      "tag": "c:foods/seasonings/chili_oil"
+    }
   ],
   "result": {
     "count": 1,

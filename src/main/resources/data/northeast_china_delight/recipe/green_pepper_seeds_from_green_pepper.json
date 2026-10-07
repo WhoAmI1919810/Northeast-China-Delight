@@ -1,5 +1,12 @@
 {
   "type": "minecraft:crafting_shapeless",
-  "ingredients": [{"item": "northeast_china_delight:green_pepper"}],
-  "result": {"count": 2, "id": "northeast_china_delight:green_pepper_seeds"}
+  "ingredients": [
+    {
+      "tag": "c:crops/green_pepper"
+    }
+  ],
+  "result": {
+    "count": 2,
+    "id": "northeast_china_delight:green_pepper_seeds"
+  }
 }

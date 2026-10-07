@@ -1,0 +1,12 @@
+{
+  "values": [
+    {
+      "id": "tofucraft:soymilk_bottle",
+      "required": false
+    },
+    {
+      "id": "foodcraft:soymilk",
+      "required": false
+    }
+  ]
+}

@@ -1,0 +1,9 @@
+{
+  "values": [
+    "northeast_china_delight:green_pepper",
+    {
+      "id": "foodcraft:green_pepper",
+      "required": false
+    }
+  ]
+}

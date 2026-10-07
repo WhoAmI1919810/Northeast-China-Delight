@@ -369,6 +369,13 @@ public class ModItems {
             new Item.Properties().stacksTo(1)
     );
 
+    /** 创造大缸：同外观，没有合成配方，条件凑齐瞬间酿好 */
+    public static final DeferredItem<Item> CREATIVE_VAT = ITEMS.registerItem(
+            "creative_vat",
+            (properties) -> new BlockItem(ModBlocks.CREATIVE_VAT.get(), properties),
+            new Item.Properties().stacksTo(1)
+    );
+
     public static final DeferredItem<Item> ANIMAL_OIL_BLOCK_ITEM = ITEMS.registerItem(
             "animal_oil_block",
             (properties) -> new BlockItem(ModBlocks.ANIMAL_OIL_BLOCK.get(), properties),

@@ -1,0 +1,16 @@
+{
+  "values": [
+    {
+      "id": "croptopia:flour",
+      "required": false
+    },
+    {
+      "id": "foodcraft:flour",
+      "required": false
+    },
+    {
+      "id": "extradelight:flour",
+      "required": false
+    }
+  ]
+}

@@ -1,0 +1,12 @@
+{
+  "values": [
+    {
+      "id": "foodcraft:tofu",
+      "required": false
+    },
+    {
+      "id": "tofucraft:tofu_kinu",
+      "required": false
+    }
+  ]
+}

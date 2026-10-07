@@ -6,9 +6,15 @@
   },
   "experience": 0.35,
   "ingredients": [
-    { "item": "northeast_china_delight:sweet_potato" },
-    { "item": "minecraft:water_bucket" },
-    { "item": "farmersdelight:rice" }
+    {
+      "tag": "c:crops/sweet_potato"
+    },
+    {
+      "item": "minecraft:water_bucket"
+    },
+    {
+      "tag": "c:crops/rice"
+    }
   ],
   "recipe_book_tab": "meals",
   "result": {

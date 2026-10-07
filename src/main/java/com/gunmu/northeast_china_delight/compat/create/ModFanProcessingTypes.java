@@ -48,7 +48,8 @@ public class ModFanProcessingTypes {
 
         @Override
         public boolean canProcess(ItemStack stack, Level level) {
-            return stack.is(ModItems.SOY_MILK.get());
+            // 矿物词典：别家模组的豆浆也能吹干
+            return stack.is(com.gunmu.northeast_china_delight.ModTags.FOODS_SOY_MILK);
         }
 
         @Override

@@ -12,11 +12,21 @@
   },
   "experience": 1.0,
   "ingredients": [
-    { "item": "fruitsdelight:orange_juice" },
-    { "item": "minecraft:porkchop" },
-    { "item": "northeast_china_delight:sweet_potato_starch" },
-    { "item": "northeast_china_delight:cooking_oil" },
-    { "item": "northeast_china_delight:white_vinegar" }
+    {
+      "item": "fruitsdelight:orange_juice"
+    },
+    {
+      "item": "minecraft:porkchop"
+    },
+    {
+      "tag": "c:foods/starch"
+    },
+    {
+      "tag": "c:foods/seasonings/cooking_oil"
+    },
+    {
+      "tag": "c:foods/seasonings/white_vinegar"
+    }
   ],
   "recipe_book_tab": "meals",
   "result": {

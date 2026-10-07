@@ -285,8 +285,8 @@ public final class VatJeiRecipes {
             return sealCandidatesOf(matcher);
         }
         return switch (recipe.seal()) {
-            // 压缸石：任意石头类方块，这里挑几个代表
-            case PRESS -> oneOf(Items.STONE, Items.STONE_BRICKS, Items.COBBLESTONE, Items.DEEPSLATE);
+            // 压缸石：把标签里所有完整方块都列出来（原版全家族 + Create 的石头）
+            case PRESS -> pressStoneCandidates();
             // 蒙缸用的羊毛地毯
             case CARPET -> oneOf(Items.WHITE_CARPET, Items.RED_CARPET, Items.BROWN_CARPET);
             case CLOTH -> {
@@ -300,6 +300,21 @@ public final class VatJeiRecipes {
 
     private static List<ItemStack> oneOf(Item... items) {
         return Arrays.stream(items).map(ItemStack::new).toList();
+    }
+
+    /** 压缸石：扫 {@link com.gunmu.northeast_china_delight.block.Vat#PRESS_STONES} 里所有 BlockItem，只要完整方块 */
+    private static List<ItemStack> pressStoneCandidates() {
+        List<ItemStack> list = new ArrayList<>();
+        for (Item item : BuiltInRegistries.ITEM) {
+            if (!(item instanceof net.minecraft.world.item.BlockItem blockItem)) {
+                continue;
+            }
+            var state = blockItem.getBlock().defaultBlockState();
+            if (state.is(com.gunmu.northeast_china_delight.block.Vat.PRESS_STONES) && state.isSolid()) {
+                list.add(new ItemStack(item));
+            }
+        }
+        return list;
     }
     /** 扫物品表，找出这个封口匹配器收得下的东西（雪块就只有它自己） */
     private static List<ItemStack> sealCandidatesOf(java.util.function.Predicate<ItemStack> matcher) {

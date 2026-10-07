@@ -1,0 +1,9 @@
+{
+  "values": [
+    "northeast_china_delight:peanut_butter",
+    {
+      "id": "croptopia:peanut_butter",
+      "required": false
+    }
+  ]
+}

@@ -2,7 +2,7 @@
   "type": "create:mixing",
   "ingredients": [
     {
-      "item": "northeast_china_delight:buckwheat"
+      "tag": "c:crops/buckwheat"
     },
     {
       "type": "neoforge:single",

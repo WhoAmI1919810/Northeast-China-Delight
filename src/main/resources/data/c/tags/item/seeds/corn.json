@@ -1,0 +1,13 @@
+{
+  "values": [
+    "northeast_china_delight:corn_seeds",
+    {
+      "id": "croptopia:corn_seed",
+      "required": false
+    },
+    {
+      "id": "hearthandharvest:corn_kernels",
+      "required": false
+    }
+  ]
+}

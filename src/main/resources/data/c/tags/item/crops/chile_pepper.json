@@ -1,0 +1,17 @@
+{
+  "values": [
+    "northeast_china_delight:red_chili",
+    {
+      "id": "croptopia:chile_pepper",
+      "required": false
+    },
+    {
+      "id": "extradelight:chili",
+      "required": false
+    },
+    {
+      "id": "foodcraft:facing_heaven_pepper",
+      "required": false
+    }
+  ]
+}

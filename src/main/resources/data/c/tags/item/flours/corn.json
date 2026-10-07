@@ -1,0 +1,9 @@
+{
+  "values": [
+    "northeast_china_delight:corn_flour",
+    {
+      "id": "extradelight:cornmeal",
+      "required": false
+    }
+  ]
+}

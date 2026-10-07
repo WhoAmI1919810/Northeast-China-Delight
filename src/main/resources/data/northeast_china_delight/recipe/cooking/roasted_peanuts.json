@@ -2,8 +2,12 @@
   "type": "farmersdelight:cooking",
   "experience": 0.35,
   "ingredients": [
-    { "item": "northeast_china_delight:peanut" },
-    { "item": "northeast_china_delight:peanut" }
+    {
+      "tag": "c:crops/peanut"
+    },
+    {
+      "tag": "c:crops/peanut"
+    }
   ],
   "recipe_book_tab": "misc",
   "result": {
