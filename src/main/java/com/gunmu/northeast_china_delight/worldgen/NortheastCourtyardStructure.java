@@ -58,10 +58,11 @@ import java.util.Optional;
  */
 public class NortheastCourtyardStructure extends Structure
 {
-    /** 默认 2 种院子（顺序即抽签概率）；小零件暂时关闭，见 {@link #partsEnabled()} */
+    /** 默认 3 种院子（顺序即抽签概率）；小零件暂时关闭，见 {@link #partsEnabled()} */
     public static final List<String> DEFAULT_TEMPLATES = List.of(
             "northeast_china_delight:northeast_yard_garden",
-            "northeast_china_delight:northeast_yard_compound"
+            "northeast_china_delight:northeast_yard_compound",
+            "northeast_china_delight:northeast_yard_livestock"
     );
 
     /**
