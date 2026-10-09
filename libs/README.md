@@ -1,13 +1,8 @@
 # libs/ 说明
 
-这里放**第三方模组的编译期依赖**（不是本模组的构建产物；本模组的产物在各节点
-`versions/<版本>/build/libs/` 下）。
+本分支只构建 1.20.1：第三方依赖（农夫乐事、机械动力及其 Ponder / Flywheel / Registrate、
+玉、JEI）全部通过 maven 获取（见 `build.gradle`），这里不放本地 jar。
 
-| 文件 | 用途 | 上游 / 许可 |
-| --- | --- | --- |
-| `ponder-neoforge-1.0.82+mc1.21.1.jar` | Create 1.21.1 的 GUI 库（catnip），编译期需要其类签名 | [Create](https://github.com/Creators-of-Create/Create)（MIT） |
-| `flywheel-neoforge-1.21.1-1.0.6.jar` | Create 的渲染库 | [Flywheel](https://github.com/Engine-Room/Flywheel)（MIT） |
-| `Registrate-MC1.21-1.3.0+67.jar` | Create 的注册工具 | [Registrate](https://github.com/Registrate-MC/Registrate)（MIT） |
+1.21.1 的 Create 编译期依赖 jar（ponder / flywheel / Registrate）在 main 分支的 `libs/` 下。
 
-这些 jar 只用于编译与开发运行，不会被打进本模组的发布包。
-如果上游发布了对应版本，优先改回 `maven.modrinth:` 或官方 maven 依赖（见 `build.gradle`）。
+本模组的构建产物（`northeast_china_delight-*.jar`）会被构建任务自动拷到这里，已被 `.gitignore` 忽略。
