@@ -1,8 +1,7 @@
-# 1.20.1（Forge 47.1）用的模组元数据。
-# 与 src/main/templates-legacy/META-INF/mods.toml（1.20.4 NeoForge）的差别：
+# 1.20.1（Forge 47.1）用的模组元数据：
 #   - 依赖写在 forge 上（不是 neoforge），版本范围是 47.x
 #   - 必需/可选用 mandatory = true/false 表示（type = "..." 是 NeoForge 20.5+ 的写法）
-#   - 机械动力回来了（1.20.1 有 Create；1.20.4 没有）
+#   - 机械动力（Create）是联动前置，与农夫乐事一起声明在依赖段
 #   - mixin 由 jar 清单的 MixinConfigs 登记，refmap 名字由 build.gradle 写进 mixins.json
 modLoader="javafml" #mandatory
 
