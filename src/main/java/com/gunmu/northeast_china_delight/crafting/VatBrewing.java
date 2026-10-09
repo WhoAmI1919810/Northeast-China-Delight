@@ -231,8 +231,9 @@ public final class VatBrewing {
         int sticky = recipe.kind() == current ? 1 : 0;
         int liquid = recipe.liquidFits(counts.water(), sourWaterMb) ? 1 : 0;
         // 精确命中：材料配齐且每格都没多投（exact 类配方一份不多）。
-        // 6 鱼 3 盐时，咸鱼的盐格 sameAs 会算成"多投 2 份"→ 不精确；鱼露 exact(6)/exact(3) 正好 → 精确。
-        // 这一维在 satisfied 之后、ready 之前，保证满配鱼露压过超额咸鱼，1 鱼 1 盐的咸鱼仍赢半成品鱼露。
+        // 这一维在 satisfied 之后、ready 之前，保证"正好配齐"的那条压过"顺手多放了一把"的那条。
+        // 6 鱼 3 盐对鱼露（exact 6/3）和咸鱼（盐 = 鱼数的一半）都是刚好的份数，
+        // 这时按最后一维 priority 判给鱼露；1 鱼 1 盐的咸鱼仍然赢过只放了 1 条鱼的鱼露。
         int exactMatch = ready && recipe.allSlotsExact(counts) ? 1 : 0;
         return new int[] { sticky, satisfied, exactMatch, ready ? 1 : 0, liquid, -recipe.minimumTotal(counts),
                 recipe.priority() };

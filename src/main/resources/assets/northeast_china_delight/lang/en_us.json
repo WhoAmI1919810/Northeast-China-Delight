@@ -62,6 +62,7 @@
   "jei.northeast_china_delight.info.oyster": "A shellfish found in the sea. Fish where a river meets an ocean to catch oysters.",
   "jei.northeast_china_delight.info.sea_cucumber": "A sea creature found on the ocean floor. In a Deep Cold Ocean or Deep Frozen Ocean, Sea Cucumbers can be caught when the surrounding 150 blocks are open water and the depth reaches 20 blocks.",
   "jei.northeast_china_delight.info.salt": "A seasoning left behind when seawater evaporates. Collect seawater with a bucket in an ocean, then heat it to obtain salt.",
+  "jei.northeast_china_delight.info.sea_water_bucket": "Seawater Bucket: fill an empty bucket in an ocean (deep oceans included) where the water column up to the sea surface is clear. It can only be poured back into such clean ocean water - right-click the water or the sea floor while underwater; you cannot place seawater on land. Cook it in a cooking pot or smoke it in a smoker to obtain salt.",
   "item.northeast_china_delight.spirit_cabbage": "Soul Cabbage",
   "item.northeast_china_delight.soy_paste": "Soy Paste",
   "item.northeast_china_delight.pickled_cucumber": "Pickled Cucumber",

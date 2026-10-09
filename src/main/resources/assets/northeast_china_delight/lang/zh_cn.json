@@ -68,6 +68,7 @@
   "jei.northeast_china_delight.info.oyster": "一种生长在海中的贝类。在河流与海洋的交汇处钓鱼，可以钓到生蚝。",
   "jei.northeast_china_delight.info.sea_cucumber": "一种生活在海底的海产。在深冷海洋或冰冻深海中，四周150格范围保持开阔且水深达到20格时，可以钓到海参。",
   "jei.northeast_china_delight.info.salt": "海水蒸发后留下的调味品。用海水桶在海洋中取水，再加热即可得到。",
+  "jei.northeast_china_delight.info.sea_water_bucket": "海水桶：拿空桶在海洋（含深海）里取水，头顶一路到海面都是水、空气或冰雪的干净水柱才行。它只能倒回这样的海水里 —— 在水下对着水面或海底右键即可，倒掉后换回空桶，没法把海水放到岸上。放进厨锅煮或烟熏炉熏，可以得到盐。",
   "item.northeast_china_delight.salted_pork": "咸腊肉",
   "item.northeast_china_delight.salted_fish": "咸鱼",
   "item.northeast_china_delight.soy_paste_chunk": "大酱块",

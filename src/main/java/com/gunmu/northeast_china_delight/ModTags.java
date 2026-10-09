@@ -43,6 +43,7 @@ public final class ModTags {
             case "foods/raw_pork" -> "raw_pork";
             case "foods/bread" -> "bread";
             case "tools/knife" -> "tools/knives";
+            case "foods/fruits/pear" -> "fruits/pear";
             default -> path;
         };
     }*/

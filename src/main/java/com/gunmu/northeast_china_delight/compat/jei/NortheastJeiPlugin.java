@@ -81,6 +81,8 @@ public class NortheastJeiPlugin implements IModPlugin {
                 Component.translatable("jei.northeast_china_delight.info.sea_cucumber"));
         registration.addItemStackInfo(new ItemStack(ModItems.SALT.get()),
                 Component.translatable("jei.northeast_china_delight.info.salt"));
+        registration.addItemStackInfo(new ItemStack(ModItems.SEA_WATER_BUCKET.get()),
+                Component.translatable("jei.northeast_china_delight.info.sea_water_bucket"));
     }
 
     /**

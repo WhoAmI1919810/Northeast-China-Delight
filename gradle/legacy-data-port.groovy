@@ -7,7 +7,8 @@
 //      structure→structures；标签目录 block/item/entity_type/fluid/game_event 改复数。
 //   2. JSON 结构：1.21 的 ItemStack 写 "id"，1.20.4 的配方结果/容器/进度图标写 "item"。
 //   3. 标签命名空间：1.21 的通用标签在 c:，1.20.4 在 forge:；几处别家模组改了名字的标签
-//      见 legacyTagPathRenames。
+//      见 legacyTagPathRenames（改名同时作用于配方里的引用和标签定义文件的路径，
+//      否则会出现「配方引用 forge:raw_fishes、定义却停在 forge:foods/raw_fish」这种空配方）。
 //   4. 1.20.4 没有机械动力：create: 配方整组丢掉，连带 create 专属的进度。
 //      （1.20.1 有机械动力：调用时传 keepCreate = true，这两步都不做，其余转换照旧。）
 //   5. 条件/原料类型改名：neoforge:can_item_perform_ability → neoforge:can_tool_perform_action
@@ -71,6 +72,7 @@ ext.legacyTagPathRenames = [
         'foods/raw_pork'   : 'raw_pork',
         'foods/bread'      : 'bread',
         'tools/knife'      : 'tools/knives',
+        'foods/fruits/pear': 'fruits/pear',
 ]
 
 // 只有机械动力才有的配方目录（1.20.4 没有机械动力）
@@ -352,6 +354,22 @@ ext.portLegacyDataTree = { File resourcesDir, boolean keepCreate = false ->
         }
         if (ns == 'c' && isTagFile) {
             ns = 'forge'      // 通用标签整体挪到 forge: 命名空间
+            // 标签 id 改过名的（foods/raw_fish → raw_fishes 之类），定义文件的路径也要跟着挪：
+            // 只改引用不改定义的话，那一格匹配不到任何东西，JEI 里就是一条空配方。
+            if (rest.size() > 2 && rest[rest.size() - 1].endsWith('.json')) {
+                def fileName = rest.remove(rest.size() - 1)
+                def stem = fileName.substring(0, fileName.length() - 5)
+                def renamed = legacyTagPathRenames.get((rest.subList(2, rest.size()) + [stem]).join('/'))
+                if (renamed != null) {
+                    rest.subList(2, rest.size()).clear()
+                    def segments = renamed.split('/') as List
+                    // renamed 的最后一段就是新的文件名，别忘了补回 .json
+                    segments[segments.size() - 1] = segments[segments.size() - 1] + '.json'
+                    rest.addAll(segments)
+                } else {
+                    rest.add(fileName)
+                }
+            }
         }
         // 1.20.1 的注册表命名空间也是 forge:（neoforge: 是 1.21 才改的名）：
         //   data/<ns>/neoforge/biome_modifier/*.json → data/<ns>/forge/biome_modifier/*.json

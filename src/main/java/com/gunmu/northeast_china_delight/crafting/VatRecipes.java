@@ -5,9 +5,7 @@ import com.gunmu.northeast_china_delight.item.ModItems;
 import com.gunmu.northeast_china_delight.ModTags;
 import com.gunmu.northeast_china_delight.util.DdIds;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -75,6 +73,8 @@ public final class VatRecipes {
     public static final int MAX_MEATS = 6;
     /** 一缸最多腌几条咸鱼：和腊肉一样，一层两条 × 三层 = 6 条 */
     public static final int MAX_SALTED_FISH = 6;
+    /** 咸鱼 / 腊肉最多要几份盐：肉数的一半（满缸 6 块正好 3 份），少腌就少放盐 */
+    public static final int SALTED_SALT_MAX = 3;
     /** 一缸大酱能装几碗 */
     public static final int PASTE_SERVINGS = 10;
     /** 一缸酱油能装几瓶 */
@@ -146,54 +146,56 @@ public final class VatRecipes {
     //   醋 ≈ 20 天、鱼露虾酱 ≈ 数月 —— 全部按比例压进 MC 的"几天"里，
     //   再用群系温度带做快慢：乳酸菌越冷越慢、越热越快；
     //   咸鱼腊肉在热带反而要捂出霉味 → 多给 50%。
-    /** 泡菜：每层水位的发酵秒数（基准 = 1 个 MC 日） */
-    public static final int PICKLE_SECONDS_PER_LAYER = 1200;
-    /** 辣白菜：每层水位的发酵秒数 */
-    public static final int SPICY_PICKLE_SECONDS_PER_LAYER = 1200;
-    /** 咸腊肉：基准 2 天 */
-    public static final int MEAT_SECONDS = 2400;
-    /** 咸鱼：基准 2 天 */
-    public static final int SALTED_FISH_SECONDS = 2400;
-    /** 大酱：基准 5 天（现实一个月压缩到 5 天） */
-    public static final int PASTE_SECONDS = 6000;
-    /** 酱油：基准 5 天 */
-    public static final int SOY_SAUCE_SECONDS = 6000;
-    /** 醋：基准 4 天 */
-    public static final int VINEGAR_SECONDS = 4800;
-    /** 白醋：基准 3 天 */
-    public static final int WHITE_VINEGAR_SECONDS = 3600;
-    /** 鱼露：基准 4 天 */
-    public static final int FISH_SAUCE_SECONDS = 4800;
-    /** 虾酱：基准 4 天 */
-    public static final int SHRIMP_PASTE_SECONDS = 4800;
-    /** 豆芽：半天 */
-    public static final int BEAN_SPROUTS_SECONDS = 600;
-    /** 酸玉米粒：基准 1 天/层 */
-    public static final int SOUR_CORN_SECONDS = 1200;
-    /** 格瓦斯：基准 1 天 */
-    public static final int KVASS_SECONDS = 1200;
-    /** 冻梨：半天（雪地里冻一天就黑透了） */
-    public static final int FROZEN_PEAR_SECONDS = 600;
+    // 2026-10-09：第一版太熬人，整张表统一减半（下面注释里的天数也按减半后的读）。
+    /** 泡菜：每层水位的发酵秒数（基准 = 半天） */
+    public static final int PICKLE_SECONDS_PER_LAYER = 600;
+    /** 辣白菜：每层水位的发酵秒数（基准 = 半天） */
+    public static final int SPICY_PICKLE_SECONDS_PER_LAYER = 600;
+    /** 咸腊肉：基准 1 天 */
+    public static final int MEAT_SECONDS = 1200;
+    /** 咸鱼：基准 1 天 */
+    public static final int SALTED_FISH_SECONDS = 1200;
+    /** 大酱：基准 2.5 天（现实一个月压缩到 2.5 天） */
+    public static final int PASTE_SECONDS = 3000;
+    /** 酱油：基准 2.5 天 */
+    public static final int SOY_SAUCE_SECONDS = 3000;
+    /** 醋：基准 2 天 */
+    public static final int VINEGAR_SECONDS = 2400;
+    /** 白醋：基准 1.5 天 */
+    public static final int WHITE_VINEGAR_SECONDS = 1800;
+    /** 鱼露：基准 2 天 */
+    public static final int FISH_SAUCE_SECONDS = 2400;
+    /** 虾酱：基准 2 天 */
+    public static final int SHRIMP_PASTE_SECONDS = 2400;
+    /** 豆芽：四分之一天 */
+    public static final int BEAN_SPROUTS_SECONDS = 300;
+    /** 酸玉米粒：基准 半天/层 */
+    public static final int SOUR_CORN_SECONDS = 600;
+    /** 格瓦斯：基准 半天 */
+    public static final int KVASS_SECONDS = 600;
+    /** 冻梨：四分之一天（雪地里冻半天就黑透了） */
+    public static final int FROZEN_PEAR_SECONDS = 300;
 
     // ===== 各温度带的时长倍率 =====
     // 1.0 = 基准时长；越小越快。
     // 乳酸菌发酵（泡菜/辣白菜/酸玉米/大酱/酱油/醋/白醋/鱼露/虾酱/格瓦斯）：
-    //   冷带慢一倍、温带基准、暖带快一半、热带再快一倍。
-    // 豆芽要温度但怕烫伤：冷带慢一倍、热带略快。
+    //   温带基准、暖带快一半、热带再快一倍。冷带的惩罚统一削弱一半
+    //   （原来 ×2 的改成 ×1.5，原来 ×1.5 的改成 ×1.25）。
+    // 豆芽要温度但怕烫伤：冷带同样只慢一半、热带略快。
     // 咸鱼腊肉不放倍率表（哪都能做、也不用更慢），
     //   只在热带加 50%（现实里大热天腊肉容易捂坏，咸货更吃工夫）。
     /** 乳酸菌发酵类（泡菜/辣白菜/酸玉米） */
     private static final java.util.function.Consumer<java.util.EnumMap<VatRecipe.BiomeBand, Float>> FERMENT =
-            m -> { m.put(VatRecipe.BiomeBand.COLD, 2.0F); m.put(VatRecipe.BiomeBand.WARM, 0.5F); m.put(VatRecipe.BiomeBand.HOT, 0.25F); };
+            m -> { m.put(VatRecipe.BiomeBand.COLD, 1.5F); m.put(VatRecipe.BiomeBand.WARM, 0.5F); m.put(VatRecipe.BiomeBand.HOT, 0.25F); };
     /** 酱酵类（大酱/酱油/醋/白醋/鱼露/虾酱）：热带不减半那么多，防止过快 */
     private static final java.util.function.Consumer<java.util.EnumMap<VatRecipe.BiomeBand, Float>> BREW =
-            m -> { m.put(VatRecipe.BiomeBand.COLD, 1.5F); m.put(VatRecipe.BiomeBand.WARM, 0.5F); m.put(VatRecipe.BiomeBand.HOT, 0.5F); };
-    /** 豆芽：冷带慢一倍、暖带基准、热带稍快 */
+            m -> { m.put(VatRecipe.BiomeBand.COLD, 1.25F); m.put(VatRecipe.BiomeBand.WARM, 0.5F); m.put(VatRecipe.BiomeBand.HOT, 0.5F); };
+    /** 豆芽：冷带慢一半、暖带基准、热带稍快 */
     private static final java.util.function.Consumer<java.util.EnumMap<VatRecipe.BiomeBand, Float>> SPROUT =
-            m -> { m.put(VatRecipe.BiomeBand.COLD, 2.0F); m.put(VatRecipe.BiomeBand.HOT, 0.75F); };
-    /** 格瓦斯：冷带慢一半、暖热带稍快 */
+            m -> { m.put(VatRecipe.BiomeBand.COLD, 1.5F); m.put(VatRecipe.BiomeBand.HOT, 0.75F); };
+    /** 格瓦斯：冷带慢四分之一、暖热带稍快 */
     private static final java.util.function.Consumer<java.util.EnumMap<VatRecipe.BiomeBand, Float>> YEAST =
-            m -> { m.put(VatRecipe.BiomeBand.COLD, 1.5F); m.put(VatRecipe.BiomeBand.WARM, 0.75F); m.put(VatRecipe.BiomeBand.HOT, 0.75F); };
+            m -> { m.put(VatRecipe.BiomeBand.COLD, 1.25F); m.put(VatRecipe.BiomeBand.WARM, 0.75F); m.put(VatRecipe.BiomeBand.HOT, 0.75F); };
     /** 咸货在热带更费劲 */
     private static final java.util.function.Consumer<java.util.EnumMap<VatRecipe.BiomeBand, Float>> SALTED =
             m -> { m.put(VatRecipe.BiomeBand.HOT, 1.5F); };
@@ -215,10 +217,15 @@ public final class VatRecipes {
         return pickles;
     }
 
+    /**
+     * 泡菜能用的蔬菜：本模组自己的那几样，或者别家塞进对应通用标签的同类菜。
+     *
+     * <p>{@code c:crops/cabbage}（卷心菜 / 卷心菜叶）特意不收 —— 酸菜是大白菜腌的，
+     * 卷心菜腌出来不该叫酸菜；别家的大白菜往 {@code c:crops/napa_cabbage} 里塞就行。
+     */
     public static boolean isPickleIngredient(ItemStack stack) {
         return pickles().containsKey(stack.getItem())
                 || stack.is(ModTags.CROPS_NAPA_CABBAGE)
-                || stack.is(ModTags.CROPS_CABBAGE)
                 || stack.is(ModTags.CROPS_CUCUMBER)
                 || stack.is(ModTags.CROPS_CARROT)
                 || stack.is(ModTags.CROPS_RADISH);
@@ -233,20 +240,31 @@ public final class VatRecipes {
         if (stack.is(ModTags.CROPS_CUCUMBER)) return new ItemStack(ModItems.PICKLED_CUCUMBER.get());
         if (stack.is(ModTags.CROPS_CARROT)) return new ItemStack(ModItems.PICKLED_CARROT.get());
         if (stack.is(ModTags.CROPS_RADISH)) return new ItemStack(ModItems.PICKLED_GREEN_RADISH.get());
-        // 大白菜或认不出来的，一律腌成酸菜
+        // 大白菜或认不出来的同类菜（别家的黄瓜 / 萝卜也算在对应标签里），一律腌成酸菜
         return new ItemStack(ModItems.SOUR_CABBAGE.get());
     }
 
-    /** 腌制腊肉用的原料（c:foods/raw_pork：别家的生猪排也能腌） */
+    /**
+     * 腌制腊肉用的原料（{@code c:foods/raw_pork}：别家的生猪排也能腌）。
+     *
+     * <p>培根不算：它本身就是腌过的，再腌一遍没道理；农夫乐事把它一起塞进了 raw_pork 标签，
+     * 所以这里额外把 bacon 排掉（名字叫 bacon / xxx_bacon 的都算）。
+     */
     public static boolean isMeatInput(ItemStack stack) {
-        return stack.is(ModTags.FOODS_RAW_PORK);
+        return stack.is(ModTags.FOODS_RAW_PORK) && !isBacon(stack);
+    }
+
+    /** 培根：id 是 bacon 或者以 _bacon 结尾（别家模组的培根也认） */
+    private static boolean isBacon(ItemStack stack) {
+        ResourceLocation id = BuiltInRegistries.ITEM.getKey(stack.getItem());
+        return id.getPath().equals("bacon") || id.getPath().endsWith("_bacon");
     }
 
     public static Item meatResult() {
         return ModItems.SALTED_PORK.get();
     }
 
-    /** 咸鱼用的原料与成品：任意生鱼，数量与盐 1:1 */
+    /** 咸鱼用的原料与成品：任意生鱼，盐只要鱼数的一半（见 {@link #SALTED_SALT_MAX}） */
     public static Item saltedFishResult() {
         return ModItems.SALTED_FISH.get();
     }
@@ -261,13 +279,14 @@ public final class VatRecipes {
         return stack.is(ModTags.SEEDS_CORN) || stack.is(ModTags.CROPS_BUCKWHEAT);
     }
 
-    /** 任意生鱼：直接用 NeoForge 通用标签 c:foods/raw_fish（鳕鱼、鲑鱼以及模组生鱼片都算） */
-    public static final TagKey<Item> RAW_FISH = TagKey.create(Registries.ITEM,
-            DdIds.of("c", "foods/raw_fish"));
-
+    /**
+     * 任意生鱼：走通用标签 {@link ModTags#FOODS_RAW_FISH}（1.21 是 {@code c:foods/raw_fish}，
+     * 1.20.x 是 {@code forge:raw_fishes}）。本模组的带鱼、虾、海参都在里面，
+     * 所以带鱼也能腌咸鱼、也能做鱼露。
+     */
     public static boolean isRawFish(ItemStack stack) {
         // 咸鱼只用整条的鱼：农夫乐事的生鳕鱼片 / 生鲑鱼片是切好的食材，不收
-        return stack.is(RAW_FISH)
+        return stack.is(ModTags.FOODS_RAW_FISH)
                 && !stack.is(FarmersDelightItems.COD_SLICE)
                 && !stack.is(FarmersDelightItems.SALMON_SLICE);
     }
@@ -333,12 +352,14 @@ public final class VatRecipes {
         return stack -> stack.is(item);
     }
 
-    /** 泡菜：投入的蔬菜 → 腌制成品；认不出来的原样返回 */
+    /**
+     * 泡菜：投入的蔬菜 → 腌制成品。
+     *
+     * <p>别家的菜也一律换成我们自己的泡菜成品（大缸里不会留别家的原物：
+     * 点别家黄瓜给酸黄瓜、点别家萝卜给酸萝卜，认不出来的按酸菜算）。
+     */
     private static VatRecipe.Converter pickleConverter() {
-        return stack -> {
-            Item result = pickles().get(stack.getItem());
-            return result == null ? stack : new ItemStack(result);
-        };
+        return VatRecipes::convertPickle;
     }
 
     /**
@@ -392,19 +413,19 @@ public final class VatRecipes {
                         .dosed().seasoning())
                 .build());
 
-        // ----- 咸腊肉：肉与盐一比一，最多 6 块，压缸石；取出即咸腊肉 -----
+        // ----- 咸腊肉：盐只要肉数的一半（满缸 6 块 = 3 份盐），压缸石；取出即咸腊肉 -----
         list.add(VatRecipe.of(Kind.MEAT, "salted_pork")
                 .priority(10).seal(press)
                 .dry()
                 .seconds(MEAT_SECONDS).biomeSeconds(SALTED)
                 .slot(VatRecipe.Slot.keep(VatRecipes::isMeatInput,
                         VatRecipe.BoundsRule.between(1, MAX_MEATS), VatRecipe.Converter.to(meatResult())))
-                // 第 0 格（肉）几块，盐就要几份 —— 按槽位号引用，JEI 那边也算得出来
+                // 盐按肉数的一半算（满缸 6 块只要 3 份）—— 按槽位号引用，JEI 那边也算得出来
                 .slot(VatRecipe.Slot.absorb(salt(),
-                        VatRecipe.BoundsRule.sameAs(0, 1)).seasoning())
+                        VatRecipe.BoundsRule.halfOf(0, SALTED_SALT_MAX)).seasoning())
                 .build());
 
-        // ----- 咸鱼：任意生鱼与盐一比一，最多 6 条，压缸石 -----
+        // ----- 咸鱼：任意生鱼 + 一半数量的盐（满缸 6 条 = 3 份盐），压缸石 -----
         list.add(VatRecipe.of(Kind.SALTED_FISH, "salted_fish")
                 .priority(10).seal(press)
                 .dry()
@@ -412,9 +433,9 @@ public final class VatRecipes {
                 .slot(VatRecipe.Slot.keep(VatRecipes::isRawFish,
                         VatRecipe.BoundsRule.between(1, MAX_SALTED_FISH),
                         VatRecipe.Converter.to(saltedFishResult())))
-                // 同上：第 0 格（鱼）几条，盐就要几份
+                // 同上：盐按鱼数的一半算（满缸 6 条只要 3 份）
                 .slot(VatRecipe.Slot.absorb(salt(),
-                        VatRecipe.BoundsRule.sameAs(0, 1)).seasoning())
+                        VatRecipe.BoundsRule.halfOf(0, SALTED_SALT_MAX)).seasoning())
                 .build());
 
         // ----- 大酱：满水 + 3 酱块 + 3 盐，蒙羊毛地毯；酱块变酱渣、出 10 碗大酱 -----

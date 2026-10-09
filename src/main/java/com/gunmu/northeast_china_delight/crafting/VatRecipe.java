@@ -238,6 +238,17 @@ public final class VatRecipe {
                 return new Bounds(n, Math.max(n, ratio));
             };
         }
+
+        /**
+         * 数量跟着**另一格**减半走（盐数 = 肉数的一半，向上取整，最多 max 份）：
+         * 满缸 6 块肉 / 6 条鱼只要 3 份盐，只放 1 块肉就只要 1 份 —— 少腌少放盐。
+         *
+         * <p>上限固定给到 max，好让"先把盐放够再放肉"也放得进去。
+         */
+        static BoundsRule halfOf(int slotIndex, int max) {
+            return counts -> new Bounds(
+                    Math.min(max, (counts.countOfSlot(slotIndex) + 1) / 2), max);
+        }
     }
 
     /**
@@ -365,7 +376,7 @@ public final class VatRecipe {
      * 不用给玩家读一个浮点温度。
      */
     public enum BiomeBand {
-        /** 会下雪（基准温度 < 0.15）：泡菜慢一倍、冻梨只能在这做 */
+        /** 会下雪（基准温度 < 0.15）：泡菜慢一半、冻梨只能在这做 */
         COLD,
         /** 不冷不热（0.15 ~ 0.7）：基准时长 */
         TEMPERATE,
