@@ -6,21 +6,15 @@ plugins {
     id 'net.neoforged.moddev' version '2.0.147' apply false
     // 1.20.1：Forge 47.1（包名仍然是 net.minecraftforge.*），同一个 ModDevGradle 的 legacyforge 插件
     id 'net.neoforged.moddev.legacyforge' version '2.0.147' apply false
-    // 1.20.2~1.20.4（NeoForge 20.x）：NeoGradle
-    // （ModDevGradle 撑不起这条线：neoForge 只支持 ≥21.0，legacyforge 只覆盖 Forge 与 NeoForge 1.20.1）
-    id 'net.neoforged.gradle.userdev' version '7.1.39' apply false
 }
 
 // 按当前 Stonecutter 节点选择用哪个插件
-//   1.20.1        → legacyforge（Forge 47.1，net.minecraftforge.*）
-//   1.20.2~1.20.4 → NeoGradle（NeoForge 20.x）
-//   1.20.5+       → moddev（NeoForge 21.x+）
+//   1.20.1  → legacyforge（Forge 47.1，net.minecraftforge.*）
+//   1.20.5+ → moddev（NeoForge 21.x+）
 if (sc.current.version.compareTo('1.20.2') < 0) {
     apply plugin: 'net.neoforged.moddev.legacyforge'
 } else if (sc.current.version.compareTo('1.20.5') >= 0) {
     apply plugin: 'net.neoforged.moddev'
-} else {
-    apply plugin: 'net.neoforged.gradle.userdev'
 }
 
 // 本脚本会被 Stonecutter 对每个 Minecraft 版本各执行一次
@@ -52,7 +46,7 @@ base {
     archivesName = mod_id
 }
 
-// 1.20.5 起 Mojang 使用 Java 21，1.20.4 及以下官方要求 Java 17
+// 1.20.5 起 Mojang 使用 Java 21，1.20.1 官方要求 Java 17
 // 但 NeoForge 的 moddev 可以用 Java 21 编 17 的 class（release 编译），
 // 没必要为了编译专门装一个 17 的 JDK
 java.toolchain.languageVersion = sc.current.version.compareTo('1.20.5') >= 0
@@ -166,47 +160,6 @@ if (sc.current.version.compareTo('1.20.2') < 0) {
             }
         }
     }
-} else {
-    // 1.20.2~1.20.4（NeoForge 20.x）：NeoGradle userdev
-    // 这条线的 Minecraft 反编译产物由 neoform + NFRT 生成，不需要（也没有）
-    // moddev 的那几个映射 result，因此只能用 NeoGradle 自己的管线
-    subsystems {
-        // 1.20.4 的反编译比较吃内存，默认值偏小
-        decompiler { maxMemory = '4G' }
-        parchment {
-            minecraftVersion = project.parchment_minecraft_version
-            mappingsVersion = project.parchment_mappings_version
-            // 本工程没有预置 Parchment 的 maven，让 NeoGradle 自己加
-            addRepository = true
-        }
-    }
-
-    // NeoGradle 7.1 的源码转换用 net.neoforged.jst:jst-cli-bundle 2.0.11，它是 Java 21 编的；
-    // 而 1.20.4 的版本清单只声明 Java 17，NeoGradle 会给这些任务发 JDK 17，
-    // 于是报 UnsupportedClassVersionError（class file version 65.0）。
-    // 只把这类"工具"任务的运行时提到 21，编译产物仍然是 release 17。
-    tasks.withType(net.neoforged.gradle.common.runtime.tasks.JavaSourceTransformer).configureEach {
-        javaVersion.set(JavaLanguageVersion.of(21))
-    }
-
-    runs {
-        client {
-            // NeoForge 20.4 读的是 neoforge.* 前缀（forge.* 是老的 Forge 名字，这里不生效）
-            systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
-            modSource project.sourceSets.main
-        }
-
-        server {
-            systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
-            programArgument '--nogui'
-            modSource project.sourceSets.main
-        }
-
-        configureEach {
-            systemProperty 'neoforge.logging.markers', 'REGISTRIES'
-            workingDirectory file("${rootDir}/run/${sc.current.version}")
-        }
-    }
 }
 
 // mods / dependencies / 其他配置不变
@@ -215,7 +168,7 @@ if (sc.current.version.compareTo('1.20.2') < 0) {
 //  在 :1.21.1:runClient 查询 modFolders 时直接报错）
 
 configurations {
-    // localRuntime 是 moddev（1.21.x）预置的配置；1.20.x 的两条线没有，用 maybeCreate 补一个同名的
+    // localRuntime 是 moddev（1.21.x）预置的配置；1.20.1 这条线没有，用 maybeCreate 补一个同名的
     if (sc.current.version.compareTo('1.20.5') < 0) {
         maybeCreate('localRuntime')
     }
@@ -279,25 +232,6 @@ dependencies {
             "${rootDir}/libs/ponder-neoforge-1.0.82+mc1.21.1.jar",
             "${rootDir}/libs/flywheel-neoforge-1.21.1-1.0.6.jar",
             "${rootDir}/libs/Registrate-MC1.21-1.3.0+67.jar")
-    } else {
-        // NeoGradle 靠这条依赖（net.neoforged:neoforge）决定用哪套 neoform / userdev 配置
-        implementation "net.neoforged:neoforge:${neo_version}"
-
-        // 1.20.4：农夫乐事没有发布 1.20.4 版本，用 libs/ 下本地构建出来的 jar
-        compileOnly files("${rootDir}/libs/farmersdelight-${farmersdelight_version}.jar")
-        localRuntime files("${rootDir}/libs/farmersdelight-${farmersdelight_version}.jar")
-
-        // 机械动力 / 果园乐事都没有 1.20.4 版本：这里不加载，
-        // 相关联动代码在源码里用 Stonecutter 条件注释排除
-
-        // 玉（Jade）13.x：大缸信息显示，可选依赖，仅客户端
-        compileOnly "maven.modrinth:jade:${jade_version}"
-        localRuntime "maven.modrinth:jade:${jade_version}"
-
-        // JEI 17.x：1.20.x 用 common-api + forge-api 编译，运行时装 neoforge 整包
-        compileOnly "mezz.jei:jei-${minecraft_version}-common-api:${jei_version}"
-        compileOnly "mezz.jei:jei-${minecraft_version}-forge-api:${jei_version}"
-        localRuntime "mezz.jei:jei-${minecraft_version}-neoforge:${jei_version}"
     }
 }
 
@@ -330,13 +264,11 @@ var generateModMetadata = tasks.register("generateModMetadata", ProcessResources
     }
     inputs.properties replaceProperties
     expand replaceProperties
-    // 1.20.1（Forge）和 1.20.4（NeoForge 20.4）都读 META-INF/mods.toml，但依赖段写法不同，
-    // 所以 1.20.1 单独一份模板；1.20.5+ 读 META-INF/neoforge.mods.toml
-    from(sc.current.version.compareTo('1.20.2') < 0
-            ? "${rootDir}/src/main/templates-forge"
-            : (sc.current.version.compareTo('1.20.5') >= 0
-                    ? "${rootDir}/src/main/templates"
-                    : "${rootDir}/src/main/templates-legacy"))
+    // 1.20.1（Forge）读 META-INF/mods.toml，依赖段写法与 1.20.5+ 不同，所以单独一份模板；
+    // 1.20.5+ 读 META-INF/neoforge.mods.toml
+    from(sc.current.version.compareTo('1.20.5') >= 0
+            ? "${rootDir}/src/main/templates"
+            : "${rootDir}/src/main/templates-forge")
     into "build/generated/sources/modMetadata"
 }
 sourceSets.main.resources.srcDir generateModMetadata
@@ -344,7 +276,7 @@ if (sc.current.version.compareTo('1.20.5') >= 0) {
     neoForge.ideSyncTask generateModMetadata
 }
 
-// 1.20.1 / 1.20.4 的 Mixin 都走 jar 清单的 MixinConfigs 登记（mods.toml 的 [[mixins]] 段是 20.5+ 才有），
+// 1.20.1 的 Mixin 走 jar 清单的 MixinConfigs 登记（mods.toml 的 [[mixins]] 段是 20.5+ 才有），
 // 另外这条线的 Mixin 只认 JAVA_17 的 compatibilityLevel，这里把共享的那份替换后生成一份
 if (sc.current.version.compareTo('1.20.5') < 0) {
     // 1.20.x 的数据包形态和 1.21 不一样（目录名/ItemStack 的 "id"、c: 标签……），
@@ -374,8 +306,7 @@ if (sc.current.version.compareTo('1.20.5') < 0) {
         }
     }
 
-    // 1.20.1（Forge）生产环境里 Minecraft 是 SRG 名，mixin 配置必须声明 refmap，否则注入找不到目标；
-    // 1.20.4（NeoForge 20.4）运行时是 Mojmap，不需要也不该写 refmap。
+    // 1.20.1（Forge）生产环境里 Minecraft 是 SRG 名，mixin 配置必须声明 refmap，否则注入找不到目标。
     // refmap 文件本身由上面的 mixin { } 扩展在编译期生成，这里只把文件名写进配置
     if (sc.current.version.compareTo('1.20.2') < 0) {
         def refmapName = "${mod_id}.refmap.json"
