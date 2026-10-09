@@ -256,16 +256,16 @@ public class GrillCampfireRenderer implements BlockEntityRenderer<GrillBlockEnti
                                      float x0, float y0, float x1, float y1,
                                      float red, float green, float blue, float alpha) {
         //? if <1.20.5 {
-        /*consumer.vertex(pose.pose(), x0, y0, 0.0F).color(red, green, blue, alpha).endVertex();
+        consumer.vertex(pose.pose(), x0, y0, 0.0F).color(red, green, blue, alpha).endVertex();
         consumer.vertex(pose.pose(), x1, y0, 0.0F).color(red, green, blue, alpha).endVertex();
         consumer.vertex(pose.pose(), x1, y1, 0.0F).color(red, green, blue, alpha).endVertex();
-        consumer.vertex(pose.pose(), x0, y1, 0.0F).color(red, green, blue, alpha).endVertex();*/
+        consumer.vertex(pose.pose(), x0, y1, 0.0F).color(red, green, blue, alpha).endVertex();
         //?} else {
-        consumer.addVertex(pose, x0, y0, 0.0F).setColor(red, green, blue, alpha);
+        /*consumer.addVertex(pose, x0, y0, 0.0F).setColor(red, green, blue, alpha);
         consumer.addVertex(pose, x1, y0, 0.0F).setColor(red, green, blue, alpha);
         consumer.addVertex(pose, x1, y1, 0.0F).setColor(red, green, blue, alpha);
         consumer.addVertex(pose, x0, y1, 0.0F).setColor(red, green, blue, alpha);
-        //?}
+        *///?}
     }
 
     /** 把底层缓冲包一层，把所有颜色换成调料色（位置、UV、光照、法线照原样传下去） */
@@ -293,7 +293,7 @@ public class GrillCampfireRenderer implements BlockEntityRenderer<GrillBlockEnti
         }
 
         //? if <1.20.5 {
-        /*@Override
+        @Override
         public VertexConsumer vertex(double x, double y, double z) {
             this.delegate.vertex(x, y, z);
             return this;
@@ -342,9 +342,9 @@ public class GrillCampfireRenderer implements BlockEntityRenderer<GrillBlockEnti
         @Override
         public void unsetDefaultColor() {
             this.delegate.unsetDefaultColor();
-        }*/
+        }
         //?} else {
-        @Override
+        /*@Override
         public VertexConsumer addVertex(float x, float y, float z) {
             this.delegate.addVertex(x, y, z);
             return this;
@@ -379,6 +379,6 @@ public class GrillCampfireRenderer implements BlockEntityRenderer<GrillBlockEnti
             this.delegate.setNormal(x, y, z);
             return this;
         }
-        //?}
+        *///?}
     }
 }

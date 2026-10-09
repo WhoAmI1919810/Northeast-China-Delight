@@ -16,32 +16,32 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.food.FoodData;
 import net.minecraft.world.item.ItemStack;
 //? if <1.20.2 {
-/*import net.minecraftforge.eventbus.api.SubscribeEvent;
-*///?} else {
-import net.neoforged.bus.api.SubscribeEvent;
-//?}
+import net.minecraftforge.eventbus.api.SubscribeEvent;
+//?} else {
+/*import net.neoforged.bus.api.SubscribeEvent;
+*///?}
 //? if <1.20.2 {
-/*import net.minecraftforge.event.entity.living.LivingEntityUseItemEvent;
-*///?} else {
-import net.neoforged.neoforge.event.entity.living.LivingEntityUseItemEvent;
-//?}
+import net.minecraftforge.event.entity.living.LivingEntityUseItemEvent;
+//?} else {
+/*import net.neoforged.neoforge.event.entity.living.LivingEntityUseItemEvent;
+*///?}
 //? if <1.20.2 {
-/*import net.minecraftforge.event.entity.player.ItemTooltipEvent;
-*///?} else {
-import net.neoforged.neoforge.event.entity.player.ItemTooltipEvent;
-//?}
+import net.minecraftforge.event.entity.player.ItemTooltipEvent;
+//?} else {
+/*import net.neoforged.neoforge.event.entity.player.ItemTooltipEvent;
+*///?}
 //? if <1.20.2 {
-/*import net.minecraftforge.event.entity.player.PlayerEvent;
-*///?} else {
-import net.neoforged.neoforge.event.entity.player.PlayerEvent;
-//?}
+import net.minecraftforge.event.entity.player.PlayerEvent;
+//?} else {
+/*import net.neoforged.neoforge.event.entity.player.PlayerEvent;
+*///?}
 //? if <1.20.2 {
-/*import net.minecraftforge.event.TickEvent;
-*///?} else if <1.20.5 {
+import net.minecraftforge.event.TickEvent;
+//?} else if <1.20.5 {
 /*import net.neoforged.neoforge.event.TickEvent;*/
 //?} else {
-import net.neoforged.neoforge.event.tick.PlayerTickEvent;
-//?}
+/*import net.neoforged.neoforge.event.tick.PlayerTickEvent;
+*///?}
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -168,10 +168,10 @@ public class DishEffectEvents {
                     .append(name)
                     .append(" (")
                     //? if <1.20.2 {
-                    /*.append(MobEffectUtil.formatDuration(instance, 1.0F))
-                    *///?} else {
-                    .append(MobEffectUtil.formatDuration(instance, 1.0F, 20.0F))
-                    //?}
+                    .append(MobEffectUtil.formatDuration(instance, 1.0F))
+                    //?} else {
+                    /*.append(MobEffectUtil.formatDuration(instance, 1.0F, 20.0F))
+                    *///?}
                     .append(")")
                     .withStyle(ChatFormatting.GRAY));
         }
@@ -209,17 +209,17 @@ public class DishEffectEvents {
 
     @SubscribeEvent
     //? if <1.20.5 {
-    /*public static void onPlayerTick(TickEvent.PlayerTickEvent event) {
+    public static void onPlayerTick(TickEvent.PlayerTickEvent event) {
         if (event.phase != TickEvent.Phase.END) {
             return;
         }
         tickPlayer(event.player);
-    }*/
+    }
     //?} else {
-    public static void onPlayerTick(PlayerTickEvent.Post event) {
+    /*public static void onPlayerTick(PlayerTickEvent.Post event) {
         tickPlayer(event.getEntity());
     }
-    //?}
+    *///?}
 
     /** 每 tick 的持续效果主体（两个版本共用） */
     private static void tickPlayer(Player player) {

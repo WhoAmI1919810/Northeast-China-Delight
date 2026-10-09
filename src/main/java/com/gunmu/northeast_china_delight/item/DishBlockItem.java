@@ -59,7 +59,7 @@ public class DishBlockItem extends ItemNameBlockItem
      * 只能自己在这里把空碗还给玩家（和 {@link DdConsumableItem} 同一套写法）。
      */
     //? if <1.20.5 {
-    /*@Override
+    @Override
     public ItemStack finishUsingItem(ItemStack stack, Level level, LivingEntity consumer)
     {
         ItemStack container = stack.getCraftingRemainingItem();
@@ -80,6 +80,6 @@ public class DishBlockItem extends ItemNameBlockItem
             }
         }
         return stack;
-    }*/
+    }
     //?}
 }

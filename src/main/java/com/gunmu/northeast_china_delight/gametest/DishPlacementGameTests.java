@@ -22,15 +22,15 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
 //? if <1.20.2 {
-/*import net.minecraftforge.gametest.GameTestHolder;
-*///?} else {
-import net.neoforged.neoforge.gametest.GameTestHolder;
-//?}
+import net.minecraftforge.gametest.GameTestHolder;
+//?} else {
+/*import net.neoforged.neoforge.gametest.GameTestHolder;
+*///?}
 //? if <1.20.2 {
-/*import net.minecraftforge.gametest.PrefixGameTestTemplate;
-*///?} else {
-import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
-//?}
+import net.minecraftforge.gametest.PrefixGameTestTemplate;
+//?} else {
+/*import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
+*///?}
 
 /**
  * 菜肴方块形态的三条规矩：
@@ -48,10 +48,10 @@ public final class DishPlacementGameTests
     private static Player mockPlayer(GameTestHelper helper, GameType gameType)
     {
         //? if <1.20.5 {
-        /*return gameType == GameType.CREATIVE ? helper.makeMockPlayer() : helper.makeMockSurvivalPlayer();
-        *///?} else {
-        return helper.makeMockPlayer(gameType);
-        //?}
+        return gameType == GameType.CREATIVE ? helper.makeMockPlayer() : helper.makeMockSurvivalPlayer();
+        //?} else {
+        /*return helper.makeMockPlayer(gameType);
+        *///?}
     }
 
     @GameTest(template = "empty")
@@ -122,10 +122,10 @@ public final class DishPlacementGameTests
                 ModGameplayEvents.onDishRightClick(
                         new
                                 //? if <1.20.2 {
-                                /*net.minecraftforge.event.entity.player.PlayerInteractEvent
-                                *///?} else {
-                                net.neoforged.neoforge.event.entity.player.PlayerInteractEvent
-                                //?}
+                                net.minecraftforge.event.entity.player.PlayerInteractEvent
+                                //?} else {
+                                /*net.neoforged.neoforge.event.entity.player.PlayerInteractEvent
+                                *///?}
                                 .RightClickBlock(
                                 player, InteractionHand.MAIN_HAND, ground, hit));
                 helper.assertTrue(level.getBlockState(target).is(dishBlock.get()),

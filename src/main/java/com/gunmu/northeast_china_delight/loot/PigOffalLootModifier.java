@@ -11,15 +11,15 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
 //? if <1.20.2 {
-/*import net.minecraftforge.common.loot.IGlobalLootModifier;
-*///?} else {
-import net.neoforged.neoforge.common.loot.IGlobalLootModifier;
-//?}
+import net.minecraftforge.common.loot.IGlobalLootModifier;
+//?} else {
+/*import net.neoforged.neoforge.common.loot.IGlobalLootModifier;
+*///?}
 //? if <1.20.2 {
-/*import net.minecraftforge.common.loot.LootModifier;
-*///?} else {
-import net.neoforged.neoforge.common.loot.LootModifier;
-//?}
+import net.minecraftforge.common.loot.LootModifier;
+//?} else {
+/*import net.neoforged.neoforge.common.loot.LootModifier;
+*///?}
 
 import java.util.ArrayList;
 import java.util.List;
@@ -38,12 +38,12 @@ public class PigOffalLootModifier extends LootModifier {
     public static final int MAX_KINDS = 2;
 
     //? if <1.20.5 {
-    /*public static final Codec<PigOffalLootModifier> CODEC = RecordCodecBuilder.create(
+    public static final Codec<PigOffalLootModifier> CODEC = RecordCodecBuilder.create(
             instance -> codecStart(instance).apply(instance, PigOffalLootModifier::new));
-    *///?} else {
-    public static final MapCodec<PigOffalLootModifier> CODEC = RecordCodecBuilder.mapCodec(
+    //?} else {
+    /*public static final MapCodec<PigOffalLootModifier> CODEC = RecordCodecBuilder.mapCodec(
             instance -> codecStart(instance).apply(instance, PigOffalLootModifier::new));
-    //?}
+    *///?}
 
     public PigOffalLootModifier(LootItemCondition[] conditions) {
         super(conditions);
@@ -84,12 +84,12 @@ public class PigOffalLootModifier extends LootModifier {
 
     @Override
     //? if <1.20.5 {
-    /*public Codec<? extends IGlobalLootModifier> codec() {
-        return CODEC;
-    }*/
-    //?} else {
-    public MapCodec<? extends IGlobalLootModifier> codec() {
+    public Codec<? extends IGlobalLootModifier> codec() {
         return CODEC;
     }
-    //?}
+    //?} else {
+    /*public MapCodec<? extends IGlobalLootModifier> codec() {
+        return CODEC;
+    }
+    *///?}
 }

@@ -20,10 +20,10 @@ public final class ModTags {
 
     private static TagKey<Item> item(String path) {
         //? if <1.20.5 {
-        /*return TagKey.create(Registries.ITEM, DdIds.of("forge", legacyPath(path)));*/
+        return TagKey.create(Registries.ITEM, DdIds.of("forge", legacyPath(path)));
         //?} else {
-        return TagKey.create(Registries.ITEM, DdIds.of("c", path));
-        //?}
+        /*return TagKey.create(Registries.ITEM, DdIds.of("c", path));
+        *///?}
     }
 
     /**
@@ -33,7 +33,7 @@ public final class ModTags {
      * <p>这张表要和 {@code gradle/legacy-data-port.groovy} 里的 {@code legacyTagPathRenames} 对齐。</p>
      */
     //? if <1.20.5 {
-    /*private static String legacyPath(String path) {
+    private static String legacyPath(String path) {
         return switch (path) {
             case "foods/dough/wheat" -> "dough/wheat";
             case "foods/raw_fish" -> "raw_fishes";
@@ -46,7 +46,7 @@ public final class ModTags {
             case "foods/fruits/pear" -> "fruits/pear";
             default -> path;
         };
-    }*/
+    }
     //?}
 
     public static final TagKey<Item> CROPS_WHEAT = item("crops/wheat");

@@ -7,8 +7,8 @@ import net.minecraft.core.Direction;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 //? if >=1.20.5 {
-import net.minecraft.world.ItemInteractionResult;
-//?}
+/*import net.minecraft.world.ItemInteractionResult;
+*///?}
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -70,7 +70,7 @@ public class CornStalkBlock extends Block {
      * 注意：空手收获要求两只手都空着，避免主手拿骨粉时副手空手误触发。
      */
     //? if <1.20.5 {
-    /*@Override
+    @Override
     public InteractionResult use(BlockState state, Level level, BlockPos pos, Player player,
                                  InteractionHand hand, BlockHitResult hit) {
         ItemStack stack = player.getItemInHand(hand);
@@ -96,9 +96,9 @@ public class CornStalkBlock extends Block {
             }
         }
         return InteractionResult.sidedSuccess(level.isClientSide());
-    }*/
+    }
     //?} else {
-    @Override
+    /*@Override
     protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos,
                                               Player player, InteractionHand hand, BlockHitResult hit) {
         if (state.getValue(STAGE) != STAGE_RIPE) {
@@ -124,7 +124,7 @@ public class CornStalkBlock extends Block {
         }
         return ItemInteractionResult.sidedSuccess(level.isClientSide());
     }
-    //?}
+    *///?}
 
     @Override
     public boolean canSurvive(BlockState state, LevelReader level, BlockPos pos) {

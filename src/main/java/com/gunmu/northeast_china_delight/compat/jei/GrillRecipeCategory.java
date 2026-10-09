@@ -13,9 +13,9 @@ import mezz.jei.api.gui.builder.IRecipeSlotBuilder;
 import mezz.jei.api.gui.drawable.IDrawable;
 import mezz.jei.api.gui.ingredient.IRecipeSlotsView;
 //? if >=1.20.5 {
-import mezz.jei.api.gui.widgets.IRecipeExtrasBuilder;
+/*import mezz.jei.api.gui.widgets.IRecipeExtrasBuilder;
 import mezz.jei.api.gui.widgets.IRecipeWidget;
-//?}
+*///?}
 import mezz.jei.api.helpers.IGuiHelper;
 import mezz.jei.api.recipe.IFocusGroup;
 import mezz.jei.api.recipe.RecipeIngredientRole;
@@ -36,10 +36,10 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.CampfireBlock;
 import net.minecraft.world.level.block.state.BlockState;
 //? if <1.20.2 {
-/*import net.minecraftforge.client.model.data.ModelData;
-*///?} else {
-import net.neoforged.neoforge.client.model.data.ModelData;
-//?}
+import net.minecraftforge.client.model.data.ModelData;
+//?} else {
+/*import net.neoforged.neoforge.client.model.data.ModelData;
+*///?}
 
 import java.util.List;
 
@@ -110,10 +110,10 @@ public class GrillRecipeCategory implements IRecipeCategory<GrillJeiRecipe> {
         this.guiHelper = guiHelper;
         this.icon = new StationIcon();
         //? if <1.20.5 {
-        /*this.arrow = guiHelper.createDrawable(WIDGETS, ARROW_U, ARROW_V, ARROW_W, ARROW_H);*/
+        this.arrow = guiHelper.createDrawable(WIDGETS, ARROW_U, ARROW_V, ARROW_W, ARROW_H);
         //?} else {
-        this.arrow = guiHelper.getRecipeArrow();
-        //?}
+        /*this.arrow = guiHelper.getRecipeArrow();
+        *///?}
         this.background = guiHelper.createBlankDrawable(WIDTH, HEIGHT);
     }
 
@@ -123,10 +123,10 @@ public class GrillRecipeCategory implements IRecipeCategory<GrillJeiRecipe> {
      */
     private static IRecipeSlotBuilder withSlotBackground(IRecipeSlotBuilder slot, IGuiHelper guiHelper) {
         //? if <1.20.5 {
-        /*return slot.setBackground(guiHelper.getSlotDrawable(), -1, -1);*/
+        return slot.setBackground(guiHelper.getSlotDrawable(), -1, -1);
         //?} else {
-        return slot.setStandardSlotBackground();
-        //?}
+        /*return slot.setStandardSlotBackground();
+        *///?}
     }
 
     @Override
@@ -184,13 +184,13 @@ public class GrillRecipeCategory implements IRecipeCategory<GrillJeiRecipe> {
     public void draw(GrillJeiRecipe recipe, IRecipeSlotsView slotsView, GuiGraphics graphics,
                      double mouseX, double mouseY) {
         //? if <1.20.5 {
-        /*drawStation(graphics, STATION_X + STATION_SIZE / 2.0F, STATION_Y + STATION_SIZE / 2.0F, STATION_SCALE);
+        drawStation(graphics, STATION_X + STATION_SIZE / 2.0F, STATION_Y + STATION_SIZE / 2.0F, STATION_SCALE);
         drawSeasoningAmounts(graphics, recipe.seasonings());
         this.arrow.draw(graphics, ARROW_X, ARROW_Y);
         Component text = timeText(recipe.seconds());
         Font font = Minecraft.getInstance().font;
         int x = ARROW_X + (this.arrow.getWidth() - font.width(text)) / 2;
-        graphics.drawString(font, text, Math.max(0, x), TIME_Y, TIME_COLOR, false);*/
+        graphics.drawString(font, text, Math.max(0, x), TIME_Y, TIME_COLOR, false);
         //?}
     }
 
@@ -228,13 +228,13 @@ public class GrillRecipeCategory implements IRecipeCategory<GrillJeiRecipe> {
     }
 
     //? if >=1.20.5 {
-    @Override
+    /*@Override
     public void createRecipeExtras(IRecipeExtrasBuilder builder, GrillJeiRecipe recipe, IFocusGroup focuses) {
         builder.addWidget(new StationWidget());
         builder.addWidget(new SeasoningAmountWidget(recipe.seasonings()));
         builder.addWidget(new TimeWidget(this.arrow, recipe.seconds()));
     }
-    //?}
+    *///?}
 
     /**
      * 画「营火烤架」：直接拿游戏里的方块模型 + 铁条几何来渲染，
@@ -299,7 +299,7 @@ public class GrillRecipeCategory implements IRecipeCategory<GrillJeiRecipe> {
     }
 
     //? if >=1.20.5 {
-    /** 页面中间那台营火烤架。控件最后绘制，所以不会被槽位盖住 */
+    /*/^* 页面中间那台营火烤架。控件最后绘制，所以不会被槽位盖住 ^/
     private static final class StationWidget implements IRecipeWidget {
 
         @Override
@@ -313,10 +313,10 @@ public class GrillRecipeCategory implements IRecipeCategory<GrillJeiRecipe> {
         }
     }
 
-    /**
+    /^*
      * 瓶装调料的用量：在对应槽位下面写一行小字（比如「10 mB」）。
      * 盐、糖这类不是瓶装的就不写 —— 它们一次消耗一份，没有 mB 概念。
-     */
+     ^/
     private record SeasoningAmountWidget(List<ItemStack> seasonings) implements IRecipeWidget {
 
         @Override
@@ -330,7 +330,7 @@ public class GrillRecipeCategory implements IRecipeCategory<GrillJeiRecipe> {
         }
     }
 
-    /** 画箭头和箭头下面的烤制时长 */
+    /^* 画箭头和箭头下面的烤制时长 ^/
     private record TimeWidget(IDrawable arrow, int seconds) implements IRecipeWidget {
 
         @Override
@@ -348,5 +348,5 @@ public class GrillRecipeCategory implements IRecipeCategory<GrillJeiRecipe> {
         }
     }
 
-    //?}
+    *///?}
 }

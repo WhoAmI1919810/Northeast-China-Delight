@@ -642,11 +642,11 @@ public class NortheastCourtyardStructure extends Structure
                         continue;
                     }
                     //? if >=1.20.5 {
-                    if (!spread.applyAdditionalChunkRestrictions(candidate.x, candidate.z, seed))
+                    /*if (!spread.applyAdditionalChunkRestrictions(candidate.x, candidate.z, seed))
                     {
                         continue;
                     }
-                    //?}
+                    *///?}
                     if (this.avoidedStructureCouldGenerate(context, holder.get().value(), centerX, centerZ))
                     {
                         return true;

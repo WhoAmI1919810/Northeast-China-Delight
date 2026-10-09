@@ -13,15 +13,15 @@ import net.minecraft.world.level.material.MapColor;
 import net.minecraft.world.level.material.PushReaction;
 import net.minecraft.world.phys.shapes.VoxelShape;
 //? if <1.20.2 {
-/*import net.minecraftforge.eventbus.api.IEventBus;
-*///?} else {
-import net.neoforged.bus.api.IEventBus;
-//?}
+import net.minecraftforge.eventbus.api.IEventBus;
+//?} else {
+/*import net.neoforged.bus.api.IEventBus;
+*///?}
 //? if <1.20.2 {
-/*import net.minecraftforge.registries.DeferredRegister;
-*///?} else {
-import net.neoforged.neoforge.registries.DeferredRegister;
-//?}
+import net.minecraftforge.registries.DeferredRegister;
+//?} else {
+/*import net.neoforged.neoforge.registries.DeferredRegister;
+*///?}
 
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -33,11 +33,11 @@ import java.util.Map;
 public class ModBlocks {
 
     //? if <1.20.2 {
-    /*public static final DeferredRegister<Block> BLOCKS =
+    public static final DeferredRegister<Block> BLOCKS =
             DeferredRegister.create(net.minecraftforge.registries.ForgeRegistries.BLOCKS, NortheastChinaDelight.MODID);
-    *///?} else {
-    public static final DeferredRegister.Blocks BLOCKS = DeferredRegister.createBlocks(NortheastChinaDelight.MODID);
-    //?}
+    //?} else {
+    /*public static final DeferredRegister.Blocks BLOCKS = DeferredRegister.createBlocks(NortheastChinaDelight.MODID);
+    *///?}
 
     /**
      * 用「属性 → 方块」的工厂注册一个方块。
@@ -50,10 +50,10 @@ public class ModBlocks {
                                                        Function<BlockBehaviour.Properties, ? extends B> factory,
                                                        BlockBehaviour.Properties properties) {
         //? if <1.20.2 {
-        /*return BLOCKS.register(name, () -> factory.apply(properties));
-        *///?} else {
-        return BLOCKS.registerBlock(name, factory, properties);
-        //?}
+        return BLOCKS.register(name, () -> factory.apply(properties));
+        //?} else {
+        /*return BLOCKS.registerBlock(name, factory, properties);
+        *///?}
     }
 
     // ===== 方块：箱装 / 袋装 =====

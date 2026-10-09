@@ -16,8 +16,8 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 //? if >=1.20.5 {
-import net.minecraft.world.ItemInteractionResult;
-//?}
+/*import net.minecraft.world.ItemInteractionResult;
+*///?}
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -36,18 +36,18 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 //? if <1.20.2 {
-/*import net.minecraftforge.common.ForgeHooks;
+import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.common.IPlantable;
 import net.minecraftforge.common.ToolActions;
-*///?} else if <1.20.5 {
+//?} else if <1.20.5 {
 /*import net.neoforged.neoforge.common.CommonHooks;
 import net.neoforged.neoforge.common.IPlantable;
 import net.neoforged.neoforge.common.ToolActions;
 *///?} else {
-import net.neoforged.neoforge.common.CommonHooks;
+/*import net.neoforged.neoforge.common.CommonHooks;
 import net.neoforged.neoforge.common.ItemAbilities;
 import net.neoforged.neoforge.common.util.TriState;
-//?}
+*///?}
 
 /**
  * 榛蘑簇：行为照抄农夫乐事的蘑菇菌簇（{@code MushroomColonyBlock}）。
@@ -62,8 +62,8 @@ import net.neoforged.neoforge.common.util.TriState;
 public class HazelMushroomColonyBlock extends BushBlock implements BonemealableBlock
 {
     //? if >=1.20.2 {
-    public static final MapCodec<HazelMushroomColonyBlock> CODEC = simpleCodec(HazelMushroomColonyBlock::new);
-    //?}
+    /*public static final MapCodec<HazelMushroomColonyBlock> CODEC = simpleCodec(HazelMushroomColonyBlock::new);
+    *///?}
 
     /** 原版／农夫乐事共用的规矩：亮度 13 以上就不算「菌类环境」 */
     public static final int MAX_LIGHT = 13;
@@ -84,12 +84,12 @@ public class HazelMushroomColonyBlock extends BushBlock implements BonemealableB
     }
 
     //? if >=1.20.2 {
-    @Override
+    /*@Override
     public MapCodec<HazelMushroomColonyBlock> codec()
     {
         return CODEC;
     }
-    //?}
+    *///?}
 
     @Override
     public VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context)
@@ -109,13 +109,13 @@ public class HazelMushroomColonyBlock extends BushBlock implements BonemealableB
         BlockPos below = pos.below();
         BlockState belowState = level.getBlockState(below);
         //? if <1.20.5 {
-        /*// 1.20.4 的 canSustainPlant 只有「能／不能」两种答案（没有 1.21 的「说不准」档），
+        // 1.20.4 的 canSustainPlant 只有「能／不能」两种答案（没有 1.21 的「说不准」档），
         // 照农夫乐事 1.20.4 的蘑菇菌簇写法：亮度够暗 + 下面这层土能长东西
         return belowState.is(BlockTags.MUSHROOM_GROW_BLOCK)
                 || level.getRawBrightness(pos, 0) < MAX_LIGHT
-                && belowState.canSustainPlant(level, below, Direction.UP, (IPlantable) state.getBlock());*/
+                && belowState.canSustainPlant(level, below, Direction.UP, (IPlantable) state.getBlock());
         //?} else {
-        TriState soil = belowState.canSustainPlant(level, below, Direction.UP, state);
+        /*TriState soil = belowState.canSustainPlant(level, below, Direction.UP, state);
         if (belowState.is(BlockTags.MUSHROOM_GROW_BLOCK))
         {
             return true;
@@ -124,7 +124,7 @@ public class HazelMushroomColonyBlock extends BushBlock implements BonemealableB
         return soil.isDefault()
                 ? level.getRawBrightness(pos, 0) < MAX_LIGHT && this.mayPlaceOn(belowState, level, below)
                 : soil.isTrue();
-        //?}
+        *///?}
     }
 
     @Override
@@ -146,54 +146,54 @@ public class HazelMushroomColonyBlock extends BushBlock implements BonemealableB
 
     private static boolean cropGrowPre(ServerLevel level, BlockPos pos, BlockState state, boolean def) {
         //? if <1.20.2 {
-        /*return ForgeHooks.onCropsGrowPre(level, pos, state, def);
-        *///?} else if <1.20.5 {
+        return ForgeHooks.onCropsGrowPre(level, pos, state, def);
+        //?} else if <1.20.5 {
         /*return CommonHooks.onCropsGrowPre(level, pos, state, def);*/
         //?} else {
-        return CommonHooks.canCropGrow(level, pos, state, def);
-        //?}
+        /*return CommonHooks.canCropGrow(level, pos, state, def);
+        *///?}
     }
 
     private static void cropGrowPost(ServerLevel level, BlockPos pos, BlockState state) {
         //? if <1.20.2 {
-        /*ForgeHooks.onCropsGrowPost(level, pos, state);
-        *///?} else if <1.20.5 {
+        ForgeHooks.onCropsGrowPost(level, pos, state);
+        //?} else if <1.20.5 {
         /*CommonHooks.onCropsGrowPost(level, pos, state);*/
         //?} else {
-        CommonHooks.fireCropGrowPost(level, pos, state);
-        //?}
+        /*CommonHooks.fireCropGrowPost(level, pos, state);
+        *///?}
     }
 
     @Override
     //? if <1.20.2 {
-    /*public ItemStack getCloneItemStack(BlockGetter level, BlockPos pos, BlockState state)
-    *///?} else {
-    public ItemStack getCloneItemStack(LevelReader level, BlockPos pos, BlockState state)
-    //?}
+    public ItemStack getCloneItemStack(BlockGetter level, BlockPos pos, BlockState state)
+    //?} else {
+    /*public ItemStack getCloneItemStack(LevelReader level, BlockPos pos, BlockState state)
+    *///?}
     {
         return new ItemStack(ModItems.HAZEL_MUSHROOM.get());
     }
 
     @Override
     //? if <1.20.5 {
-    /*public InteractionResult use(BlockState state, Level level, BlockPos pos, Player player,
-                                 InteractionHand hand, BlockHitResult hit)*/
+    public InteractionResult use(BlockState state, Level level, BlockPos pos, Player player,
+                                 InteractionHand hand, BlockHitResult hit)
     //?} else {
-    protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos,
+    /*protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos,
                                               Player player, InteractionHand hand, BlockHitResult hit)
-    //?}
+    *///?}
     {
         //? if <1.20.5 {
-        /*ItemStack stack = player.getItemInHand(hand);*/
+        ItemStack stack = player.getItemInHand(hand);
         //?}
         int age = state.getValue(COLONY_AGE);
         if (age <= 0)
         {
             //? if <1.20.5 {
-            /*return InteractionResult.PASS;*/
+            return InteractionResult.PASS;
             //?} else {
-            return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
-            //?}
+            /*return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+            *///?}
         }
 
         if (shearsHarvest(stack))
@@ -208,10 +208,10 @@ public class HazelMushroomColonyBlock extends BushBlock implements BonemealableB
                         pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, 3, 0.1, 0.1, 0.1, 0.001);
             }
             //? if <1.20.5 {
-            /*return InteractionResult.sidedSuccess(level.isClientSide);*/
+            return InteractionResult.sidedSuccess(level.isClientSide);
             //?} else {
-            return ItemInteractionResult.sidedSuccess(level.isClientSide);
-            //?}
+            /*return ItemInteractionResult.sidedSuccess(level.isClientSide);
+            *///?}
         }
 
         if (stack.is(ModBlockTags.KNIVES))
@@ -227,26 +227,26 @@ public class HazelMushroomColonyBlock extends BushBlock implements BonemealableB
                         pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, 10, 0.2, 0.2, 0.2, 0.1);
             }
             //? if <1.20.5 {
-            /*return InteractionResult.sidedSuccess(level.isClientSide);*/
+            return InteractionResult.sidedSuccess(level.isClientSide);
             //?} else {
-            return ItemInteractionResult.sidedSuccess(level.isClientSide);
-            //?}
+            /*return ItemInteractionResult.sidedSuccess(level.isClientSide);
+            *///?}
         }
 
         //? if <1.20.5 {
-        /*return InteractionResult.PASS;*/
+        return InteractionResult.PASS;
         //?} else {
-        return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
-        //?}
+        /*return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+        *///?}
     }
 
     /** 剪刀能不能「收割」这一株（1.20.4 的工具行为常量在 ToolActions 里） */
     private static boolean shearsHarvest(ItemStack stack) {
         //? if <1.20.5 {
-        /*return stack.canPerformAction(ToolActions.SHEARS_HARVEST);*/
+        return stack.canPerformAction(ToolActions.SHEARS_HARVEST);
         //?} else {
-        return stack.canPerformAction(ItemAbilities.SHEARS_HARVEST);
-        //?}
+        /*return stack.canPerformAction(ItemAbilities.SHEARS_HARVEST);
+        *///?}
     }
 
     @Override
@@ -257,10 +257,10 @@ public class HazelMushroomColonyBlock extends BushBlock implements BonemealableB
 
     @Override
     //? if <1.20.2 {
-    /*public boolean isValidBonemealTarget(LevelReader level, BlockPos pos, BlockState state, boolean isClient)
-    *///?} else {
-    public boolean isValidBonemealTarget(LevelReader level, BlockPos pos, BlockState state)
-    //?}
+    public boolean isValidBonemealTarget(LevelReader level, BlockPos pos, BlockState state, boolean isClient)
+    //?} else {
+    /*public boolean isValidBonemealTarget(LevelReader level, BlockPos pos, BlockState state)
+    *///?}
     {
         return state.getValue(COLONY_AGE) < MAX_AGE;
     }

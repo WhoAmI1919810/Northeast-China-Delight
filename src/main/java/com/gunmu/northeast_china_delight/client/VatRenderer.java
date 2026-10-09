@@ -24,10 +24,10 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 //? if <1.20.2 {
-/*import net.minecraftforge.client.model.data.ModelData;
-*///?} else {
-import net.neoforged.neoforge.client.model.data.ModelData;
-//?}
+import net.minecraftforge.client.model.data.ModelData;
+//?} else {
+/*import net.neoforged.neoforge.client.model.data.ModelData;
+*///?}
 
 import java.util.List;
 
@@ -367,16 +367,16 @@ public class VatRenderer implements BlockEntityRenderer<VatBlockEntity> {
                              float dx, float dy, float dz, float du, float dv,
                              float nx, float ny, float nz) {
         //? if <1.20.5 {
-        /*vc.vertex(pose.pose(), ax, ay, az).color(r, g, b, alpha).uv(au, av)
+        vc.vertex(pose.pose(), ax, ay, az).color(r, g, b, alpha).uv(au, av)
                 .overlayCoords(overlay).uv2(light).normal(pose.normal(), nx, ny, nz).endVertex();
         vc.vertex(pose.pose(), bx, by, bz).color(r, g, b, alpha).uv(bu, bv)
                 .overlayCoords(overlay).uv2(light).normal(pose.normal(), nx, ny, nz).endVertex();
         vc.vertex(pose.pose(), cx, cy, cz).color(r, g, b, alpha).uv(cu, cv)
                 .overlayCoords(overlay).uv2(light).normal(pose.normal(), nx, ny, nz).endVertex();
         vc.vertex(pose.pose(), dx, dy, dz).color(r, g, b, alpha).uv(du, dv)
-                .overlayCoords(overlay).uv2(light).normal(pose.normal(), nx, ny, nz).endVertex();*/
+                .overlayCoords(overlay).uv2(light).normal(pose.normal(), nx, ny, nz).endVertex();
         //?} else {
-        vc.addVertex(pose, ax, ay, az).setColor(r, g, b, alpha).setUv(au, av)
+        /*vc.addVertex(pose, ax, ay, az).setColor(r, g, b, alpha).setUv(au, av)
                 .setOverlay(overlay).setLight(light).setNormal(pose, nx, ny, nz);
         vc.addVertex(pose, bx, by, bz).setColor(r, g, b, alpha).setUv(bu, bv)
                 .setOverlay(overlay).setLight(light).setNormal(pose, nx, ny, nz);
@@ -384,6 +384,6 @@ public class VatRenderer implements BlockEntityRenderer<VatBlockEntity> {
                 .setOverlay(overlay).setLight(light).setNormal(pose, nx, ny, nz);
         vc.addVertex(pose, dx, dy, dz).setColor(r, g, b, alpha).setUv(du, dv)
                 .setOverlay(overlay).setLight(light).setNormal(pose, nx, ny, nz);
-        //?}
+        *///?}
     }
 }

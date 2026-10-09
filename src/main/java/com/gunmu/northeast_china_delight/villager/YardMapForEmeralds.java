@@ -6,8 +6,8 @@ import com.gunmu.northeast_china_delight.util.DdIds;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 //? if >=1.20.5 {
-import net.minecraft.core.component.DataComponents;
-//?}
+/*import net.minecraft.core.component.DataComponents;
+*///?}
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -20,14 +20,14 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.MapItem;
 //? if >=1.20.5 {
-import net.minecraft.world.item.trading.ItemCost;
-//?}
+/*import net.minecraft.world.item.trading.ItemCost;
+*///?}
 import net.minecraft.world.item.trading.MerchantOffer;
 import net.minecraft.world.level.levelgen.structure.Structure;
 
 //? if >=1.20.5 {
-import net.minecraft.world.level.saveddata.maps.MapDecorationType;
-//?}
+/*import net.minecraft.world.level.saveddata.maps.MapDecorationType;
+*///?}
 import net.minecraft.world.level.saveddata.maps.MapItemSavedData;
 
 import javax.annotation.Nullable;
@@ -83,18 +83,18 @@ public class YardMapForEmeralds implements VillagerTrades.ItemListing
         ItemStack map = MapItem.create(serverLevel, yardPos.getX(), yardPos.getZ(), MAP_SCALE, true, true);
         MapItem.renderBiomePreviewMap(serverLevel, map);
         //? if <1.20.5 {
-        /*MapItemSavedData.addTargetDecoration(map, yardPos, DECORATION_LABEL, ModMapDecorations.DONGBEI_YARD);
-        *///?} else {
-        MapItemSavedData.addTargetDecoration(map, yardPos, DECORATION_LABEL, ModMapDecorations.dongbeiYardHolder());
-        //?}
-        //? if <1.20.5 {
-        /*map.setHoverName(Component.translatable(DISPLAY_NAME));
-        return new MerchantOffer(new ItemStack(Items.EMERALD, this.emeraldCost), new ItemStack(Items.COMPASS),
-                map, this.maxUses, this.villagerXp, 0.2F);*/
+        MapItemSavedData.addTargetDecoration(map, yardPos, DECORATION_LABEL, ModMapDecorations.DONGBEI_YARD);
         //?} else {
-        map.set(DataComponents.ITEM_NAME, Component.translatable(DISPLAY_NAME));
+        /*MapItemSavedData.addTargetDecoration(map, yardPos, DECORATION_LABEL, ModMapDecorations.dongbeiYardHolder());
+        *///?}
+        //? if <1.20.5 {
+        map.setHoverName(Component.translatable(DISPLAY_NAME));
+        return new MerchantOffer(new ItemStack(Items.EMERALD, this.emeraldCost), new ItemStack(Items.COMPASS),
+                map, this.maxUses, this.villagerXp, 0.2F);
+        //?} else {
+        /*map.set(DataComponents.ITEM_NAME, Component.translatable(DISPLAY_NAME));
         return new MerchantOffer(new ItemCost(Items.EMERALD, this.emeraldCost), Optional.of(new ItemCost(Items.COMPASS)),
                 map, this.maxUses, this.villagerXp, 0.2F);
-        //?}
+        *///?}
     }
 }

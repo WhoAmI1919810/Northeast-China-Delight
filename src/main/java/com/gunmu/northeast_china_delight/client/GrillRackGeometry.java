@@ -169,21 +169,21 @@ public final class GrillRackGeometry {
     private static void vertex(VertexConsumer consumer, PoseStack.Pose matrix, float x, float y, float z,
                                float u, float v, float nx, float ny, float nz, int packedLight, int packedOverlay) {
         //? if <1.20.5 {
-        /*consumer.vertex(matrix.pose(), x, y, z)
+        consumer.vertex(matrix.pose(), x, y, z)
                 .color(1.0F, 1.0F, 1.0F, 1.0F)
                 .uv(u, v)
                 .overlayCoords(packedOverlay)
                 .uv2(packedLight)
                 .normal(matrix.normal(), nx, ny, nz)
-                .endVertex();*/
+                .endVertex();
         //?} else {
-        consumer.addVertex(matrix, x, y, z)
+        /*consumer.addVertex(matrix, x, y, z)
                 .setColor(1.0F, 1.0F, 1.0F, 1.0F)
                 .setUv(u, v)
                 .setOverlay(packedOverlay)
                 .setLight(packedLight)
                 .setNormal(nx, ny, nz);
-        //?}
+        *///?}
     }
 
     /** 把贴图坐标因子夹到「最外圈像素的中心」之间，避免采样到图集里隔壁的贴图 */

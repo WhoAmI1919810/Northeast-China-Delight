@@ -4,15 +4,15 @@ import com.gunmu.northeast_china_delight.NortheastChinaDelight;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 //? if <1.20.2 {
-/*import net.minecraftforge.eventbus.api.IEventBus;
-*///?} else {
-import net.neoforged.bus.api.IEventBus;
-//?}
+import net.minecraftforge.eventbus.api.IEventBus;
+//?} else {
+/*import net.neoforged.bus.api.IEventBus;
+*///?}
 //? if <1.20.2 {
-/*import net.minecraftforge.registries.DeferredRegister;
-*///?} else {
-import net.neoforged.neoforge.registries.DeferredRegister;
-//?}
+import net.minecraftforge.registries.DeferredRegister;
+//?} else {
+/*import net.neoforged.neoforge.registries.DeferredRegister;
+*///?}
 
 import java.util.function.Supplier;
 

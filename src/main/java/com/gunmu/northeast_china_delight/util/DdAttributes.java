@@ -19,12 +19,12 @@ import java.util.concurrent.ConcurrentHashMap;
 public final class DdAttributes {
 
     //? if <1.20.5 {
-    /*private static final Map<ResourceLocation, UUID> UUID_CACHE = new ConcurrentHashMap<>();
+    private static final Map<ResourceLocation, UUID> UUID_CACHE = new ConcurrentHashMap<>();
 
     private static UUID uuidOf(ResourceLocation id) {
         return UUID_CACHE.computeIfAbsent(id,
                 location -> UUID.nameUUIDFromBytes(location.toString().getBytes(StandardCharsets.UTF_8)));
-    }*/
+    }
     //?}
 
     private DdAttributes() {
@@ -32,44 +32,44 @@ public final class DdAttributes {
 
     /** 乘法基值运算：1.20.4 叫 MULTIPLY_BASE，1.20.5 起改叫 ADD_MULTIPLIED_BASE */
     //? if <1.20.5 {
-    /*public static final AttributeModifier.Operation OP_MULTIPLY_BASE = AttributeModifier.Operation.MULTIPLY_BASE;
-    *///?} else {
-    public static final AttributeModifier.Operation OP_MULTIPLY_BASE = AttributeModifier.Operation.ADD_MULTIPLIED_BASE;
-    //?}
+    public static final AttributeModifier.Operation OP_MULTIPLY_BASE = AttributeModifier.Operation.MULTIPLY_BASE;
+    //?} else {
+    /*public static final AttributeModifier.Operation OP_MULTIPLY_BASE = AttributeModifier.Operation.ADD_MULTIPLIED_BASE;
+    *///?}
 
     /** 造一个修饰符 */
     public static AttributeModifier create(ResourceLocation id, double amount, AttributeModifier.Operation operation) {
         //? if <1.20.5 {
-        /*return new AttributeModifier(uuidOf(id), id.toString(), amount, operation);*/
+        return new AttributeModifier(uuidOf(id), id.toString(), amount, operation);
         //?} else {
-        return new AttributeModifier(id, amount, operation);
-        //?}
+        /*return new AttributeModifier(id, amount, operation);
+        *///?}
     }
 
     /** 查已经挂在这个属性上的修饰符（没有就是 null） */
     public static AttributeModifier get(AttributeInstance instance, ResourceLocation id) {
         //? if <1.20.5 {
-        /*return instance.getModifier(uuidOf(id));*/
+        return instance.getModifier(uuidOf(id));
         //?} else {
-        return instance.getModifier(id);
-        //?}
+        /*return instance.getModifier(id);
+        *///?}
     }
 
     /** 摘掉修饰符 */
     public static void remove(AttributeInstance instance, ResourceLocation id) {
         //? if <1.20.5 {
-        /*instance.removeModifier(uuidOf(id));*/
+        instance.removeModifier(uuidOf(id));
         //?} else {
-        instance.removeModifier(id);
-        //?}
+        /*instance.removeModifier(id);
+        *///?}
     }
 
     /** 修饰符的数值（1.20.4 是 getAmount()，1.21 起是 amount()） */
     public static double amount(AttributeModifier modifier) {
         //? if <1.20.5 {
-        /*return modifier.getAmount();*/
+        return modifier.getAmount();
         //?} else {
-        return modifier.amount();
-        //?}
+        /*return modifier.amount();
+        *///?}
     }
 }

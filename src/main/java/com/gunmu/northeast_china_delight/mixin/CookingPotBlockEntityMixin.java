@@ -3,16 +3,16 @@ package com.gunmu.northeast_china_delight.mixin;
 import com.gunmu.northeast_china_delight.item.SeasoningBottleItem;
 import com.gunmu.northeast_china_delight.item.ModItems;
 //? if >=1.20.2 {
-import net.minecraft.world.item.crafting.RecipeHolder;
-//?}
+/*import net.minecraft.world.item.crafting.RecipeHolder;
+*///?}
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 //? if <1.20.2 {
-/*import net.minecraftforge.items.ItemStackHandler;
-*///?} else {
-import net.neoforged.neoforge.items.ItemStackHandler;
-//?}
+import net.minecraftforge.items.ItemStackHandler;
+//?} else {
+/*import net.neoforged.neoforge.items.ItemStackHandler;
+*///?}
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
@@ -47,10 +47,10 @@ public abstract class CookingPotBlockEntityMixin {
     @Inject(method = "processCooking", at = @At("HEAD"), remap = false)
     private void northeast$rememberCookingResult(
             //? if <1.20.2 {
-            /*CookingPotRecipe recipe,
-            *///?} else {
-            RecipeHolder<CookingPotRecipe> recipe,
-            //?}
+            CookingPotRecipe recipe,
+            //?} else {
+            /*RecipeHolder<CookingPotRecipe> recipe,
+            *///?}
                                                CookingPotBlockEntity pot,
                                                CallbackInfoReturnable<Boolean> cir) {
         Level level = pot.getLevel();
@@ -59,10 +59,10 @@ public abstract class CookingPotBlockEntityMixin {
             return;
         }
         //? if <1.20.2 {
-        /*this.northeast$cookingResult = recipe.getResultItem(level.registryAccess()).copy();
-        *///?} else {
-        this.northeast$cookingResult = recipe.value().getResultItem(level.registryAccess()).copy();
-        //?}
+        this.northeast$cookingResult = recipe.getResultItem(level.registryAccess()).copy();
+        //?} else {
+        /*this.northeast$cookingResult = recipe.value().getResultItem(level.registryAccess()).copy();
+        *///?}
     }
 
     /** 调料瓶不弹出锅外，留在锅里下一锅接着用 */
@@ -115,10 +115,10 @@ public abstract class CookingPotBlockEntityMixin {
     @Inject(method = "processCooking", at = @At("RETURN"), remap = false)
     private void northeast$leaveCracklings(
             //? if <1.20.2 {
-            /*CookingPotRecipe recipe,
-            *///?} else {
-            RecipeHolder<CookingPotRecipe> recipe,
-            //?}
+            CookingPotRecipe recipe,
+            //?} else {
+            /*RecipeHolder<CookingPotRecipe> recipe,
+            *///?}
                                          CookingPotBlockEntity pot,
                                          CallbackInfoReturnable<Boolean> cir) {
         if (!cir.getReturnValueZ()) {
@@ -127,14 +127,14 @@ public abstract class CookingPotBlockEntityMixin {
         }
         Level level = pot.getLevel();
         //? if <1.20.2 {
-        /*if (level == null || !recipe.getResultItem(level.registryAccess()).is(ModItems.ANIMAL_OIL.get())) {
+        if (level == null || !recipe.getResultItem(level.registryAccess()).is(ModItems.ANIMAL_OIL.get())) {
             return;
         }
-        *///?} else {
-        if (level == null || !recipe.value().getResultItem(level.registryAccess()).is(ModItems.ANIMAL_OIL.get())) {
+        //?} else {
+        /*if (level == null || !recipe.value().getResultItem(level.registryAccess()).is(ModItems.ANIMAL_OIL.get())) {
             return;
         }
-        //?}
+        *///?}
 
         ItemStack cracklings = new ItemStack(ModItems.CRACKLINGS.get());
         ItemStackHandler inventory = pot.getInventory();

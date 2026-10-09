@@ -245,10 +245,10 @@ public class YardClearingPiece extends StructurePiece
         Block block = state.getBlock();
         return
                 //? if <1.20.2 {
-                /*block == Blocks.GRASS
-                *///?} else {
-                block == Blocks.SHORT_GRASS
-                //?}
+                block == Blocks.GRASS
+                //?} else {
+                /*block == Blocks.SHORT_GRASS
+                *///?}
                 || block == Blocks.TALL_GRASS
                 || block == Blocks.FERN
                 || block == Blocks.LARGE_FERN

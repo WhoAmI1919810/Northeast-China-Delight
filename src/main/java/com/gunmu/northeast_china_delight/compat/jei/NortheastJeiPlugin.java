@@ -37,10 +37,10 @@ public class NortheastJeiPlugin implements IModPlugin {
             RecipeType.create(NortheastChinaDelight.MODID, "grill", GrillJeiRecipe.class);
 
     //? if >=1.20.5 {
-    /** 批量风干是机械动力的鼓风机行为，1.20.4 节点没有机械动力，这个分类整块不注册 */
+    /*/^* 批量风干是机械动力的鼓风机行为，1.20.4 节点没有机械动力，这个分类整块不注册 ^/
     public static final RecipeType<DryingJeiRecipe> DRYING_TYPE =
             RecipeType.create(NortheastChinaDelight.MODID, "drying", DryingJeiRecipe.class);
-    //?}
+    *///?}
 
     private static final ResourceLocation PLUGIN_UID =
             DdIds.of(NortheastChinaDelight.MODID, "jei_plugin");
@@ -56,8 +56,8 @@ public class NortheastJeiPlugin implements IModPlugin {
         registration.addRecipeCategories(new VatRecipeCategory(guiHelper));
         registration.addRecipeCategories(new GrillRecipeCategory(guiHelper));
         //? if >=1.20.5 {
-        registration.addRecipeCategories(new DryingRecipeCategory(guiHelper));
-        //?}
+        /*registration.addRecipeCategories(new DryingRecipeCategory(guiHelper));
+        *///?}
     }
 
     @Override
@@ -65,8 +65,8 @@ public class NortheastJeiPlugin implements IModPlugin {
         registration.addRecipes(VAT_TYPE, VatJeiRecipes.all());
         registration.addRecipes(GRILL_TYPE, GrillJeiRecipes.all());
         //? if >=1.20.5 {
-        registration.addRecipes(DRYING_TYPE, DryingJeiRecipes.all());
-        //?}
+        /*registration.addRecipes(DRYING_TYPE, DryingJeiRecipes.all());
+        *///?}
         registration.addItemStackInfo(new ItemStack(ModItems.GINSENG.get()),
                 Component.translatable("jei.northeast_china_delight.info.ginseng"));
         registration.addItemStackInfo(new ItemStack(ModItems.WOOD_EAR.get()),
@@ -102,9 +102,9 @@ public class NortheastJeiPlugin implements IModPlugin {
         registration.addRecipeCatalyst(new ItemStack(ModItems.VAT.get()), VAT_TYPE);
         registration.addRecipeCatalyst(new ItemStack(ModItems.GRILL_RACK.get()), GRILL_TYPE);
         //? if >=1.20.5 {
-        registration.addRecipeCatalyst(new ItemStack(
+        /*registration.addRecipeCatalyst(new ItemStack(
                 net.minecraft.core.registries.BuiltInRegistries.BLOCK.get(
                         DdIds.of("create", "encased_fan"))), DRYING_TYPE);
-        //?}
+        *///?}
     }
 }

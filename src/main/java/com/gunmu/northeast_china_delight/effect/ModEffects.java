@@ -5,15 +5,15 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectCategory;
 //? if <1.20.2 {
-/*import net.minecraftforge.eventbus.api.IEventBus;
-*///?} else {
-import net.neoforged.bus.api.IEventBus;
-//?}
+import net.minecraftforge.eventbus.api.IEventBus;
+//?} else {
+/*import net.neoforged.bus.api.IEventBus;
+*///?}
 //? if <1.20.2 {
-/*import net.minecraftforge.registries.DeferredRegister;
-*///?} else {
-import net.neoforged.neoforge.registries.DeferredRegister;
-//?}
+import net.minecraftforge.registries.DeferredRegister;
+//?} else {
+/*import net.neoforged.neoforge.registries.DeferredRegister;
+*///?}
 import java.util.function.Supplier;
 
 /**

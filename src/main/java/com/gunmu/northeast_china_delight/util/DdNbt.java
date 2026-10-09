@@ -23,37 +23,37 @@ public final class DdNbt {
     public static void saveAllItems(CompoundTag tag, NonNullList<ItemStack> list, boolean includeEmpty,
                                    HolderLookup.Provider registries) {
         //? if <1.20.5 {
-        /*ContainerHelper.saveAllItems(tag, list, includeEmpty);*/
+        ContainerHelper.saveAllItems(tag, list, includeEmpty);
         //?} else {
-        ContainerHelper.saveAllItems(tag, list, includeEmpty, registries);
-        //?}
+        /*ContainerHelper.saveAllItems(tag, list, includeEmpty, registries);
+        *///?}
     }
 
     /** 从 tag 里读回物品列表（与 1.21 一样：只覆盖 NBT 里存在的槽位） */
     public static void loadAllItems(CompoundTag tag, NonNullList<ItemStack> list,
                                    HolderLookup.Provider registries) {
         //? if <1.20.5 {
-        /*ContainerHelper.loadAllItems(tag, list);*/
+        ContainerHelper.loadAllItems(tag, list);
         //?} else {
-        ContainerHelper.loadAllItems(tag, list, registries);
-        //?}
+        /*ContainerHelper.loadAllItems(tag, list, registries);
+        *///?}
     }
 
     /** 读单个物品；空 tag / 解析失败都给 {@code ItemStack.EMPTY} */
     public static ItemStack parseItem(CompoundTag tag, HolderLookup.Provider registries) {
         //? if <1.20.5 {
-        /*return ItemStack.of(tag);*/
+        return ItemStack.of(tag);
         //?} else {
-        return ItemStack.parse(registries, tag).orElse(ItemStack.EMPTY);
-        //?}
+        /*return ItemStack.parse(registries, tag).orElse(ItemStack.EMPTY);
+        *///?}
     }
 
     /** 写单个物品，返回序列化出来的 tag */
     public static Tag saveItem(ItemStack stack, HolderLookup.Provider registries) {
         //? if <1.20.5 {
-        /*return stack.save(new CompoundTag());*/
+        return stack.save(new CompoundTag());
         //?} else {
-        return stack.save(registries);
-        //?}
+        /*return stack.save(registries);
+        *///?}
     }
 }

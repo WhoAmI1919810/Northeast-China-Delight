@@ -6,10 +6,10 @@ import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import net.minecraft.world.entity.npc.VillagerProfession;
 import net.minecraft.world.entity.npc.VillagerTrades;
 //? if <1.20.2 {
-/*import net.minecraftforge.event.village.VillagerTradesEvent;
-*///?} else {
-import net.neoforged.neoforge.event.village.VillagerTradesEvent;
-//?}
+import net.minecraftforge.event.village.VillagerTradesEvent;
+//?} else {
+/*import net.neoforged.neoforge.event.village.VillagerTradesEvent;
+*///?}
 
 import java.util.List;
 
