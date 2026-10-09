@@ -95,7 +95,7 @@ public class GrillRecipeCategory implements IRecipeCategory<GrillJeiRecipe> {
     private static final int WIDTH = RESULT_X + SLOT + 6;
     private static final int HEIGHT = 60;
 
-    /** 1.20.4 的 JEI（17.x）没有现成的箭头图，小箭头从模组自己的控件贴图上取 */
+    /** 旧版 JEI（1.20.1 用 15.x）没有现成的箭头图，小箭头从模组自己的控件贴图上取 */
     private static final ResourceLocation WIDGETS = DdIds.of(
             NortheastChinaDelight.MODID, "textures/gui/jei_widgets.png");
     private static final int ARROW_U = 61, ARROW_V = 93, ARROW_W = 24, ARROW_H = 16;
@@ -103,7 +103,7 @@ public class GrillRecipeCategory implements IRecipeCategory<GrillJeiRecipe> {
     private final IDrawable icon;
     private final IDrawable arrow;
     private final IGuiHelper guiHelper;
-    /** 1.20.4 的 JEI（17.x）必须给一张背景图，这里给的是同尺寸的空白图 */
+    /** 旧版 JEI（1.20.1 用 15.x）必须给一张背景图，这里给的是同尺寸的空白图 */
     private final IDrawable background;
 
     public GrillRecipeCategory(IGuiHelper guiHelper) {
@@ -119,7 +119,7 @@ public class GrillRecipeCategory implements IRecipeCategory<GrillJeiRecipe> {
 
     /**
      * 槽位底图：两个版本的 JEI 说法不一样 —— 1.21 要显式说「用标准槽位底图」，
-     * 1.20.4 的 JEI 得自己把 guiHelper 的槽位图挂上去。
+     * 旧版 JEI 得自己把 guiHelper 的槽位图挂上去。
      */
     private static IRecipeSlotBuilder withSlotBackground(IRecipeSlotBuilder slot, IGuiHelper guiHelper) {
         //? if <1.20.5 {
@@ -155,7 +155,7 @@ public class GrillRecipeCategory implements IRecipeCategory<GrillJeiRecipe> {
         return HEIGHT;
     }
 
-    /** 1.20.4 的 JEI 会拿它当页面底板（空白图）；1.21 的 JEI 用不到 */
+    /** 旧版 JEI 会拿它当页面底板（空白图）；1.21 的 JEI 用不到 */
     @Override
     public IDrawable getBackground() {
         return this.background;
@@ -177,7 +177,7 @@ public class GrillRecipeCategory implements IRecipeCategory<GrillJeiRecipe> {
     }
 
     /**
-     * 1.20.4 的 JEI（17.x）没有「控件」那一层，除了槽位以外的画面都在这里画。
+     * 旧版 JEI 没有「控件」那一层，除了槽位以外的画面都在这里画。
      * 1.21 分支里这个方法什么都不做 —— 那些图形交给下面的控件画。
      */
     @Override
@@ -269,7 +269,7 @@ public class GrillRecipeCategory implements IRecipeCategory<GrillJeiRecipe> {
     }
 
     /**
-     * 瓶装调料的用量小字：1.21 走控件、1.20.4 在 draw() 里直接画，两边共用这一份。
+     * 瓶装调料的用量小字：1.21 走控件、旧版 JEI 在 draw() 里直接画，两边共用这一份。
      */
     private static void drawSeasoningAmounts(GuiGraphics graphics, List<ItemStack> seasonings) {
         Font font = Minecraft.getInstance().font;

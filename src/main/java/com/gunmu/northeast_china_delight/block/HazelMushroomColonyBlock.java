@@ -109,8 +109,8 @@ public class HazelMushroomColonyBlock extends BushBlock implements BonemealableB
         BlockPos below = pos.below();
         BlockState belowState = level.getBlockState(below);
         //? if <1.20.5 {
-        /*// 1.20.4 的 canSustainPlant 只有「能／不能」两种答案（没有 1.21 的「说不准」档），
-        // 照农夫乐事 1.20.4 的蘑菇菌簇写法：亮度够暗 + 下面这层土能长东西
+        /*// 1.20.1 的 canSustainPlant 只有「能／不能」两种答案（没有 1.21 的「说不准」档），
+        // 照农夫乐事 1.20.1 的蘑菇菌簇写法：亮度够暗 + 下面这层土能长东西
         return belowState.is(BlockTags.MUSHROOM_GROW_BLOCK)
                 || level.getRawBrightness(pos, 0) < MAX_LIGHT
                 && belowState.canSustainPlant(level, below, Direction.UP, (IPlantable) state.getBlock());*/
@@ -240,7 +240,7 @@ public class HazelMushroomColonyBlock extends BushBlock implements BonemealableB
         //?}
     }
 
-    /** 剪刀能不能「收割」这一株（1.20.4 的工具行为常量在 ToolActions 里） */
+    /** 剪刀能不能「收割」这一株（1.20.1 的工具行为常量在 ToolActions 里） */
     private static boolean shearsHarvest(ItemStack stack) {
         //? if <1.20.5 {
         /*return stack.canPerformAction(ToolActions.SHEARS_HARVEST);*/

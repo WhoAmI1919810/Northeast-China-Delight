@@ -16,7 +16,7 @@ import java.util.function.Supplier;
 /**
  * 状态效果的收敛层。
  *
- * <p>1.20.4 的效果注册表就是 {@code MobEffect} 本身（{@code MobEffects.X} 是 MobEffect，
+ * <p>1.20.1 的效果注册表就是 {@code MobEffect} 本身（{@code MobEffects.X} 是 MobEffect，
  * {@code hasEffect} / {@code MobEffectInstance} 也都要 MobEffect）；1.21 起统一换成
  * {@code Holder<MobEffect>}。这里把两种写法收成一套调用。</p>
  */
@@ -25,7 +25,7 @@ public final class DdEffects {
     private DdEffects() {
     }
 
-    /** 原版效果常量 → Holder（1.20.4 传 MobEffect，1.21 直接原样返回） */
+    /** 原版效果常量 → Holder（1.20.1 传 MobEffect，1.21 直接原样返回） */
     //? if <1.20.5 {
     /*public static Holder<MobEffect> hold(MobEffect effect) {
         return BuiltInRegistries.MOB_EFFECT.wrapAsHolder(effect);

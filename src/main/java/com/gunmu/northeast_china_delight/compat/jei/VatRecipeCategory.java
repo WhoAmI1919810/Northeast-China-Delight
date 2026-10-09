@@ -153,7 +153,7 @@ public class VatRecipeCategory implements IRecipeCategory<VatJeiRecipe> {
     private static final String[] PRIMARY_SLOTS =
             { SLOT_PRIMARY_0, SLOT_PRIMARY_1, SLOT_PRIMARY_2, SLOT_PRIMARY_3 };
 
-    /** 1.20.4 的 JEI（17.x）没有现成的箭头图，小箭头从模组自己的控件贴图上取 */
+    /** 旧版 JEI（1.20.1 用 15.x）没有现成的箭头图，小箭头从模组自己的控件贴图上取 */
     private static final ResourceLocation WIDGETS = DdIds.of(
             NortheastChinaDelight.MODID, "textures/gui/jei_widgets.png");
     private static final int ARROW_U = 61, ARROW_V = 93, ARROW_W = 24, ARROW_H = 16;
@@ -161,7 +161,7 @@ public class VatRecipeCategory implements IRecipeCategory<VatJeiRecipe> {
     private final IDrawable icon;
     private final IDrawable arrow;
     private final IGuiHelper guiHelper;
-    /** 1.20.4 的 JEI（17.x）必须给一张背景图，这里给的是同尺寸的空白图 */
+    /** 旧版 JEI（1.20.1 用 15.x）必须给一张背景图，这里给的是同尺寸的空白图 */
     private final IDrawable background;
 
     public VatRecipeCategory(IGuiHelper guiHelper) {
@@ -178,7 +178,7 @@ public class VatRecipeCategory implements IRecipeCategory<VatJeiRecipe> {
 
     /**
      * 槽位底图：两个版本的 JEI 说法不一样 —— 1.21 要显式说「用标准槽位底图」，
-     * 1.20.4 的 JEI 得自己把 guiHelper 的槽位图挂上去。
+     * 旧版 JEI 得自己把 guiHelper 的槽位图挂上去。
      */
     private static IRecipeSlotBuilder withSlotBackground(IRecipeSlotBuilder slot, IGuiHelper guiHelper) {
         //? if <1.20.5 {
@@ -214,7 +214,7 @@ public class VatRecipeCategory implements IRecipeCategory<VatJeiRecipe> {
         return HEIGHT;
     }
 
-    /** 1.20.4 的 JEI 会拿它当页面底板（空白图）；1.21 的 JEI 用不到 */
+    /** 旧版 JEI 会拿它当页面底板（空白图）；1.21 的 JEI 用不到 */
     @Override
     public IDrawable getBackground() {
         return this.background;
@@ -370,10 +370,10 @@ public class VatRecipeCategory implements IRecipeCategory<VatJeiRecipe> {
     }
 
     /**
-     * 1.20.4 的 JEI（17.x）没有「控件」那一层，除了槽位以外的画面都在这里画：
+     * 旧版 JEI 没有「控件」那一层，除了槽位以外的画面都在这里画：
      * 缸口液面、大缸本体、引线、箭头、发酵时长和条件注记。
      *
-     * <p>17.x 也没法给槽位做「显示覆盖」，所以多档配方在 1.20.4 上画的是第一档
+     * <p>旧版 JEI 也没法给槽位做「显示覆盖」，所以多档配方在这里画的是第一档
      * （槽位里摆的也是第一档）——换档轮播是 1.21 分支的功能。</p>
      */
     //? if <1.20.5 {

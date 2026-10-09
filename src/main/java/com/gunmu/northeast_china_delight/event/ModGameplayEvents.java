@@ -92,7 +92,7 @@ public final class ModGameplayEvents
      *
      * <p>触发点按版本分成两套：</p>
      * <ul>
-     *   <li>1.20.1 / 1.20.4：用 {@code FillBucketEvent}（Forge 47 和 NeoForge 20.4 里都还在），
+     *   <li>1.20.1：用 {@code FillBucketEvent}（Forge 47 里还在），
      *       直接换掉「桶里舀到的战利品」，扣空桶、进背包这些原版流程照旧；</li>
      *   <li>1.21.1：NeoForge 21.1 删掉了 {@code FillBucketEvent}，而水方块没有准星命中框，
      *       {@code RightClickBlock} / {@code UseItemOnBlockEvent} 对着水都不会触发 —— 这正是
@@ -313,7 +313,7 @@ public final class ModGameplayEvents
         return InteractionResult.sidedSuccess(context.getLevel().isClientSide);
     }
 
-    /** 斧头去皮这个「工具行为」在两个版本里分属两个类：1.20.4 在 ToolActions，1.21 起在 ItemAbilities */
+    /** 斧头去皮这个「工具行为」在两个版本里分属两个类：1.20.1 在 ToolActions，1.21 起在 ItemAbilities */
     private static boolean isAxeStrip(BlockEvent.BlockToolModificationEvent event)
     {
         //? if <1.20.2 {
@@ -394,7 +394,7 @@ public final class ModGameplayEvents
     /**
      * 1.20.1 没有数据表（data map）：熔炉 / 烟熏炉 / 高炉 / 机械动力烈焰燃烧器的燃料时长
      * 只能在事件里给。1.20.5+ 走 {@code data/neoforge/data_maps/item/furnace_fuels.json}，
-     * 这一段在那些版本上不编译；1.20.4（NeoForge 20.4）已经有数据表，也不用这里。
+     * 这一段在那些版本上不编译。
      */
     //? if <1.20.2 {
     /*@SubscribeEvent

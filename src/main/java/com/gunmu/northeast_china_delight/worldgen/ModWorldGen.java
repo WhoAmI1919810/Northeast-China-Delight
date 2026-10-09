@@ -41,7 +41,7 @@ public class ModWorldGen
     public static final DeferredRegister<StructurePieceType> PIECE_TYPES =
             DeferredRegister.create(Registries.STRUCTURE_PIECE, NortheastChinaDelight.MODID);
 
-    /** 结构类型的 codec：1.20.4 的 StructureType 要 Codec，1.20.5 起改要 MapCodec */
+    /** 结构类型的 codec：1.20.1 的 StructureType 要 Codec，1.20.5 起改要 MapCodec */
     private static final Supplier<StructureType<NortheastCourtyardStructure>> COURTYARD_TYPE_SUPPLIER =
             //? if <1.20.5 {
             /*() -> () -> NortheastCourtyardStructure.CODEC.codec();*/

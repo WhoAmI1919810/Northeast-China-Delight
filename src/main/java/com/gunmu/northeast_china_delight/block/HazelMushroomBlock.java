@@ -147,7 +147,7 @@ public class HazelMushroomBlock extends BushBlock implements BonemealableBlock
             return true;
         }
         //? if <1.20.5 {
-        /*// 1.20.4 的 canSustainPlant 只有「能／不能」两种答案（没有 1.21 的「说不准」档）：
+        /*// 1.20.1 的 canSustainPlant 只有「能／不能」两种答案（没有 1.21 的「说不准」档）：
         // 下面这层土能长东西，或者地面本身够结实，就算站得住
         return belowState.canSustainPlant(level, below, Direction.UP, (IPlantable) state.getBlock())
                 || this.mayPlaceOn(belowState, level, below);*/

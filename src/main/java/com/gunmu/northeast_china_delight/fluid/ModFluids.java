@@ -639,7 +639,7 @@ public final class ModFluids {
      * 本模组的流体类型。
      *
      * <p>「这个流体在客户端长什么样」（静/流贴图、染色）两个版本的挂法不同：
-     * 1.20.4 没有 {@code RegisterClientExtensionsEvent}，只能覆写 {@link FluidType#initializeClient}
+     * 1.20.1 没有 {@code RegisterClientExtensionsEvent}，只能覆写 {@link FluidType#initializeClient}
      * —— 好在它只在客户端会被调用（构造器里带 Dist 判断），服务端不会加载这段；
      * 1.21 起由客户端事件统一注册，这个类就只是个普通 FluidType。</p>
      */

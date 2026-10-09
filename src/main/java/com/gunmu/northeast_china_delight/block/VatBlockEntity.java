@@ -779,7 +779,7 @@ public class VatBlockEntity extends BlockEntity implements IFluidHandler {
     }
     //?}
 
-    /** 存档主体（两个版本共用）；1.20.4 没有注册表参数，传 null 即可 */
+    /** 存档主体（两个版本共用）；1.20.1 没有注册表参数，传 null 即可 */
     private void saveVatData(CompoundTag tag, @Nullable HolderLookup.Provider registries) {
         DdNbt.saveAllItems(tag, this.contents, true, registries);
         // 注意：空的 ItemStack 不能存档，必须判空

@@ -747,7 +747,7 @@ public class ModItems {
     /**
      * 造一份「吃完返还容器」的食物属性。
      *
-     * <p>1.21 起写在食物组件里（{@code usingConvertsTo}）；1.20.4 没有这个 API，
+     * <p>1.21 起写在食物组件里（{@code usingConvertsTo}）；1.20.1 没有这个 API，
      * 容器由 {@link DdConsumableItem} 按 {@code craftRemainder} 在吃完时还给玩家。</p>
      */
     private static FoodProperties foodReturning(FoodProperties.Builder builder, ItemLike remainder) {
@@ -758,7 +758,7 @@ public class ModItems {
         //?}
     }
 
-    /** 饱和度倍率：1.20.4 叫 saturationMod，1.20.5 起改叫 saturationModifier */
+    /** 饱和度倍率：1.20.1 叫 saturationMod，1.20.5 起改叫 saturationModifier */
     private static FoodProperties.Builder withSaturation(FoodProperties.Builder builder, float value) {
         //? if <1.20.5 {
         /*return builder.saturationMod(value);*/

@@ -25,13 +25,13 @@ import java.util.function.Supplier;
  *
  * <p>贴图放在 {@code assets/northeast_china_delight/textures/map/decorations/northeast_yard.png}（8×8）。</p>
  *
- * <p>1.20.4 没有 {@code MapDecorationType} 注册表（1.20.5 才加），只能退回原版
+ * <p>1.20.1 没有 {@code MapDecorationType} 注册表（1.20.5 才加），只能退回原版
  * {@code MapDecoration.Type} 枚举，这里用红叉（原版探险家地图同款图标）。</p>
  */
 public final class ModMapDecorations
 {
     //? if <1.20.5 {
-    /*// 1.20.4：没有自定义地图标识的注册表，退回原版红叉
+    /*// 1.20.1：没有自定义地图标识的注册表，退回原版红叉
     public static final MapDecoration.Type DONGBEI_YARD = MapDecoration.Type.TARGET_X;
     *///?} else {
     public static final DeferredRegister<MapDecorationType> DECORATION_TYPES =

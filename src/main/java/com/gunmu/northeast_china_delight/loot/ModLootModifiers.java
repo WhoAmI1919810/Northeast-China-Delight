@@ -27,7 +27,7 @@ import net.neoforged.neoforge.registries.NeoForgeRegistries;
 /**
  * 本模组的全局掉落修改器。
  *
- * <p>1.20.4 的序列化注册表要的是 {@code Codec}，1.21.1 起改成 {@code MapCodec}，
+ * <p>1.20.1 的序列化注册表要的是 {@code Codec}，1.21.1 起改成 {@code MapCodec}，
  * 所以注册类型按版本分流；顺手把没人引用的 DeferredHolder 常量收成 private 注册调用。</p>
  */
 public class ModLootModifiers {

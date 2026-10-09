@@ -37,7 +37,7 @@ public class NortheastJeiPlugin implements IModPlugin {
             RecipeType.create(NortheastChinaDelight.MODID, "grill", GrillJeiRecipe.class);
 
     //? if >=1.20.5 {
-    /** 批量风干是机械动力的鼓风机行为，1.20.4 节点没有机械动力，这个分类整块不注册 */
+    /** 批量风干是机械动力的鼓风机行为；这个 JEI 分类只在 1.21.1 线注册 */
     public static final RecipeType<DryingJeiRecipe> DRYING_TYPE =
             RecipeType.create(NortheastChinaDelight.MODID, "drying", DryingJeiRecipe.class);
     //?}
@@ -98,7 +98,7 @@ public class NortheastJeiPlugin implements IModPlugin {
     /** 拿着大缸 / 烧烤架按 R / 双击就能看到对应的配方 */
     @Override
     public void registerRecipeCatalysts(IRecipeCatalystRegistration registration) {
-        // 1.20.4 的 JEI（17.x）只收 ItemStack，1.21 收 ItemLike —— 用 ItemStack 两边都能过
+        // 旧版 JEI（1.20.1 用 15.x）只收 ItemStack，1.21 收 ItemLike —— 用 ItemStack 两边都能过
         registration.addRecipeCatalyst(new ItemStack(ModItems.VAT.get()), VAT_TYPE);
         registration.addRecipeCatalyst(new ItemStack(ModItems.GRILL_RACK.get()), GRILL_TYPE);
         //? if >=1.20.5 {
