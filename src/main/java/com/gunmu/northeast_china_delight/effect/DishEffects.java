@@ -47,6 +47,9 @@ public final class DishEffects {
             }
             case BALANCED -> DdEffects.holder(NOURISHMENT)
                     .ifPresent(effect -> list.add(new Applied(effect, duration, 0)));
+            // 暖身汤：效果只有「暖身」，由汤类名单在进食事件里统一给，这里不加口味效果
+            case WARM -> {
+            }
         }
         return list;
     }
@@ -58,15 +61,15 @@ public final class DishEffects {
         return list;
     }
 
-    /** 参鸡汤额外给的「养生」：固定 10 秒（200 tick），效果本身按血量分档回血 */
-    public static List<Applied> ginsengSoupExtras() {
+    /** 「养生」短效果：参鸡汤、葱烧海参这类滋补菜额外给 10 秒（200 tick），效果本身按血量分档回血 */
+    public static List<Applied> nourishingExtras() {
         List<Applied> list = new ArrayList<>();
         list.add(new Applied(DdEffects.hold(ModEffects.NOURISHING), 200, 0));
         return list;
     }
 
-    /** 汤类额外给的「暖身」：时长跟这道菜自己的效果一致 */
-    public static List<Applied> soupWarmth(int durationTicks) {
+    /** 额外给的「暖身」：时长由 {@link DishFlavors#warmthTicks} 决定 */
+    public static List<Applied> warmth(int durationTicks) {
         List<Applied> list = new ArrayList<>();
         list.add(new Applied(DdEffects.hold(ModEffects.WARMTH), durationTicks, 0));
         return list;

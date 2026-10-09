@@ -149,7 +149,7 @@ public class ModItems {
     /** 动物油：2 份肥肉在厨锅里熬出来，玻璃瓶装（白色偏微黄） */
     public static final Supplier<Item> ANIMAL_OIL = bottled("animal_oil");
     /** 格瓦斯：6 个面包 + 3 份水在大缸里蒙粗布毯发酵成的瓶装饮品（饮品不是调料，没有耐久条） */
-    public static final Supplier<Item> KVASS = bottledDrink("kvass", 4, 0.5F);
+    public static final Supplier<Item> KVASS = bottledDrink("kvass", 2, 0.25F);
     /** 花生酱：熟花生米磨出来，玻璃瓶装 */
     public static final Supplier<Item> PEANUT_BUTTER = bottled("peanut_butter");
     /** 熟花生米：花生在厨锅里炒熟 */
