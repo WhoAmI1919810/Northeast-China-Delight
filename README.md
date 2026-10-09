@@ -1,6 +1,6 @@
 # 东北乐事 (Northeast China Delight)
 
-本分支为 Minecraft 1.20.1（Forge）版本，开发主干在 main 分支。
+本分支为 Minecraft 1.20.1（Forge）版本线；1.21.1（NeoForge）开发主干在 main 分支。
 
 ## 当前最新版本
 

@@ -3,6 +3,5 @@ plugins {
 }
 
 // 当前激活的版本：根目录 src/ 中的条件注释按它展开
-// 切换版本：./gradlew "Set active project to 1.21.4"
-// 恢复仓库状态：./gradlew "Reset active project"
+// 本分支只有 1.20.1 节点（切换 1.21.1 等版本见 main 分支）
 stonecutter.active '1.20.1'
