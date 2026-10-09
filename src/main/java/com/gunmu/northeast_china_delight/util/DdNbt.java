@@ -8,11 +8,11 @@ import net.minecraft.world.ContainerHelper;
 import net.minecraft.world.item.ItemStack;
 
 /**
- * 存档 API 的收敛层，用来抹平 1.20.4 与 1.21.1 的差异。
+ * 存档 API 的收敛层，用来抹平 1.20.1 与 1.21.1 的差异。
  *
  * <p>1.20.5 起 {@code ContainerHelper} / {@code ItemStack} 的存取都多了一个
- * {@code HolderLookup.Provider}（数据包注册表）参数，1.20.4 没有这一层。
- * 本类统一成同一种调用形式：1.20.4 分支把这个参数直接丢掉。</p>
+ * {@code HolderLookup.Provider}（数据包注册表）参数，1.20.1 没有这一层。
+ * 本类统一成同一种调用形式：1.20.1 分支把这个参数直接丢掉。</p>
  */
 public final class DdNbt {
 

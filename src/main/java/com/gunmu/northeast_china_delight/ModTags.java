@@ -27,8 +27,8 @@ public final class ModTags {
     }
 
     /**
-     * 1.20.4 用的标签路径：通用标签在 {@code forge:} 命名空间下，而且有几条在 1.20.4 的名字
-     * 和 1.21 的 {@code c:} 不一样（跟着农夫乐事的 1.20.4 版本走）。
+     * 1.20.1 用的标签路径：通用标签在 {@code forge:} 命名空间下，而且有几条在 1.20.1 的名字
+     * 和 1.21 的 {@code c:} 不一样（跟着农夫乐事的 1.20.1 版本走）。
      *
      * <p>这张表要和 {@code gradle/legacy-data-port.groovy} 里的 {@code legacyTagPathRenames} 对齐。</p>
      */

@@ -389,7 +389,7 @@ public class NortheastChinaDelight
          * 酱油、大酱在流体储罐 / 管道里的贴图。
          * 没有这一段的话，机械动力的储罐会显示成紫黑格。
          *
-         * <p>1.20.4 没有这个事件 —— 那边的贴图挂在 {@code FluidType#initializeClient} 上，
+         * <p>1.20.1 没有这个事件 —— 那边的贴图挂在 {@code FluidType#initializeClient} 上，
          * 见 {@code ModFluids.DdFluidType}。</p>
          */
         //? if >=1.20.5 {

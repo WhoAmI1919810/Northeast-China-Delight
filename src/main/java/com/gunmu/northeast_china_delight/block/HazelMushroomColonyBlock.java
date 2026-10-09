@@ -240,7 +240,7 @@ public class HazelMushroomColonyBlock extends BushBlock implements BonemealableB
         *///?}
     }
 
-    /** 剪刀能不能「收割」这一株（1.20.4 的工具行为常量在 ToolActions 里） */
+    /** 剪刀能不能「收割」这一株（1.20.1 的工具行为常量在 ToolActions 里） */
     private static boolean shearsHarvest(ItemStack stack) {
         //? if <1.20.5 {
         return stack.canPerformAction(ToolActions.SHEARS_HARVEST);

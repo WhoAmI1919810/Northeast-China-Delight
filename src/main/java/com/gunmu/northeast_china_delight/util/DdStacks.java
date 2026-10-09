@@ -9,7 +9,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 
 /**
- * 物品堆相关的小工具，用来抹平 1.20.4 与 1.21.1 的 API 差异。
+ * 物品堆相关的小工具，用来抹平 1.20.1 与 1.21.1 的 API 差异。
  */
 public final class DdStacks {
 
@@ -19,7 +19,7 @@ public final class DdStacks {
     /**
      * 扣工具耐久（会顺带广播「工具用坏」）。
      *
-     * <p>1.20.4 只能传一个"坏了怎么办"的回调；1.20.5 起改成直接传装备槽，
+     * <p>1.20.1 只能传一个"坏了怎么办"的回调；1.20.5 起改成直接传装备槽，
      * 于是有个 {@code LivingEntity.getSlotForHand}。</p>
      */
     public static void hurtAndBreak(ItemStack stack, int amount, Player player, InteractionHand hand) {
@@ -57,7 +57,7 @@ public final class DdStacks {
         *///?}
     }
 
-    /** 是不是能吃的（1.20.4 的 {@code ItemStack#isEdible()} 在 1.20.5 起换成了食物组件） */
+    /** 是不是能吃的（1.20.1 的 {@code ItemStack#isEdible()} 在 1.20.5 起换成了食物组件） */
     public static boolean isEdible(ItemStack stack) {
         //? if <1.20.5 {
         return stack.isEdible();

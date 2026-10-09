@@ -3,7 +3,7 @@ package com.gunmu.northeast_china_delight.util;
 import net.minecraft.world.entity.player.Player;
 
 /**
- * 玩家相关的小工具，抹平 1.20.4 与 1.21.1 的 API 差异。
+ * 玩家相关的小工具，抹平 1.20.1 与 1.21.1 的 API 差异。
  */
 public final class DdPlayers {
 

@@ -55,7 +55,7 @@ public class DishBlockItem extends ItemNameBlockItem
     }
 
     /**
-     * 1.20.4 没有食物的「返还容器」组件（{@code usingConvertsTo}），
+     * 1.20.1 没有食物的「返还容器」组件（{@code usingConvertsTo}），
      * 只能自己在这里把空碗还给玩家（和 {@link DdConsumableItem} 同一套写法）。
      */
     //? if <1.20.5 {

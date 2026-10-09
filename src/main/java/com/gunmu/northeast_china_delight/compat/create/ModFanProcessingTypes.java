@@ -30,9 +30,6 @@ import java.util.function.Supplier;
 /**
  * Create 动力鼓风机的"裸风"处理类型（不接触水、火、熔岩、灵魂火时兜底）。
  * 目前唯一用途：把扔出来的碗装豆浆吹干，得到干豆腐 + 返还空碗。
- *
- * <p>1.20.4 节点没有机械动力（见 versions/1.20.4/gradle.properties 的说明），
- * 所以这条兼容整块停用，只留一个空的注册入口。</p>
  */
 public class ModFanProcessingTypes {
 
@@ -109,9 +106,5 @@ public class ModFanProcessingTypes {
             // 裸风对实体无影响。
         }
     }
-    //?} else {
-    /*public static void register(IEventBus bus) {
-        // 1.20.4 没有机械动力：「裸风风干」这类鼓风机处理类型不参与
-    }*/
     //?}
 }

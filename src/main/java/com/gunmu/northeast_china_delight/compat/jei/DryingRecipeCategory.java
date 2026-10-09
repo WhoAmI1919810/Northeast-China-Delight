@@ -1,5 +1,5 @@
 // 这个分类完全靠机械动力的模型（AllPartialModels）+ catnip 的 GUI 元素渲染，
-// 1.20.4 节点没有机械动力，整个文件停用（只留注释）。
+// 这个分类只在 1.21.1 线注册（低版本线整体停用，只留注释）。
 //? if >=1.20.5 {
 /*package com.gunmu.northeast_china_delight.compat.jei;
 
