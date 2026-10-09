@@ -56,6 +56,8 @@ import java.util.UUID;
  *     <li>吃完油腻菜 → 缓慢 + 生命提升 2 + 急迫 + 油腻 2，并解除爽口；</li>
  *     <li>吃完爽口菜 → 爽口 + 速度，并解除油腻；</li>
  *     <li>吃完荤素搭配的菜 → 农夫乐事的滋养；</li>
+ *     <li>汤类、水饺、烤地瓜、烤玉米、豆浆 → 额外给「暖身」（水饺等固定 10 秒）；</li>
+ *     <li>参鸡汤、葱烧海参额外给 10 秒「养生」；</li>
  *     <li>带着「油腻」再吃油腻菜、带着「爽口」再吃爽口菜 → 进食速度降低 (50 + 等级×10)%；</li>
  *     <li>油腻：饱食度与饱和度下降速度降低 (50 + 等级×10)%；</li>
  *     <li>爽口：回血速度提高 (20 + 当前饱和度 × 等级)%，回血消耗的饥饿值照常扣除。</li>
@@ -91,15 +93,16 @@ public class DishEffectEvents {
         for (DishEffects.Applied applied : DishEffects.of(info)) {
             player.addEffect(applied.instance());
         }
-        // 汤类：额外给「暖身」（寒冷群系加速 + 不陷细雪）
-        if (DishFlavors.isSoup(stack.getItem())) {
-            for (DishEffects.Applied applied : DishEffects.soupWarmth(info.durationTicks())) {
+        // 汤类、水饺、烤地瓜这类：额外给「暖身」（寒冷群系加速 + 不陷细雪）
+        int warmth = DishFlavors.warmthTicks(stack.getItem(), info);
+        if (warmth > 0) {
+            for (DishEffects.Applied applied : DishEffects.warmth(warmth)) {
                 player.addEffect(applied.instance());
             }
         }
-        // 参鸡汤：额外带「养生」（按血量分档回血）
-        if (stack.is(ModItems.SHEN_JI_TANG.get())) {
-            for (DishEffects.Applied applied : DishEffects.ginsengSoupExtras()) {
+        // 参鸡汤、葱烧海参：额外带 10 秒「养生」（按血量分档回血）
+        if (stack.is(ModItems.SHEN_JI_TANG.get()) || stack.is(ModItems.CONG_SHAO_HAI_SHEN.get())) {
+            for (DishEffects.Applied applied : DishEffects.nourishingExtras()) {
                 player.addEffect(applied.instance());
             }
         }
@@ -139,11 +142,12 @@ public class DishEffectEvents {
             return;
         }
         List<DishEffects.Applied> effects = new ArrayList<>(DishEffects.of(info));
-        if (DishFlavors.isSoup(stack.getItem())) {
-            effects.addAll(DishEffects.soupWarmth(info.durationTicks()));
+        int warmth = DishFlavors.warmthTicks(stack.getItem(), info);
+        if (warmth > 0) {
+            effects.addAll(DishEffects.warmth(warmth));
         }
-        if (stack.is(ModItems.SHEN_JI_TANG.get())) {
-            effects.addAll(DishEffects.ginsengSoupExtras());
+        if (stack.is(ModItems.SHEN_JI_TANG.get()) || stack.is(ModItems.CONG_SHAO_HAI_SHEN.get())) {
+            effects.addAll(DishEffects.nourishingExtras());
         }
         if (stack.is(ModItems.ORANGE_GUO_BAO_ROU.get())) {
             effects.addAll(DishEffects.orangeJuiceExtras());

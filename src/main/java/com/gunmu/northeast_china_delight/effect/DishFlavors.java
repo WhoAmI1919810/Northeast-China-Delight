@@ -7,9 +7,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * 菜肴的"口味"表：决定吃完给什么状态效果、持续多久。
@@ -26,7 +24,9 @@ public final class DishFlavors {
         /** 爽口 */
         REFRESHING,
         /** 荤素搭配、不腻 */
-        BALANCED
+        BALANCED,
+        /** 暖身：汤类专属，只给「暖身」、不加口味效果 */
+        WARM
     }
 
     public record Info(Flavor flavor, int ingredientCount, int overrideTicks) {
@@ -46,29 +46,37 @@ public final class DishFlavors {
     private static Map<Item, Info> table;
 
     /**
-     * 汤类料理：除了各自的口味效果，还会额外给「暖身」——
-     * 寒冷覆雪的群系里跑得动（+5%×等级 移动速度），也不会陷进细雪。
+     * 「暖身」名单：path -> 暖身时长（tick）。0 表示跟随这道菜自己的效果时长。
      *
-     * <p>想给某道汤加上/去掉，只要改这一份名单。
+     * <p>吃完给「暖身」：寒冷覆雪的群系里跑得动（+5%×等级 移动速度），也不会陷进细雪。
+     * 想给某道菜加上/去掉，只要改这一份名单。
      */
-    private static final Set<String> SOUP_PATHS = Set.of(
-            "soy_paste_soup",              // 大酱汤
-            "seafood_tofu_soup",       // 大虾豆腐汤
-            "sea_cucumber_tofu_soup",       // 海参豆腐汤
-            "sauerkraut_seafood_stew",      // 酸菜海鲜锅
-            "spicy_beef_soup",        // 辣牛肉汤
-            "kimchi_tofu_soup",        // 辣白菜豆腐汤
-            "ginseng_chicken_soup",               // 参鸡汤
-            "cabbage_tofu_vermicelli_stew",// 白菜豆腐炖粉条
-            "demoli_fish_stew",            // 得莫利炖鱼
-            "borscht",                 // 苏波汤
-            "shrimp_paste_tofu_stew",       // 虾酱炖豆腐
-            "crushed_corn_porridge",                // 碴子粥
-            "sweet_potato_porridge",      // 地瓜粥
-            "sour_noodle_soup"                 // 酸汤子
+    private static final Map<String, Integer> WARMTH_PATHS = Map.ofEntries(
+            // ===== 汤类：暖身跟菜品自己的时长一致 =====
+            Map.entry("soy_paste_soup", 0),                 // 大酱汤
+            Map.entry("seafood_tofu_soup", 0),              // 大虾豆腐汤
+            Map.entry("sea_cucumber_tofu_soup", 0),         // 海参豆腐汤
+            Map.entry("sauerkraut_seafood_stew", 0),        // 酸菜海鲜锅
+            Map.entry("spicy_beef_soup", 0),                // 辣牛肉汤
+            Map.entry("kimchi_tofu_soup", 0),               // 辣白菜豆腐汤
+            Map.entry("ginseng_chicken_soup", 0),           // 参鸡汤
+            Map.entry("cabbage_tofu_vermicelli_stew", 0),   // 白菜豆腐炖粉条
+            Map.entry("demoli_fish_stew", 0),               // 得莫利炖鱼
+            Map.entry("borscht", 0),                        // 苏波汤
+            Map.entry("shrimp_paste_tofu_stew", 0),         // 虾酱炖豆腐
+            Map.entry("crushed_corn_porridge", 0),          // 碴子粥
+            Map.entry("sweet_potato_porridge", 0),          // 地瓜粥
+            Map.entry("sour_noodle_soup", 0),               // 酸汤子
+            // ===== 热饮 / 烤的 / 水饺：固定 10 秒（200 tick） =====
+            Map.entry("soy_milk", 200),                     // 豆浆
+            Map.entry("baked_sweet_potato", 200),           // 烤地瓜
+            Map.entry("grilled_corn", 200),                 // 烤玉米
+            Map.entry("shrimp_pork_dumpling", 200),         // 虾仁猪肉馅水饺
+            Map.entry("three_delicacy_dumpling", 200),      // 三鲜馅水饺
+            Map.entry("sauerkraut_crackling_dumpling", 200) // 酸菜油滋了水饺
     );
 
-    private static Set<Item> soupTable;
+    private static Map<Item, Integer> warmthTable;
 
     private DishFlavors() {
     }
@@ -86,17 +94,21 @@ public final class DishFlavors {
         return info == null ? null : info.flavor();
     }
 
-    /** 这道菜是不是汤类（决定要不要额外给「暖身」） */
-    public static boolean isSoup(Item item) {
-        if (soupTable == null) {
-            Set<Item> set = new HashSet<>();
-            for (String path : SOUP_PATHS) {
-                set.add(BuiltInRegistries.ITEM.get(
-                        DdIds.of(NortheastChinaDelight.MODID, path)));
+    /** 这道菜额外给多久「暖身」（tick）；0 表示不给 */
+    public static int warmthTicks(Item item, Info info) {
+        if (warmthTable == null) {
+            Map<Item, Integer> map = new HashMap<>();
+            for (Map.Entry<String, Integer> entry : WARMTH_PATHS.entrySet()) {
+                map.put(BuiltInRegistries.ITEM.get(
+                        DdIds.of(NortheastChinaDelight.MODID, entry.getKey())), entry.getValue());
             }
-            soupTable = Set.copyOf(set);
+            warmthTable = Map.copyOf(map);
         }
-        return soupTable.contains(item);
+        Integer ticks = warmthTable.get(item);
+        if (ticks == null) {
+            return 0;
+        }
+        return ticks > 0 ? ticks : info.durationTicks();
     }
 
     private static Map<Item, Info> build() {
@@ -146,10 +158,16 @@ public final class DishFlavors {
         put(map, Flavor.REFRESHING, 4, "stuffed_cucumber_pickle");
         put(map, Flavor.REFRESHING, 8, "mixed_vegetable_salad");
         put(map, Flavor.REFRESHING, 3, "cabbage_tofu_vermicelli_stew");
-        put(map, Flavor.REFRESHING, 6, "kimchi_tofu_soup");
         put(map, Flavor.REFRESHING, 2, "pickled_cucumber_pork_stirfry");
-        put(map, Flavor.REFRESHING, 3, "soy_paste_soup");
         put(map, Flavor.REFRESHING, 5, "tiger_salad");
+        put(map, Flavor.REFRESHING, 1, 200, "kvass");   // 格瓦斯：10 秒
+
+        // ===== 暖身：只给「暖身」、不加口味效果的几道 =====
+        put(map, Flavor.WARM, 6, "kimchi_tofu_soup");
+        put(map, Flavor.WARM, 3, "soy_paste_soup");
+        put(map, Flavor.WARM, 1, "soy_milk");
+        put(map, Flavor.WARM, 1, "baked_sweet_potato");
+        put(map, Flavor.WARM, 1, "grilled_corn");
 
         // ===== 荤素搭配、不会腻：吃完给农夫乐事的滋养 =====
         put(map, Flavor.BALANCED, 3, "steamed_egg_soy_paste");
