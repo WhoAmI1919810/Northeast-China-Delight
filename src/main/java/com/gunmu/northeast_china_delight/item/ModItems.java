@@ -14,15 +14,15 @@ import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.ItemLike;
 //? if <1.20.2 {
-/*import net.minecraftforge.eventbus.api.IEventBus;
-*///?} else {
-import net.neoforged.bus.api.IEventBus;
-//?}
+import net.minecraftforge.eventbus.api.IEventBus;
+//?} else {
+/*import net.neoforged.bus.api.IEventBus;
+*///?}
 //? if <1.20.2 {
-/*import net.minecraftforge.registries.DeferredRegister;
-*///?} else {
-import net.neoforged.neoforge.registries.DeferredRegister;
-//?}
+import net.minecraftforge.registries.DeferredRegister;
+//?} else {
+/*import net.neoforged.neoforge.registries.DeferredRegister;
+*///?}
 
 import java.util.Collections;
 import java.util.ArrayList;
@@ -41,11 +41,11 @@ import java.util.function.Supplier;
 public class ModItems {
 
     //? if <1.20.2 {
-    /*public static final DeferredRegister<Item> ITEMS =
+    public static final DeferredRegister<Item> ITEMS =
             DeferredRegister.create(net.minecraftforge.registries.ForgeRegistries.ITEMS, NortheastChinaDelight.MODID);
-    *///?} else {
-    public static final DeferredRegister.Items ITEMS = DeferredRegister.createItems(NortheastChinaDelight.MODID);
-    //?}
+    //?} else {
+    /*public static final DeferredRegister.Items ITEMS = DeferredRegister.createItems(NortheastChinaDelight.MODID);
+    *///?}
 
     /** 油炸时一次烧完一整瓶的油：植物油、动物油（厨锅按这个标签判断） */
     public static final TagKey<Item> DEEP_FRY_OILS = TagKey.create(Registries.ITEM,
@@ -540,10 +540,10 @@ public class ModItems {
                                                         Function<Item.Properties, ? extends I> factory,
                                                         Item.Properties properties) {
         //? if <1.20.2 {
-        /*return ITEMS.register(id, () -> factory.apply(properties));
-        *///?} else {
-        return ITEMS.registerItem(id, factory, properties);
-        //?}
+        return ITEMS.register(id, () -> factory.apply(properties));
+        //?} else {
+        /*return ITEMS.registerItem(id, factory, properties);
+        *///?}
     }
 
     /** 登记一个只有默认属性的普通物品 */
@@ -752,19 +752,19 @@ public class ModItems {
      */
     private static FoodProperties foodReturning(FoodProperties.Builder builder, ItemLike remainder) {
         //? if <1.20.5 {
-        /*return builder.build();*/
+        return builder.build();
         //?} else {
-        return builder.usingConvertsTo(remainder).build();
-        //?}
+        /*return builder.usingConvertsTo(remainder).build();
+        *///?}
     }
 
     /** 饱和度倍率：1.20.4 叫 saturationMod，1.20.5 起改叫 saturationModifier */
     private static FoodProperties.Builder withSaturation(FoodProperties.Builder builder, float value) {
         //? if <1.20.5 {
-        /*return builder.saturationMod(value);*/
+        return builder.saturationMod(value);
         //?} else {
-        return builder.saturationModifier(value);
-        //?}
+        /*return builder.saturationModifier(value);
+        *///?}
     }
 
     private static FoodProperties.Builder steakFood() {

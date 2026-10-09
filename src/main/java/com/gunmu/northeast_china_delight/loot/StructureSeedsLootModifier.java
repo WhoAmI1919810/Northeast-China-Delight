@@ -10,15 +10,15 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
 //? if <1.20.2 {
-/*import net.minecraftforge.common.loot.IGlobalLootModifier;
-*///?} else {
-import net.neoforged.neoforge.common.loot.IGlobalLootModifier;
-//?}
+import net.minecraftforge.common.loot.IGlobalLootModifier;
+//?} else {
+/*import net.neoforged.neoforge.common.loot.IGlobalLootModifier;
+*///?}
 //? if <1.20.2 {
-/*import net.minecraftforge.common.loot.LootModifier;
-*///?} else {
-import net.neoforged.neoforge.common.loot.LootModifier;
-//?}
+import net.minecraftforge.common.loot.LootModifier;
+//?} else {
+/*import net.neoforged.neoforge.common.loot.LootModifier;
+*///?}
 
 /**
  * 结构宝箱（沙漠神殿 / 掠夺者前哨站 / 废弃矿井 / 丛林神庙 / 沉船 / 雪屋 / 海底废墟，
@@ -31,12 +31,12 @@ import net.neoforged.neoforge.common.loot.LootModifier;
 public class StructureSeedsLootModifier extends LootModifier
 {
     //? if <1.20.5 {
-    /*public static final Codec<StructureSeedsLootModifier> CODEC = RecordCodecBuilder.create(
+    public static final Codec<StructureSeedsLootModifier> CODEC = RecordCodecBuilder.create(
             instance -> codecStart(instance).apply(instance, StructureSeedsLootModifier::new));
-    *///?} else {
-    public static final MapCodec<StructureSeedsLootModifier> CODEC = RecordCodecBuilder.mapCodec(
+    //?} else {
+    /*public static final MapCodec<StructureSeedsLootModifier> CODEC = RecordCodecBuilder.mapCodec(
             instance -> codecStart(instance).apply(instance, StructureSeedsLootModifier::new));
-    //?}
+    *///?}
 
     /** 全部可种植物品：种子类 + 能直接种的红薯/花生/大豆/红豆/荞麦 */
     private static final Entry[] SEEDS = {
@@ -64,16 +64,16 @@ public class StructureSeedsLootModifier extends LootModifier
 
     @Override
     //? if <1.20.5 {
-    /*public Codec<? extends IGlobalLootModifier> codec()
-    {
-        return CODEC;
-    }*/
-    //?} else {
-    public MapCodec<? extends IGlobalLootModifier> codec()
+    public Codec<? extends IGlobalLootModifier> codec()
     {
         return CODEC;
     }
-    //?}
+    //?} else {
+    /*public MapCodec<? extends IGlobalLootModifier> codec()
+    {
+        return CODEC;
+    }
+    *///?}
 
     @Override
     protected ObjectArrayList<ItemStack> doApply(ObjectArrayList<ItemStack> generatedLoot, LootContext context)

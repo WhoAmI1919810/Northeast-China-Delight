@@ -7,15 +7,15 @@ import net.minecraft.world.level.levelgen.feature.configurations.NoneFeatureConf
 import net.minecraft.world.level.levelgen.structure.StructureType;
 import net.minecraft.world.level.levelgen.structure.pieces.StructurePieceType;
 //? if <1.20.2 {
-/*import net.minecraftforge.eventbus.api.IEventBus;
-*///?} else {
-import net.neoforged.bus.api.IEventBus;
-//?}
+import net.minecraftforge.eventbus.api.IEventBus;
+//?} else {
+/*import net.neoforged.bus.api.IEventBus;
+*///?}
 //? if <1.20.2 {
-/*import net.minecraftforge.registries.DeferredRegister;
-*///?} else {
-import net.neoforged.neoforge.registries.DeferredRegister;
-//?}
+import net.minecraftforge.registries.DeferredRegister;
+//?} else {
+/*import net.neoforged.neoforge.registries.DeferredRegister;
+*///?}
 
 import java.util.function.Supplier;
 
@@ -44,10 +44,10 @@ public class ModWorldGen
     /** 结构类型的 codec：1.20.4 的 StructureType 要 Codec，1.20.5 起改要 MapCodec */
     private static final Supplier<StructureType<NortheastCourtyardStructure>> COURTYARD_TYPE_SUPPLIER =
             //? if <1.20.5 {
-            /*() -> () -> NortheastCourtyardStructure.CODEC.codec();*/
+            () -> () -> NortheastCourtyardStructure.CODEC.codec();
             //?} else {
-            () -> () -> NortheastCourtyardStructure.CODEC;
-            //?}
+            /*() -> () -> NortheastCourtyardStructure.CODEC;
+            *///?}
 
     public static final Supplier<StructureType<NortheastCourtyardStructure>> COURTYARD_TYPE =
             STRUCTURE_TYPES.register("northeast_courtyard", COURTYARD_TYPE_SUPPLIER);

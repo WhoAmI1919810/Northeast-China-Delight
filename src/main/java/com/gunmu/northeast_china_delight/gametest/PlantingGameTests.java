@@ -21,15 +21,15 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
 //? if <1.20.2 {
-/*import net.minecraftforge.gametest.GameTestHolder;
-*///?} else {
-import net.neoforged.neoforge.gametest.GameTestHolder;
-//?}
+import net.minecraftforge.gametest.GameTestHolder;
+//?} else {
+/*import net.neoforged.neoforge.gametest.GameTestHolder;
+*///?}
 //? if <1.20.2 {
-/*import net.minecraftforge.gametest.PrefixGameTestTemplate;
-*///?} else {
-import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
-//?}
+import net.minecraftforge.gametest.PrefixGameTestTemplate;
+//?} else {
+/*import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
+*///?}
 
 /**
  * 雪地种植的回归测试。
@@ -54,10 +54,10 @@ public final class PlantingGameTests
     private static Player mockPlayer(GameTestHelper helper, GameType gameType)
     {
         //? if <1.20.5 {
-        /*return gameType == GameType.CREATIVE ? helper.makeMockPlayer() : helper.makeMockSurvivalPlayer();
-        *///?} else {
-        return helper.makeMockPlayer(gameType);
-        //?}
+        return gameType == GameType.CREATIVE ? helper.makeMockPlayer() : helper.makeMockSurvivalPlayer();
+        //?} else {
+        /*return helper.makeMockPlayer(gameType);
+        *///?}
     }
 
     @GameTest(template = "empty")

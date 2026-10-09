@@ -1,8 +1,8 @@
 package com.gunmu.northeast_china_delight.util;
 
 //? if >=1.20.5 {
-import net.minecraft.core.component.DataComponents;
-//?}
+/*import net.minecraft.core.component.DataComponents;
+*///?}
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
@@ -24,21 +24,21 @@ public final class DdStacks {
      */
     public static void hurtAndBreak(ItemStack stack, int amount, Player player, InteractionHand hand) {
         //? if <1.20.5 {
-        /*stack.hurtAndBreak(amount, player, broken -> broken.broadcastBreakEvent(hand));*/
+        stack.hurtAndBreak(amount, player, broken -> broken.broadcastBreakEvent(hand));
         //?} else {
-        stack.hurtAndBreak(amount, player, LivingEntity.getSlotForHand(hand));
-        //?}
+        /*stack.hurtAndBreak(amount, player, LivingEntity.getSlotForHand(hand));
+        *///?}
     }
 
     /** 消耗掉 amount 个（1.21 的 {@code ItemStack#consume}：创造模式不扣）。 */
     public static void consume(ItemStack stack, int amount, Player player) {
         //? if <1.20.5 {
-        /*if (!DdPlayers.hasInfiniteMaterials(player)) {
+        if (!DdPlayers.hasInfiniteMaterials(player)) {
             stack.shrink(amount);
-        }*/
+        }
         //?} else {
-        stack.consume(amount, player);
-        //?}
+        /*stack.consume(amount, player);
+        *///?}
     }
 
     /**
@@ -47,22 +47,22 @@ public final class DdStacks {
      */
     public static ItemStack consumeAndReturn(ItemStack stack, int amount, Player player) {
         //? if <1.20.5 {
-        /*ItemStack taken = stack.copyWithCount(amount);
+        ItemStack taken = stack.copyWithCount(amount);
         if (!DdPlayers.hasInfiniteMaterials(player)) {
             stack.shrink(amount);
         }
-        return taken;*/
+        return taken;
         //?} else {
-        return stack.consumeAndReturn(amount, player);
-        //?}
+        /*return stack.consumeAndReturn(amount, player);
+        *///?}
     }
 
     /** 是不是能吃的（1.20.4 的 {@code ItemStack#isEdible()} 在 1.20.5 起换成了食物组件） */
     public static boolean isEdible(ItemStack stack) {
         //? if <1.20.5 {
-        /*return stack.isEdible();*/
+        return stack.isEdible();
         //?} else {
-        return stack.has(DataComponents.FOOD);
-        //?}
+        /*return stack.has(DataComponents.FOOD);
+        *///?}
     }
 }

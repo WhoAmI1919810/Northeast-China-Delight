@@ -24,15 +24,15 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.GameType;
 //? if <1.20.2 {
-/*import net.minecraftforge.gametest.GameTestHolder;
-*///?} else {
-import net.neoforged.neoforge.gametest.GameTestHolder;
-//?}
+import net.minecraftforge.gametest.GameTestHolder;
+//?} else {
+/*import net.neoforged.neoforge.gametest.GameTestHolder;
+*///?}
 //? if <1.20.2 {
-/*import net.minecraftforge.gametest.PrefixGameTestTemplate;
-*///?} else {
-import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
-//?}
+import net.minecraftforge.gametest.PrefixGameTestTemplate;
+//?} else {
+/*import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
+*///?}
 
 import java.util.List;
 
@@ -61,10 +61,10 @@ public final class VatGameTests {
     /** 假玩家：1.20.4 的 GameTestHelper 拆成 makeMockPlayer / makeMockSurvivalPlayer 两个方法 */
     private static Player mockPlayer(GameTestHelper helper, GameType gameType) {
         //? if <1.20.5 {
-        /*return gameType == GameType.CREATIVE ? helper.makeMockPlayer() : helper.makeMockSurvivalPlayer();
-        *///?} else {
-        return helper.makeMockPlayer(gameType);
-        //?}
+        return gameType == GameType.CREATIVE ? helper.makeMockPlayer() : helper.makeMockSurvivalPlayer();
+        //?} else {
+        /*return helper.makeMockPlayer(gameType);
+        *///?}
     }
 
     /** 大缸在结构里的相对坐标 */

@@ -22,8 +22,8 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 //? if >=1.20.5 {
-import net.minecraft.world.ItemInteractionResult;
-//?}
+/*import net.minecraft.world.ItemInteractionResult;
+*///?}
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
@@ -251,7 +251,7 @@ public class Vat extends Block implements EntityBlock {
      */
     @Override
     //? if <1.20.5 {
-    /*public @NotNull InteractionResult use(BlockState state, Level level, BlockPos pos, Player player,
+    public @NotNull InteractionResult use(BlockState state, Level level, BlockPos pos, Player player,
                                           InteractionHand hand, BlockHitResult hit) {
         ItemStack stack = player.getItemInHand(hand);
         InteractionResult itemResult = vatUseItem(stack, state, level, pos, player, hand, hit);
@@ -260,16 +260,16 @@ public class Vat extends Block implements EntityBlock {
         }
         // 1.21.1 里这是两个方法：useItemOn 答「交给默认交互」时才轮到「空手右键」这一套
         return vatUseWithdrawn(state, level, pos, player, hit);
-    }*/
+    }
     //?} else {
-    protected @NotNull ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos,
+    /*protected @NotNull ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos,
                                                        Player player, InteractionHand hand, BlockHitResult hit) {
         InteractionResult result = vatUseItem(stack, state, level, pos, player, hand, hit);
         return result == InteractionResult.PASS
                 ? ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION
                 : ItemInteractionResult.sidedSuccess(level.isClientSide());
     }
-    //?}
+    *///?}
 
     /** 拿着东西右键大缸（两个版本共用的实现，由上面的壳子翻译返回值） */
     private @NotNull InteractionResult vatUseItem(ItemStack stack, BlockState state, Level level, BlockPos pos,
@@ -520,12 +520,12 @@ public class Vat extends Block implements EntityBlock {
 
     /** 空手右键：取回石头/地毯、取出成品、逐个取泡菜 */
     //? if >=1.20.5 {
-    @Override
+    /*@Override
     protected @NotNull InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos,
                                                         Player player, BlockHitResult hit) {
         return vatUseWithdrawn(state, level, pos, player, hit);
     }
-    //?}
+    *///?}
 
     /** 空手右键：取回石头/地毯、取出成品、逐个取泡菜（两个版本共用） */
     private @NotNull InteractionResult vatUseWithdrawn(BlockState state, Level level, BlockPos pos,
@@ -632,10 +632,10 @@ public class Vat extends Block implements EntityBlock {
     /** 大缸被破坏时把里面的东西吐出来 —— 除了已经"被吸收"的调料（盐、辣椒酱、鱼露、虾酱） */
     @Override
     //? if <1.20.2 {
-    /*public void playerWillDestroy(Level level, BlockPos pos, BlockState state, Player player) {
-    *///?} else {
-    public BlockState playerWillDestroy(Level level, BlockPos pos, BlockState state, Player player) {
-    //?}
+    public void playerWillDestroy(Level level, BlockPos pos, BlockState state, Player player) {
+    //?} else {
+    /*public BlockState playerWillDestroy(Level level, BlockPos pos, BlockState state, Player player) {
+    *///?}
         VatBlockEntity destroyed = vatAt(level, pos);
         if (!level.isClientSide && destroyed != null) {
             VatBlockEntity vat = destroyed;
@@ -649,10 +649,10 @@ public class Vat extends Block implements EntityBlock {
             give(player, vat.takeCover());
         }
         //? if <1.20.2 {
-        /*super.playerWillDestroy(level, pos, state, player);
-        *///?} else {
-        return super.playerWillDestroy(level, pos, state, player);
-        //?}
+        super.playerWillDestroy(level, pos, state, player);
+        //?} else {
+        /*return super.playerWillDestroy(level, pos, state, player);
+        *///?}
     }
 
     /**

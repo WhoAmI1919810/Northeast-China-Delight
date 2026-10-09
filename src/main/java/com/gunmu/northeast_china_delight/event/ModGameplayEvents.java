@@ -35,36 +35,36 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.sounds.SoundSource;
 //? if <1.20.2 {
-/*import net.minecraftforge.eventbus.api.SubscribeEvent;
-*///?} else {
-import net.neoforged.bus.api.SubscribeEvent;
-//?}
-//? if <1.20.2 {
-/*import net.minecraftforge.event.furnace.FurnaceFuelBurnTimeEvent;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
+//?} else {
+/*import net.neoforged.bus.api.SubscribeEvent;
 *///?}
+//? if <1.20.2 {
+import net.minecraftforge.event.furnace.FurnaceFuelBurnTimeEvent;
+//?}
 //? if >=1.20.5 {
-import net.neoforged.neoforge.common.ItemAbilities;
-//?}
+/*import net.neoforged.neoforge.common.ItemAbilities;
+*///?}
 //? if <1.20.2 {
-/*import net.minecraftforge.event.level.BlockEvent;
-*///?} else {
-import net.neoforged.neoforge.event.level.BlockEvent;
-//?}
+import net.minecraftforge.event.level.BlockEvent;
+//?} else {
+/*import net.neoforged.neoforge.event.level.BlockEvent;
+*///?}
 //? if <1.20.2 {
-/*import net.minecraftforge.event.entity.player.PlayerInteractEvent;
-*///?} else {
-import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
-//?}
+import net.minecraftforge.event.entity.player.PlayerInteractEvent;
+//?} else {
+/*import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
+*///?}
 //? if <1.20.2 {
-/*import net.minecraftforge.eventbus.api.Event;
+import net.minecraftforge.eventbus.api.Event;
 import net.minecraftforge.event.entity.player.FillBucketEvent;
-*///?} else if <1.20.5 {
+//?} else if <1.20.5 {
 /*import net.neoforged.bus.api.Event;
 import net.neoforged.neoforge.event.entity.player.FillBucketEvent;
 *///?}
 //? if >=1.20.5 {
-import net.minecraft.world.phys.HitResult;
-//?}
+/*import net.minecraft.world.phys.HitResult;
+*///?}
 
 /**
  * 三个和小玩法有关的钩子：
@@ -102,7 +102,7 @@ public final class ModGameplayEvents
      * </ul>
      */
     //? if <1.20.5 {
-    /*@SubscribeEvent
+    @SubscribeEvent
     public static void onWaterBucketPickup(FillBucketEvent event)
     {
         // 取水用的必须是空桶（旧代码判断的是「水桶」，那个条件永远不成立）
@@ -122,8 +122,8 @@ public final class ModGameplayEvents
         event.setFilledBucket(new ItemStack(ModItems.SEA_WATER_BUCKET.get()));
         event.setResult(Event.Result.ALLOW);
     }
-    *///?} else {
-    @SubscribeEvent
+    //?} else {
+    /*@SubscribeEvent
     public static void onWaterBucketPickup(PlayerInteractEvent.RightClickItem event)
     {
         ItemStack stack = event.getItemStack();
@@ -164,7 +164,7 @@ public final class ModGameplayEvents
             serverPlayer.inventoryMenu.sendAllDataToRemote();
         }
     }
-    //?}
+    *///?}
 
     /** 这一格是不是「干净的海洋水柱」里的水源（空桶一舀就能舀起来的那种）。 */
     private static boolean canPickSeaWater(Player player, Level level, BlockPos pos,
@@ -215,10 +215,10 @@ public final class ModGameplayEvents
     private static ItemStack pickupFrom(BucketPickup pickup, Player player, Level level, BlockPos pos, BlockState state)
     {
         //? if <1.20.2 {
-        /*return pickup.pickupBlock(level, pos, state);
-        *///?} else {
-        return pickup.pickupBlock(player, level, pos, state);
-        //?}
+        return pickup.pickupBlock(level, pos, state);
+        //?} else {
+        /*return pickup.pickupBlock(player, level, pos, state);
+        *///?}
     }
 
     /**
@@ -317,12 +317,12 @@ public final class ModGameplayEvents
     private static boolean isAxeStrip(BlockEvent.BlockToolModificationEvent event)
     {
         //? if <1.20.2 {
-        /*return event.getToolAction() == net.minecraftforge.common.ToolActions.AXE_STRIP;
-        *///?} else if <1.20.5 {
+        return event.getToolAction() == net.minecraftforge.common.ToolActions.AXE_STRIP;
+        //?} else if <1.20.5 {
         /*return event.getToolAction() == net.neoforged.neoforge.common.ToolActions.AXE_STRIP;*/
         //?} else {
-        return event.getItemAbility() == ItemAbilities.AXE_STRIP;
-        //?}
+        /*return event.getItemAbility() == ItemAbilities.AXE_STRIP;
+        *///?}
     }
 
     @SubscribeEvent
@@ -397,7 +397,7 @@ public final class ModGameplayEvents
      * 这一段在那些版本上不编译；1.20.4（NeoForge 20.4）已经有数据表，也不用这里。
      */
     //? if <1.20.2 {
-    /*@SubscribeEvent
+    @SubscribeEvent
     public static void onFurnaceFuel(FurnaceFuelBurnTimeEvent event)
     {
         ItemStack stack = event.getItemStack();
@@ -414,5 +414,5 @@ public final class ModGameplayEvents
             event.setBurnTime(3200);
         }
     }
-    *///?}
+    //?}
 }

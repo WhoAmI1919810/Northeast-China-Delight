@@ -22,7 +22,7 @@ public class DdConsumableItem extends Item {
     }
 
     //? if <1.20.5 {
-    /*@Override
+    @Override
     public ItemStack finishUsingItem(ItemStack stack, Level level, LivingEntity consumer) {
         ItemStack container = stack.getCraftingRemainingItem();
         super.finishUsingItem(stack, level, consumer);
@@ -40,6 +40,6 @@ public class DdConsumableItem extends Item {
             }
         }
         return stack;
-    }*/
+    }
     //?}
 }

@@ -10,15 +10,15 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
 //? if <1.20.2 {
-/*import net.minecraftforge.common.loot.IGlobalLootModifier;
-*///?} else {
-import net.neoforged.neoforge.common.loot.IGlobalLootModifier;
-//?}
+import net.minecraftforge.common.loot.IGlobalLootModifier;
+//?} else {
+/*import net.neoforged.neoforge.common.loot.IGlobalLootModifier;
+*///?}
 //? if <1.20.2 {
-/*import net.minecraftforge.common.loot.LootModifier;
-*///?} else {
-import net.neoforged.neoforge.common.loot.LootModifier;
-//?}
+import net.minecraftforge.common.loot.LootModifier;
+//?} else {
+/*import net.neoforged.neoforge.common.loot.LootModifier;
+*///?}
 
 /**
  * 渔夫（village_fisher）箱子：小概率塞东北乐事的水产食材和海味菜。
@@ -29,12 +29,12 @@ import net.neoforged.neoforge.common.loot.LootModifier;
 public class FishermanLootModifier extends LootModifier
 {
     //? if <1.20.5 {
-    /*public static final Codec<FishermanLootModifier> CODEC = RecordCodecBuilder.create(
+    public static final Codec<FishermanLootModifier> CODEC = RecordCodecBuilder.create(
             instance -> codecStart(instance).apply(instance, FishermanLootModifier::new));
-    *///?} else {
-    public static final MapCodec<FishermanLootModifier> CODEC = RecordCodecBuilder.mapCodec(
+    //?} else {
+    /*public static final MapCodec<FishermanLootModifier> CODEC = RecordCodecBuilder.mapCodec(
             instance -> codecStart(instance).apply(instance, FishermanLootModifier::new));
-    //?}
+    *///?}
 
     /** 生鲜水产 */
     private static final Entry[] RAW = {
@@ -59,16 +59,16 @@ public class FishermanLootModifier extends LootModifier
 
     @Override
     //? if <1.20.5 {
-    /*public Codec<? extends IGlobalLootModifier> codec()
-    {
-        return CODEC;
-    }*/
-    //?} else {
-    public MapCodec<? extends IGlobalLootModifier> codec()
+    public Codec<? extends IGlobalLootModifier> codec()
     {
         return CODEC;
     }
-    //?}
+    //?} else {
+    /*public MapCodec<? extends IGlobalLootModifier> codec()
+    {
+        return CODEC;
+    }
+    *///?}
 
     @Override
     protected ObjectArrayList<ItemStack> doApply(ObjectArrayList<ItemStack> generatedLoot, LootContext context)

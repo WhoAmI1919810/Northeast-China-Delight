@@ -5,8 +5,8 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 //? if >=1.20.5 {
-import net.minecraft.world.ItemInteractionResult;
-//?}
+/*import net.minecraft.world.ItemInteractionResult;
+*///?}
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -65,7 +65,7 @@ public class DdCropBlock extends CropBlock {
      * 成熟后用剪刀右键：只摘走果实，植株退回幼株继续生长（消耗剪刀 1 点耐久）。
      */
     //? if <1.20.5 {
-    /*@Override
+    @Override
     public InteractionResult use(BlockState state, Level level, BlockPos pos, Player player,
                                  InteractionHand hand, BlockHitResult hit) {
         ItemStack stack = player.getItemInHand(hand);
@@ -78,9 +78,9 @@ public class DdCropBlock extends CropBlock {
             return InteractionResult.sidedSuccess(level.isClientSide());
         }
         return super.use(state, level, pos, player, hand, hit);
-    }*/
+    }
     //?} else {
-    @Override
+    /*@Override
     protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos,
                                               Player player, InteractionHand hand, BlockHitResult hit) {
         if (this.shearsHarvest != null && stack.is(Items.SHEARS) && this.isMaxAge(state)) {
@@ -93,5 +93,5 @@ public class DdCropBlock extends CropBlock {
         }
         return super.useItemOn(stack, state, level, pos, player, hand, hit);
     }
-    //?}
+    *///?}
 }

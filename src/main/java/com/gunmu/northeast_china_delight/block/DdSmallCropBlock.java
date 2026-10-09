@@ -36,8 +36,8 @@ import java.util.function.Supplier;
 public class DdSmallCropBlock extends BushBlock implements BonemealableBlock {
 
     //? if >=1.20.2 {
-    public static final MapCodec<DdSmallCropBlock> CODEC = simpleCodec(DdSmallCropBlock::new);
-    //?}
+    /*public static final MapCodec<DdSmallCropBlock> CODEC = simpleCodec(DdSmallCropBlock::new);
+    *///?}
 
     public static final int MAX_AGE = 3;
     public static final IntegerProperty AGE = BlockStateProperties.AGE_3;
@@ -69,19 +69,19 @@ public class DdSmallCropBlock extends BushBlock implements BonemealableBlock {
     }
 
     //? if >=1.20.2 {
-    @Override
+    /*@Override
     public MapCodec<DdSmallCropBlock> codec() {
         return CODEC;
     }
-    //?}
+    *///?}
 
     /** 选取方块时给回种子 */
     @Override
     //? if <1.20.2 {
-    /*public ItemStack getCloneItemStack(BlockGetter level, BlockPos pos, BlockState state)
-    *///?} else {
-    public ItemStack getCloneItemStack(LevelReader level, BlockPos pos, BlockState state)
-    //?}
+    public ItemStack getCloneItemStack(BlockGetter level, BlockPos pos, BlockState state)
+    //?} else {
+    /*public ItemStack getCloneItemStack(LevelReader level, BlockPos pos, BlockState state)
+    *///?}
     {
         return this.seed == null ? ItemStack.EMPTY : new ItemStack(this.seed.get());
     }
@@ -123,22 +123,22 @@ public class DdSmallCropBlock extends BushBlock implements BonemealableBlock {
 
     private static boolean cropGrowPre(ServerLevel level, BlockPos pos, BlockState state, boolean def) {
         //? if <1.20.2 {
-        /*return net.minecraftforge.common.ForgeHooks.onCropsGrowPre(level, pos, state, def);
-        *///?} else if <1.20.5 {
+        return net.minecraftforge.common.ForgeHooks.onCropsGrowPre(level, pos, state, def);
+        //?} else if <1.20.5 {
         /*return net.neoforged.neoforge.common.CommonHooks.onCropsGrowPre(level, pos, state, def);*/
         //?} else {
-        return net.neoforged.neoforge.common.CommonHooks.canCropGrow(level, pos, state, def);
-        //?}
+        /*return net.neoforged.neoforge.common.CommonHooks.canCropGrow(level, pos, state, def);
+        *///?}
     }
 
     private static void cropGrowPost(ServerLevel level, BlockPos pos, BlockState state) {
         //? if <1.20.2 {
-        /*net.minecraftforge.common.ForgeHooks.onCropsGrowPost(level, pos, state);
-        *///?} else if <1.20.5 {
+        net.minecraftforge.common.ForgeHooks.onCropsGrowPost(level, pos, state);
+        //?} else if <1.20.5 {
         /*net.neoforged.neoforge.common.CommonHooks.onCropsGrowPost(level, pos, state);*/
         //?} else {
-        net.neoforged.neoforge.common.CommonHooks.fireCropGrowPost(level, pos, state);
-        //?}
+        /*net.neoforged.neoforge.common.CommonHooks.fireCropGrowPost(level, pos, state);
+        *///?}
     }
 
     /**
@@ -192,10 +192,10 @@ public class DdSmallCropBlock extends BushBlock implements BonemealableBlock {
 
     @Override
     //? if <1.20.2 {
-    /*public boolean isValidBonemealTarget(LevelReader level, BlockPos pos, BlockState state, boolean isClient)
-    *///?} else {
-    public boolean isValidBonemealTarget(LevelReader level, BlockPos pos, BlockState state)
-    //?}
+    public boolean isValidBonemealTarget(LevelReader level, BlockPos pos, BlockState state, boolean isClient)
+    //?} else {
+    /*public boolean isValidBonemealTarget(LevelReader level, BlockPos pos, BlockState state)
+    *///?}
     {
         return state.getValue(AGE) < MAX_AGE;
     }

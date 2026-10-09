@@ -26,15 +26,15 @@ public class NourishingEffect extends MobEffect {
      */
     @Override
     //? if <1.20.5 {
-    /*public void applyEffectTick(LivingEntity entity, int amplifier) {
+    public void applyEffectTick(LivingEntity entity, int amplifier) {
         this.nourish(entity);
-    }*/
+    }
     //?} else {
-    public boolean applyEffectTick(LivingEntity entity, int amplifier) {
+    /*public boolean applyEffectTick(LivingEntity entity, int amplifier) {
         this.nourish(entity);
         return true;
     }
-    //?}
+    *///?}
 
     /** 真正的回血逻辑（分档在里面按血量做，两个版本共用） */
     private void nourish(LivingEntity entity) {
@@ -61,14 +61,14 @@ public class NourishingEffect extends MobEffect {
 
     /** 每 tick 都触发 applyEffectTick（分档逻辑在里面按血量做） */
     //? if <1.20.2 {
-    /*@Override
+    @Override
     public boolean isDurationEffectTick(int duration, int amplifier) {
         return true;
     }
-    *///?} else {
-    @Override
+    //?} else {
+    /*@Override
     public boolean shouldApplyEffectTickThisTick(int duration, int amplifier) {
         return true;
     }
-    //?}
+    *///?}
 }

@@ -130,16 +130,16 @@ public class GrillBlockEntity extends BlockEntity {
 
     @Override
     //? if <1.20.5 {
-    /*public void load(CompoundTag tag) {
+    public void load(CompoundTag tag) {
         super.load(tag);
         this.readFromTag(tag, null);
-    }*/
+    }
     //?} else {
-    protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
+    /*protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.loadAdditional(tag, registries);
         this.readFromTag(tag, registries);
     }
-    //?}
+    *///?}
 
     /** 读档主体（两个版本共用） */
     private void readFromTag(CompoundTag tag, HolderLookup.Provider registries) {
@@ -157,16 +157,16 @@ public class GrillBlockEntity extends BlockEntity {
 
     @Override
     //? if <1.20.5 {
-    /*protected void saveAdditional(CompoundTag tag) {
+    protected void saveAdditional(CompoundTag tag) {
         super.saveAdditional(tag);
         this.writeToTag(tag, null);
-    }*/
+    }
     //?} else {
-    protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
+    /*protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.saveAdditional(tag, registries);
         this.writeToTag(tag, registries);
     }
-    //?}
+    *///?}
 
     /** 存档主体（两个版本共用） */
     private void writeToTag(CompoundTag tag, HolderLookup.Provider registries) {
@@ -180,18 +180,18 @@ public class GrillBlockEntity extends BlockEntity {
     /** 食材和调料都要同步给客户端 —— 渲染那层「刷上去的颜色」要用 */
     @Override
     //? if <1.20.5 {
-    /*public CompoundTag getUpdateTag() {
+    public CompoundTag getUpdateTag() {
         CompoundTag tag = new CompoundTag();
         this.writeToTag(tag, null);
         return tag;
-    }*/
+    }
     //?} else {
-    public CompoundTag getUpdateTag(HolderLookup.Provider registries) {
+    /*public CompoundTag getUpdateTag(HolderLookup.Provider registries) {
         CompoundTag tag = new CompoundTag();
         this.writeToTag(tag, registries);
         return tag;
     }
-    //?}
+    *///?}
 
     @Override
     public Packet<ClientGamePacketListener> getUpdatePacket() {

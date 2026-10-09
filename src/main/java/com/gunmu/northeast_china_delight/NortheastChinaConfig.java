@@ -1,10 +1,10 @@
 package com.gunmu.northeast_china_delight;
 
 //? if <1.20.2 {
-/*import net.minecraftforge.common.ForgeConfigSpec;
-*///?} else {
-import net.neoforged.neoforge.common.ModConfigSpec;
-//?}
+import net.minecraftforge.common.ForgeConfigSpec;
+//?} else {
+/*import net.neoforged.neoforge.common.ModConfigSpec;
+*///?}
 
 /**
  * 模组配置。
@@ -16,30 +16,30 @@ import net.neoforged.neoforge.common.ModConfigSpec;
 public final class NortheastChinaConfig
 {
     //? if <1.20.2 {
-    /*public static final ForgeConfigSpec SPEC;
+    public static final ForgeConfigSpec SPEC;
 
     // 菜肴方块形态总开关
     public static final ForgeConfigSpec.BooleanValue DISH_PLACEMENT_ENABLED;
 
     // 东北小院里的小零件（灶棚、鸡架、水井、菜窖等）是否生成
     public static final ForgeConfigSpec.BooleanValue YARD_PARTS_ENABLED;
-    *///?} else {
-    public static final ModConfigSpec SPEC;
+    //?} else {
+    /*public static final ModConfigSpec SPEC;
 
-    /** 菜肴方块形态总开关 */
+    /^* 菜肴方块形态总开关 ^/
     public static final ModConfigSpec.BooleanValue DISH_PLACEMENT_ENABLED;
 
-    /** 东北小院里的小零件（灶棚、鸡架、水井、菜窖等）是否生成 */
+    /^* 东北小院里的小零件（灶棚、鸡架、水井、菜窖等）是否生成 ^/
     public static final ModConfigSpec.BooleanValue YARD_PARTS_ENABLED;
-    //?}
+    *///?}
 
     static
     {
         //? if <1.20.2 {
-        /*ForgeConfigSpec.Builder*/
+        ForgeConfigSpec.Builder
         //?} else {
-        ModConfigSpec.Builder
-        //?}
+        /*ModConfigSpec.Builder
+        *///?}
         builder = configBuilder();
         builder.comment("菜肴方块形态").push("dishes");
         DISH_PLACEMENT_ENABLED = builder
@@ -59,14 +59,14 @@ public final class NortheastChinaConfig
 
     /** 两个平台的 Builder 方法名完全一样，只有类型名不同，所以在这里分版本取。 */
     //? if <1.20.2 {
-    /*private static ForgeConfigSpec.Builder configBuilder() {
+    private static ForgeConfigSpec.Builder configBuilder() {
         return new ForgeConfigSpec.Builder();
     }
-    *///?} else {
-    private static ModConfigSpec.Builder configBuilder() {
+    //?} else {
+    /*private static ModConfigSpec.Builder configBuilder() {
         return new ModConfigSpec.Builder();
     }
-    //?}
+    *///?}
 
     private NortheastChinaConfig()
     {

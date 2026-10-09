@@ -1,7 +1,7 @@
 package com.gunmu.northeast_china_delight.fluid;
 
 //? if <1.20.2 {
-/*import net.minecraft.world.item.Item;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.LiquidBlock;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraftforge.fluids.FluidType;
@@ -86,4 +86,4 @@ public class BaseFlowingFluid
         }
     }
 }
-*///?}
+//?}

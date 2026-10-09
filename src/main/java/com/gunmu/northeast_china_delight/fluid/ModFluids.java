@@ -7,33 +7,33 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.material.Fluid;
 //? if <1.20.2 {
-/*import net.minecraftforge.eventbus.api.IEventBus;
-*///?} else {
-import net.neoforged.bus.api.IEventBus;
-//?}
+import net.minecraftforge.eventbus.api.IEventBus;
+//?} else {
+/*import net.neoforged.bus.api.IEventBus;
+*///?}
 //? if <1.20.2 {
-/*import net.minecraftforge.client.extensions.common.IClientFluidTypeExtensions;
-*///?} else {
-import net.neoforged.neoforge.client.extensions.common.IClientFluidTypeExtensions;
-//?}
+import net.minecraftforge.client.extensions.common.IClientFluidTypeExtensions;
+//?} else {
+/*import net.neoforged.neoforge.client.extensions.common.IClientFluidTypeExtensions;
+*///?}
 //? if >=1.20.2 {
-import net.neoforged.neoforge.fluids.BaseFlowingFluid;
-//?}
+/*import net.neoforged.neoforge.fluids.BaseFlowingFluid;
+*///?}
 //? if <1.20.2 {
-/*import net.minecraftforge.fluids.FluidType;
-*///?} else {
-import net.neoforged.neoforge.fluids.FluidType;
-//?}
+import net.minecraftforge.fluids.FluidType;
+//?} else {
+/*import net.neoforged.neoforge.fluids.FluidType;
+*///?}
 //? if <1.20.2 {
-/*import net.minecraftforge.registries.DeferredRegister;
-*///?} else {
-import net.neoforged.neoforge.registries.DeferredRegister;
-//?}
+import net.minecraftforge.registries.DeferredRegister;
+//?} else {
+/*import net.neoforged.neoforge.registries.DeferredRegister;
+*///?}
 //? if <1.20.2 {
-/*import net.minecraftforge.registries.ForgeRegistries;
-*///?} else {
-import net.neoforged.neoforge.registries.NeoForgeRegistries;
-//?}
+import net.minecraftforge.registries.ForgeRegistries;
+//?} else {
+/*import net.neoforged.neoforge.registries.NeoForgeRegistries;
+*///?}
 
 import java.util.function.Consumer;
 import java.util.function.Supplier;
@@ -53,10 +53,10 @@ public final class ModFluids {
 
     public static final DeferredRegister<FluidType> FLUID_TYPES =
             //? if <1.20.2 {
-            /*DeferredRegister.create(ForgeRegistries.Keys.FLUID_TYPES, NortheastChinaDelight.MODID);
-            *///?} else {
-            DeferredRegister.create(NeoForgeRegistries.Keys.FLUID_TYPES, NortheastChinaDelight.MODID);
-            //?}
+            DeferredRegister.create(ForgeRegistries.Keys.FLUID_TYPES, NortheastChinaDelight.MODID);
+            //?} else {
+            /*DeferredRegister.create(NeoForgeRegistries.Keys.FLUID_TYPES, NortheastChinaDelight.MODID);
+            *///?}
     public static final DeferredRegister<Fluid> FLUIDS =
             DeferredRegister.create(Registries.FLUID, NortheastChinaDelight.MODID);
 
@@ -657,7 +657,7 @@ public final class ModFluids {
         }
 
         //? if <1.20.5 {
-        /*@Override
+        @Override
         public void initializeClient(Consumer<IClientFluidTypeExtensions> consumer) {
             consumer.accept(new IClientFluidTypeExtensions() {
                 @Override
@@ -675,7 +675,7 @@ public final class ModFluids {
                     return DdFluidType.this.tintColor;
                 }
             });
-        }*/
+        }
         //?}
     }
 }

@@ -19,8 +19,8 @@ import net.minecraft.world.Containers;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 //? if >=1.20.5 {
-import net.minecraft.world.ItemInteractionResult;
-//?}
+/*import net.minecraft.world.ItemInteractionResult;
+*///?}
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -59,8 +59,8 @@ import org.jetbrains.annotations.Nullable;
 public class GrillCampfireBlock extends CampfireBlock {
 
     //? if >=1.20.2 {
-    public static final MapCodec<GrillCampfireBlock> CODEC = simpleCodec(GrillCampfireBlock::new);
-    //?}
+    /*public static final MapCodec<GrillCampfireBlock> CODEC = simpleCodec(GrillCampfireBlock::new);
+    *///?}
 
     /** 底下的火是灵魂营火（拆烤架时还原回灵魂营火） */
     public static final net.minecraft.world.level.block.state.properties.BooleanProperty SOUL =
@@ -78,11 +78,11 @@ public class GrillCampfireBlock extends CampfireBlock {
 
     @SuppressWarnings({"unchecked", "rawtypes"})
     //? if >=1.20.2 {
-    @Override
+    /*@Override
     public MapCodec<CampfireBlock> codec() {
         return (MapCodec) CODEC;
     }
-    //?}
+    *///?}
 
     @Override
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
@@ -152,21 +152,21 @@ public class GrillCampfireBlock extends CampfireBlock {
 
     @Override
     //? if <1.20.5 {
-    /*public InteractionResult use(BlockState state, Level level, BlockPos pos, Player player,
+    public InteractionResult use(BlockState state, Level level, BlockPos pos, Player player,
                                  InteractionHand hand, BlockHitResult hit) {
         InteractionResult result = this.useOnGrill(player.getItemInHand(hand), state, level, pos, player, hand, hit);
         // PASS 表示「方块没管这次交互」，交给父类 —— 等于让手上的物品自己做事
         return result == InteractionResult.PASS ? super.use(state, level, pos, player, hand, hit) : result;
-    }*/
+    }
     //?} else {
-    protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos,
+    /*protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos,
                                               Player player, InteractionHand hand, BlockHitResult hit) {
         InteractionResult result = this.useOnGrill(stack, state, level, pos, player, hand, hit);
         return result == InteractionResult.PASS
                 ? super.useItemOn(stack, state, level, pos, player, hand, hit)
                 : ItemInteractionResult.sidedSuccess(level.isClientSide);
     }
-    //?}
+    *///?}
 
     /**
      * 交互主体：两个版本共用这一份实现，返回 {@link InteractionResult}，

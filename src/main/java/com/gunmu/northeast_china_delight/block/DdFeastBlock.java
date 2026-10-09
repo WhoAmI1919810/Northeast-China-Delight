@@ -9,8 +9,8 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 //? if >=1.20.5 {
-import net.minecraft.world.ItemInteractionResult;
-//?}
+/*import net.minecraft.world.ItemInteractionResult;
+*///?}
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -50,8 +50,8 @@ import java.util.function.Supplier;
 public class DdFeastBlock extends Block {
 
     //? if >=1.20.2 {
-    public static final MapCodec<DdFeastBlock> CODEC = simpleCodec(DdFeastBlock::new);
-    //?}
+    /*public static final MapCodec<DdFeastBlock> CODEC = simpleCodec(DdFeastBlock::new);
+    *///?}
 
     public static final DirectionProperty FACING = BlockStateProperties.HORIZONTAL_FACING;
     public static final int MAX_SERVINGS = 4;
@@ -84,11 +84,11 @@ public class DdFeastBlock extends Block {
     }
 
     //? if >=1.20.2 {
-    @Override
+    /*@Override
     public MapCodec<DdFeastBlock> codec() {
         return CODEC;
     }
-    //?}
+    *///?}
 
     @Override
     public VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
@@ -116,7 +116,7 @@ public class DdFeastBlock extends Block {
 
     @Override
     //? if <1.20.5 {
-    /*public InteractionResult use(BlockState state, Level level, BlockPos pos, Player player,
+    public InteractionResult use(BlockState state, Level level, BlockPos pos, Player player,
                                  InteractionHand hand, BlockHitResult hit) {
         ItemStack stack = player.getItemInHand(hand);
         int servings = state.getValue(SERVINGS);
@@ -152,9 +152,9 @@ public class DdFeastBlock extends Block {
                     0.8F, 0.8F + level.random.nextFloat() * 0.4F);
         }
         return InteractionResult.sidedSuccess(level.isClientSide);
-    }*/
+    }
     //?} else {
-    protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos,
+    /*protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos,
                                               Player player, InteractionHand hand, BlockHitResult hit) {
         int servings = state.getValue(SERVINGS);
         if (this.servingItem == null) {
@@ -190,7 +190,7 @@ public class DdFeastBlock extends Block {
         }
         return ItemInteractionResult.sidedSuccess(level.isClientSide);
     }
-    //?}
+    *///?}
 
     /** 必须放在实心方块上（和蛋糕一样） */
     @Override

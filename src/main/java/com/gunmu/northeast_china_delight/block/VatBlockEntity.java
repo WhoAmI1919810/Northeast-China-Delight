@@ -8,14 +8,14 @@ import com.gunmu.northeast_china_delight.NortheastChinaDelight;
 import com.gunmu.northeast_china_delight.util.DdIds;
 import com.gunmu.northeast_china_delight.util.DdNbt;
 //? if <1.20.2 {
-/*import net.minecraft.advancements.Advancement;
+import net.minecraft.advancements.Advancement;
 import net.minecraft.core.Direction;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.util.LazyOptional;
-*///?} else {
-import net.minecraft.advancements.AdvancementHolder;
-//?}
+//?} else {
+/*import net.minecraft.advancements.AdvancementHolder;
+*///?}
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.NonNullList;
@@ -34,15 +34,15 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.resources.ResourceLocation;
 //? if <1.20.2 {
-/*import net.minecraftforge.fluids.FluidStack;
-*///?} else {
-import net.neoforged.neoforge.fluids.FluidStack;
-//?}
+import net.minecraftforge.fluids.FluidStack;
+//?} else {
+/*import net.neoforged.neoforge.fluids.FluidStack;
+*///?}
 //? if <1.20.2 {
-/*import net.minecraftforge.fluids.capability.IFluidHandler;
-*///?} else {
-import net.neoforged.neoforge.fluids.capability.IFluidHandler;
-//?}
+import net.minecraftforge.fluids.capability.IFluidHandler;
+//?} else {
+/*import net.neoforged.neoforge.fluids.capability.IFluidHandler;
+*///?}
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -59,7 +59,7 @@ import net.minecraft.world.phys.Vec3;
 public class VatBlockEntity extends BlockEntity implements IFluidHandler {
 
     //? if <1.20.2 {
-    /*// 1.20.1（Forge）靠 ICapabilityProvider + LazyOptional 暴露流体能力；
+    // 1.20.1（Forge）靠 ICapabilityProvider + LazyOptional 暴露流体能力；
     // 1.20.2 起换成在 RegisterCapabilitiesEvent 里注册（见 NortheastChinaDelight）。
     private final LazyOptional<IFluidHandler> fluidHandler = LazyOptional.of(() -> this);
 
@@ -76,7 +76,7 @@ public class VatBlockEntity extends BlockEntity implements IFluidHandler {
         super.invalidateCaps();
         fluidHandler.invalidate();
     }
-    *///?}
+    //?}
 
     /** 内容物条目上限（5 份蔬菜 + 1 份盐，或 5 块肉 + 5 份盐） */
     public static final int MAX_ENTRIES = 12;
@@ -688,10 +688,10 @@ public class VatBlockEntity extends BlockEntity implements IFluidHandler {
     public FluidStack drain(FluidStack resource, FluidAction action) {
         Fluid fluid = productFluid();
         //? if <1.20.2 {
-        /*if (fluid == null || resource.isEmpty() || resource.getFluid() != fluid) {
-        *///?} else {
-        if (fluid == null || resource.isEmpty() || !resource.is(fluid)) {
-        //?}
+        if (fluid == null || resource.isEmpty() || resource.getFluid() != fluid) {
+        //?} else {
+        /*if (fluid == null || resource.isEmpty() || !resource.is(fluid)) {
+        *///?}
             return FluidStack.EMPTY;
         }
         return drain(resource.getAmount(), action);
@@ -747,12 +747,12 @@ public class VatBlockEntity extends BlockEntity implements IFluidHandler {
             return;
         }
         //? if <1.20.2 {
-        /*Advancement advancement = serverLevel.getServer().getAdvancements().getAdvancement(
+        Advancement advancement = serverLevel.getServer().getAdvancements().getAdvancement(
                 DdIds.of(NortheastChinaDelight.MODID, "pump_seasoning"));
-        *///?} else {
-        AdvancementHolder advancement = serverLevel.getServer().getAdvancements().get(
+        //?} else {
+        /*AdvancementHolder advancement = serverLevel.getServer().getAdvancements().get(
                 DdIds.of(NortheastChinaDelight.MODID, "pump_seasoning"));
-        //?}
+        *///?}
         if (advancement == null) {
             return;
         }
@@ -768,16 +768,16 @@ public class VatBlockEntity extends BlockEntity implements IFluidHandler {
 
     @Override
     //? if <1.20.5 {
-    /*protected void saveAdditional(CompoundTag tag) {
+    protected void saveAdditional(CompoundTag tag) {
         super.saveAdditional(tag);
         this.saveVatData(tag, null);
-    }*/
+    }
     //?} else {
-    protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
+    /*protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.saveAdditional(tag, registries);
         this.saveVatData(tag, registries);
     }
-    //?}
+    *///?}
 
     /** 存档主体（两个版本共用）；1.20.4 没有注册表参数，传 null 即可 */
     private void saveVatData(CompoundTag tag, @Nullable HolderLookup.Provider registries) {
@@ -803,16 +803,16 @@ public class VatBlockEntity extends BlockEntity implements IFluidHandler {
 
     @Override
     //? if <1.20.5 {
-    /*public void load(CompoundTag tag) {
+    public void load(CompoundTag tag) {
         super.load(tag);
         this.loadVatData(tag, null);
-    }*/
+    }
     //?} else {
-    protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
+    /*protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.loadAdditional(tag, registries);
         this.loadVatData(tag, registries);
     }
-    //?}
+    *///?}
 
     /** 读档主体（两个版本共用） */
     private void loadVatData(CompoundTag tag, @Nullable HolderLookup.Provider registries) {
@@ -880,14 +880,14 @@ public class VatBlockEntity extends BlockEntity implements IFluidHandler {
 
     @Override
     //? if <1.20.5 {
-    /*public CompoundTag getUpdateTag() {
+    public CompoundTag getUpdateTag() {
         return this.saveWithoutMetadata();
-    }*/
+    }
     //?} else {
-    public CompoundTag getUpdateTag(HolderLookup.Provider registries) {
+    /*public CompoundTag getUpdateTag(HolderLookup.Provider registries) {
         return this.saveWithoutMetadata(registries);
     }
-    //?}
+    *///?}
 
     /** 把存档里的加工类型名字转回枚举，认不出来（旧版本删掉的类型）就当空缸 */
     private static VatRecipes.Kind parseKind(String name) {

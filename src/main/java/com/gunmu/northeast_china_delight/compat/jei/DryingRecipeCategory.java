@@ -1,7 +1,7 @@
 // 这个分类完全靠机械动力的模型（AllPartialModels）+ catnip 的 GUI 元素渲染，
 // 1.20.4 节点没有机械动力，整个文件停用（只留注释）。
 //? if >=1.20.5 {
-package com.gunmu.northeast_china_delight.compat.jei;
+/*package com.gunmu.northeast_china_delight.compat.jei;
 
 import com.gunmu.northeast_china_delight.NortheastChinaDelight;
 import com.gunmu.northeast_china_delight.util.DdIds;
@@ -23,12 +23,12 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 
-/**
+/^*
  * JEI「批量风干」分类 —— 照抄 Create {@code ProcessingViaFanCategory}，
  * 区别只在没有底部催化剂方块（水/火/灵魂火）和白色阴影。
  * 风扇渲染直接调用 catnip {@link GuiGameElement#of}，就是
  * {@code AnimatedKinetics} 内部的真实调用。
- */
+ ^/
 public class DryingRecipeCategory implements IRecipeCategory<DryingJeiRecipe> {
 
     private static final int SLOT = 16;
@@ -129,4 +129,4 @@ public class DryingRecipeCategory implements IRecipeCategory<DryingJeiRecipe> {
         }
     }
 }
-//?}
+*///?}

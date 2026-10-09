@@ -39,91 +39,91 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.entity.CampfireBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 //? if <1.20.2 {
-/*import net.minecraftforge.api.distmarker.Dist;
-*///?} else {
-import net.neoforged.api.distmarker.Dist;
-//?}
+import net.minecraftforge.api.distmarker.Dist;
+//?} else {
+/*import net.neoforged.api.distmarker.Dist;
+*///?}
 //? if <1.20.2 {
-/*import net.minecraftforge.eventbus.api.IEventBus;
-*///?} else {
-import net.neoforged.bus.api.IEventBus;
-//?}
+import net.minecraftforge.eventbus.api.IEventBus;
+//?} else {
+/*import net.neoforged.bus.api.IEventBus;
+*///?}
 //? if <1.20.2 {
-/*import net.minecraftforge.eventbus.api.SubscribeEvent;
-*///?} else {
-import net.neoforged.bus.api.SubscribeEvent;
-//?}
+import net.minecraftforge.eventbus.api.SubscribeEvent;
+//?} else {
+/*import net.neoforged.bus.api.SubscribeEvent;
+*///?}
 //? if <1.20.2 {
-/*import net.minecraftforge.common.capabilities.RegisterCapabilitiesEvent;
-*///?} else {
-import net.neoforged.neoforge.capabilities.Capabilities;
+import net.minecraftforge.common.capabilities.RegisterCapabilitiesEvent;
+//?} else {
+/*import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
-//?}
+*///?}
 //? if <1.20.2 {
-/*import net.minecraftforge.fml.ModContainer;
-*///?} else {
-import net.neoforged.fml.ModContainer;
-//?}
+import net.minecraftforge.fml.ModContainer;
+//?} else {
+/*import net.neoforged.fml.ModContainer;
+*///?}
 //? if <1.20.2 {
-/*import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
-*///?} else if <1.20.5 {
+import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
+//?} else if <1.20.5 {
 /*import net.neoforged.fml.common.Mod.EventBusSubscriber;*/
 //?} else {
-import net.neoforged.fml.common.EventBusSubscriber;
-//?}
+/*import net.neoforged.fml.common.EventBusSubscriber;
+*///?}
 //? if <1.20.2 {
-/*import net.minecraftforge.fml.common.Mod;
-*///?} else {
-import net.neoforged.fml.common.Mod;
-//?}
+import net.minecraftforge.fml.common.Mod;
+//?} else {
+/*import net.neoforged.fml.common.Mod;
+*///?}
 //? if <1.20.2 {
-/*import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
-*///?} else {
-import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
-//?}
+import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
+//?} else {
+/*import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
+*///?}
 //? if <1.20.2 {
-/*import net.minecraftforge.common.MinecraftForge;
-*///?} else {
-import net.neoforged.neoforge.common.NeoForge;
-//?}
+import net.minecraftforge.common.MinecraftForge;
+//?} else {
+/*import net.neoforged.neoforge.common.NeoForge;
+*///?}
 //? if <1.20.2 {
-/*import net.minecraftforge.event.BuildCreativeModeTabContentsEvent;
-*///?} else {
-import net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent;
-//?}
+import net.minecraftforge.event.BuildCreativeModeTabContentsEvent;
+//?} else {
+/*import net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent;
+*///?}
 //? if <1.20.2 {
-/*import net.minecraftforge.event.entity.player.PlayerInteractEvent;
-*///?} else {
-import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
-//?}
+import net.minecraftforge.event.entity.player.PlayerInteractEvent;
+//?} else {
+/*import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
+*///?}
 //? if <1.20.2 {
-/*import net.minecraftforge.event.server.ServerStartingEvent;
-*///?} else {
-import net.neoforged.neoforge.event.server.ServerStartingEvent;
-//?}
+import net.minecraftforge.event.server.ServerStartingEvent;
+//?} else {
+/*import net.neoforged.neoforge.event.server.ServerStartingEvent;
+*///?}
 //? if <1.20.2 {
-/*import net.minecraftforge.client.event.RegisterColorHandlersEvent;
-*///?} else {
-import net.neoforged.neoforge.client.event.RegisterColorHandlersEvent;
-//?}
+import net.minecraftforge.client.event.RegisterColorHandlersEvent;
+//?} else {
+/*import net.neoforged.neoforge.client.event.RegisterColorHandlersEvent;
+*///?}
 //? if <1.20.2 {
-/*import net.minecraftforge.client.event.EntityRenderersEvent;
-*///?} else {
-import net.neoforged.neoforge.client.event.EntityRenderersEvent;
-//?}
+import net.minecraftforge.client.event.EntityRenderersEvent;
+//?} else {
+/*import net.neoforged.neoforge.client.event.EntityRenderersEvent;
+*///?}
 //? if <1.20.2 {
-/*import net.minecraftforge.client.extensions.common.IClientFluidTypeExtensions;
-*///?} else {
-import net.neoforged.neoforge.client.extensions.common.IClientFluidTypeExtensions;
-//?}
+import net.minecraftforge.client.extensions.common.IClientFluidTypeExtensions;
+//?} else {
+/*import net.neoforged.neoforge.client.extensions.common.IClientFluidTypeExtensions;
+*///?}
 //? if >=1.20.5 {
-import net.neoforged.neoforge.client.extensions.common.RegisterClientExtensionsEvent;
-//?}
+/*import net.neoforged.neoforge.client.extensions.common.RegisterClientExtensionsEvent;
+*///?}
 //? if <1.20.2 {
-/*import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
-*///?} else {
-import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
-//?}
+import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
+//?} else {
+/*import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
+*///?}
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 
@@ -136,13 +136,13 @@ public class NortheastChinaDelight
     private static final Logger LOGGER = LogUtils.getLogger();
 
     //? if <1.20.2 {
-    /*public NortheastChinaDelight()
+    public NortheastChinaDelight()
     {
         IEventBus modEventBus = net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext.get().getModEventBus();
-    *///?} else {
-    public NortheastChinaDelight(IEventBus modEventBus, ModContainer modContainer)
+    //?} else {
+    /*public NortheastChinaDelight(IEventBus modEventBus, ModContainer modContainer)
     {
-    //?}
+    *///?}
         ModItems.register(modEventBus);
         ModBlocks.register(modEventBus);
         ModFluids.register(modEventBus);
@@ -156,14 +156,14 @@ public class NortheastChinaDelight
         ModWorldGen.register(modEventBus);
         // 模组配置（菜肴方块形态的总开关）
         //? if <1.20.2 {
-        /*net.minecraftforge.fml.ModLoadingContext.get().registerConfig(
+        net.minecraftforge.fml.ModLoadingContext.get().registerConfig(
                 net.minecraftforge.fml.config.ModConfig.Type.COMMON, NortheastChinaConfig.SPEC);
-        *///?} else if <1.20.5 {
+        //?} else if <1.20.5 {
         /*net.neoforged.fml.ModLoadingContext.get().registerConfig(
                 net.neoforged.fml.config.ModConfig.Type.COMMON, NortheastChinaConfig.SPEC);*/
         //?} else {
-        modContainer.registerConfig(net.neoforged.fml.config.ModConfig.Type.COMMON, NortheastChinaConfig.SPEC);
-        //?}
+        /*modContainer.registerConfig(net.neoforged.fml.config.ModConfig.Type.COMMON, NortheastChinaConfig.SPEC);
+        *///?}
 
         // 将物品添加到本模组的创造模式物品栏
         modEventBus.addListener(this::addItemsToCreativeTab);
@@ -174,7 +174,7 @@ public class NortheastChinaDelight
 
         // 注册服务器及其他游戏事件
         //? if <1.20.2 {
-        /*MinecraftForge.EVENT_BUS.register(this);
+        MinecraftForge.EVENT_BUS.register(this);
         MinecraftForge.EVENT_BUS.register(DishEffectEvents.class);
         // 木耳（给原木去皮）与人参（空手刨土）的钩子
         MinecraftForge.EVENT_BUS.register(ModGameplayEvents.class);
@@ -188,8 +188,8 @@ public class NortheastChinaDelight
         MinecraftForge.EVENT_BUS.addListener(ModFishermanTrades::addTrades);
         MinecraftForge.EVENT_BUS.addListener(ModCartographerTrades::addTrades);
         MinecraftForge.EVENT_BUS.addListener(ModWandererTrades::addTrades);
-        *///?} else {
-        NeoForge.EVENT_BUS.register(this);
+        //?} else {
+        /*NeoForge.EVENT_BUS.register(this);
         NeoForge.EVENT_BUS.register(DishEffectEvents.class);
         // 木耳（给原木去皮）与人参（空手刨土）的钩子
         NeoForge.EVENT_BUS.register(ModGameplayEvents.class);
@@ -203,7 +203,7 @@ public class NortheastChinaDelight
         NeoForge.EVENT_BUS.addListener(ModFishermanTrades::addTrades);
         NeoForge.EVENT_BUS.addListener(ModCartographerTrades::addTrades);
         NeoForge.EVENT_BUS.addListener(ModWandererTrades::addTrades);
-        //?}
+        *///?}
     }
 
     /** 通用设置：往原版堆里塞数据 —— 玉米茎秆能堆肥。 */
@@ -235,11 +235,11 @@ public class NortheastChinaDelight
     private void registerCapabilities(@NotNull RegisterCapabilitiesEvent event)
     {
         //? if <1.20.2 {
-        /*// 1.20.1（Forge）的流体能力在 VatBlockEntity#getCapability 里暴露，这里不用注册
-        *///?} else {
-        event.registerBlockEntity(Capabilities.FluidHandler.BLOCK, ModBlockEntities.VAT.get(),
+        // 1.20.1（Forge）的流体能力在 VatBlockEntity#getCapability 里暴露，这里不用注册
+        //?} else {
+        /*event.registerBlockEntity(Capabilities.FluidHandler.BLOCK, ModBlockEntities.VAT.get(),
                 (vat, side) -> vat);
-        //?}
+        *///?}
     }
 
     @SubscribeEvent
@@ -393,7 +393,7 @@ public class NortheastChinaDelight
          * 见 {@code ModFluids.DdFluidType}。</p>
          */
         //? if >=1.20.5 {
-        @SubscribeEvent
+        /*@SubscribeEvent
         public static void onRegisterClientExtensions(RegisterClientExtensionsEvent event)
         {
             event.registerFluidType(new IClientFluidTypeExtensions()
@@ -630,6 +630,6 @@ public class NortheastChinaDelight
                 }
             }, ModFluids.KVASS_TYPE);
         }
-        //?}
+        *///?}
     }
 }
