@@ -18,8 +18,9 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import nbt_io
 from designs import DESIGNS
 
+ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 DEFAULT_NBT = os.path.join(
-    r"H:\IdeaProjects\northeast_china_delight1.21.1",
+    ROOT,
     "src", "main", "resources", "data", "northeast_china_delight", "structure",
 )
 

@@ -12,10 +12,11 @@
     用法： pwsh -File tools\draw_cucumber_fruit.ps1
 #>
 param(
-    [string]$Root = 'H:\IdeaProjects\northeast_china_delight1.21.1'
+    [string]$Root = ''
 )
 
 $ErrorActionPreference = 'Stop'
+if (-not $Root) { $Root = (Resolve-Path (Join-Path $PSScriptRoot '..')).Path }
 Add-Type -AssemblyName System.Drawing.Common
 
 $texDir = Join-Path $Root 'src\main\resources\assets\northeast_china_delight\textures\block'

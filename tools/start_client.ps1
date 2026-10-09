@@ -4,7 +4,7 @@
 
     - 控制台输出（Gradle + 启动器 + 游戏日志）：logs\client-<版本>-<时间戳>.log
     - 游戏自身的 latest.log，退出后归档为：logs\minecraft-<版本>-<时间戳>.log
-    - 游戏目录仍在 run\<版本>\（存档、配置），不在 Codex 工作目录里
+    - 游戏目录仍在 run\<版本>\（存档、配置），全部位于工程目录内
 
     用法：
         pwsh -File tools\start_client.ps1
@@ -12,10 +12,11 @@
 #>
 param(
     [string]$GameVersion = '1.21.1',
-    [string]$JavaHome = 'H:\OpenJDK21'
+    [string]$JavaHome = $env:JAVA_HOME
 )
 
 $ErrorActionPreference = 'Stop'
+if (-not $JavaHome) { throw '请先设置 JAVA_HOME（JDK 21），或用 -JavaHome 指定 JDK 目录。' }
 
 $env:JAVA_HOME = $JavaHome
 $projectRoot = (Resolve-Path (Join-Path $PSScriptRoot '..')).Path

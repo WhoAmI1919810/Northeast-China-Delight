@@ -9,7 +9,7 @@
     用法： pwsh -File tools\preview_vat_shapes.ps1 [-Out vat_shapes.png]
 #>
 param(
-    [string]$Out = 'H:\IdeaProjects\northeast_china_delight1.21.1\vat_shapes_preview.png',
+    [string]$Out = '',
     [int]$Tile = 190,
     [double]$Scale = 9
 )
@@ -17,12 +17,13 @@ param(
 $ErrorActionPreference = 'Stop'
 Add-Type -AssemblyName System.Drawing.Common
 
-$root = 'H:\IdeaProjects\northeast_china_delight1.21.1'
+$root = (Resolve-Path (Join-Path $PSScriptRoot '..')).Path
+if (-not $Out) { $Out = Join-Path $root '.tmp\vat_shapes_preview.png' }
 $javaFile = Join-Path $root 'src\main\java\com\gunmu\northeast_china_delight\client\VatItemShapes.java'
 $assets = Join-Path $root 'src\main\resources\assets\northeast_china_delight'
 $renderer = Join-Path $root 'tools\render_model.ps1'
-# 临时文件一律放 E:\codex\dd_tmp（用户要求：不许往 C 盘写东西）
-$tmpDir = 'E:\codex\dd_tmp\vat_shapes'
+# 临时文件放工程内的 .tmp\（不入库）
+$tmpDir = Join-Path $root '.tmp\vat_shapes'
 if (Test-Path $tmpDir) { Remove-Item $tmpDir -Recurse -Force }
 New-Item -ItemType Directory -Force -Path $tmpDir | Out-Null
 

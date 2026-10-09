@@ -24,10 +24,18 @@ param(
     [int]$Tile = 340,
     [double]$PanX = 0,
     [double]$PanY = 0,
-    [string]$AssetsRoot = 'H:\IdeaProjects\northeast_china_delight1.21.1\src\main\resources\assets',
-    [string]$VanillaJar = 'C:\Users\wcs\.gradle\caches\neoformruntime\artifacts\minecraft_1.21.1_client.jar',
+    [string]$AssetsRoot = '',
+    [string]$VanillaJar = '',
     [string]$Label = ''
 )
+
+$repoRoot = (Resolve-Path (Join-Path $PSScriptRoot '..')).Path
+if (-not $AssetsRoot) { $AssetsRoot = Join-Path $repoRoot 'src\main\resources\assets' }
+if (-not $VanillaJar) {
+    # 原版客户端 jar：优先取 GRADLE_USER_HOME，缺省用 ~/.gradle（Gradle 默认位置），可用 -VanillaJar 覆盖
+    $gradleHome = if ($env:GRADLE_USER_HOME) { $env:GRADLE_USER_HOME } else { Join-Path $env:USERPROFILE '.gradle' }
+    $VanillaJar = Join-Path $gradleHome 'caches\neoformruntime\artifacts\minecraft_1.21.1_client.jar'
+}
 
 if ($env:PV_STRICT) { $ErrorActionPreference = 'Stop' }
 

@@ -8,8 +8,8 @@
 纯标准库实现（zlib 手写 PNG + 扫描线多边形填充），不依赖 Pillow。
 
 用法：
-    H:\\miniconda3\\python.exe tools\\structure_gen\\render_structure.py
-    H:\\miniconda3\\python\\... --only dongbei_yard_garden --scale 10 --out E:\\codex\\dd_tmp\\render
+    python tools/structure_gen/render_structure.py
+    python tools/structure_gen/render_structure.py --only dongbei_yard_garden --scale 10 --out <输出目录>
 """
 
 import argparse
@@ -24,11 +24,13 @@ import nbt_io
 from mcblocks import color_of
 from designs import DESIGNS
 
+# 工程根目录（本文件位于 <root>/tools/structure_gen/ 下）
+ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 DEFAULT_NBT = os.path.join(
-    r"H:\IdeaProjects\northeast_china_delight1.21.1",
+    ROOT,
     "src", "main", "resources", "data", "northeast_china_delight", "structure",
 )
-DEFAULT_OUT = r"E:\codex\dd_tmp\render"
+DEFAULT_OUT = os.path.join(ROOT, ".tmp", "render")
 
 BG = (26, 30, 38)
 

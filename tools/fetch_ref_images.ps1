@@ -7,10 +7,10 @@
 
     用法：
         pwsh -File tools\fetch_ref_images.ps1
-        pwsh -File tools\fetch_ref_images.ps1 -OutDir E:\codex\dd_tmp\refs -Want 30
+        pwsh -File tools\fetch_ref_images.ps1 -Want 30
 #>
 param(
-    [string]$OutDir = 'E:\codex\dd_tmp\refs',
+    [string]$OutDir = '',
     [int]$Want = 30,
     [int]$MinBytes = 15000,
     [string[]]$Queries = @(
@@ -27,6 +27,7 @@ $ErrorActionPreference = 'Stop'
 $ProgressPreference = 'SilentlyContinue'
 $ua = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0 Safari/537.36'
 
+if (-not $OutDir) { $OutDir = Join-Path (Resolve-Path (Join-Path $PSScriptRoot '..')).Path '.tmp\refs' }
 New-Item -ItemType Directory -Force -Path $OutDir | Out-Null
 
 $urls = New-Object System.Collections.Generic.List[string]

@@ -17,7 +17,7 @@ $ErrorActionPreference = 'Stop'
 Add-Type -AssemblyName System.Drawing.Common
 
 $root = Split-Path -Parent (Split-Path -Parent $MyInvocation.MyCommand.Path)
-if (-not $Out) { $Out = 'E:\codex\dd_tmp\gap_check.png' }
+if (-not $Out) { $Out = Join-Path $root '.tmp\gap_check.png' }
 
 & pwsh -NoProfile -File (Join-Path $root 'tools\render_model.ps1') -Model $Model -Out $Out `
     -Views '0/89.5' -Tile (16 * $Scale + 2 * $Scale) -Scale $Scale | Out-Null

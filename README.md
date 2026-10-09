@@ -1,6 +1,8 @@
 # 东北乐事 (Northeast China Delight)
 
-一个 NeoForge 模组，添加东北风味的内容，是 [农夫乐事 (Farmer's Delight)](https://github.com/vectorwing/FarmersDelight) 的附属模组。
+一个 NeoForge / Forge 模组，添加东北风味的内容，是 [农夫乐事 (Farmer's Delight)](https://github.com/vectorwing/FarmersDelight) 的附属模组。
+
+![雪原里的东北小院](docs/assets/northeast_yard.png)
 
 ## 版本号与更新记录
 
@@ -13,7 +15,7 @@
 ### 2.4.0
 
 - **菜肴有了方块形态，操作方式也定下了**：66 道单份料理都是**右键直接吃、潜行右键摆成方块**。
-  摆放功能由一个配置开关控制：config/dongbei_delight-common.toml 里的 dishes.dish_placement_enabled，
+  摆放功能由一个配置开关控制：config/northeast_china_delight-common.toml 里的 dishes.dish_placement_enabled，
   设成 `false` 就彻底关掉——关掉之后潜行右键既不放置、也不会有任何提示文字，玩家感觉不到这个功能存在。
 - 料理模型按显示乐事容器的像素边界统一生成：普通/黄铜碗占地 8×8、高 4 像素；大盘占地 14×14、高 2 像素。
   大盆整锅料理继续使用已有的独立方块，不重复套用单份模型。
@@ -182,21 +184,27 @@
 
 ## 支持的版本
 
-| Minecraft | NeoForge | 农夫乐事 | 说明 |
-| --- | --- | --- | --- |
-| 1.21.1 | 21.1.250 | 1.3.4 | 仓库主版本（VCS version），提交前源码保持此状态 |
+| Minecraft | 加载器 | 农夫乐事 | 机械动力 | 说明 |
+| --- | --- | --- | --- | --- |
+| 1.21.1 | NeoForge 21.1.250 | 1.3.4 | 6.0.10+mc1.21.1 | 仓库主版本（VCS version），提交前源码保持此状态 |
+| 1.20.1 | Forge 47.1（47.1.33 起） | 1.20.1-1.3.4 | mc1.20.1-6.0.8 | 经典版本节点：机械动力在 1.20 世代只做到 1.20.1，Create 联动的完整形态在这个节点 |
+| 1.20.4 | NeoForge 20.4.189 | 1.20.4-1.2.4-beta.3（本地构建） | 无（Create 未发布该版本） | 备用节点：可编译、可出包，不主推 |
 
-目标版本必须跟随农夫乐事：它目前只发布到 1.21.1。待其发布新版本线后，在 `settings.gradle` 中追加对应节点即可。
-（`versions/1.21.4/` 里还留着早期试探多版本时生成的构建产物，没有注册到 Stonecutter，可以随时删除。）
+新增版本时：在 `settings.gradle` 的 `versions` 里登记、补一份 `versions/<版本>/gradle.properties` 与资源目录，
+再按下文「多版本开发规则」处理代码差异。
 
 ## 环境要求
 
-- JDK 21（`JAVA_HOME` 必须指向 JDK 21，Stonecutter 与 Gradle 9 都要求 JVM 21）
-- 首次构建需要联网下载 Gradle、NeoForge 与 Minecraft 反编译产物
+- JDK 21：Gradle / Stonecutter 自身运行需要（`JAVA_HOME` 指向 JDK 21）
+- JDK 17：1.20.1 / 1.20.4 节点编译时使用的 Java 工具链；本机没有时可由 Gradle 自动下载，
+  或用**用户级** `gradle.properties` 的 `org.gradle.java.installations.paths` 指定（本机路径不要提交进仓库）
+- 首次构建需要联网下载 Gradle、NeoForge / Forge 与 Minecraft 反编译产物
 
 ## 依赖：农夫乐事
 
-农夫乐事没有发布到公共 Maven，工程通过 [Modrinth Maven](https://api.modrinth.com/maven) 获取，坐标 `maven.modrinth:farmers-delight:<版本>`，版本号在 `versions/1.21.1/gradle.properties` 的 `farmersdelight_version` 中配置。
+农夫乐事没有发布到公共 Maven，工程通过 [Modrinth Maven](https://api.modrinth.com/maven) 获取，
+坐标 `maven.modrinth:farmers-delight:<版本>`；各节点的版本号在 `versions/<游戏版本>/gradle.properties`
+的 `farmersdelight_version` 里配置（1.20.4 的 FD 官方未发布，用 `libs/` 下的本地构建包，见 `libs/README.md`）。
 
 - `compileOnly`：编译期可引用其 API，但不会打进本模组的 jar
 - `localRuntime`：开发运行时自动加载，便于本地测试
@@ -207,20 +215,22 @@
 
 ```bash
 ./gradlew build                      # 构建所有版本（不指定项目路径时 Gradle 会对每个版本节点各执行一次）
-./gradlew :1.21.1:build              # 只构建 1.21.1
-./gradlew :1.21.4:build              # 只构建 1.21.4
+./gradlew :1.21.1:build              # 只构建 1.21.1（仓库主版本）
+./gradlew :1.20.1:build              # 只构建 1.20.1（Forge 47）
+./gradlew :1.20.4:build              # 只构建 1.20.4（备用节点）
 ./gradlew :1.21.1:runClient          # 启动 1.21.1 客户端
+./gradlew :1.20.1:runClient          # 启动 1.20.1 客户端
 ./gradlew :1.21.1:runServer          # 启动 1.21.1 服务端（首次需在 run/1.21.1/eula.txt 同意 EULA）
-./gradlew "Set active project to 1.21.4"   # 切换激活版本（会重写 src/ 中的条件注释）
+./gradlew "Set active project to 1.20.4"   # 切换激活版本（会重写 src/ 中的条件注释）
 ./gradlew "Reset active project"     # 提交前恢复为 VCS 版本（1.21.1）
 ```
 
-产物位于 `versions/<游戏版本>/build/libs/dongbei_delight-<模组版本>+<游戏版本>.jar`。
+产物位于 `versions/<游戏版本>/build/libs/northeast_china_delight-<模组版本>+<游戏版本>.jar`。
 每个游戏版本使用独立的运行目录 `run/<游戏版本>/`，存档与配置互不干扰。
 
 ## 日志约定
 
-启动 Minecraft 产生的日志统一放在工程根目录的 **`logs/`**（不要放到 Codex 的工作目录里）。
+启动 Minecraft 产生的日志统一放在工程根目录的 **`logs/`**。
 用下面的脚本启动客户端，它会自动建目录、记录控制台日志，并在退出后把游戏的 `latest.log` 归档一份：
 
 ```powershell
@@ -248,10 +258,15 @@ pwsh -File tools\start_client.ps1          # 默认启动 1.21.1
 ```
 src/main/java                     所有版本共享的源码（用条件注释区分版本）
 src/main/resources                所有版本共享的资源
-src/main/templates                模组元数据模板（构建时按版本填充）
+src/main/templates                1.20.5+ 的模组元数据模板
+src/main/templates-forge          1.20.1（Forge）的模组元数据模板
+src/main/templates-legacy         1.20.2~1.20.4 的模组元数据模板
 versions/<游戏版本>/
-    gradle.properties             该版本使用的 Minecraft / NeoForge / Parchment 版本
+    gradle.properties             该版本使用的 Minecraft / 加载器 / 依赖版本
     src/main/resources            仅该版本使用的资源（会覆盖同名共享资源）
+docs/                             开发文档（适配计划、结构说明、素材清单等）
+libs/                             第三方编译依赖（不在公共 Maven 上的本地包，见 libs/README.md）
+tools/                            开发辅助脚本（结构生成、贴图预览、客户端启动等）
 stonecutter.gradle                当前激活的版本
 ```
 
@@ -264,30 +279,26 @@ stonecutter.gradle                当前激活的版本
 用条件注释包裹，**当前激活版本的分支是未注释的，其它分支必须写在块注释里**：
 
 ```java
-//? if <1.21.4 {
-import net.minecraft.world.ItemInteractionResult;
+//? if <1.20.5 {
+/*// 1.20.1 ~ 1.20.4 才会编译的代码；激活 1.21.1 时它整体是一段块注释
+public static final MapDecoration.Type DONGBEI_YARD = MapDecoration.Type.TARGET_X;
+*///?} else {
+public static final DeferredRegister<MapDecorationType> DECORATION_TYPES =
+        DeferredRegister.create(Registries.MAP_DECORATION_TYPE, NortheastChinaDelight.MODID);
 //?}
 ```
 
-```java
-//? if >=1.21.4 {
-/*@Override
-protected @NotNull InteractionResult useItemOn(...) {
-    ...
-}*/
-//?} else {
-@Override
-protected @NotNull ItemInteractionResult useItemOn(...) {
-    ...
-}
-//?}
-```
+条件里的版本比较支持 `>=`、`<` 等写法；目前实际用到的主要是 `<1.20.2`、`<1.20.5`、`>=1.20.5`。
 
 ### 2. 资源文件差异
 
 Stonecutter 只处理文本源码，**不会处理 JSON 等资源**，因此版本相关的资源要放到 `versions/<游戏版本>/src/main/resources/` 下，例如配方文件。
 
-### 3. 已知的版本差异
+### 3. 版本差异速查
+
+1.20.x 与 1.21.1 的差异（Forge → NeoForge、`useItemOn`、注册表 API 等）都在源码里用
+`//? if <1.20.2`、`//? if <1.20.5`、`//? if >=1.20.5` 分支处理，`build.gradle` 按版本切换构建插件与元数据模板。
+下表是早前试探 1.21.4 时整理的，留作将来加版本时参考：
 
 | 内容 | 1.21.1 | 1.21.4 |
 | --- | --- | --- |
@@ -296,24 +307,22 @@ Stonecutter 只处理文本源码，**不会处理 JSON 等资源**，因此版�
 | 配方 ingredient | `"ingredient": {"item": "..."}` | `"ingredient": "..."` |
 | `useItemOn` 返回值 | `ItemInteractionResult`（`PASS_TO_DEFAULT_BLOCK_INTERACTION`） | `InteractionResult`（`TRY_WITH_EMPTY_HAND`） |
 
-新增版本时：在 `settings.gradle` 的 `versions` 里登记、创建 `versions/<版本>/gradle.properties` 与资源目录，然后按上面的方式处理代码差异。
-
 ## 与农夫乐事的联动
 
-数据驱动的配方直接写在 `src/main/resources/data/dongbei_delight/recipe/` 下即可。
+数据驱动的配方直接写在 `src/main/resources/data/northeast_china_delight/recipe/` 下即可。
 
 **炖锅（Cooking Pot）**
 
 ```json
 {
   "type": "farmersdelight:cooking",
-  "experience": 1.0,
+  "experience": 0.35,
   "ingredients": [
-    { "item": "minecraft:apple" },
-    { "item": "minecraft:sugar" }
+    { "item": "northeast_china_delight:pork_fat" },
+    { "item": "northeast_china_delight:pork_fat" }
   ],
-  "recipe_book_tab": "drinks",
-  "result": { "count": 1, "id": "dongbei_delight:soul_cabbage" }
+  "recipe_book_tab": "misc",
+  "result": { "count": 1, "id": "northeast_china_delight:animal_oil" }
 }
 ```
 
@@ -322,11 +331,23 @@ Stonecutter 只处理文本源码，**不会处理 JSON 等资源**，因此版�
 ```json
 {
   "type": "farmersdelight:cutting",
-  "ingredients": [{ "item": "dongbei_delight:sour_cabbage" }],
-  "result": [{ "item": { "count": 1, "id": "dongbei_delight:soul_cabbage" } }],
-  "sound": { "sound_id": "minecraft:item.axe.strip" },
-  "tool": [{ "tag": "farmersdelight:tools/knives" }]
+  "ingredients": [{ "item": "minecraft:chicken" }],
+  "result": [
+    { "item": { "count": 2, "id": "farmersdelight:chicken_cuts" } },
+    { "item": { "count": 1, "id": "northeast_china_delight:chicken_frame" } }
+  ],
+  "tool": [
+    { "type": "farmersdelight:item_ability", "action": "knife_dig" },
+    { "tag": "c:tools/knife" }
+  ]
 }
 ```
+
+## 致谢
+
+- [Farmer's Delight](https://github.com/vectorwing/FarmersDelight)（vectorwing，MIT）：本模组的前置与灵感来源
+- [Create](https://github.com/Creators-of-Create/Create)（simibubi）：流体与自动化联动
+- NeoForge / Forge 与 [ModDevGradle](https://github.com/neoforged/ModDevGradle)：构建工具链
+- 工程由 [NeoForge MDK 模板](https://github.com/NeoForgeMDKs/MDK-1.21.1-ModDevGradle) 起步（`TEMPLATE_LICENSE.txt` 适用于模板文件）
 
 常用的农夫乐事标签：`farmersdelight:tools/knives`（刀具）、`farmersdelight:meals`（正餐）、`farmersdelight:snacks`（零食）、`farmersdelight:drinks`（饮品）、`farmersdelight:flat_on_cutting_board`（可平放于砧板）。

@@ -21,7 +21,8 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 import nbt_io
 
-ROOT = r"H:\IdeaProjects\northeast_china_delight1.21.1"
+# 工程根目录（本文件位于 <root>/tools/structure_gen/ 下）
+ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 SRC = os.path.join(ROOT, "临时素材")
 OUT = os.path.join(ROOT, "src", "main", "resources", "data", "northeast_china_delight",
                    "structure", "village")

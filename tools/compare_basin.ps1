@@ -11,9 +11,9 @@
     用法： pwsh -File tools\compare_basin.ps1 [-Model <json>] [-Icon <png>] [-Out <png>] [-Yaw 45] [-Pitch 25]
 #>
 param(
-    [string]$Model = 'H:\IdeaProjects\northeast_china_delight1.21.1\src\main\resources\assets\northeast_china_delight\models\block\da_feng_shou_pot_servings0.json',
-    [string]$Icon = 'H:\IdeaProjects\northeast_china_delight1.21.1\src\main\resources\assets\northeast_china_delight\textures\item\large_basin.png',
-    [string]$Out = 'H:\IdeaProjects\northeast_china_delight1.21.1\basin_vs_icon.png',
+    [string]$Model = '',
+    [string]$Icon = '',
+    [string]$Out = '',
     [double]$Yaw = 45,
     [double]$Pitch = 25,
     [int]$Panel = 360
@@ -23,7 +23,11 @@ $ErrorActionPreference = 'Stop'
 Add-Type -AssemblyName System.Drawing.Common
 
 $tools = Split-Path -Parent $MyInvocation.MyCommand.Path
-$tmpShot = 'E:\codex\dd_tmp\cmp_basin_render.png'
+$root = Split-Path -Parent $tools
+if (-not $Model) { $Model = Join-Path $root 'src\main\resources\assets\northeast_china_delight\models\block\da_feng_shou_pot_servings0.json' }
+if (-not $Icon) { $Icon = Join-Path $root 'src\main\resources\assets\northeast_china_delight\textures\item\large_basin.png' }
+if (-not $Out) { $Out = Join-Path $root '.tmp\basin_vs_icon.png' }
+$tmpShot = Join-Path $root '.tmp\cmp_basin_render.png'
 
 #  —— 1. 渲染模型（大画布，之后按轮廓裁剪） ——
 & pwsh -NoProfile -File (Join-Path $tools 'render_model.ps1') -Model $Model -Out $tmpShot `

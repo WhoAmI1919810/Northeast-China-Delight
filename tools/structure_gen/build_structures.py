@@ -1,8 +1,8 @@
 """把 designs.py 里的院子写成 .nbt 结构文件。
 
 用法：
-    H:\\miniconda3\\python.exe tools\\structure_gen\\build_structures.py
-    H:\\miniconda3\\python.exe tools\\structure_gen\\build_structures.py --out E:\\codex\\dd_tmp\\nbt
+    python tools/structure_gen/build_structures.py
+    python tools/structure_gen/build_structures.py --out <输出目录>
 """
 
 import argparse
@@ -14,8 +14,10 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import nbt_io
 from designs import DESIGNS
 
+# 工程根目录（本文件位于 <root>/tools/structure_gen/ 下）
+ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 DEFAULT_OUT = os.path.join(
-    r"H:\IdeaProjects\northeast_china_delight1.21.1",
+    ROOT,
     "src", "main", "resources", "data", "northeast_china_delight", "structure",
 )
 

@@ -8,13 +8,14 @@
 param(
     [Parameter(Mandatory = $true)][string]$Model,
     [int]$Scale = 12,
-    [string]$OutDir = 'E:\codex\dd_tmp\bowl_leak'
+    [string]$OutDir = ''
 )
 
 $ErrorActionPreference = 'Stop'
 Add-Type -AssemblyName System.Drawing.Common
 
 $root = Split-Path -Parent (Split-Path -Parent $MyInvocation.MyCommand.Path)
+if (-not $OutDir) { $OutDir = Join-Path $root '.tmp\bowl_leak' }
 if (Test-Path $OutDir) { Remove-Item $OutDir -Recurse -Force }
 New-Item -ItemType Directory -Force -Path $OutDir | Out-Null
 

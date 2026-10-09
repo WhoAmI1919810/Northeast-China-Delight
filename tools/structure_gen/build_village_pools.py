@@ -12,8 +12,14 @@ import os
 import sys
 import zipfile
 
-ROOT = r"H:\IdeaProjects\northeast_china_delight1.21.1"
-CLIENT_JAR = r"C:\Users\wcs\.gradle\caches\neoformruntime\artifacts\minecraft_1.21.1_client.jar"
+# 工程根目录（本文件位于 <root>/tools/structure_gen/ 下）
+ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
+# 原版客户端 jar：可用环境变量 DD_CLIENT_JAR 指定；
+# 默认从 Gradle 缓存的 NeoForm 运行时产物里找。
+_GRADLE_HOME = os.environ.get("GRADLE_USER_HOME") or os.path.join(os.path.expanduser("~"), ".gradle")
+CLIENT_JAR = os.environ.get("DD_CLIENT_JAR") or os.path.join(
+    _GRADLE_HOME, "caches", "neoformruntime", "artifacts", "minecraft_1.21.1_client.jar")
 OUT_ROOT = os.path.join(ROOT, "src", "main", "resources", "data", "minecraft",
                         "worldgen", "template_pool", "village")
 

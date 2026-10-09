@@ -12,14 +12,15 @@
 
     用法：
       pwsh -File tools\generate_food_storage.ps1
-      pwsh -File tools\generate_food_storage.ps1 -SourceRoot E:\codex\dd_tmp\foodblocks
+      pwsh -File tools\generate_food_storage.ps1 -SourceRoot <解压出来的素材目录>
 #>
 param(
-    [string]$SourceRoot = 'E:\codex\dd_tmp\foodblocks'
+    [string]$SourceRoot = ''
 )
 
 $ErrorActionPreference = 'Stop'
 $projectRoot = (Resolve-Path (Join-Path $PSScriptRoot '..')).Path
+if (-not $SourceRoot) { $SourceRoot = Join-Path $projectRoot '.tmp\foodblocks' }
 $assets = Join-Path $projectRoot 'src\main\resources\assets\northeast_china_delight'
 $data = Join-Path $projectRoot 'src\main\resources\data\northeast_china_delight'
 $texDir = Join-Path $assets 'textures\block'

@@ -5,7 +5,7 @@
           （可以直接在游戏里用 结构方块 / /place template 摆出来）
   效果图 -> docs/结构渲染图/建筑单体/<中文名>.png
 
-用法：H:\\miniconda3\\python.exe tools\\structure_gen\\build_parts.py
+用法：python tools/structure_gen/build_parts.py（在工程根目录下执行）
       … build_parts.py --no-render   # 只更新 NBT，不动 docs 里的效果图
 """
 
@@ -21,7 +21,8 @@ from kit import Build
 from mcblocks import B
 from render_structure import render
 
-ROOT = r"H:\IdeaProjects\northeast_china_delight1.21.1"
+# 工程根目录（本文件位于 <root>/tools/structure_gen/ 下）
+ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 NBT_OUT = os.path.join(ROOT, "src", "main", "resources", "data", "northeast_china_delight", "structure", "parts")
 IMG_OUT = os.path.join(ROOT, "docs", "结构渲染图", "建筑单体")
 

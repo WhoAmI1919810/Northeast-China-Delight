@@ -9,10 +9,11 @@
     用法： pwsh -File tools\generate_pot_food_textures.ps1
 #>
 param(
-    [string]$Root = 'H:\IdeaProjects\northeast_china_delight1.21.1'
+    [string]$Root = ''
 )
 
 $ErrorActionPreference = 'Stop'
+if (-not $Root) { $Root = (Resolve-Path (Join-Path $PSScriptRoot '..')).Path }
 Add-Type -AssemblyName System.Drawing.Common
 $outDir = Join-Path $Root 'src\main\resources\assets\northeast_china_delight\textures\block'
 

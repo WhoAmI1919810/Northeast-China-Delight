@@ -1,36 +1,50 @@
-# eclipse
+# ===== 构建产物 =====
+build
+.gradle
+.gradle-registry
+
+# 本地 Gradle 家目录 / 守护进程缓存的几种历史写法（都是本机缓存，不入库）
+.gradle-home
+.gradle-home-*
+.userhome
+.userhome-*
+
+# 构建完成的模组包：各节点的 versions/<版本>/build/libs/ 才是权威产物，
+# 根目录 lib/ 只是本地收集处；libs/ 里只保留第三方编译依赖
+/lib/
+libs/dongbei_delight-*.jar
+libs/northeast_china_delight-*.jar
+
+# ===== 运行 / 测试 =====
+run
+runs
+run-data
+# 启动 Minecraft 时记录的日志（约定：所有日志统一放这里，只保留占位文件）
+logs/*
+!logs/README.md
+
+# ===== 开发临时 / 工作目录（不入库，需要时本地准备或重新生成）=====
+.tmp/
+临时素材/
+结构NBT/
+repo/
+
+# ===== 杂项 =====
+*.log
+hs_err_pid*.log
+__pycache__/
+*.pyc
+
+# ===== IDE =====
 bin
 *.launch
 .settings
 .metadata
 .classpath
 .project
-
-# idea
+eclipse
 out
 *.ipr
 *.iws
 *.iml
 .idea
-
-# gradle
-build
-.gradle
-.gradle-registry
-
-# other
-eclipse
-run
-runs
-run-data
-
-# 启动 Minecraft 时记录的日志（约定：所有日志统一放这里，只保留占位文件）
-logs/*
-!logs/README.md
-
-repo
-
-# Stonecutter/本地 Gradle 缓存（构建产物，不入库）
-.gradle-home
-.gradle-home-*
-结构NBT/

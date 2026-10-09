@@ -10,10 +10,11 @@
 #>
 param(
     [string]$GameVersion = '1.21.1',
-    [string]$JavaHome = 'H:\OpenJDK21'
+    [string]$JavaHome = $env:JAVA_HOME
 )
 
 $ErrorActionPreference = 'Stop'
+if (-not $JavaHome) { throw '请先设置 JAVA_HOME（JDK 21），或用 -JavaHome 指定 JDK 目录。' }
 
 $env:JAVA_HOME = $JavaHome
 $projectRoot = (Resolve-Path (Join-Path $PSScriptRoot '..')).Path

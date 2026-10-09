@@ -5,7 +5,7 @@
 就说明它们叠在一起了。
 
 用法：
-    H:\\miniconda3\\python.exe tools\\structure_gen\\check_overlaps.py
+    python tools/structure_gen/check_overlaps.py（在工程根目录下执行）
 """
 
 import inspect
