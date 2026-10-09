@@ -281,16 +281,14 @@ if (sc.current.version.compareTo('1.20.5') >= 0) {
 if (sc.current.version.compareTo('1.20.5') < 0) {
     // 1.20.x 的数据包形态和 1.21 不一样（目录名/ItemStack 的 "id"、c: 标签……），
     // 复制完资源后就地转换一次，见 gradle/legacy-data-port.groovy。
-    // 1.20.1 有机械动力：create 的配方与相关进度要保留（keepCreateData）
     apply from: "${rootDir}/gradle/legacy-data-port.groovy"
 
-    def keepCreateData = sc.current.version.compareTo('1.20.2') < 0
     def legacyResourcesOut = sourceSets.main.output.resourcesDir
     tasks.named('processResources', ProcessResources).configure { task ->
         // 转换脚本本身算输入：改了脚本就要重跑（不然会一直 UP-TO-DATE 用旧结果）
         task.inputs.file("${rootDir}/gradle/legacy-data-port.groovy")
         task.doLast {
-            portLegacyDataTree(legacyResourcesOut, keepCreateData)
+            portLegacyDataTree(legacyResourcesOut)
         }
     }
 
