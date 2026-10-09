@@ -191,6 +191,17 @@ public class ModBlocks {
 
     // ===== 功能方块 =====
 
+    /**
+     * 缸坯：本体是个方块，但从头到尾都不摆到世界里 ——
+     * 物品栏里按方块模型立体渲染（物品形态见 {@code DisplayOnlyBlockItem}），
+     * 右键放不下去，也不进「方块」物品栏，手感跟普通物品一样。
+     */
+    public static final Supplier<Block> UNFIRED_VAT_BLANK = block(
+            "unfired_vat_blank",
+            Block::new,
+            BlockBehaviour.Properties.of().strength(3.5f)
+    );
+
     // registerBlock 会自动把注册名绑定为方块的 id（1.21.4 起方块必须带 id）
     public static final Supplier<Block> VAT = block(
             "vat",
