@@ -1,5 +1,6 @@
 package com.gunmu.northeast_china_delight.worldgen;
 
+import com.gunmu.northeast_china_delight.util.DdIds;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.util.RandomSource;
@@ -22,7 +23,7 @@ public class CourtyardPiece extends TemplateStructurePiece
     public CourtyardPiece(StructureTemplateManager templateManager, String templateId, BlockPos pos, Rotation rotation)
     {
         super(ModWorldGen.COURTYARD_PIECE.get(), 0, templateManager,
-                net.minecraft.resources.ResourceLocation.parse(templateId), templateId,
+                DdIds.parse(templateId), templateId,
                 settings(rotation), pos);
     }
 

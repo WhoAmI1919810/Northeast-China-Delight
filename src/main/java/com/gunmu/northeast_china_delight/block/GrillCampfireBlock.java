@@ -4,6 +4,8 @@ import com.gunmu.northeast_china_delight.crafting.GrillRecipes;
 import com.gunmu.northeast_china_delight.item.GrillSeasonings;
 import com.gunmu.northeast_china_delight.item.ModItems;
 import com.gunmu.northeast_china_delight.item.SeasoningBottleItem;
+import com.gunmu.northeast_china_delight.util.DdPlayers;
+import com.gunmu.northeast_china_delight.util.DdStacks;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -15,7 +17,10 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.Containers;
 import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
+//? if >=1.20.5 {
 import net.minecraft.world.ItemInteractionResult;
+//?}
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -53,7 +58,9 @@ import org.jetbrains.annotations.Nullable;
  */
 public class GrillCampfireBlock extends CampfireBlock {
 
+    //? if >=1.20.2 {
     public static final MapCodec<GrillCampfireBlock> CODEC = simpleCodec(GrillCampfireBlock::new);
+    //?}
 
     /** 底下的火是灵魂营火（拆烤架时还原回灵魂营火） */
     public static final net.minecraft.world.level.block.state.properties.BooleanProperty SOUL =
@@ -70,10 +77,12 @@ public class GrillCampfireBlock extends CampfireBlock {
     }
 
     @SuppressWarnings({"unchecked", "rawtypes"})
+    //? if >=1.20.2 {
     @Override
     public MapCodec<CampfireBlock> codec() {
         return (MapCodec) CODEC;
     }
+    //?}
 
     @Override
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
@@ -89,13 +98,13 @@ public class GrillCampfireBlock extends CampfireBlock {
 
     /** 选中 / 右键用的轮廓：整格高，不然只能点到下面那截营火 */
     @Override
-    protected VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
+    public VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
         return INTERACTION_SHAPE;
     }
 
     /** 碰撞还是原版营火的 7/16 高，走路照样能踩过去 */
     @Override
-    protected VoxelShape getCollisionShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
+    public VoxelShape getCollisionShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
         return SHAPE;
     }
 
@@ -142,11 +151,32 @@ public class GrillCampfireBlock extends CampfireBlock {
     // ===== 交互 =====
 
     @Override
+    //? if <1.20.5 {
+    /*public InteractionResult use(BlockState state, Level level, BlockPos pos, Player player,
+                                 InteractionHand hand, BlockHitResult hit) {
+        InteractionResult result = this.useOnGrill(player.getItemInHand(hand), state, level, pos, player, hand, hit);
+        // PASS 表示「方块没管这次交互」，交给父类 —— 等于让手上的物品自己做事
+        return result == InteractionResult.PASS ? super.use(state, level, pos, player, hand, hit) : result;
+    }*/
+    //?} else {
     protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos,
                                               Player player, InteractionHand hand, BlockHitResult hit) {
+        InteractionResult result = this.useOnGrill(stack, state, level, pos, player, hand, hit);
+        return result == InteractionResult.PASS
+                ? super.useItemOn(stack, state, level, pos, player, hand, hit)
+                : ItemInteractionResult.sidedSuccess(level.isClientSide);
+    }
+    //?}
+
+    /**
+     * 交互主体：两个版本共用这一份实现，返回 {@link InteractionResult}，
+     * 由上面两个「壳子」翻译成本版本要求的那套返回值。
+     */
+    private InteractionResult useOnGrill(ItemStack stack, BlockState state, Level level, BlockPos pos,
+                                         Player player, InteractionHand hand, BlockHitResult hit) {
         GrillBlockEntity grill = level.getBlockEntity(pos) instanceof GrillBlockEntity existing ? existing : null;
         if (level.isClientSide) {
-            return ItemInteractionResult.sidedSuccess(true);
+            return InteractionResult.sidedSuccess(true);
         }
         // 自愈：万一这格是早期版本放坏的（方块在、方块实体没建起来），这里补一个
         if (grill == null) {
@@ -158,25 +188,25 @@ public class GrillCampfireBlock extends CampfireBlock {
         if (stack.isEmpty()) {
             // 只认主手：不然一次右键里主手、副手各来一遍，会把手刚空出来的那次也算成一次操作
             if (hand != InteractionHand.MAIN_HAND) {
-                return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+                return InteractionResult.PASS;
             }
             int slot = clickedSlot(state, hit);
             if (!grill.getItems().get(slot).isEmpty()) {
                 takeBack(player, level, pos, state, grill, slot);
-                return ItemInteractionResult.sidedSuccess(false);
+                return InteractionResult.sidedSuccess(false);
             }
             if (!grill.isEmpty()) {
                 hint(player, "message.northeast_china_delight.grill.no_food_here");
-                return ItemInteractionResult.sidedSuccess(false);
+                return InteractionResult.sidedSuccess(false);
             }
             // 架子空了：要潜行右键才收回烤架，免得顺手一点就把烤架撸下来
             if (!player.isSecondaryUseActive()) {
                 hint(player, "message.northeast_china_delight.grill.sneak_to_remove");
-                return ItemInteractionResult.sidedSuccess(false);
+                return InteractionResult.sidedSuccess(false);
             }
             level.setBlock(pos, withoutGrill(state), 3);
             level.playSound(null, pos, SoundEvents.ITEM_PICKUP, SoundSource.BLOCKS, 0.8F, 1.2F);
-            return ItemInteractionResult.sidedSuccess(false);
+            return InteractionResult.sidedSuccess(false);
         }
 
         // 放食材：优先放在点到的那个角，那个角有东西就找第一个空位
@@ -187,50 +217,50 @@ public class GrillCampfireBlock extends CampfireBlock {
             }
             if (slot < 0) {
                 hint(player, "message.northeast_china_delight.grill.full");
-                return ItemInteractionResult.sidedSuccess(false);
+                return InteractionResult.sidedSuccess(false);
             }
-            grill.getItems().set(slot, stack.consumeAndReturn(1, player));
+            grill.getItems().set(slot, DdStacks.consumeAndReturn(stack, 1, player));
             grill.setProgress(slot, 0);
             grill.setChanged();
             level.sendBlockUpdated(pos, state, state, 3);
             level.playSound(null, pos, SoundEvents.COMPOSTER_FILL_SUCCESS, SoundSource.BLOCKS, 1.0F, 1.0F);
-            return ItemInteractionResult.sidedSuccess(false);
+            return InteractionResult.sidedSuccess(false);
         }
 
         // 刷料 / 撒料：瓶装调料要「左手拿瓶子、右手拿刷子」
         boolean brushing = hand == InteractionHand.MAIN_HAND && stack.is(Items.BRUSH);
         ItemStack seasoning = brushing ? player.getOffhandItem() : stack;
         if (seasoning.isEmpty()) {
-            return ItemInteractionResult.sidedSuccess(false);
+            return InteractionResult.sidedSuccess(false);
         }
         int slot = seasonTargetSlot(state, hit, grill);
         if (slot < 0) {
             hint(player, "message.northeast_china_delight.grill.no_food");
-            return ItemInteractionResult.sidedSuccess(false);
+            return InteractionResult.sidedSuccess(false);
         }
         GrillRecipes.Recipe recipe = GrillRecipes.byInput(grill.getItems().get(slot));
         if (recipe == null || !recipe.needsSeasoning(grill.seasoningsOf(slot), seasoning)) {
             hint(player, "message.northeast_china_delight.grill.not_needed");
-            return ItemInteractionResult.sidedSuccess(false);
+            return InteractionResult.sidedSuccess(false);
         }
         if (GrillSeasonings.needsBrush(seasoning) && !brushing) {
             hint(player, "message.northeast_china_delight.grill.need_brush");
-            return ItemInteractionResult.sidedSuccess(false);
+            return InteractionResult.sidedSuccess(false);
         }
         if (!grill.addSeasoning(slot, seasoning)) {
             hint(player, "message.northeast_china_delight.grill.full");
-            return ItemInteractionResult.sidedSuccess(false);
+            return InteractionResult.sidedSuccess(false);
         }
 
         if (GrillSeasonings.isSauce(seasoning)) {
             // 厚酱（辣椒酱）：一份酱抹一份食材，创造模式不扣
-            if (!player.hasInfiniteMaterials()) {
-                seasoning.consume(1, player);
+            if (!DdPlayers.hasInfiniteMaterials(player)) {
+                DdStacks.consume(seasoning, 1, player);
             }
             hint(player, "message.northeast_china_delight.grill.brushed_sauce", seasoning.getHoverName());
         } else if (SeasoningBottleItem.isBottle(seasoning)) {
             // 给一份食材刷一次只花 10 mB；创造模式不扣（和盐、糖这些直接消耗的调料保持一致）
-            if (!player.hasInfiniteMaterials()) {
+            if (!DdPlayers.hasInfiniteMaterials(player)) {
                 player.setItemInHand(InteractionHand.OFF_HAND,
                         SeasoningBottleItem.use(seasoning, SeasoningBottleItem.GRILL_DOSE_MB));
             }
@@ -242,12 +272,12 @@ public class GrillCampfireBlock extends CampfireBlock {
                 hint(player, "message.northeast_china_delight.grill.brushed_empty", seasoning.getHoverName());
             }
         } else {
-            seasoning.consume(1, player);
+            DdStacks.consume(seasoning, 1, player);
             hint(player, "message.northeast_china_delight.grill.sprinkled", seasoning.getHoverName());
         }
         level.sendBlockUpdated(pos, state, state, 3);
         level.playSound(null, pos, SoundEvents.COMPOSTER_FILL_SUCCESS, SoundSource.BLOCKS, 1.0F, 0.8F);
-        return ItemInteractionResult.sidedSuccess(false);
+        return InteractionResult.sidedSuccess(false);
     }
 
     /** 鼠标点到的位置在方块里的水平坐标（0~1） */
@@ -455,7 +485,7 @@ public class GrillCampfireBlock extends CampfireBlock {
 
     /** 拆掉的时候把烤架和火上没取走的东西都掉出来 */
     @Override
-    protected void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean isMoving) {
+    public void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean isMoving) {
         if (!state.is(newState.getBlock()) && !level.isClientSide
                 && level.getBlockEntity(pos) instanceof GrillBlockEntity grill) {
             for (ItemStack stack : grill.getItems()) {

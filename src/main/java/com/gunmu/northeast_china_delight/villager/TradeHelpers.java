@@ -5,7 +5,11 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Block;
+//? if <1.20.2 {
+/*import net.minecraftforge.common.BasicItemListing;
+*///?} else {
 import net.neoforged.neoforge.common.BasicItemListing;
+//?}
 
 /**
  * 各类村民交易共用的几个小助手：

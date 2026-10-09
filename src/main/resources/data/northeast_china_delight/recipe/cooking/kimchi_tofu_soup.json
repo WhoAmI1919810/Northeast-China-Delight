@@ -22,7 +22,7 @@
       "item": "minecraft:water_bucket"
     },
     {
-      "tag": "farmersdelight:cooked_rice"
+          "tag": "c:cooked_rice"
     }
   ],
   "recipe_book_tab": "meals",

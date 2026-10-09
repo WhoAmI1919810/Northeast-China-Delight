@@ -14,10 +14,22 @@
     "minecraft:andesite",
     "minecraft:polished_andesite",
     "minecraft:tuff",
-    "minecraft:polished_tuff",
-    "minecraft:tuff_bricks",
-    "minecraft:chiseled_tuff",
-    "minecraft:chiseled_tuff_bricks",
+    {
+      "id": "minecraft:polished_tuff",
+      "required": false
+    },
+    {
+      "id": "minecraft:tuff_bricks",
+      "required": false
+    },
+    {
+      "id": "minecraft:chiseled_tuff",
+      "required": false
+    },
+    {
+      "id": "minecraft:chiseled_tuff_bricks",
+      "required": false
+    },
     "minecraft:deepslate",
     "minecraft:cobbled_deepslate",
     "minecraft:polished_deepslate",

@@ -1,10 +1,14 @@
 package com.gunmu.northeast_china_delight.block;
 
 import com.gunmu.northeast_china_delight.item.ModItems;
+import com.gunmu.northeast_china_delight.util.DdStacks;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
+//? if >=1.20.5 {
 import net.minecraft.world.ItemInteractionResult;
+//?}
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -56,7 +60,7 @@ public class CornStalkBlock extends Block {
     }
 
     @Override
-    protected VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
+    public VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
         return SHAPE;
     }
 
@@ -65,6 +69,35 @@ public class CornStalkBlock extends Block {
      *
      * 注意：空手收获要求两只手都空着，避免主手拿骨粉时副手空手误触发。
      */
+    //? if <1.20.5 {
+    /*@Override
+    public InteractionResult use(BlockState state, Level level, BlockPos pos, Player player,
+                                 InteractionHand hand, BlockHitResult hit) {
+        ItemStack stack = player.getItemInHand(hand);
+        if (state.getValue(STAGE) != STAGE_RIPE) {
+            return InteractionResult.PASS;
+        }
+        boolean withShears = stack.is(Items.SHEARS);
+        boolean emptyHand = stack.isEmpty() && player.getOffhandItem().isEmpty();
+        if (!withShears && !emptyHand) {
+            return InteractionResult.PASS;
+        }
+
+        if (!level.isClientSide) {
+            popResource(level, pos, new ItemStack(ModItems.CORN.get(), 2));
+            // 上格回到"刚抽出"，下方作物退回第 6 阶段（年龄 5）—— 上下一起重新长一遍
+            level.setBlock(pos, state.setValue(STAGE, STAGE_YOUNG), 2);
+            BlockPos belowPos = pos.below();
+            if (level.getBlockState(belowPos).getBlock() instanceof CornCropBlock crop) {
+                level.setBlock(belowPos, crop.getStateForAge(CornCropBlock.STALK_AGE), 2);
+            }
+            if (withShears) {
+                DdStacks.hurtAndBreak(stack, 1, player, hand);
+            }
+        }
+        return InteractionResult.sidedSuccess(level.isClientSide());
+    }*/
+    //?} else {
     @Override
     protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos,
                                               Player player, InteractionHand hand, BlockHitResult hit) {
@@ -91,9 +124,10 @@ public class CornStalkBlock extends Block {
         }
         return ItemInteractionResult.sidedSuccess(level.isClientSide());
     }
+    //?}
 
     @Override
-    protected boolean canSurvive(BlockState state, LevelReader level, BlockPos pos) {
+    public boolean canSurvive(BlockState state, LevelReader level, BlockPos pos) {
         return level.getBlockState(pos.below()).getBlock() instanceof CornCropBlock;
     }
 
@@ -107,7 +141,7 @@ public class CornStalkBlock extends Block {
      * 下格保持年龄 6（仍然是两格高，等它自己重新结穗）；只有把上格打掉才退回年龄 5。
      */
     @Override
-    protected void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean isMoving) {
+    public void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean isMoving) {
         if (!level.isClientSide && !newState.is(this)) {
             BlockPos belowPos = pos.below();
             BlockState below = level.getBlockState(belowPos);
@@ -120,7 +154,7 @@ public class CornStalkBlock extends Block {
     }
 
     @Override
-    protected BlockState updateShape(BlockState state, Direction direction, BlockState neighborState,
+    public BlockState updateShape(BlockState state, Direction direction, BlockState neighborState,
                                      LevelAccessor level, BlockPos pos, BlockPos neighborPos) {
         if (!state.canSurvive(level, pos)) {
             return Blocks.AIR.defaultBlockState();

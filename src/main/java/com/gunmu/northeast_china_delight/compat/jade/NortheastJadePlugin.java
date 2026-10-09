@@ -1,7 +1,8 @@
 package com.gunmu.northeast_china_delight.compat.jade;
 
-import com.gunmu.northeast_china_delight.NortheastChinaDelight;
 import com.gunmu.northeast_china_delight.block.Vat;
+import com.gunmu.northeast_china_delight.NortheastChinaDelight;
+import com.gunmu.northeast_china_delight.util.DdIds;
 import net.minecraft.resources.ResourceLocation;
 import snownee.jade.api.IWailaClientRegistration;
 import snownee.jade.api.IWailaPlugin;
@@ -17,7 +18,7 @@ import snownee.jade.api.WailaPlugin;
 public class NortheastJadePlugin implements IWailaPlugin {
 
     public static final ResourceLocation VAT_UID =
-            ResourceLocation.fromNamespaceAndPath(NortheastChinaDelight.MODID, "vat");
+            DdIds.of(NortheastChinaDelight.MODID, "vat");
 
     @Override
     public void registerClient(IWailaClientRegistration registration) {

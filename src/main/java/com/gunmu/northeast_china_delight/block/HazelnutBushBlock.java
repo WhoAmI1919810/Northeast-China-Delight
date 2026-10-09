@@ -9,7 +9,9 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+//? if >=1.20.5 {
 import net.minecraft.world.ItemInteractionResult;
+//?}
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
@@ -51,7 +53,9 @@ import net.minecraft.world.level.block.Blocks;
  */
 public class HazelnutBushBlock extends BushBlock implements BonemealableBlock {
 
+    //? if >=1.20.2 {
     public static final MapCodec<HazelnutBushBlock> CODEC = simpleCodec(HazelnutBushBlock::new);
+    //?}
 
     public static final int MAX_AGE = 3;
     public static final IntegerProperty AGE = BlockStateProperties.AGE_3;
@@ -106,19 +110,26 @@ public class HazelnutBushBlock extends BushBlock implements BonemealableBlock {
                 && super.mayPlaceOn(level.getBlockState(pos.below()), level, pos.below());
     }
 
+    //? if >=1.20.2 {
     @Override
     public MapCodec<HazelnutBushBlock> codec() {
         return CODEC;
     }
+    //?}
 
     /** 选取方块给榛子（原版甜浆果丛给甜浆果） */
     @Override
-    public ItemStack getCloneItemStack(LevelReader level, BlockPos pos, BlockState state) {
+    //? if <1.20.2 {
+    /*public ItemStack getCloneItemStack(BlockGetter level, BlockPos pos, BlockState state)
+    *///?} else {
+    public ItemStack getCloneItemStack(LevelReader level, BlockPos pos, BlockState state)
+    //?}
+    {
         return new ItemStack(ModItems.HAZELNUT.get());
     }
 
     @Override
-    protected VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
+    public VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
         if (state.getValue(AGE) == 0) {
             return SAPLING_SHAPE;
         }
@@ -126,21 +137,41 @@ public class HazelnutBushBlock extends BushBlock implements BonemealableBlock {
     }
 
     @Override
-    protected boolean isRandomlyTicking(BlockState state) {
+    public boolean isRandomlyTicking(BlockState state) {
         return state.getValue(AGE) < MAX_AGE;
     }
 
     @Override
-    protected void randomTick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random) {
+    public void randomTick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random) {
         int age = state.getValue(AGE);
         if (age < MAX_AGE
                 && level.getRawBrightness(pos.above(), 0) >= 9
-                && net.neoforged.neoforge.common.CommonHooks.canCropGrow(level, pos, state, random.nextInt(5) == 0)) {
+                && cropGrowPre(level, pos, state, random.nextInt(5) == 0)) {
             BlockState grown = state.setValue(AGE, age + 1);
             level.setBlock(pos, grown, 2);
-            net.neoforged.neoforge.common.CommonHooks.fireCropGrowPost(level, pos, state);
+            cropGrowPost(level, pos, state);
             level.gameEvent(GameEvent.BLOCK_CHANGE, pos, GameEvent.Context.of(grown));
         }
+    }
+
+    private static boolean cropGrowPre(ServerLevel level, BlockPos pos, BlockState state, boolean def) {
+        //? if <1.20.2 {
+        /*return net.minecraftforge.common.ForgeHooks.onCropsGrowPre(level, pos, state, def);
+        *///?} else if <1.20.5 {
+        /*return net.neoforged.neoforge.common.CommonHooks.onCropsGrowPre(level, pos, state, def);*/
+        //?} else {
+        return net.neoforged.neoforge.common.CommonHooks.canCropGrow(level, pos, state, def);
+        //?}
+    }
+
+    private static void cropGrowPost(ServerLevel level, BlockPos pos, BlockState state) {
+        //? if <1.20.2 {
+        /*net.minecraftforge.common.ForgeHooks.onCropsGrowPost(level, pos, state);
+        *///?} else if <1.20.5 {
+        /*net.neoforged.neoforge.common.CommonHooks.onCropsGrowPost(level, pos, state);*/
+        //?} else {
+        net.neoforged.neoforge.common.CommonHooks.fireCropGrowPost(level, pos, state);
+        //?}
     }
 
     /**
@@ -148,12 +179,36 @@ public class HazelnutBushBlock extends BushBlock implements BonemealableBlock {
      * 但**不会**像甜浆果丛那样按移动距离扣血 —— 榛子丛不扎人。
      */
     @Override
-    protected void entityInside(BlockState state, Level level, BlockPos pos, Entity entity) {
+    public void entityInside(BlockState state, Level level, BlockPos pos, Entity entity) {
         if (entity instanceof LivingEntity && entity.getType() != EntityType.FOX && entity.getType() != EntityType.BEE) {
             entity.makeStuckInBlock(state, new Vec3(0.8F, 0.75, 0.8F));
         }
     }
 
+    //? if <1.20.5 {
+    /*@Override
+    public InteractionResult use(BlockState state, Level level, BlockPos pos, Player player,
+                                 InteractionHand hand, BlockHitResult hit) {
+        ItemStack stack = player.getItemInHand(hand);
+        // 没熟的时候拿骨粉点：交给骨粉自己的逻辑（催熟），方块这边不处理
+        if (state.getValue(AGE) != MAX_AGE && stack.is(Items.BONE_MEAL)) {
+            return InteractionResult.PASS;
+        }
+        int age = state.getValue(AGE);
+        boolean ripe = age == MAX_AGE;
+        if (age > 1) {
+            int count = 1 + level.random.nextInt(2) + (ripe ? 1 : 0);
+            popResource(level, pos, new ItemStack(ModItems.HAZELNUT.get(), count));
+            level.playSound(null, pos, SoundEvents.SWEET_BERRY_BUSH_PICK_BERRIES, SoundSource.BLOCKS,
+                    1.0F, 0.8F + level.random.nextFloat() * 0.4F);
+            BlockState picked = state.setValue(AGE, 1);
+            level.setBlock(pos, picked, 2);
+            level.gameEvent(GameEvent.BLOCK_CHANGE, pos, GameEvent.Context.of(player, picked));
+            return InteractionResult.sidedSuccess(level.isClientSide);
+        }
+        return super.use(state, level, pos, player, hand, hit);
+    }*/
+    //?} else {
     @Override
     protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos,
                                               Player player, InteractionHand hand, BlockHitResult hit) {
@@ -180,6 +235,7 @@ public class HazelnutBushBlock extends BushBlock implements BonemealableBlock {
         }
         return super.useWithoutItem(state, level, pos, player, hit);
     }
+    //?}
 
     @Override
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
@@ -187,7 +243,12 @@ public class HazelnutBushBlock extends BushBlock implements BonemealableBlock {
     }
 
     @Override
-    public boolean isValidBonemealTarget(LevelReader level, BlockPos pos, BlockState state) {
+    //? if <1.20.2 {
+    /*public boolean isValidBonemealTarget(LevelReader level, BlockPos pos, BlockState state, boolean isClient)
+    *///?} else {
+    public boolean isValidBonemealTarget(LevelReader level, BlockPos pos, BlockState state)
+    //?}
+    {
         return state.getValue(AGE) < MAX_AGE;
     }
 

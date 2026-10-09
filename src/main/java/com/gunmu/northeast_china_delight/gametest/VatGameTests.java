@@ -1,15 +1,16 @@
 package com.gunmu.northeast_china_delight.gametest;
 
-import com.gunmu.northeast_china_delight.NortheastChinaDelight;
 import com.gunmu.northeast_china_delight.block.ModBlocks;
 import com.gunmu.northeast_china_delight.block.VatBlockEntity;
-import com.gunmu.northeast_china_delight.crafting.VatBrewing;
-import com.gunmu.northeast_china_delight.crafting.VatRecipe;
-import com.gunmu.northeast_china_delight.crafting.VatRecipeValidator;
-import com.gunmu.northeast_china_delight.crafting.VatRecipes;
 import com.gunmu.northeast_china_delight.compat.jei.VatJeiRecipe;
 import com.gunmu.northeast_china_delight.compat.jei.VatJeiRecipes;
+import com.gunmu.northeast_china_delight.crafting.VatBrewing;
+import com.gunmu.northeast_china_delight.crafting.VatRecipe;
+import com.gunmu.northeast_china_delight.crafting.VatRecipes;
+import com.gunmu.northeast_china_delight.crafting.VatRecipeValidator;
 import com.gunmu.northeast_china_delight.item.ModItems;
+import com.gunmu.northeast_china_delight.NortheastChinaDelight;
+import com.gunmu.northeast_china_delight.util.DdIds;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.gametest.framework.GameTest;
@@ -22,8 +23,16 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.GameType;
+//? if <1.20.2 {
+/*import net.minecraftforge.gametest.GameTestHolder;
+*///?} else {
 import net.neoforged.neoforge.gametest.GameTestHolder;
+//?}
+//? if <1.20.2 {
+/*import net.minecraftforge.gametest.PrefixGameTestTemplate;
+*///?} else {
 import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
+//?}
 
 import java.util.List;
 
@@ -47,6 +56,15 @@ import java.util.List;
 public final class VatGameTests {
 
     private VatGameTests() {
+    }
+
+    /** 假玩家：1.20.4 的 GameTestHelper 拆成 makeMockPlayer / makeMockSurvivalPlayer 两个方法 */
+    private static Player mockPlayer(GameTestHelper helper, GameType gameType) {
+        //? if <1.20.5 {
+        /*return gameType == GameType.CREATIVE ? helper.makeMockPlayer() : helper.makeMockSurvivalPlayer();
+        *///?} else {
+        return helper.makeMockPlayer(gameType);
+        //?}
     }
 
     /** 大缸在结构里的相对坐标 */
@@ -133,7 +151,7 @@ public final class VatGameTests {
     /** 大酱酿好、液体取空之后：加谷物 + 水 + 粗布毯要能接着酿醋 */
     @GameTest(template = "empty")
     public static void finishedPasteCanBrewVinegar(GameTestHelper helper) {
-        Player player = helper.makeMockPlayer(GameType.CREATIVE);
+        Player player = mockPlayer(helper, GameType.CREATIVE);
         VatBlockEntity vat = placeVat(helper);
         ServerLevel level = helper.getLevel();
         BlockPos pos = helper.absolutePos(AT);
@@ -180,7 +198,7 @@ public final class VatGameTests {
     /** 泡菜腌完剩下的酸引水：加谷物 + 粗布毯要能接着酿白醋 */
     @GameTest(template = "empty")
     public static void pickleSourWaterCanBrewWhiteVinegar(GameTestHelper helper) {
-        Player player = helper.makeMockPlayer(GameType.CREATIVE);
+        Player player = mockPlayer(helper, GameType.CREATIVE);
         VatBlockEntity vat = placeVat(helper);
         ServerLevel level = helper.getLevel();
         BlockPos pos = helper.absolutePos(AT);
@@ -231,7 +249,7 @@ public final class VatGameTests {
     /** 先盖地毯、后倒水：倒完水就该开工（以前加水分支不会触发开工） */
     @GameTest(template = "empty")
     public static void waterAfterSealingStartsBrew(GameTestHelper helper) {
-        Player player = helper.makeMockPlayer(GameType.CREATIVE);
+        Player player = mockPlayer(helper, GameType.CREATIVE);
         VatBlockEntity vat = placeVat(helper);
         ServerLevel level = helper.getLevel();
         BlockPos pos = helper.absolutePos(AT);
@@ -262,7 +280,7 @@ public final class VatGameTests {
     /** 还没腌好的蒙盖缸：空手右键要把盖布还回来（不然只能砸缸） */
     @GameTest(template = "empty")
     public static void coverComesBackBeforeFermented(GameTestHelper helper) {
-        Player player = helper.makeMockPlayer(GameType.CREATIVE);
+        Player player = mockPlayer(helper, GameType.CREATIVE);
         VatBlockEntity vat = placeVat(helper);
         vat.addContent(new ItemStack(ModItems.SOY_PASTE_CHUNK.get()));
         vat.setKind(VatRecipes.Kind.PASTE);
@@ -279,7 +297,7 @@ public final class VatGameTests {
 
     private static VatBlockEntity placeVat(GameTestHelper helper) {
         helper.setBlock(AT, ModBlocks.VAT.get());
-        return helper.getBlockEntity(AT);
+        return (VatBlockEntity) helper.getBlockEntity(AT);
     }
 
     /** 拿某样东西右键大缸一下（走真实的交互入口） */
@@ -297,7 +315,7 @@ public final class VatGameTests {
     /** 农夫乐事的粗布毯；没装农夫乐事时返回 null（酿醋那两条跳过） */
     private static Item clothRug() {
         Item rug = BuiltInRegistries.ITEM.get(
-                ResourceLocation.fromNamespaceAndPath("farmersdelight", "canvas_rug"));
+                DdIds.of("farmersdelight", "canvas_rug"));
         return rug == Items.AIR ? null : rug;
     }
 }

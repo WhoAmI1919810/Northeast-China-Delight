@@ -2,6 +2,9 @@ package com.gunmu.northeast_china_delight.effect;
 
 import com.gunmu.northeast_china_delight.item.ModItems;
 import com.gunmu.northeast_china_delight.item.SeasoningBottleItem;
+import com.gunmu.northeast_china_delight.util.DdIds;
+import com.gunmu.northeast_china_delight.util.DdAttributes;
+import com.gunmu.northeast_china_delight.util.DdEffects;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.Holder;
 import net.minecraft.network.chat.Component;
@@ -12,11 +15,33 @@ import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.food.FoodData;
 import net.minecraft.world.item.ItemStack;
+//? if <1.20.2 {
+/*import net.minecraftforge.eventbus.api.SubscribeEvent;
+*///?} else {
 import net.neoforged.bus.api.SubscribeEvent;
+//?}
+//? if <1.20.2 {
+/*import net.minecraftforge.event.entity.living.LivingEntityUseItemEvent;
+*///?} else {
 import net.neoforged.neoforge.event.entity.living.LivingEntityUseItemEvent;
+//?}
+//? if <1.20.2 {
+/*import net.minecraftforge.event.entity.player.ItemTooltipEvent;
+*///?} else {
 import net.neoforged.neoforge.event.entity.player.ItemTooltipEvent;
+//?}
+//? if <1.20.2 {
+/*import net.minecraftforge.event.entity.player.PlayerEvent;
+*///?} else {
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
+//?}
+//? if <1.20.2 {
+/*import net.minecraftforge.event.TickEvent;
+*///?} else if <1.20.5 {
+/*import net.neoforged.neoforge.event.TickEvent;*/
+//?} else {
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
+//?}
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -58,8 +83,8 @@ public class DishEffectEvents {
 
         // 两种口味互相解除
         switch (info.flavor()) {
-            case GREASY -> player.removeEffect(ModEffects.REFRESHING);
-            case REFRESHING -> player.removeEffect(ModEffects.GREASY);
+            case GREASY -> DdEffects.removeEffect(player, ModEffects.REFRESHING);
+            case REFRESHING -> DdEffects.removeEffect(player, ModEffects.GREASY);
             default -> {
             }
         }
@@ -138,11 +163,15 @@ public class DishEffectEvents {
                 name = Component.translatable("potion.withAmplifier", name,
                         Component.translatable("potion.potency." + instance.getAmplifier()));
             }
-            name = name.copy().withStyle(instance.getEffect().value().getCategory().getTooltipFormatting());
+            name = name.copy().withStyle(DdEffects.category(instance).getTooltipFormatting());
             tooltip.add(Component.literal(" ")
                     .append(name)
                     .append(" (")
+                    //? if <1.20.2 {
+                    /*.append(MobEffectUtil.formatDuration(instance, 1.0F))
+                    *///?} else {
                     .append(MobEffectUtil.formatDuration(instance, 1.0F, 20.0F))
+                    //?}
                     .append(")")
                     .withStyle(ChatFormatting.GRAY));
         }
@@ -157,14 +186,14 @@ public class DishEffectEvents {
         }
         DishFlavors.Flavor flavor = DishFlavors.flavorOf(event.getItem().getItem());
         Holder<MobEffect> effect = switch (flavor == null ? DishFlavors.Flavor.BALANCED : flavor) {
-            case GREASY -> ModEffects.GREASY;
-            case REFRESHING -> ModEffects.REFRESHING;
+            case GREASY -> DdEffects.hold(ModEffects.GREASY);
+            case REFRESHING -> DdEffects.hold(ModEffects.REFRESHING);
             default -> null;
         };
         if (effect == null) {
             return;
         }
-        MobEffectInstance instance = player.getEffect(effect);
+        MobEffectInstance instance = DdEffects.getEffect(player, effect);
         if (instance == null) {
             return;
         }
@@ -179,8 +208,21 @@ public class DishEffectEvents {
     // ===== 每 tick 的持续效果 =====
 
     @SubscribeEvent
+    //? if <1.20.5 {
+    /*public static void onPlayerTick(TickEvent.PlayerTickEvent event) {
+        if (event.phase != TickEvent.Phase.END) {
+            return;
+        }
+        tickPlayer(event.player);
+    }*/
+    //?} else {
     public static void onPlayerTick(PlayerTickEvent.Post event) {
-        Player player = event.getEntity();
+        tickPlayer(event.getEntity());
+    }
+    //?}
+
+    /** 每 tick 的持续效果主体（两个版本共用） */
+    private static void tickPlayer(Player player) {
         if (player.level().isClientSide()) {
             return;
         }
@@ -188,7 +230,7 @@ public class DishEffectEvents {
         FoodData food = player.getFoodData();
 
         // 油腻：把这一 tick 新增的饥饿消耗按比例减掉
-        MobEffectInstance greasy = player.getEffect(ModEffects.GREASY);
+        MobEffectInstance greasy = DdEffects.getEffect(player, ModEffects.GREASY);
         float exhaustion = food.getExhaustionLevel();
         Float last = LAST_EXHAUSTION.put(id, exhaustion);
         if (greasy != null && last != null && exhaustion > last) {
@@ -200,7 +242,7 @@ public class DishEffectEvents {
         }
 
         // 爽口：回血更快（照常消耗饥饿值）
-        MobEffectInstance refreshing = player.getEffect(ModEffects.REFRESHING);
+        MobEffectInstance refreshing = DdEffects.getEffect(player, ModEffects.REFRESHING);
         applyWarmthSpeed(player);
         if (refreshing == null || player.getHealth() >= player.getMaxHealth() || food.getFoodLevel() < 18) {
             REGEN_CREDIT.remove(id);
@@ -230,8 +272,7 @@ public class DishEffectEvents {
 
     /** 移动速度修饰符的 id（每次 tick 按需刷新，离开寒冷群系立刻撤掉） */
     private static final net.minecraft.resources.ResourceLocation WARMTH_SPEED_ID =
-            net.minecraft.resources.ResourceLocation.fromNamespaceAndPath(
-                    com.gunmu.northeast_china_delight.NortheastChinaDelight.MODID, "warmth_speed");
+            DdIds.of(com.gunmu.northeast_china_delight.NortheastChinaDelight.MODID, "warmth_speed");
     /** 每级加多少移动速度：5% */
     public static final double WARMTH_SPEED_PER_LEVEL = 0.05D;
     /**
@@ -246,27 +287,27 @@ public class DishEffectEvents {
         if (attribute == null) {
             return;
         }
-        MobEffectInstance warmth = player.getEffect(ModEffects.WARMTH);
+        MobEffectInstance warmth = DdEffects.getEffect(player, ModEffects.WARMTH);
         int level = warmth == null ? 0 : warmth.getAmplifier() + 1;
         boolean cold = level > 0 && isColdBiome(player);
         net.minecraft.world.entity.ai.attributes.AttributeModifier existing =
-                attribute.getModifier(WARMTH_SPEED_ID);
+                DdAttributes.get(attribute, WARMTH_SPEED_ID);
         if (!cold) {
             if (existing != null) {
-                attribute.removeModifier(WARMTH_SPEED_ID);
+                DdAttributes.remove(attribute, WARMTH_SPEED_ID);
             }
             return;
         }
         double amount = WARMTH_SPEED_PER_LEVEL * level;
-        if (existing != null && Math.abs(existing.amount() - amount) < 1.0E-6D) {
+        if (existing != null && Math.abs(DdAttributes.amount(existing) - amount) < 1.0E-6D) {
             return;
         }
         if (existing != null) {
-            attribute.removeModifier(WARMTH_SPEED_ID);
+            DdAttributes.remove(attribute, WARMTH_SPEED_ID);
         }
-        attribute.addTransientModifier(new net.minecraft.world.entity.ai.attributes.AttributeModifier(
+        attribute.addTransientModifier(DdAttributes.create(
                 WARMTH_SPEED_ID, amount,
-                net.minecraft.world.entity.ai.attributes.AttributeModifier.Operation.ADD_MULTIPLIED_BASE));
+                DdAttributes.OP_MULTIPLY_BASE));
     }
 
     /** 寒冷覆雪的生物群系：按生物群系基础温度判断 */

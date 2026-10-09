@@ -8,10 +8,26 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.block.entity.BlockEntity;
+//? if <1.20.2 {
+/*import net.minecraftforge.eventbus.api.SubscribeEvent;
+*///?} else {
 import net.neoforged.bus.api.SubscribeEvent;
+//?}
+//? if <1.20.2 {
+/*import net.minecraftforge.event.entity.player.AdvancementEvent;
+*///?} else {
 import net.neoforged.neoforge.event.entity.player.AdvancementEvent;
+//?}
+//? if <1.20.2 {
+/*import net.minecraftforge.event.entity.player.PlayerInteractEvent;
+*///?} else {
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
+//?}
+//? if <1.20.2 {
+/*import net.minecraftforge.event.level.BlockEvent;
+*///?} else {
 import net.neoforged.neoforge.event.level.BlockEvent;
+//?}
 import org.slf4j.Logger;
 
 /**
@@ -30,8 +46,13 @@ public final class ModDebugEvents {
         if (!(event.getEntity() instanceof ServerPlayer player)) {
             return;
         }
+        //? if <1.20.2 {
+        /*LOGGER.info("[DBG-ADV] {} 获得进度 {}（位置 {}）",
+                player.getName().getString(), event.getAdvancement().getId(), player.blockPosition());
+        *///?} else {
         LOGGER.info("[DBG-ADV] {} 获得进度 {}（位置 {}）",
                 player.getName().getString(), event.getAdvancement().id(), player.blockPosition());
+        //?}
     }
 
     @SubscribeEvent

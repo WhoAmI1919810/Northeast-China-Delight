@@ -41,7 +41,7 @@ public class CornCropBlock extends DdCropBlock {
     private static final VoxelShape TALL_SHAPE = Block.box(3.0D, 0.0D, 3.0D, 13.0D, 16.0D, 13.0D);
 
     @Override
-    protected VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
+    public VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
         if (this.getAge(state) >= STALK_AGE) {
             return TALL_SHAPE;
         }
@@ -53,7 +53,7 @@ public class CornCropBlock extends DdCropBlock {
     }
 
     @Override
-    protected void randomTick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random) {
+    public void randomTick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random) {
         super.randomTick(state, level, pos, random);
         refreshStalk(level, pos);
     }

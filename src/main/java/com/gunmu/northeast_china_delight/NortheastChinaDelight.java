@@ -1,24 +1,25 @@
 package com.gunmu.northeast_china_delight;
 
-import com.gunmu.northeast_china_delight.block.ModBlocks;
-import com.gunmu.northeast_china_delight.block.ModBlockEntities;
 import com.gunmu.northeast_china_delight.block.GrillCampfireBlock;
+import com.gunmu.northeast_china_delight.block.ModBlockEntities;
+import com.gunmu.northeast_china_delight.block.ModBlocks;
 import com.gunmu.northeast_china_delight.block.Vat;
 import com.gunmu.northeast_china_delight.block.VatBlockEntity;
 import com.gunmu.northeast_china_delight.client.GrillCampfireRenderer;
 import com.gunmu.northeast_china_delight.client.VatRenderer;
-import com.gunmu.northeast_china_delight.effect.DishEffectEvents;
-import com.gunmu.northeast_china_delight.event.ModGameplayEvents;
 import com.gunmu.northeast_china_delight.compat.create.ModFanProcessingTypes;
+import com.gunmu.northeast_china_delight.effect.DishEffectEvents;
 import com.gunmu.northeast_china_delight.effect.ModEffects;
+import com.gunmu.northeast_china_delight.event.ModGameplayEvents;
 import com.gunmu.northeast_china_delight.fluid.ModFluids;
 import com.gunmu.northeast_china_delight.item.ModItems;
 import com.gunmu.northeast_china_delight.loot.ModLootModifiers;
-import com.gunmu.northeast_china_delight.villager.ModVillagerProfessions;
+import com.gunmu.northeast_china_delight.util.DdIds;
 import com.gunmu.northeast_china_delight.villager.ModButcherTrades;
 import com.gunmu.northeast_china_delight.villager.ModCartographerTrades;
 import com.gunmu.northeast_china_delight.villager.ModFarmerTrades;
 import com.gunmu.northeast_china_delight.villager.ModFishermanTrades;
+import com.gunmu.northeast_china_delight.villager.ModVillagerProfessions;
 import com.gunmu.northeast_china_delight.villager.ModWandererTrades;
 import com.gunmu.northeast_china_delight.villager.SideDishMerchantTrades;
 import com.gunmu.northeast_china_delight.worldgen.ModWorldGen;
@@ -37,23 +38,92 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.entity.CampfireBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+//? if <1.20.2 {
+/*import net.minecraftforge.api.distmarker.Dist;
+*///?} else {
 import net.neoforged.api.distmarker.Dist;
+//?}
+//? if <1.20.2 {
+/*import net.minecraftforge.eventbus.api.IEventBus;
+*///?} else {
 import net.neoforged.bus.api.IEventBus;
+//?}
+//? if <1.20.2 {
+/*import net.minecraftforge.eventbus.api.SubscribeEvent;
+*///?} else {
 import net.neoforged.bus.api.SubscribeEvent;
+//?}
+//? if <1.20.2 {
+/*import net.minecraftforge.common.capabilities.RegisterCapabilitiesEvent;
+*///?} else {
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
+//?}
+//? if <1.20.2 {
+/*import net.minecraftforge.fml.ModContainer;
+*///?} else {
 import net.neoforged.fml.ModContainer;
+//?}
+//? if <1.20.2 {
+/*import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
+*///?} else if <1.20.5 {
+/*import net.neoforged.fml.common.Mod.EventBusSubscriber;*/
+//?} else {
 import net.neoforged.fml.common.EventBusSubscriber;
+//?}
+//? if <1.20.2 {
+/*import net.minecraftforge.fml.common.Mod;
+*///?} else {
 import net.neoforged.fml.common.Mod;
+//?}
+//? if <1.20.2 {
+/*import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
+*///?} else {
 import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
+//?}
+//? if <1.20.2 {
+/*import net.minecraftforge.common.MinecraftForge;
+*///?} else {
 import net.neoforged.neoforge.common.NeoForge;
+//?}
+//? if <1.20.2 {
+/*import net.minecraftforge.event.BuildCreativeModeTabContentsEvent;
+*///?} else {
 import net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent;
+//?}
+//? if <1.20.2 {
+/*import net.minecraftforge.event.entity.player.PlayerInteractEvent;
+*///?} else {
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
+//?}
+//? if <1.20.2 {
+/*import net.minecraftforge.event.server.ServerStartingEvent;
+*///?} else {
 import net.neoforged.neoforge.event.server.ServerStartingEvent;
+//?}
+//? if <1.20.2 {
+/*import net.minecraftforge.client.event.RegisterColorHandlersEvent;
+*///?} else {
 import net.neoforged.neoforge.client.event.RegisterColorHandlersEvent;
+//?}
+//? if <1.20.2 {
+/*import net.minecraftforge.client.event.EntityRenderersEvent;
+*///?} else {
 import net.neoforged.neoforge.client.event.EntityRenderersEvent;
+//?}
+//? if <1.20.2 {
+/*import net.minecraftforge.client.extensions.common.IClientFluidTypeExtensions;
+*///?} else {
 import net.neoforged.neoforge.client.extensions.common.IClientFluidTypeExtensions;
+//?}
+//? if >=1.20.5 {
 import net.neoforged.neoforge.client.extensions.common.RegisterClientExtensionsEvent;
+//?}
+//? if <1.20.2 {
+/*import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
+*///?} else {
+import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
+//?}
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 
@@ -65,8 +135,14 @@ public class NortheastChinaDelight
     public static final String MODID = "northeast_china_delight";
     private static final Logger LOGGER = LogUtils.getLogger();
 
+    //? if <1.20.2 {
+    /*public NortheastChinaDelight()
+    {
+        IEventBus modEventBus = net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext.get().getModEventBus();
+    *///?} else {
     public NortheastChinaDelight(IEventBus modEventBus, ModContainer modContainer)
     {
+    //?}
         ModItems.register(modEventBus);
         ModBlocks.register(modEventBus);
         ModFluids.register(modEventBus);
@@ -79,7 +155,15 @@ public class NortheastChinaDelight
         ModMapDecorations.register(modEventBus);
         ModWorldGen.register(modEventBus);
         // 模组配置（菜肴方块形态的总开关）
+        //? if <1.20.2 {
+        /*net.minecraftforge.fml.ModLoadingContext.get().registerConfig(
+                net.minecraftforge.fml.config.ModConfig.Type.COMMON, NortheastChinaConfig.SPEC);
+        *///?} else if <1.20.5 {
+        /*net.neoforged.fml.ModLoadingContext.get().registerConfig(
+                net.neoforged.fml.config.ModConfig.Type.COMMON, NortheastChinaConfig.SPEC);*/
+        //?} else {
         modContainer.registerConfig(net.neoforged.fml.config.ModConfig.Type.COMMON, NortheastChinaConfig.SPEC);
+        //?}
 
         // 将物品添加到本模组的创造模式物品栏
         modEventBus.addListener(this::addItemsToCreativeTab);
@@ -89,6 +173,22 @@ public class NortheastChinaDelight
         modEventBus.addListener(this::onCommonSetup);
 
         // 注册服务器及其他游戏事件
+        //? if <1.20.2 {
+        /*MinecraftForge.EVENT_BUS.register(this);
+        MinecraftForge.EVENT_BUS.register(DishEffectEvents.class);
+        // 木耳（给原木去皮）与人参（空手刨土）的钩子
+        MinecraftForge.EVENT_BUS.register(ModGameplayEvents.class);
+        // 临时调试：进度授予 / 方块放置 / 大缸状态
+        MinecraftForge.EVENT_BUS.register(com.gunmu.northeast_china_delight.event.ModDebugEvents.class);
+        // 副食商的交易表（每次数据包重载时重新填一遍）
+        MinecraftForge.EVENT_BUS.addListener(SideDishMerchantTrades::addTrades);
+        // 原版各职业的交易表：农民 / 屠夫 / 渔夫 / 制图师 / 流浪商人
+        MinecraftForge.EVENT_BUS.addListener(ModFarmerTrades::addTrades);
+        MinecraftForge.EVENT_BUS.addListener(ModButcherTrades::addTrades);
+        MinecraftForge.EVENT_BUS.addListener(ModFishermanTrades::addTrades);
+        MinecraftForge.EVENT_BUS.addListener(ModCartographerTrades::addTrades);
+        MinecraftForge.EVENT_BUS.addListener(ModWandererTrades::addTrades);
+        *///?} else {
         NeoForge.EVENT_BUS.register(this);
         NeoForge.EVENT_BUS.register(DishEffectEvents.class);
         // 木耳（给原木去皮）与人参（空手刨土）的钩子
@@ -103,10 +203,11 @@ public class NortheastChinaDelight
         NeoForge.EVENT_BUS.addListener(ModFishermanTrades::addTrades);
         NeoForge.EVENT_BUS.addListener(ModCartographerTrades::addTrades);
         NeoForge.EVENT_BUS.addListener(ModWandererTrades::addTrades);
+        //?}
     }
 
     /** 通用设置：往原版堆里塞数据 —— 玉米茎秆能堆肥。 */
-    private void onCommonSetup(@NotNull net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent event)
+    private void onCommonSetup(@NotNull FMLCommonSetupEvent event)
     {
         event.enqueueWork(() -> {
             // 玉米茎秆：晒干的秸秆，堆肥效率比普通作物高（0.65 一档）
@@ -133,8 +234,12 @@ public class NortheastChinaDelight
 
     private void registerCapabilities(@NotNull RegisterCapabilitiesEvent event)
     {
+        //? if <1.20.2 {
+        /*// 1.20.1（Forge）的流体能力在 VatBlockEntity#getCapability 里暴露，这里不用注册
+        *///?} else {
         event.registerBlockEntity(Capabilities.FluidHandler.BLOCK, ModBlockEntities.VAT.get(),
                 (vat, side) -> vat);
+        //?}
     }
 
     @SubscribeEvent
@@ -283,7 +388,11 @@ public class NortheastChinaDelight
         /**
          * 酱油、大酱在流体储罐 / 管道里的贴图。
          * 没有这一段的话，机械动力的储罐会显示成紫黑格。
+         *
+         * <p>1.20.4 没有这个事件 —— 那边的贴图挂在 {@code FluidType#initializeClient} 上，
+         * 见 {@code ModFluids.DdFluidType}。</p>
          */
+        //? if >=1.20.5 {
         @SubscribeEvent
         public static void onRegisterClientExtensions(RegisterClientExtensionsEvent event)
         {
@@ -292,13 +401,13 @@ public class NortheastChinaDelight
                 @Override
                 public ResourceLocation getStillTexture()
                 {
-                    return ResourceLocation.fromNamespaceAndPath(MODID, "block/soy_sauce_still");
+                    return DdIds.of(MODID, "block/soy_sauce_still");
                 }
 
                 @Override
                 public ResourceLocation getFlowingTexture()
                 {
-                    return ResourceLocation.fromNamespaceAndPath(MODID, "block/soy_sauce_flow");
+                    return DdIds.of(MODID, "block/soy_sauce_flow");
                 }
             }, ModFluids.SOY_SAUCE_TYPE);
 
@@ -307,13 +416,13 @@ public class NortheastChinaDelight
                 @Override
                 public ResourceLocation getStillTexture()
                 {
-                    return ResourceLocation.fromNamespaceAndPath(MODID, "block/soy_paste_still");
+                    return DdIds.of(MODID, "block/soy_paste_still");
                 }
 
                 @Override
                 public ResourceLocation getFlowingTexture()
                 {
-                    return ResourceLocation.fromNamespaceAndPath(MODID, "block/soy_paste_still");
+                    return DdIds.of(MODID, "block/soy_paste_still");
                 }
 
                 @Override
@@ -328,13 +437,13 @@ public class NortheastChinaDelight
                 @Override
                 public ResourceLocation getStillTexture()
                 {
-                    return ResourceLocation.fromNamespaceAndPath(MODID, "block/soy_milk_still");
+                    return DdIds.of(MODID, "block/soy_milk_still");
                 }
 
                 @Override
                 public ResourceLocation getFlowingTexture()
                 {
-                    return ResourceLocation.fromNamespaceAndPath(MODID, "block/soy_milk_flow");
+                    return DdIds.of(MODID, "block/soy_milk_flow");
                 }
             }, ModFluids.SOY_MILK_TYPE);
 
@@ -343,13 +452,13 @@ public class NortheastChinaDelight
                 @Override
                 public ResourceLocation getStillTexture()
                 {
-                    return ResourceLocation.fromNamespaceAndPath(MODID, "block/vinegar_still");
+                    return DdIds.of(MODID, "block/vinegar_still");
                 }
 
                 @Override
                 public ResourceLocation getFlowingTexture()
                 {
-                    return ResourceLocation.fromNamespaceAndPath(MODID, "block/vinegar_flow");
+                    return DdIds.of(MODID, "block/vinegar_flow");
                 }
             }, ModFluids.VINEGAR_TYPE);
 
@@ -358,13 +467,13 @@ public class NortheastChinaDelight
                 @Override
                 public ResourceLocation getStillTexture()
                 {
-                    return ResourceLocation.fromNamespaceAndPath(MODID, "block/sour_water_still");
+                    return DdIds.of(MODID, "block/sour_water_still");
                 }
 
                 @Override
                 public ResourceLocation getFlowingTexture()
                 {
-                    return ResourceLocation.fromNamespaceAndPath(MODID, "block/sour_water_flow");
+                    return DdIds.of(MODID, "block/sour_water_flow");
                 }
             }, ModFluids.SOUR_WATER_TYPE);
 
@@ -373,13 +482,13 @@ public class NortheastChinaDelight
                 @Override
                 public ResourceLocation getStillTexture()
                 {
-                    return ResourceLocation.fromNamespaceAndPath(MODID, "block/white_vinegar_still");
+                    return DdIds.of(MODID, "block/white_vinegar_still");
                 }
 
                 @Override
                 public ResourceLocation getFlowingTexture()
                 {
-                    return ResourceLocation.fromNamespaceAndPath(MODID, "block/white_vinegar_flow");
+                    return DdIds.of(MODID, "block/white_vinegar_flow");
                 }
             }, ModFluids.WHITE_VINEGAR_TYPE);
 
@@ -388,13 +497,13 @@ public class NortheastChinaDelight
                 @Override
                 public ResourceLocation getStillTexture()
                 {
-                    return ResourceLocation.fromNamespaceAndPath(MODID, "block/fish_sauce_still");
+                    return DdIds.of(MODID, "block/fish_sauce_still");
                 }
 
                 @Override
                 public ResourceLocation getFlowingTexture()
                 {
-                    return ResourceLocation.fromNamespaceAndPath(MODID, "block/fish_sauce_flow");
+                    return DdIds.of(MODID, "block/fish_sauce_flow");
                 }
             }, ModFluids.FISH_SAUCE_TYPE);
 
@@ -403,13 +512,13 @@ public class NortheastChinaDelight
                 @Override
                 public ResourceLocation getStillTexture()
                 {
-                    return ResourceLocation.fromNamespaceAndPath(MODID, "block/shrimp_paste_still");
+                    return DdIds.of(MODID, "block/shrimp_paste_still");
                 }
 
                 @Override
                 public ResourceLocation getFlowingTexture()
                 {
-                    return ResourceLocation.fromNamespaceAndPath(MODID, "block/shrimp_paste_still");
+                    return DdIds.of(MODID, "block/shrimp_paste_still");
                 }
 
                 @Override
@@ -424,13 +533,13 @@ public class NortheastChinaDelight
                 @Override
                 public ResourceLocation getStillTexture()
                 {
-                    return ResourceLocation.fromNamespaceAndPath(MODID, "block/vegetable_oil_still");
+                    return DdIds.of(MODID, "block/vegetable_oil_still");
                 }
 
                 @Override
                 public ResourceLocation getFlowingTexture()
                 {
-                    return ResourceLocation.fromNamespaceAndPath(MODID, "block/vegetable_oil_flow");
+                    return DdIds.of(MODID, "block/vegetable_oil_flow");
                 }
             }, ModFluids.VEGETABLE_OIL_TYPE);
 
@@ -439,13 +548,13 @@ public class NortheastChinaDelight
                 @Override
                 public ResourceLocation getStillTexture()
                 {
-                    return ResourceLocation.fromNamespaceAndPath(MODID, "block/animal_oil_still");
+                    return DdIds.of(MODID, "block/animal_oil_still");
                 }
 
                 @Override
                 public ResourceLocation getFlowingTexture()
                 {
-                    return ResourceLocation.fromNamespaceAndPath(MODID, "block/animal_oil_flow");
+                    return DdIds.of(MODID, "block/animal_oil_flow");
                 }
             }, ModFluids.ANIMAL_OIL_TYPE);
 
@@ -454,13 +563,13 @@ public class NortheastChinaDelight
                 @Override
                 public ResourceLocation getStillTexture()
                 {
-                    return ResourceLocation.fromNamespaceAndPath(MODID, "block/peanut_butter_still");
+                    return DdIds.of(MODID, "block/peanut_butter_still");
                 }
 
                 @Override
                 public ResourceLocation getFlowingTexture()
                 {
-                    return ResourceLocation.fromNamespaceAndPath(MODID, "block/peanut_butter_still");
+                    return DdIds.of(MODID, "block/peanut_butter_still");
                 }
 
                 @Override
@@ -475,13 +584,13 @@ public class NortheastChinaDelight
                 @Override
                 public ResourceLocation getStillTexture()
                 {
-                    return ResourceLocation.fromNamespaceAndPath(MODID, "block/chili_oil_still");
+                    return DdIds.of(MODID, "block/chili_oil_still");
                 }
 
                 @Override
                 public ResourceLocation getFlowingTexture()
                 {
-                    return ResourceLocation.fromNamespaceAndPath(MODID, "block/chili_oil_flow");
+                    return DdIds.of(MODID, "block/chili_oil_flow");
                 }
             }, ModFluids.CHILI_OIL_TYPE);
 
@@ -490,13 +599,13 @@ public class NortheastChinaDelight
                 @Override
                 public ResourceLocation getStillTexture()
                 {
-                    return ResourceLocation.fromNamespaceAndPath(MODID, "block/chili_sauce_still");
+                    return DdIds.of(MODID, "block/chili_sauce_still");
                 }
 
                 @Override
                 public ResourceLocation getFlowingTexture()
                 {
-                    return ResourceLocation.fromNamespaceAndPath(MODID, "block/chili_sauce_still");
+                    return DdIds.of(MODID, "block/chili_sauce_still");
                 }
 
                 @Override
@@ -511,15 +620,16 @@ public class NortheastChinaDelight
                 @Override
                 public ResourceLocation getStillTexture()
                 {
-                    return ResourceLocation.fromNamespaceAndPath(MODID, "block/kvass_still");
+                    return DdIds.of(MODID, "block/kvass_still");
                 }
 
                 @Override
                 public ResourceLocation getFlowingTexture()
                 {
-                    return ResourceLocation.fromNamespaceAndPath(MODID, "block/kvass_flow");
+                    return DdIds.of(MODID, "block/kvass_flow");
                 }
             }, ModFluids.KVASS_TYPE);
         }
+        //?}
     }
 }

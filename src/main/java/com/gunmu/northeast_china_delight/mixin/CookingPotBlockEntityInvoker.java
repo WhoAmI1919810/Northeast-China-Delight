@@ -12,6 +12,6 @@ import vectorwing.farmersdelight.common.block.entity.CookingPotBlockEntity;
 @Mixin(CookingPotBlockEntity.class)
 public interface CookingPotBlockEntityInvoker {
 
-    @Invoker("ejectIngredientRemainder")
+    @Invoker(value = "ejectIngredientRemainder", remap = false)
     void northeast$ejectIngredientRemainder(ItemStack stack);
 }

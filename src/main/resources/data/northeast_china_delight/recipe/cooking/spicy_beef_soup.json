@@ -19,7 +19,7 @@
       "tag": "c:foods/bean_sprouts"
     },
     {
-      "tag": "farmersdelight:cooked_rice"
+          "tag": "c:cooked_rice"
     }
   ],
   "recipe_book_tab": "meals",

@@ -1,6 +1,7 @@
 package com.gunmu.northeast_china_delight.item;
 
 import com.gunmu.northeast_china_delight.block.SkewerBlock;
+import com.gunmu.northeast_china_delight.util.DdStacks;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.InteractionResult;
@@ -54,7 +55,7 @@ public class SkewerItem extends BlockItem
                 net.minecraft.sounds.SoundSource.BLOCKS, 1.0F, 0.8F);
         level.gameEvent(net.minecraft.world.level.gameevent.GameEvent.BLOCK_PLACE,
                 topPos, net.minecraft.world.level.gameevent.GameEvent.Context.of(player, topState));
-        context.getItemInHand().consume(1, player);
+        DdStacks.consume(context.getItemInHand(), 1, player);
         return InteractionResult.sidedSuccess(level.isClientSide());
     }
 }

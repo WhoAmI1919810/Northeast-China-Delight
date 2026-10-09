@@ -1,5 +1,6 @@
 package com.gunmu.northeast_china_delight.worldgen;
 
+import com.gunmu.northeast_china_delight.util.DdIds;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
@@ -225,7 +226,7 @@ public class NortheastCourtyardStructure extends Structure
                     break;
                 }
                 StructureTemplate template = context.structureTemplateManager()
-                        .getOrCreate(ResourceLocation.parse(yard.template()));
+                        .getOrCreate(DdIds.parse(yard.template()));
                 builder.addPiece(new YardClearingPiece(yard.pos(),
                         template.getSize().getX(), template.getSize().getZ(),
                         yard.pos().getY() + GROUND_LAYER_IN_TEMPLATE,
@@ -235,7 +236,7 @@ public class NortheastCourtyardStructure extends Structure
             for (Yard yard : yards)
             {
                 StructureTemplate yardTemplate = context.structureTemplateManager()
-                        .getOrCreate(ResourceLocation.parse(yard.template()));
+                        .getOrCreate(DdIds.parse(yard.template()));
                 builder.addPiece(new CourtyardPiece(context.structureTemplateManager(),
                         yard.template(), yard.pos(), yard.rotation()));
                 // 黑土地：这个院子周围撒一片沃土（不一定是每户都有）
@@ -300,7 +301,7 @@ public class NortheastCourtyardStructure extends Structure
                     // 空隙模式：先按当前院子的尺寸往外挪，再留出距离，最后补上新院子自己的尺寸
                     StructureTemplate currentSize = sizes.get(current.template());
                     StructureTemplate nextSize = sizes.computeIfAbsent(template,
-                            id -> context.structureTemplateManager().getOrCreate(ResourceLocation.parse(id)));
+                            id -> context.structureTemplateManager().getOrCreate(DdIds.parse(id)));
                     int lateral = LATERAL_JITTER > 0
                             ? random.nextInt(LATERAL_JITTER * 2 + 1) - LATERAL_JITTER : 0;
                     int stepX = direction.getStepX();
@@ -409,7 +410,7 @@ public class NortheastCourtyardStructure extends Structure
             // 旁边就是（或很可能是）村庄，别把院子摞到人家头上
             return null;
         }
-        sizes.computeIfAbsent(template, id -> context.structureTemplateManager().getOrCreate(ResourceLocation.parse(id)));
+        sizes.computeIfAbsent(template, id -> context.structureTemplateManager().getOrCreate(DdIds.parse(id)));
         boolean blackSoil = this.blackSoilChance > 0.0F && random.nextFloat() < this.blackSoilChance;
         // 院子的草地要和外边的地面齐平。坑在于雪原：地表最上面那格是**雪层**，
         // 高度图会把雪层也算进去，于是院子会被抬高整整一格（就是那块露在外面的砖）。
@@ -457,7 +458,7 @@ public class NortheastCourtyardStructure extends Structure
     private boolean gateFrontOk(GenerationContext context, String template, BlockPos pos,
                                 Rotation rotation, int yardSurface)
     {
-        StructureTemplate t = context.structureTemplateManager().getOrCreate(ResourceLocation.parse(template));
+        StructureTemplate t = context.structureTemplateManager().getOrCreate(DdIds.parse(template));
         int sizeX = t.getSize().getX();
         int sizeZ = t.getSize().getZ();
         boolean flipped = rotation == Rotation.CLOCKWISE_180;
@@ -512,7 +513,7 @@ public class NortheastCourtyardStructure extends Structure
      */
     private boolean footprintOk(GenerationContext context, String template, int x, int z, int surface)
     {
-        StructureTemplate t = context.structureTemplateManager().getOrCreate(ResourceLocation.parse(template));
+        StructureTemplate t = context.structureTemplateManager().getOrCreate(DdIds.parse(template));
         int sizeX = t.getSize().getX();
         int sizeZ = t.getSize().getZ();
         int[][] probes = {
@@ -537,7 +538,7 @@ public class NortheastCourtyardStructure extends Structure
      */
     private boolean waterFarEnough(GenerationContext context, String template, int x, int z)
     {
-        StructureTemplate t = context.structureTemplateManager().getOrCreate(ResourceLocation.parse(template));
+        StructureTemplate t = context.structureTemplateManager().getOrCreate(DdIds.parse(template));
         int half = Math.max(t.getSize().getX(), t.getSize().getZ()) / 2;
         int reach = half + WATER_CLEARANCE;
         for (int dx = -reach; dx <= reach; dx += 4)
@@ -603,7 +604,7 @@ public class NortheastCourtyardStructure extends Structure
         {
             return false;
         }
-        StructureTemplate t = context.structureTemplateManager().getOrCreate(ResourceLocation.parse(template));
+        StructureTemplate t = context.structureTemplateManager().getOrCreate(DdIds.parse(template));
         int sizeX = t.getSize().getX();
         int sizeZ = t.getSize().getZ();
         int minX = x - this.avoidMargin;
@@ -640,10 +641,12 @@ public class NortheastCourtyardStructure extends Structure
                     {
                         continue;
                     }
+                    //? if >=1.20.5 {
                     if (!spread.applyAdditionalChunkRestrictions(candidate.x, candidate.z, seed))
                     {
                         continue;
                     }
+                    //?}
                     if (this.avoidedStructureCouldGenerate(context, holder.get().value(), centerX, centerZ))
                     {
                         return true;

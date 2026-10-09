@@ -13,6 +13,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import com.gunmu.northeast_china_delight.util.DdNbt;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -128,13 +129,25 @@ public class GrillBlockEntity extends BlockEntity {
     }
 
     @Override
+    //? if <1.20.5 {
+    /*public void load(CompoundTag tag) {
+        super.load(tag);
+        this.readFromTag(tag, null);
+    }*/
+    //?} else {
     protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.loadAdditional(tag, registries);
+        this.readFromTag(tag, registries);
+    }
+    //?}
+
+    /** 读档主体（两个版本共用） */
+    private void readFromTag(CompoundTag tag, HolderLookup.Provider registries) {
         this.items.clear();
-        ContainerHelper.loadAllItems(tag, this.items, registries);
+        DdNbt.loadAllItems(tag, this.items, registries);
         this.seasonings.clear();
         if (tag.contains("Seasonings")) {
-            ContainerHelper.loadAllItems(tag.getCompound("Seasonings"), this.seasonings, registries);
+            DdNbt.loadAllItems(tag.getCompound("Seasonings"), this.seasonings, registries);
         }
         if (tag.contains("GrillProgress")) {
             int[] saved = tag.getIntArray("GrillProgress");
@@ -143,25 +156,42 @@ public class GrillBlockEntity extends BlockEntity {
     }
 
     @Override
+    //? if <1.20.5 {
+    /*protected void saveAdditional(CompoundTag tag) {
+        super.saveAdditional(tag);
+        this.writeToTag(tag, null);
+    }*/
+    //?} else {
     protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.saveAdditional(tag, registries);
-        ContainerHelper.saveAllItems(tag, this.items, true, registries);
+        this.writeToTag(tag, registries);
+    }
+    //?}
+
+    /** 存档主体（两个版本共用） */
+    private void writeToTag(CompoundTag tag, HolderLookup.Provider registries) {
+        DdNbt.saveAllItems(tag, this.items, true, registries);
         CompoundTag seasoningsTag = new CompoundTag();
-        ContainerHelper.saveAllItems(seasoningsTag, this.seasonings, true, registries);
+        DdNbt.saveAllItems(seasoningsTag, this.seasonings, true, registries);
         tag.put("Seasonings", seasoningsTag);
         tag.putIntArray("GrillProgress", this.progress);
     }
 
     /** 食材和调料都要同步给客户端 —— 渲染那层「刷上去的颜色」要用 */
     @Override
+    //? if <1.20.5 {
+    /*public CompoundTag getUpdateTag() {
+        CompoundTag tag = new CompoundTag();
+        this.writeToTag(tag, null);
+        return tag;
+    }*/
+    //?} else {
     public CompoundTag getUpdateTag(HolderLookup.Provider registries) {
         CompoundTag tag = new CompoundTag();
-        ContainerHelper.saveAllItems(tag, this.items, true, registries);
-        CompoundTag seasoningsTag = new CompoundTag();
-        ContainerHelper.saveAllItems(seasoningsTag, this.seasonings, true, registries);
-        tag.put("Seasonings", seasoningsTag);
+        this.writeToTag(tag, registries);
         return tag;
     }
+    //?}
 
     @Override
     public Packet<ClientGamePacketListener> getUpdatePacket() {

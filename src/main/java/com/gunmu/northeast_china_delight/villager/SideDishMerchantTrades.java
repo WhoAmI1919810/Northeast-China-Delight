@@ -9,8 +9,16 @@ import net.minecraft.world.entity.npc.VillagerType;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+//? if <1.20.2 {
+/*import net.minecraftforge.common.BasicItemListing;
+*///?} else {
 import net.neoforged.neoforge.common.BasicItemListing;
+//?}
+//? if <1.20.2 {
+/*import net.minecraftforge.event.village.VillagerTradesEvent;
+*///?} else {
 import net.neoforged.neoforge.event.village.VillagerTradesEvent;
+//?}
 
 import java.util.List;
 

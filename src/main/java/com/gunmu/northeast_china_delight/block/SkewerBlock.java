@@ -3,7 +3,9 @@ package com.gunmu.northeast_china_delight.block;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.InteractionResult;
+//? if >=1.20.5 {
 import net.minecraft.world.ItemInteractionResult;
+//?}
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -78,7 +80,7 @@ public class SkewerBlock extends Block
     }
 
     @Override
-    protected boolean canSurvive(BlockState state, LevelReader level, BlockPos pos)
+    public boolean canSurvive(BlockState state, LevelReader level, BlockPos pos)
     {
         BlockPos above = pos.above();
         BlockState support = level.getBlockState(above);
@@ -90,7 +92,7 @@ public class SkewerBlock extends Block
     }
 
     @Override
-    protected BlockState updateShape(BlockState state, Direction direction, BlockState neighborState,
+    public BlockState updateShape(BlockState state, Direction direction, BlockState neighborState,
                                      LevelAccessor level, BlockPos pos, BlockPos neighborPos)
     {
         if (!state.canSurvive(level, pos))
@@ -100,6 +102,15 @@ public class SkewerBlock extends Block
         return super.updateShape(state, direction, neighborState, level, pos, neighborPos);
     }
 
+    //? if <1.20.5 {
+    /*@Override
+    public InteractionResult use(BlockState state, Level level, BlockPos pos, Player player,
+                                 InteractionHand hand, BlockHitResult hitResult)
+    {
+        advance(state, level, pos);
+        return InteractionResult.sidedSuccess(level.isClientSide());
+    }*/
+    //?} else {
     @Override
     protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos,
                                                Player player, BlockHitResult hitResult)
@@ -114,6 +125,7 @@ public class SkewerBlock extends Block
         advance(state, level, pos);
         return ItemInteractionResult.sidedSuccess(level.isClientSide());
     }
+    //?}
 
     private InteractionResult advance(BlockState state, Level level, BlockPos pos)
     {
@@ -131,7 +143,7 @@ public class SkewerBlock extends Block
     }
 
     @Override
-    protected void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean movedByPiston)
+    public void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean movedByPiston)
     {
         if (!level.isClientSide && !newState.is(this))
         {

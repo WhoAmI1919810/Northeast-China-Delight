@@ -20,8 +20,16 @@ import net.minecraft.world.level.GameType;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
+//? if <1.20.2 {
+/*import net.minecraftforge.gametest.GameTestHolder;
+*///?} else {
 import net.neoforged.neoforge.gametest.GameTestHolder;
+//?}
+//? if <1.20.2 {
+/*import net.minecraftforge.gametest.PrefixGameTestTemplate;
+*///?} else {
 import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
+//?}
 
 /**
  * 雪地种植的回归测试。
@@ -42,6 +50,16 @@ public final class PlantingGameTests
     {
     }
 
+    /** 假玩家：1.20.4 的 GameTestHelper 拆成 makeMockPlayer / makeMockSurvivalPlayer 两个方法 */
+    private static Player mockPlayer(GameTestHelper helper, GameType gameType)
+    {
+        //? if <1.20.5 {
+        /*return gameType == GameType.CREATIVE ? helper.makeMockPlayer() : helper.makeMockSurvivalPlayer();
+        *///?} else {
+        return helper.makeMockPlayer(gameType);
+        //?}
+    }
+
     @GameTest(template = "empty")
     public static void hazelnutGrowsInsideTheSnowLayer(GameTestHelper helper)
     {
@@ -52,7 +70,7 @@ public final class PlantingGameTests
         level.setBlockAndUpdate(ground, Blocks.GRASS_BLOCK.defaultBlockState());
         level.setBlockAndUpdate(snowPos, Blocks.SNOW.defaultBlockState());
 
-        Player player = helper.makeMockPlayer(GameType.SURVIVAL);
+        Player player = mockPlayer(helper, GameType.SURVIVAL);
         placeOn(level, player, ModItems.HAZELNUT.get(), snowPos);
 
         helper.assertTrue(level.getBlockState(ground).is(Blocks.GRASS_BLOCK),
@@ -71,7 +89,7 @@ public final class PlantingGameTests
         BlockPos ground = helper.absolutePos(new BlockPos(1, 1, 1));
         BlockPos plant = ground.above();
         level.setBlockAndUpdate(ground, Blocks.GRASS_BLOCK.defaultBlockState());
-        Player player = helper.makeMockPlayer(GameType.SURVIVAL);
+        Player player = mockPlayer(helper, GameType.SURVIVAL);
         placeOn(level, player, ModItems.HAZELNUT.get(), plant);
         helper.assertTrue(level.getBlockState(plant).is(ModBlocks.HAZELNUT_BUSH.get()),
                 "榛子丛应该能种在裸土上");
@@ -98,7 +116,7 @@ public final class PlantingGameTests
             level.setBlockAndUpdate(plant.above(y), Blocks.OAK_LEAVES.defaultBlockState());
         }
         level.setBlockAndUpdate(ground.offset(4, 0, 0), Blocks.SNOW.defaultBlockState());
-        Player player = helper.makeMockPlayer(GameType.SURVIVAL);
+        Player player = mockPlayer(helper, GameType.SURVIVAL);
         placeOn(level, player, ModItems.GINSENG_SEEDS.get(), plant);
         helper.assertTrue(level.getBlockState(plant).is(ModBlocks.GINSENG_CROP.get()),
                 "人参应该能种下");

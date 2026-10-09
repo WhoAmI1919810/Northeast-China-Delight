@@ -39,7 +39,9 @@ import net.minecraft.world.phys.shapes.VoxelShape;
  */
 public class GinsengCropBlock extends BushBlock implements BonemealableBlock
 {
+    //? if >=1.20.2 {
     public static final MapCodec<GinsengCropBlock> CODEC = simpleCodec(GinsengCropBlock::new);
+    //?}
 
     public static final int MAX_AGE = 7;
     public static final IntegerProperty AGE = BlockStateProperties.AGE_7;
@@ -71,20 +73,26 @@ public class GinsengCropBlock extends BushBlock implements BonemealableBlock
         this.registerDefaultState(this.stateDefinition.any().setValue(AGE, 0).setValue(SNOWY, false));
     }
 
+    //? if >=1.20.2 {
     @Override
     public MapCodec<GinsengCropBlock> codec()
     {
         return CODEC;
     }
+    //?}
 
     @Override
-    protected VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context)
+    public VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context)
     {
         return SHAPE_BY_AGE[state.getValue(AGE)];
     }
 
     @Override
+    //? if <1.20.2 {
+    /*public ItemStack getCloneItemStack(BlockGetter level, BlockPos pos, BlockState state)
+    *///?} else {
     public ItemStack getCloneItemStack(LevelReader level, BlockPos pos, BlockState state)
+    //?}
     {
         return new ItemStack(ModItems.GINSENG_SEEDS.get());
     }
@@ -137,7 +145,7 @@ public class GinsengCropBlock extends BushBlock implements BonemealableBlock
     }
 
     @Override
-    protected boolean canSurvive(BlockState state, LevelReader level, BlockPos pos)
+    public boolean canSurvive(BlockState state, LevelReader level, BlockPos pos)
     {
         if (!this.mayPlaceOn(level.getBlockState(pos.below()), level, pos.below()))
         {
@@ -192,13 +200,13 @@ public class GinsengCropBlock extends BushBlock implements BonemealableBlock
     }
 
     @Override
-    protected boolean isRandomlyTicking(BlockState state)
+    public boolean isRandomlyTicking(BlockState state)
     {
         return state.getValue(AGE) < MAX_AGE;
     }
 
     @Override
-    protected void randomTick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random)
+    public void randomTick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random)
     {
         if (state.getValue(AGE) >= MAX_AGE || !level.isAreaLoaded(pos, 1))
         {
@@ -208,11 +216,33 @@ public class GinsengCropBlock extends BushBlock implements BonemealableBlock
         {
             return;
         }
-        if (net.neoforged.neoforge.common.CommonHooks.canCropGrow(level, pos, state, random.nextInt(GROWTH_DENOMINATOR) == 0))
+        if (cropGrowPre(level, pos, state, random.nextInt(GROWTH_DENOMINATOR) == 0))
         {
             level.setBlock(pos, state.setValue(AGE, state.getValue(AGE) + 1), 2);
-            net.neoforged.neoforge.common.CommonHooks.fireCropGrowPost(level, pos, state);
+            cropGrowPost(level, pos, state);
         }
+    }
+
+    private static boolean cropGrowPre(ServerLevel level, BlockPos pos, BlockState state, boolean def)
+    {
+        //? if <1.20.2 {
+        /*return net.minecraftforge.common.ForgeHooks.onCropsGrowPre(level, pos, state, def);
+        *///?} else if <1.20.5 {
+        /*return net.neoforged.neoforge.common.CommonHooks.onCropsGrowPre(level, pos, state, def);*/
+        //?} else {
+        return net.neoforged.neoforge.common.CommonHooks.canCropGrow(level, pos, state, def);
+        //?}
+    }
+
+    private static void cropGrowPost(ServerLevel level, BlockPos pos, BlockState state)
+    {
+        //? if <1.20.2 {
+        /*net.minecraftforge.common.ForgeHooks.onCropsGrowPost(level, pos, state);
+        *///?} else if <1.20.5 {
+        /*net.neoforged.neoforge.common.CommonHooks.onCropsGrowPost(level, pos, state);*/
+        //?} else {
+        net.neoforged.neoforge.common.CommonHooks.fireCropGrowPost(level, pos, state);
+        //?}
     }
 
     @Override
@@ -222,7 +252,11 @@ public class GinsengCropBlock extends BushBlock implements BonemealableBlock
     }
 
     @Override
+    //? if <1.20.2 {
+    /*public boolean isValidBonemealTarget(LevelReader level, BlockPos pos, BlockState state, boolean isClient)
+    *///?} else {
     public boolean isValidBonemealTarget(LevelReader level, BlockPos pos, BlockState state)
+    //?}
     {
         return state.getValue(AGE) < MAX_AGE;
     }

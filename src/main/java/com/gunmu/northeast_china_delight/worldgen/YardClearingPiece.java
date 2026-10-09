@@ -243,7 +243,12 @@ public class YardClearingPiece extends StructurePiece
             return true;
         }
         Block block = state.getBlock();
-        return block == Blocks.SHORT_GRASS
+        return
+                //? if <1.20.2 {
+                /*block == Blocks.GRASS
+                *///?} else {
+                block == Blocks.SHORT_GRASS
+                //?}
                 || block == Blocks.TALL_GRASS
                 || block == Blocks.FERN
                 || block == Blocks.LARGE_FERN

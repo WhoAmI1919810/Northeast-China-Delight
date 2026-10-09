@@ -2,11 +2,17 @@ package com.gunmu.northeast_china_delight.mixin;
 
 import com.gunmu.northeast_china_delight.item.SeasoningBottleItem;
 import com.gunmu.northeast_china_delight.item.ModItems;
+//? if >=1.20.2 {
 import net.minecraft.world.item.crafting.RecipeHolder;
+//?}
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
+//? if <1.20.2 {
+/*import net.minecraftforge.items.ItemStackHandler;
+*///?} else {
 import net.neoforged.neoforge.items.ItemStackHandler;
+//?}
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
@@ -38,18 +44,31 @@ public abstract class CookingPotBlockEntityMixin {
     private ItemStack northeast$cookingResult = ItemStack.EMPTY;
 
     /** 记住这一锅做的是什么（油要用它判断是不是油炸菜） */
-    @Inject(method = "processCooking", at = @At("HEAD"))
-    private void northeast$rememberCookingResult(RecipeHolder<CookingPotRecipe> recipe, CookingPotBlockEntity pot,
+    @Inject(method = "processCooking", at = @At("HEAD"), remap = false)
+    private void northeast$rememberCookingResult(
+            //? if <1.20.2 {
+            /*CookingPotRecipe recipe,
+            *///?} else {
+            RecipeHolder<CookingPotRecipe> recipe,
+            //?}
+                                               CookingPotBlockEntity pot,
                                                CallbackInfoReturnable<Boolean> cir) {
         Level level = pot.getLevel();
-        this.northeast$cookingResult = level == null
-                ? ItemStack.EMPTY
-                : recipe.value().getResultItem(level.registryAccess()).copy();
+        if (level == null) {
+            this.northeast$cookingResult = ItemStack.EMPTY;
+            return;
+        }
+        //? if <1.20.2 {
+        /*this.northeast$cookingResult = recipe.getResultItem(level.registryAccess()).copy();
+        *///?} else {
+        this.northeast$cookingResult = recipe.value().getResultItem(level.registryAccess()).copy();
+        //?}
     }
 
     /** 调料瓶不弹出锅外，留在锅里下一锅接着用 */
     @Redirect(
             method = "processCooking",
+            remap = false,
             at = @At(
                     value = "INVOKE",
                     target = "Lvectorwing/farmersdelight/common/block/entity/CookingPotBlockEntity;ejectIngredientRemainder(Lnet/minecraft/world/item/ItemStack;)V"))
@@ -63,7 +82,8 @@ public abstract class CookingPotBlockEntityMixin {
     /** 调料瓶不整瓶消耗，改成扣 50 mB 后留在锅里 */
     @Redirect(
             method = "processCooking",
-            at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/ItemStack;shrink(I)V"))
+            remap = false,
+            at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/ItemStack;shrink(I)V", remap = true))
     private void northeast$useOneDose(ItemStack stack, int amount) {
         if (!SeasoningBottleItem.isBottle(stack)) {
             stack.shrink(amount);
@@ -92,17 +112,29 @@ public abstract class CookingPotBlockEntityMixin {
      * <p>农夫乐事一条厨锅配方只有一个产物，所以在 {@code processCooking} 收尾之后补一份：
      * 先试着塞回锅里的空槽位（玩家开锅就能拿到），塞不下就按「食材剩余物」弹到锅外。
      */
-    @Inject(method = "processCooking", at = @At("RETURN"))
-    private void northeast$leaveCracklings(RecipeHolder<CookingPotRecipe> recipe, CookingPotBlockEntity pot,
+    @Inject(method = "processCooking", at = @At("RETURN"), remap = false)
+    private void northeast$leaveCracklings(
+            //? if <1.20.2 {
+            /*CookingPotRecipe recipe,
+            *///?} else {
+            RecipeHolder<CookingPotRecipe> recipe,
+            //?}
+                                         CookingPotBlockEntity pot,
                                          CallbackInfoReturnable<Boolean> cir) {
         if (!cir.getReturnValueZ()) {
             // 没真正做出这一锅就别给
             return;
         }
         Level level = pot.getLevel();
+        //? if <1.20.2 {
+        /*if (level == null || !recipe.getResultItem(level.registryAccess()).is(ModItems.ANIMAL_OIL.get())) {
+            return;
+        }
+        *///?} else {
         if (level == null || !recipe.value().getResultItem(level.registryAccess()).is(ModItems.ANIMAL_OIL.get())) {
             return;
         }
+        //?}
 
         ItemStack cracklings = new ItemStack(ModItems.CRACKLINGS.get());
         ItemStackHandler inventory = pot.getInventory();

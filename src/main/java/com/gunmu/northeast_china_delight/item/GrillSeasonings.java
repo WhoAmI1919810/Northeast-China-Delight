@@ -1,6 +1,7 @@
 package com.gunmu.northeast_china_delight.item;
 
 import com.gunmu.northeast_china_delight.NortheastChinaDelight;
+import com.gunmu.northeast_china_delight.util.DdIds;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
@@ -29,7 +30,7 @@ public final class GrillSeasonings {
 
     /** 需要拿刷子抹的厚酱（辣椒酱等） */
     public static final TagKey<Item> SAUCES = TagKey.create(Registries.ITEM,
-            ResourceLocation.fromNamespaceAndPath(NortheastChinaDelight.MODID, "grill_sauces"));
+            DdIds.of(NortheastChinaDelight.MODID, "grill_sauces"));
 
     /** 这份调料是不是"厚酱" */
     public static boolean isSauce(ItemStack stack) {

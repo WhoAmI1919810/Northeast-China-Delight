@@ -13,7 +13,7 @@
       "tag": "c:foods/raw_pork"
     },
     {
-      "tag": "farmersdelight:cooked_rice"
+          "tag": "c:cooked_rice"
     },
     {
       "tag": "c:eggs"

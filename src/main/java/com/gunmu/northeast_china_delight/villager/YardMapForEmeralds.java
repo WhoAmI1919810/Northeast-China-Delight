@@ -1,10 +1,13 @@
 package com.gunmu.northeast_china_delight.villager;
 
-import com.gunmu.northeast_china_delight.NortheastChinaDelight;
 import com.gunmu.northeast_china_delight.ModMapDecorations;
+import com.gunmu.northeast_china_delight.NortheastChinaDelight;
+import com.gunmu.northeast_china_delight.util.DdIds;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
+//? if >=1.20.5 {
 import net.minecraft.core.component.DataComponents;
+//?}
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -16,11 +19,15 @@ import net.minecraft.world.entity.npc.VillagerTrades;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.MapItem;
+//? if >=1.20.5 {
 import net.minecraft.world.item.trading.ItemCost;
+//?}
 import net.minecraft.world.item.trading.MerchantOffer;
 import net.minecraft.world.level.levelgen.structure.Structure;
 
+//? if >=1.20.5 {
 import net.minecraft.world.level.saveddata.maps.MapDecorationType;
+//?}
 import net.minecraft.world.level.saveddata.maps.MapItemSavedData;
 
 import javax.annotation.Nullable;
@@ -38,7 +45,7 @@ public class YardMapForEmeralds implements VillagerTrades.ItemListing
 {
     /** 小院地图找的是这个结构标签里的结构；要加别的小院变体，往标签文件里加就行。 */
     private static final TagKey<Structure> DESTINATION = TagKey.create(Registries.STRUCTURE,
-            ResourceLocation.fromNamespaceAndPath(NortheastChinaDelight.MODID, "on_northeast_yard_maps"));
+            DdIds.of(NortheastChinaDelight.MODID, "on_northeast_yard_maps"));
 
     /** 地图名字的语言键，和原版 {@code filled_map.mansion}、{@code filled_map.monument} 一个写法。 */
     private static final String DISPLAY_NAME = "filled_map.northeast_yard";
@@ -75,9 +82,19 @@ public class YardMapForEmeralds implements VillagerTrades.ItemListing
         }
         ItemStack map = MapItem.create(serverLevel, yardPos.getX(), yardPos.getZ(), MAP_SCALE, true, true);
         MapItem.renderBiomePreviewMap(serverLevel, map);
-        MapItemSavedData.addTargetDecoration(map, yardPos, DECORATION_LABEL, ModMapDecorations.DONGBEI_YARD);
+        //? if <1.20.5 {
+        /*MapItemSavedData.addTargetDecoration(map, yardPos, DECORATION_LABEL, ModMapDecorations.DONGBEI_YARD);
+        *///?} else {
+        MapItemSavedData.addTargetDecoration(map, yardPos, DECORATION_LABEL, ModMapDecorations.dongbeiYardHolder());
+        //?}
+        //? if <1.20.5 {
+        /*map.setHoverName(Component.translatable(DISPLAY_NAME));
+        return new MerchantOffer(new ItemStack(Items.EMERALD, this.emeraldCost), new ItemStack(Items.COMPASS),
+                map, this.maxUses, this.villagerXp, 0.2F);*/
+        //?} else {
         map.set(DataComponents.ITEM_NAME, Component.translatable(DISPLAY_NAME));
         return new MerchantOffer(new ItemCost(Items.EMERALD, this.emeraldCost), Optional.of(new ItemCost(Items.COMPASS)),
                 map, this.maxUses, this.villagerXp, 0.2F);
+        //?}
     }
 }

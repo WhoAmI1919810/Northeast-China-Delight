@@ -1,8 +1,9 @@
 package com.gunmu.northeast_china_delight.crafting;
 
 import com.mojang.logging.LogUtils;
-import com.gunmu.northeast_china_delight.ModTags;
 import com.gunmu.northeast_china_delight.item.ModItems;
+import com.gunmu.northeast_china_delight.ModTags;
+import com.gunmu.northeast_china_delight.util.DdIds;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
@@ -262,7 +263,7 @@ public final class VatRecipes {
 
     /** 任意生鱼：直接用 NeoForge 通用标签 c:foods/raw_fish（鳕鱼、鲑鱼以及模组生鱼片都算） */
     public static final TagKey<Item> RAW_FISH = TagKey.create(Registries.ITEM,
-            ResourceLocation.fromNamespaceAndPath("c", "foods/raw_fish"));
+            DdIds.of("c", "foods/raw_fish"));
 
     public static boolean isRawFish(ItemStack stack) {
         // 咸鱼只用整条的鱼：农夫乐事的生鳕鱼片 / 生鲑鱼片是切好的食材，不收
@@ -277,7 +278,7 @@ public final class VatRecipes {
         private static final Item SALMON_SLICE = item("farmersdelight", "salmon_slice");
 
         private static Item item(String namespace, String path) {
-            return BuiltInRegistries.ITEM.get(ResourceLocation.fromNamespaceAndPath(namespace, path));
+            return BuiltInRegistries.ITEM.get(DdIds.of(namespace, path));
         }
     }
 

@@ -16,7 +16,11 @@ import snownee.jade.api.config.IPluginConfig;
 import snownee.jade.api.ui.BoxStyle;
 import snownee.jade.api.ui.IElement;
 import snownee.jade.api.ui.IElementHelper;
+//? if <1.20.2 {
+/*import snownee.jade.api.ui.IProgressStyle;
+*///?} else {
 import snownee.jade.api.ui.ProgressStyle;
+//?}
 
 import java.util.ArrayList;
 import java.util.List;
@@ -108,8 +112,13 @@ public enum VatComponentProvider implements IBlockComponentProvider {
                         : Component.translatable("jade.northeast_china_delight.vat.waiting");
             }
             // 进度条上的文字用白色，避免默认的自动取色在浅色条上看不清
+            //? if <1.20.2 {
+            /*IProgressStyle style = helper.progressStyle().textColor(0xFFFFFF);
+            tooltip.add(helper.progress(ratio, text, style, BoxStyle.DEFAULT, false));
+            *///?} else {
             ProgressStyle style = helper.progressStyle().textColor(0xFFFFFF);
             tooltip.add(helper.progress(ratio, text, style, BoxStyle.getNestedBox(), false));
+            //?}
         }
 
     }

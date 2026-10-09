@@ -1,6 +1,10 @@
+// 这个分类完全靠机械动力的模型（AllPartialModels）+ catnip 的 GUI 元素渲染，
+// 1.20.4 节点没有机械动力，整个文件停用（只留注释）。
+//? if >=1.20.5 {
 package com.gunmu.northeast_china_delight.compat.jei;
 
 import com.gunmu.northeast_china_delight.NortheastChinaDelight;
+import com.gunmu.northeast_china_delight.util.DdIds;
 import com.simibubi.create.AllBlocks;
 import com.simibubi.create.AllPartialModels;
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
@@ -48,7 +52,7 @@ public class DryingRecipeCategory implements IRecipeCategory<DryingJeiRecipe> {
     private static final int WIDTH = 177;
     private static final int HEIGHT = 80;
 
-    private static final ResourceLocation WIDGETS = ResourceLocation.fromNamespaceAndPath(
+    private static final ResourceLocation WIDGETS = DdIds.of(
             NortheastChinaDelight.MODID, "textures/gui/jei_widgets.png");
     private static final int LARROW_U = 19, LARROW_V = 0, LARROW_W = 71, LARROW_H = 10;
     // Create JEI_SHADOW：白色椭圆光斑，画在风扇正下方
@@ -125,3 +129,4 @@ public class DryingRecipeCategory implements IRecipeCategory<DryingJeiRecipe> {
         }
     }
 }
+//?}

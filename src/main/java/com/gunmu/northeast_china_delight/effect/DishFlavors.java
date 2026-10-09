@@ -1,6 +1,7 @@
 package com.gunmu.northeast_china_delight.effect;
 
 import com.gunmu.northeast_china_delight.NortheastChinaDelight;
+import com.gunmu.northeast_china_delight.util.DdIds;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
@@ -91,7 +92,7 @@ public final class DishFlavors {
             Set<Item> set = new HashSet<>();
             for (String path : SOUP_PATHS) {
                 set.add(BuiltInRegistries.ITEM.get(
-                        ResourceLocation.fromNamespaceAndPath(NortheastChinaDelight.MODID, path)));
+                        DdIds.of(NortheastChinaDelight.MODID, path)));
             }
             soupTable = Set.copyOf(set);
         }
@@ -113,6 +114,9 @@ public final class DishFlavors {
         put(map, Flavor.GREASY, 6, "smoked_meat_platter");
         put(map, Flavor.GREASY, 4, "braised_pork_ribs");
         put(map, Flavor.GREASY, 3, "candied_sweet_potato");
+        put(map, Flavor.GREASY, 4, "dry_fried_hairtail");
+        put(map, Flavor.GREASY, 4, "braised_hairtail");
+        put(map, Flavor.GREASY, 5, "hazelnut_sugar_fire_bun");
         put(map, Flavor.GREASY, 5, "corn_fritter");
         put(map, Flavor.GREASY, 5, "potato_pancake");
         put(map, Flavor.GREASY, 3, "three_fresh_veggies");
@@ -167,7 +171,7 @@ public final class DishFlavors {
         put(map, Flavor.BALANCED, 2, "sea_cucumber_tofu_soup");
         put(map, Flavor.BALANCED, 6, "demoli_fish_stew");
         put(map, Flavor.BALANCED, 6, "borscht");
-        put(map, Flavor.BALANCED, 6, "sauerkraut_seafood_stew");
+        put(map, Flavor.BALANCED, 6, "sauerkraut_seafood_stew_bowl");
         put(map, Flavor.BALANCED, 5, "ginseng_chicken_soup");
         put(map, Flavor.BALANCED, 4, "chicken_mushroom_stew_bowl");
         put(map, Flavor.BALANCED, 6, "bibimbap");
@@ -183,7 +187,7 @@ public final class DishFlavors {
 
     /** 带单独时长（tick）的版本 */
     private static void put(Map<Item, Info> map, Flavor flavor, int ingredientCount, int overrideTicks, String path) {
-        Item item = BuiltInRegistries.ITEM.get(ResourceLocation.fromNamespaceAndPath(NortheastChinaDelight.MODID, path));
+        Item item = BuiltInRegistries.ITEM.get(DdIds.of(NortheastChinaDelight.MODID, path));
         map.put(item, new Info(flavor, ingredientCount, overrideTicks));
     }
 }

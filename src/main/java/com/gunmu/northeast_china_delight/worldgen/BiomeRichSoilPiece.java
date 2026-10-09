@@ -1,5 +1,6 @@
 package com.gunmu.northeast_china_delight.worldgen;
 
+import com.gunmu.northeast_china_delight.util.DdIds;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
@@ -28,7 +29,7 @@ public class BiomeRichSoilPiece extends StructurePiece
 {
     /** 农夫乐事的沃土（软依赖：按 id 查，查不到就不长） */
     public static final ResourceLocation RICH_SOIL =
-            ResourceLocation.fromNamespaceAndPath("farmersdelight", "rich_soil");
+            DdIds.of("farmersdelight", "rich_soil");
 
     private final float density;
 

@@ -5,10 +5,20 @@ import net.minecraft.world.entity.npc.VillagerTrades;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+//? if >=1.20.5 {
 import net.minecraft.world.item.trading.ItemCost;
+//?}
 import net.minecraft.world.item.trading.MerchantOffer;
+//? if <1.20.2 {
+/*import net.minecraftforge.common.BasicItemListing;
+*///?} else {
 import net.neoforged.neoforge.common.BasicItemListing;
+//?}
+//? if <1.20.2 {
+/*import net.minecraftforge.event.village.WandererTradesEvent;
+*///?} else {
 import net.neoforged.neoforge.event.village.WandererTradesEvent;
+//?}
 
 import java.util.List;
 import java.util.Optional;
@@ -67,6 +77,15 @@ public final class ModWandererTrades
     {
         return (trader, random) -> {
             int price = GINSENG_MIN_PRICE + random.nextInt(GINSENG_PRICE_SPREAD + 1);
+            //? if <1.20.5 {
+            /*return new MerchantOffer(
+                    new ItemStack(Items.EMERALD, price),
+                    ItemStack.EMPTY,
+                    new ItemStack(ModItems.GINSENG.get()),
+                    1,
+                    1,
+                    0.0F);*/
+            //?} else {
             return new MerchantOffer(
                     new ItemCost(Items.EMERALD, price),
                     Optional.empty(),
@@ -74,6 +93,7 @@ public final class ModWandererTrades
                     1,
                     1,
                     0.0F);
+            //?}
         };
     }
 }

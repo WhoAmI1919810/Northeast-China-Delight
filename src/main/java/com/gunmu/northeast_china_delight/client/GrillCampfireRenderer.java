@@ -255,10 +255,17 @@ public class GrillCampfireRenderer implements BlockEntityRenderer<GrillBlockEnti
     private static void addSpeckQuad(VertexConsumer consumer, PoseStack.Pose pose,
                                      float x0, float y0, float x1, float y1,
                                      float red, float green, float blue, float alpha) {
+        //? if <1.20.5 {
+        /*consumer.vertex(pose.pose(), x0, y0, 0.0F).color(red, green, blue, alpha).endVertex();
+        consumer.vertex(pose.pose(), x1, y0, 0.0F).color(red, green, blue, alpha).endVertex();
+        consumer.vertex(pose.pose(), x1, y1, 0.0F).color(red, green, blue, alpha).endVertex();
+        consumer.vertex(pose.pose(), x0, y1, 0.0F).color(red, green, blue, alpha).endVertex();*/
+        //?} else {
         consumer.addVertex(pose, x0, y0, 0.0F).setColor(red, green, blue, alpha);
         consumer.addVertex(pose, x1, y0, 0.0F).setColor(red, green, blue, alpha);
         consumer.addVertex(pose, x1, y1, 0.0F).setColor(red, green, blue, alpha);
         consumer.addVertex(pose, x0, y1, 0.0F).setColor(red, green, blue, alpha);
+        //?}
     }
 
     /** 把底层缓冲包一层，把所有颜色换成调料色（位置、UV、光照、法线照原样传下去） */
@@ -285,6 +292,58 @@ public class GrillCampfireRenderer implements BlockEntityRenderer<GrillBlockEnti
             this.alpha = alpha;
         }
 
+        //? if <1.20.5 {
+        /*@Override
+        public VertexConsumer vertex(double x, double y, double z) {
+            this.delegate.vertex(x, y, z);
+            return this;
+        }
+
+        @Override
+        public VertexConsumer color(int red, int green, int blue, int alpha) {
+            this.delegate.color(this.red, this.green, this.blue, this.alpha);
+            return this;
+        }
+
+        @Override
+        public VertexConsumer uv(float u, float v) {
+            this.delegate.uv(u, v);
+            return this;
+        }
+
+        @Override
+        public VertexConsumer overlayCoords(int u, int v) {
+            this.delegate.overlayCoords(u, v);
+            return this;
+        }
+
+        @Override
+        public VertexConsumer uv2(int u, int v) {
+            this.delegate.uv2(u, v);
+            return this;
+        }
+
+        @Override
+        public VertexConsumer normal(float x, float y, float z) {
+            this.delegate.normal(x, y, z);
+            return this;
+        }
+
+        @Override
+        public void endVertex() {
+            this.delegate.endVertex();
+        }
+
+        @Override
+        public void defaultColor(int red, int green, int blue, int alpha) {
+            this.delegate.defaultColor(red, green, blue, alpha);
+        }
+
+        @Override
+        public void unsetDefaultColor() {
+            this.delegate.unsetDefaultColor();
+        }*/
+        //?} else {
         @Override
         public VertexConsumer addVertex(float x, float y, float z) {
             this.delegate.addVertex(x, y, z);
@@ -320,5 +379,6 @@ public class GrillCampfireRenderer implements BlockEntityRenderer<GrillBlockEnti
             this.delegate.setNormal(x, y, z);
             return this;
         }
+        //?}
     }
 }

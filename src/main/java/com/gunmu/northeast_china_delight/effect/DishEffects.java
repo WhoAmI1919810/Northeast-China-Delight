@@ -1,7 +1,8 @@
 package com.gunmu.northeast_china_delight.effect;
 
+import com.gunmu.northeast_china_delight.util.DdIds;
+import com.gunmu.northeast_china_delight.util.DdEffects;
 import net.minecraft.core.Holder;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -18,11 +19,11 @@ public final class DishEffects {
 
     /** 农夫乐事的滋养（可选模组，按 id 查） */
     private static final ResourceLocation NOURISHMENT =
-            ResourceLocation.fromNamespaceAndPath("farmersdelight", "nourishment");
+            DdIds.of("farmersdelight", "nourishment");
     /** 一条待施加的效果 */
     public record Applied(Holder<MobEffect> effect, int durationTicks, int amplifier) {
         public MobEffectInstance instance() {
-            return new MobEffectInstance(this.effect, this.durationTicks, this.amplifier, false, true, true);
+            return DdEffects.instance(this.effect, this.durationTicks, this.amplifier);
         }
     }
 
@@ -35,16 +36,16 @@ public final class DishEffects {
         List<Applied> list = new ArrayList<>();
         switch (info.flavor()) {
             case GREASY -> {
-                list.add(new Applied(MobEffects.MOVEMENT_SLOWDOWN, duration, 0));
-                list.add(new Applied(MobEffects.HEALTH_BOOST, duration, 1));
-                list.add(new Applied(MobEffects.DIG_SPEED, duration, 0));
-                list.add(new Applied(ModEffects.GREASY, duration, 1));
+                list.add(new Applied(DdEffects.hold(MobEffects.MOVEMENT_SLOWDOWN), duration, 0));
+                list.add(new Applied(DdEffects.hold(MobEffects.HEALTH_BOOST), duration, 1));
+                list.add(new Applied(DdEffects.hold(MobEffects.DIG_SPEED), duration, 0));
+                list.add(new Applied(DdEffects.hold(ModEffects.GREASY), duration, 1));
             }
             case REFRESHING -> {
-                list.add(new Applied(MobEffects.MOVEMENT_SPEED, duration, 0));
-                list.add(new Applied(ModEffects.REFRESHING, duration, 0));
+                list.add(new Applied(DdEffects.hold(MobEffects.MOVEMENT_SPEED), duration, 0));
+                list.add(new Applied(DdEffects.hold(ModEffects.REFRESHING), duration, 0));
             }
-            case BALANCED -> BuiltInRegistries.MOB_EFFECT.getHolder(NOURISHMENT)
+            case BALANCED -> DdEffects.holder(NOURISHMENT)
                     .ifPresent(effect -> list.add(new Applied(effect, duration, 0)));
         }
         return list;
@@ -53,21 +54,21 @@ public final class DishEffects {
     /** 新派橙汁锅包肉额外带的效果：橘子汁本身的 5 秒生命恢复（不含解毒） */
     public static List<Applied> orangeJuiceExtras() {
         List<Applied> list = new ArrayList<>();
-        list.add(new Applied(MobEffects.REGENERATION, 100, 0));
+        list.add(new Applied(DdEffects.hold(MobEffects.REGENERATION), 100, 0));
         return list;
     }
 
     /** 参鸡汤额外给的「养生」：固定 10 秒（200 tick），效果本身按血量分档回血 */
     public static List<Applied> ginsengSoupExtras() {
         List<Applied> list = new ArrayList<>();
-        list.add(new Applied(ModEffects.NOURISHING, 200, 0));
+        list.add(new Applied(DdEffects.hold(ModEffects.NOURISHING), 200, 0));
         return list;
     }
 
     /** 汤类额外给的「暖身」：时长跟这道菜自己的效果一致 */
     public static List<Applied> soupWarmth(int durationTicks) {
         List<Applied> list = new ArrayList<>();
-        list.add(new Applied(ModEffects.WARMTH, durationTicks, 0));
+        list.add(new Applied(DdEffects.hold(ModEffects.WARMTH), durationTicks, 0));
         return list;
     }
 }

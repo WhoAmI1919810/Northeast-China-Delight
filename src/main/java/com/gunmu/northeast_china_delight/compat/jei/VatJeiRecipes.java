@@ -3,6 +3,7 @@ package com.gunmu.northeast_china_delight.compat.jei;
 import com.gunmu.northeast_china_delight.crafting.VatRecipe;
 import com.gunmu.northeast_china_delight.crafting.VatRecipes;
 import com.gunmu.northeast_china_delight.fluid.ModFluids;
+import com.gunmu.northeast_china_delight.util.DdIds;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
@@ -291,7 +292,7 @@ public final class VatJeiRecipes {
             case CARPET -> oneOf(Items.WHITE_CARPET, Items.RED_CARPET, Items.BROWN_CARPET);
             case CLOTH -> {
                 Item rug = BuiltInRegistries.ITEM.get(
-                        ResourceLocation.fromNamespaceAndPath("farmersdelight", "canvas_rug"));
+                        DdIds.of("farmersdelight", "canvas_rug"));
                 yield rug == Items.AIR ? List.of() : List.of(new ItemStack(rug));
             }
             case NONE -> List.of();

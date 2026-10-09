@@ -1,14 +1,23 @@
 package com.gunmu.northeast_china_delight;
 
 import com.gunmu.northeast_china_delight.item.ModItems;
+import com.gunmu.northeast_china_delight.util.DdIds;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.ItemStack;
+//? if <1.20.2 {
+/*import net.minecraftforge.eventbus.api.IEventBus;
+*///?} else {
 import net.neoforged.bus.api.IEventBus;
+//?}
+//? if <1.20.2 {
+/*import net.minecraftforge.registries.DeferredRegister;
+*///?} else {
 import net.neoforged.neoforge.registries.DeferredRegister;
+//?}
 
 import java.util.function.Supplier;
 
@@ -56,7 +65,7 @@ public class ModCreativeTabs {
 
     private static ResourceKey<CreativeModeTab> tabKey(String path) {
         return ResourceKey.create(Registries.CREATIVE_MODE_TAB,
-                ResourceLocation.fromNamespaceAndPath(NortheastChinaDelight.MODID, path));
+                DdIds.of(NortheastChinaDelight.MODID, path));
     }
 
     public static void register(IEventBus eventBus) {

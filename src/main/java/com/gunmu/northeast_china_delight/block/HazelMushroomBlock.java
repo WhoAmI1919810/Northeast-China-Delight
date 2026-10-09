@@ -17,7 +17,13 @@ import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
+//? if <1.20.2 {
+/*import net.minecraftforge.common.IPlantable;
+*///?} else if <1.20.5 {
+/*import net.neoforged.neoforge.common.IPlantable;
+*///?} else {
 import net.neoforged.neoforge.common.util.TriState;
+//?}
 
 /**
  * 榛蘑（单株）：行为照抄原版蘑菇。
@@ -31,7 +37,9 @@ import net.neoforged.neoforge.common.util.TriState;
  */
 public class HazelMushroomBlock extends BushBlock implements BonemealableBlock
 {
+    //? if >=1.20.2 {
     public static final MapCodec<HazelMushroomBlock> CODEC = simpleCodec(HazelMushroomBlock::new);
+    //?}
 
     /** 原版蘑菇的规矩：亮度到 13 就不长了 */
     public static final int MAX_LIGHT = 13;
@@ -43,20 +51,26 @@ public class HazelMushroomBlock extends BushBlock implements BonemealableBlock
         super(properties);
     }
 
+    //? if >=1.20.2 {
     @Override
     public MapCodec<HazelMushroomBlock> codec()
     {
         return CODEC;
     }
+    //?}
 
     @Override
-    protected VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context)
+    public VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context)
     {
         return SHAPE;
     }
 
     @Override
+    //? if <1.20.2 {
+    /*public ItemStack getCloneItemStack(BlockGetter level, BlockPos pos, BlockState state)
+    *///?} else {
     public ItemStack getCloneItemStack(LevelReader level, BlockPos pos, BlockState state)
+    //?}
     {
         return new ItemStack(ModItems.HAZEL_MUSHROOM.get());
     }
@@ -69,7 +83,7 @@ public class HazelMushroomBlock extends BushBlock implements BonemealableBlock
      * 所以这里把「怕光」挪到扩散这一步：<b>亮处的榛蘑能活，但不会蔓延</b>。</p>
      */
     @Override
-    protected void randomTick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random)
+    public void randomTick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random)
     {
         // 种在沃土上的榛蘑有概率原地长成榛蘑菌落（对齐农夫乐事：蘑菇菌落不是撒骨粉变出来的，
         // 是蘑菇种在沃土上一段时间后自动变成的）
@@ -124,23 +138,34 @@ public class HazelMushroomBlock extends BushBlock implements BonemealableBlock
     }
 
     @Override
-    protected boolean canSurvive(BlockState state, LevelReader level, BlockPos pos)
+    public boolean canSurvive(BlockState state, LevelReader level, BlockPos pos)
     {
         BlockPos below = pos.below();
         BlockState belowState = level.getBlockState(below);
-        TriState soil = belowState.canSustainPlant(level, below, Direction.UP, state);
         if (belowState.is(BlockTags.MUSHROOM_GROW_BLOCK))
         {
             return true;
         }
+        //? if <1.20.5 {
+        /*// 1.20.4 的 canSustainPlant 只有「能／不能」两种答案（没有 1.21 的「说不准」档）：
+        // 下面这层土能长东西，或者地面本身够结实，就算站得住
+        return belowState.canSustainPlant(level, below, Direction.UP, (IPlantable) state.getBlock())
+                || this.mayPlaceOn(belowState, level, below);*/
+        //?} else {
+        TriState soil = belowState.canSustainPlant(level, below, Direction.UP, state);
         // 只挑地面，不挑亮度：亮处的榛蘑照活，只是不会蔓延（见 randomTick）
         return soil.isDefault() ? this.mayPlaceOn(belowState, level, below) : soil.isTrue();
+        //?}
     }
 
     // 榛蘑不吃骨粉 —— 原版蘑菇也是不能撒骨粉催大的。
     // 想拿到榛蘑菌落：把它种在农夫乐事的沃土（rich_soil）上，等随机刻。
     @Override
+    //? if <1.20.2 {
+    /*public boolean isValidBonemealTarget(LevelReader level, BlockPos pos, BlockState state, boolean isClient)
+    *///?} else {
     public boolean isValidBonemealTarget(LevelReader level, BlockPos pos, BlockState state)
+    //?}
     {
         return false;
     }

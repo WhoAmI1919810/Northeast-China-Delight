@@ -3,15 +3,24 @@ package com.gunmu.northeast_china_delight.compat.jei;
 import com.gunmu.northeast_china_delight.NortheastChinaDelight;
 import com.gunmu.northeast_china_delight.block.ModBlocks;
 import com.gunmu.northeast_china_delight.item.ModItems;
+import com.gunmu.northeast_china_delight.util.DdIds;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
+//? if >=1.20.5 {
 import mezz.jei.api.gui.builder.IIngredientConsumer;
+//?}
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
+import mezz.jei.api.gui.builder.IRecipeSlotBuilder;
 import mezz.jei.api.gui.drawable.IDrawable;
+//? if >=1.20.5 {
 import mezz.jei.api.gui.ingredient.IRecipeSlotDrawable;
 import mezz.jei.api.gui.ingredient.IRecipeSlotDrawablesView;
+//?}
+import mezz.jei.api.gui.ingredient.IRecipeSlotsView;
+//? if >=1.20.5 {
 import mezz.jei.api.gui.widgets.IRecipeExtrasBuilder;
 import mezz.jei.api.gui.widgets.IRecipeWidget;
+//?}
 import mezz.jei.api.helpers.IGuiHelper;
 import mezz.jei.api.recipe.IFocusGroup;
 import mezz.jei.api.recipe.RecipeIngredientRole;
@@ -20,7 +29,9 @@ import mezz.jei.api.recipe.category.IRecipeCategory;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
+//? if >=1.20.5 {
 import net.minecraft.client.gui.navigation.ScreenPosition;
+//?}
 import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
@@ -32,8 +43,16 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.Fluids;
+//? if <1.20.2 {
+/*import net.minecraftforge.client.extensions.common.IClientFluidTypeExtensions;
+*///?} else {
 import net.neoforged.neoforge.client.extensions.common.IClientFluidTypeExtensions;
+//?}
+//? if <1.20.2 {
+/*import net.minecraftforge.client.model.data.ModelData;
+*///?} else {
 import net.neoforged.neoforge.client.model.data.ModelData;
+//?}
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -134,12 +153,39 @@ public class VatRecipeCategory implements IRecipeCategory<VatJeiRecipe> {
     private static final String[] PRIMARY_SLOTS =
             { SLOT_PRIMARY_0, SLOT_PRIMARY_1, SLOT_PRIMARY_2, SLOT_PRIMARY_3 };
 
+    /** 1.20.4 的 JEI（17.x）没有现成的箭头图，小箭头从模组自己的控件贴图上取 */
+    private static final ResourceLocation WIDGETS = DdIds.of(
+            NortheastChinaDelight.MODID, "textures/gui/jei_widgets.png");
+    private static final int ARROW_U = 61, ARROW_V = 93, ARROW_W = 24, ARROW_H = 16;
+
     private final IDrawable icon;
     private final IDrawable arrow;
+    private final IGuiHelper guiHelper;
+    /** 1.20.4 的 JEI（17.x）必须给一张背景图，这里给的是同尺寸的空白图 */
+    private final IDrawable background;
 
     public VatRecipeCategory(IGuiHelper guiHelper) {
+        this.guiHelper = guiHelper;
+        //? if <1.20.5 {
+        /*this.icon = guiHelper.createDrawableItemStack(new ItemStack(ModItems.VAT.get()));
+        this.arrow = guiHelper.createDrawable(WIDGETS, ARROW_U, ARROW_V, ARROW_W, ARROW_H);*/
+        //?} else {
         this.icon = guiHelper.createDrawableItemLike(ModItems.VAT.get());
         this.arrow = guiHelper.getRecipeArrow();
+        //?}
+        this.background = guiHelper.createBlankDrawable(WIDTH, HEIGHT);
+    }
+
+    /**
+     * 槽位底图：两个版本的 JEI 说法不一样 —— 1.21 要显式说「用标准槽位底图」，
+     * 1.20.4 的 JEI 得自己把 guiHelper 的槽位图挂上去。
+     */
+    private static IRecipeSlotBuilder withSlotBackground(IRecipeSlotBuilder slot, IGuiHelper guiHelper) {
+        //? if <1.20.5 {
+        /*return slot.setBackground(guiHelper.getSlotDrawable(), -1, -1);*/
+        //?} else {
+        return slot.setStandardSlotBackground();
+        //?}
     }
 
     @Override
@@ -166,6 +212,12 @@ public class VatRecipeCategory implements IRecipeCategory<VatJeiRecipe> {
     @Override
     public int getHeight() {
         return HEIGHT;
+    }
+
+    /** 1.20.4 的 JEI 会拿它当页面底板（空白图）；1.21 的 JEI 用不到 */
+    @Override
+    public IDrawable getBackground() {
+        return this.background;
     }
 
     // ===== 行的排布：左侧材料从上到下依次是 顶部封缸物 → 配料 → 食材 → 缸底液体，整列上下居中 =====
@@ -251,10 +303,9 @@ public class VatRecipeCategory implements IRecipeCategory<VatJeiRecipe> {
 
         // 顶部：封缸物
         if (!state.seal().isEmpty()) {
-            builder.addSlot(RecipeIngredientRole.INPUT, INPUT_X, rows.get(row++).y())
+            withSlotBackground(builder.addSlot(RecipeIngredientRole.INPUT, INPUT_X, rows.get(row++).y())
                     .addItemStacks(state.seal())
-                    .setSlotName(SLOT_SEAL)
-                    .setStandardSlotBackground();
+                    .setSlotName(SLOT_SEAL), this.guiHelper);
         }
         // 配料
         if (!state.seasoning().isEmpty()) {
@@ -266,11 +317,10 @@ public class VatRecipeCategory implements IRecipeCategory<VatJeiRecipe> {
         }
         // 缸底：液体（缸口里另外会画一层液面，这里的格子是给 JEI 查配方用的）
         if (state.hasLiquid()) {
-            builder.addSlot(RecipeIngredientRole.INPUT, INPUT_X, rows.get(row).y())
+            withSlotBackground(builder.addSlot(RecipeIngredientRole.INPUT, INPUT_X, rows.get(row).y())
                     .addFluidStack(state.liquid(), state.liquidMb())
                     .setFluidRenderer(state.liquidCapacityMb(), false, SLOT, SLOT)
-                    .setSlotName(SLOT_LIQUID)
-                    .setStandardSlotBackground();
+                    .setSlotName(SLOT_LIQUID), this.guiHelper);
         }
 
         // 产物：物品格在上、液体格在下；只有一种时单独居中
@@ -278,19 +328,17 @@ public class VatRecipeCategory implements IRecipeCategory<VatJeiRecipe> {
         boolean hasResultItem = !state.result().isEmpty();
         boolean hasResultFluid = state.hasResultFluid();
         if (hasResultItem) {
-            builder.addSlot(RecipeIngredientRole.OUTPUT, OUTPUT_X,
+            withSlotBackground(builder.addSlot(RecipeIngredientRole.OUTPUT, OUTPUT_X,
                             hasResultFluid ? OUTPUT_ITEM_Y : OUTPUT_ONLY_Y)
                     .addItemStack(state.result())
-                    .setSlotName(SLOT_RESULT)
-                    .setStandardSlotBackground();
+                    .setSlotName(SLOT_RESULT), this.guiHelper);
         }
         if (hasResultFluid) {
-            builder.addSlot(RecipeIngredientRole.OUTPUT, OUTPUT_X,
+            withSlotBackground(builder.addSlot(RecipeIngredientRole.OUTPUT, OUTPUT_X,
                             hasResultItem ? OUTPUT_FLUID_Y : OUTPUT_ONLY_Y)
                     .addFluidStack(state.resultFluid(), state.resultFluidMb())
                     .setFluidRenderer(state.resultFluidCapacityMb(), false, SLOT, SLOT)
-                    .setSlotName(SLOT_RESULT_FLUID)
-                    .setStandardSlotBackground();
+                    .setSlotName(SLOT_RESULT_FLUID), this.guiHelper);
         }
     }
 
@@ -300,8 +348,8 @@ public class VatRecipeCategory implements IRecipeCategory<VatJeiRecipe> {
      *
      * @return 下一层从第几行开始
      */
-    private static int addLayer(IRecipeLayoutBuilder builder, List<List<ItemStack>> layer, List<Row> rows,
-                                int rowIndex, String[] names) {
+    private int addLayer(IRecipeLayoutBuilder builder, List<List<ItemStack>> layer, List<Row> rows,
+                         int rowIndex, String[] names) {
         List<List<List<ItemStack>>> split = splitRows(layer);
         for (int r = 0; r < split.size(); r++) {
             List<List<ItemStack>> row = split.get(r);
@@ -313,15 +361,62 @@ public class VatRecipeCategory implements IRecipeCategory<VatJeiRecipe> {
                 }
                 int index = r * 2 + c;
                 int x = row.size() == 1 ? INPUT_X : (c == 0 ? INPUT_PAIR_X1 : INPUT_PAIR_X2);
-                builder.addSlot(RecipeIngredientRole.INPUT, x, y)
+                withSlotBackground(builder.addSlot(RecipeIngredientRole.INPUT, x, y)
                         .addItemStacks(items)
-                        .setSlotName(names[index])
-                        .setStandardSlotBackground();
+                        .setSlotName(names[index]), this.guiHelper);
             }
         }
         return rowIndex + split.size();
     }
 
+    /**
+     * 1.20.4 的 JEI（17.x）没有「控件」那一层，除了槽位以外的画面都在这里画：
+     * 缸口液面、大缸本体、引线、箭头、发酵时长和条件注记。
+     *
+     * <p>17.x 也没法给槽位做「显示覆盖」，所以多档配方在 1.20.4 上画的是第一档
+     * （槽位里摆的也是第一档）——换档轮播是 1.21 分支的功能。</p>
+     */
+    //? if <1.20.5 {
+    /*@Override
+    public void draw(VatJeiRecipe recipe, IRecipeSlotsView slotsView, GuiGraphics graphics,
+                     double mouseX, double mouseY) {
+        VatJeiRecipe.State state = recipe.first();
+
+        // 缸口里的液面：先画液面再盖缸（缸口是透明的）
+        if (state.hasLiquid() && state.liquid() != null) {
+            drawFluidRhombus(graphics, state.liquid(), MOUTH_X, MOUTH_Y,
+                    MOUTH_HALF_WIDTH, MOUTH_HALF_HEIGHT);
+        }
+        drawVatBlock(graphics, VAT_X + VAT_ICON_SIZE / 2F, VAT_Y + VAT_ICON_SIZE / 2F + 2, 22.0F);
+        // 每个材料格引一条线到缸上对应的位置
+        for (Row row : rowsOf(state)) {
+            int right = row.pair() ? ROW_RIGHT_PAIR : ROW_RIGHT_SINGLE;
+            int centerY = row.y() + SLOT / 2;
+            graphics.fill(right + 1, centerY, LEADER_BUS_X + 1, centerY + 1, LEADER_COLOR);
+            drawLine(graphics, LEADER_BUS_X, centerY, row.targetX(), row.targetY(), LEADER_COLOR);
+        }
+        // 箭头：从缸指向产物
+        this.arrow.draw(graphics, ARROW_X, ARROW_Y);
+
+        // 发酵时长写在箭头下方
+        Component text = timeText(state.seconds());
+        Font font = Minecraft.getInstance().font;
+        int x = ARROW_X + (this.arrow.getWidth() - font.width(text)) / 2;
+        if (x + font.width(text) > TIME_MAX_RIGHT) {
+            x = TIME_MAX_RIGHT - font.width(text);
+        }
+        graphics.drawString(font, text, x, TIME_Y, TIME_COLOR, false);
+
+        // 额外条件注记（"要在会下雪的群系里酿"），小一号字写在时长下面
+        Component note = state.note();
+        if (note != null) {
+            int noteX = (WIDTH - font.width(note)) / 2;
+            graphics.drawString(font, note, noteX, HEIGHT - 10, 0xFF666666, false);
+        }
+    }*/
+    //?}
+
+    //? if >=1.20.5 {
     @Override
     public void createRecipeExtras(IRecipeExtrasBuilder builder, VatJeiRecipe recipe, IFocusGroup focuses) {
         builder.addWidget(new VatWidget(recipe.states(), builder.getRecipeSlots(),
@@ -486,6 +581,7 @@ public class VatRecipeCategory implements IRecipeCategory<VatJeiRecipe> {
             return a.getItem() == b.getItem() && a.getCount() == b.getCount();
         }
     }
+    //?}
 
     // ===== 画图小工具 =====
 

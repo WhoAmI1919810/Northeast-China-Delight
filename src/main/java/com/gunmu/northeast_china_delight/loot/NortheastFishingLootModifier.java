@@ -1,6 +1,7 @@
 package com.gunmu.northeast_china_delight.loot;
 
 import com.gunmu.northeast_china_delight.item.ModItems;
+import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
@@ -20,8 +21,16 @@ import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
 import net.minecraft.world.phys.Vec3;
+//? if <1.20.2 {
+/*import net.minecraftforge.common.loot.IGlobalLootModifier;
+*///?} else {
 import net.neoforged.neoforge.common.loot.IGlobalLootModifier;
+//?}
+//? if <1.20.2 {
+/*import net.minecraftforge.common.loot.LootModifier;
+*///?} else {
 import net.neoforged.neoforge.common.loot.LootModifier;
+//?}
 
 /**
  * 钓鱼的「鱼」这一类在本模组里有三张表，按浮漂所在的水域来挑：
@@ -66,8 +75,13 @@ public class NortheastFishingLootModifier extends LootModifier
             new Entry(ModItems.HAIRTAIL, 25), new Entry(ModItems.SEA_CUCUMBER, 25)
     };
 
+    //? if <1.20.5 {
+    /*public static final Codec<NortheastFishingLootModifier> CODEC = RecordCodecBuilder.create(
+            instance -> codecStart(instance).apply(instance, NortheastFishingLootModifier::new));
+    *///?} else {
     public static final MapCodec<NortheastFishingLootModifier> CODEC = RecordCodecBuilder.mapCodec(
             instance -> codecStart(instance).apply(instance, NortheastFishingLootModifier::new));
+    //?}
 
     public NortheastFishingLootModifier(LootItemCondition[] conditions)
     {
@@ -285,10 +299,17 @@ public class NortheastFishingLootModifier extends LootModifier
     }
 
     @Override
+    //? if <1.20.5 {
+    /*public Codec<? extends IGlobalLootModifier> codec()
+    {
+        return CODEC;
+    }*/
+    //?} else {
     public MapCodec<? extends IGlobalLootModifier> codec()
     {
         return CODEC;
     }
+    //?}
 
     /** 表里的一项：掉落物 + 权重（用 Supplier 是为了不在注册表冻结前取物品实例） */
     private record Entry(java.util.function.Supplier<? extends net.minecraft.world.level.ItemLike> item, int weight)

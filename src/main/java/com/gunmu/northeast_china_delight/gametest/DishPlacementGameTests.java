@@ -1,10 +1,11 @@
 package com.gunmu.northeast_china_delight.gametest;
 
-import com.gunmu.northeast_china_delight.NortheastChinaConfig;
-import com.gunmu.northeast_china_delight.NortheastChinaDelight;
 import com.gunmu.northeast_china_delight.block.ModBlocks;
 import com.gunmu.northeast_china_delight.event.ModGameplayEvents;
 import com.gunmu.northeast_china_delight.item.ModItems;
+import com.gunmu.northeast_china_delight.NortheastChinaConfig;
+import com.gunmu.northeast_china_delight.NortheastChinaDelight;
+import com.gunmu.northeast_china_delight.util.DdIds;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -20,8 +21,16 @@ import net.minecraft.world.level.GameType;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
+//? if <1.20.2 {
+/*import net.minecraftforge.gametest.GameTestHolder;
+*///?} else {
 import net.neoforged.neoforge.gametest.GameTestHolder;
+//?}
+//? if <1.20.2 {
+/*import net.minecraftforge.gametest.PrefixGameTestTemplate;
+*///?} else {
 import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
+//?}
 
 /**
  * 菜肴方块形态的三条规矩：
@@ -35,6 +44,16 @@ public final class DishPlacementGameTests
     {
     }
 
+    /** 假玩家：1.20.4 的 GameTestHelper 拆成 makeMockPlayer / makeMockSurvivalPlayer 两个方法 */
+    private static Player mockPlayer(GameTestHelper helper, GameType gameType)
+    {
+        //? if <1.20.5 {
+        /*return gameType == GameType.CREATIVE ? helper.makeMockPlayer() : helper.makeMockSurvivalPlayer();
+        *///?} else {
+        return helper.makeMockPlayer(gameType);
+        //?}
+    }
+
     @GameTest(template = "empty")
     public static void dishPlacesOnlyWhenSneaking(GameTestHelper helper)
     {
@@ -43,7 +62,7 @@ public final class DishPlacementGameTests
         BlockPos target = ground.above();
         level.setBlockAndUpdate(ground, Blocks.STONE.defaultBlockState());
 
-        Player player = helper.makeMockPlayer(GameType.SURVIVAL);
+        Player player = mockPlayer(helper, GameType.SURVIVAL);
 
         // 1) 不潜行：不放置
         player.setShiftKeyDown(false);
@@ -80,7 +99,7 @@ public final class DishPlacementGameTests
         BlockPos target = ground.above();
         level.setBlockAndUpdate(ground, Blocks.STONE.defaultBlockState());
 
-        Player player = helper.makeMockPlayer(GameType.SURVIVAL);
+        Player player = mockPlayer(helper, GameType.SURVIVAL);
         player.setShiftKeyDown(true);
         boolean oldPlacement = NortheastChinaConfig.DISH_PLACEMENT_ENABLED.get();
         NortheastChinaConfig.DISH_PLACEMENT_ENABLED.set(true);
@@ -93,7 +112,7 @@ public final class DishPlacementGameTests
                 helper.assertTrue(dishBlock != null, "料理方块未注册: " + id);
 
                 var item = BuiltInRegistries.ITEM.get(
-                        ResourceLocation.fromNamespaceAndPath(NortheastChinaDelight.MODID, id));
+                        DdIds.of(NortheastChinaDelight.MODID, id));
                 helper.assertTrue(item != net.minecraft.world.item.Items.AIR,
                         "料理物品未注册: " + id);
                 player.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(item));
@@ -101,7 +120,13 @@ public final class DishPlacementGameTests
                         Vec3.atCenterOf(ground).add(0.0, 0.5, 0.0), Direction.UP, ground, false);
 
                 ModGameplayEvents.onDishRightClick(
-                        new net.neoforged.neoforge.event.entity.player.PlayerInteractEvent.RightClickBlock(
+                        new
+                                //? if <1.20.2 {
+                                /*net.minecraftforge.event.entity.player.PlayerInteractEvent
+                                *///?} else {
+                                net.neoforged.neoforge.event.entity.player.PlayerInteractEvent
+                                //?}
+                                .RightClickBlock(
                                 player, InteractionHand.MAIN_HAND, ground, hit));
                 helper.assertTrue(level.getBlockState(target).is(dishBlock.get()),
                         "料理未沿用统一的潜行右键放置路径: " + id);

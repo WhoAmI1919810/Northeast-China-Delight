@@ -1,8 +1,9 @@
 package com.gunmu.northeast_china_delight.compat.jei;
 
-import com.gunmu.northeast_china_delight.NortheastChinaDelight;
 import com.gunmu.northeast_china_delight.crafting.VatRecipes;
 import com.gunmu.northeast_china_delight.item.ModItems;
+import com.gunmu.northeast_china_delight.NortheastChinaDelight;
+import com.gunmu.northeast_china_delight.util.DdIds;
 import mezz.jei.api.IModPlugin;
 import mezz.jei.api.JeiPlugin;
 import mezz.jei.api.helpers.IGuiHelper;
@@ -35,11 +36,14 @@ public class NortheastJeiPlugin implements IModPlugin {
     public static final RecipeType<GrillJeiRecipe> GRILL_TYPE =
             RecipeType.create(NortheastChinaDelight.MODID, "grill", GrillJeiRecipe.class);
 
+    //? if >=1.20.5 {
+    /** 批量风干是机械动力的鼓风机行为，1.20.4 节点没有机械动力，这个分类整块不注册 */
     public static final RecipeType<DryingJeiRecipe> DRYING_TYPE =
             RecipeType.create(NortheastChinaDelight.MODID, "drying", DryingJeiRecipe.class);
+    //?}
 
     private static final ResourceLocation PLUGIN_UID =
-            ResourceLocation.fromNamespaceAndPath(NortheastChinaDelight.MODID, "jei_plugin");
+            DdIds.of(NortheastChinaDelight.MODID, "jei_plugin");
 
     @Override
     public ResourceLocation getPluginUid() {
@@ -51,14 +55,18 @@ public class NortheastJeiPlugin implements IModPlugin {
         IGuiHelper guiHelper = registration.getJeiHelpers().getGuiHelper();
         registration.addRecipeCategories(new VatRecipeCategory(guiHelper));
         registration.addRecipeCategories(new GrillRecipeCategory(guiHelper));
+        //? if >=1.20.5 {
         registration.addRecipeCategories(new DryingRecipeCategory(guiHelper));
+        //?}
     }
 
     @Override
     public void registerRecipes(IRecipeRegistration registration) {
         registration.addRecipes(VAT_TYPE, VatJeiRecipes.all());
         registration.addRecipes(GRILL_TYPE, GrillJeiRecipes.all());
+        //? if >=1.20.5 {
         registration.addRecipes(DRYING_TYPE, DryingJeiRecipes.all());
+        //?}
         registration.addItemStackInfo(new ItemStack(ModItems.GINSENG.get()),
                 Component.translatable("jei.northeast_china_delight.info.ginseng"));
         registration.addItemStackInfo(new ItemStack(ModItems.WOOD_EAR.get()),
@@ -88,8 +96,13 @@ public class NortheastJeiPlugin implements IModPlugin {
     /** 拿着大缸 / 烧烤架按 R / 双击就能看到对应的配方 */
     @Override
     public void registerRecipeCatalysts(IRecipeCatalystRegistration registration) {
-        registration.addRecipeCatalyst(ModItems.VAT.get(), VAT_TYPE);
-        registration.addRecipeCatalyst(ModItems.GRILL_RACK.get(), GRILL_TYPE);
-        registration.addRecipeCatalyst(new net.minecraft.world.item.ItemStack(net.minecraft.core.registries.BuiltInRegistries.BLOCK.get(net.minecraft.resources.ResourceLocation.fromNamespaceAndPath("create", "encased_fan"))), DRYING_TYPE);
+        // 1.20.4 的 JEI（17.x）只收 ItemStack，1.21 收 ItemLike —— 用 ItemStack 两边都能过
+        registration.addRecipeCatalyst(new ItemStack(ModItems.VAT.get()), VAT_TYPE);
+        registration.addRecipeCatalyst(new ItemStack(ModItems.GRILL_RACK.get()), GRILL_TYPE);
+        //? if >=1.20.5 {
+        registration.addRecipeCatalyst(new ItemStack(
+                net.minecraft.core.registries.BuiltInRegistries.BLOCK.get(
+                        DdIds.of("create", "encased_fan"))), DRYING_TYPE);
+        //?}
     }
 }

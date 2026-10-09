@@ -1,6 +1,7 @@
 package com.gunmu.northeast_china_delight.loot;
 
 import com.gunmu.northeast_china_delight.item.ModItems;
+import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
@@ -8,8 +9,16 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.storage.loot.LootContext;
 import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
+//? if <1.20.2 {
+/*import net.minecraftforge.common.loot.IGlobalLootModifier;
+*///?} else {
 import net.neoforged.neoforge.common.loot.IGlobalLootModifier;
+//?}
+//? if <1.20.2 {
+/*import net.minecraftforge.common.loot.LootModifier;
+*///?} else {
 import net.neoforged.neoforge.common.loot.LootModifier;
+//?}
 
 /**
  * 村庄住宅箱子：按群系塞东北乐事的种子和谷物。
@@ -30,8 +39,13 @@ import net.neoforged.neoforge.common.loot.LootModifier;
  */
 public class VillageSeedsLootModifier extends LootModifier
 {
+    //? if <1.20.5 {
+    /*public static final Codec<VillageSeedsLootModifier> CODEC = RecordCodecBuilder.create(
+            instance -> codecStart(instance).apply(instance, VillageSeedsLootModifier::new));
+    *///?} else {
     public static final MapCodec<VillageSeedsLootModifier> CODEC = RecordCodecBuilder.mapCodec(
             instance -> codecStart(instance).apply(instance, VillageSeedsLootModifier::new));
+    //?}
 
     /** 平原/热带草原/针叶林村庄的种子池 */
     private static final Entry[] TEMPERATE = {
@@ -58,10 +72,17 @@ public class VillageSeedsLootModifier extends LootModifier
     }
 
     @Override
+    //? if <1.20.5 {
+    /*public Codec<? extends IGlobalLootModifier> codec()
+    {
+        return CODEC;
+    }*/
+    //?} else {
     public MapCodec<? extends IGlobalLootModifier> codec()
     {
         return CODEC;
     }
+    //?}
 
     @Override
     protected ObjectArrayList<ItemStack> doApply(ObjectArrayList<ItemStack> generatedLoot, LootContext context)

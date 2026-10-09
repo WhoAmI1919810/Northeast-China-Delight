@@ -1,5 +1,6 @@
 package com.gunmu.northeast_china_delight;
 
+import com.gunmu.northeast_china_delight.util.DdIds;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
@@ -18,8 +19,34 @@ public final class ModTags {
     }
 
     private static TagKey<Item> item(String path) {
-        return TagKey.create(Registries.ITEM, ResourceLocation.fromNamespaceAndPath("c", path));
+        //? if <1.20.5 {
+        /*return TagKey.create(Registries.ITEM, DdIds.of("forge", legacyPath(path)));*/
+        //?} else {
+        return TagKey.create(Registries.ITEM, DdIds.of("c", path));
+        //?}
     }
+
+    /**
+     * 1.20.4 用的标签路径：通用标签在 {@code forge:} 命名空间下，而且有几条在 1.20.4 的名字
+     * 和 1.21 的 {@code c:} 不一样（跟着农夫乐事的 1.20.4 版本走）。
+     *
+     * <p>这张表要和 {@code gradle/legacy-data-port.groovy} 里的 {@code legacyTagPathRenames} 对齐。</p>
+     */
+    //? if <1.20.5 {
+    /*private static String legacyPath(String path) {
+        return switch (path) {
+            case "foods/dough/wheat" -> "dough/wheat";
+            case "foods/raw_fish" -> "raw_fishes";
+            case "foods/raw_beef" -> "raw_beef";
+            case "foods/raw_chicken" -> "raw_chicken";
+            case "foods/raw_mutton" -> "raw_mutton";
+            case "foods/raw_pork" -> "raw_pork";
+            case "foods/bread" -> "bread";
+            case "tools/knife" -> "tools/knives";
+            default -> path;
+        };
+    }*/
+    //?}
 
     public static final TagKey<Item> CROPS_WHEAT = item("crops/wheat");
     public static final TagKey<Item> CROPS_CARROT = item("crops/carrot");

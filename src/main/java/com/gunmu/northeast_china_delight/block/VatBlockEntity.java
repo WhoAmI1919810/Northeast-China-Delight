@@ -1,11 +1,21 @@
 package com.gunmu.northeast_china_delight.block;
 
-import com.gunmu.northeast_china_delight.NortheastChinaDelight;
 import com.gunmu.northeast_china_delight.crafting.VatRecipes;
 import com.gunmu.northeast_china_delight.fluid.ModFluids;
 import com.gunmu.northeast_china_delight.item.ModItems;
 import com.gunmu.northeast_china_delight.ModTags;
+import com.gunmu.northeast_china_delight.NortheastChinaDelight;
+import com.gunmu.northeast_china_delight.util.DdIds;
+import com.gunmu.northeast_china_delight.util.DdNbt;
+//? if <1.20.2 {
+/*import net.minecraft.advancements.Advancement;
+import net.minecraft.core.Direction;
+import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.capabilities.ForgeCapabilities;
+import net.minecraftforge.common.util.LazyOptional;
+*///?} else {
 import net.minecraft.advancements.AdvancementHolder;
+//?}
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.core.NonNullList;
@@ -23,8 +33,17 @@ import net.minecraft.world.level.material.Fluid;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.resources.ResourceLocation;
+//? if <1.20.2 {
+/*import net.minecraftforge.fluids.FluidStack;
+*///?} else {
 import net.neoforged.neoforge.fluids.FluidStack;
+//?}
+//? if <1.20.2 {
+/*import net.minecraftforge.fluids.capability.IFluidHandler;
+*///?} else {
 import net.neoforged.neoforge.fluids.capability.IFluidHandler;
+//?}
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -38,6 +57,26 @@ import net.minecraft.world.phys.Vec3;
  * 大酱 / 酱油按 mB 记账（1 份 = 250 mB），这样既能用碗、瓶取，也能被流体管道抽走。
  */
 public class VatBlockEntity extends BlockEntity implements IFluidHandler {
+
+    //? if <1.20.2 {
+    /*// 1.20.1（Forge）靠 ICapabilityProvider + LazyOptional 暴露流体能力；
+    // 1.20.2 起换成在 RegisterCapabilitiesEvent 里注册（见 NortheastChinaDelight）。
+    private final LazyOptional<IFluidHandler> fluidHandler = LazyOptional.of(() -> this);
+
+    @Override
+    public <T> LazyOptional<T> getCapability(Capability<T> capability, @Nullable Direction side) {
+        if (capability == ForgeCapabilities.FLUID_HANDLER) {
+            return fluidHandler.cast();
+        }
+        return super.getCapability(capability, side);
+    }
+
+    @Override
+    public void invalidateCaps() {
+        super.invalidateCaps();
+        fluidHandler.invalidate();
+    }
+    *///?}
 
     /** 内容物条目上限（5 份蔬菜 + 1 份盐，或 5 块肉 + 5 份盐） */
     public static final int MAX_ENTRIES = 12;
@@ -648,7 +687,11 @@ public class VatBlockEntity extends BlockEntity implements IFluidHandler {
     @Override
     public FluidStack drain(FluidStack resource, FluidAction action) {
         Fluid fluid = productFluid();
+        //? if <1.20.2 {
+        /*if (fluid == null || resource.isEmpty() || resource.getFluid() != fluid) {
+        *///?} else {
         if (fluid == null || resource.isEmpty() || !resource.is(fluid)) {
+        //?}
             return FluidStack.EMPTY;
         }
         return drain(resource.getAmount(), action);
@@ -703,8 +746,13 @@ public class VatBlockEntity extends BlockEntity implements IFluidHandler {
         if (!(this.level instanceof ServerLevel serverLevel)) {
             return;
         }
+        //? if <1.20.2 {
+        /*Advancement advancement = serverLevel.getServer().getAdvancements().getAdvancement(
+                DdIds.of(NortheastChinaDelight.MODID, "pump_seasoning"));
+        *///?} else {
         AdvancementHolder advancement = serverLevel.getServer().getAdvancements().get(
-                ResourceLocation.fromNamespaceAndPath(NortheastChinaDelight.MODID, "pump_seasoning"));
+                DdIds.of(NortheastChinaDelight.MODID, "pump_seasoning"));
+        //?}
         if (advancement == null) {
             return;
         }
@@ -719,15 +767,27 @@ public class VatBlockEntity extends BlockEntity implements IFluidHandler {
     // ===== 存档与同步 =====
 
     @Override
+    //? if <1.20.5 {
+    /*protected void saveAdditional(CompoundTag tag) {
+        super.saveAdditional(tag);
+        this.saveVatData(tag, null);
+    }*/
+    //?} else {
     protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.saveAdditional(tag, registries);
-        ContainerHelper.saveAllItems(tag, this.contents, registries);
+        this.saveVatData(tag, registries);
+    }
+    //?}
+
+    /** 存档主体（两个版本共用）；1.20.4 没有注册表参数，传 null 即可 */
+    private void saveVatData(CompoundTag tag, @Nullable HolderLookup.Provider registries) {
+        DdNbt.saveAllItems(tag, this.contents, true, registries);
         // 注意：空的 ItemStack 不能存档，必须判空
         if (!this.press.isEmpty()) {
-            tag.put("press", this.press.save(registries));
+            tag.put("press", DdNbt.saveItem(this.press, registries));
         }
         if (!this.cover.isEmpty()) {
-            tag.put("cover", this.cover.save(registries));
+            tag.put("cover", DdNbt.saveItem(this.cover, registries));
         }
         tag.putInt("paste_mb", this.pasteMb);
         tag.putInt("soy_sauce_mb", this.soySauceMb);
@@ -742,20 +802,32 @@ public class VatBlockEntity extends BlockEntity implements IFluidHandler {
     }
 
     @Override
+    //? if <1.20.5 {
+    /*public void load(CompoundTag tag) {
+        super.load(tag);
+        this.loadVatData(tag, null);
+    }*/
+    //?} else {
     protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.loadAdditional(tag, registries);
+        this.loadVatData(tag, registries);
+    }
+    //?}
+
+    /** 读档主体（两个版本共用） */
+    private void loadVatData(CompoundTag tag, @Nullable HolderLookup.Provider registries) {
         // 关键：loadAllItems 只会覆盖 NBT 里存在的槽位，不会清空原有数据。
         // 不先清空的话，被取走的物品会残留在客户端那份数据里，表现为「取出了但模型不消失」。
         for (int i = 0; i < MAX_ENTRIES; i++) {
             this.contents.set(i, ItemStack.EMPTY);
         }
-        ContainerHelper.loadAllItems(tag, this.contents, registries);
+        DdNbt.loadAllItems(tag, this.contents, registries);
         // 必须先判空：空的 CompoundTag 会被当成一次「解析失败的物品」并刷一条错误日志
         this.press = tag.contains("press")
-                ? ItemStack.parse(registries, tag.getCompound("press")).orElse(ItemStack.EMPTY)
+                ? DdNbt.parseItem(tag.getCompound("press"), registries)
                 : ItemStack.EMPTY;
         this.cover = tag.contains("cover")
-                ? ItemStack.parse(registries, tag.getCompound("cover")).orElse(ItemStack.EMPTY)
+                ? DdNbt.parseItem(tag.getCompound("cover"), registries)
                 : ItemStack.EMPTY;
         // 旧存档里可能记着已经删掉的加工类型（比如早已废弃的「水面团」DOUGH）：
         // 认不出来就当成空缸，绝不因为一条老数据把存档读崩
@@ -807,9 +879,15 @@ public class VatBlockEntity extends BlockEntity implements IFluidHandler {
     }
 
     @Override
+    //? if <1.20.5 {
+    /*public CompoundTag getUpdateTag() {
+        return this.saveWithoutMetadata();
+    }*/
+    //?} else {
     public CompoundTag getUpdateTag(HolderLookup.Provider registries) {
         return this.saveWithoutMetadata(registries);
     }
+    //?}
 
     /** 把存档里的加工类型名字转回枚举，认不出来（旧版本删掉的类型）就当空缸 */
     private static VatRecipes.Kind parseKind(String name) {
