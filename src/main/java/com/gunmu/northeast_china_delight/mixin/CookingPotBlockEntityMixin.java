@@ -1,5 +1,7 @@
 package com.gunmu.northeast_china_delight.mixin;
 
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
+import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.gunmu.northeast_china_delight.item.SeasoningBottleItem;
 import com.gunmu.northeast_china_delight.item.ModItems;
 //? if >=1.20.2 {
@@ -17,7 +19,6 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import vectorwing.farmersdelight.common.block.entity.CookingPotBlockEntity;
 import vectorwing.farmersdelight.common.crafting.CookingPotRecipe;
@@ -35,6 +36,10 @@ import vectorwing.farmersdelight.common.crafting.CookingPotRecipe;
  * </ul>
  *
  * 其余食材（牛奶桶之类）完全按农夫乐事原本的行为走。
+ *
+ * <p>这两处都用 {@code @WrapOperation} 而不是 {@code @Redirect}：Redirect 是「抢占」那条指令，
+ * 同一个指令上再出现一个 Redirect（别的模组也炖锅调味的话）会直接冲突崩溃；
+ * WrapOperation 是后置包装，多个模组可以一层层套着，各自拿到 {@code original} 继续往下调。
  */
 @Mixin(CookingPotBlockEntity.class)
 public abstract class CookingPotBlockEntityMixin {
@@ -66,27 +71,27 @@ public abstract class CookingPotBlockEntityMixin {
     }
 
     /** 调料瓶不弹出锅外，留在锅里下一锅接着用 */
-    @Redirect(
+    @WrapOperation(
             method = "processCooking",
             remap = false,
             at = @At(
                     value = "INVOKE",
                     target = "Lvectorwing/farmersdelight/common/block/entity/CookingPotBlockEntity;ejectIngredientRemainder(Lnet/minecraft/world/item/ItemStack;)V"))
-    private void northeast$keepBottleInPot(CookingPotBlockEntity pot, ItemStack remainder) {
+    private void northeast$keepBottleInPot(CookingPotBlockEntity pot, ItemStack remainder, Operation<Void> original) {
         if (SeasoningBottleItem.isBottle(remainder)) {
             return;
         }
-        ((CookingPotBlockEntityInvoker) pot).northeast$ejectIngredientRemainder(remainder);
+        original.call(pot, remainder);
     }
 
     /** 调料瓶不整瓶消耗，改成扣 50 mB 后留在锅里 */
-    @Redirect(
+    @WrapOperation(
             method = "processCooking",
             remap = false,
             at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/ItemStack;shrink(I)V", remap = true))
-    private void northeast$useOneDose(ItemStack stack, int amount) {
+    private void northeast$useOneDose(ItemStack stack, int amount, Operation<Void> original) {
         if (!SeasoningBottleItem.isBottle(stack)) {
-            stack.shrink(amount);
+            original.call(stack, amount);
             return;
         }
         // 油炸菜里的油一次用光：整瓶扣掉，只把空玻璃瓶还给玩家

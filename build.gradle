@@ -205,6 +205,18 @@ dependencies {
         // 少了它就是 -proc:none，refmap 不生成，reobfJar 会报找不到
         // build/mixin/<mod_id>.refmap.json.mappings.tsrg。Create 1.20.1 也是这么写的。
         annotationProcessor "org.spongepowered:mixin:0.8.5:processor"
+
+        // MixinExtras：@WrapOperation 的注解与运行时实现。
+        //   compileOnly        —— 编译期拿 com.llamalad7.mixinextras 的注解/Operation（用 common 包，forge 包是套壳）
+        //   annotationProcessor—— 它的注解处理器把 @WrapOperation 的目标写进 refmap；
+        //                         没有这条，SRG 环境里 shrink 那条注入会找不到目标
+        //   localRuntime       —— 开发环境直接按模组加载（Forge 47.x 不自带 MixinExtras）
+        //   jarJar             —— 正式包内嵌（FML 会连它自己的嵌套 jar 一起处理）
+        compileOnly "io.github.llamalad7:mixinextras-common:${mixinextras_version}"
+        annotationProcessor "io.github.llamalad7:mixinextras-common:${mixinextras_version}"
+        localRuntime "io.github.llamalad7:mixinextras-forge:${mixinextras_version}"
+        jarJar "io.github.llamalad7:mixinextras-forge:${mixinextras_version}"
+
     } else if (sc.current.version.compareTo('1.20.5') >= 0) {
         // 农夫乐事：编译期引用其 API，开发运行时实际加载
         compileOnly "maven.modrinth:farmers-delight:${farmersdelight_version}"
