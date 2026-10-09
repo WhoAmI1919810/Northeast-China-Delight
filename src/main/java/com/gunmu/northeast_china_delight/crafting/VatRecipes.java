@@ -146,35 +146,36 @@ public final class VatRecipes {
     //   醋 ≈ 20 天、鱼露虾酱 ≈ 数月 —— 全部按比例压进 MC 的"几天"里，
     //   再用群系温度带做快慢：乳酸菌越冷越慢、越热越快；
     //   咸鱼腊肉在热带反而要捂出霉味 → 多给 50%。
-    // 2026-10-09：第一版太熬人，整张表统一减半（下面注释里的天数也按减半后的读）。
-    /** 泡菜：每层水位的发酵秒数（基准 = 半天） */
-    public static final int PICKLE_SECONDS_PER_LAYER = 600;
-    /** 辣白菜：每层水位的发酵秒数（基准 = 半天） */
-    public static final int SPICY_PICKLE_SECONDS_PER_LAYER = 600;
-    /** 咸腊肉：基准 1 天 */
-    public static final int MEAT_SECONDS = 1200;
-    /** 咸鱼：基准 1 天 */
-    public static final int SALTED_FISH_SECONDS = 1200;
-    /** 大酱：基准 2.5 天（现实一个月压缩到 2.5 天） */
-    public static final int PASTE_SECONDS = 3000;
-    /** 酱油：基准 2.5 天 */
-    public static final int SOY_SAUCE_SECONDS = 3000;
-    /** 醋：基准 2 天 */
-    public static final int VINEGAR_SECONDS = 2400;
-    /** 白醋：基准 1.5 天 */
-    public static final int WHITE_VINEGAR_SECONDS = 1800;
-    /** 鱼露：基准 2 天 */
-    public static final int FISH_SAUCE_SECONDS = 2400;
-    /** 虾酱：基准 2 天 */
-    public static final int SHRIMP_PASTE_SECONDS = 2400;
-    /** 豆芽：四分之一天 */
-    public static final int BEAN_SPROUTS_SECONDS = 300;
-    /** 酸玉米粒：基准 半天/层 */
-    public static final int SOUR_CORN_SECONDS = 600;
-    /** 格瓦斯：基准 半天 */
-    public static final int KVASS_SECONDS = 600;
-    /** 冻梨：四分之一天（雪地里冻半天就黑透了） */
-    public static final int FROZEN_PEAR_SECONDS = 300;
+    // 2026-10-09：第一版太熬人，整张表统一减半；同日又按用户要求再缩到当时的 1/10
+    //   （合计 = 初版的 1/20），现在全都落在半分钟到五分钟这个量级。
+    /** 泡菜：每层水位的发酵秒数（基准 60 秒） */
+    public static final int PICKLE_SECONDS_PER_LAYER = 60;
+    /** 辣白菜：每层水位的发酵秒数（基准 60 秒） */
+    public static final int SPICY_PICKLE_SECONDS_PER_LAYER = 60;
+    /** 咸腊肉：基准 120 秒 */
+    public static final int MEAT_SECONDS = 120;
+    /** 咸鱼：基准 120 秒 */
+    public static final int SALTED_FISH_SECONDS = 120;
+    /** 大酱：基准 300 秒 */
+    public static final int PASTE_SECONDS = 300;
+    /** 酱油：基准 300 秒 */
+    public static final int SOY_SAUCE_SECONDS = 300;
+    /** 醋：基准 240 秒 */
+    public static final int VINEGAR_SECONDS = 240;
+    /** 白醋：基准 180 秒 */
+    public static final int WHITE_VINEGAR_SECONDS = 180;
+    /** 鱼露：基准 240 秒 */
+    public static final int FISH_SAUCE_SECONDS = 240;
+    /** 虾酱：基准 240 秒 */
+    public static final int SHRIMP_PASTE_SECONDS = 240;
+    /** 豆芽：基准 30 秒 */
+    public static final int BEAN_SPROUTS_SECONDS = 30;
+    /** 酸玉米粒：基准 60 秒/层 */
+    public static final int SOUR_CORN_SECONDS = 60;
+    /** 格瓦斯：基准 60 秒 */
+    public static final int KVASS_SECONDS = 60;
+    /** 冻梨：基准 30 秒（雪地里冻一小会儿就黑透了） */
+    public static final int FROZEN_PEAR_SECONDS = 30;
 
     // ===== 各温度带的时长倍率 =====
     // 1.0 = 基准时长；越小越快。
