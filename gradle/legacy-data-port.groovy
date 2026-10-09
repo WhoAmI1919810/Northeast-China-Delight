@@ -1,44 +1,40 @@
 // 1.20.x（< 1.20.5）节点的数据包转换。
 //
-// 1.21 与 1.20.4 的数据包形态不同，这里在 processResources 复制完资源之后，就地把
-// build/resources/main/data/** 改成 1.20.4 认识的样子：
+// 1.21 与 1.20.1 的数据包形态不同，这里在 processResources 复制完资源之后，就地把
+// build/resources/main/data/** 改成 1.20.1 认识的样子：
 //
 //   1. 目录改名：advancement→advancements、loot_table→loot_tables、recipe→recipes、
 //      structure→structures；标签目录 block/item/entity_type/fluid/game_event 改复数。
-//   2. JSON 结构：1.21 的 ItemStack 写 "id"，1.20.4 的配方结果/容器/进度图标写 "item"。
-//   3. 标签命名空间：1.21 的通用标签在 c:，1.20.4 在 forge:；几处别家模组改了名字的标签
+//   2. JSON 结构：1.21 的 ItemStack 写 "id"，1.20.1 的配方结果/容器/进度图标写 "item"。
+//   3. 标签命名空间：1.21 的通用标签在 c:，1.20.1 在 forge:；几处别家模组改了名字的标签
 //      见 legacyTagPathRenames（改名同时作用于配方里的引用和标签定义文件的路径，
 //      否则会出现「配方引用 forge:raw_fishes、定义却停在 forge:foods/raw_fish」这种空配方）。
-//   4. 1.20.4 没有机械动力：create: 配方整组丢掉，连带 create 专属的进度。
-//      （1.20.1 有机械动力：调用时传 keepCreate = true，这两步都不做，其余转换照旧。）
-//   5. 条件/原料类型改名：neoforge:can_item_perform_ability → neoforge:can_tool_perform_action
-//      （字段 ability → action）；neoforge:components 原料 → 普通物品原料（1.20.4 没有数据组件）。
-//   6. 农夫乐事切菜板：1.20.4 的 result 直接是 ItemStack，tool 只收单个原料。
-//   7. 1.20.4 上不存在的模组（create）出现在标签里时，条目改写成 required:false，
-//      否则 1.20.4 会因「引用了不存在的物品」把整条标签丢掉。
-//   8. 掉落条件里 1.21 的 "entity": "attacker" 改回 1.20.4 的 "killer"；
-//      物品谓词的 "items": "#tag" 改成 1.20.4 的 "tag": "tag"。
+//   4. 条件/原料类型改名：neoforge:can_item_perform_ability → neoforge:can_tool_perform_action
+//      （字段 ability → action）；neoforge:components 原料 → 普通物品原料（1.20.1 没有数据组件）。
+//   5. 农夫乐事切菜板：1.20.x 的 result 直接是 ItemStack，tool 只收单个原料。
+//   6. 掉落条件里 1.21 的 "entity": "attacker" 改回 1.20.x 的 "killer"；
+//      物品谓词的 "items": "#tag" 改成 1.20.x 的 "tag": "tag"。
 //
-// 1.20.1（keepCreate = true）比 1.20.4 多一步「NeoForge 名字 → Forge 名字」：
-//   9. 战利品条件 / 配方条件 / 生物群系修改器类型：neoforge:* → forge:*
+// 1.20.1 特有的是「NeoForge 名字 → Forge 名字」：
+//   7. 战利品条件 / 配方条件 / 生物群系修改器类型：neoforge:* → forge:*
 //      （neoforge:loot_table_id → forge:loot_table_id、neoforge:mod_loaded → forge:mod_loaded、
 //        neoforge:add_features → forge:add_features……；工具动作条件统一成 field=action 的
 //        forge:can_tool_perform_action）。
-//  10. 注册表目录：data/<ns>/neoforge/biome_modifier → data/<ns>/forge/biome_modifier；
+//   8. 注册表目录：data/<ns>/neoforge/biome_modifier → data/<ns>/forge/biome_modifier；
 //      全局掉落修改器清单 data/neoforge/loot_modifiers/global_loot_modifiers.json
 //      → data/forge/loot_modifiers/global_loot_modifiers.json（Forge 1.20.1 只读后者）。
-//  11. 机械动力的配方形态（Create 6.0.8 / 1.20.1）：
+//   9. 机械动力的配方形态（Create 6.0.8 / 1.20.1）：
 //      流体原料去掉 "type": "neoforge:single" 包装，直接 {"amount":N,"fluid":X}；
 //      输出里带 "amount" 的 "id" 写 "fluid"、不带的写 "item"；
 //      sequenced_assembly 的 "transitional_item" 要写成驼峰 "transitionalItem"。
-//  12. Forge 1.20.1 的配方不认顶层 forge:conditions，带条件的配方要整条包进
+//  10. Forge 1.20.1 的配方不认顶层 forge:conditions，带条件的配方要整条包进
 //      forge:conditional（否则条件被忽略、缺模组时配方会报解析错误）。
-//  13. 1.20.1 没有数据表（data map）：data/neoforge/data_maps/** 丢掉，
+//  11. 1.20.1 没有数据表（data map）：data/neoforge/data_maps/** 丢掉，
 //      燃烧时长改由 ModGameplayEvents 的 FurnaceFuelBurnTimeEvent 处理器给。
 //
 // 注意：标签改名表要和 Java 侧 ModTags（< 1.20.5 分支）保持一致。
-// 已核对农夫乐事 1.20.1-1.3.4 的 jar：forge: 命名空间下的标签路径与 1.20.4 一致
-//（bread、bread/wheat、dough/wheat、raw_fishes、cooked_fishes、tools/knives……）。
+// 已核对农夫乐事 1.20.1-1.3.4 的 jar：forge: 命名空间下的标签路径（bread、bread/wheat、
+// dough/wheat、raw_fishes、cooked_fishes、tools/knives……）与转换结果一致。
 
 import groovy.json.JsonOutput
 import groovy.json.JsonSlurper
@@ -62,7 +58,7 @@ ext.legacyTagDirRenames = [
         'game_event' : 'game_events',
 ]
 
-// 1.21 的 c:<path> 在 1.20.4 里叫 forge:<改过的 path>（没列出来的就是同名）
+// 1.21 的 c:<path> 在 1.20.1 里叫 forge:<改过的 path>（没列出来的就是同名）
 ext.legacyTagPathRenames = [
         'foods/dough/wheat': 'dough/wheat',
         'foods/raw_fish'   : 'raw_fishes',
@@ -75,20 +71,8 @@ ext.legacyTagPathRenames = [
         'foods/fruits/pear': 'fruits/pear',
 ]
 
-// 只有机械动力才有的配方目录（1.20.4 没有机械动力）
-ext.legacyCreateRecipeDirs = ['compacting', 'emptying', 'filling', 'milling', 'mixing', 'pressing', 'sequenced_assembly'] as Set
-
-// 依赖机械动力的文件（图标就是 create 的物品，1.20.4 里不存在）
-ext.legacyDroppedFiles = ['data/northeast_china_delight/advancement/pump_seasoning.json'] as Set
-
-// 1.20.4 上不存在的模组：它们在标签里的条目要显式标成 required:false。
-// 1.20.4 的 TagEntry 默认 required=true，缺一个引用就整条标签加载失败
-//（TagLoader#build 返回 left → 只打 error 日志、不注册该标签），
-// 所以像是 forge:plates/brass 这种"条目全来自 create"的标签会整个消失。
-ext.legacyOptionalNamespaces = ['create'] as Set
-
-// 1.21 把战利品上下文里的实体目标改了名，1.20.4 还是老名字
-//（LootContext.EntityTarget：1.20.4 = killer/direct_killer/killer_player）
+// 1.21 把战利品上下文里的实体目标改了名，1.20.1 还是老名字
+//（LootContext.EntityTarget：1.20.1 = killer/direct_killer/killer_player）
 ext.legacyEntityTargetRenames = [
         'attacker'        : 'killer',
         'direct_attacker' : 'direct_killer',
@@ -97,7 +81,7 @@ ext.legacyEntityTargetRenames = [
 
 // ===== 1.20.1（Forge 47.1）和 1.21.1（NeoForge）的注册名差异 =====
 // 1.20.1 的 Forge 没有 neoforge: 这一套名字，对应的都挂在 forge: 下。
-// 下面两张表只在 keepCreate（= 1.20.1）时生效，1.20.4 的 neoforge: 名字保持原样。
+// 下面两张表把 1.21 的 neoforge: 名字映射到 1.20.1 Forge 的 forge:。
 ext.legacy1201ConditionRenames = [
         'neoforge:loot_table_id'          : 'forge:loot_table_id',
         'neoforge:can_tool_perform_action': 'forge:can_tool_perform_action',
@@ -109,7 +93,7 @@ ext.legacy1201TypeRenames = [
         'neoforge:add_features': 'forge:add_features',
 ]
 
-/** c:xxx / c:xxx 形式的标签 id → 1.20.4 的 forge:xxx */
+/** c:xxx 形式的标签 id → 1.20.1 的 forge:xxx */
 ext.legacyRemapTagId = { String id ->
     if (!id.startsWith('c:')) {
         return id
@@ -156,7 +140,7 @@ ext.legacyUnescapeUnicode = { String json ->
 ext.legacyTransformNode = { Object node, Map env ->
     if (node instanceof Map) {
         def map = node as Map
-        // 1.20.4 没有数据组件：neoforge:components 原料退化成普通物品原料
+        // 1.20.1 没有数据组件：neoforge:components 原料退化成普通物品原料
         if (map.get('type') == 'neoforge:components') {
             def items = map.get('items')
             def one = items instanceof List ? items.get(0) : items
@@ -167,58 +151,57 @@ ext.legacyTransformNode = { Object node, Map env ->
         // 1.20.1 的 Create 流体原料没有 "type" 包装：
         //   {"type":"neoforge:single","amount":N,"fluid":X} → {"amount":N,"fluid":X}
         // 1.21 的流体标签写法同理退化成 1.20.1 的 "fluidTag"
-        if (env.legacy1201 && map.get('type') == 'neoforge:single') {
+        if (map.get('type') == 'neoforge:single') {
             env.changed = true
             map = new LinkedHashMap(map)
             map.remove('type')
-        } else if (env.legacy1201 && map.get('type') == 'neoforge:tag') {
+        } else if (map.get('type') == 'neoforge:tag') {
             env.changed = true
             map = new LinkedHashMap(map)
             map.remove('type')
             def tagId = map.remove('tag')
             out.put('fluidTag', tagId)
         }
-        // 工具动作条件：1.20.4 是 neoforge:can_tool_perform_action（字段 action），
-        // 1.20.1 的 Forge 叫 forge:can_tool_perform_action，字段一样是 action
+        // 工具动作条件：1.20.1 的 Forge 叫 forge:can_tool_perform_action（字段 action）
         if (map.get('condition') == 'neoforge:can_item_perform_ability') {
             env.changed = true
             map = new LinkedHashMap(map)
             map.remove('condition')
             def action = map.remove('ability')
-            out.put('condition', env.legacy1201 ? 'forge:can_tool_perform_action' : 'neoforge:can_tool_perform_action')
+            out.put('condition', 'forge:can_tool_perform_action')
             out.put('action', action)
         }
         map.each { Object k, Object v ->
             def key = k as String
             // 1.20.1：注册名从 neoforge: 挪到 forge:
-            if (env.legacy1201 && key == 'condition' && v instanceof String && legacy1201ConditionRenames.containsKey(v)) {
+            if (key == 'condition' && v instanceof String && legacy1201ConditionRenames.containsKey(v)) {
                 env.changed = true
                 out.put(key, legacy1201ConditionRenames[v])
                 return
             }
             // 配方/战利品里的条件对象也用 "type"（如 {"type":"neoforge:mod_loaded"}），
             // 所以两张表都要看
-            if (env.legacy1201 && key == 'type' && v instanceof String
+            if (key == 'type' && v instanceof String
                     && (legacy1201TypeRenames.containsKey(v) || legacy1201ConditionRenames.containsKey(v))) {
                 env.changed = true
                 out.put(key, legacy1201TypeRenames.get(v) ?: legacy1201ConditionRenames[v])
                 return
             }
             // 1.20.1 的配方条件键叫 forge:conditions（1.21 才是 neoforge:conditions）
-            if (env.legacy1201 && key == 'neoforge:conditions') {
+            if (key == 'neoforge:conditions') {
                 env.changed = true
                 out.put('forge:conditions', legacyTransformNode(v, env))
                 return
             }
             // 1.20.1 的 create:sequenced_assembly 要的是驼峰写法 transitionalItem
-            if (env.legacy1201 && env.recipe && key == 'transitional_item') {
+            if (env.recipe && key == 'transitional_item') {
                 env.changed = true
                 out.put('transitionalItem', legacyTransformNode(v, env))
                 return
             }
-            // 1.20.4 的 ItemPredicate 还没有并成 HolderSet：标签要写进单独的 "tag" 字段，
+            // 1.20.x 的 ItemPredicate 还没有并成 HolderSet：标签要写进单独的 "tag" 字段，
             // 而且 TagKey.codec 不带 "#" 前缀（1.21 是 "items": "#tag" 写在一起）。
-            // 不转的话 1.20.4 会报 "Not a json array"，整条掉落修改器被丢掉。
+            // 不转的话 1.20.1 会报 "Not a json array"，整条掉落修改器被丢掉。
             if (key == 'items' && v instanceof String) {
                 def s = v as String
                 env.changed = true
@@ -242,7 +225,7 @@ ext.legacyTransformNode = { Object node, Map env ->
                 env.changed = true
                 return
             }
-            // 进度图标：1.20.4 的 display.icon 用 "item"
+            // 进度图标：1.20.1 的 display.icon 用 "item"
             if (env.advancement && key == 'icon' && v instanceof Map && (v as Map).containsKey('id')) {
                 def icon = new LinkedHashMap(v as Map)
                 def iconId = icon.remove('id')
@@ -283,7 +266,7 @@ ext.legacyTransformNode = { Object node, Map env ->
             }
             out.put(key, legacyTransformNode(v, env))
         }
-        // 农夫乐事切菜板：1.20.4 的 result 直接是 ItemStack，tool 只收单个原料
+        // 农夫乐事切菜板：1.20.x 的 result 直接是 ItemStack，tool 只收单个原料
         if (map.get('type') == 'farmersdelight:cutting') {
             def result = out.get('result')
             if (result instanceof List) {
@@ -323,11 +306,9 @@ ext.legacyTransformNode = { Object node, Map env ->
 }
 
 /**
- * 把 build/resources/main/data 就地转成 1.20.x 形态。
- *
- * @param keepCreate 1.20.1 传 true：保留 create: 配方与依赖机械动力的进度（1.20.4 传 false）
+ * 把 build/resources/main/data 就地转成 1.20.1 形态。
  */
-ext.portLegacyDataTree = { File resourcesDir, boolean keepCreate = false ->
+ext.portLegacyDataTree = { File resourcesDir ->
     File dataDir = new File(resourcesDir, 'data')
     if (!dataDir.isDirectory()) {
         return
@@ -374,61 +355,30 @@ ext.portLegacyDataTree = { File resourcesDir, boolean keepCreate = false ->
         // 1.20.1 的注册表命名空间也是 forge:（neoforge: 是 1.21 才改的名）：
         //   data/<ns>/neoforge/biome_modifier/*.json → data/<ns>/forge/biome_modifier/*.json
         //   全局掉落修改器的清单必须是 forge:loot_modifiers/global_loot_modifiers.json
-        if (keepCreate) {
-            if (rest.size() > 1 && rest[0] == 'neoforge' && rest[1] == 'biome_modifier') {
-                rest[0] = 'forge'
-            } else if (ns == 'neoforge' && rest[0] == 'loot_modifiers') {
-                ns = 'forge'
-            }
+        if (rest.size() > 1 && rest[0] == 'neoforge' && rest[1] == 'biome_modifier') {
+            rest[0] = 'forge'
+        } else if (ns == 'neoforge' && rest[0] == 'loot_modifiers') {
+            ns = 'forge'
         }
         def newRel = ([ns] + rest).join('/')
 
-        // ---- 整组丢弃：机械动力的配方与文件（1.20.4 没有 Create；1.20.1 有，保留） ----
-        if (!keepCreate) {
-            if (rest[0] == 'recipes' && rest.size() > 1 && legacyCreateRecipeDirs.contains(rest[1])) {
-                src.delete()
-                stats.dropped++
-                return
-            }
-            if (legacyDroppedFiles.contains('data/' + rel)) {
-                src.delete()
-                stats.dropped++
-                return
-            }
-        } else if (rel.startsWith('neoforge/data_maps/')) {
-            // 1.20.1 的 Forge 没有数据表这一套，留着既没用也容易误导（见文件头第 13 条）
+        // ---- 整组丢弃：1.20.1 的 Forge 没有数据表（data map）这一套（见文件头第 11 条） ----
+        if (rel.startsWith('neoforge/data_maps/')) {
             src.delete()
             stats.dropped++
             return
         }
 
         // ---- JSON 内容改写 ----
-        def env = [changed: false, recipe: newRel.contains('/recipes/'), advancement: newRel.contains('/advancements/'),
-                   legacy1201: keepCreate]
+        def env = [changed: false, recipe: newRel.contains('/recipes/'), advancement: newRel.contains('/advancements/')]
         if (rel.endsWith('.json')) {
             def root = slurper.parse(src, 'UTF-8')
-            // 1.20.4 里不存在的模组：把标签条目改成 {id: ..., required: false}
-            //（1.20.1 上这些模组都在，不动）
-            if (!keepCreate && isTagFile && root instanceof Map && (root as Map).get('values') instanceof List) {
-                def values = (root as Map).get('values') as List
-                (root as Map).put('values', values.collect { Object v ->
-                    if (v instanceof String) {
-                        def raw = v as String
-                        def id = raw.startsWith('#') ? raw.substring(1) : raw
-                        if (legacyOptionalNamespaces.contains(id.split(':', 2)[0])) {
-                            env.changed = true
-                            return ['id': raw, 'required': false]
-                        }
-                    }
-                    return v
-                })
-            }
             def rewritten = legacyTransformNode(root, env)
             // Forge 1.20.1 只在 forge:conditional 这个序列化器里支持配方条件，
             // 顶层 forge:conditions 会被当成无关字段忽略（缺模组时配方直接报错）。
             // 所以带条件的配方整条包一层：
             //   {"type":"forge:conditional","recipes":[{"conditions":[...],"recipe":{原配方}}]}
-            if (env.legacy1201 && env.recipe && rewritten instanceof Map
+            if (env.recipe && rewritten instanceof Map
                     && (rewritten as Map).containsKey('forge:conditions')) {
                 def wrapper = new LinkedHashMap(rewritten as Map)
                 def recipeCondition = wrapper.remove('forge:conditions')
@@ -448,9 +398,9 @@ ext.portLegacyDataTree = { File resourcesDir, boolean keepCreate = false ->
                 return
             }
         }
-        // ---- 结构 NBT：物品堆格式回退（第 16 条） ----
+        // ---- 结构 NBT：物品堆格式回退（第 14 条） ----
         if (rel.endsWith('.nbt')) {
-            if (legacyPortStructureNbt(src, keepCreate ? 3465 : 3700)) {
+            if (legacyPortStructureNbt(src, 3465)) {
                 stats.nbt++
             }
         }
@@ -466,23 +416,23 @@ ext.portLegacyDataTree = { File resourcesDir, boolean keepCreate = false ->
     dataDir.eachDirRecurse { File d -> dirs << d }
     dirs.sort { a, b -> b.path.length() <=> a.path.length() }
     dirs.each { File d -> if (!d.list() || d.list().length == 0) { d.delete() } }
-    println "[legacy-data] ${keepCreate ? '1.20.1' : '1.20.4'} 数据包转换完成：改名 ${stats.renamed}、改写 ${stats.rewritten}、丢弃 ${stats.dropped}、结构 NBT ${stats.nbt}"
+    println "[legacy-data] 1.20.1 数据包转换完成：改名 ${stats.renamed}、改写 ${stats.rewritten}、丢弃 ${stats.dropped}、结构 NBT ${stats.nbt}"
 }
-//  14. 位置谓词：1.21 是 "structures"（HolderSet），1.20.x 只有 "structure"（单个 id）。
+//  12. 位置谓词：1.21 是 "structures"（HolderSet），1.20.x 只有 "structure"（单个 id）。
 //      不改名的话旧版把它当未知字段忽略 → 条件退化成「任何位置都满足」，进度一进游戏就弹。
-//  15. 进度条件里的 player 简写（1.21 的 EntityPredicate.ADVANCEMENT_CODEC 写法）展开成
+//  13. 进度条件里的 player 简写（1.21 的 EntityPredicate.ADVANCEMENT_CODEC 写法）展开成
 //      [{"condition":"minecraft:entity_properties","entity":"this","predicate":<原对象>}]。
 //      1.20.x 的 ContextAwarePredicate.fromJson 只认 JsonArray，给对象会静默返回 null，
 //      player 谓词等于「无限制」，minecraft:location 进度一进游戏就弹
 //      （2026-10-09 玩家实测「快乐老家」；vanilla 1.20.1 / 1.21 的 adventuring_time.json 是同一写法）。
-//  16. 结构 NBT（data/<ns>/structures/**.nbt，gzip 二进制）里的物品堆格式回退：
+//  14. 结构 NBT（data/<ns>/structures/**.nbt，gzip 二进制）里的物品堆格式回退：
 //      1.20.5+ 写 {"id":..., "count":N[,"components":...]}，1.20.x 只认 {"id":..., "Count":Nb[,"tag":...]}。
 //      不改的话伪装方块（create:copycat_step / copycat_panel）会「缺材质」：
 //      它们的 Item 在 1.20.x 上读出来是空堆 → Create 6.0 读取时材质校验通不过 → Material 被重置成空。
-//      顺带把 DataVersion 改成目标版本（1.20.1 = 3465、1.20.4 = 3700）。
+//      顺带把 DataVersion 改成 1.20.1 的 3465。
 
 /**
- * 结构 NBT 的物品堆格式回退（文件头第 16 条）。返回是否发生改写，文件就地更新（保持原 gzip/明文形态）。
+ * 结构 NBT 的物品堆格式回退（文件头第 14 条）。返回是否发生改写，文件就地更新（保持原 gzip/明文形态）。
  * 判定：任何一个「id 是字符串、count 是整数」的 compound 都当成物品堆（伪装方块的 Item、容器 Items 的元素……）。
  */
 ext.legacyPortStructureNbt = { File file, int targetDataVersion ->
