@@ -9,3 +9,7 @@
 - Minecraft 1.20.1：Forge 47.1.33 及以上
 
 需要[农夫乐事](https://github.com/vectorwing/FarmersDelight)与[机械动力](https://github.com/Creators-of-Create/Create)作为前置。
+
+## 许可证
+
+[MIT](LICENSE)
