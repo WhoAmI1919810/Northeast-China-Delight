@@ -372,9 +372,11 @@ public class ModItems {
 
     // ===== 方块物品 =====
 
+    /** 缸坯：方块形态的物品，放不下去也不会摆出来（合成与烧炼配方照旧） */
     public static final Supplier<Item> UNFIRED_VAT_BLANK = regItem(
             "unfired_vat_blank",
-            Item::new,
+            (properties) -> new DisplayOnlyBlockItem(ModBlocks.UNFIRED_VAT_BLANK.get(),
+                    "message.northeast_china_delight.unfired_vat_blank.place_hint", properties),
             new Item.Properties().stacksTo(1)
     );
 
@@ -450,7 +452,7 @@ public class ModItems {
             CORN_STALK,
             // 厨具与容器
             LARGE_BASIN, BRASS_BOWL, ANIMAL_OIL_BLOCK_ITEM,
-            // 方块（大缸与烧烤架归到「方块」那一项里，见 BLOCK_TAB_ITEMS）
+            // 缸坯在这里当普通物品用（大缸与烧烤架归到「方块」那一项，见 BLOCK_TAB_ITEMS）
             UNFIRED_VAT_BLANK
     );
 
