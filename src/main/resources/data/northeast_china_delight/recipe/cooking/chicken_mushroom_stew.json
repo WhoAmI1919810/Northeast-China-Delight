@@ -7,10 +7,13 @@
   "experience": 1.0,
   "ingredients": [
     {
-      "tag": "c:foods/raw_chicken"
+      "item": "minecraft:chicken"
     },
     {
-      "tag": "c:mushrooms"
+      "item": "northeast_china_delight:hazel_mushroom"
+    },
+    {
+      "item": "northeast_china_delight:hazel_mushroom"
     },
     {
       "tag": "c:foods/seasonings/soy_sauce"

@@ -10,7 +10,7 @@
       "tag": "c:crops/ginseng"
     },
     {
-      "tag": "c:foods/raw_chicken"
+      "item": "minecraft:chicken"
     },
     {
       "tag": "c:crops/rice"
