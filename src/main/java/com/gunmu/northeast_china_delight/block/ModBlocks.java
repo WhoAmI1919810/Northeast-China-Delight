@@ -56,11 +56,6 @@ public class ModBlocks {
         *///?}
     }
 
-    // ===== 方块：箱装 / 袋装 =====
-    // 9 个材料压成 1 个方块，方块也能拆回 9 个（配方见 tools\generate_food_storage.ps1 生成的文件）。
-    // 贴图、方块状态、模型、掉落表都由那个脚本按下面的清单生成。
-
-    /** 箱装：蔬菜与腌菜，木头质感 */
     public static final List<String> CRATE_IDS = List.of(
             "napa_cabbage_crate", "cucumber_crate", "green_radish_crate", "green_onion_crate",
             "eggplant_crate", "green_pepper_crate", "red_chili_crate", "green_beans_crate",
@@ -68,7 +63,6 @@ public class ModBlocks {
             "pickled_cucumber_crate", "pickled_carrot_crate", "pickled_green_radish_crate", "frozen_pear_crate"
     );
 
-    /** 袋装：谷物与山珍，麻袋质感 */
     public static final List<String> SACK_IDS = List.of(
             "corn_seeds_sack", "buckwheat_sack", "soybean_sack", "red_bean_sack", "peanut_sack",
             "hazelnut_sack", "hazel_mushroom_sack", "wood_ear_sack", "ginseng_sack"
@@ -77,7 +71,6 @@ public class ModBlocks {
     public static final Map<String, Supplier<Block>> CRATES = storageBlocks(CRATE_IDS, SoundType.WOOD);
     public static final Map<String, Supplier<Block>> SACKS = storageBlocks(SACK_IDS, SoundType.WOOL);
 
-    /** 这些方块都是普通方块：只负责装东西，没有方块实体 */
     private static Map<String, Supplier<Block>> storageBlocks(List<String> ids, SoundType sound) {
         Map<String, Supplier<Block>> map = new LinkedHashMap<>();
         for (String id : ids) {
@@ -104,7 +97,6 @@ public class ModBlocks {
             properties -> new CornCropBlock(properties, () -> ModItems.CORN_SEEDS.get()),
             cropProperties()
     );
-    /** 玉米上方的茎秆，没有物品，由作物自己长出来 */
     public static final Supplier<Block> CORN_STALK = block(
             "corn_stalk",
             CornStalkBlock::new,
@@ -114,37 +106,23 @@ public class ModBlocks {
             fruitCrop("green_beans", () -> ModItems.GREEN_BEANS_SEEDS.get(), () -> ModItems.GREEN_BEANS.get());
     public static final Supplier<Block> BUCKWHEAT_CROP =
             crop("buckwheat", () -> ModItems.BUCKWHEAT.get());
-    /** 大白菜：整棵长在地上，形状和模型照农夫乐事的卷心菜 */
     public static final Supplier<Block> NAPA_CABBAGE_CROP =
             cabbageCrop("napa_cabbage", () -> ModItems.NAPA_CABBAGE_SEEDS.get());
     public static final Supplier<Block> CUCUMBER_CROP =
             fruitCrop("cucumber", () -> ModItems.CUCUMBER_SEEDS.get(), () -> ModItems.CUCUMBER.get());
-    /** 红薯：自身即种子，没有单独的种子物品 */
     public static final Supplier<Block> SWEET_POTATO_CROP =
             crop("sweet_potato", () -> ModItems.SWEET_POTATO.get());
-    /** 红辣椒：可以用剪刀采摘，植株继续生长 */
     public static final Supplier<Block> RED_CHILI_CROP =
             fruitCrop("red_chili", () -> ModItems.RED_CHILI_SEEDS.get(), () -> ModItems.RED_CHILI.get());
-    /** 花生、红豆：自身即种子 */
     public static final Supplier<Block> PEANUT_CROP =
             crop("peanut", () -> ModItems.PEANUT.get());
     public static final Supplier<Block> RED_BEAN_CROP =
             crop("red_bean", () -> ModItems.RED_BEAN.get());
-    /** 大葱：整株收获，需要单独的种子物品；**只有 4 个生长阶段**，所以用 4 阶段作物那套 */
     public static final Supplier<Block> GREEN_ONION_CROP =
             smallCrop("green_onion", () -> ModItems.GREEN_ONION_SEEDS.get());
-    /** 青萝卜：整株收获，需要单独的种子物品 */
     public static final Supplier<Block> GREEN_RADISH_CROP =
             crop("green_radish", () -> ModItems.GREEN_RADISH_SEEDS.get());
 
-    // ===== 野生植物 =====
-
-    /**
-     * 榛子丛：像甜浆果丛一样长在地上，右键采摘榛子、不会伤害玩家。
-     *
-     * 没有对应的物品（不掉落方块本身，也不进创造模式物品栏），
-     * 想种就在地上右键榛子 —— 榛子自己就是种子。
-     */
     public static final Supplier<Block> HAZELNUT_BUSH = block(
             "hazelnut_bush",
             HazelnutBushBlock::new,
@@ -157,21 +135,18 @@ public class ModBlocks {
                     .pushReaction(PushReaction.DESTROY)
     );
 
-    /** 榛蘑（单株）：行为照抄原版蘑菇 */
     public static final Supplier<Block> HAZEL_MUSHROOM = block(
             "hazel_mushroom",
             HazelMushroomBlock::new,
             mushroomProperties()
     );
 
-    /** 榛蘑簇：行为照抄农夫乐事的蘑菇菌簇 */
     public static final Supplier<Block> HAZEL_MUSHROOM_COLONY = block(
             "hazel_mushroom_colony",
             HazelMushroomColonyBlock::new,
             mushroomProperties()
     );
 
-    /** 人参：8 个生长阶段，自带覆雪状态 */
     public static final Supplier<Block> GINSENG_CROP = block(
             "ginseng_crop",
             GinsengCropBlock::new,
@@ -189,13 +164,6 @@ public class ModBlocks {
             skewerProperties()
     );
 
-    // ===== 功能方块 =====
-
-    /**
-     * 缸坯：本体是个方块，但从头到尾都不摆到世界里 ——
-     * 物品栏里按方块模型立体渲染（物品形态见 {@code DisplayOnlyBlockItem}），
-     * 右键放不下去，也不进「方块」物品栏，手感跟普通物品一样。
-     */
     public static final Supplier<Block> UNFIRED_VAT_BLANK = block(
             "unfired_vat_blank",
             Block::new,
@@ -209,7 +177,6 @@ public class ModBlocks {
             BlockBehaviour.Properties.of().strength(3.5f)
     );
 
-    /** 创造大缸：同外观、同交互，条件凑齐就瞬间完成（没有合成配方） */
     public static final Supplier<Block> CREATIVE_VAT = block(
             "creative_vat",
             CreativeVat::new,
@@ -219,7 +186,7 @@ public class ModBlocks {
     /**
      * 架上烧烤架的营火。
      *
-     * 注意这里是**另一个方块**，而不是给原版营火加方块状态属性 ——
+     * 注意这里是另一个方块，而不是给原版营火加方块状态属性 ——
      * 给原版方块加属性会改变全局方块状态 id，老存档里的方块会错位。
      * 这个方块直接继承原版营火，所以点燃、熄灭、伤害、粒子、渲染都和营火一样，
      * 只是多了一个烤架，并且把「放上去烤」的流程换成了本模组的烧烤配方。
@@ -237,11 +204,6 @@ public class ModBlocks {
                     .ignitedByLava()
     );
 
-    /**
-     * 动物油块：4 瓶动物油在工作台压成一块。
-     * 特性照搬原版蜂蜜块（{@link AnimalOilBlock} 直接继承 {@link net.minecraft.world.level.block.HoneyBlock}），
-     * 只是贴图更白。
-     */
     public static final Supplier<Block> ANIMAL_OIL_BLOCK = block(
             "animal_oil_block",
             AnimalOilBlock::new,
@@ -253,16 +215,6 @@ public class ModBlocks {
                     .sound(SoundType.HONEY_BLOCK)
     );
 
-    // ===== 流体方块 =====
-
-    // ===== 大盆菜的方块形式（一放就是一整盆，右键取一份）=====
-
-    // ===== 单份菜肴的方块形式（右键吃、潜行右键摆）=====
-    // 容器几何与 display-delight 一致：碗 8×8 高 4、大盘 14×14 高 2。
-    // 这些方块只负责承载渲染和碰撞箱，食用/放置由 ModGameplayEvents 统一处理，
-    // 这样普通 Item 的 craftRemainder / FoodProperties 不会因为换成 BlockItem 而改变。
-
-    /** 需要单份方块模型的料理。大盆整锅料理不在这里，它们已有独立的 DdFeastBlock。 */
     public static final List<String> DISH_BLOCK_IDS = List.of(
             "new_style_crispy_pork", "orange_crispy_pork", "crispy_pork_strips", "three_fresh_veggies",
             "braised_pork_ribs", "ground_pot_chicken_bowl", "ground_pot_ribs_bowl", "slaughter_feast_bowl",
@@ -286,7 +238,6 @@ public class ModBlocks {
             "braised_hairtail", "hazelnut_sugar_fire_bun"
     );
 
-    /** 真实以餐盘盛装的单份料理。 */
     public static final List<String> TRAY_DISH_IDS = List.of(
             "new_style_crispy_pork", "orange_crispy_pork", "crispy_pork_strips", "three_fresh_veggies",
             "braised_pork_ribs", "old_style_crispy_pork", "braised_pork_bone_sauce", "braised_beef_sauce",
@@ -345,8 +296,6 @@ public class ModBlocks {
                         .pushReaction(PushReaction.DESTROY));
     }
 
-    // 做法见 DdFeastBlock：两个方块状态属性（朝向 + 剩余份数），没有方块实体。
-
     public static final Supplier<Block> DA_FENG_SHOU_POT =
             feastBlock("harvest_stew", () -> ModItems.DA_FENG_SHOU_BOWL.get());
     public static final Supplier<Block> DI_GUO_JI_POT =
@@ -367,7 +316,7 @@ public class ModBlocks {
     /**
      * 注册一口大盆菜。
      *
-     * 注意第二个参数**必须**传「取一份给什么」—— 之前漏了它，方块里的 servingItem 一直是 null，
+     * 注意第二个参数必须传「取一份给什么」—— 之前漏了它，方块里的 servingItem 一直是 null，
      * 结果拿着碗右键毫无反应。
      */
     private static Supplier<Block> feastBlock(String name, Supplier<? extends net.minecraft.world.item.Item> serving) {
@@ -380,10 +329,8 @@ public class ModBlocks {
                         .noOcclusion());
     }
 
-
-
     /**
-     * 调料液体**不再有方块形态**（2026-09-24 用户要求）：
+     * 调料液体不再有方块形态（2026-09-24 用户要求）：
      * 它们只作为真正的流体存在 —— 大缸、管道、机械动力储罐、玻璃瓶都能用，
      * 但没法被倒到地上变成液体方块。
      * NeoForge 的 createLegacyBlock 在没有方块时返回空气，所以删掉注册不会崩。
@@ -393,26 +340,22 @@ public class ModBlocks {
         return block(name + "_crop", properties -> new DdCropBlock(properties, seed), cropProperties());
     }
 
-    /** 4 个生长阶段的小作物（AGE_3，目前只有大葱用） */
     private static Supplier<Block> smallCrop(String name, Supplier<? extends ItemLike> seed) {
         return block(name + "_crop",
                 properties -> new DdSmallCropBlock(properties, seed), cropProperties());
     }
 
-    /** 整棵长在地上的菜（大白菜）：形状照农夫乐事的卷心菜 */
     private static Supplier<Block> cabbageCrop(String name, Supplier<? extends ItemLike> seed) {
         return block(name + "_crop",
                 properties -> new DdCabbageCropBlock(properties, seed), cropProperties());
     }
 
-    /** 果菜：成熟后可以用剪刀只摘果实，植株继续生长 */
     private static Supplier<Block> fruitCrop(String name, Supplier<? extends ItemLike> seed,
                                                   Supplier<? extends ItemLike> fruit) {
         return block(name + "_crop",
                 properties -> new DdCropBlock(properties, seed, fruit), cropProperties());
     }
 
-    /** 与原版作物一致的方块属性 */
     private static BlockBehaviour.Properties cropProperties() {
         return BlockBehaviour.Properties.of()
                 .mapColor(MapColor.PLANT)
@@ -423,7 +366,6 @@ public class ModBlocks {
                 .pushReaction(PushReaction.DESTROY);
     }
 
-    /** 不会随机刻的植物方块 */
     private static BlockBehaviour.Properties plantProperties() {
         return BlockBehaviour.Properties.of()
                 .mapColor(MapColor.PLANT)
@@ -433,7 +375,6 @@ public class ModBlocks {
                 .pushReaction(PushReaction.DESTROY);
     }
 
-    /** 蘑菇类方块：和原版的蘑菇、农夫乐事的菌簇同一套属性（怕光、一碰就碎、会随机刻） */
     private static BlockBehaviour.Properties mushroomProperties() {
         return BlockBehaviour.Properties.of()
                 .mapColor(MapColor.PLANT)

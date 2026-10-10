@@ -25,23 +25,12 @@ import net.minecraftforge.common.IPlantable;
 /*import net.neoforged.neoforge.common.util.TriState;
 *///?}
 
-/**
- * 榛蘑（单株）：行为照抄原版蘑菇。
- *
- * <ul>
- *   <li>只能在「固体方块」上落脚，而且要**暗**（亮度 13 以下）才活得下去，和我们认识的真蘑菇一样；</li>
- *   <li>随机刻会像原版蘑菇那样慢慢往旁边「蹿」：附近同类超过 5 株就不长了，</li>
- *   <li>撒骨粉会原地长成一丛 {@link HazelMushroomColonyBlock 榛蘑簇}（这是玩家想种出菌簇的唯一办法，
- *       自然生成出来的永远都是单株）。</li>
- * </ul>
- */
 public class HazelMushroomBlock extends BushBlock implements BonemealableBlock
 {
     //? if >=1.20.2 {
     /*public static final MapCodec<HazelMushroomBlock> CODEC = simpleCodec(HazelMushroomBlock::new);
     *///?}
 
-    /** 原版蘑菇的规矩：亮度到 13 就不长了 */
     public static final int MAX_LIGHT = 13;
 
     protected static final VoxelShape SHAPE = Block.box(5.0, 0.0, 5.0, 11.0, 6.0, 11.0);
@@ -75,18 +64,9 @@ public class HazelMushroomBlock extends BushBlock implements BonemealableBlock
         return new ItemStack(ModItems.HAZEL_MUSHROOM.get());
     }
 
-    /**
-     * 原版蘑菇的扩散逻辑，一字不差地搬过来。
-     *
-     * <p>唯一的差别：原版蘑菇把「亮度 13 以上」写死在 {@code canSurvive} 里，亮处会直接被方块更新清掉。
-     * 榛蘑是按「榛子丛周围每格 3%」撒出去的，开阔地（天光 15）很常见，照原版写法撒完就会当场消失，
-     * 所以这里把「怕光」挪到扩散这一步：<b>亮处的榛蘑能活，但不会蔓延</b>。</p>
-     */
     @Override
     public void randomTick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random)
     {
-        // 种在沃土上的榛蘑有概率原地长成榛蘑菌落（对齐农夫乐事：蘑菇菌落不是撒骨粉变出来的，
-        // 是蘑菇种在沃土上一段时间后自动变成的）
         if (level.getBlockState(pos.below()).is(ModBlockTags.RICH_SOIL_CONVERTS_TO_COLONY)
                 && random.nextInt(4) == 0)
         {
@@ -96,7 +76,6 @@ public class HazelMushroomBlock extends BushBlock implements BonemealableBlock
             }
             return;
         }
-        // 太亮就不蔓延（原版蘑菇的「怕光」）
         if (level.getRawBrightness(pos, 0) >= MAX_LIGHT)
         {
             return;

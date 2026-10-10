@@ -2,39 +2,27 @@ plugins {
     id 'idea'
     id 'java-library'
     id 'maven-publish'
-    // 1.21.x：NeoForge 官方 ModDevGradle
     id 'net.neoforged.moddev' version '2.0.147' apply false
-    // 1.20.1：Forge 47.1（包名仍然是 net.minecraftforge.*），同一个 ModDevGradle 的 legacyforge 插件
     id 'net.neoforged.moddev.legacyforge' version '2.0.147' apply false
 }
 
-// 按当前 Stonecutter 节点选择用哪个插件
-//   1.20.1  → legacyforge（Forge 47.1，net.minecraftforge.*）
-//   1.20.5+ → moddev（NeoForge 21.x+）
 if (sc.current.version.compareTo('1.20.2') < 0) {
     apply plugin: 'net.neoforged.moddev.legacyforge'
 } else if (sc.current.version.compareTo('1.20.5') >= 0) {
     apply plugin: 'net.neoforged.moddev'
 }
 
-// 本脚本会被 Stonecutter 对每个 Minecraft 版本各执行一次
-// sc.current.version 即当前节点对应的游戏版本，例如 1.21.1
 version = "${mod_version}+${sc.current.version}"
 group = mod_group_id
 
 allprojects {
     repositories {
         maven { url 'https://maven.aliyun.com/nexus/content/groups/public/' }
-        // 农夫乐事未发布到公共 Maven，通过 Modrinth 的 Maven 代理获取
         maven { name = 'Modrinth'; url = 'https://api.modrinth.com/maven' }
-        // JEI 的官方 Maven：Modrinth 的 maven 只会给到 Fabric 版的 jar（中间名映射，编译不过）
         maven { name = 'BlameJared'; url = 'https://maven.blamejared.com' }
     }
 }
 
-// 1.20.1 的机械动力生态用到两个额外 maven：
-//   maven.createmod.net       —— Ponder（catnip 的 GuiGameElement 在这里）/ Flywheel
-//   maven.ithundxr.dev/mirror —— Registrate
 if (sc.current.version.compareTo('1.20.2') < 0) {
     repositories {
         maven { name = 'CreateMod'; url = 'https://maven.createmod.net' }
@@ -46,9 +34,6 @@ base {
     archivesName = mod_id
 }
 
-// 1.20.5 起 Mojang 使用 Java 21，1.20.1 官方要求 Java 17
-// 但 NeoForge 的 moddev 可以用 Java 21 编 17 的 class（release 编译），
-// 没必要为了编译专门装一个 17 的 JDK
 java.toolchain.languageVersion = sc.current.version.compareTo('1.20.5') >= 0
         ? JavaLanguageVersion.of(21) : JavaLanguageVersion.of(17)
 
@@ -63,8 +48,6 @@ if (sc.current.version.compareTo('1.20.2') < 0) {
     // 生产环境里 Minecraft 的名字是 SRG，mixin 必须靠 refmap 重映射才能找到目标；
     // mixin { } 是 legacyforge 提供的扩展，负责生成 refmap 并打包进 jar
     mixin {
-        // 2.0.147 的 add(SourceSet, refmapName) 同时做三件事：给 JavaCompile 加 refmap 参数、
-        // 把生成的 refmap 放进 jar、返回它的 Provider（不用手工赋值，那个是 2.0.107 的旧写法）
         add(sourceSets.main, "${mod_id}.refmap.json")
         config "${mod_id}.mixins.json"
     }
@@ -114,7 +97,6 @@ if (sc.current.version.compareTo('1.20.2') < 0) {
         }
     }
 } else if (sc.current.version.compareTo('1.20.5') >= 0) {
-    // 1.21.x：NeoForge moddev
     neoForge {
         version = project.neo_version
 
@@ -168,7 +150,6 @@ if (sc.current.version.compareTo('1.20.2') < 0) {
 //  在 :1.21.1:runClient 查询 modFolders 时直接报错）
 
 configurations {
-    // localRuntime 是 moddev（1.21.x）预置的配置；1.20.1 这条线没有，用 maybeCreate 补一个同名的
     if (sc.current.version.compareTo('1.20.5') < 0) {
         maybeCreate('localRuntime')
     }
@@ -177,63 +158,41 @@ configurations {
 
 dependencies {
     if (sc.current.version.compareTo('1.20.2') < 0) {
-        // 1.20.1（Forge 47.1）：Forge 版本由 legacyForge.version 声明，不需要 implementation 依赖
 
-        // 农夫乐事：官方发布，1.20.1-1.3.4 与 1.21.1 的 1.3.4 同版本号，API 基本一致
         compileOnly "maven.modrinth:farmers-delight:${farmersdelight_version}"
         localRuntime "maven.modrinth:farmers-delight:${farmersdelight_version}"
 
-        // 机械动力：官方 6.0.8（本节点存在的意义所在）。
-        // Flywheel / Ponder / Registrate 以 jarjar 内嵌在 Create 里（运行时由 Forge 自动加载），
-        // 但编译期不在类路径上，而 Create 的 API 签名会引用它们（BlockEntry / PartialModel / GuiGameElement）
         compileOnly "maven.modrinth:create:${create_version}"
         localRuntime "maven.modrinth:create:${create_version}"
         compileOnly "net.createmod.ponder:Ponder-Forge-${minecraft_version}:${ponder_version}"
         compileOnly "dev.engine-room.flywheel:flywheel-forge-api-${minecraft_version}:${flywheel_version}"
         compileOnly "com.tterrag.registrate:Registrate:${registrate_version}"
 
-        // 玉（Jade）11.x：大缸信息显示，可选依赖，仅客户端
         compileOnly "maven.modrinth:jade:${jade_version}"
         localRuntime "maven.modrinth:jade:${jade_version}"
 
-        // JEI 15.x：common-api + forge-api 编译，运行时装 forge 整包
         compileOnly "mezz.jei:jei-${minecraft_version}-common-api:${jei_version}"
         compileOnly "mezz.jei:jei-${minecraft_version}-forge-api:${jei_version}"
         localRuntime "mezz.jei:jei-${minecraft_version}-forge:${jei_version}"
 
-        // Mixin 注解处理器：编译期产出 refmap 与 .mappings.tsrg。
-        // 少了它就是 -proc:none，refmap 不生成，reobfJar 会报找不到
-        // build/mixin/<mod_id>.refmap.json.mappings.tsrg。Create 1.20.1 也是这么写的。
         annotationProcessor "org.spongepowered:mixin:0.8.5:processor"
 
-        // MixinExtras：@WrapOperation 的注解与运行时实现。
-        //   compileOnly        —— 编译期拿 com.llamalad7.mixinextras 的注解/Operation（用 common 包，forge 包是套壳）
-        //   annotationProcessor—— 它的注解处理器把 @WrapOperation 的目标写进 refmap；
-        //                         没有这条，SRG 环境里 shrink 那条注入会找不到目标
-        //   localRuntime       —— 开发环境直接按模组加载（Forge 47.x 不自带 MixinExtras）
-        //   jarJar             —— 正式包内嵌（FML 会连它自己的嵌套 jar 一起处理）
         compileOnly "io.github.llamalad7:mixinextras-common:${mixinextras_version}"
         annotationProcessor "io.github.llamalad7:mixinextras-common:${mixinextras_version}"
         localRuntime "io.github.llamalad7:mixinextras-forge:${mixinextras_version}"
         jarJar "io.github.llamalad7:mixinextras-forge:${mixinextras_version}"
     } else if (sc.current.version.compareTo('1.20.5') >= 0) {
-        // 农夫乐事：编译期引用其 API，开发运行时实际加载
         compileOnly "maven.modrinth:farmers-delight:${farmersdelight_version}"
         localRuntime "maven.modrinth:farmers-delight:${farmersdelight_version}"
 
-        // 机械动力：本模组的联动前置（流体管道 / 储罐），开发运行时一并加载
         compileOnly "maven.modrinth:create:${create_version}"
         localRuntime "maven.modrinth:create:${create_version}"
 
-        // 玉（Jade）：大缸信息显示，可选依赖，仅客户端
         compileOnly "maven.modrinth:jade:${jade_version}"
         localRuntime "maven.modrinth:jade:${jade_version}"
 
-        // 果园乐事：可选联动，只在开发环境里加载方便测试（配方用 neoforge:mod_loaded 门控）
         localRuntime "maven.modrinth:fruits-delight:${fruitsdelight_version}"
 
-        // JEI：可选联动，用于展示大缸的多步骤配方（开发环境里直接装上方便测试）
-        // 1.21.x 用 mezz.jei 的 neoforge 单 jar
         compileOnly "mezz.jei:jei-1.21.1-neoforge-api:${jei_version}"
         localRuntime "mezz.jei:jei-1.21.1-neoforge:${jei_version}"
 
@@ -246,10 +205,8 @@ dependencies {
     }
 }
 
-// 包含数据生成器产出的资源
 sourceSets.main.resources.srcDir "${rootDir}/src/generated/resources"
 
-// 将 src/main/templates 中的占位符替换为各版本的实际参数
 var generateModMetadata = tasks.register("generateModMetadata", ProcessResources) {
     var replaceProperties = [
             minecraft_version      : minecraft_version,
@@ -265,7 +222,6 @@ var generateModMetadata = tasks.register("generateModMetadata", ProcessResources
             create_version_range   : create_version_range,
             jei_version_range      : jei_version_range
     ]
-    // 1.20.1 的模组元数据写的是 Forge 的依赖；20.4 / 21.x 写 NeoForge 的
     if (sc.current.version.compareTo('1.20.2') < 0) {
         replaceProperties.forge_version_range = forge_version_range
         replaceProperties.jade_version_range = jade_version_range
@@ -275,8 +231,6 @@ var generateModMetadata = tasks.register("generateModMetadata", ProcessResources
     }
     inputs.properties replaceProperties
     expand replaceProperties
-    // 1.20.1（Forge）读 META-INF/mods.toml，依赖段写法与 1.20.5+ 不同，所以单独一份模板；
-    // 1.20.5+ 读 META-INF/neoforge.mods.toml
     from(sc.current.version.compareTo('1.20.5') >= 0
             ? "${rootDir}/src/main/templates"
             : "${rootDir}/src/main/templates-forge")
@@ -287,16 +241,11 @@ if (sc.current.version.compareTo('1.20.5') >= 0) {
     neoForge.ideSyncTask generateModMetadata
 }
 
-// 1.20.1 的 Mixin 走 jar 清单的 MixinConfigs 登记（mods.toml 的 [[mixins]] 段是 20.5+ 才有），
-// 另外这条线的 Mixin 只认 JAVA_17 的 compatibilityLevel，这里把共享的那份替换后生成一份
 if (sc.current.version.compareTo('1.20.5') < 0) {
-    // 1.20.x 的数据包形态和 1.21 不一样（目录名/ItemStack 的 "id"、c: 标签……），
-    // 复制完资源后就地转换一次，见 gradle/legacy-data-port.groovy。
     apply from: "${rootDir}/gradle/legacy-data-port.groovy"
 
     def legacyResourcesOut = sourceSets.main.output.resourcesDir
     tasks.named('processResources', ProcessResources).configure { task ->
-        // 转换脚本本身算输入：改了脚本就要重跑（不然会一直 UP-TO-DATE 用旧结果）
         task.inputs.file("${rootDir}/gradle/legacy-data-port.groovy")
         task.doLast {
             portLegacyDataTree(legacyResourcesOut)
@@ -348,9 +297,6 @@ publishing {
     }
 }
 
-// 构建完成后，把 jar 也复制到工程根目录的 lib/ 和 libs/：
-// 这两个文件夹是「拿去测试 / 分享」的落脚点，省得每次都翻 versions/<版本>/build/libs。
-// 每个游戏版本各留一份，文件名带版本号（northeast_china_delight-<mod_version>+<mc_version>.jar）。
 ['lib', 'libs'].each { folder ->
     def copyJar = tasks.register("copyJarTo${folder.capitalize()}", Copy) {
         // 1.20.x 节点（legacyforge）里 `jar` 产出的是「开发名」的包，能进游戏的是 reobfJar 的结果；

@@ -18,16 +18,8 @@ import net.minecraft.world.level.levelgen.structure.BoundingBox;
 import net.minecraft.world.level.levelgen.structure.StructurePiece;
 import net.minecraft.world.level.levelgen.structure.pieces.StructurePieceSerializationContext;
 
-/**
- * 黑土地：在小院周围把表层的草方块 / 泥土 / 灰化土 / 积雪，按概率换成
- * 农夫乐事的「沃土」（rich_soil）。
- *
- * <p>概率、半径都在结构 JSON 里（black_soil_chance / black_soil_radius /
- * black_soil_density），改数字就能调；没装农夫乐事时整块直接跳过，不会报错。
- */
 public class BlackSoilPiece extends StructurePiece
 {
-    /** 农夫乐事的沃土（软依赖：按 id 查，查不到就不长） */
     public static final ResourceLocation RICH_SOIL =
             DdIds.of("farmersdelight", "rich_soil");
 
@@ -76,7 +68,6 @@ public class BlackSoilPiece extends StructurePiece
         {
             for (int z = minZ; z <= maxZ; z++)
             {
-                // 只处理正在生成的这个 chunk 里的格子，别伸手到隔壁
                 if (!chunkContains(chunkPos, x, z))
                 {
                     continue;
@@ -94,7 +85,6 @@ public class BlackSoilPiece extends StructurePiece
                 BlockState state = level.getBlockState(cursor);
                 if (state.is(Blocks.SNOW))
                 {
-                    // 雪盖着的话先扫掉，不然黑土地看不见
                     level.setBlock(cursor, Blocks.AIR.defaultBlockState(), 2);
                     cursor.setY(y - 1);
                     state = level.getBlockState(cursor);

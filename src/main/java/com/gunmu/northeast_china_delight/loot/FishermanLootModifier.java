@@ -20,12 +20,6 @@ import net.minecraftforge.common.loot.LootModifier;
 /*import net.neoforged.neoforge.common.loot.LootModifier;
 *///?}
 
-/**
- * 渔夫（village_fisher）箱子：小概率塞东北乐事的水产食材和海味菜。
- *
- * <p>先按 ~18% 概率出一份「生鲜」（大虾/生蚝/带鱼/海参），
- * 再按 ~10% 概率出一份「海味菜」（咸鱼/咸鱼饼子/葱烧海参/酸菜海鲜锅）。</p>
- */
 public class FishermanLootModifier extends LootModifier
 {
     //? if <1.20.5 {
@@ -36,7 +30,6 @@ public class FishermanLootModifier extends LootModifier
             instance -> codecStart(instance).apply(instance, FishermanLootModifier::new));
     *///?}
 
-    /** 生鲜水产 */
     private static final Entry[] RAW = {
             new Entry(() -> ModItems.SHRIMP.get(), 9),
             new Entry(() -> ModItems.OYSTER.get(), 8),
@@ -44,7 +37,6 @@ public class FishermanLootModifier extends LootModifier
             new Entry(() -> ModItems.SEA_CUCUMBER.get(), 5)
     };
 
-    /** 海味成品 */
     private static final Entry[] DISH = {
             new Entry(() -> ModItems.SALTED_FISH.get(), 8),
             new Entry(() -> ModItems.XIAN_YU_BING_ZI.get(), 6),

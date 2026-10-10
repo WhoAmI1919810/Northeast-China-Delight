@@ -49,23 +49,12 @@ import net.neoforged.neoforge.common.ItemAbilities;
 import net.neoforged.neoforge.common.util.TriState;
 *///?}
 
-/**
- * 榛蘑簇：行为照抄农夫乐事的蘑菇菌簇（{@code MushroomColonyBlock}）。
- *
- * <ul>
- *   <li>四个生长阶段（0~3），随机刻会一阶一阶往上长，耕地／泥土／苔藓这类「能长菌的方块」上才行；</li>
- *   <li>拿<b>剪刀</b>右键：摘下一株蘑菇，菌簇退回一阶；</li>
- *   <li>拿<b>刀</b>右键：一次把菌簇上的蘑菇全割下来（数量＝当前阶段），菌簇退回 0 阶；</li>
- *   <li>撒骨粉：一次长 1~2 阶；玩家自己放下去的时候直接是长满的 3 阶（和农夫乐事一样）。</li>
- * </ul>
- */
 public class HazelMushroomColonyBlock extends BushBlock implements BonemealableBlock
 {
     //? if >=1.20.2 {
     /*public static final MapCodec<HazelMushroomColonyBlock> CODEC = simpleCodec(HazelMushroomColonyBlock::new);
     *///?}
 
-    /** 原版／农夫乐事共用的规矩：亮度 13 以上就不算「菌类环境」 */
     public static final int MAX_LIGHT = 13;
     public static final int MAX_AGE = 3;
     public static final IntegerProperty COLONY_AGE = BlockStateProperties.AGE_3;

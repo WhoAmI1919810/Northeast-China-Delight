@@ -7,7 +7,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-/** 把 {@link GrillRecipes} 里的配方转成 JEI 展示用的形状 */
+/**
+ * 把 {@link GrillRecipes} 里的配方转成 JEI 展示用的形状
+ */
 public final class GrillJeiRecipes {
 
     private GrillJeiRecipes() {

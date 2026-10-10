@@ -18,16 +18,8 @@ import net.minecraft.world.level.levelgen.structure.BoundingBox;
 import net.minecraft.world.level.levelgen.structure.StructurePiece;
 import net.minecraft.world.level.levelgen.structure.pieces.StructurePieceSerializationContext;
 
-/**
- * 生物群系沃土：东北小院所在的**整片生物群系**里，土类方块按概率变成农夫乐事的「沃土」。
- *
- * <p>不是撒在院子周围那一小圈，而是**这一户落点的整片生物群系**——
- * 同一 chunk 里 biome 对得上的草方块 / 泥土 / 灰化土 / 积雪，按 {@code density} 换成 rich_soil。
- * 没装农夫乐事时整块直接跳过，不会报错。
- */
 public class BiomeRichSoilPiece extends StructurePiece
 {
-    /** 农夫乐事的沃土（软依赖：按 id 查，查不到就不长） */
     public static final ResourceLocation RICH_SOIL =
             DdIds.of("farmersdelight", "rich_soil");
 
@@ -72,7 +64,6 @@ public class BiomeRichSoilPiece extends StructurePiece
         {
             for (int z = minZ; z <= maxZ; z++)
             {
-                // 只处理正在生成的这个 chunk 里的格子，别伸手到隔壁
                 if (!chunkContains(chunkPos, x, z))
                 {
                     continue;
@@ -82,7 +73,6 @@ public class BiomeRichSoilPiece extends StructurePiece
                 {
                     continue;
                 }
-                // 值噪声成片：大块大片一起变，不是满天星（密度越高斑块越大）
                 double noise = valueNoise(x, z);
                 if (noise < 1.0 - this.density)
                 {
@@ -92,7 +82,6 @@ public class BiomeRichSoilPiece extends StructurePiece
                 BlockState state = level.getBlockState(cursor);
                 if (state.is(Blocks.SNOW))
                 {
-                    // 雪盖着的话先扫掉，不然沃土看不见
                     level.setBlock(cursor, Blocks.AIR.defaultBlockState(), 2);
                     cursor.setY(y - 1);
                     state = level.getBlockState(cursor);
@@ -111,13 +100,8 @@ public class BiomeRichSoilPiece extends StructurePiece
                 && chunk.getMinBlockZ() <= z && z <= chunk.getMaxBlockZ();
     }
 
-    /** 值噪声的格子尺寸：12 格一格，沃土斑块大概是 5~8 格一团 */
     private static final double NOISE_CELL = 12.0;
 
-    /**
-     * 2D 值噪声：把 x/z 落在的格子四角哈希成 0~1 的值，再双线性插值平滑。
-     * 纯按坐标算，不依赖 chunk 随机数 —— 跨 chunk 边界也能接上。
-     */
     private static double valueNoise(int x, int z)
     {
         double fx = x / NOISE_CELL;
@@ -135,7 +119,6 @@ public class BiomeRichSoilPiece extends StructurePiece
 
     private static double hash(int x, int z)
     {
-        // 经典整数哈希：坐标混成分散到 0~1
         int h = x * 0x27d4eb2d ^ z * 0x165667b1;
         h = (h ^ (h >>> 15)) * 0x85ebca6b;
         h ^= h >>> 13;

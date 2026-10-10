@@ -20,30 +20,15 @@ import java.util.List;
 
 /**
  * 烤架营火的方块实体。
- *
- * <p>一个烤架能放 **4 份食材**（什么都能放，可以混着放），每一份各自记：
- * <ul>
- *     <li>食材本身（{@link #items}）；</li>
- *     <li>刷在这份食材上的调料（{@link #seasonings}，每份最多 {@link #SEASONINGS_PER_SLOT} 样）；</li>
- *     <li>烤制进度（{@link #progress}）。</li>
- * </ul>
- *
- * <p><b>为什么不直接用原版的 {@code CampfireBlockEntity}</b>：
- * 方块实体的类型会校验「这个方块是不是我的合法方块」（{@code BlockEntityType.isValid}），
- * 而 `minecraft:campfire` 那个类型只登记了原版的营火。
  */
 public class GrillBlockEntity extends BlockEntity {
 
-    /** 一个烤架能放几份食材 */
     public static final int SLOTS = 4;
-    /** 每份食材最多刷几样调料 */
     public static final int SEASONINGS_PER_SLOT = 4;
 
-    /** 四份食材在方块里的水平偏移（和原版营火摆 4 份食物的位置一致） */
     private static final float CORNER = 0.3125F;
 
     private final NonNullList<ItemStack> items = NonNullList.withSize(SLOTS, ItemStack.EMPTY);
-    /** 按「第几份食材 × 调料位」铺平存放，方便直接存档 */
     private final NonNullList<ItemStack> seasonings =
             NonNullList.withSize(SLOTS * SEASONINGS_PER_SLOT, ItemStack.EMPTY);
     private final int[] progress = new int[SLOTS];
@@ -72,7 +57,6 @@ public class GrillBlockEntity extends BlockEntity {
         return this.items.stream().allMatch(ItemStack::isEmpty);
     }
 
-    /** 第 slot 份食材上已经刷了的调料种类 */
     public List<Item> seasoningsOf(int slot) {
         List<Item> list = new ArrayList<>();
         int base = slot * SEASONINGS_PER_SLOT;
@@ -85,7 +69,6 @@ public class GrillBlockEntity extends BlockEntity {
         return list;
     }
 
-    /** 给第 slot 份食材记一样调料；这一份的调料位满了返回 false */
     public boolean addSeasoning(int slot, ItemStack stack) {
         int base = slot * SEASONINGS_PER_SLOT;
         for (int i = 0; i < SEASONINGS_PER_SLOT; i++) {
@@ -109,7 +92,6 @@ public class GrillBlockEntity extends BlockEntity {
         }
     }
 
-    /** 把第 slot 份食材连同它身上的调料一起清掉（取走 / 烤好时用） */
     public void clearSlot(int slot) {
         this.items.set(slot, ItemStack.EMPTY);
         int base = slot * SEASONINGS_PER_SLOT;
@@ -120,7 +102,6 @@ public class GrillBlockEntity extends BlockEntity {
         setChanged();
     }
 
-    /** 架烤架时把普通营火上正在烤的东西搬过来 */
     public void setItemsFrom(List<ItemStack> source) {
         for (int i = 0; i < this.items.size(); i++) {
             this.items.set(i, i < source.size() ? source.get(i).copy() : ItemStack.EMPTY);
@@ -141,7 +122,6 @@ public class GrillBlockEntity extends BlockEntity {
     }
     *///?}
 
-    /** 读档主体（两个版本共用） */
     private void readFromTag(CompoundTag tag, HolderLookup.Provider registries) {
         this.items.clear();
         DdNbt.loadAllItems(tag, this.items, registries);
@@ -168,7 +148,6 @@ public class GrillBlockEntity extends BlockEntity {
     }
     *///?}
 
-    /** 存档主体（两个版本共用） */
     private void writeToTag(CompoundTag tag, HolderLookup.Provider registries) {
         DdNbt.saveAllItems(tag, this.items, true, registries);
         CompoundTag seasoningsTag = new CompoundTag();
@@ -177,7 +156,6 @@ public class GrillBlockEntity extends BlockEntity {
         tag.putIntArray("GrillProgress", this.progress);
     }
 
-    /** 食材和调料都要同步给客户端 —— 渲染那层「刷上去的颜色」要用 */
     @Override
     //? if <1.20.5 {
     public CompoundTag getUpdateTag() {

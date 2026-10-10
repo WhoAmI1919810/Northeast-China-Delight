@@ -5,14 +5,8 @@ import net.minecraft.world.effect.MobEffectCategory;
 import net.minecraft.world.entity.LivingEntity;
 
 /**
- * 养生：参鸡汤的状态效果。按当前血量占最大生命值的比例分档回血——
- * 血越少回得越勤（残血时保命用），血快满时就慢下来。
- *
- * <p>分档（每 N tick 回 1 点）：
- * 血量 &gt;70% → 25 tick；
- * 50%~70% → 10 tick；
- * 25%~50% → 6 tick；
- * &lt;25% → 3 tick。</p>
+ * 养生：参鸡汤的状态效果。按当前血量占最大生命值的比例分档回血——血越少回得越勤（残血时保命用），血快满时就慢下来。分档（每 N tick 回 1 点）：血量 &gt;70% →
+ * 25 tick； 50%~70% → 10 tick； 25%~50% → 6 tick； &lt;25% → 3 tick。
  */
 public class NourishingEffect extends MobEffect {
 
@@ -20,10 +14,6 @@ public class NourishingEffect extends MobEffect {
         super(MobEffectCategory.BENEFICIAL, 0xE8B93B);
     }
 
-    /**
-     * 每 tick 都会被调（见 {@link #shouldApplyEffectTickThisTick}），
-     * 真正要不要回血按当前血量档位拿实体 tick 计数取模。
-     */
     @Override
     //? if <1.20.5 {
     public void applyEffectTick(LivingEntity entity, int amplifier) {
@@ -36,7 +26,6 @@ public class NourishingEffect extends MobEffect {
     }
     *///?}
 
-    /** 真正的回血逻辑（分档在里面按血量做，两个版本共用） */
     private void nourish(LivingEntity entity) {
         float max = entity.getMaxHealth();
         float health = entity.getHealth();

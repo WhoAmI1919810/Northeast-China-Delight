@@ -44,41 +44,26 @@ import net.minecraftforge.client.model.data.ModelData;
 import java.util.List;
 
 /**
- * JEI 里的「烧烤」分类。
- *
- * 排版：最左边是**营火烤架**本身，食材那一格就摆在它**正上方**；
- * 营火右边是这一份要用到的调料（一样一格），再往右是箭头和烤好的成品，
- * 烤制时长写在箭头下面。和「大缸」分类一样不带背景图，尺寸自己给。
- *
- * 那台营火烤架不是贴图，而是把游戏里的方块模型 + 铁条几何直接渲染出来
- * （和世界里看到的一样，材质也跟着资源包走）—— 用的是 {@link GrillRackGeometry} 里同一份几何。
+ * JEI 里的「烧烤」分类。排版：最左边是营火烤架本身，食材那一格就摆在它正上方；营火右边是这一份要用到的调料（一样一格），再往右是箭头和烤好的成品，烤制时长写在箭头下面。和「大
+ * 缸」分类一样不带背景图，尺寸自己给。
  */
 public class GrillRecipeCategory implements IRecipeCategory<GrillJeiRecipe> {
 
     private static final int SLOT = 16;
-    /** 槽位间距（16 + 4） */
     private static final int STEP = 20;
-    /**
-     * 一份配方最多用几样调料 —— 直接按现有配方算，页面宽度跟着它走，
-     * 以后加一条更复杂的烧烤配方（比如 3 样调料）页面会自动变宽。
-     */
     private static final int MAX_SEASONINGS = Math.max(1, GrillJeiRecipes.all().stream()
             .mapToInt(recipe -> recipe.seasonings().size())
             .max()
             .orElse(1));
 
-    /** 左边那台营火烤架 */
     private static final int STATION_SIZE = 32;
     private static final int STATION_X = 6;
     private static final int STATION_Y = 20;
-    /** 一格方块在 GUI 里画多少像素高 */
     private static final float STATION_SCALE = 20.0F;
 
-    /** 食材摆在营火**正上方**，和营火左右居中对齐 */
     private static final int INPUT_X = STATION_X + (STATION_SIZE - SLOT) / 2;
     private static final int INPUT_Y = STATION_Y - SLOT - 2;
 
-    /** 调料在营火右边，和营火共用一条中线 */
     private static final int ROW_Y = STATION_Y + (STATION_SIZE - SLOT) / 2;
     private static final int SEASONING_X = STATION_X + STATION_SIZE + 6;
 
@@ -88,14 +73,12 @@ public class GrillRecipeCategory implements IRecipeCategory<GrillJeiRecipe> {
     private static final int TIME_Y = ROW_Y + 22;
     private static final int TIME_COLOR = 0xFF3F3F3F;
 
-    /** 瓶装调料的用量小字写在槽位下面（缩到 0.65 倍才塞得进 20px 的槽距） */
     private static final int AMOUNT_Y = ROW_Y + SLOT + 3;
     private static final float AMOUNT_TEXT_SCALE = 0.65F;
 
     private static final int WIDTH = RESULT_X + SLOT + 6;
     private static final int HEIGHT = 60;
 
-    /** 旧版 JEI（1.20.1 用 15.x）没有现成的箭头图，小箭头从模组自己的控件贴图上取 */
     private static final ResourceLocation WIDGETS = DdIds.of(
             NortheastChinaDelight.MODID, "textures/gui/jei_widgets.png");
     private static final int ARROW_U = 61, ARROW_V = 93, ARROW_W = 24, ARROW_H = 16;
@@ -117,10 +100,6 @@ public class GrillRecipeCategory implements IRecipeCategory<GrillJeiRecipe> {
         this.background = guiHelper.createBlankDrawable(WIDTH, HEIGHT);
     }
 
-    /**
-     * 槽位底图：两个版本的 JEI 说法不一样 —— 1.21 要显式说「用标准槽位底图」，
-     * 旧版 JEI 得自己把 guiHelper 的槽位图挂上去。
-     */
     private static IRecipeSlotBuilder withSlotBackground(IRecipeSlotBuilder slot, IGuiHelper guiHelper) {
         //? if <1.20.5 {
         return slot.setBackground(guiHelper.getSlotDrawable(), -1, -1);
@@ -144,7 +123,6 @@ public class GrillRecipeCategory implements IRecipeCategory<GrillJeiRecipe> {
         return this.icon;
     }
 
-    /** 没有背景图，尺寸得自己给 */
     @Override
     public int getWidth() {
         return WIDTH;
@@ -155,7 +133,6 @@ public class GrillRecipeCategory implements IRecipeCategory<GrillJeiRecipe> {
         return HEIGHT;
     }
 
-    /** 旧版 JEI 会拿它当页面底板（空白图）；1.21 的 JEI 用不到 */
     @Override
     public IDrawable getBackground() {
         return this.background;
@@ -176,10 +153,6 @@ public class GrillRecipeCategory implements IRecipeCategory<GrillJeiRecipe> {
                 .addItemStack(recipe.result()), this.guiHelper);
     }
 
-    /**
-     * 旧版 JEI 没有「控件」那一层，除了槽位以外的画面都在这里画。
-     * 1.21 分支里这个方法什么都不做 —— 那些图形交给下面的控件画。
-     */
     @Override
     public void draw(GrillJeiRecipe recipe, IRecipeSlotsView slotsView, GuiGraphics graphics,
                      double mouseX, double mouseY) {
@@ -194,7 +167,9 @@ public class GrillRecipeCategory implements IRecipeCategory<GrillJeiRecipe> {
         //?}
     }
 
-    /** JEI 分类图标：同样画那台营火烤架，只是缩到 16×16 的标签格里 */
+    /**
+     * JEI 分类图标：同样画那台营火烤架，只是缩到 16×16 的标签格里
+     */
     private static final class StationIcon implements IDrawable {
 
         @Override
@@ -213,7 +188,6 @@ public class GrillRecipeCategory implements IRecipeCategory<GrillJeiRecipe> {
         }
     }
 
-    /** 烤制时长：不足一分钟写「N 秒」，整分钟写「N 分钟」，其余写「N 分 M 秒」 */
     private static Component timeText(int seconds) {
         if (seconds <= 0) {
             return Component.empty();
@@ -236,13 +210,6 @@ public class GrillRecipeCategory implements IRecipeCategory<GrillJeiRecipe> {
     }
     *///?}
 
-    /**
-     * 画「营火烤架」：直接拿游戏里的方块模型 + 铁条几何来渲染，
-     * 所以 JEI 里的样子和世界里一模一样（贴图跟着资源包走，也不会多出一份美术素材）。
-     *
-     * <p>变换用的是标准的「物品栏里的方块」视角：30° 俯角 + 225° 水平角，
-     * 再把 Y 轴翻过来（GUI 的 y 向下），方块中心摆到 (centerX, centerY)。
-     */
     private static void drawStation(GuiGraphics graphics, float centerX, float centerY, float scale) {
         Minecraft minecraft = Minecraft.getInstance();
         BlockState state = ModBlocks.GRILL_CAMPFIRE.get().defaultBlockState()
@@ -258,24 +225,18 @@ public class GrillRecipeCategory implements IRecipeCategory<GrillJeiRecipe> {
         pose.mulPose(Axis.YP.rotationDegrees(225.0F));
         pose.translate(-0.5F, -0.5F, -0.5F);
 
-        // 火堆：本模组的烤架营火方块模型（继承原版营火）
         minecraft.getBlockRenderer().renderSingleBlock(state, pose, buffers,
                 LightTexture.FULL_BRIGHT, OverlayTexture.NO_OVERLAY, ModelData.EMPTY, RenderType.cutout());
-        // 烤架的铁条：和世界里同一份几何（这里当单独一台画，四面都不相连）
         GrillRackGeometry.render(pose, buffers, LightTexture.FULL_BRIGHT, OverlayTexture.NO_OVERLAY,
                 false, false, false, false);
         buffers.endBatch();
         pose.popPose();
     }
 
-    /**
-     * 瓶装调料的用量小字：1.21 走控件、旧版 JEI 在 draw() 里直接画，两边共用这一份。
-     */
     private static void drawSeasoningAmounts(GuiGraphics graphics, List<ItemStack> seasonings) {
         Font font = Minecraft.getInstance().font;
         Component bottleText = Component.translatable("jei.northeast_china_delight.grill.seasoning_amount_brush",
                 SeasoningBottleItem.GRILL_DOSE_MB);
-        // 厚酱（辣椒酱）没有 mB 概念：写「1 份 · 需刷子」提示它也要用刷子抹
         Component sauceText = Component.translatable("jei.northeast_china_delight.grill.seasoning_sauce");
         PoseStack pose = graphics.pose();
         for (int i = 0; i < seasonings.size() && i < MAX_SEASONINGS; i++) {

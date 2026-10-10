@@ -13,37 +13,15 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * 大缸配方注册表的**自检**（新增配方时防踩坑）。
- *
- * <p>声明式配方的代价是"写错了不会报错"：份数算不出来、JEI 一页装不下、
- * 两个格子收同一种东西……这些在代码里都是合法写法，只有玩到才发现。
- * 所以注册表一建好（{@link VatRecipes#all()}）就把下面这些规则跑一遍，把问题写进日志：
- *
- * <ol>
- *   <li><b>Kind 与配方一对一</b>：大缸里只记 Kind，取货 / 流体 / Jade 都按 Kind 反查配方，
- *       同一个 Kind 出现两条配方就会互相串味；</li>
- *   <li><b>展示的份数真的能开工</b>：把 JEI 那一档算出来的份数喂回 {@link VatRecipe#materialsReady}
- *       验一遍 —— "盐数 = 肉数"这类跨格规则算错（例如 JEI 上写 6 肉 1 盐）就是靠这条兜住的；</li>
- *   <li><b>一缸装得下</b>：各格上限之和不能超过 {@link VatBlockEntity#MAX_ENTRIES}，
- *       否则玩家永远放不满，表现为"点了没反应"；</li>
- *   <li><b>JEI 一页画得下</b>：一层最多 {@link #MAX_SLOTS_PER_LAYER} 格、整页最多 {@link #MAX_ROWS} 行
- *       （超了会数组越界或者画到页面外）；</li>
- *   <li><b>同一配方里格子不重叠</b>：投料找格、完成后的去向都只看第一个匹配的格子，
- *       两个格子收同一种东西就会各写各的；</li>
- *   <li><b>数值自洽</b>：min ≤ max、水位区间不反、时长 &gt; 0、CONVERT 必须写产物、每个 Kind 都得有配方。</li>
- * </ol>
- *
- * <p>返回的问题列表里以 {@code WARN} 开头的只是提醒（可能是有意为之），其余按错误处理。
- * 自检只写日志、不抛异常 —— 它不该把游戏拦下来。
+ * 大缸配方注册表的自检（新增配方时防踩坑）。声明式配方的代价是"写错了不会报错"：份数算不出来、JEI 一页装不下、两个格子收同一种东西……这些在代码里都是合法写法，只有玩到才发
+ * 现。
  */
 public final class VatRecipeValidator {
 
     private VatRecipeValidator() {
     }
 
-    /** JEI 一页左侧"一层"最多画几格（与 VatRecipeCategory 的槽位名数组长度一致） */
     public static final int MAX_SLOTS_PER_LAYER = 4;
-    /** JEI 一页最多几行（与 VatRecipeCategory 的 WIDTH × HEIGHT 一致：5 行 = 88px 刚好放得下） */
     public static final int MAX_ROWS = 5;
 
     /** 跑一遍全部规则，返回问题清单（空 = 全过） */
@@ -66,8 +44,6 @@ public final class VatRecipeValidator {
         }
         return problems;
     }
-
-    // ===== 各条规则 =====
 
     private static void checkKindUnique(VatRecipe recipe, Map<VatRecipes.Kind, String> kinds, List<String> problems) {
         if (recipe.kind() == VatRecipes.Kind.NONE) {
@@ -108,7 +84,6 @@ public final class VatRecipeValidator {
         }
     }
 
-    /** JEI 一页的容量：一层最多 4 格、整页最多 5 行（含封口物与缸底液体各一行） */
     private static void checkJeiCapacity(VatRecipe recipe, List<String> problems) {
         int seasoning = 0;
         int primary = 0;
@@ -165,7 +140,6 @@ public final class VatRecipeValidator {
         }
     }
 
-    /** 同一配方里两个格子收同一种东西：投料与"完成后的去向"都只看第一个匹配的格子 */
     private static void checkOverlappingSlots(VatRecipe recipe, List<ItemStack> everyItem, List<String> problems) {
         List<VatRecipe.Slot> slots = recipe.slots();
         for (int i = 0; i < slots.size(); i++) {
@@ -182,9 +156,6 @@ public final class VatRecipeValidator {
         }
     }
 
-    // ===== 小工具 =====
-
-    /** 这条配方在 JEI 上会演示哪几档水位（和 VatJeiRecipes 保持一致） */
     private static int[] levelsOf(VatRecipe recipe) {
         VatRecipe.Liquid liquid = recipe.liquid();
         if (liquid.waterMin() <= 0) {

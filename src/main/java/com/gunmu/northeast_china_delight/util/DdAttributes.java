@@ -10,11 +10,10 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * 属性修饰符的收敛层。
- *
- * <p>1.20.1 的 {@code AttributeModifier} 认 UUID（{@code new AttributeModifier(UUID, String, double, Operation)}），
- * 1.21 起改成认 {@code ResourceLocation}。这里把「拿 id 换算 / 构造 / 查询 / 摘除 / 取值」收成一套调用，
- * UUID 用名字派生（同名 id 永远得到同一个 UUID，跨存档稳定）。</p>
+ * 属性修饰符的收敛层。 1.20.1 的 {@code AttributeModifier} 认 UUID（
+ * {@code new AttributeModifier(UUID, String, double, Operation)}）， 1.21 起改成认
+ * {@code ResourceLocation}。这里把「拿 id 换算 / 构造 / 查询 / 摘除 / 取值」收成一套调用， UUID 用名字派生（同名 id 永远得到同一
+ * 个 UUID，跨存档稳定）。
  */
 public final class DdAttributes {
 
@@ -37,7 +36,6 @@ public final class DdAttributes {
     /*public static final AttributeModifier.Operation OP_MULTIPLY_BASE = AttributeModifier.Operation.ADD_MULTIPLIED_BASE;
     *///?}
 
-    /** 造一个修饰符 */
     public static AttributeModifier create(ResourceLocation id, double amount, AttributeModifier.Operation operation) {
         //? if <1.20.5 {
         return new AttributeModifier(uuidOf(id), id.toString(), amount, operation);
@@ -46,7 +44,6 @@ public final class DdAttributes {
         *///?}
     }
 
-    /** 查已经挂在这个属性上的修饰符（没有就是 null） */
     public static AttributeModifier get(AttributeInstance instance, ResourceLocation id) {
         //? if <1.20.5 {
         return instance.getModifier(uuidOf(id));
@@ -55,7 +52,6 @@ public final class DdAttributes {
         *///?}
     }
 
-    /** 摘掉修饰符 */
     public static void remove(AttributeInstance instance, ResourceLocation id) {
         //? if <1.20.5 {
         instance.removeModifier(uuidOf(id));
@@ -64,7 +60,6 @@ public final class DdAttributes {
         *///?}
     }
 
-    /** 修饰符的数值（1.20.1 是 getAmount()，1.21 起是 amount()） */
     public static double amount(AttributeModifier modifier) {
         //? if <1.20.5 {
         return modifier.getAmount();

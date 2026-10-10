@@ -66,21 +66,9 @@ import net.neoforged.neoforge.event.entity.player.FillBucketEvent;
 /*import net.minecraft.world.phys.HitResult;
 *///?}
 
-/**
- * 三个和小玩法有关的钩子：
- *
- * <ul>
- *   <li><b>木耳</b>：给原木去皮的那一刻按树种／生物群系掷骰子（黑森林的深色橡木、白桦林的白桦 7%，
- *       橡木 5%，针叶树不产）。去皮本身就是「第一次」，已经去过的原木不会再触发；</li>
- *   <li><b>人参</b>：空手刨开成熟人参脚下的土，才会掉出人参和参籽；</li>
- *   <li><b>海水桶</b>：空桶在干净的海洋水柱里取水时，把原版给的水桶换成海水桶。</li>
- * </ul>
- */
 public final class ModGameplayEvents
 {
-    /** 黑森林／白桦林的去皮出木耳概率 */
     public static final float WOOD_EAR_FOREST_CHANCE = 0.07F;
-    /** 橡木的去皮出木耳概率 */
     public static final float WOOD_EAR_OAK_CHANCE = 0.05F;
 
     private ModGameplayEvents()
@@ -118,7 +106,6 @@ public final class ModGameplayEvents
         {
             return;
         }
-        // 「扣掉空桶、把新桶塞回玩家手里」交给原版事件流程
         event.setFilledBucket(new ItemStack(ModItems.SEA_WATER_BUCKET.get()));
         event.setResult(Event.Result.ALLOW);
     }
@@ -166,7 +153,6 @@ public final class ModGameplayEvents
     }
     *///?}
 
-    /** 这一格是不是「干净的海洋水柱」里的水源（空桶一舀就能舀起来的那种）。 */
     private static boolean canPickSeaWater(Player player, Level level, BlockPos pos,
             BlockHitResult hit, ItemStack stack)
     {
@@ -181,10 +167,6 @@ public final class ModGameplayEvents
         return SeaWaterBucketItem.isValidOceanColumn(level, pos);
     }
 
-    /**
-     * 服务端：把水源舀走，并补上原版取水会有的那一串反馈（统计 / 音效 / 装桶的进度条件）。
-     * 客户端不做世界改动，直接算成功（这里只用于预测）。
-     */
     private static boolean pickUpOceanWater(Player player, Level level, BlockPos pos)
     {
         if (level.isClientSide())
@@ -221,13 +203,6 @@ public final class ModGameplayEvents
         *///?}
     }
 
-    /**
-     * 单份料理的唯一交互入口：普通右键直接吃，潜行右键尝试摆放。
-     *
-     * <p>料理本身仍然是普通 {@link net.minecraft.world.item.Item}，所以不会改变碗、
-     * 黄铜碗等 craft remainder。摆放时临时借用 {@link BlockItem} 的原版放置流程，
-     * 放置失败则回到吃东西的流程；开关关闭时也只走吃东西，不发送提示文字。</p>
-     */
     @SubscribeEvent
     public static void onDishRightClick(PlayerInteractEvent.RightClickBlock event)
     {
@@ -261,8 +236,6 @@ public final class ModGameplayEvents
             }
         }
 
-        // 非潜行右键，以及配置关闭时的潜行右键：直接走物品的食用逻辑。
-        // 这里显式取消方块交互，保证对着箱子/工作台右键也不会出现“放不下”的提示。
         if (DdStacks.isEdible(stack))
         {
             InteractionResult eaten = stack.getItem()
@@ -313,7 +286,6 @@ public final class ModGameplayEvents
         return InteractionResult.sidedSuccess(context.getLevel().isClientSide);
     }
 
-    /** 斧头去皮这个「工具行为」在两个版本里分属两个类：1.20.1 在 ToolActions，1.21 起在 ItemAbilities */
     private static boolean isAxeStrip(BlockEvent.BlockToolModificationEvent event)
     {
         //? if <1.20.2 {
@@ -346,7 +318,6 @@ public final class ModGameplayEvents
         Block.popResource(level, pos, new ItemStack(ModItems.WOOD_EAR.get()));
     }
 
-    /** 这一根原木在这个生物群系里去皮出木耳的概率 */
     private static float woodEarChance(ServerLevel level, BlockPos pos, BlockState logState)
     {
         Holder<Biome> biome = level.getBiome(pos);

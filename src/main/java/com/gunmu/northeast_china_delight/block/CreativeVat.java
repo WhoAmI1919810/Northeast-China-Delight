@@ -8,10 +8,8 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 
 /**
- * 创造大缸：和 {@link Vat} 外观、右键交互一模一样，
- * 区别只在「条件凑齐的瞬间就完成」 —— 投料 + 封口都到位时不排队，直接酿好。
- *
- * <p>没有对应配方：创造大缸只能靠创造模式 / 指令拿到。</p>
+ * 创造大缸：和 {@link Vat} 外观、右键交互一模一样，区别只在「条件凑齐的瞬间就完成」 —— 投料 + 封口都到位时不排队，直接酿好。没有对应配方：创造大缸只能靠创造模
+ * 式 / 指令拿到。
  */
 public class CreativeVat extends Vat {
 
@@ -19,7 +17,6 @@ public class CreativeVat extends Vat {
         super(properties);
     }
 
-    /** 这一缸条件齐了就当场完成，不走计时 */
     @Override
     protected void tryStart(Level level, BlockPos pos, VatBlockEntity vat) {
         if (level instanceof ServerLevel serverLevel) {

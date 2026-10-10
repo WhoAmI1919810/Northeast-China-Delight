@@ -20,14 +20,6 @@ import net.minecraftforge.registries.DeferredRegister;
 *///?}
 import java.util.function.Supplier;
 
-/**
- * 自定义地图标识：制图师卖的「小院地图」上标目的地用的图标。
- *
- * <p>贴图放在 {@code assets/northeast_china_delight/textures/map/decorations/northeast_yard.png}（8×8）。</p>
- *
- * <p>1.20.1 没有 {@code MapDecorationType} 注册表（1.20.5 才加），只能退回原版
- * {@code MapDecoration.Type} 枚举，这里用红叉（原版探险家地图同款图标）。</p>
- */
 public final class ModMapDecorations
 {
     //? if <1.20.5 {

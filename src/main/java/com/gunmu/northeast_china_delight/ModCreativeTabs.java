@@ -22,9 +22,7 @@ import net.minecraftforge.registries.DeferredRegister;
 import java.util.function.Supplier;
 
 /**
- * 本模组的创造模式物品栏。
- *
- * 拆成三个：食材与杂项、菜肴、方块（箱装 / 袋装这些"收纳用"的食物方块单独一项）。
+ * 本模组的创造模式物品栏。拆成三个：食材与杂项、菜肴、方块（箱装 / 袋装这些"收纳用"的食物方块单独一项）。
  */
 public class ModCreativeTabs {
 
@@ -38,7 +36,6 @@ public class ModCreativeTabs {
     public static final DeferredRegister<CreativeModeTab> CREATIVE_MODE_TABS =
             DeferredRegister.create(Registries.CREATIVE_MODE_TAB, NortheastChinaDelight.MODID);
 
-    /** 食材与调料 */
     public static final Supplier<CreativeModeTab> INGREDIENTS_TAB =
             CREATIVE_MODE_TABS.register(INGREDIENTS_TAB_KEY.location().getPath(),
                     () -> CreativeModeTab.builder()
@@ -46,7 +43,6 @@ public class ModCreativeTabs {
                             .title(Component.translatable("itemGroup.northeast_china_delight.ingredients"))
                             .build());
 
-    /** 菜肴 */
     public static final Supplier<CreativeModeTab> DISHES_TAB =
             CREATIVE_MODE_TABS.register(DISHES_TAB_KEY.location().getPath(),
                     () -> CreativeModeTab.builder()
@@ -54,7 +50,6 @@ public class ModCreativeTabs {
                             .title(Component.translatable("itemGroup.northeast_china_delight.dishes"))
                             .build());
 
-    /** 方块：箱装与袋装 */
     public static final Supplier<CreativeModeTab> BLOCKS_TAB =
             CREATIVE_MODE_TABS.register(BLOCKS_TAB_KEY.location().getPath(),
                     () -> CreativeModeTab.builder()

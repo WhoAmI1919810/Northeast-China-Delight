@@ -20,12 +20,6 @@ import net.minecraftforge.common.loot.LootModifier;
 /*import net.neoforged.neoforge.common.loot.LootModifier;
 *///?}
 
-/**
- * 屠夫（village_butcher）箱子：小概率塞东北乐事的肉类食材和肉菜。
- *
- * <p>分两档roll：先按 ~18% 概率出一份「生料」（排骨/油边/下水这类屠夫卖的鲜肉），
- * 再按 ~10% 概率出一份「肉菜」（红肠/血肠/烤货/炖菜这类成品）。</p>
- */
 public class ButcherLootModifier extends LootModifier
 {
     //? if <1.20.5 {
@@ -36,7 +30,6 @@ public class ButcherLootModifier extends LootModifier
             instance -> codecStart(instance).apply(instance, ButcherLootModifier::new));
     *///?}
 
-    /** 生肉 / 下水（屠夫卖的料） */
     private static final Entry[] RAW = {
             new Entry(() -> ModItems.PORK_RIBS.get(), 8),
             new Entry(() -> ModItems.OIL_EDGE.get(), 7),
@@ -47,7 +40,6 @@ public class ButcherLootModifier extends LootModifier
             new Entry(() -> ModItems.CHICKEN_FRAME.get(), 5)
     };
 
-    /** 肉菜 / 灌肠 / 烤货（成品） */
     private static final Entry[] DISH = {
             new Entry(() -> ModItems.RED_SAUSAGE.get(), 8),
             new Entry(() -> ModItems.BLOOD_SAUSAGE.get(), 7),

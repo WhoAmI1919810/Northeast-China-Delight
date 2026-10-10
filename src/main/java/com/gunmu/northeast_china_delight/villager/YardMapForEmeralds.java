@@ -33,27 +33,15 @@ import net.minecraft.world.level.saveddata.maps.MapItemSavedData;
 import javax.annotation.Nullable;
 import java.util.Optional;
 
-/**
- * 制图师卖的「小院地图」。
- *
- * <p>这条交易是原版 {@code VillagerTrades.TreasureMapForEmeralds}（卖海洋／林地探险家地图的那条）
- * 的原样照搬：同样在 {@code getOffer} 里现找结构、现画地图，价格同样是「绿宝石 + 指南针」，
- * 出来的东西就是一张原版的探险家地图——只是目的地换成了东北小院、红叉是原版的红叉，
- * 名字用 {@code filled_map.*} 那套语言键。模组里没有、也不会有单独的地图物品。</p>
- */
 public class YardMapForEmeralds implements VillagerTrades.ItemListing
 {
-    /** 小院地图找的是这个结构标签里的结构；要加别的小院变体，往标签文件里加就行。 */
     private static final TagKey<Structure> DESTINATION = TagKey.create(Registries.STRUCTURE,
             DdIds.of(NortheastChinaDelight.MODID, "on_northeast_yard_maps"));
 
-    /** 地图名字的语言键，和原版 {@code filled_map.mansion}、{@code filled_map.monument} 一个写法。 */
     private static final String DISPLAY_NAME = "filled_map.northeast_yard";
 
-    /** 原版探险家地图用的记号是红叉，这里保持一致。 */
     private static final String DECORATION_LABEL = "+";
 
-    /** 原版探险家地图的缩放级别。 */
     private static final byte MAP_SCALE = 2;
 
     private final int emeraldCost;

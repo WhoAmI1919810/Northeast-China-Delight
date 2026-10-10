@@ -15,15 +15,11 @@ plugins {
 }
 
 stonecutter {
-    // 本工程使用 Groovy DSL
     kotlinController = false
     centralScript = 'build.gradle'
 
     create(getRootProject()) {
-        // 本分支只保留 1.20.1 节点：./gradlew build 只出 1.20.1 的包，
-        // 1.21.1 版本线见 main 分支
         versions '1.20.1'
-        // 提交进仓库的源码状态以该版本为准
         vcsVersion = '1.20.1'
     }
 }

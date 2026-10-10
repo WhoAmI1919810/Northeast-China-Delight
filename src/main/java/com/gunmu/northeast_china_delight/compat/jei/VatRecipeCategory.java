@@ -59,59 +59,36 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * JEI 里的「大缸」分类。
- *
- * 画面中央是大缸的图标（等距视角的陶缸），左侧竖排是往缸里放的材料
- * （顶部封缸物 → 配料 → 食材 → 缸底液体），每一行都有一条引线连到缸身上；
- * 右侧是产物：物品格在上、液体格在下，箭头从缸指向产物，箭头下方写发酵时长。
- *
- * 配方要用到液体时，缸口里会按那种液体的颜色画一层液面（用多少都画，只是表示「缸里有这种液体」）。
- * 箭头、引线、液面和时长都由 {@link VatWidget} 绘制 —— 控件最后绘制，所以不会被槽位盖住。
- *
- * 多档配方（例如辣白菜按水位 1 / 2 / 3 层）由同一个控件每 1.5 秒换一档。
+ * JEI 里的「大缸」分类。画面中央是大缸的图标（等距视角的陶缸），左侧竖排是往缸里放的材料（顶部封缸物 → 配料 → 食材 → 缸底液体），每一行都有一条引线连到缸身上；右侧是
+ * 产物：物品格在上、液体格在下，箭头从缸指向产物，箭头下方写发酵时长。
  */
 public class VatRecipeCategory implements IRecipeCategory<VatJeiRecipe> {
 
     public static final int WIDTH = 138;
     public static final int HEIGHT = 92;
 
-    /** 槽位 16×16，行距 18（槽与槽之间留 2px） */
     private static final int SLOT = 16;
     private static final int ROW_STEP = 18;
-    /** 一行放两个槽时的间距 */
     private static final int PAIR_GAP = 6;
 
-    /** 输入列：单格居中时的 x，以及并排两格时的两个 x */
     private static final int INPUT_X = 15;
     private static final int INPUT_PAIR_X1 = 4;
     private static final int INPUT_PAIR_X2 = INPUT_PAIR_X1 + SLOT + PAIR_GAP;
-    /** 引线从行的右边缘出发：单格行 / 双格行 */
     private static final int ROW_RIGHT_SINGLE = INPUT_X + SLOT;
     private static final int ROW_RIGHT_PAIR = INPUT_PAIR_X2 + SLOT;
-    /** 引线先横着走到这条竖线上，再斜着连到缸身 */
     private static final int LEADER_BUS_X = 46;
     private static final int LEADER_COLOR = 0xFF6B6B6B;
 
-    /** 页面竖直中心：箭头、缸、产物都对齐到这条线 */
     private static final int CENTER_Y = 46;
 
-    /**
-     * 大缸图标 32×32，是把游戏里的 vat_top / vat_side 做等距投影生成的
-     * （见 tools/generate_jei_assets.ps1），缸口那片是透明的，
-     * 所以先在下面画液面、再盖上图标，液体就露在缸口里。
-     */
     private static final int VAT_ICON_SIZE = 32;
     private static final int VAT_X = 52;
     private static final int VAT_Y = CENTER_Y - VAT_ICON_SIZE / 2;
     private static final int MOUTH_X = VAT_X + 16;
     private static final int MOUTH_Y = VAT_Y + 9;
-    /** 缸口透明区的半宽 / 半高，液面就画这么大（由脚本报告：x 6~25、y 4~13） */
     private static final int MOUTH_HALF_WIDTH = 10;
     private static final int MOUTH_HALF_HEIGHT = 5;
 
-    /**
-     * 引线的落点：封缸物指向缸口，食材 / 调料指向缸身侧面，液体指向缸底。
-     */
     private static final int LEADER_MOUTH_X = MOUTH_X - 6;
     private static final int LEADER_MOUTH_Y = MOUTH_Y - 3;
     private static final int LEADER_SIDE_X = VAT_X + 4;
@@ -119,7 +96,6 @@ public class VatRecipeCategory implements IRecipeCategory<VatJeiRecipe> {
     private static final int LEADER_BOTTOM_X = VAT_X + 8;
     private static final int LEADER_BOTTOM_Y = VAT_Y + 24;
 
-    /** 箭头与产物 */
     private static final int ARROW_X = 88;
     private static final int ARROW_Y = CENTER_Y - SLOT / 2;
     private static final int OUTPUT_X = 114;
@@ -127,13 +103,11 @@ public class VatRecipeCategory implements IRecipeCategory<VatJeiRecipe> {
     private static final int OUTPUT_FLUID_Y = CENTER_Y + 1;
     private static final int OUTPUT_ONLY_Y = CENTER_Y - SLOT / 2;
 
-    /** 发酵时长写在箭头下方 */
     private static final int TIME_Y = 70;
     private static final int TIME_COLOR = 0xFF3F3F3F;
     /** 时长文字最远画到这里，避免压到右边的产物格 */
     private static final int TIME_MAX_RIGHT = OUTPUT_X - 2;
 
-    /** 槽位名字：动画换档时要靠它找回具体的槽 */
     private static final String SLOT_SEAL = "seal";
     private static final String SLOT_SEASONING_0 = "seasoning_0";
     private static final String SLOT_SEASONING_1 = "seasoning_1";
@@ -147,13 +121,11 @@ public class VatRecipeCategory implements IRecipeCategory<VatJeiRecipe> {
     private static final String SLOT_RESULT = "result";
     private static final String SLOT_RESULT_FLUID = "result_fluid";
 
-    /** 每一层的槽位名（一层最多 4 格：每行 2 格） */
     private static final String[] SEASONING_SLOTS =
             { SLOT_SEASONING_0, SLOT_SEASONING_1, SLOT_SEASONING_2, SLOT_SEASONING_3 };
     private static final String[] PRIMARY_SLOTS =
             { SLOT_PRIMARY_0, SLOT_PRIMARY_1, SLOT_PRIMARY_2, SLOT_PRIMARY_3 };
 
-    /** 旧版 JEI（1.20.1 用 15.x）没有现成的箭头图，小箭头从模组自己的控件贴图上取 */
     private static final ResourceLocation WIDGETS = DdIds.of(
             NortheastChinaDelight.MODID, "textures/gui/jei_widgets.png");
     private static final int ARROW_U = 61, ARROW_V = 93, ARROW_W = 24, ARROW_H = 16;
@@ -176,10 +148,6 @@ public class VatRecipeCategory implements IRecipeCategory<VatJeiRecipe> {
         this.background = guiHelper.createBlankDrawable(WIDTH, HEIGHT);
     }
 
-    /**
-     * 槽位底图：两个版本的 JEI 说法不一样 —— 1.21 要显式说「用标准槽位底图」，
-     * 旧版 JEI 得自己把 guiHelper 的槽位图挂上去。
-     */
     private static IRecipeSlotBuilder withSlotBackground(IRecipeSlotBuilder slot, IGuiHelper guiHelper) {
         //? if <1.20.5 {
         return slot.setBackground(guiHelper.getSlotDrawable(), -1, -1);
@@ -203,7 +171,6 @@ public class VatRecipeCategory implements IRecipeCategory<VatJeiRecipe> {
         return this.icon;
     }
 
-    /** 没有背景图，JEI 的 getBackground() 默认返回 null，所以尺寸得自己给 */
     @Override
     public int getWidth() {
         return WIDTH;
@@ -214,20 +181,15 @@ public class VatRecipeCategory implements IRecipeCategory<VatJeiRecipe> {
         return HEIGHT;
     }
 
-    /** 旧版 JEI 会拿它当页面底板（空白图）；1.21 的 JEI 用不到 */
     @Override
     public IDrawable getBackground() {
         return this.background;
     }
 
-    // ===== 行的排布：左侧材料从上到下依次是 顶部封缸物 → 配料 → 食材 → 缸底液体，整列上下居中 =====
-
-    /** 一层占几行：一格一行、两格一行，三 / 四格占两行（每行 2 格） */
     private static int layerRows(int slots) {
         return slots <= 0 ? 0 : (slots + 1) / 2;
     }
 
-    /** 这一层按"每行两个"切开 */
     private static List<List<List<ItemStack>>> splitRows(List<List<ItemStack>> layer) {
         List<List<List<ItemStack>>> rows = new ArrayList<>();
         for (int i = 0; i < layer.size(); i += 2) {
@@ -236,7 +198,6 @@ public class VatRecipeCategory implements IRecipeCategory<VatJeiRecipe> {
         return rows;
     }
 
-    /** 这条配方在左侧占几行 */
     private static int rowCount(VatJeiRecipe.State state) {
         int rows = 0;
         if (!state.seal().isEmpty()) {
@@ -250,7 +211,6 @@ public class VatRecipeCategory implements IRecipeCategory<VatJeiRecipe> {
         return rows;
     }
 
-    /** 第一行的 y */
     private static int firstRowY(int rows) {
         if (rows <= 0) {
             return 0;
@@ -260,15 +220,12 @@ public class VatRecipeCategory implements IRecipeCategory<VatJeiRecipe> {
     }
 
     /**
-     * 左侧的一行：纵坐标 + 是不是并排两格 + 引线连到缸上哪一点。
-     *
-     * <p>槽位摆放、引线绘制都读同一份 {@link #rowsOf}，
-     * 所以"行数"和"引线条数"不可能再对不上（以前辣白菜那一页就因此越界崩过）。
+     * 左侧的一行：纵坐标 + 是不是并排两格 + 引线连到缸上哪一点。槽位摆放、引线绘制都读同一份 {@link #rowsOf}，所以"行数"和"引线条数"不可能再对不上（以前辣白
+     * 菜那一页就因此越界崩过）。
      */
     private record Row(int y, boolean pair, int targetX, int targetY) {
     }
 
-    /** 把一页配方左侧的每一行算出来（封口物 → 配料 → 食材 → 缸底液体，整列上下居中） */
     private static List<Row> rowsOf(VatJeiRecipe.State state) {
         List<Row> rows = new ArrayList<>();
         int y = firstRowY(rowCount(state));
@@ -284,7 +241,6 @@ public class VatRecipeCategory implements IRecipeCategory<VatJeiRecipe> {
         return rows;
     }
 
-    /** 一层占几行就补几行引线；行数多了以后引线落点往下挪几像素，免得两条线完全重叠 */
     private static int addLayerRows(List<Row> rows, List<List<ItemStack>> layer, int y) {
         List<List<List<ItemStack>>> split = splitRows(layer);
         for (int i = 0; i < split.size(); i++) {
@@ -301,21 +257,17 @@ public class VatRecipeCategory implements IRecipeCategory<VatJeiRecipe> {
         List<Row> rows = rowsOf(state);
         int row = 0;
 
-        // 顶部：封缸物
         if (!state.seal().isEmpty()) {
             withSlotBackground(builder.addSlot(RecipeIngredientRole.INPUT, INPUT_X, rows.get(row++).y())
                     .addItemStacks(state.seal())
                     .setSlotName(SLOT_SEAL), this.guiHelper);
         }
-        // 配料
         if (!state.seasoning().isEmpty()) {
             row = addLayer(builder, state.seasoning(), rows, row, SEASONING_SLOTS);
         }
-        // 食材
         if (!state.primary().isEmpty()) {
             row = addLayer(builder, state.primary(), rows, row, PRIMARY_SLOTS);
         }
-        // 缸底：液体（缸口里另外会画一层液面，这里的格子是给 JEI 查配方用的）
         if (state.hasLiquid()) {
             withSlotBackground(builder.addSlot(RecipeIngredientRole.INPUT, INPUT_X, rows.get(row).y())
                     .addFluidStack(state.liquid(), state.liquidMb())
@@ -323,8 +275,6 @@ public class VatRecipeCategory implements IRecipeCategory<VatJeiRecipe> {
                     .setSlotName(SLOT_LIQUID), this.guiHelper);
         }
 
-        // 产物：物品格在上、液体格在下；只有一种时单独居中
-        // （大酱 / 酱油 / 醋 留在缸里的是酱渣，鱼露 / 虾酱 / 白醋 没有物品产物）
         boolean hasResultItem = !state.result().isEmpty();
         boolean hasResultFluid = state.hasResultFluid();
         if (hasResultItem) {
@@ -382,23 +332,19 @@ public class VatRecipeCategory implements IRecipeCategory<VatJeiRecipe> {
                      double mouseX, double mouseY) {
         VatJeiRecipe.State state = recipe.first();
 
-        // 缸口里的液面：先画液面再盖缸（缸口是透明的）
         if (state.hasLiquid() && state.liquid() != null) {
             drawFluidRhombus(graphics, state.liquid(), MOUTH_X, MOUTH_Y,
                     MOUTH_HALF_WIDTH, MOUTH_HALF_HEIGHT);
         }
         drawVatBlock(graphics, VAT_X + VAT_ICON_SIZE / 2F, VAT_Y + VAT_ICON_SIZE / 2F + 2, 22.0F);
-        // 每个材料格引一条线到缸上对应的位置
         for (Row row : rowsOf(state)) {
             int right = row.pair() ? ROW_RIGHT_PAIR : ROW_RIGHT_SINGLE;
             int centerY = row.y() + SLOT / 2;
             graphics.fill(right + 1, centerY, LEADER_BUS_X + 1, centerY + 1, LEADER_COLOR);
             drawLine(graphics, LEADER_BUS_X, centerY, row.targetX(), row.targetY(), LEADER_COLOR);
         }
-        // 箭头：从缸指向产物
         this.arrow.draw(graphics, ARROW_X, ARROW_Y);
 
-        // 发酵时长写在箭头下方
         Component text = timeText(state.seconds());
         Font font = Minecraft.getInstance().font;
         int x = ARROW_X + (this.arrow.getWidth() - font.width(text)) / 2;
@@ -407,7 +353,6 @@ public class VatRecipeCategory implements IRecipeCategory<VatJeiRecipe> {
         }
         graphics.drawString(font, text, x, TIME_Y, TIME_COLOR, false);
 
-        // 额外条件注记（"要在会下雪的群系里酿"），小一号字写在时长下面
         Component note = state.note();
         if (note != null) {
             int noteX = (WIDTH - font.width(note)) / 2;
@@ -583,14 +528,6 @@ public class VatRecipeCategory implements IRecipeCategory<VatJeiRecipe> {
     }
     *///?}
 
-    // ===== 画图小工具 =====
-
-    /**
-     * 在缸口里画一层液面：直接拿这种液体的静止贴图，按行铺进菱形里（用多少液体都画，只表示「缸里有这种东西」）。
-     *
-     * 这里走方块图集里的 sprite 而不是直接 blit 贴图路径 —— 水的静止贴图是动画贴图，
-     * 直接 blit 会取不到（画出来是紫黑格子），用 sprite 就会自动跟着动画帧。
-     */
     private static void drawFluidRhombus(GuiGraphics graphics, Fluid fluid, int centerX, int centerY,
                                          int halfWidth, int halfHeight) {
         ResourceLocation texture = IClientFluidTypeExtensions.of(fluid).getStillTexture();
@@ -614,11 +551,6 @@ public class VatRecipeCategory implements IRecipeCategory<VatJeiRecipe> {
         }
     }
 
-    /**
-     * 液面要乘的颜色。
-     * 原版水的贴图是灰白的，蓝色来自群系着色，所以这里给它默认水色；
-     * 其它液体（含本模组的）贴图本身就是有颜色的，用自己的 tint（一般是白色 = 不改）。
-     */
     private static int fluidTint(Fluid fluid) {
         if (fluid == Fluids.WATER || fluid == Fluids.FLOWING_WATER) {
             return 0xFF3F76E4;
@@ -626,10 +558,6 @@ public class VatRecipeCategory implements IRecipeCategory<VatJeiRecipe> {
         return IClientFluidTypeExtensions.of(fluid).getTintColor();
     }
 
-    /**
-     * 在 JEI 页里画真实的大缸方块（不是预制 PNG）。
-     * 变换用「物品栏视角」：30° 俯角 + 225° 水平角，缸中心对齐 (centerX, centerY)。
-     */
     private static void drawVatBlock(GuiGraphics graphics, float centerX, float centerY, float scale) {
         Minecraft minecraft = Minecraft.getInstance();
         net.minecraft.world.level.block.state.BlockState state = ModBlocks.VAT.get().defaultBlockState();
@@ -649,7 +577,6 @@ public class VatRecipeCategory implements IRecipeCategory<VatJeiRecipe> {
         pose.popPose();
     }
 
-    /** 画一条细线（逐点填充，够用就好） */
     private static void drawLine(GuiGraphics graphics, int x1, int y1, int x2, int y2, int color) {
         int steps = Math.max(Math.abs(x2 - x1), Math.abs(y2 - y1));
         if (steps <= 0) {
@@ -662,12 +589,6 @@ public class VatRecipeCategory implements IRecipeCategory<VatJeiRecipe> {
         }
     }
 
-    /**
-     * 发酵时长用游戏日表示（1 个 MC 日 = 24000 tick = 1200 秒）：
-     *   - 不到一天 → 「N 秒」
-     *   - 整天     → 「N 天」
-     *   - 带零头   → 「N 天 M 秒」
-     */
     private static Component timeText(int seconds) {
         if (seconds <= 0) {
             return Component.empty();

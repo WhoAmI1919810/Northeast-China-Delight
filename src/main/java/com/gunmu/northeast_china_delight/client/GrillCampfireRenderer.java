@@ -32,50 +32,25 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * 烤架营火的渲染。
- *
- * <ul>
- *     <li>火堆本身走方块模型（继承原版营火）；</li>
- *     <li>4 份食材摆在 4 个角上（位置照抄原版营火），搁在烤架架面上；</li>
- *     <li>刷过调料的那一份会在食材上再叠一层：瓶装调料是**把食材原样再画一遍、只把颜色换成调料色**，
- *         所以位置、朝向、透明轮廓和食材完全一致；盐、糖这类则**在食材的实心像素上**撒几个白点；</li>
- *     <li>最上面那层三维铁条烤架（4 根立柱 + 边框 + 铁条）。</li>
- * </ul>
+ * 烤架营火的渲染。所以位置、朝向、透明轮廓和食材完全一致；盐、糖这类则在食材的实心像素上撒几个白点；</li>
  */
 public class GrillCampfireRenderer implements BlockEntityRenderer<GrillBlockEntity> {
 
-    /** 食材就搁在架面上：架面顶在 0.9625，食材薄片厚 1/16（上下各 1/32），所以中心抬到 0.99375 */
     private static final float ITEM_Y = 0.99375F;
-    /** 原版营火摆食物的偏移与大小 */
     private static final float ITEM_OFFSET = 0.3125F;
     private static final float ITEM_SCALE = 0.375F;
 
-    /**
-     * 调料那一层要抬到食材**上表面之上**。
-     *
-     * 物品模型是一格 1/16 厚的薄片，缩放 ITEM_SCALE 之后厚度约 0.0234 格、半厚约 0.0117 格，
-     * 所以抬 0.006 是不够的 —— 白点和颜色层会被埋在食材贴片内部，根本看不见。
-     */
     private static final float SEASON_LIFT = 0.0135F;
-    /** 颜色层的透明度：淡淡的就好（瓶装调料那种"刷一层油"） */
     private static final float SEASON_ALPHA = 0.32F;
 
-    // ===== 辣椒酱这类"厚酱"：颜色更浓 + 粗颗粒的辣椒碎，和糖霜的白点完全不是一回事 =====
-
-    /** 厚酱的红：比辣椒油更沉、更暗一点，看着像酱而不是油 */
     private static final int SAUCE_TINT = 0xB5321C;
-    /** 厚酱颜色层的透明度（比瓶装调料厚） */
     private static final float SAUCE_ALPHA = 0.55F;
-    /** 酱里的辣椒碎：深红发褐 */
     private static final int SAUCE_FLECK_COLOR = 0x7A1A0C;
     private static final float SAUCE_FLECK_ALPHA = 0.9F;
-    /** 辣椒碎的个数与大小（都比糖粒大一圈，能看出"碎辣椒"的感觉） */
     private static final int SAUCE_FLECK_COUNT = 7;
     private static final float SAUCE_FLECK_HALF_PX = 0.9F;
 
-    /** 撒几个白点 */
     private static final int SPECK_COUNT = 4;
-    /** 每个白点在自己那个像素里的半径（单位：像素，0.6 ≈ 一格像素的 120%） */
     private static final float SPECK_HALF_PX = 0.6F;
     private static final float SPECK_ALPHA = 0.9F;
     /** 只有足够实的像素才撒点，避免点在半透明的边缘上 */
@@ -102,14 +77,11 @@ public class GrillCampfireRenderer implements BlockEntityRenderer<GrillBlockEnti
             Direction direction = Direction.from2DDataValue(Math.floorMod(slot + facing.get2DDataValue(), 4));
             List<Item> applied = grill.seasoningsOf(slot);
 
-            // 食材本身：和原版营火一模一样的摆法，只是整体抬到架面上面
             pose.pushPose();
             translateToItem(pose, direction);
             drawItem(stack, buffer, pose, packedLight, packedOverlay, grill, seed + slot);
             pose.popPose();
 
-            // 瓶装调料：同一份食材**用同一个变换**再画一遍，只是把颜色换成调料色。
-            // 这样位置、朝向、透明轮廓全都和食材一致，不会多出方框。
             for (Item seasoning : applied) {
                 if (!(seasoning instanceof SeasoningBottleItem)) {
                     continue;
@@ -127,7 +99,6 @@ public class GrillCampfireRenderer implements BlockEntityRenderer<GrillBlockEnti
                 pose.popPose();
             }
 
-            // 辣椒酱这类厚酱：再叠一层浓红，并撒几粒深红的辣椒碎
             boolean hasSauce = applied.stream().anyMatch(GrillSeasonings::isSauce);
             if (hasSauce) {
                 MultiBufferSource sauce = new TintBufferSource(buffer,
@@ -145,7 +116,6 @@ public class GrillCampfireRenderer implements BlockEntityRenderer<GrillBlockEnti
                         SAUCE_FLECK_COLOR, SAUCE_FLECK_ALPHA, SAUCE_FLECK_HALF_PX, SAUCE_FLECK_COUNT);
             }
 
-            // 盐、糖这类干调料：在食材的实心像素上撒几个白点
             boolean hasDrySeasoning = applied.stream().anyMatch(item -> !GrillSeasonings.needsBrush(new ItemStack(item)));
             if (hasDrySeasoning) {
                 renderSpecks(pose, buffer, stack, direction, grill.getLevel(), seed + slot,
@@ -154,8 +124,6 @@ public class GrillCampfireRenderer implements BlockEntityRenderer<GrillBlockEnti
             }
         }
 
-        // 烤架：几何在 GrillRackGeometry 里按方块坐标直接拼（JEI 的「烧烤」页面用的是同一份），
-        // 这里只需按四个方向有没有相邻的烤架决定边框和立柱怎么拼。
         BlockPos pos = grill.getBlockPos();
         Level level = grill.getLevel();
         GrillRackGeometry.render(pose, buffer, packedLight, packedOverlay,
@@ -171,17 +139,10 @@ public class GrillCampfireRenderer implements BlockEntityRenderer<GrillBlockEnti
                 pose, buffer, grill.getLevel(), seed);
     }
 
-    // ===== 烤架本体 =====
-
-    /** 相邻那格是不是也架了烤架 */
     private static boolean linked(BlockGetter level, BlockPos pos, Direction direction) {
         return level != null && level.getBlockState(pos.relative(direction)).is(ModBlocks.GRILL_CAMPFIRE.get());
     }
 
-    /**
-     * 把坐标系摆到「某一份食材」那里 —— 和原版营火摆 4 份食物的变换完全一致：
-     * 先平移到方块中心与架面高度，再按这一格的朝向转过去，最后偏移 + 缩放到那一角。
-     */
     private static void translateToItem(PoseStack pose, Direction direction) {
         pose.translate(0.5F, ITEM_Y, 0.5F);
         pose.mulPose(Axis.YP.rotationDegrees(-direction.toYRot()));
@@ -190,21 +151,11 @@ public class GrillCampfireRenderer implements BlockEntityRenderer<GrillBlockEnti
         pose.scale(ITEM_SCALE, ITEM_SCALE, ITEM_SCALE);
     }
 
-    /** 摆到「食材自己的坐标系」：原点在贴图中心，贴图铺满 (-0.5 ~ 0.5) 的正方形 */
     private static void translateToItemLocal(PoseStack pose, Direction direction) {
         pose.translate(0.0F, SEASON_LIFT, 0.0F);
         translateToItem(pose, direction);
     }
 
-    /**
-     * 在食材贴图的**实心像素**上撒几粒小点。
-     *
-     * <p>盐、糖是白色小点；辣椒酱用同一套取点逻辑，但换成深红的粗颗粒（看着像碎辣椒），
-     * 所以两种调料一眼能分出来。
-     *
-     * <p>点的位置直接从贴图像素里挑，UV 也取同一个像素，所以：
-     * 食材轮廓以外的透明区域不会出现点，点也不会悬空。
-     */
     private void renderSpecks(PoseStack pose, MultiBufferSource buffer, ItemStack stack, Direction direction,
                               net.minecraft.world.level.Level level, int seed,
                               int packedLight, int packedOverlay,
@@ -231,8 +182,6 @@ public class GrillCampfireRenderer implements BlockEntityRenderer<GrillBlockEnti
             return;
         }
 
-        // 白点用**不带贴图**的纯色渲染类型画，所以它真的是白的；
-        // 位置仍然取自食材的实心像素，所以不会跑到轮廓外面去。
         VertexConsumer consumer = buffer.getBuffer(RenderType.debugQuads());
         float red = ((color >> 16) & 0xFF) / 255.0F;
         float green = ((color >> 8) & 0xFF) / 255.0F;
@@ -251,7 +200,6 @@ public class GrillCampfireRenderer implements BlockEntityRenderer<GrillBlockEnti
         pose.popPose();
     }
 
-    /** 一粒小点（POSITION_COLOR 格式：不需要贴图、光照、法线，也不会被背面剔除） */
     private static void addSpeckQuad(VertexConsumer consumer, PoseStack.Pose pose,
                                      float x0, float y0, float x1, float y1,
                                      float red, float green, float blue, float alpha) {
@@ -268,7 +216,6 @@ public class GrillCampfireRenderer implements BlockEntityRenderer<GrillBlockEnti
         *///?}
     }
 
-    /** 把底层缓冲包一层，把所有颜色换成调料色（位置、UV、光照、法线照原样传下去） */
     private record TintBufferSource(MultiBufferSource delegate,
                                     float red, float green, float blue, float alpha) implements MultiBufferSource {
         @Override

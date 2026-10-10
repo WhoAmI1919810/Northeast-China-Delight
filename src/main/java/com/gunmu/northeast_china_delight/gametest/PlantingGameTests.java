@@ -31,17 +31,6 @@ import net.minecraftforge.gametest.PrefixGameTestTemplate;
 /*import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
 *///?}
 
-/**
- * 雪地种植的回归测试。
- *
- * <p>要的行为是「榛子丛**长在雪里**」：底下那格仍然是草方块，榛子丛和薄雪片**占同一格**
- * （把雪片顶掉但自带雪面），所以放下之后应当看到：</p>
- * <ul>
- *   <li>雪片那一格变成榛子丛（雪片本体没了，由模型里的雪面代替）；</li>
- *   <li>榛子丛的 {@code snowy=true}；</li>
- *   <li>它下面那格还是草方块。</li>
- * </ul>
- */
 @GameTestHolder(NortheastChinaDelight.MODID)
 @PrefixGameTestTemplate(false)
 public final class PlantingGameTests
@@ -50,7 +39,6 @@ public final class PlantingGameTests
     {
     }
 
-    /** 假玩家：1.20.1 的 GameTestHelper 拆成 makeMockPlayer / makeMockSurvivalPlayer 两个方法 */
     private static Player mockPlayer(GameTestHelper helper, GameType gameType)
     {
         //? if <1.20.5 {
@@ -125,7 +113,6 @@ public final class PlantingGameTests
         helper.succeed();
     }
 
-    /** 模拟玩家右键点住 clickedPos 这个方块（顶面），拿着 item 去种 */
     private static void placeOn(ServerLevel level, Player player, Item item, BlockPos clickedPos)
     {
         ItemStack stack = new ItemStack(item);

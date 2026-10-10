@@ -39,17 +39,9 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraft.world.level.block.Blocks;
 
 /**
- * 榛子丛：行为照搬原版甜浆果丛，只有三处不同。
- *
- * <ul>
- *   <li>采摘 / 选取方块给的是榛子（自身即种子，右键就能再种下）；</li>
- *   <li>扎进丛里只会被绊住减速，<b>不会受伤</b>；</li>
- *   <li>贴图与掉落表换成榛子丛自己的。</li>
- * </ul>
- *
- * 生长阶段沿用甜浆果丛的 {@link BlockStateProperties#AGE_3}（0~3）：
- * 0~1 是幼苗，2 开始结果（右键可摘），3 是完熟（右键能摘到最多）。
- * 破坏时的掉落写在 {@code data/northeast_china_delight/loot_table/blocks/hazelnut_bush.json} 里。
+ * 榛子丛：行为照搬原版甜浆果丛，只有三处不同。生长阶段沿用甜浆果丛的 {@link BlockStateProperties#AGE_3}（0~3）： 0~1 是幼苗，2 开始结
+ * 果（右键可摘），3 是完熟（右键能摘到最多）。破坏时的掉落写在
+ * {@code data/northeast_china_delight/loot_table/blocks/hazelnut_bush.json} 里。
  */
 public class HazelnutBushBlock extends BushBlock implements BonemealableBlock {
 
@@ -59,10 +51,6 @@ public class HazelnutBushBlock extends BushBlock implements BonemealableBlock {
 
     public static final int MAX_AGE = 3;
     public static final IntegerProperty AGE = BlockStateProperties.AGE_3;
-    /**
-     * 覆雪形态：植株**和雪片占同一格**（底下还是土），模型里自带一层雪片的底面，
-     * 看起来就像从雪里长出来。
-     */
     public static final BooleanProperty SNOWY = BlockStateProperties.SNOWY;
 
     private static final VoxelShape SAPLING_SHAPE = Block.box(3.0, 0.0, 3.0, 13.0, 8.0, 13.0);
@@ -87,25 +75,17 @@ public class HazelnutBushBlock extends BushBlock implements BonemealableBlock {
                 || isSnow(level.getBlockState(pos.below()));
     }
 
-    /** 种下去的时候看准：点到雪片上、把它换成榛子丛，这一丛就是覆雪的 */
     @Override
     public BlockState getStateForPlacement(BlockPlaceContext context) {
         return this.defaultBlockState()
                 .setValue(SNOWY, isSnowyAt(context.getLevel(), context.getClickedPos()));
     }
 
-    /**
-     * 能落脚的地方：泥土／草方块／耕地这些老规矩，另外**雪片上面也算**。
-     *
-     * <p>雪地里地表是一层雪片，榛子丛就该站在雪片上（和树、草一样长在雪面），
-     * 而不是把雪片顶掉、露出底下的土。</p>
-     */
     @Override
     protected boolean mayPlaceOn(BlockState state, BlockGetter level, BlockPos pos) {
         if (super.mayPlaceOn(state, level, pos)) {
             return true;
         }
-        // 雪片、雪块上面都算：雪林（grove）那类群系地表是一整块雪，底下的土照样能扎根
         return (state.is(Blocks.SNOW) || state.is(Blocks.SNOW_BLOCK))
                 && super.mayPlaceOn(level.getBlockState(pos.below()), level, pos.below());
     }
@@ -117,7 +97,6 @@ public class HazelnutBushBlock extends BushBlock implements BonemealableBlock {
     }
     *///?}
 
-    /** 选取方块给榛子（原版甜浆果丛给甜浆果） */
     @Override
     //? if <1.20.2 {
     public ItemStack getCloneItemStack(BlockGetter level, BlockPos pos, BlockState state)
@@ -174,10 +153,6 @@ public class HazelnutBushBlock extends BushBlock implements BonemealableBlock {
         *///?}
     }
 
-    /**
-     * 走进丛里会被枝叶绊住（和甜浆果丛一样减速），
-     * 但**不会**像甜浆果丛那样按移动距离扣血 —— 榛子丛不扎人。
-     */
     @Override
     public void entityInside(BlockState state, Level level, BlockPos pos, Entity entity) {
         if (entity instanceof LivingEntity && entity.getType() != EntityType.FOX && entity.getType() != EntityType.BEE) {
@@ -190,7 +165,6 @@ public class HazelnutBushBlock extends BushBlock implements BonemealableBlock {
     public InteractionResult use(BlockState state, Level level, BlockPos pos, Player player,
                                  InteractionHand hand, BlockHitResult hit) {
         ItemStack stack = player.getItemInHand(hand);
-        // 没熟的时候拿骨粉点：交给骨粉自己的逻辑（催熟），方块这边不处理
         if (state.getValue(AGE) != MAX_AGE && stack.is(Items.BONE_MEAL)) {
             return InteractionResult.PASS;
         }

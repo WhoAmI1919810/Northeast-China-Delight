@@ -20,14 +20,6 @@ import net.minecraftforge.common.loot.LootModifier;
 /*import net.neoforged.neoforge.common.loot.LootModifier;
 *///?}
 
-/**
- * 结构宝箱（沙漠神殿 / 掠夺者前哨站 / 废弃矿井 / 丛林神庙 / 沉船 / 雪屋 / 海底废墟，
- * 以及村庄里的非住宅箱）小概率塞东北乐事的种子与可种植谷物。
- *
- * <p>与村庄住宅用的 {@link VillageSeedsLootModifier} 不同：这一份概率刻意压低
- * （约 15% 出 1 份），并且把 15 种可种植物品全放进同一个池子——
- * 包括能直接当种子种的红薯、花生、大豆、红豆、荞麦。</p>
- */
 public class StructureSeedsLootModifier extends LootModifier
 {
     //? if <1.20.5 {
@@ -38,7 +30,6 @@ public class StructureSeedsLootModifier extends LootModifier
             instance -> codecStart(instance).apply(instance, StructureSeedsLootModifier::new));
     *///?}
 
-    /** 全部可种植物品：种子类 + 能直接种的红薯/花生/大豆/红豆/荞麦 */
     private static final Entry[] SEEDS = {
             new Entry(() -> ModItems.CORN_SEEDS.get(), 8),
             new Entry(() -> ModItems.SOYBEAN.get(), 8),
@@ -54,7 +45,7 @@ public class StructureSeedsLootModifier extends LootModifier
             new Entry(() -> ModItems.EGGPLANT_SEEDS.get(), 6),
             new Entry(() -> ModItems.GREEN_BEANS_SEEDS.get(), 6),
             new Entry(() -> ModItems.RED_CHILI_SEEDS.get(), 5),
-            new Entry(() -> ModItems.GINSENG_SEEDS.get(), 2)   // 人参种：稀有
+            new Entry(() -> ModItems.GINSENG_SEEDS.get(), 2)
     };
 
     public StructureSeedsLootModifier(LootItemCondition[] conditions)
@@ -79,7 +70,6 @@ public class StructureSeedsLootModifier extends LootModifier
     protected ObjectArrayList<ItemStack> doApply(ObjectArrayList<ItemStack> generatedLoot, LootContext context)
     {
         var random = context.getRandom();
-        // 小概率：15% 塞 1 份种子（村庄住宅的 40% 是"大概率"，这里是"小概率"）
         if (random.nextFloat() < 0.15F)
         {
             generatedLoot.add(roll(random, SEEDS));
@@ -97,7 +87,7 @@ public class StructureSeedsLootModifier extends LootModifier
             roll -= entry.weight;
             if (roll < 0)
             {
-                int count = 1 + random.nextInt(2);  // 1~2 个
+                int count = 1 + random.nextInt(2);
                 return new ItemStack(entry.item.get(), count);
             }
         }

@@ -32,10 +32,6 @@ import net.minecraftforge.gametest.PrefixGameTestTemplate;
 /*import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
 *///?}
 
-/**
- * 菜肴方块形态的三条规矩：
- * 不潜行右键 = 吃（不摆）、潜行右键 = 摆成方块、开关关掉时潜行右键也不摆（而且没有任何提示）。
- */
 @GameTestHolder(NortheastChinaDelight.MODID)
 @PrefixGameTestTemplate(false)
 public final class DishPlacementGameTests
@@ -44,7 +40,6 @@ public final class DishPlacementGameTests
     {
     }
 
-    /** 假玩家：1.20.1 的 GameTestHelper 拆成 makeMockPlayer / makeMockSurvivalPlayer 两个方法 */
     private static Player mockPlayer(GameTestHelper helper, GameType gameType)
     {
         //? if <1.20.5 {
@@ -64,18 +59,15 @@ public final class DishPlacementGameTests
 
         Player player = mockPlayer(helper, GameType.SURVIVAL);
 
-        // 1) 不潜行：不放置
         player.setShiftKeyDown(false);
         useOn(level, player, target);
         helper.assertTrue(level.getBlockState(target).isAir(), "不潜行右键不应该把菜摆出来");
 
-        // 2) 潜行 + 开关打开：放置
         player.setShiftKeyDown(true);
         useOn(level, player, target);
         helper.assertTrue(level.getBlockState(target).is(ModBlocks.OLD_STYLE_GUO_BAO_ROU.get()),
                 "潜行右键应该把菜摆成方块");
 
-        // 3) 开关关掉：不放置（且不会有任何文字提示）
         level.setBlockAndUpdate(target, Blocks.AIR.defaultBlockState());
         boolean old = NortheastChinaConfig.DISH_PLACEMENT_ENABLED.get();
         NortheastChinaConfig.DISH_PLACEMENT_ENABLED.set(false);

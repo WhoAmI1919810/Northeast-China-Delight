@@ -19,7 +19,9 @@ import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 
-/** A seawater bucket can only be emptied back into a clean ocean water column. */
+/**
+ * A seawater bucket can only be emptied back into a clean ocean water column.
+ */
 public class SeaWaterBucketItem extends BucketItem {
     public SeaWaterBucketItem(Properties properties) {
         super(Fluids.WATER, properties);
@@ -31,12 +33,6 @@ public class SeaWaterBucketItem extends BucketItem {
         return isValidOceanColumn(level, pos) && super.emptyContents(player, level, pos, result, container);
     }
 
-    /**
-     * 原版倒水只认「实心方块」的准星命中，而水流没有命中框：所以站在海里对着水右键时，
-     * 要么得瞄到海底方块，要么什么都不发生。这里补一条「瞄着水也能倒」的路 ——
-     * 先走原版（瞄到方块时的行为不变），原版什么都没瞄到（MISS）时再用 SOURCE_ONLY
-     * 瞄一次水源方块：干净海洋水柱里就把海水倒回去（水本来就还在，不需要再放），换回空桶。
-     */
     @Override
     public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
         ItemStack stack = player.getItemInHand(hand);
@@ -81,10 +77,6 @@ public class SeaWaterBucketItem extends BucketItem {
         return true;
     }
 
-    /**
-     * 取海水的视线检测：和原版空桶取水走同一条路 —— 只认水源方块（流动的水不算），
-     * 长度用玩家自己的方块交互距离。1.21.1 那边就是靠它才瞄得准水面的。
-     */
     public static BlockHitResult raycastSourceFluid(Level level, Player player) {
         return getPlayerPOVHitResult(level, player, ClipContext.Fluid.SOURCE_ONLY);
     }

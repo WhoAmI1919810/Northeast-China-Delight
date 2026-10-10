@@ -58,7 +58,6 @@ ext.legacyTagDirRenames = [
         'game_event' : 'game_events',
 ]
 
-// 1.21 的 c:<path> 在 1.20.1 里叫 forge:<改过的 path>（没列出来的就是同名）
 ext.legacyTagPathRenames = [
         'foods/dough/wheat': 'dough/wheat',
         'foods/raw_fish'   : 'raw_fishes',
@@ -71,8 +70,6 @@ ext.legacyTagPathRenames = [
         'foods/fruits/pear': 'fruits/pear',
 ]
 
-// 1.21 把战利品上下文里的实体目标改了名，1.20.1 还是老名字
-//（LootContext.EntityTarget：1.20.1 = killer/direct_killer/killer_player）
 ext.legacyEntityTargetRenames = [
         'attacker'        : 'killer',
         'direct_attacker' : 'direct_killer',
@@ -88,12 +85,10 @@ ext.legacy1201ConditionRenames = [
         'neoforge:mod_loaded'             : 'forge:mod_loaded',
 ]
 
-// 生物群系修改器的 type：1.21 是 neoforge:add_features，1.20.1 Forge 是 forge:add_features
 ext.legacy1201TypeRenames = [
         'neoforge:add_features': 'forge:add_features',
 ]
 
-/** c:xxx 形式的标签 id → 1.20.1 的 forge:xxx */
 ext.legacyRemapTagId = { String id ->
     if (!id.startsWith('c:')) {
         return id
@@ -102,15 +97,10 @@ ext.legacyRemapTagId = { String id ->
     return 'forge:' + (legacyTagPathRenames.get(rest) ?: rest)
 }
 
-/** #c:xxx 形式的标签引用 → #forge:xxx */
 ext.legacyRemapTagRef = { String ref ->
     return ref.startsWith('#c:') ? '#' + legacyRemapTagId(ref.substring(1)) : ref
 }
 
-/**
- * Groovy 的 JsonOutput 会把非 ASCII 字符转义成 \uXXXX（中文注释就全变乱码了），这里还原回来。
- * 数据文件里本来没有反斜杠（已核对），所以看到 \uXXXX 就一定是 JsonOutput 转义的。
- */
 ext.legacyUnescapeUnicode = { String json ->
     if (!json.contains('\\u')) {
         return json
@@ -136,11 +126,9 @@ ext.legacyUnescapeUnicode = { String json ->
     return sb.toString()
 }
 
-/** 递归改写一个 JSON 节点；env.changed 记录内容有没有真的动过 */
 ext.legacyTransformNode = { Object node, Map env ->
     if (node instanceof Map) {
         def map = node as Map
-        // 1.20.1 没有数据组件：neoforge:components 原料退化成普通物品原料
         if (map.get('type') == 'neoforge:components') {
             def items = map.get('items')
             def one = items instanceof List ? items.get(0) : items
@@ -148,9 +136,6 @@ ext.legacyTransformNode = { Object node, Map env ->
             return ['item': one]
         }
         def out = new LinkedHashMap()
-        // 1.20.1 的 Create 流体原料没有 "type" 包装：
-        //   {"type":"neoforge:single","amount":N,"fluid":X} → {"amount":N,"fluid":X}
-        // 1.21 的流体标签写法同理退化成 1.20.1 的 "fluidTag"
         if (map.get('type') == 'neoforge:single') {
             env.changed = true
             map = new LinkedHashMap(map)
@@ -162,7 +147,6 @@ ext.legacyTransformNode = { Object node, Map env ->
             def tagId = map.remove('tag')
             out.put('fluidTag', tagId)
         }
-        // 工具动作条件：1.20.1 的 Forge 叫 forge:can_tool_perform_action（字段 action）
         if (map.get('condition') == 'neoforge:can_item_perform_ability') {
             env.changed = true
             map = new LinkedHashMap(map)
@@ -173,35 +157,27 @@ ext.legacyTransformNode = { Object node, Map env ->
         }
         map.each { Object k, Object v ->
             def key = k as String
-            // 1.20.1：注册名从 neoforge: 挪到 forge:
             if (key == 'condition' && v instanceof String && legacy1201ConditionRenames.containsKey(v)) {
                 env.changed = true
                 out.put(key, legacy1201ConditionRenames[v])
                 return
             }
-            // 配方/战利品里的条件对象也用 "type"（如 {"type":"neoforge:mod_loaded"}），
-            // 所以两张表都要看
             if (key == 'type' && v instanceof String
                     && (legacy1201TypeRenames.containsKey(v) || legacy1201ConditionRenames.containsKey(v))) {
                 env.changed = true
                 out.put(key, legacy1201TypeRenames.get(v) ?: legacy1201ConditionRenames[v])
                 return
             }
-            // 1.20.1 的配方条件键叫 forge:conditions（1.21 才是 neoforge:conditions）
             if (key == 'neoforge:conditions') {
                 env.changed = true
                 out.put('forge:conditions', legacyTransformNode(v, env))
                 return
             }
-            // 1.20.1 的 create:sequenced_assembly 要的是驼峰写法 transitionalItem
             if (env.recipe && key == 'transitional_item') {
                 env.changed = true
                 out.put('transitionalItem', legacyTransformNode(v, env))
                 return
             }
-            // 1.20.x 的 ItemPredicate 还没有并成 HolderSet：标签要写进单独的 "tag" 字段，
-            // 而且 TagKey.codec 不带 "#" 前缀（1.21 是 "items": "#tag" 写在一起）。
-            // 不转的话 1.20.1 会报 "Not a json array"，整条掉落修改器被丢掉。
             if (key == 'items' && v instanceof String) {
                 def s = v as String
                 env.changed = true
@@ -212,20 +188,16 @@ ext.legacyTransformNode = { Object node, Map env ->
                 }
                 return
             }
-            // 掉落条件里的 "entity": "attacker" → "killer"
             if (key == 'entity' && v instanceof String && legacyEntityTargetRenames.containsKey(v)) {
                 env.changed = true
                 out.put(key, legacyEntityTargetRenames[v])
                 return
             }
-            // 配方里的 "id" 只出现在 ItemStack / FluidStack 位置（result / results[] / container / transitional_item）。
-            // 1.20.x 的 Create 用 "item" 表示物品输出、用 "fluid" 表示流体输出，靠同一层里有没有 "amount" 区分
             if (env.recipe && key == 'id' && v instanceof String) {
                 out.put(map.containsKey('amount') ? 'fluid' : 'item', v)
                 env.changed = true
                 return
             }
-            // 进度图标：1.20.1 的 display.icon 用 "item"
             if (env.advancement && key == 'icon' && v instanceof Map && (v as Map).containsKey('id')) {
                 def icon = new LinkedHashMap(v as Map)
                 def iconId = icon.remove('id')
@@ -234,7 +206,6 @@ ext.legacyTransformNode = { Object node, Map env ->
                 out.put(key, legacyTransformNode(icon, env))
                 return
             }
-            // {"tag": "c:xxx"} → {"tag": "forge:xxx"}
             if (key == 'structures' && v instanceof String) {
                 env.changed = true
                 out.put('structure', v)
@@ -266,7 +237,6 @@ ext.legacyTransformNode = { Object node, Map env ->
             }
             out.put(key, legacyTransformNode(v, env))
         }
-        // 农夫乐事切菜板：1.20.x 的 result 直接是 ItemStack，tool 只收单个原料
         if (map.get('type') == 'farmersdelight:cutting') {
             def result = out.get('result')
             if (result instanceof List) {
@@ -305,9 +275,6 @@ ext.legacyTransformNode = { Object node, Map env ->
     return node
 }
 
-/**
- * 把 build/resources/main/data 就地转成 1.20.1 形态。
- */
 ext.portLegacyDataTree = { File resourcesDir ->
     File dataDir = new File(resourcesDir, 'data')
     if (!dataDir.isDirectory()) {
@@ -327,16 +294,13 @@ ext.portLegacyDataTree = { File resourcesDir ->
         def rest = new ArrayList<String>(parts.subList(1, parts.size()))
         def isTagFile = rest.size() > 1 && rest[0] == 'tags'
 
-        // ---- 目录改名 ----
         if (isTagFile && legacyTagDirRenames.containsKey(rest[1])) {
             rest[1] = legacyTagDirRenames[rest[1]]
         } else if (legacyTopRenames.containsKey(rest[0])) {
             rest[0] = legacyTopRenames[rest[0]]
         }
         if (ns == 'c' && isTagFile) {
-            ns = 'forge'      // 通用标签整体挪到 forge: 命名空间
-            // 标签 id 改过名的（foods/raw_fish → raw_fishes 之类），定义文件的路径也要跟着挪：
-            // 只改引用不改定义的话，那一格匹配不到任何东西，JEI 里就是一条空配方。
+            ns = 'forge'
             if (rest.size() > 2 && rest[rest.size() - 1].endsWith('.json')) {
                 def fileName = rest.remove(rest.size() - 1)
                 def stem = fileName.substring(0, fileName.length() - 5)
@@ -362,22 +326,16 @@ ext.portLegacyDataTree = { File resourcesDir ->
         }
         def newRel = ([ns] + rest).join('/')
 
-        // ---- 整组丢弃：1.20.1 的 Forge 没有数据表（data map）这一套（见文件头第 11 条） ----
         if (rel.startsWith('neoforge/data_maps/')) {
             src.delete()
             stats.dropped++
             return
         }
 
-        // ---- JSON 内容改写 ----
         def env = [changed: false, recipe: newRel.contains('/recipes/'), advancement: newRel.contains('/advancements/')]
         if (rel.endsWith('.json')) {
             def root = slurper.parse(src, 'UTF-8')
             def rewritten = legacyTransformNode(root, env)
-            // Forge 1.20.1 只在 forge:conditional 这个序列化器里支持配方条件，
-            // 顶层 forge:conditions 会被当成无关字段忽略（缺模组时配方直接报错）。
-            // 所以带条件的配方整条包一层：
-            //   {"type":"forge:conditional","recipes":[{"conditions":[...],"recipe":{原配方}}]}
             if (env.recipe && rewritten instanceof Map
                     && (rewritten as Map).containsKey('forge:conditions')) {
                 def wrapper = new LinkedHashMap(rewritten as Map)
@@ -398,7 +356,6 @@ ext.portLegacyDataTree = { File resourcesDir ->
                 return
             }
         }
-        // ---- 结构 NBT：物品堆格式回退（第 14 条） ----
         if (rel.endsWith('.nbt')) {
             if (legacyPortStructureNbt(src, 3465)) {
                 stats.nbt++
@@ -411,7 +368,6 @@ ext.portLegacyDataTree = { File resourcesDir ->
             stats.renamed++
         }
     }
-    // 收拾改名后留下的空目录
     def dirs = []
     dataDir.eachDirRecurse { File d -> dirs << d }
     dirs.sort { a, b -> b.path.length() <=> a.path.length() }
@@ -431,10 +387,6 @@ ext.portLegacyDataTree = { File resourcesDir ->
 //      它们的 Item 在 1.20.x 上读出来是空堆 → Create 6.0 读取时材质校验通不过 → Material 被重置成空。
 //      顺带把 DataVersion 改成 1.20.1 的 3465。
 
-/**
- * 结构 NBT 的物品堆格式回退（文件头第 14 条）。返回是否发生改写，文件就地更新（保持原 gzip/明文形态）。
- * 判定：任何一个「id 是字符串、count 是整数」的 compound 都当成物品堆（伪装方块的 Item、容器 Items 的元素……）。
- */
 ext.legacyPortStructureNbt = { File file, int targetDataVersion ->
     byte[] raw = file.bytes
     boolean gzipped = raw.length > 2 && (raw[0] & 0xFF) == 0x1F && (raw[1] & 0xFF) == 0x8B
@@ -514,7 +466,9 @@ class LegacyNbtTag {
     }
 }
 
-/** 只够本脚本用的最小 NBT 读写（保留全部标签类型，读进来什么样、写回去什么样）。 */
+/**
+ * 只够本脚本用的最小 NBT 读写（保留全部标签类型，读进来什么样、写回去什么样）。
+ */
 class LegacyNbtCodec {
     static final int END = 0
     static final int BYTE = 1

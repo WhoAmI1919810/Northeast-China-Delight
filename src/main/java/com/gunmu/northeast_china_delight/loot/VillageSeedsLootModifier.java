@@ -20,23 +20,6 @@ import net.minecraftforge.common.loot.LootModifier;
 /*import net.neoforged.neoforge.common.loot.LootModifier;
 *///?}
 
-/**
- * 村庄住宅箱子：按群系塞东北乐事的种子和谷物。
- *
- * <p>不是「替换」而是「追加」——往已经roll好的战利品里再塞 1~2 个种子，
- * 概率按群系调（平原/热带草原/针叶林才出东北作物，雪原/沙漠不出）。</p>
- *
- * <p>JSON 写法：
- * <pre>
- * {
- *   "type": "northeast_china_delight:village_seeds",
- *   "conditions": [
- *     { "condition": "neoforge:loot_table_id", "loot_table_id": "minecraft:chests/village/village_plains_house" }
- *   ]
- * }
- * </pre>
- * </p>
- */
 public class VillageSeedsLootModifier extends LootModifier
 {
     //? if <1.20.5 {
@@ -47,7 +30,6 @@ public class VillageSeedsLootModifier extends LootModifier
             instance -> codecStart(instance).apply(instance, VillageSeedsLootModifier::new));
     *///?}
 
-    /** 平原/热带草原/针叶林村庄的种子池 */
     private static final Entry[] TEMPERATE = {
             new Entry(() -> ModItems.CORN_SEEDS.get(), 8),
             new Entry(() -> ModItems.SOYBEAN.get(), 8),
@@ -63,7 +45,7 @@ public class VillageSeedsLootModifier extends LootModifier
             new Entry(() -> ModItems.EGGPLANT_SEEDS.get(), 6),
             new Entry(() -> ModItems.GREEN_BEANS_SEEDS.get(), 6),
             new Entry(() -> ModItems.RED_CHILI_SEEDS.get(), 5),
-            new Entry(() -> ModItems.GINSENG_SEEDS.get(), 2)   // 人参：稀有，只有 2 权重
+            new Entry(() -> ModItems.GINSENG_SEEDS.get(), 2)
     };
 
     public VillageSeedsLootModifier(LootItemCondition[] conditions)
@@ -88,7 +70,6 @@ public class VillageSeedsLootModifier extends LootModifier
     protected ObjectArrayList<ItemStack> doApply(ObjectArrayList<ItemStack> generatedLoot, LootContext context)
     {
         var random = context.getRandom();
-        // 40% 概率塞一个种子，15% 概率再塞第二个
         if (random.nextFloat() < 0.40F)
         {
             generatedLoot.add(roll(random, TEMPERATE));
@@ -110,7 +91,7 @@ public class VillageSeedsLootModifier extends LootModifier
             roll -= entry.weight;
             if (roll < 0)
             {
-                int count = 1 + random.nextInt(2);  // 1~2 个
+                int count = 1 + random.nextInt(2);
                 return new ItemStack(entry.item.get(), count);
             }
         }
