@@ -52,7 +52,8 @@ public final class VatRecipes {
     public static final int VEGETABLES_PER_WATER = 2;
     public static final int SALT_PER_WATER = 1;
     public static final int MAX_MEATS = 6;
-    public static final int MAX_SALTED_FISH = 6;
+    public static final int SALTED_FISH_FISH = 3;
+    public static final int SALTED_FISH_SALT = 3;
     public static final int SALTED_SALT_MAX = 3;
     public static final int PASTE_SERVINGS = 10;
     public static final int SOY_SAUCE_SERVINGS = 10;
@@ -61,8 +62,8 @@ public final class VatRecipes {
     public static final int WATER_MB_PER_LEVEL = 1000;
     public static final int SERVING_MB = 250;
     public static final int SOUR_WATER_MB = 3 * SERVING_MB;
-    public static final int FISH_SAUCE_FISH = 6;
-    public static final int FISH_SAUCE_SALT = 3;
+    public static final int FISH_SAUCE_FISH = 3;
+    public static final int FISH_SAUCE_SALT = 6;
     public static final int FISH_SAUCE_SERVINGS = 1;
     public static final int SHRIMP_PASTE_SHRIMP = 6;
     public static final int SHRIMP_PASTE_SALT = 3;
@@ -183,8 +184,12 @@ public final class VatRecipes {
         return stack.is(ModTags.SEEDS_CORN) || stack.is(ModTags.CROPS_BUCKWHEAT);
     }
 
+    /** 生鱼：虾 / 生蚝 / 海参不算，切好的鱼片也不算（免得鱼片腌完又变回整条） */
     public static boolean isRawFish(ItemStack stack) {
         return stack.is(ModTags.FOODS_RAW_FISH)
+                && !stack.is(ModTags.FOODS_SHRIMP)
+                && !stack.is(ModTags.FOODS_OYSTER)
+                && !stack.is(ModTags.FOODS_SEA_CUCUMBER)
                 && !stack.is(FarmersDelightItems.COD_SLICE)
                 && !stack.is(FarmersDelightItems.SALMON_SLICE);
     }
@@ -303,10 +308,10 @@ public final class VatRecipes {
                 .dry()
                 .seconds(SALTED_FISH_SECONDS).biomeSeconds(SALTED)
                 .slot(VatRecipe.Slot.keep(VatRecipes::isRawFish,
-                        VatRecipe.BoundsRule.between(1, MAX_SALTED_FISH),
+                        VatRecipe.BoundsRule.exact(SALTED_FISH_FISH),
                         VatRecipe.Converter.to(saltedFishResult())))
                 .slot(VatRecipe.Slot.absorb(salt(),
-                        VatRecipe.BoundsRule.halfOf(0, SALTED_SALT_MAX)).seasoning())
+                        VatRecipe.BoundsRule.exact(SALTED_FISH_SALT)).seasoning())
                 .build());
 
         list.add(VatRecipe.of(Kind.PASTE, "soy_paste")
