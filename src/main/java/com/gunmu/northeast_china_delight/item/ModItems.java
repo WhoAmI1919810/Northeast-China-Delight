@@ -394,13 +394,13 @@ public class ModItems {
     }
 
     private static Supplier<Item> bottledDrink(String id) {
-        return regItem(id, DdConsumableItem::new, new Item.Properties()
+        return regItem(id, DdDrinkItem::new, new Item.Properties()
                 .craftRemainder(Items.GLASS_BOTTLE)
                 .food(foodReturning(steakFood(), Items.GLASS_BOTTLE)));
     }
 
     private static Supplier<Item> bottledDrink(String id, int nutrition, float saturation) {
-        return regItem(id, DdConsumableItem::new, new Item.Properties()
+        return regItem(id, DdDrinkItem::new, new Item.Properties()
                 .craftRemainder(Items.GLASS_BOTTLE)
                 .food(foodReturning(stats(nutrition, saturation), Items.GLASS_BOTTLE)));
     }
