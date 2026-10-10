@@ -13,11 +13,6 @@ import net.minecraft.world.level.levelgen.structure.pieces.StructurePieceSeriali
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructurePlaceSettings;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplateManager;
 
-/**
- * 放下一个院子 NBT 的结构片段。
- *
- * 只做「把模板摆到世界上」这一件事，尺寸、朝向全部由模板和 {@link StructurePlaceSettings} 决定。
- */
 public class CourtyardPiece extends TemplateStructurePiece
 {
     public CourtyardPiece(StructureTemplateManager templateManager, String templateId, BlockPos pos, Rotation rotation)
@@ -51,10 +46,8 @@ public class CourtyardPiece extends TemplateStructurePiece
     protected void handleDataMarker(String name, BlockPos pos, ServerLevelAccessor level,
                                     RandomSource random, BoundingBox box)
     {
-        // 模板里没有用 data marker，留空
     }
 
-    /** 让 Java 侧也能拿到模板名字（调试用） */
     public String templateId()
     {
         return this.templateName;

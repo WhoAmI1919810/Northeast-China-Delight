@@ -58,17 +58,12 @@ import java.util.Optional;
  */
 public class NortheastCourtyardStructure extends Structure
 {
-    /** 默认 3 种院子（顺序即抽签概率）；小零件暂时关闭，见 {@link #partsEnabled()} */
     public static final List<String> DEFAULT_TEMPLATES = List.of(
             "northeast_china_delight:northeast_yard_garden",
             "northeast_china_delight:northeast_yard_compound",
             "northeast_china_delight:northeast_yard_livestock"
     );
 
-    /**
-     * 默认要避开的其他结构集：原版的五种村庄。
-     * 小院要是长在村子里，两边的房子会互相插进对方身体里，所以离得太近就换地方。
-     */
     public static final List<String> DEFAULT_AVOID_STRUCTURES = List.of(
             "minecraft:village_plains",
             "minecraft:village_desert",
@@ -77,28 +72,14 @@ public class NortheastCourtyardStructure extends Structure
             "minecraft:village_taiga"
     );
 
-    /** 模板里在院子地面以下多垫了几层土（见 tools/structure_gen，base_y=4，用来挖菜窖） */
     public static final int TEMPLATE_BASE_Y = 4;
-    /**
-     * 模板里「院子地面（草方块）」在第几层：**第 0 层就是院子地面**，
-     * 上面才是房子和家具 —— 见 tools/structure_gen/designs.py 的 GROUND/ON。
-     */
     public static final int GROUND_LAYER_IN_TEMPLATE = TEMPLATE_BASE_Y;
-    /** 游走时的横向随机偏移（格），让村子不像棋盘 */
     public static final int LATERAL_JITTER = 6;
-    /** 门口前方检查范围：多宽、地形高差容忍几格 */
     public static final int GATE_CHECK_WIDTH = 18;
     public static final int MAX_GATE_SLOPE = 4;
-    /** 黑土地每格替换概率（改这一个数就能调密度） */
     public static final float BLACK_SOIL_DENSITY = 0.12F;
-    /** 群系沃土的密度：一户人家周围有多大一片土会变成沃土 */
     public static final float BIOME_SOIL_DENSITY = 0.25F;
 
-    /**
-     * 「清场」设置：院子正上方留多少格空气、院子外扩多少格清树。
-     * 单独做成一个对象，是因为 RecordCodecBuilder 一份最多只能写 16 个字段，
-     * 后面还要加「避开村庄」的配置。
-     */
     public record ClearSettings(int radius, int above)
     {
         public static final Codec<ClearSettings> CODEC = RecordCodecBuilder.create(i -> i.group(
@@ -107,7 +88,6 @@ public class NortheastCourtyardStructure extends Structure
         ).apply(i, ClearSettings::new));
     }
 
-    /** 「避开其他结构」设置：默认躲开原版五种村庄，间隔 64 格。 */
     public record AvoidSettings(List<String> structures, int margin)
     {
         public static final Codec<AvoidSettings> CODEC = RecordCodecBuilder.create(i -> i.group(
@@ -118,16 +98,8 @@ public class NortheastCourtyardStructure extends Structure
 
         public static final AvoidSettings DEFAULT = new AvoidSettings(DEFAULT_AVOID_STRUCTURES, 64);
     }
-    /**
-     * 游走概率递减曲线：第 1 户 80%，之后每多一户降 15%，降到 20% 不再降
-     * （80 / 65 / 50 / 35 / 20 / 20 / 20 …）。{@code walk_chance} 是起始概率。
-     */
     public static final float WALK_CHANCE_STEP = 0.15F;
     public static final float WALK_CHANCE_MIN = 0.20F;
-    /**
-     * 小院离水面的最小距离（格）：候选位置周围这么大一圈里只要有水就不生成。
-     * 玩家要求"生成的小院离水至少 15 格远"。
-     */
     public static final int WATER_CLEARANCE = 15;
 
     private static final List<Direction> HORIZONTALS =
@@ -190,8 +162,6 @@ public class NortheastCourtyardStructure extends Structure
         this.allowFlip = allowFlip;
         this.blackSoilChance = blackSoilChance;
         this.blackSoilRadius = blackSoilRadius;
-        // gap = 两个院子之间的空隙（默认，院子大了也不会挤在一起）
-        // center = 两个院子原点的直线距离（旧行为）
         this.stepMeasure = "center".equalsIgnoreCase(stepMeasure) ? "center" : "gap";
         this.clearRadius = clear.radius();
         this.clearAbove = clear.above();
@@ -218,8 +188,6 @@ public class NortheastCourtyardStructure extends Structure
         }
         BlockPos origin = yards.get(0).pos();
         return Optional.of(new GenerationStub(origin, builder -> {
-            // 先把所有院子的清场件加进去，再加院子本体 ——
-            // 不然相邻院子的清场会把这一户院里的大树也清掉。
             for (Yard yard : yards)
             {
                 if (this.clearRadius <= 0 && this.clearAbove <= 0)
@@ -240,26 +208,22 @@ public class NortheastCourtyardStructure extends Structure
                         .getOrCreate(DdIds.parse(yard.template()));
                 builder.addPiece(new CourtyardPiece(context.structureTemplateManager(),
                         yard.template(), yard.pos(), yard.rotation()));
-                // 黑土地：这个院子周围撒一片沃土（不一定是每户都有）
                 if (yard.blackSoil() && this.blackSoilRadius > 0)
                 {
                     BlockPos center = yard.pos().offset(
                             yardTemplate.getSize().getX() / 2, 0, yardTemplate.getSize().getZ() / 2);
                     builder.addPiece(new BlackSoilPiece(center, this.blackSoilRadius, BLACK_SOIL_DENSITY));
-                    // 群系沃土：这一户落点的**整片生物群系**里，土类按概率变沃土
                     builder.addPiece(new BiomeRichSoilPiece(center, this.blackSoilRadius * 4, BIOME_SOIL_DENSITY));
                 }
             }
         }));
     }
 
-    /** 是否生成院子里的小零件（灶棚、鸡架、水井、菜窖、柴垛等） */
     private static boolean partsEnabled()
     {
         return com.gunmu.northeast_china_delight.NortheastChinaConfig.YARD_PARTS_ENABLED.get();
     }
 
-    /** 游走：从第一户开始，四个方向各自掷概率、各自随机距离，长到上限为止。 */
     private List<Yard> growCluster(GenerationContext context, WorldgenRandom random, int startX, int startZ)
     {
         List<Yard> yards = new ArrayList<>();
@@ -285,7 +249,6 @@ public class NortheastCourtyardStructure extends Structure
                 }
                 if (random.nextFloat() >= this.walkChanceFor(yards))
                 {
-                    // 这个方向没掷中就到此为止
                     continue;
                 }
                 int distance = this.stepMin + random.nextInt(this.stepMax - this.stepMin + 1);
@@ -299,7 +262,6 @@ public class NortheastCourtyardStructure extends Structure
                 }
                 else
                 {
-                    // 空隙模式：先按当前院子的尺寸往外挪，再留出距离，最后补上新院子自己的尺寸
                     StructureTemplate currentSize = sizes.get(current.template());
                     StructureTemplate nextSize = sizes.computeIfAbsent(template,
                             id -> context.structureTemplateManager().getOrCreate(DdIds.parse(id)));
@@ -335,7 +297,6 @@ public class NortheastCourtyardStructure extends Structure
                 Yard candidate = this.tryMakeYard(context, random, sizes, template, x, z);
                 if (candidate == null || this.overlaps(candidate, yards, sizes))
                 {
-                    // 位置不合法 / 不是寒冷群系 / 和别的院子挤在一起 —— 这条支路终止
                     continue;
                 }
                 yards.add(candidate);
@@ -354,7 +315,6 @@ public class NortheastCourtyardStructure extends Structure
         return this.templates.get(random.nextInt(this.templates.size()));
     }
 
-    /** 第 n 户的游走概率：起始 80%，每户降 15%，到 20% 封底 */
     private float walkChanceFor(List<Yard> placed)
     {
         float chance = this.walkChance - WALK_CHANCE_STEP * Math.max(0, placed.size() - 1);
@@ -370,7 +330,6 @@ public class NortheastCourtyardStructure extends Structure
                 context.heightAccessor(), context.randomState());
         if (surface != floor)
         {
-            // 水面 / 水下，不要
             return null;
         }
         int minY = context.heightAccessor().getMinBuildHeight();
@@ -386,7 +345,6 @@ public class NortheastCourtyardStructure extends Structure
         {
             return null;
         }
-        // 河流和海洋里不长小院（河边、海边的岸上也不行 —— 那些地方容易半只脚泡水里）
         if (biome.is(net.minecraft.tags.BiomeTags.IS_RIVER)
                 || biome.is(net.minecraft.tags.BiomeTags.IS_OCEAN))
         {
@@ -398,29 +356,25 @@ public class NortheastCourtyardStructure extends Structure
         }
         if (!this.footprintOk(context, template, x, z, surface))
         {
-            // 院子这块地被山体埋住 / 悬在崖上，放弃
             return null;
         }
         if (!this.waterFarEnough(context, template, x, z))
         {
-            // 周围 15 格内有水（河、湖、海），换地方
             return null;
         }
         if (this.tooCloseToAvoidedStructures(context, template, x, z))
         {
-            // 旁边就是（或很可能是）村庄，别把院子摞到人家头上
             return null;
         }
         sizes.computeIfAbsent(template, id -> context.structureTemplateManager().getOrCreate(DdIds.parse(id)));
         boolean blackSoil = this.blackSoilChance > 0.0F && random.nextFloat() < this.blackSoilChance;
-        // 院子的草地要和外边的地面齐平。坑在于雪原：地表最上面那格是**雪层**，
+        // 院子的草地要和外边的地面齐平。坑在于雪原：地表最上面那格是雪层，
         // 高度图会把雪层也算进去，于是院子会被抬高整整一格（就是那块露在外面的砖）。
-        // 所以下雪的地方要多压一格，让院子地面落在雪层**下面**那层地面上。
+        // 所以下雪的地方要多压一格，让院子地面落在雪层下面那层地面上。
         boolean snowy = biome.value().getPrecipitationAt(new BlockPos(x, surface, z))
                 == net.minecraft.world.level.biome.Biome.Precipitation.SNOW;
         int sink = snowy ? 2 : 1;
         BlockPos pos = new BlockPos(x, surface - GROUND_LAYER_IN_TEMPLATE - sink, z);
-        // 朝向：优先挑「门口不是悬崖/水面/墙」的那一面
         Rotation rotation = this.pickRotation(context, template, pos, surface, random);
         if (rotation == null)
         {
@@ -478,12 +432,10 @@ public class NortheastCourtyardStructure extends Structure
                         context.heightAccessor(), context.randomState());
                 if (surface != floor)
                 {
-                    // 门口是水面/水下，不合格
                     return false;
                 }
                 if (Math.abs(surface - yardSurface) > MAX_GATE_SLOPE)
                 {
-                    // 门口是悬崖或高墙，不合格
                     return false;
                 }
             }
@@ -491,7 +443,6 @@ public class NortheastCourtyardStructure extends Structure
         return true;
     }
 
-    /** 地形高差检查：院子四角高差太大就放弃（免得一半悬空）。 */
     private boolean slopeOk(GenerationContext context, int x, int z, int surface)
     {
         int reach = 8;
@@ -533,10 +484,6 @@ public class NortheastCourtyardStructure extends Structure
         return true;
     }
 
-    /**
-     * 检查候选位置周围「院子半径 + 15 格」范围内有没有水。
-     * 世界生成阶段读不到方块，只能用高度图：水面高度 != 海底高度 就说明那一列有液体。
-     */
     private boolean waterFarEnough(GenerationContext context, String template, int x, int z)
     {
         StructureTemplate t = context.structureTemplateManager().getOrCreate(DdIds.parse(template));
@@ -559,7 +506,6 @@ public class NortheastCourtyardStructure extends Structure
         return true;
     }
 
-    /** 用模板的真实尺寸判断两个院子是否挤在一起（留 minGap 格缝）。 */
     private boolean overlaps(Yard candidate, List<Yard> yards, Map<String, StructureTemplate> sizes)
     {
         StructureTemplate a = sizes.get(candidate.template());
@@ -582,14 +528,6 @@ public class NortheastCourtyardStructure extends Structure
         return false;
     }
 
-    /**
-     * 候选位置离「要避开的其他结构」太近就返回 true（这一户不生成）。
-     *
-     * <p>世界生成阶段问不到「别的结构到底生成了没」，只能照原版 {@code exclusion_zone} 的思路：
-     * 用放置算法算出村庄**可能**落在哪些区块，要求院子和这些候选位置至少隔开 {@code avoid_margin} 格。
-     * 村庄真正落地还要过生物群系那一关，所以这里再判一次群系，
-     * 免得把小院从「根本不会长村」的区块旁边无谓地赶走。
-     */
     private boolean tooCloseToAvoidedStructures(GenerationContext context, String template, int x, int z)
     {
         if (this.avoidMargin <= 0 || this.avoidStructures.isEmpty())
@@ -658,7 +596,6 @@ public class NortheastCourtyardStructure extends Structure
         return false;
     }
 
-    /** 这个位置的地表群系，是不是该结构集里某个结构允许生成的群系？ */
     private boolean avoidedStructureCouldGenerate(GenerationContext context, StructureSet set, int blockX, int blockZ)
     {
         int surface = context.chunkGenerator().getBaseHeight(blockX, blockZ, Heightmap.Types.WORLD_SURFACE_WG,
@@ -682,7 +619,6 @@ public class NortheastCourtyardStructure extends Structure
         return ModWorldGen.COURTYARD_TYPE.get();
     }
 
-    /** 一个院子的落点 */
     public record Yard(String template, BlockPos pos, Rotation rotation, boolean blackSoil)
     {
     }

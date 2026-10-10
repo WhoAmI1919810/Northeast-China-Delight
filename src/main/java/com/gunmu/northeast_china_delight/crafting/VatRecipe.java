@@ -10,79 +10,44 @@ import java.util.List;
 import java.util.function.Predicate;
 
 /**
- * 一条大缸配方 —— **纯数据**。
- *
- * <p>这里只有"要什么、要多少、多长时间、完成后变成什么"，没有任何一句针对某个具体物品的 if。
- * 大缸的交互逻辑（{@link VatBrewing}）和 JEI 页面都只读这些字段，所以新增 / 修改配方
- * **只需要在 {@link VatRecipes#REGISTRY} 里加一条或改一条**，判定、计时、取货、JEI 全都会跟着变。
- *
- * <p>一条配方由四部分组成：
- * <ol>
- *   <li>{@link Liquid}：要不要水（几层）、要不要酸引水（多少 mB）；</li>
- *   <li>{@link Slot}：投料格 —— 匹配器 + 数量规则 + 完成后的去向；</li>
- *   <li>{@link Seal}：开工要压缸石 / 蒙粗布毯 / 蒙羊毛地毯；</li>
- *   <li>完成后的变化：产出什么液体、水位和酸引水怎么变（都在 {@link Liquid} 里）。</li>
- * </ol>
- *
- * <p>数量规则（{@link Bounds}）支持"跟着水位走"和"跟着另一格走"，
- * 所以像"一层水配两份菜""盐数等于肉数"这种关系也都是数据，不是代码。
+ * 一条大缸配方 —— 纯数据。这里只有"要什么、要多少、多长时间、完成后变成什么"，没有任何一句针对某个具体物品的 if。大缸的交互逻辑（{@link VatBrewing}）和
+ * JEI 页面都只读这些字段，所以新增 / 修改配方 只需要在 {@link VatRecipes#REGISTRY} 里加一条或改一条，判定、计时、取货、JEI 全都会跟着变。
  */
 public final class VatRecipe {
 
-    /** 开工需要的封口物 */
+    /**
+     * 开工需要的封口物
+     */
     public enum Seal {
-        /** 不需要封口 */
         NONE,
-        /** 压缸石 */
         PRESS,
-        /** 农夫乐事的粗布毯 */
         CLOTH,
-        /** 羊毛地毯 */
         CARPET
     }
 
     /**
-     * 一个投料格完成后的去向。
-     *
-     * <p>这四种去向决定了大缸在三段时间点上的表现：
-     * 投料时（能不能放、放几个）、完成时（缸里变成什么样）、取货时（玩家拿到什么）。
+     * 一个投料格完成后的去向。这四种去向决定了大缸在三段时间点上的表现：投料时（能不能放、放几个）、完成时（缸里变成什么样）、取货时（玩家拿到什么）。
      */
     public enum Fate {
-        /**
-         * 原样留在缸里；玩家取出来时按 {@link Slot#converter()} 换成成品。
-         * 泡菜 / 腊肉 / 咸鱼走这条 —— 发酵完缸里还是菜和肉，取出来才是腌好的。
-         */
         KEEP,
-        /**
-         * 完成时在原地变成 {@link Slot#product()}（酱块→酱渣、黄豆→豆芽、玉米粒→酸玉米粒），
-         * 之后玩家取出的是这个产物。
-         */
         CONVERT,
-        /**
-         * 完成时就被吸收 / 消耗掉（水里的盐、酱油用的小麦、酿醋的谷物、格瓦斯的面包）。
-         * 缸里看不见了，也不需要玩家取。
-         */
         CONSUME,
-        /**
-         * 完成时**仍然留在缸里**，因为它还要影响外观（盐水让肉发白、辣椒酱让水面和菜发红），
-         * 玩家取货时才消失。容器（瓶 / 碗）在投料时就已经还给玩家。
-         */
         ABSORB
     }
 
-    /** 完成时，缸里原有的液体怎么处理 */
+    /**
+     * 完成时，缸里原有的液体怎么处理
+     */
     public enum LiquidAfter {
-        /** 保持不动 */
         KEEP,
-        /** 全部清空（水被吸收、或者变成了成品液体） */
         CLEAR,
-        /** 只扣掉配方要求的那一份（例如白醋只喝掉 750 mB 酸引水，剩下的是剩下的） */
         DRAIN_REQUIRED
     }
 
-    /** 大缸里能存的那几种液体（纯存储用，配方里只是引用它们的名字） */
+    /**
+     * 大缸里能存的那几种液体（纯存储用，配方里只是引用它们的名字）
+     */
     public enum Fluid {
-        /** 清水：不占成品槽，按 mB 记在 VatBlockEntity#waterMb */
         WATER,
         SOUR_WATER,
         PASTE,
@@ -94,76 +59,61 @@ public final class VatRecipe {
         KVASS
     }
 
-    /** JEI 页面上这一格画在哪一排：食材排（缸身侧面）还是配料排（缸身侧面、靠上） */
+    /**
+     * JEI 页面上这一格画在哪一排：食材排（缸身侧面）还是配料排（缸身侧面、靠上）
+     */
     public enum Layer {
         INGREDIENT,
         SEASONING
     }
 
     /**
-     * 一个投料格在"取货"时的换算。
-     *
-     * <p>输入永远是缸里那一份东西（一个），返回玩家应该拿到的那一份。
-     * 泡菜是"大白菜→酸白菜"，腊肉是"生猪排→咸腊肉"，都用它表达。
+     * 一个投料格在"取货"时的换算。输入永远是缸里那一份东西（一个），返回玩家应该拿到的那一份。泡菜是"大白菜→酸白菜"，腊肉是"生猪排→咸腊肉"，都用它表达。
      */
     @FunctionalInterface
     public interface Converter {
         ItemStack apply(ItemStack in);
 
-        /** 固定换成某一种东西 */
         static Converter to(Item to) {
             return in -> new ItemStack(to);
         }
 
-        /** 原样 */
         static Converter same() {
             return in -> in;
         }
     }
 
-    /** 数量规则要用到的缸内情况 */
+    /**
+     * 数量规则要用到的缸内情况
+     */
     public interface Counts {
-        /** 缸里匹配某个条件的物品总数 */
         int count(Predicate<ItemStack> matcher);
 
-        /** 缸里的清水层数（一层 = 1000 mB） */
         int water();
 
-        /**
-         * 缸里**第 slotIndex 格**现在有几份 —— 供"跟着另一格走"的数量规则（{@link BoundsRule#sameAs}）用。
-         *
-         * <p>这里刻意按**槽位号**问，而不是按匹配器问：匹配器是 lambda，
-         * 同一段匹配逻辑写在两个地方就是两个不同的对象，用 {@code ==} 认亲在别人的
-         * {@code Counts} 实现里必然认不出来（症状是"盐数"被算成 0，再被钳成 1）。
-         * 经 {@link VatRecipe#boundsOf(int, Counts)} 进来时会自动包一层 {@link SlotCounts}，
-         * 所以正常调用方不用自己实现这个方法。
-         */
         default int countOfSlot(int slotIndex) {
             throw new UnsupportedOperationException(
                     "Counts 要么经 VatRecipe#boundsOf 使用，要么自己实现 countOfSlot");
         }
     }
 
-    /** 数量区间 */
+    /**
+     * 数量区间
+     */
     public record Bounds(int min, int max) {
         public boolean satisfied(int have) {
             return have >= this.min && have <= this.max;
         }
 
-        /** 这一格至少要几份（JEI 展示用） */
         public int want() {
             return this.max == Integer.MAX_VALUE ? Math.max(1, this.min) : this.max;
         }
     }
 
     /**
-     * 一份"按格子假定份数"的缸内情况 —— JEI 展开与配方自检这类
-     * "先假定一个缸内状态、再按数量规则算份数"的地方用。
-     *
-     * <p>{@link #count} 是按匹配器**引用**认亲的（只认这条配方里那几格的匹配器实例，
-     * {@link VatRecipe#materialsReady} 就是这么问的）；
-     * "跟着另一格走"（{@link BoundsRule#sameAs}）那类跨格规则走 {@link #countOfSlot}，
-     * 按槽位号取值，不存在认亲问题。
+     * 一份"按格子假定份数"的缸内情况 —— JEI 展开与配方自检这类 "先假定一个缸内状态、再按数量规则算份数"的地方用。 {@link #count} 是按匹配器引用认亲的（只
+     * 认这条配方里那几格的匹配器实例， {@link VatRecipe#materialsReady} 就是这么问的）； "跟着另一格走"（
+     * {@link BoundsRule#sameAs}）那类跨格规则走 {@link #countOfSlot}，按槽位号取值，不存在认亲问题。
      */
     public record AssumedCounts(int water, int[] counts, VatRecipe recipe) implements Counts {
 
@@ -183,22 +133,21 @@ public final class VatRecipe {
         }
     }
 
-    /** 数量规则：给定缸内情况算出这一格允许的数量区间 */
+    /**
+     * 数量规则：给定缸内情况算出这一格允许的数量区间
+     */
     @FunctionalInterface
     public interface BoundsRule {
         Bounds get(Counts counts);
 
-        /** 固定数量（下限 = 上限） */
         static BoundsRule exact(int n) {
             return counts -> new Bounds(n, n);
         }
 
-        /** 固定区间 */
         static BoundsRule between(int min, int max) {
             return counts -> new Bounds(min, max);
         }
 
-        /** 跟着水位走：每层水对应 [perLayerMin, perLayerMax] 份 */
         static BoundsRule perLayer(int perLayerMin, int perLayerMax) {
             return counts -> {
                 int layers = Math.max(1, counts.water());
@@ -206,17 +155,14 @@ public final class VatRecipe {
             };
         }
 
-        /** 跟着水位走，而且上下限相同 */
         static BoundsRule perLayerExact(int per) {
             return perLayer(per, per);
         }
 
-        /** 下限固定、上限按水位放大（泡菜：至少 1 份菜，每层最多 2 份） */
         static BoundsRule minWithPerLayerMax(int min, int perLayerMax) {
             return counts -> new Bounds(min, perLayerMax * Math.max(1, counts.water()));
         }
 
-        /** 下限按水位查表（比如辣白菜的调味品：1、2 层要 1 份，3 层要 2 份） */
         static BoundsRule minByWater(int[] minByWaterLevel, int max) {
             return counts -> {
                 int level = Math.max(0, Math.min(minByWaterLevel.length - 1, counts.water()));
@@ -225,7 +171,7 @@ public final class VatRecipe {
         }
 
         /**
-         * 数量跟着**另一格**走（盐数 = 肉数）：下限 = ratio × 第 slotIndex 格的数量。
+         * 数量跟着另一格走（盐数 = 肉数）：下限 = ratio × 第 slotIndex 格的数量。
          *
          * <p>上限给到 ratio，好让"先放盐后放肉"也放得进去（放满 6 块肉时盐正好也是 6 份）；
          * 但"能不能开工"仍然要求上下限都满足，所以盐少了照样不开工。
@@ -239,71 +185,42 @@ public final class VatRecipe {
             };
         }
 
-        /**
-         * 数量跟着**另一格**减半走（盐数 = 肉数的一半，向上取整，最多 max 份）：
-         * 满缸 6 块肉 / 6 条鱼只要 3 份盐，只放 1 块肉就只要 1 份 —— 少腌少放盐。
-         *
-         * <p>上限固定给到 max，好让"先把盐放够再放肉"也放得进去。
-         */
         static BoundsRule halfOf(int slotIndex, int max) {
             return counts -> new Bounds(
                     Math.min(max, (counts.countOfSlot(slotIndex) + 1) / 2), max);
         }
     }
 
-    /**
-     * 一个投料格。
-     *
-     * @param matcher   这一格收什么
-     * @param bounds    数量规则
-     * @param fate      完成后的去向
-     * @param converter {@code KEEP} 时：取货换算（null = 原样）
-     * @param product   {@code CONVERT} 时：变成什么
-     * @param refund    连瓶 / 连碗扔进缸的那种调料：投料时先把空容器还给玩家
-     * @param perDose     这一格收的是带余量的瓶装调料：投入时只扣一份剂量（不整瓶收进去），
-     *                  缸里按"一份"记账，瓶子（或余量不足时的空玻璃瓶）还给玩家
-     * @param layer     JEI 画在食材排还是配料排
-     */
     public record Slot(Predicate<ItemStack> matcher, BoundsRule bounds, Fate fate,
                        @Nullable Converter converter, @Nullable Item product, @Nullable Item refund,
                        boolean perDose, Layer layer) {
 
-        /** 留着，取货时换成 converter 的结果 */
         public static Slot keep(Predicate<ItemStack> matcher, BoundsRule bounds, Converter converter) {
             return new Slot(matcher, bounds, Fate.KEEP, converter, null, null, false, Layer.INGREDIENT);
         }
 
-        /** 完成时变成 product，之后玩家取出的就是 product */
         public static Slot convert(Predicate<ItemStack> matcher, BoundsRule bounds, Item product) {
             return new Slot(matcher, bounds, Fate.CONVERT, null, product, null, false, Layer.INGREDIENT);
         }
 
-        /** 完成时被吸收 / 消耗 */
         public static Slot consume(Predicate<ItemStack> matcher, BoundsRule bounds) {
             return new Slot(matcher, bounds, Fate.CONSUME, null, null, null, false, Layer.INGREDIENT);
         }
 
-        /** 完成时仍留在缸里影响外观，玩家取货时才消失 */
         public static Slot absorb(Predicate<ItemStack> matcher, BoundsRule bounds) {
             return new Slot(matcher, bounds, Fate.ABSORB, null, null, null, false, Layer.INGREDIENT);
         }
 
-        /** 这种调料是连瓶 / 连碗一起扔进缸的：投料时先把空容器还给玩家 */
         public Slot refund(Item container) {
             return new Slot(this.matcher, this.bounds, this.fate, this.converter, this.product,
                     container, this.perDose, this.layer);
         }
 
-        /**
-         * 这种调料按剂量扣（{@link com.gunmu.northeast_china_delight.item.SeasoningBottleItem}）：
-         * 投进缸里只算一份剂量，瓶子还剩多少还给玩家多少，用空了就还个玻璃瓶。
-         */
         public Slot dosed() {
             return new Slot(this.matcher, this.bounds, this.fate, this.converter, this.product,
                     this.refund, true, this.layer);
         }
 
-        /** 这一格算「配料」（盐、小麦、辣椒酱、鱼露…），JEI 里画在食材上面那一排 */
         public Slot seasoning() {
             return new Slot(this.matcher, this.bounds, this.fate, this.converter, this.product,
                     this.refund, this.perDose, Layer.SEASONING);
@@ -311,18 +228,6 @@ public final class VatRecipe {
 
     }
 
-    /**
-     * 液体要求 + 完成后的液体变化。
-     *
-     * @param waterMin        需要的最少清水层数
-     * @param waterMax        允许的最多清水层数（超过就说明这缸不是给它准备的）
-     * @param sourWaterMb     需要的酸引水量（mB）
-     * @param product         完成后产出的液体（null = 没有液体产物）
-     * @param productMb       产出的量（mB）
-     * @param productPerLayer 产出的量按水位翻倍（泡菜：几层水就出几层酸引水）
-     * @param waterAfter      完成后清水怎么处理
-     * @param sourWaterAfter  完成后酸引水怎么处理
-     */
     public record Liquid(int waterMin, int waterMax, int sourWaterMb, @Nullable Fluid product,
                          int productMb, boolean productPerLayer,
                          LiquidAfter waterAfter, LiquidAfter sourWaterAfter) {
@@ -343,12 +248,9 @@ public final class VatRecipe {
     private final List<Slot> slots;
     private final int seconds;
     private final boolean secondsPerLayer;
-    /** 这条配方要求大缸所在的生物群系是「会下雪的」 —— 冻梨那种天冷才做得出来的东西才填 true */
     private final boolean requiresSnowyBiome;
-    /** 这条配方要求缸顶压的是哪一种封口物（null = 不限 / 由 seal 决定）。冻梨的"压一块雪"走这个。 */
     @Nullable
     private final java.util.function.Predicate<ItemStack> requiredSealItem;
-    /** 各生物群系温度带的时长倍率：null = 所有群系都按基准时长 */
     @Nullable
     private final java.util.EnumMap<BiomeBand, Float> biomeSecondsMultiplier;
 
@@ -370,19 +272,13 @@ public final class VatRecipe {
     }
 
     /**
-     * 生物群系温度带：按 {@code getBaseTemperature()} 分四档。
-     *
-     * 分带的好处是 JEi / 提示里能一句话说明（"温暖群系酿得更快"），
-     * 不用给玩家读一个浮点温度。
+     * 生物群系温度带：按 {@code getBaseTemperature()} 分四档。分带的好处是 JEi / 提示里能一句话说明（"温暖群系酿得更快"），不用给玩家读一个浮点
+     * 温度。
      */
     public enum BiomeBand {
-        /** 会下雪（基准温度 < 0.15）：泡菜慢一半、冻梨只能在这做 */
         COLD,
-        /** 不冷不热（0.15 ~ 0.7）：基准时长 */
         TEMPERATE,
-        /** 暖和（0.7 ~ 0.95）：发酵快一半 */
         WARM,
-        /** 炎热（≥ 0.95，沙漠 / 热带 / 下界）：发酵最快、腊肉反而要防霉 */
         HOT;
 
         public static BiomeBand of(float baseTemperature) {
@@ -399,18 +295,14 @@ public final class VatRecipe {
         }
     }
 
-    // ===== 只读访问 =====
-
     public String id() {
         return this.id;
     }
 
-    /** 这条配方对应大缸的哪种加工状态（存储 / 渲染 / Jade 文案用） */
     public VatRecipes.Kind kind() {
         return this.kind;
     }
 
-    /** 同时匹配多条配方时，priority 大的优先 */
     public int priority() {
         return this.priority;
     }
@@ -435,29 +327,19 @@ public final class VatRecipe {
         return this.secondsPerLayer;
     }
 
-    /** 这条配方要不要求缸所在的地方是会下雪的生物群系（冻梨要、别的不要） */
     public boolean requiresSnowyBiome() {
         return this.requiresSnowyBiome;
     }
 
-    /**
-     * 缸顶要压的具体封口物（null = 只看 {@link #seal()}，不限定具体物品）。
-     * 冻梨的「顶上压一块雪」走这个：seal=PRESS（要压东西）+ requiredSealItem=雪块。
-     */
     @Nullable
     public java.util.function.Predicate<ItemStack> requiredSealItem() {
         return this.requiredSealItem;
     }
 
-    /** 时长（秒）：按水位配比的配方会乘上水位 */
     public int secondsFor(int waterLevel) {
         return this.secondsPerLayer ? this.seconds * Math.max(1, waterLevel) : this.seconds;
     }
 
-    /**
-     * 这条配方在某个温度带里的实际时长（秒）。
-     * 没有指定倍率的配方（咸鱼、腊肉这种"在哪都一样"的）直接返回基准时长。
-     */
     public int secondsFor(int waterLevel, BiomeBand band) {
         int base = secondsFor(waterLevel);
         if (this.biomeSecondsMultiplier == null) {
@@ -467,10 +349,6 @@ public final class VatRecipe {
         return mul == null ? base : Math.max(1, Math.round(base * mul));
     }
 
-    /**
-     * 某个温度带的时长倍率；null = 这配方不分群系。
-     * 给 JEI / 调试展示用（"在暖和群系×0.5"）。
-     */
     @Nullable
     public Float biomeMultiplier(BiomeBand band) {
         return this.biomeSecondsMultiplier == null ? null : this.biomeSecondsMultiplier.get(band);
@@ -498,32 +376,24 @@ public final class VatRecipe {
         return counts;
     }
 
-    /** 完成后产出的液体量（mB），按水位配比的配方会乘上水位 */
     public int productMbFor(int waterLevel) {
         return this.liquid.productPerLayer
                 ? this.liquid.productMb * Math.max(1, waterLevel)
                 : this.liquid.productMb;
     }
 
-    /** 这条配方的液体产物（不是"缸底要放什么液体"，那是 {@link #liquid()}） */
     @Nullable
     public Fluid productFluid() {
         return this.liquid.product();
     }
 
-    // ===== 通用判定（不认识任何具体物品）=====
-
-    /** 这一格现在允许放几个 */
     public Bounds boundsOf(int slotIndex, Counts counts) {
         return this.slots.get(slotIndex).bounds().get(new SlotCounts(counts, this));
     }
 
     /**
-     * 把"缸内情况"补上"按槽位号取数量"的能力。
-     *
-     * <p>"盐数 = 肉数"这类规则要跨格引用，靠匹配器实例认亲不可靠（lambda 在不同调用点是不同对象，
-     * JEI 那份 {@code Counts} 就是因此把肉数算成 0 的），所以统一在这里翻译：
-     * 槽位号 → 那一格的匹配器 → 数量。
+     * 把"缸内情况"补上"按槽位号取数量"的能力。 "盐数 = 肉数"这类规则要跨格引用，靠匹配器实例认亲不可靠（lambda 在不同调用点是不同对象， JEI 那份
+     * {@code Counts} 就是因此把肉数算成 0 的），所以统一在这里翻译：槽位号 → 那一格的匹配器 → 数量。
      */
     private record SlotCounts(Counts delegate, VatRecipe recipe) implements Counts {
 
@@ -547,12 +417,10 @@ public final class VatRecipe {
         }
     }
 
-    /** 这一格收不收这种东西 */
     public boolean accepts(int slotIndex, ItemStack stack) {
         return this.slots.get(slotIndex).matcher().test(stack);
     }
 
-    /** 液体条件是否满足（水层 / 酸引水） */
     public boolean liquidFits(int water, int sourWaterMb) {
         return this.liquid.waterFits(water) && sourWaterMb >= this.liquid.sourWaterMb();
     }
@@ -560,14 +428,13 @@ public final class VatRecipe {
     /**
      * 这缸现在的液体还"救得回来"吗 —— 判断现在能不能继续往缸里投料。
      *
-     * <p>和 {@link #liquidFits} 的区别：这里只要求**没有超上限的水**、酸引水不少于配方要求。
+     * <p>和 {@link #liquidFits} 的区别：这里只要求没有超上限的水、酸引水不少于配方要求。
      * 于是"先放酱块后倒水""酿完酱只剩酱渣时先加谷物再倒水"这些玩法仍然成立。
      */
     public boolean canStillMatch(int water, int sourWaterMb) {
         return water <= this.liquid.waterMax() && sourWaterMb >= this.liquid.sourWaterMb();
     }
 
-    /** 材料是否配齐（不含封口物） */
     public boolean materialsReady(Counts counts, int sourWaterMb) {
         if (!this.liquidFits(counts.water(), sourWaterMb)) {
             return false;
@@ -580,7 +447,6 @@ public final class VatRecipe {
         return true;
     }
 
-    /** 已经满足的格子数（用来在重叠的配方之间挑最贴切的那一条） */
     public int satisfiedSlots(Counts counts) {
         int n = 0;
         for (int i = 0; i < this.slots.size(); i++) {
@@ -591,10 +457,6 @@ public final class VatRecipe {
         return n;
     }
 
-    /**
-     * 每一格都已满足、且缸内数量恰好等于该格要求的最小份数（一份都不多）。
-     * 用来区分"刚好命中 exact 配方"（鱼露 6 鱼 3 盐）和"弹性配方多投了料"（咸鱼 6 鱼 3 盐）。
-     */
     public boolean allSlotsExact(Counts counts) {
         for (int i = 0; i < this.slots.size(); i++) {
             Bounds b = this.boundsOf(i, counts);
@@ -606,7 +468,6 @@ public final class VatRecipe {
         return true;
     }
 
-    /** 所有格子"最少要几份"的合计（越小说明这条配方越容易被满足） */
     public int minimumTotal(Counts counts) {
         int n = 0;
         for (int i = 0; i < this.slots.size(); i++) {
@@ -628,7 +489,6 @@ public final class VatRecipe {
         return counts.count(slot.matcher()) < bounds.max();
     }
 
-    /** 找到第一个收得下这种东西、且还有位置的格子；没有就返回 -1 */
     public int findSlotFor(ItemStack stack, Counts counts) {
         for (int i = 0; i < this.slots.size(); i++) {
             if (this.hasRoomFor(i, stack, counts)) {
@@ -638,7 +498,6 @@ public final class VatRecipe {
         return -1;
     }
 
-    /** 取货用的格子（KEEP 的成品格） */
     public List<Slot> keepSlots() {
         List<Slot> list = new ArrayList<>();
         for (Slot slot : this.slots) {
@@ -649,12 +508,13 @@ public final class VatRecipe {
         return list;
     }
 
-    /** 组装用 */
     public static Builder of(VatRecipes.Kind kind, String id) {
         return new Builder(kind, id);
     }
 
-    /** 配方的构建器 —— 纯数据装配，写配方时只会用到这些方法 */
+    /**
+     * 配方的构建器 —— 纯数据装配，写配方时只会用到这些方法
+     */
     public static final class Builder {
         private final String id;
         private final VatRecipes.Kind kind;
@@ -683,25 +543,21 @@ public final class VatRecipe {
             return this;
         }
 
-        /** 不要任何液体（也不允许缸里有水、有酸引水） */
         public Builder dry() {
             this.liquid = Liquid.NONE;
             return this;
         }
 
-        /** 要水：水位在 [min,max] 层之间；完成后水位怎么变由 waterAfter 决定 */
         public Builder water(int min, int max, LiquidAfter waterAfter) {
             this.liquid = new Liquid(min, max, 0, null, 0, false, waterAfter, LiquidAfter.KEEP);
             return this;
         }
 
-        /** 要酸引水：至少 mb 毫升；完成后怎么变由 sourAfter 决定 */
         public Builder sourWater(int mb, LiquidAfter sourAfter) {
             this.liquid = new Liquid(0, 0, mb, null, 0, false, LiquidAfter.KEEP, sourAfter);
             return this;
         }
 
-        /** 产出液体 */
         public Builder product(Fluid fluid, int mb, boolean perLayer) {
             Liquid old = this.liquid;
             this.liquid = new Liquid(old.waterMin(), old.waterMax(), old.sourWaterMb(),
@@ -709,7 +565,6 @@ public final class VatRecipe {
             return this;
         }
 
-        /** 完成后水位清 0 */
         public Builder clearWater() {
             Liquid old = this.liquid;
             this.liquid = new Liquid(old.waterMin(), old.waterMax(), old.sourWaterMb(),
@@ -718,7 +573,6 @@ public final class VatRecipe {
             return this;
         }
 
-        /** 完成后酸引水清 0 */
         public Builder clearSourWater() {
             Liquid old = this.liquid;
             this.liquid = new Liquid(old.waterMin(), old.waterMax(), old.sourWaterMb(),
@@ -727,7 +581,6 @@ public final class VatRecipe {
             return this;
         }
 
-        /** 完成后把水位等量变成酸引水（泡菜用）：一层水 = 1000 mB 酸引水 */
         public Builder waterBecomesSourWater() {
             Liquid old = this.liquid;
             this.liquid = new Liquid(old.waterMin(), old.waterMax(), old.sourWaterMb(),
@@ -746,7 +599,6 @@ public final class VatRecipe {
             return this;
         }
 
-        /** 这缸只能放在「会下雪的生物群系」里开工（冻梨那种要冻起来的东西） */
         public Builder requiresSnowyBiome() {
             this.requiresSnowyBiome = true;
             return this;
@@ -758,10 +610,6 @@ public final class VatRecipe {
             return this;
         }
 
-        /**
-         * 不同温度带的时长倍率：冷带×2 / 温带×1 / 暖带×0.5 / 热带×0.25 这样写。
-         * 没写的带按基准时长算（倍率 1）。
-         */
         public Builder biomeSeconds(java.util.function.Consumer<java.util.EnumMap<BiomeBand, Float>> fill) {
             java.util.EnumMap<BiomeBand, Float> map = new java.util.EnumMap<>(BiomeBand.class);
             fill.accept(map);

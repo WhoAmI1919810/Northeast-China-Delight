@@ -24,14 +24,8 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 import java.util.function.Supplier;
 
 /**
- * **4 个生长阶段**的小作物（原版 {@code CropBlock} 写死了 8 个阶段 AGE_7，改不了，
- * 所以这里单独写一个 AGE_3 的版本）。
- *
- * <p>行为照抄原版作物：只能种在耕地上、随机刻按「生长速度」推进、骨粉催一阶。
- * 目前只有**大葱**用它 —— 大葱只画了 4 个阶段，而且生长本来就快。
- *
- * <p>注意：这个方块的 {@code age} 只有 0~3；老存档里如果是这个方块、又存着 age≥4，
- * 读档时那个属性会被忽略、退回 age 0（作物变回幼苗），不会影响别的方块。
+ * 4 个生长阶段的小作物（原版 {@code CropBlock} 写死了 8 个阶段 AGE_7，改不了，所以这里单独写一个 AGE_3 的版本）。行为照抄原版作物：只能种在耕
+ * 地上、随机刻按「生长速度」推进、骨粉催一阶。目前只有大葱用它 —— 大葱只画了 4 个阶段，而且生长本来就快。
  */
 public class DdSmallCropBlock extends BushBlock implements BonemealableBlock {
 
@@ -49,14 +43,9 @@ public class DdSmallCropBlock extends BushBlock implements BonemealableBlock {
             Block.box(0.0, 0.0, 0.0, 16.0, 16.0, 16.0)
     };
 
-    /**
-     * 种子物品；只有 codec 反序列化出来的实例才会是 null
-     * （本模组永远用带种子的那个构造器注册方块）。
-     */
     @org.jetbrains.annotations.Nullable
     private final Supplier<? extends ItemLike> seed;
 
-    /** 给 codec 用的构造器（simpleCodec 只认「只有 Properties」的那种） */
     public DdSmallCropBlock(BlockBehaviour.Properties properties) {
         this(properties, null);
     }
@@ -93,7 +82,6 @@ public class DdSmallCropBlock extends BushBlock implements BonemealableBlock {
 
     @Override
     protected boolean mayPlaceOn(BlockState state, BlockGetter level, BlockPos pos) {
-        // 和原版作物一样只能种在耕地上（农夫乐事的富饶农田继承自耕地，所以也能种）
         return state.getBlock() instanceof FarmBlock;
     }
 
@@ -141,10 +129,6 @@ public class DdSmallCropBlock extends BushBlock implements BonemealableBlock {
         //?}
     }
 
-    /**
-     * 生长速度：和原版作物同一套算法 —— 看脚下 3×3 的耕地（湿润的更快），
-     * 周围同样种着这种作物的格子会拖慢生长。
-     */
     private float growthSpeed(BlockState state, BlockGetter level, BlockPos pos) {
         float speed = 1.0F;
         BlockPos below = pos.below();

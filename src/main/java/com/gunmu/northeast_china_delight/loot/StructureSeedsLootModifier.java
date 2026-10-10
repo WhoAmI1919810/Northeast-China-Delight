@@ -54,7 +54,7 @@ public class StructureSeedsLootModifier extends LootModifier
             new Entry(() -> ModItems.EGGPLANT_SEEDS.get(), 6),
             new Entry(() -> ModItems.GREEN_BEANS_SEEDS.get(), 6),
             new Entry(() -> ModItems.RED_CHILI_SEEDS.get(), 5),
-            new Entry(() -> ModItems.GINSENG_SEEDS.get(), 2)   // 人参种：稀有
+            new Entry(() -> ModItems.GINSENG_SEEDS.get(), 2)
     };
 
     public StructureSeedsLootModifier(LootItemCondition[] conditions)
@@ -79,7 +79,6 @@ public class StructureSeedsLootModifier extends LootModifier
     protected ObjectArrayList<ItemStack> doApply(ObjectArrayList<ItemStack> generatedLoot, LootContext context)
     {
         var random = context.getRandom();
-        // 小概率：15% 塞 1 份种子（村庄住宅的 40% 是"大概率"，这里是"小概率"）
         if (random.nextFloat() < 0.15F)
         {
             generatedLoot.add(roll(random, SEEDS));
@@ -97,7 +96,7 @@ public class StructureSeedsLootModifier extends LootModifier
             roll -= entry.weight;
             if (roll < 0)
             {
-                int count = 1 + random.nextInt(2);  // 1~2 个
+                int count = 1 + random.nextInt(2);
                 return new ItemStack(entry.item.get(), count);
             }
         }

@@ -39,12 +39,9 @@ import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 /**
- * 大缸酿出的两种液体：酱油、大酱。
- *
- * 关于「懒加载」：{@code Fluid} 的构造函数会往流体注册表里挂一个 intrusive holder，
- * 这要求注册表处于「解冻」状态 —— 也就是只能在 RegisterEvent 期间创建。
- * 而方块注册事件不一定排在流体注册事件之前，所以这里两个实例都做成按需创建：
- * 谁先用到（方块工厂或流体注册）就先创建，另一个直接复用同一个实例。
+ * 大缸酿出的两种液体：酱油、大酱。关于「懒加载」：{@code Fluid} 的构造函数会往流体注册表里挂一个 intrusive holder，这要求注册表处于「解冻」状态 —
+ * — 也就是只能在 RegisterEvent 期间创建。而方块注册事件不一定排在流体注册事件之前，所以这里两个实例都做成按需创建：谁先用到（方块工厂或流体注册）就先创建，另一个
+ * 直接复用同一个实例。
  */
 public final class ModFluids {
 
@@ -59,8 +56,6 @@ public final class ModFluids {
             //?}
     public static final DeferredRegister<Fluid> FLUIDS =
             DeferredRegister.create(Registries.FLUID, NortheastChinaDelight.MODID);
-
-    // ===== 酱油 =====
 
     public static final FluidType SOY_SAUCE_TYPE = new DdFluidType(FluidType.Properties.create()
             .descriptionId("fluid_type.northeast_china_delight.soy_sauce")
@@ -78,7 +73,6 @@ public final class ModFluids {
     private static BaseFlowingFluid.Source soySauceSource;
     private static BaseFlowingFluid.Flowing soySauceFlowing;
 
-    /** 静止的酱油（注册与液体方块共用这一个实例） */
     public static BaseFlowingFluid.Source soySauceSource() {
         if (soySauceSource == null) {
             soySauceSource = new BaseFlowingFluid.Source(SOY_SAUCE_PROPERTIES);
@@ -86,7 +80,6 @@ public final class ModFluids {
         return soySauceSource;
     }
 
-    /** 流动的酱油 */
     public static BaseFlowingFluid.Flowing soySauceFlowing() {
         if (soySauceFlowing == null) {
             soySauceFlowing = new BaseFlowingFluid.Flowing(SOY_SAUCE_PROPERTIES);
@@ -100,8 +93,6 @@ public final class ModFluids {
             FLUIDS.register("soy_sauce", ModFluids::soySauceSource);
     public static final Supplier<BaseFlowingFluid.Flowing> FLOWING_SOY_SAUCE =
             FLUIDS.register("flowing_soy_sauce", ModFluids::soySauceFlowing);
-
-    // ===== 大酱 =====
 
     public static final FluidType SOY_PASTE_TYPE = new DdFluidType(FluidType.Properties.create()
             .descriptionId("fluid_type.northeast_china_delight.soy_paste")
@@ -119,7 +110,6 @@ public final class ModFluids {
     private static BaseFlowingFluid.Source soyPasteSource;
     private static BaseFlowingFluid.Flowing soyPasteFlowing;
 
-    /** 静止的大酱（罐里那缸酱的「液体」形态） */
     public static BaseFlowingFluid.Source soyPasteSource() {
         if (soyPasteSource == null) {
             soyPasteSource = new BaseFlowingFluid.Source(SOY_PASTE_PROPERTIES);
@@ -127,7 +117,6 @@ public final class ModFluids {
         return soyPasteSource;
     }
 
-    /** 流动的大酱 */
     public static BaseFlowingFluid.Flowing soyPasteFlowing() {
         if (soyPasteFlowing == null) {
             soyPasteFlowing = new BaseFlowingFluid.Flowing(SOY_PASTE_PROPERTIES);
@@ -141,8 +130,6 @@ public final class ModFluids {
             FLUIDS.register("soy_paste", ModFluids::soyPasteSource);
     public static final Supplier<BaseFlowingFluid.Flowing> FLOWING_SOY_PASTE =
             FLUIDS.register("flowing_soy_paste", ModFluids::soyPasteFlowing);
-
-    // ===== 豆浆 =====
 
     public static final FluidType SOY_MILK_TYPE = new DdFluidType(FluidType.Properties.create()
             .descriptionId("fluid_type.northeast_china_delight.soy_milk")
@@ -160,7 +147,6 @@ public final class ModFluids {
     private static BaseFlowingFluid.Source soyMilkSource;
     private static BaseFlowingFluid.Flowing soyMilkFlowing;
 
-    /** 静止的豆浆（动力搅拌器在工作盆里加热搅拌出来的） */
     public static BaseFlowingFluid.Source soyMilkSource() {
         if (soyMilkSource == null) {
             soyMilkSource = new BaseFlowingFluid.Source(SOY_MILK_PROPERTIES);
@@ -168,7 +154,6 @@ public final class ModFluids {
         return soyMilkSource;
     }
 
-    /** 流动的豆浆 */
     public static BaseFlowingFluid.Flowing soyMilkFlowing() {
         if (soyMilkFlowing == null) {
             soyMilkFlowing = new BaseFlowingFluid.Flowing(SOY_MILK_PROPERTIES);
@@ -182,8 +167,6 @@ public final class ModFluids {
             FLUIDS.register("soy_milk", ModFluids::soyMilkSource);
     public static final Supplier<BaseFlowingFluid.Flowing> FLOWING_SOY_MILK =
             FLUIDS.register("flowing_soy_milk", ModFluids::soyMilkFlowing);
-
-    // ===== 醋 =====
 
     public static final FluidType VINEGAR_TYPE = new DdFluidType(FluidType.Properties.create()
             .descriptionId("fluid_type.northeast_china_delight.vinegar")
@@ -201,7 +184,6 @@ public final class ModFluids {
     private static BaseFlowingFluid.Source vinegarSource;
     private static BaseFlowingFluid.Flowing vinegarFlowing;
 
-    /** 静止的醋（酱渣 + 玉米粒 / 荞麦二次发酵出来的） */
     public static BaseFlowingFluid.Source vinegarSource() {
         if (vinegarSource == null) {
             vinegarSource = new BaseFlowingFluid.Source(VINEGAR_PROPERTIES);
@@ -209,7 +191,6 @@ public final class ModFluids {
         return vinegarSource;
     }
 
-    /** 流动的醋 */
     public static BaseFlowingFluid.Flowing vinegarFlowing() {
         if (vinegarFlowing == null) {
             vinegarFlowing = new BaseFlowingFluid.Flowing(VINEGAR_PROPERTIES);
@@ -223,8 +204,6 @@ public final class ModFluids {
             FLUIDS.register("vinegar", ModFluids::vinegarSource);
     public static final Supplier<BaseFlowingFluid.Flowing> FLOWING_VINEGAR =
             FLUIDS.register("flowing_vinegar", ModFluids::vinegarFlowing);
-
-    // ===== 酸引水（泡菜腌完后缸里的那缸水） =====
 
     public static final FluidType SOUR_WATER_TYPE = new DdFluidType(FluidType.Properties.create()
             .descriptionId("fluid_type.northeast_china_delight.sour_water")
@@ -242,7 +221,6 @@ public final class ModFluids {
     private static BaseFlowingFluid.Source sourWaterSource;
     private static BaseFlowingFluid.Flowing sourWaterFlowing;
 
-    /** 静止的酸引水（泡菜发酵完成后由缸里的盐水转化而来） */
     public static BaseFlowingFluid.Source sourWaterSource() {
         if (sourWaterSource == null) {
             sourWaterSource = new BaseFlowingFluid.Source(SOUR_WATER_PROPERTIES);
@@ -250,7 +228,6 @@ public final class ModFluids {
         return sourWaterSource;
     }
 
-    /** 流动的酸引水 */
     public static BaseFlowingFluid.Flowing sourWaterFlowing() {
         if (sourWaterFlowing == null) {
             sourWaterFlowing = new BaseFlowingFluid.Flowing(SOUR_WATER_PROPERTIES);
@@ -264,8 +241,6 @@ public final class ModFluids {
             FLUIDS.register("sour_water", ModFluids::sourWaterSource);
     public static final Supplier<BaseFlowingFluid.Flowing> FLOWING_SOUR_WATER =
             FLUIDS.register("flowing_sour_water", ModFluids::sourWaterFlowing);
-
-    // ===== 白醋（酸引水 + 谷物二次发酵） =====
 
     public static final FluidType WHITE_VINEGAR_TYPE = new DdFluidType(FluidType.Properties.create()
             .descriptionId("fluid_type.northeast_china_delight.white_vinegar")
@@ -283,7 +258,6 @@ public final class ModFluids {
     private static BaseFlowingFluid.Source whiteVinegarSource;
     private static BaseFlowingFluid.Flowing whiteVinegarFlowing;
 
-    /** 静止的白醋 */
     public static BaseFlowingFluid.Source whiteVinegarSource() {
         if (whiteVinegarSource == null) {
             whiteVinegarSource = new BaseFlowingFluid.Source(WHITE_VINEGAR_PROPERTIES);
@@ -291,7 +265,6 @@ public final class ModFluids {
         return whiteVinegarSource;
     }
 
-    /** 流动的白醋 */
     public static BaseFlowingFluid.Flowing whiteVinegarFlowing() {
         if (whiteVinegarFlowing == null) {
             whiteVinegarFlowing = new BaseFlowingFluid.Flowing(WHITE_VINEGAR_PROPERTIES);
@@ -305,8 +278,6 @@ public final class ModFluids {
             FLUIDS.register("white_vinegar", ModFluids::whiteVinegarSource);
     public static final Supplier<BaseFlowingFluid.Flowing> FLOWING_WHITE_VINEGAR =
             FLUIDS.register("flowing_white_vinegar", ModFluids::whiteVinegarFlowing);
-
-    // ===== 鱼露 =====
 
     public static final FluidType FISH_SAUCE_TYPE = new DdFluidType(FluidType.Properties.create()
             .descriptionId("fluid_type.northeast_china_delight.fish_sauce")
@@ -324,7 +295,6 @@ public final class ModFluids {
     private static BaseFlowingFluid.Source fishSauceSource;
     private static BaseFlowingFluid.Flowing fishSauceFlowing;
 
-    /** 静止的鱼露 */
     public static BaseFlowingFluid.Source fishSauceSource() {
         if (fishSauceSource == null) {
             fishSauceSource = new BaseFlowingFluid.Source(FISH_SAUCE_PROPERTIES);
@@ -332,7 +302,6 @@ public final class ModFluids {
         return fishSauceSource;
     }
 
-    /** 流动的鱼露 */
     public static BaseFlowingFluid.Flowing fishSauceFlowing() {
         if (fishSauceFlowing == null) {
             fishSauceFlowing = new BaseFlowingFluid.Flowing(FISH_SAUCE_PROPERTIES);
@@ -346,8 +315,6 @@ public final class ModFluids {
             FLUIDS.register("fish_sauce", ModFluids::fishSauceSource);
     public static final Supplier<BaseFlowingFluid.Flowing> FLOWING_FISH_SAUCE =
             FLUIDS.register("flowing_fish_sauce", ModFluids::fishSauceFlowing);
-
-    // ===== 虾酱 =====
 
     public static final FluidType SHRIMP_PASTE_TYPE = new DdFluidType(FluidType.Properties.create()
             .descriptionId("fluid_type.northeast_china_delight.shrimp_paste")
@@ -365,7 +332,6 @@ public final class ModFluids {
     private static BaseFlowingFluid.Source shrimpPasteSource;
     private static BaseFlowingFluid.Flowing shrimpPasteFlowing;
 
-    /** 静止的虾酱 */
     public static BaseFlowingFluid.Source shrimpPasteSource() {
         if (shrimpPasteSource == null) {
             shrimpPasteSource = new BaseFlowingFluid.Source(SHRIMP_PASTE_PROPERTIES);
@@ -373,7 +339,6 @@ public final class ModFluids {
         return shrimpPasteSource;
     }
 
-    /** 流动的虾酱 */
     public static BaseFlowingFluid.Flowing shrimpPasteFlowing() {
         if (shrimpPasteFlowing == null) {
             shrimpPasteFlowing = new BaseFlowingFluid.Flowing(SHRIMP_PASTE_PROPERTIES);
@@ -387,8 +352,6 @@ public final class ModFluids {
             FLUIDS.register("shrimp_paste", ModFluids::shrimpPasteSource);
     public static final Supplier<BaseFlowingFluid.Flowing> FLOWING_SHRIMP_PASTE =
             FLUIDS.register("flowing_shrimp_paste", ModFluids::shrimpPasteFlowing);
-
-    // ===== 植物油 =====
 
     public static final FluidType VEGETABLE_OIL_TYPE = new DdFluidType(FluidType.Properties.create()
             .descriptionId("fluid_type.northeast_china_delight.vegetable_oil")
@@ -406,7 +369,6 @@ public final class ModFluids {
     private static BaseFlowingFluid.Source vegetableOilSource;
     private static BaseFlowingFluid.Flowing vegetableOilFlowing;
 
-    /** 静止的植物油（动力冲压机压熟花生米挤出来的） */
     public static BaseFlowingFluid.Source vegetableOilSource() {
         if (vegetableOilSource == null) {
             vegetableOilSource = new BaseFlowingFluid.Source(VEGETABLE_OIL_PROPERTIES);
@@ -414,7 +376,6 @@ public final class ModFluids {
         return vegetableOilSource;
     }
 
-    /** 流动的植物油 */
     public static BaseFlowingFluid.Flowing vegetableOilFlowing() {
         if (vegetableOilFlowing == null) {
             vegetableOilFlowing = new BaseFlowingFluid.Flowing(VEGETABLE_OIL_PROPERTIES);
@@ -428,8 +389,6 @@ public final class ModFluids {
             FLUIDS.register("vegetable_oil", ModFluids::vegetableOilSource);
     public static final Supplier<BaseFlowingFluid.Flowing> FLOWING_VEGETABLE_OIL =
             FLUIDS.register("flowing_vegetable_oil", ModFluids::vegetableOilFlowing);
-
-    // ===== 动物油 =====
 
     public static final FluidType ANIMAL_OIL_TYPE = new DdFluidType(FluidType.Properties.create()
             .descriptionId("fluid_type.northeast_china_delight.animal_oil")
@@ -447,7 +406,6 @@ public final class ModFluids {
     private static BaseFlowingFluid.Source animalOilSource;
     private static BaseFlowingFluid.Flowing animalOilFlowing;
 
-    /** 静止的动物油（动力搅拌器把肥肉熬出来的液态油） */
     public static BaseFlowingFluid.Source animalOilSource() {
         if (animalOilSource == null) {
             animalOilSource = new BaseFlowingFluid.Source(ANIMAL_OIL_PROPERTIES);
@@ -455,7 +413,6 @@ public final class ModFluids {
         return animalOilSource;
     }
 
-    /** 流动的动物油 */
     public static BaseFlowingFluid.Flowing animalOilFlowing() {
         if (animalOilFlowing == null) {
             animalOilFlowing = new BaseFlowingFluid.Flowing(ANIMAL_OIL_PROPERTIES);
@@ -469,10 +426,6 @@ public final class ModFluids {
             FLUIDS.register("animal_oil", ModFluids::animalOilSource);
     public static final Supplier<BaseFlowingFluid.Flowing> FLOWING_ANIMAL_OIL =
             FLUIDS.register("flowing_animal_oil", ModFluids::animalOilFlowing);
-
-    // ===== 花生酱 =====
-    // 注：这瓶「酱」是能流动的液体 —— 大缸里虾酱 6 虾 3 盐出一瓶，
-    // 花生酱就是把花生熬出油的稠酱，物理上跟油差不多。
 
     public static final FluidType PEANUT_BUTTER_TYPE = new DdFluidType(FluidType.Properties.create()
             .descriptionId("fluid_type.northeast_china_delight.peanut_butter")
@@ -511,8 +464,6 @@ public final class ModFluids {
     public static final Supplier<BaseFlowingFluid.Flowing> FLOWING_PEANUT_BUTTER =
             FLUIDS.register("flowing_peanut_butter", ModFluids::peanutButterFlowing);
 
-    // ===== 辣椒油 =====
-
     public static final FluidType CHILI_OIL_TYPE = new DdFluidType(FluidType.Properties.create()
             .descriptionId("fluid_type.northeast_china_delight.chili_oil")
             .density(920)
@@ -550,9 +501,6 @@ public final class ModFluids {
     public static final Supplier<BaseFlowingFluid.Flowing> FLOWING_CHILI_OIL =
             FLUIDS.register("flowing_chili_oil", ModFluids::chiliOilFlowing);
 
-    // ===== 辣椒酱 =====
-    // 碗装的稠调料：2 个红辣椒 + 盐捣出来的糊，稠度跟虾酱一个量级。
-
     public static final FluidType CHILI_SAUCE_TYPE = new DdFluidType(FluidType.Properties.create()
             .descriptionId("fluid_type.northeast_china_delight.chili_sauce")
             .density(1350)
@@ -589,9 +537,6 @@ public final class ModFluids {
             FLUIDS.register("chili_sauce", ModFluids::chiliSauceSource);
     public static final Supplier<BaseFlowingFluid.Flowing> FLOWING_CHILI_SAUCE =
             FLUIDS.register("flowing_chili_sauce", ModFluids::chiliSauceFlowing);
-
-    // ===== 格瓦斯 =====
-    // 大缸里发酵出来的饮料，比水稠一点点，颜色像焦糖。
 
     public static final FluidType KVASS_TYPE = new DdFluidType(FluidType.Properties.create()
             .descriptionId("fluid_type.northeast_china_delight.kvass")
@@ -636,12 +581,9 @@ public final class ModFluids {
     }
 
     /**
-     * 本模组的流体类型。
-     *
-     * <p>「这个流体在客户端长什么样」（静/流贴图、染色）两个版本的挂法不同：
-     * 1.20.1 没有 {@code RegisterClientExtensionsEvent}，只能覆写 {@link FluidType#initializeClient}
-     * —— 好在它只在客户端会被调用（构造器里带 Dist 判断），服务端不会加载这段；
-     * 1.21 起由客户端事件统一注册，这个类就只是个普通 FluidType。</p>
+     * 本模组的流体类型。「这个流体在客户端长什么样」（静/流贴图、染色）两个版本的挂法不同： 1.20.1 没有
+     * {@code RegisterClientExtensionsEvent}，只能覆写 {@link FluidType#initializeClient} —— 好在它只在客户
+     * 端会被调用（构造器里带 Dist 判断），服务端不会加载这段； 1.21 起由客户端事件统一注册，这个类就只是个普通 FluidType。
      */
     private static class DdFluidType extends FluidType {
 

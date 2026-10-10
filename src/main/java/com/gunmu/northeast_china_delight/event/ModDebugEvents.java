@@ -31,8 +31,7 @@ import net.neoforged.neoforge.event.level.BlockEvent;
 import org.slf4j.Logger;
 
 /**
- * 临时调试输出：进度授予、方块放置、右键方块、大缸状态。
- * 调完之后整个文件可以删掉。
+ * 临时调试输出：进度授予、方块放置、右键方块、大缸状态。调完之后整个文件可以删掉。
  */
 public final class ModDebugEvents {
 
@@ -71,7 +70,6 @@ public final class ModDebugEvents {
                     event.getLevel().getBlockState(event.getPos()).getBlock(),
                     event.getItemStack().getItem(), event.getFace());
         }
-        // 顺手把大缸的状态也打出来
         if (event.getLevel() instanceof ServerLevel level) {
             BlockPos pos = event.getPos();
             BlockEntity be = level.getBlockEntity(pos);
@@ -81,7 +79,6 @@ public final class ModDebugEvents {
         }
     }
 
-    /** 大缸当前状态（kind / 水量 / 是否完成 / 内容物摘要） */
     public static void logVat(String why, VatBlockEntity vat, boolean fermented) {
         LOGGER.info("[DBG-VAT] {} kind={} 水={}mB 酸引水={}mB 完成={} 压石={} 盖={} 内容物={}",
                 why, vat.kind(), vat.waterMb(), vat.sourWaterMb(), fermented,

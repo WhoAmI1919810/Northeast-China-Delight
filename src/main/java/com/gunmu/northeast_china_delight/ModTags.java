@@ -7,11 +7,8 @@ import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 
 /**
- * 矿物词典（c: 通用标签）键。
- *
- * <p>NeoForge 1.21.1 用 {@code c:} 命名空间的标签当"矿物词典"：
- * 别家模组的青椒、黄瓜、大豆这些东西只要把物品塞进同一个标签，
- * 我们的配方就能直接认。</p>
+ * 矿物词典（c: 通用标签）键。 NeoForge 1.21.1 用 {@code c:} 命名空间的标签当"矿物词典"：别家模组的青椒、黄瓜、大豆这些东西只要把物品塞进同一个标
+ * 签，我们的配方就能直接认。
  */
 public final class ModTags {
 

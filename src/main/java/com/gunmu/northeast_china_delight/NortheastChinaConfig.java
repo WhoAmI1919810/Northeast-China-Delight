@@ -26,10 +26,8 @@ public final class NortheastChinaConfig
     *///?} else {
     public static final ModConfigSpec SPEC;
 
-    /** 菜肴方块形态总开关 */
     public static final ModConfigSpec.BooleanValue DISH_PLACEMENT_ENABLED;
 
-    /** 东北小院里的小零件（灶棚、鸡架、水井、菜窖等）是否生成 */
     public static final ModConfigSpec.BooleanValue YARD_PARTS_ENABLED;
     //?}
 

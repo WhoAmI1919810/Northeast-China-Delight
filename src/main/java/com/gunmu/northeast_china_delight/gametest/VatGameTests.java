@@ -38,18 +38,6 @@ import java.util.List;
 
 /**
  * 大缸的自动化回归（跑法：{@code gradlew runGameTestServer}）。
- *
- * <p>这里覆盖的是"看代码看不出来、只能真跑一遍"的几条：
- * <ul>
- *   <li>{@link #vatRecipesPassSelfCheck()}：配方注册表自检（含"JEI 展示的份数真的能开工"）；</li>
- *   <li>{@link #vatJeiCountsMatchRecipe()}：JEI 上"6 肉 1 盐"那类份数错；</li>
- *   <li>{@link #finishedPasteCanBrewVinegar()} / {@link #pickleSourWaterCanBrewWhiteVinegar()}：
- *       二次发酵（做好的缸就地接着酿）；</li>
- *   <li>{@link #waterAfterSealingStartsBrew()} / {@link #coverComesBackBeforeFermented()}：
- *       盖布的先后顺序不该把人卡死。</li>
- * </ul>
- *
- * <p>用的空结构在 {@code data/northeast_china_delight/structure/empty.nbt}（5×5×5 全空气）。
  */
 @GameTestHolder(NortheastChinaDelight.MODID)
 @PrefixGameTestTemplate(false)
@@ -58,7 +46,6 @@ public final class VatGameTests {
     private VatGameTests() {
     }
 
-    /** 假玩家：1.20.1 的 GameTestHelper 拆成 makeMockPlayer / makeMockSurvivalPlayer 两个方法 */
     private static Player mockPlayer(GameTestHelper helper, GameType gameType) {
         //? if <1.20.5 {
         /*return gameType == GameType.CREATIVE ? helper.makeMockPlayer() : helper.makeMockSurvivalPlayer();
@@ -67,10 +54,7 @@ public final class VatGameTests {
         //?}
     }
 
-    /** 大缸在结构里的相对坐标 */
     private static final BlockPos AT = new BlockPos(1, 1, 1);
-
-    // ===== 配方表本身 =====
 
     @GameTest(template = "empty")
     public static void vatRecipesPassSelfCheck(GameTestHelper helper) {
@@ -97,10 +81,6 @@ public final class VatGameTests {
         }
     }
 
-    /**
-     * JEI 页面生成器本身：每条配方都出得来页面，页面上写的份数就是配方自检里那一份，
-     * 而且没有"什么都产不出来"的空页。
-     */
     @GameTest(template = "empty")
     public static void vatJeiPagesAreGenerated(GameTestHelper helper) {
         for (VatRecipe recipe : VatRecipes.all()) {
@@ -138,7 +118,6 @@ public final class VatGameTests {
         }
     }
 
-    /** 这一层第一格上写的份数（没画出来时返回 -1） */
     private static int shownCount(List<List<ItemStack>> layer) {
         if (layer.isEmpty() || layer.get(0).isEmpty()) {
             return -1;
@@ -146,9 +125,6 @@ public final class VatGameTests {
         return layer.get(0).get(0).getCount();
     }
 
-    // ===== 二次发酵：做好的缸能就地接着酿 =====
-
-    /** 大酱酿好、液体取空之后：加谷物 + 水 + 粗布毯要能接着酿醋 */
     @GameTest(template = "empty")
     public static void finishedPasteCanBrewVinegar(GameTestHelper helper) {
         Player player = mockPlayer(helper, GameType.CREATIVE);
@@ -156,7 +132,6 @@ public final class VatGameTests {
         ServerLevel level = helper.getLevel();
         BlockPos pos = helper.absolutePos(AT);
 
-        // 先把这一缸大酱"酿完"（走真实的完成流程）
         vat.addWater(3 * VatRecipes.WATER_MB_PER_LEVEL);
         for (int i = 0; i < VatRecipes.PASTE_CHUNKS; i++) {
             vat.addContent(new ItemStack(ModItems.SOY_PASTE_CHUNK.get()));
@@ -169,10 +144,8 @@ public final class VatGameTests {
         if (vat.residueCount() != VatRecipes.RESIDUE_COUNT) {
             helper.fail("大酱酿完缸里应该有 " + VatRecipes.RESIDUE_COUNT + " 份酱渣，实际 " + vat.residueCount());
         }
-        // 玩家把大酱装空（10 碗）
         vat.setProductMb(VatRecipe.Fluid.PASTE, 0);
 
-        // 这一步在修好之前会被 forInsert 拒掉：完成的缸被当成"正在发酵"
         if (VatBrewing.forInsert(vat, new ItemStack(ModItems.CORN_SEEDS.get())) == null) {
             helper.fail("酿完大酱的缸加不进谷物：二次发酵被 forInsert 挡掉了");
         }
@@ -195,7 +168,6 @@ public final class VatGameTests {
         helper.succeed();
     }
 
-    /** 泡菜腌完剩下的酸引水：加谷物 + 粗布毯要能接着酿白醋 */
     @GameTest(template = "empty")
     public static void pickleSourWaterCanBrewWhiteVinegar(GameTestHelper helper) {
         Player player = mockPlayer(helper, GameType.CREATIVE);
@@ -215,7 +187,6 @@ public final class VatGameTests {
         if (vat.sourWaterMb() < VatRecipes.SOUR_WATER_MB) {
             helper.fail("泡菜腌完应该有酸引水，实际 " + vat.sourWaterMb() + " mB");
         }
-        // 玩家把菜取走（酸引水留在缸里）
         for (int i = 0; i < 6; i++) {
             VatBrewing.takeOne(vat, new java.util.ArrayList<>());
         }
@@ -244,8 +215,6 @@ public final class VatGameTests {
         helper.succeed();
     }
 
-    // ===== 盖布的先后顺序 =====
-
     /** 先盖地毯、后倒水：倒完水就该开工（以前加水分支不会触发开工） */
     @GameTest(template = "empty")
     public static void waterAfterSealingStartsBrew(GameTestHelper helper) {
@@ -261,12 +230,10 @@ public final class VatGameTests {
             vat.addContent(new ItemStack(ModItems.SALT.get()));
         }
         vat.setKind(VatRecipes.Kind.PASTE);
-        // 先蒙羊毛地毯（大酱的封口物）
         click(helper, player, new ItemStack(Items.WHITE_CARPET));
         if (!vat.isCovered()) {
             helper.fail("羊毛地毯没能盖到缸上");
         }
-        // 再倒三桶水：第三桶之后应该就开工了
         for (int i = 0; i < 3; i++) {
             click(helper, player, new ItemStack(Items.WATER_BUCKET));
         }
@@ -277,7 +244,6 @@ public final class VatGameTests {
         helper.succeed();
     }
 
-    /** 还没腌好的蒙盖缸：空手右键要把盖布还回来（不然只能砸缸） */
     @GameTest(template = "empty")
     public static void coverComesBackBeforeFermented(GameTestHelper helper) {
         Player player = mockPlayer(helper, GameType.CREATIVE);
@@ -293,14 +259,11 @@ public final class VatGameTests {
         helper.succeed();
     }
 
-    // ===== 小工具 =====
-
     private static VatBlockEntity placeVat(GameTestHelper helper) {
         helper.setBlock(AT, ModBlocks.VAT.get());
         return (VatBlockEntity) helper.getBlockEntity(AT);
     }
 
-    /** 拿某样东西右键大缸一下（走真实的交互入口） */
     private static void click(GameTestHelper helper, Player player, ItemStack stack) {
         player.setItemInHand(InteractionHand.MAIN_HAND, stack);
         helper.useBlock(AT, player);
@@ -312,7 +275,6 @@ public final class VatGameTests {
         }
     }
 
-    /** 农夫乐事的粗布毯；没装农夫乐事时返回 null（酿醋那两条跳过） */
     private static Item clothRug() {
         Item rug = BuiltInRegistries.ITEM.get(
                 DdIds.of("farmersdelight", "canvas_rug"));

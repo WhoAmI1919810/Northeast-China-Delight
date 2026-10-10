@@ -47,7 +47,6 @@ public class ButcherLootModifier extends LootModifier
             new Entry(() -> ModItems.CHICKEN_FRAME.get(), 5)
     };
 
-    /** 肉菜 / 灌肠 / 烤货（成品） */
     private static final Entry[] DISH = {
             new Entry(() -> ModItems.RED_SAUSAGE.get(), 8),
             new Entry(() -> ModItems.BLOOD_SAUSAGE.get(), 7),

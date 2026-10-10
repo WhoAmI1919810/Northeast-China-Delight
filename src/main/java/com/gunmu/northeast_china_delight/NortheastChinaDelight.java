@@ -127,7 +127,6 @@ import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 
-
 // modid 必须与 neoforge.mods.toml 中的条目保持一致
 @Mod(NortheastChinaDelight.MODID)
 public class NortheastChinaDelight
@@ -165,11 +164,8 @@ public class NortheastChinaDelight
         modContainer.registerConfig(net.neoforged.fml.config.ModConfig.Type.COMMON, NortheastChinaConfig.SPEC);
         //?}
 
-        // 将物品添加到本模组的创造模式物品栏
         modEventBus.addListener(this::addItemsToCreativeTab);
-        // 大缸的流体能力：让流体管道能把酱油 / 大酱抽进储罐
         modEventBus.addListener(this::registerCapabilities);
-        // 通用设置：堆肥、可燃性等
         modEventBus.addListener(this::onCommonSetup);
 
         // 注册服务器及其他游戏事件
@@ -191,13 +187,9 @@ public class NortheastChinaDelight
         *///?} else {
         NeoForge.EVENT_BUS.register(this);
         NeoForge.EVENT_BUS.register(DishEffectEvents.class);
-        // 木耳（给原木去皮）与人参（空手刨土）的钩子
         NeoForge.EVENT_BUS.register(ModGameplayEvents.class);
-        // 临时调试：进度授予 / 方块放置 / 大缸状态
         NeoForge.EVENT_BUS.register(com.gunmu.northeast_china_delight.event.ModDebugEvents.class);
-        // 副食商的交易表（每次数据包重载时重新填一遍）
         NeoForge.EVENT_BUS.addListener(SideDishMerchantTrades::addTrades);
-        // 原版各职业的交易表：农民 / 屠夫 / 渔夫 / 制图师 / 流浪商人
         NeoForge.EVENT_BUS.addListener(ModFarmerTrades::addTrades);
         NeoForge.EVENT_BUS.addListener(ModButcherTrades::addTrades);
         NeoForge.EVENT_BUS.addListener(ModFishermanTrades::addTrades);
@@ -206,11 +198,9 @@ public class NortheastChinaDelight
         //?}
     }
 
-    /** 通用设置：往原版堆里塞数据 —— 玉米茎秆能堆肥。 */
     private void onCommonSetup(@NotNull FMLCommonSetupEvent event)
     {
         event.enqueueWork(() -> {
-            // 玉米茎秆：晒干的秸秆，堆肥效率比普通作物高（0.65 一档）
             net.minecraft.world.level.block.ComposterBlock.COMPOSTABLES.put(
                     ModItems.CORN_STALK.get(), 0.65F);
         });
@@ -248,12 +238,6 @@ public class NortheastChinaDelight
         LOGGER.info("da dong bei shi wo di jia xiang ~");
     }
 
-    /**
-     * 拿着烧烤架右键普通营火：把营火换成「架了烤架的营火」。
-     *
-     * 这里是另换一个方块，而不是给原版营火加一个方块状态属性 ——
-     * 给原版方块加属性会改变全局方块状态 id，老存档里的方块会错位。
-     */
     @SubscribeEvent
     public void onRightClickCampfire(PlayerInteractEvent.RightClickBlock event)
     {
@@ -297,16 +281,11 @@ public class NortheastChinaDelight
             LOGGER.info("MINECRAFT NAME >> {}", Minecraft.getInstance().getUser().getName());
         }
 
-        /**
-         * 大缸里的水面用原版 water_still 贴图，而那张贴图本身是灰白的，
-         * 蓝色来自群系着色 —— 所以这里给水面（tintindex 0）注册水的颜色。
-         */
         @SubscribeEvent
         public static void onRegisterBlockColors(RegisterColorHandlersEvent.Block event)
         {
             event.register(
                     (state, level, pos, tintIndex) -> {
-                        // 酸引水：泡菜腌完后缸里的水，用发浑的淡黄色和其它液体区分开
                         if (level != null && pos != null
                                 && level.getBlockEntity(pos) instanceof VatBlockEntity vat
                                 && vat.sourWaterMb() > 0) {
@@ -315,7 +294,6 @@ public class NortheastChinaDelight
                         int color = level != null && pos != null
                                 ? BiomeColors.getAverageWaterColor(level, pos)
                                 : 0x3F76E4;
-                        // 盐够了的水稍微发白，用来提示「可以压石头开腌了」
                         if (state.getValue(Vat.SALTED)) {
                             int r = (color >> 16) & 0xFF;
                             int g = (color >> 8) & 0xFF;
@@ -325,7 +303,6 @@ public class NortheastChinaDelight
                             b += (int) ((255 - b) * 0.45F);
                             color = (r << 16) | (g << 8) | b;
                         }
-                        // 缸里泡着的东西会给水染色：辣椒酱发红、酱块发酱色、蔬菜发淡绿 …
                         if (level != null && pos != null
                                 && level.getBlockEntity(pos) instanceof VatBlockEntity vat) {
                             float weight = 1.0F;
@@ -345,7 +322,6 @@ public class NortheastChinaDelight
                     ModBlocks.VAT.get());
         }
 
-        /** 按比例把两个颜色混起来（amount = 0 全用 base，= 1 全用 tint） */
         private static int blend(int base, int tint, float amount)
         {
             float a = Math.max(0.0F, Math.min(1.0F, amount));
@@ -361,11 +337,6 @@ public class NortheastChinaDelight
             return (r << 16) | (g << 8) | b;
         }
 
-        /**
-         * 调料瓶照原版药水的做法：瓶身和液面都用原版的贴图（potion / potion_overlay），
-         * 这里只给液面那一层（tintindex 0）按物品染上对应颜色，瓶子那层不染。
-         * 颜色表在 {@link com.gunmu.northeast_china_delight.item.BottleColors}。
-         */
         @SubscribeEvent
         public static void onRegisterItemColors(RegisterColorHandlersEvent.Item event)
         {
@@ -376,12 +347,10 @@ public class NortheastChinaDelight
                     com.gunmu.northeast_china_delight.item.BottleColors.bottles());
         }
 
-        /** 大缸里的内容物需要渲染在方块上，所以注册方块实体渲染器 */
         @SubscribeEvent
         public static void onRegisterRenderers(EntityRenderersEvent.RegisterRenderers event)
         {
             event.registerBlockEntityRenderer(ModBlockEntities.VAT.get(), VatRenderer::new);
-            // 烤架营火：火堆用方块模型，架上的东西和那层烤架由这个渲染器画
             event.registerBlockEntityRenderer(ModBlockEntities.GRILL_CAMPFIRE.get(), GrillCampfireRenderer::new);
         }
 

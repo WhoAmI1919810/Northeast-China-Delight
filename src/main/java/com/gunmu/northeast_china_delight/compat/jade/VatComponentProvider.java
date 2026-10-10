@@ -26,13 +26,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * 准星指大缸时只显示三样：**液面高度、内容物、发酵进度条**。
- *
- * 详细的投料需求（几份盐、几块酱块、几份谷物…）一律不在这里写 —— 那些看 JEI 的
- * 大缸配方页就行，Jade 里堆一堆文字反而看不清。
- *
- * 进度条只在这里显示；物品栏上方的 HUD 已经移除。
- * 数据全部读客户端那份方块实体（大缸每次变化都会同步），所以在没装 Jade 的服务端上也能正常显示。
+ * 准星指大缸时只显示三样：液面高度、内容物、发酵进度条。详细的投料需求（几份盐、几块酱块、几份谷物…）一律不在这里写 —— 那些看 JEI 的大缸配方页就行，Jade 里堆一堆文
+ * 字反而看不清。
  */
 public enum VatComponentProvider implements IBlockComponentProvider {
 
@@ -46,7 +41,6 @@ public enum VatComponentProvider implements IBlockComponentProvider {
         return NortheastJadePlugin.VAT_UID;
     }
 
-    /** 排在方块名之后、其它模组信息之前 */
     @Override
     public int getDefaultPriority() {
         return TooltipPosition.BODY + 100;
@@ -71,13 +65,11 @@ public enum VatComponentProvider implements IBlockComponentProvider {
             return;
         }
 
-        // 液面高度
         if (water > 0) {
             tooltip.add(Component.translatable("jade.northeast_china_delight.vat.water", water,
                     ModBlockStateProperties.VAT_MAX_WATER));
         }
 
-        // 内容物图标
         if (!contents.isEmpty()) {
             List<IElement> line = new ArrayList<>();
             line.add(helper.text(Component.translatable("jade.northeast_china_delight.vat.contents")));
@@ -87,10 +79,8 @@ public enum VatComponentProvider implements IBlockComponentProvider {
             tooltip.add(line);
         }
 
-        // 发酵进度条
         if (kind != VatRecipes.Kind.NONE) {
             float ratio = fermented ? 1.0F : progress / (float) Vat.MAX_PROGRESS;
-            // 按大缸在做的东西换说法：泡菜「发酵」、腊肉/咸鱼「腌制」、大酱/酱油「酿造」
             String stage = switch (kind) {
                 case MEAT, SALTED_FISH -> "curing";
                 case PASTE, SOY_SAUCE, FISH_SAUCE, SHRIMP_PASTE -> "brewing";
@@ -102,8 +92,6 @@ public enum VatComponentProvider implements IBlockComponentProvider {
             if (fermented) {
                 text = Component.translatable("jade.northeast_china_delight.vat.done." + stage);
             } else {
-                // 材料 + 封口都凑齐了（压缸石一压、地毯一蒙）就算"已经开始"，
-                // 哪怕第一步还没走完（咸腊肉一步要 2 分钟）也别显示"等待投料"
                 boolean started = progress > 0 || com.gunmu.northeast_china_delight.crafting.VatBrewing
                         .ready(vat) != null;
                 text = started

@@ -56,17 +56,11 @@ public class ModLootModifiers {
     //?}
 
     public static void register(IEventBus eventBus) {
-        // 猪副产物：小刀宰杀时每种 10%、最多 2 种
         add("pig_offal", PigOffalLootModifier.CODEC);
-        // 三张钓鱼表：带鱼（冷水深海）、生蚝（河口近海）、大虾（其它任何水域）
         add("fishing", NortheastFishingLootModifier.CODEC);
-        // 结构宝箱（神殿/前哨站/矿井/神庙/沉船/雪屋/海底废墟/村庄非住宅）小概率塞种子
         add("structure_seeds", StructureSeedsLootModifier.CODEC);
-        // 屠夫箱：小概率塞肉类食材和肉菜
         add("butcher_loot", ButcherLootModifier.CODEC);
-        // 渔夫箱：小概率塞水产食材和海味菜
         add("fisherman_loot", FishermanLootModifier.CODEC);
-        // 村庄住宅箱子：按群系塞东北乐事的种子和谷物
         add("village_seeds", VillageSeedsLootModifier.CODEC);
 
         LOOT_MODIFIERS.register(eventBus);

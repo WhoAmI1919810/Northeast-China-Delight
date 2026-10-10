@@ -15,29 +15,13 @@ import net.minecraft.world.level.levelgen.feature.Feature;
 import net.minecraft.world.level.levelgen.feature.FeaturePlaceContext;
 import net.minecraft.world.level.levelgen.feature.configurations.NoneFeatureConfiguration;
 
-/**
- * 榛子丛的自然生成：先种下一丛熟透的榛子丛，再按规则在周围撒榛蘑。
- *
- * <p>榛蘑的生成概率：</p>
- * <ul>
- *   <li>基础概率 <b>3%</b>，作用在榛子丛周围半径 10 格里每一格「草方块／泥土」上，各自独立判定；</li>
- *   <li>如果榛子丛周围 10 格里长着深色橡木／橡木／白桦，就把对应树种的概率加到这个 3% 上：
- *       深色橡木 +1.5%、橡木 +1%、白桦 +0.6%（同时有好几种就取最高的那一项）；</li>
- *   <li>自然生成的榛蘑永远是<b>单株</b>，不会出现榛蘑簇。</li>
- * </ul>
- */
 public class HazelnutBushFeature extends Feature<NoneFeatureConfiguration>
 {
-    /** 榛蘑的基础概率 */
     public static final float BASE_CHANCE = 0.015F;
-    /** 周围有深色橡木时额外加的概率 */
     public static final float DARK_OAK_CHANCE = 0.0075F;
-    /** 周围有橡木时额外加的概率 */
     public static final float OAK_CHANCE = 0.005F;
-    /** 周围有白桦时额外加的概率 */
     public static final float BIRCH_CHANCE = 0.003F;
 
-    /** 榛子丛影响榛蘑的水平半径 */
     public static final int BUSH_RADIUS = 10;
 
     public HazelnutBushFeature(Codec<NoneFeatureConfiguration> codec)
@@ -52,8 +36,6 @@ public class HazelnutBushFeature extends Feature<NoneFeatureConfiguration>
         BlockPos origin = context.origin();
         RandomSource random = context.random();
 
-        // 雪地里地表是一层薄雪片：榛子丛要**和雪片占同一格**（把雪片顶掉、自带雪面），
-        // 而不是长在雪片上面那一层。
         BlockPos target = origin;
         BlockState belowOrigin = level.getBlockState(origin.below());
         if (belowOrigin.is(Blocks.SNOW) && belowOrigin.getValue(SnowLayerBlock.LAYERS) == 1)

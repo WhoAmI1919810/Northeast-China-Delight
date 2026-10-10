@@ -19,10 +19,8 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 
 import java.util.function.Supplier;
 
-/** 世界生成相关的注册表：结构类型 + 结构片段类型。 */
 public class ModWorldGen
 {
-    /** 本模组自己的地物（榛子丛、树脚下的榛蘑、野生人参） */
     public static final DeferredRegister<Feature<?>> FEATURES =
             DeferredRegister.create(Registries.FEATURE, NortheastChinaDelight.MODID);
 
@@ -41,7 +39,6 @@ public class ModWorldGen
     public static final DeferredRegister<StructurePieceType> PIECE_TYPES =
             DeferredRegister.create(Registries.STRUCTURE_PIECE, NortheastChinaDelight.MODID);
 
-    /** 结构类型的 codec：1.20.1 的 StructureType 要 Codec，1.20.5 起改要 MapCodec */
     private static final Supplier<StructureType<NortheastCourtyardStructure>> COURTYARD_TYPE_SUPPLIER =
             //? if <1.20.5 {
             /*() -> () -> NortheastCourtyardStructure.CODEC.codec();*/
@@ -56,17 +53,14 @@ public class ModWorldGen
             PIECE_TYPES.register("northeast_courtyard",
                     () -> (StructurePieceType.StructureTemplateType) CourtyardPiece::new);
 
-    /** 小院周围的「黑土地」（农夫乐事沃土）散布器 */
     public static final Supplier<StructurePieceType> BLACK_SOIL_PIECE =
             PIECE_TYPES.register("northeast_black_soil",
                     () -> (StructurePieceType.ContextlessType) BlackSoilPiece::new);
 
-    /** 生物群系沃土：整片群系按概率铺农夫乐事的沃土 */
     public static final Supplier<StructurePieceType> BIOME_RICH_SOIL_PIECE =
             PIECE_TYPES.register("northeast_biome_rich_soil",
                     () -> (StructurePieceType.ContextlessType) BiomeRichSoilPiece::new);
 
-    /** 小院周边的清场（上方净空 + 半径内地物） */
     public static final Supplier<StructurePieceType> CLEARING_PIECE =
             PIECE_TYPES.register("northeast_clearing",
                     () -> (StructurePieceType.ContextlessType) YardClearingPiece::new);

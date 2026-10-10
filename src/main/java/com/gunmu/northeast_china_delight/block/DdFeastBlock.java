@@ -35,17 +35,6 @@ import java.util.function.Supplier;
 
 /**
  * 「一大盆菜」的方块形式 —— 做法照农夫乐事的 {@code FeastBlock}（牧羊人派、填馅南瓜那套）。
- *
- * <p>**没有方块实体**，整道菜的状态只有两个方块状态属性：
- * <ul>
- *     <li>{@link #FACING}：朝向，放置时按玩家面朝的方向；</li>
- *     <li>{@link #SERVINGS}：还剩几份（0~4），取一份减一。</li>
- * </ul>
- *
- * <p>右键取一份：给一份「碗装XX」，份数减一；**取走最后一份时方块直接消失**，
- * 并把大脸盆还给玩家（所以盆不会丢）。
- *
- * <p>方块物品（一放就是一整盆）和碗装单品都在 {@link ModItems} 里登记。
  */
 public class DdFeastBlock extends Block {
 
@@ -57,17 +46,9 @@ public class DdFeastBlock extends Block {
     public static final int MAX_SERVINGS = 4;
     public static final IntegerProperty SERVINGS = IntegerProperty.create("servings", 0, MAX_SERVINGS);
 
-    /**
-     * 还有菜时的高度：盆身 6 像素 + 冒尖的食材最多到 7 像素。
-     *
-     * <p>（2026-09-24 去掉"漏斗"下两层之后重新量的：40 个模型里 38 个是 6 像素，
-     * 只有 2 个冒尖的到 7 像素，所以取 7 就正好包住整道菜。）
-     */
     private static final VoxelShape SHAPE_FULL = Block.box(1.0, 0.0, 1.0, 15.0, 7.0, 15.0);
-    /** 空盆 / 残渣：只剩盆身，6 像素高 */
     private static final VoxelShape SHAPE_EMPTY = Block.box(1.0, 0.0, 1.0, 15.0, 6.0, 15.0);
 
-    /** 取一份给什么（碗装XX）；只有 codec 反序列化出来的实例才会是 null */
     @Nullable
     private final Supplier<Item> servingItem;
 
@@ -92,8 +73,6 @@ public class DdFeastBlock extends Block {
 
     @Override
     public VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
-        // 选中轮廓 = 碰撞箱 = 这道菜的真实高度（6~7 像素），不再是整格 16 像素。
-        // 模型里最高的食材也只到 7 像素，所以右键照样点得到，不会出现"点高了没反应"。
         return state.getValue(SERVINGS) > 0 ? SHAPE_FULL : SHAPE_EMPTY;
     }
 
@@ -106,7 +85,6 @@ public class DdFeastBlock extends Block {
         return state.getValue(SERVINGS);
     }
 
-    /** 一放下去就是满满一盆 */
     @Override
     public BlockState getStateForPlacement(BlockPlaceContext context) {
         return this.defaultBlockState()
@@ -160,7 +138,7 @@ public class DdFeastBlock extends Block {
         if (this.servingItem == null) {
             return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
         }
-        // 必须拿**碗**来盛：右键一次盛走一份，碗被消耗，取一份「碗装XX」
+        // 必须拿碗来盛：右键一次盛走一份，碗被消耗，取一份「碗装XX」
         if (!stack.is(net.minecraft.world.item.Items.BOWL)) {
             if (!level.isClientSide) {
                 player.displayClientMessage(net.minecraft.network.chat.Component.translatable(
@@ -179,7 +157,6 @@ public class DdFeastBlock extends Block {
             stack.shrink(1);
             popResource(level, pos, new ItemStack(this.servingItem.get()));
             if (servings == 1) {
-                // 最后一份：连方块一起收走，把大脸盆还给玩家
                 level.removeBlock(pos, false);
                 popResource(level, pos, new ItemStack(ModItems.LARGE_BASIN.get()));
             } else {
@@ -212,7 +189,6 @@ public class DdFeastBlock extends Block {
         builder.add(FACING, SERVINGS);
     }
 
-    /** 比较器按剩余份数输出（和蛋糕一样） */
     @Override
     public int getAnalogOutputSignal(BlockState state, Level level, BlockPos pos) {
         return state.getValue(SERVINGS);

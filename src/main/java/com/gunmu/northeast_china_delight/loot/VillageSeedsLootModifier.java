@@ -63,7 +63,7 @@ public class VillageSeedsLootModifier extends LootModifier
             new Entry(() -> ModItems.EGGPLANT_SEEDS.get(), 6),
             new Entry(() -> ModItems.GREEN_BEANS_SEEDS.get(), 6),
             new Entry(() -> ModItems.RED_CHILI_SEEDS.get(), 5),
-            new Entry(() -> ModItems.GINSENG_SEEDS.get(), 2)   // 人参：稀有，只有 2 权重
+            new Entry(() -> ModItems.GINSENG_SEEDS.get(), 2)
     };
 
     public VillageSeedsLootModifier(LootItemCondition[] conditions)
@@ -88,7 +88,6 @@ public class VillageSeedsLootModifier extends LootModifier
     protected ObjectArrayList<ItemStack> doApply(ObjectArrayList<ItemStack> generatedLoot, LootContext context)
     {
         var random = context.getRandom();
-        // 40% 概率塞一个种子，15% 概率再塞第二个
         if (random.nextFloat() < 0.40F)
         {
             generatedLoot.add(roll(random, TEMPERATE));
@@ -110,7 +109,7 @@ public class VillageSeedsLootModifier extends LootModifier
             roll -= entry.weight;
             if (roll < 0)
             {
-                int count = 1 + random.nextInt(2);  // 1~2 个
+                int count = 1 + random.nextInt(2);
                 return new ItemStack(entry.item.get(), count);
             }
         }

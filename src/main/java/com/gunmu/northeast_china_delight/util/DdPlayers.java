@@ -10,7 +10,6 @@ public final class DdPlayers {
     private DdPlayers() {
     }
 
-    /** 「创造模式那一类不会消耗东西」的玩家（1.21 起的 {@code hasInfiniteMaterials}）。 */
     public static boolean hasInfiniteMaterials(Player player) {
         //? if <1.20.5 {
         /*return player.isCreative();*/

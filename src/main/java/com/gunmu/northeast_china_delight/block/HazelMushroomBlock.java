@@ -75,18 +75,9 @@ public class HazelMushroomBlock extends BushBlock implements BonemealableBlock
         return new ItemStack(ModItems.HAZEL_MUSHROOM.get());
     }
 
-    /**
-     * 原版蘑菇的扩散逻辑，一字不差地搬过来。
-     *
-     * <p>唯一的差别：原版蘑菇把「亮度 13 以上」写死在 {@code canSurvive} 里，亮处会直接被方块更新清掉。
-     * 榛蘑是按「榛子丛周围每格 3%」撒出去的，开阔地（天光 15）很常见，照原版写法撒完就会当场消失，
-     * 所以这里把「怕光」挪到扩散这一步：<b>亮处的榛蘑能活，但不会蔓延</b>。</p>
-     */
     @Override
     public void randomTick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random)
     {
-        // 种在沃土上的榛蘑有概率原地长成榛蘑菌落（对齐农夫乐事：蘑菇菌落不是撒骨粉变出来的，
-        // 是蘑菇种在沃土上一段时间后自动变成的）
         if (level.getBlockState(pos.below()).is(ModBlockTags.RICH_SOIL_CONVERTS_TO_COLONY)
                 && random.nextInt(4) == 0)
         {
@@ -96,7 +87,6 @@ public class HazelMushroomBlock extends BushBlock implements BonemealableBlock
             }
             return;
         }
-        // 太亮就不蔓延（原版蘑菇的「怕光」）
         if (level.getRawBrightness(pos, 0) >= MAX_LIGHT)
         {
             return;
@@ -153,7 +143,6 @@ public class HazelMushroomBlock extends BushBlock implements BonemealableBlock
                 || this.mayPlaceOn(belowState, level, below);*/
         //?} else {
         TriState soil = belowState.canSustainPlant(level, below, Direction.UP, state);
-        // 只挑地面，不挑亮度：亮处的榛蘑照活，只是不会蔓延（见 randomTick）
         return soil.isDefault() ? this.mayPlaceOn(belowState, level, below) : soil.isTrue();
         //?}
     }

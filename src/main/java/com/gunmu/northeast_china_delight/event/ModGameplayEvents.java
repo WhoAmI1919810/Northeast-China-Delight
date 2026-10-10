@@ -78,9 +78,7 @@ import net.minecraft.world.phys.HitResult;
  */
 public final class ModGameplayEvents
 {
-    /** 黑森林／白桦林的去皮出木耳概率 */
     public static final float WOOD_EAR_FOREST_CHANCE = 0.07F;
-    /** 橡木的去皮出木耳概率 */
     public static final float WOOD_EAR_OAK_CHANCE = 0.05F;
 
     private ModGameplayEvents()
@@ -148,7 +146,6 @@ public final class ModGameplayEvents
         event.setCancellationResult(InteractionResult.SUCCESS);
         if (level.isClientSide())
         {
-            // 客户端只负责取消（别预测成普通水桶），动手都在服务端
             return;
         }
         if (!pickUpOceanWater(player, level, pos))
@@ -160,7 +157,6 @@ public final class ModGameplayEvents
         player.setItemInHand(event.getHand(), seaBucket);
         if (!player.isUsingItem() && player instanceof ServerPlayer serverPlayer)
         {
-            // 事件被取消后不会再走原版 useItem 的同步，这里补上
             serverPlayer.inventoryMenu.sendAllDataToRemote();
         }
     }
@@ -181,10 +177,6 @@ public final class ModGameplayEvents
         return SeaWaterBucketItem.isValidOceanColumn(level, pos);
     }
 
-    /**
-     * 服务端：把水源舀走，并补上原版取水会有的那一串反馈（统计 / 音效 / 装桶的进度条件）。
-     * 客户端不做世界改动，直接算成功（这里只用于预测）。
-     */
     private static boolean pickUpOceanWater(Player player, Level level, BlockPos pos)
     {
         if (level.isClientSide())
@@ -221,13 +213,6 @@ public final class ModGameplayEvents
         //?}
     }
 
-    /**
-     * 单份料理的唯一交互入口：普通右键直接吃，潜行右键尝试摆放。
-     *
-     * <p>料理本身仍然是普通 {@link net.minecraft.world.item.Item}，所以不会改变碗、
-     * 黄铜碗等 craft remainder。摆放时临时借用 {@link BlockItem} 的原版放置流程，
-     * 放置失败则回到吃东西的流程；开关关闭时也只走吃东西，不发送提示文字。</p>
-     */
     @SubscribeEvent
     public static void onDishRightClick(PlayerInteractEvent.RightClickBlock event)
     {
@@ -261,8 +246,6 @@ public final class ModGameplayEvents
             }
         }
 
-        // 非潜行右键，以及配置关闭时的潜行右键：直接走物品的食用逻辑。
-        // 这里显式取消方块交互，保证对着箱子/工作台右键也不会出现“放不下”的提示。
         if (DdStacks.isEdible(stack))
         {
             InteractionResult eaten = stack.getItem()
@@ -313,7 +296,6 @@ public final class ModGameplayEvents
         return InteractionResult.sidedSuccess(context.getLevel().isClientSide);
     }
 
-    /** 斧头去皮这个「工具行为」在两个版本里分属两个类：1.20.1 在 ToolActions，1.21 起在 ItemAbilities */
     private static boolean isAxeStrip(BlockEvent.BlockToolModificationEvent event)
     {
         //? if <1.20.2 {
@@ -346,7 +328,6 @@ public final class ModGameplayEvents
         Block.popResource(level, pos, new ItemStack(ModItems.WOOD_EAR.get()));
     }
 
-    /** 这一根原木在这个生物群系里去皮出木耳的概率 */
     private static float woodEarChance(ServerLevel level, BlockPos pos, BlockState logState)
     {
         Holder<Biome> biome = level.getBiome(pos);

@@ -50,7 +50,6 @@ public final class PlantingGameTests
     {
     }
 
-    /** 假玩家：1.20.1 的 GameTestHelper 拆成 makeMockPlayer / makeMockSurvivalPlayer 两个方法 */
     private static Player mockPlayer(GameTestHelper helper, GameType gameType)
     {
         //? if <1.20.5 {
@@ -125,7 +124,6 @@ public final class PlantingGameTests
         helper.succeed();
     }
 
-    /** 模拟玩家右键点住 clickedPos 这个方块（顶面），拿着 item 去种 */
     private static void placeOn(ServerLevel level, Player player, Item item, BlockPos clickedPos)
     {
         ItemStack stack = new ItemStack(item);

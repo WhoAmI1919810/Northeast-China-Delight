@@ -12,16 +12,6 @@ import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.Level;
 
-/**
- * 菜肴的物品形态：既是食物，也是能摆的方块。
- *
- * <ul>
- *   <li><b>普通右键</b>：直接吃（对准方块也是吃，不会误放）；</li>
- *   <li><b>潜行右键</b>：把这道菜摆成方块形态；</li>
- *   <li>摆放功能由 {@link NortheastChinaConfig#DISH_PLACEMENT_ENABLED} 控制，关掉之后潜行右键既不放置、
- *       也不会有任何提示文字，直接当普通右键吃。</li>
- * </ul>
- */
 public class DishBlockItem extends ItemNameBlockItem
 {
     public DishBlockItem(Block block, Properties properties)
@@ -45,7 +35,6 @@ public class DishBlockItem extends ItemNameBlockItem
             }
         }
 
-        // 普通右键（或摆放功能被关掉时）：直接吃，什么都不提示
         if (DdStacks.isEdible(context.getItemInHand()) && player != null)
         {
             InteractionResult eaten = this.use(context.getLevel(), player, context.getHand()).getResult();

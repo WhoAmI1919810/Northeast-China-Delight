@@ -44,7 +44,6 @@ public class FishermanLootModifier extends LootModifier
             new Entry(() -> ModItems.SEA_CUCUMBER.get(), 5)
     };
 
-    /** 海味成品 */
     private static final Entry[] DISH = {
             new Entry(() -> ModItems.SALTED_FISH.get(), 8),
             new Entry(() -> ModItems.XIAN_YU_BING_ZI.get(), 6),

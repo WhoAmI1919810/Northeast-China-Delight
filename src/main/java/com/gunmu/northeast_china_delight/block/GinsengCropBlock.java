@@ -26,7 +26,7 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
 /**
- * 人参：**8 个生长阶段**的药材植株，长在灰化土／泥土／苔藓块上。
+ * 人参：8 个生长阶段的药材植株，长在灰化土／泥土／苔藓块上。
  *
  * <p>和普通作物不一样的地方：</p>
  * <ul>
@@ -45,15 +45,11 @@ public class GinsengCropBlock extends BushBlock implements BonemealableBlock
 
     public static final int MAX_AGE = 7;
     public static final IntegerProperty AGE = BlockStateProperties.AGE_7;
-    /** 覆雪形态：参苗**和雪片占同一格**（底下还是土），模型里自带雪片底面 */
     public static final BooleanProperty SNOWY = BlockStateProperties.SNOWY;
 
-    /** 随机刻推进一阶的概率分母：数字越大长得越慢 */
     private static final int GROWTH_DENOMINATOR = 30;
 
-    /** 头顶多少格之内算「有树遮阴」 */
     private static final int SHADE_HEIGHT = 6;
-    /** 附近多少格内有雪才算数 */
     private static final int SNOW_RANGE = 3;
 
     private static final VoxelShape[] SHAPE_BY_AGE = new VoxelShape[]{
@@ -111,7 +107,6 @@ public class GinsengCropBlock extends BushBlock implements BonemealableBlock
         {
             return null;
         }
-        // 点到雪片上是把雪片顶掉、参苗占这一格：那就是覆雪形态（模型自带雪片底面）
         return this.defaultBlockState().setValue(SNOWY, isSnowyAt(context.getLevel(), pos));
     }
 
@@ -130,8 +125,6 @@ public class GinsengCropBlock extends BushBlock implements BonemealableBlock
                 || isSnow(level.getBlockState(pos.below()));
     }
 
-    // ===== 生长条件 =====
-
     @Override
     protected boolean mayPlaceOn(BlockState state, BlockGetter level, BlockPos pos)
     {
@@ -139,7 +132,6 @@ public class GinsengCropBlock extends BushBlock implements BonemealableBlock
         {
             return true;
         }
-        // 雪片、雪块上面都算（雪林／积雪山坡的地表是一整块雪，下面才是土）
         return (state.is(Blocks.SNOW) || state.is(Blocks.SNOW_BLOCK))
                 && level.getBlockState(pos.below()).is(ModBlockTags.GINSENG_PLANTABLE_ON);
     }
@@ -153,11 +145,10 @@ public class GinsengCropBlock extends BushBlock implements BonemealableBlock
         }
         // 只要求「寒冷群系」：野山参是按「这块地会落雪」长出来的，
         // 那时候地上还没有雪片（落雪那一步排在植被之后），不能拿「附近有雪」卡它。
-        // 「头顶要遮阴 + 附近要有雪」是**种参籽**的规矩，放在 getStateForPlacement 里。
+        // 「头顶要遮阴 + 附近要有雪」是种参籽的规矩，放在 getStateForPlacement 里。
         return hasColdBiome(level, pos);
     }
 
-    /** 寒冷生物群系：基准温度低于 0.15（原版「会下雪」的那条线） */
     private static boolean hasColdBiome(LevelReader level, BlockPos pos)
     {
         // 世界生成阶段（WorldGenLevel 里的 canSurvive 检查）不能走 getBiome ——
@@ -170,7 +161,6 @@ public class GinsengCropBlock extends BushBlock implements BonemealableBlock
         return biome.value().getBaseTemperature() < 0.15F;
     }
 
-    /** 头顶要有树叶遮阴 */
     private static boolean hasShade(LevelReader level, BlockPos pos)
     {
         BlockPos.MutableBlockPos cursor = pos.mutable();
@@ -185,7 +175,6 @@ public class GinsengCropBlock extends BushBlock implements BonemealableBlock
         return false;
     }
 
-    /** 附近要有雪（雪层、雪块、细雪） */
     private static boolean hasSnowNearby(LevelReader level, BlockPos pos)
     {
         for (BlockPos around : BlockPos.betweenClosed(

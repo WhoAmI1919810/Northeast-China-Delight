@@ -25,16 +25,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * 猪副产物掉落：用小刀宰杀猪时，每种副产物各自 10% 概率，且一次最多掉 2 种。
- *
- * 以前是 4 条独立掉落（各 40%，可能一次全掉），现在合并成这一条统一处理，
- * 并且加上了猪肝。
+ * 猪副产物掉落：用小刀宰杀猪时，每种副产物各自 10% 概率，且一次最多掉 2 种。以前是 4 条独立掉落（各 40%，可能一次全掉），现在合并成这一条统一处理，并且加上了猪肝。
  */
 public class PigOffalLootModifier extends LootModifier {
 
-    /** 每种副产物的掉落概率 */
     public static final float CHANCE = 0.1F;
-    /** 一次最多掉几种 */
     public static final int MAX_KINDS = 2;
 
     //? if <1.20.5 {
@@ -61,7 +56,6 @@ public class PigOffalLootModifier extends LootModifier {
                 ModItems.OIL_EDGE.get()));
 
         RandomSource random = context.getRandom();
-        // 打乱顺序：保证"最多 2 种"不会总是偏向列表里靠前的几项
         for (int i = candidates.size() - 1; i > 0; i--) {
             int j = random.nextInt(i + 1);
             Item tmp = candidates.get(i);

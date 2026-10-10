@@ -14,11 +14,9 @@ import java.util.Optional;
 import java.util.function.Supplier;
 
 /**
- * 状态效果的收敛层。
- *
- * <p>1.20.1 的效果注册表就是 {@code MobEffect} 本身（{@code MobEffects.X} 是 MobEffect，
+ * 状态效果的收敛层。 1.20.1 的效果注册表就是 {@code MobEffect} 本身（{@code MobEffects.X} 是 MobEffect，
  * {@code hasEffect} / {@code MobEffectInstance} 也都要 MobEffect）；1.21 起统一换成
- * {@code Holder<MobEffect>}。这里把两种写法收成一套调用。</p>
+ * {@code Holder<MobEffect>}。这里把两种写法收成一套调用。
  */
 public final class DdEffects {
 
@@ -46,7 +44,6 @@ public final class DdEffects {
         //?}
     }
 
-    /** 按 id 查效果（查不到就是空；用于可选的农夫乐事「滋养」） */
     public static Optional<Holder<MobEffect>> holder(ResourceLocation id) {
         //? if <1.20.5 {
         /*return BuiltInRegistries.MOB_EFFECT.getHolder(ResourceKey.create(Registries.MOB_EFFECT, id))
@@ -57,7 +54,6 @@ public final class DdEffects {
         //?}
     }
 
-    /** 造一条效果实例 */
     public static MobEffectInstance instance(Holder<MobEffect> effect, int durationTicks, int amplifier) {
         //? if <1.20.5 {
         /*return new MobEffectInstance(effect.value(), durationTicks, amplifier, false, true, true);*/
@@ -66,7 +62,6 @@ public final class DdEffects {
         //?}
     }
 
-    /** 实例身上的效果分类（提示框配色用） */
     public static MobEffectCategory category(MobEffectInstance instance) {
         //? if <1.20.5 {
         /*return instance.getEffect().getCategory();*/
