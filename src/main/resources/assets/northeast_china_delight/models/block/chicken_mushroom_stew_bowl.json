@@ -9,7 +9,7 @@
     "face_0": "northeast_china_delight:block/dish_generated/top_northeast_china_delight_item_chicken_mushroom_stew_bowl",
     "face_1": "northeast_china_delight:block/dish_generated/stew_broth",
     "face_2": "northeast_china_delight:block/dish_generated/top_minecraft_item_chicken",
-    "face_3": "minecraft:item/brown_mushroom",
+    "face_3": "minecraft:block/brown_mushroom",
     "face_4": "northeast_china_delight:block/dish_generated/top_northeast_china_delight_item_napa_cabbage"
   },
   "elements": [

@@ -7,16 +7,19 @@ import com.gunmu.northeast_china_delight.block.Vat;
 import com.gunmu.northeast_china_delight.block.VatBlockEntity;
 import com.gunmu.northeast_china_delight.client.GrillCampfireRenderer;
 import com.gunmu.northeast_china_delight.client.VatRenderer;
+import com.gunmu.northeast_china_delight.client.WoodenMortarRenderer;
 import com.gunmu.northeast_china_delight.compat.create.ModFanProcessingTypes;
 import com.gunmu.northeast_china_delight.compat.jei.VatJeiSync;
 import com.gunmu.northeast_china_delight.crafting.ModVatRecipes;
 import com.gunmu.northeast_china_delight.crafting.ModGrillRecipes;
 import com.gunmu.northeast_china_delight.crafting.ModDryingRecipes;
+import com.gunmu.northeast_china_delight.crafting.ModPoundRecipes;
 import com.gunmu.northeast_china_delight.effect.DishEffectEvents;
 import com.gunmu.northeast_china_delight.effect.ModEffects;
 import com.gunmu.northeast_china_delight.event.ModGameplayEvents;
 import com.gunmu.northeast_china_delight.fluid.ModFluids;
 import com.gunmu.northeast_china_delight.item.ModItems;
+import com.gunmu.northeast_china_delight.item.ModSounds;
 import com.gunmu.northeast_china_delight.item.SeaWaterBuckets;
 import com.gunmu.northeast_china_delight.loot.ModLootModifiers;
 import com.gunmu.northeast_china_delight.util.DdIds;
@@ -129,6 +132,8 @@ import net.neoforged.neoforge.client.extensions.common.IClientFluidTypeExtension
 //? if >=1.20.5 {
 import com.gunmu.northeast_china_delight.client.DdFeastItemRenderer;
 import com.gunmu.northeast_china_delight.client.LargeBasinItemRenderer;
+import com.gunmu.northeast_china_delight.client.WoodenMalletItemRenderer;
+import com.gunmu.northeast_china_delight.client.LyricsHudOverlay;
 import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.neoforged.neoforge.client.extensions.common.RegisterClientExtensionsEvent;
 //?}
@@ -156,6 +161,7 @@ public class NortheastChinaDelight
     {
     //?}
         ModItems.register(modEventBus);
+        ModSounds.register(modEventBus);
         SeaWaterBuckets.register(modEventBus);
         ModBlocks.register(modEventBus);
         ModFluids.register(modEventBus);
@@ -163,6 +169,7 @@ public class NortheastChinaDelight
         ModVatRecipes.register(modEventBus);
         ModGrillRecipes.register(modEventBus);
         ModDryingRecipes.register(modEventBus);
+        ModPoundRecipes.register(modEventBus);
         ModCreativeTabs.register(modEventBus);
         ModLootModifiers.register(modEventBus);
         ModEffects.register(modEventBus);
@@ -257,6 +264,20 @@ public class NortheastChinaDelight
         *///?} else {
         event.registerBlockEntity(Capabilities.FluidHandler.BLOCK, ModBlockEntities.VAT.get(),
                 (vat, side) -> vat);
+        // 调料瓶暴露流体能力，分液池才能倒出瓶子里实际剩下的量
+        event.registerItem(Capabilities.FluidHandler.ITEM,
+                (stack, context) -> com.gunmu.northeast_china_delight.item.SeasoningBottleFluidHandler.of(stack),
+                com.gunmu.northeast_china_delight.item.ModItems.SOY_SAUCE.get(),
+                com.gunmu.northeast_china_delight.item.ModItems.VINEGAR.get(),
+                com.gunmu.northeast_china_delight.item.ModItems.WHITE_VINEGAR.get(),
+                com.gunmu.northeast_china_delight.item.ModItems.FISH_SAUCE.get(),
+                com.gunmu.northeast_china_delight.item.ModItems.SHRIMP_PASTE.get(),
+                com.gunmu.northeast_china_delight.item.ModItems.KVASS.get(),
+                com.gunmu.northeast_china_delight.item.ModItems.SOUR_WATER.get(),
+                com.gunmu.northeast_china_delight.item.ModItems.PEANUT_BUTTER.get(),
+                com.gunmu.northeast_china_delight.item.ModItems.COOKING_OIL.get(),
+                com.gunmu.northeast_china_delight.item.ModItems.ANIMAL_OIL.get(),
+                com.gunmu.northeast_china_delight.item.ModItems.CHILI_OIL.get());
         //?}
     }
 
@@ -309,7 +330,23 @@ public class NortheastChinaDelight
             LOGGER.info("MINECRAFT NAME >> {}", Minecraft.getInstance().getUser().getName());
         }
 
+        /**
+         * 唱片歌词 HUD：唱片机播放「大东北是我的家乡」时在物品栏上方滚动显示歌词。
+         *
+         * <p>NeoForge 的 @EventBusSubscriber 会把游戏总线事件与模组总线事件分开注册，
+         * 所以这个游戏总线事件挂在 MOD 总线的类里也能被正确接上；1.20.1（Forge）没有这套
+         * 自动分流，那边交给下面的 ClientForgeEvents（Bus.FORGE）单独接。</p>
+         */
+        //? if >=1.20.2 {
         @SubscribeEvent
+        public static void onRenderGui(net.neoforged.neoforge.client.event.RenderGuiEvent.Post event)
+        {
+            LyricsHudOverlay.render(event.getGuiGraphics(),
+                    event.getGuiGraphics().guiWidth(),
+                    event.getGuiGraphics().guiHeight());
+        }
+        //?}
+
         public static void onRegisterBlockColors(RegisterColorHandlersEvent.Block event)
         {
             event.register(
@@ -380,6 +417,7 @@ public class NortheastChinaDelight
         {
             event.registerBlockEntityRenderer(ModBlockEntities.VAT.get(), VatRenderer::new);
             event.registerBlockEntityRenderer(ModBlockEntities.GRILL_CAMPFIRE.get(), GrillCampfireRenderer::new);
+            event.registerBlockEntityRenderer(ModBlockEntities.WOODEN_MORTAR.get(), WoodenMortarRenderer::new);
         }
 
         /**
@@ -391,6 +429,8 @@ public class NortheastChinaDelight
         public static void onRegisterAdditionalModels(ModelEvent.RegisterAdditional event)
         {
             registerItemIcon(event, "large_basin_icon");
+            registerItemIcon(event, "wooden_mallet_icon");
+            registerItemIcon(event, "wooden_mallet_model");
             registerItemIcon(event, "sauerkraut_bone_stew_icon");
             registerItemIcon(event, "ground_pot_chicken_icon");
             registerItemIcon(event, "ground_pot_ribs_icon");
@@ -399,6 +439,29 @@ public class NortheastChinaDelight
             registerItemIcon(event, "harvest_stew_icon");
             registerItemIcon(event, "sauerkraut_seafood_stew_icon");
             registerItemIcon(event, "chicken_mushroom_stew_icon");
+            registerAllBlockModels(event);
+        }
+
+        /**
+         * 舂捣的 {@code stage_models} 可以引用任意数据包方块模型，这些模型不一定出现在任何
+         * blockstate 里。这里把资源包内所有 {@code models/block/*.json} 登记为可单独烘焙的模型，
+         * 之后 BER 和 JEI 才能按 id 取到它们。
+         */
+        private static void registerAllBlockModels(ModelEvent.RegisterAdditional event)
+        {
+            var resources = Minecraft.getInstance().getResourceManager()
+                    .listResources("models/block", path -> path.getPath().endsWith(".json"));
+            for (ResourceLocation location : resources.keySet())
+            {
+                String path = location.getPath();
+                String modelPath = path.substring("models/".length(), path.length() - ".json".length());
+                ResourceLocation modelId = DdIds.of(location.getNamespace(), modelPath);
+                //? if <1.20.2 {
+                /*event.register(modelId);
+                *///?} else {
+                event.register(ModelResourceLocation.standalone(modelId));
+                //?}
+            }
         }
 
         private static void registerItemIcon(ModelEvent.RegisterAdditional event, String iconPath)
@@ -423,6 +486,9 @@ public class NortheastChinaDelight
         {
             // 大脸盆：物品栏画贴图、手/地面/头上画方块，分流在 LargeBasinItemRenderer 里
             event.registerItem(LargeBasinItemRenderer.CLIENT_EXTENSION, ModItems.LARGE_BASIN.get());
+
+            // 木槌：物品栏画贴图、手/地面/展示框画 3D 模型，分流在 WoodenMalletItemRenderer 里
+            event.registerItem(WoodenMalletItemRenderer.CLIENT_EXTENSION, ModItems.WOODEN_MALLET.get());
 
             // 8 道大盆菜：物品栏画贴图、手/地面画方块，分流在 DdFeastItemRenderer 里
             event.registerItem(DdFeastItemRenderer.CLIENT_EXTENSION,
@@ -671,4 +737,23 @@ public class NortheastChinaDelight
         }
         //?}
     }
+
+    /**
+     * 1.20.1（Forge）的歌词 HUD 注册点。Forge 的 @Mod.EventBusSubscriber 不会像 NeoForge
+     * 那样把游戏总线事件拆出去，而 RenderGuiEvent.Post 在 Forge 里挂在主事件总线上，
+     * 所以必须单独开一个 Bus.FORGE 的类来接，不能塞在上面那个 Bus.MOD 的类里。
+     */
+    //? if <1.20.2 {
+    /*@Mod.EventBusSubscriber(modid = MODID, bus = Mod.EventBusSubscriber.Bus.FORGE, value = Dist.CLIENT)
+    public static class ClientForgeEvents
+    {
+        @SubscribeEvent
+        public static void onRenderGui(net.minecraftforge.client.event.RenderGuiEvent.Post event)
+        {
+            com.gunmu.northeast_china_delight.client.LyricsHudOverlay.render(event.getGuiGraphics(),
+                    event.getGuiGraphics().guiWidth(),
+                    event.getGuiGraphics().guiHeight());
+        }
+    }
+    *///?}
 }

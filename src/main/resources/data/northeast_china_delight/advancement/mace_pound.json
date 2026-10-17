@@ -1,0 +1,23 @@
+{
+  "parent": "northeast_china_delight:stare",
+  "display": {
+    "icon": {
+      "id": "minecraft:mace"
+    },
+    "title": {
+      "translate": "advancements.northeast_china_delight.mace_pound.title"
+    },
+    "description": {
+      "translate": "advancements.northeast_china_delight.mace_pound.description"
+    },
+    "frame": "challenge",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": true
+  },
+  "criteria": {
+    "pound": {
+      "trigger": "minecraft:impossible"
+    }
+  }
+}

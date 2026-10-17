@@ -12,7 +12,7 @@
       "water_min": 3,
       "water_max": 3,
       "water_after": "CLEAR",
-      "product": "SOY_SAUCE",
+      "product": "northeast_china_delight:soy_sauce",
       "product_mb": 2500
     },
     "slots": [

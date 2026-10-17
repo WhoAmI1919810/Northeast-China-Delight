@@ -30,6 +30,10 @@ public class ModBlockEntities {
             "grill_campfire",
             () -> BlockEntityType.Builder.of(GrillBlockEntity::new, ModBlocks.GRILL_CAMPFIRE.get()).build(null));
 
+    public static final Supplier<BlockEntityType<WoodenMortarBlockEntity>> WOODEN_MORTAR = BLOCK_ENTITIES.register(
+            "wooden_mortar",
+            () -> BlockEntityType.Builder.of(WoodenMortarBlockEntity::new, ModBlocks.WOODEN_MORTAR.get()).build(null));
+
     public static void register(IEventBus eventBus) {
         BLOCK_ENTITIES.register(eventBus);
     }

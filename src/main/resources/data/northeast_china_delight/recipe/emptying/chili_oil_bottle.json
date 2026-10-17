@@ -1,12 +1,6 @@
 {
   "type": "create:emptying",
-  "ingredients": [
-    {
-      "type": "neoforge:components",
-      "items": "northeast_china_delight:chili_oil",
-      "components": { "minecraft:damage": 0 }
-    }
-  ],
+  "ingredients": [ { "type": "neoforge:components", "items": "northeast_china_delight:chili_oil", "components": { "minecraft:damage": 0 }, "strict": true } ],
   "results": [
     { "id": "minecraft:glass_bottle" },
     { "amount": 250, "id": "northeast_china_delight:chili_oil" }

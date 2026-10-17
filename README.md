@@ -4,13 +4,28 @@ main 分支为 1.21.1（NeoForge）开发主线；1.20.1（Forge）版本线见 
 
 ## 当前最新版本
 
-**3.0.0**
+**3.1.0**
 
 - Minecraft 1.21.1：NeoForge 21.1
+- Minecraft 1.20.1：Forge 47.1
 
 需要[农夫乐事](https://github.com/vectorwing/FarmersDelight)与[机械动力](https://github.com/Creators-of-Create/Create)作为前置。
 
 ## 更新记录
+
+**3.1.0**
+
+- 优化大缸配方中对液体的处理
+- 优化大缸液面的渲染，将使用相应流体的材质
+- 修复分液器不能正确处理用过的瓶装调料的问题
+- 新增食物：红豆松饼、花生松饼、打糕
+- 新增方块：木臼，以及相应的打糕配方，木臼会生成在东北小院里
+- 新增物品：木槌，用于在木臼里舂捣打糕
+- 新增关于木臼和木槌的进度
+- 红石比较器可以将大缸的制作进度输出为信号
+- 新增唱片：大东北是我的家乡，并实现歌词的显示（仅1.21.1），该唱片会生成在东北小院里
+- 初步实现对 ALI 等辅助模组呈现信息的适配
+- JEI 中新增冻梨的信息页
 
 **3.0.0**
 
@@ -96,18 +111,29 @@ main 分支为 1.21.1（NeoForge）开发主线；1.20.1（Forge）版本线见 
 
 | 字段 | 含义 |
 | --- | --- |
-| `kind` | 使用已有加工类型，如 `BEAN_SPROUTS`、`PICKLE`、`KVASS`；不是配方 ID，也不能任意新增类型名称 |
-| `verb` | 可选工序动词，用于右键进度、Jade 和 JEI；未填写时按 `kind` 使用默认动词 |
+| `kind` | 历史遗留的枚举，只能填已有的名字（`BEAN_SPROUTS`、`PICKLE`、`KVASS` 等），填别的会加载失败。它现在只是个标记，不决定产物；新配方借用任意一个即可。副作用是旧存档里只记了 kind 的缸，会被同 kind 里优先级最高的配方认领 |
+| `verb` | 可选工序动词，用于右键进度、Jade 和 JEI；未填写时按 `kind` 使用默认动词。只是一个词，真正显示的整句由下面的句式字段决定 |
 | `priority` | 可选匹配优先级，默认 `0`，越大越优先 |
 | `seal` | 封口要求：`NONE`、`PRESS`、`CLOTH` 或 `CARPET`；示例的 `CLOTH` 使用 `farmersdelight:canvas_rug` |
 | `seconds` | 基础加工时长，单位为秒 |
-| `liquid` | 清水要求及加工后处理；`water_min`、`water_max` 是 `0–3` 层水位，每层 `1000 mB`，不是直接填写毫桶数；`water_after=CLEAR` 表示完成后清掉原来的清水 |
+| `liquid` | 清水要求、产物液体与装瓶。`water_min`、`water_max` 是 `0–3` 层水位，每层 `1000 mB`；`water_after=CLEAR` 表示完成后清掉原来的清水。`product` 写流体 ID（如 `create:tea`），`product_mb` 是总量，上限 `3000 mB`；`product_per_layer=true` 时按水位层数倍增。旧数据包里不带冒号的枚举名（`PASTE`、`SOY_SAUCE` 等）仍可解析 |
 | `slots` | 1–12 个投料条目；`ingredient` 支持 `item`、`tag`、内置 `matcher` 或任选数组；示例的 `bounds` 允许 1–2 份大豆，`CONVERT` 将每份原料转为 `result` 指定的豆芽 |
 | `biome_seconds` | 可选群系时长倍率；示例在冷群系乘 `1.5`，热群系乘 `0.75`，未指定的气候类型乘 `1` |
 
-`verb` 还支持 `{"text":"催芽"}` 或 `{"translate":"example.process.sprouting"}`；翻译键需在客户端语言资源中定义，直接写文字则不需要额外资源。液体成品写在 `liquid.product`（已有液体类型，如 `KVASS`）和 `liquid.product_mb` 中，产量单位为 `mB`；`product_per_layer=true` 时，`product_mb` 表示每层清水的产量。固体处理和复杂数量规则请以对应的内置配方为基础修改，不要仅修改 `kind` 来决定产物。
+`verb` 还支持 `{"text":"催芽"}` 或 `{"translate":"example.process.sprouting"}`；翻译键需在客户端语言资源中定义，直接写文字则不需要额外资源。默认的显示句式是中文语序（「腌制中 50%」），别的语言会拼不对，所以每处显示都可以换整句的翻译键，不写就用默认的：
 
-完成后先移除封口物，固体成品可空手取出；大酱（`PASTE`）用碗，其他大缸液体用玻璃瓶，每份 `250 mB`。取货容器由成品类型决定，没有独立的容器字段；JEI 会显示取货方式及对应容器，容器不算加工原料。固液混合配方可分别取货，取走固体不会清掉剩余液体。
+| 字段 | 显示位置 | 占位符 |
+| --- | --- | --- |
+| `progress` | Jade 进度条，进行中 | 动词、百分比 |
+| `done` | Jade 进度条，完成 | 动词 |
+| `time` | JEI 的时长 | 动词、时长 |
+| `hint.long` / `hint.short` | 游戏内动作条，剩余超过 / 不到一分钟 | 动词、百分比、分、秒 / 动词、百分比、秒 |
+
+装瓶写在 `liquid.serving_container` 和 `liquid.serving_item`，两个必须成对出现：拿着前者右键，每份扣 `250 mB`，得到后者。例如 `"serving_container": "minecraft:bucket"` 配 `"serving_item": "minecraft:lava_bucket"`。都不写时按流体给默认装法：大酱用碗，酱油、醋、白醋、鱼露、虾酱、格瓦斯、酸引水用玻璃瓶，其余流体没有默认容器，只能用泵抽走。
+
+固体处理：`KEEP` 和 `CONVERT` 的成品完成后留在缸里，空手逐份取出；`ABSORB` 和 `CONSUME` 在发酵完成时就消耗掉，`ABSORB` 可以写 `refund` 返还一个容器（辣椒酱还一个碗），没有 `refund` 的直接消失。复杂数量规则请以对应的内置配方为基础修改，不要仅修改 `kind` 来决定产物。
+
+完成后先移除封口物。固液混合配方可分别取货，取走固体不会清掉剩余液体。JEI 会显示取货方式及对应容器，容器不算加工原料。
 
 新增配方使用不同文件名或命名空间即可获得新 ID，例如 `data/example/recipe/vat/bean_sprouts.json`（1.20.1 使用 `recipes/`）。配方应作为世界数据包加载，而不是客户端资源包；执行 `/reload` 后重新加载规则并刷新 JEI 页面。
 

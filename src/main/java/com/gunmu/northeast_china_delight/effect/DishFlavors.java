@@ -167,6 +167,8 @@ public final class DishFlavors {
         put(map, Flavor.BALANCED, 4, "chicken_mushroom_stew_bowl");
         put(map, Flavor.BALANCED, 6, "bibimbap");
         put(map, Flavor.BALANCED, 5, "grilled_cold_noodles");
+        put(map, Flavor.BALANCED, 2, "red_bean_songpyeon");
+        put(map, Flavor.BALANCED, 2, "peanut_songpyeon");
 
         return Map.copyOf(map);
     }

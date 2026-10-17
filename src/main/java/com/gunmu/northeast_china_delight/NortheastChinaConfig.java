@@ -62,6 +62,7 @@ public final class NortheastChinaConfig
             "northeast_china_delight:grilled_oil_edge",
             "northeast_china_delight:hairtail",
             "northeast_china_delight:mung_bean_sheet",
+            "northeast_china_delight:music_disc_northeast",
             "northeast_china_delight:napa_cabbage",
             "northeast_china_delight:napa_cabbage_seeds",
             "northeast_china_delight:oil_edge",

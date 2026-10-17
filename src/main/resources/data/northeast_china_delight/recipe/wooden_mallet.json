@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "A": {
+      "tag": "minecraft:planks"
+    },
+    "B": {
+      "tag": "minecraft:logs"
+    },
+    "C": {
+      "item": "minecraft:stick"
+    }
+  },
+  "pattern": [
+    "BAB",
+    "BAB",
+    " C "
+  ],
+  "result": {
+    "count": 1,
+    "id": "northeast_china_delight:wooden_mallet"
+  }
+}

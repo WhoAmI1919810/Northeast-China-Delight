@@ -1,0 +1,37 @@
+{
+  "credit": "花生松饼：物品栏用 2D 贴图，放置模型只借用餐盘边界",
+  "parent": "block/block",
+  "render_type": "minecraft:cutout",
+  "textures": {
+    "particle": "northeast_china_delight:item/peanut_songpyeon",
+    "food": "northeast_china_delight:item/peanut_songpyeon",
+    "tray_top": "northeast_china_delight:block/container_tray_top",
+    "tray_bottom": "northeast_china_delight:block/container_tray_bottom"
+  },
+  "elements": [
+    {
+      "from": [1, 0, 1],
+      "to": [15, 2, 15],
+      "faces": {
+        "north": {"uv": [1, 11, 15, 13], "texture": "#tray_bottom"},
+        "east": {"uv": [1, 11, 15, 13], "texture": "#tray_bottom"},
+        "south": {"uv": [1, 11, 15, 13], "texture": "#tray_bottom"},
+        "west": {"uv": [1, 11, 15, 13], "texture": "#tray_bottom"},
+        "up": {"uv": [1, 1, 15, 15], "texture": "#tray_top"},
+        "down": {"uv": [1, 11, 15, 13], "texture": "#tray_bottom"}
+      }
+    },
+    {
+      "from": [3, 2, 3],
+      "to": [13, 4, 13],
+      "faces": {
+        "north": {"uv": [3, 4, 13, 6], "texture": "#food"},
+        "east": {"uv": [3, 4, 13, 6], "texture": "#food"},
+        "south": {"uv": [3, 4, 13, 6], "texture": "#food"},
+        "west": {"uv": [3, 4, 13, 6], "texture": "#food"},
+        "up": {"uv": [2, 2, 14, 14], "texture": "#food"},
+        "down": {"uv": [2, 2, 14, 14], "texture": "#food"}
+      }
+    }
+  ]
+}

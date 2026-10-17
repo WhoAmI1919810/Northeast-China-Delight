@@ -1,0 +1,10 @@
+{
+  "music_disc.northeast": {
+    "sounds": [
+      {
+        "name": "northeast_china_delight:records/northeast",
+        "stream": true
+      }
+    ]
+  }
+}

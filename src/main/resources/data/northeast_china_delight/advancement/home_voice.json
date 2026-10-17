@@ -1,0 +1,41 @@
+{
+  "parent": "northeast_china_delight:visit_all_yards",
+  "display": {
+    "icon": {
+      "id": "northeast_china_delight:music_disc_northeast"
+    },
+    "title": {
+      "translate": "advancements.northeast_china_delight.home_voice.title"
+    },
+    "description": {
+      "translate": "advancements.northeast_china_delight.home_voice.description"
+    },
+    "frame": "challenge",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "play": {
+      "trigger": "minecraft:item_used_on_block",
+      "conditions": {
+        "location": [
+          {
+            "condition": "minecraft:location_check",
+            "predicate": {
+              "block": {
+                "blocks": "minecraft:jukebox"
+              }
+            }
+          },
+          {
+            "condition": "minecraft:match_tool",
+            "predicate": {
+              "items": "northeast_china_delight:music_disc_northeast"
+            }
+          }
+        ]
+      }
+    }
+  }
+}

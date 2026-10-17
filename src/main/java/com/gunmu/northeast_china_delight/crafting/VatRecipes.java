@@ -356,54 +356,92 @@ public final class VatRecipes {
     public record Serving(Item container, Item item) {
     }
 
+    /**
+     * 这种流体用什么容器取、取出来是什么。
+     * 先看配方里写的（{@code serving_container} / {@code serving_item}），
+     * 配方没写才按本模组自己的那几种液体给默认瓶子。
+     */
     @Nullable
-    public static Serving servingOf(VatRecipe.Fluid fluid) {
-        return switch (fluid) {
-            case PASTE -> new Serving(Items.BOWL, ModItems.SOY_PASTE.get());
-            case SOY_SAUCE -> new Serving(Items.GLASS_BOTTLE, ModItems.SOY_SAUCE.get());
-            case VINEGAR -> new Serving(Items.GLASS_BOTTLE, ModItems.VINEGAR.get());
-            case WHITE_VINEGAR -> new Serving(Items.GLASS_BOTTLE, ModItems.WHITE_VINEGAR.get());
-            case FISH_SAUCE -> new Serving(Items.GLASS_BOTTLE, ModItems.FISH_SAUCE.get());
-            case SHRIMP_PASTE -> new Serving(Items.GLASS_BOTTLE, ModItems.SHRIMP_PASTE.get());
-            case KVASS -> new Serving(Items.GLASS_BOTTLE, ModItems.KVASS.get());
-            case SOUR_WATER -> new Serving(Items.GLASS_BOTTLE, ModItems.SOUR_WATER.get());
-            case WATER -> null;
-        };
+    public static Serving servingOf(VatBlockEntity vat) {
+        VatRecipe recipe = recipeOf(vat);
+        if (recipe != null) {
+            net.minecraft.world.item.Item container = recipe.liquid().servingContainer();
+            net.minecraft.world.item.Item item = recipe.liquid().servingItem();
+            if (container != null && item != null) {
+                return new Serving(container, item);
+            }
+        }
+        return servingOf(productOf(vat));
     }
 
     @Nullable
-    public static VatRecipe.Fluid productOf(VatBlockEntity vat) {
-        VatRecipe.Fluid brewed = vat.brewedProduct();
-        if (brewed != null && vat.productMb(brewed) > 0) {
+    public static Serving servingOf(net.minecraft.world.level.material.Fluid fluid) {
+        if (fluid == null) {
+            return null;
+        }
+        if (fluid.isSame(com.gunmu.northeast_china_delight.fluid.ModFluids.soyPasteSource())) {
+            return new Serving(Items.BOWL, ModItems.SOY_PASTE.get());
+        }
+        if (fluid.isSame(com.gunmu.northeast_china_delight.fluid.ModFluids.soySauceSource())) {
+            return new Serving(Items.GLASS_BOTTLE, ModItems.SOY_SAUCE.get());
+        }
+        if (fluid.isSame(com.gunmu.northeast_china_delight.fluid.ModFluids.vinegarSource())) {
+            return new Serving(Items.GLASS_BOTTLE, ModItems.VINEGAR.get());
+        }
+        if (fluid.isSame(com.gunmu.northeast_china_delight.fluid.ModFluids.whiteVinegarSource())) {
+            return new Serving(Items.GLASS_BOTTLE, ModItems.WHITE_VINEGAR.get());
+        }
+        if (fluid.isSame(com.gunmu.northeast_china_delight.fluid.ModFluids.fishSauceSource())) {
+            return new Serving(Items.GLASS_BOTTLE, ModItems.FISH_SAUCE.get());
+        }
+        if (fluid.isSame(com.gunmu.northeast_china_delight.fluid.ModFluids.shrimpPasteSource())) {
+            return new Serving(Items.GLASS_BOTTLE, ModItems.SHRIMP_PASTE.get());
+        }
+        if (fluid.isSame(com.gunmu.northeast_china_delight.fluid.ModFluids.kvassSource())) {
+            return new Serving(Items.GLASS_BOTTLE, ModItems.KVASS.get());
+        }
+        if (fluid.isSame(com.gunmu.northeast_china_delight.fluid.ModFluids.sourWaterSource())) {
+            return new Serving(Items.GLASS_BOTTLE, ModItems.SOUR_WATER.get());
+        }
+        return null;
+    }
+
+    /**
+     * 缸里现在的成品液体。优先看缸自己记的（发酵完成时按配方写进去的），
+     * 其次看配方声明的产物，最后才按旧的加工类型兜底 —— 老存档没有记流体 id，只能靠 kind 认。
+     */
+    @Nullable
+    public static net.minecraft.world.level.material.Fluid productOf(VatBlockEntity vat) {
+        net.minecraft.world.level.material.Fluid brewed = vat.brewedFluid();
+        if (brewed != null && vat.brewedMb() > 0) {
             return brewed;
         }
         VatRecipe recipe = recipeOf(vat);
-        if (recipe != null && vat.recipeId() != null) {
-            return recipe.liquid().product();
+        if (recipe != null && recipe.productFluid() != null) {
+            return recipe.productFluid();
         }
-        if (brewed != null) {
-            return brewed;
+        if (vat.sourWaterMb() > 0 && (vat.kind() == Kind.PICKLE || vat.kind() == Kind.SPICY_PICKLE)) {
+            return com.gunmu.northeast_china_delight.fluid.ModFluids.sourWaterSource();
         }
-        if (recipe != null) {
-            return recipe.liquid().product();
-        }
-        return switch (vat.kind()) {
-            case PASTE -> VatRecipe.Fluid.PASTE;
-            case SOY_SAUCE -> VatRecipe.Fluid.SOY_SAUCE;
-            case VINEGAR -> VatRecipe.Fluid.VINEGAR;
-            case WHITE_VINEGAR -> VatRecipe.Fluid.WHITE_VINEGAR;
-            case FISH_SAUCE -> VatRecipe.Fluid.FISH_SAUCE;
-            case SHRIMP_PASTE -> VatRecipe.Fluid.SHRIMP_PASTE;
-            case KVASS -> VatRecipe.Fluid.KVASS;
-            case PICKLE, SPICY_PICKLE -> VatRecipe.Fluid.SOUR_WATER;
-            default -> null;
-        };
+        return legacyProduct(vat);
+    }
+
+    /** 旧存档里各液体还分字段记，按字段里有没有量认出现在是哪种 */
+    @Nullable
+    private static net.minecraft.world.level.material.Fluid legacyProduct(VatBlockEntity vat) {
+        if (vat.pasteMb() > 0) return com.gunmu.northeast_china_delight.fluid.ModFluids.soyPasteSource();
+        if (vat.soySauceMb() > 0) return com.gunmu.northeast_china_delight.fluid.ModFluids.soySauceSource();
+        if (vat.vinegarMb() > 0) return com.gunmu.northeast_china_delight.fluid.ModFluids.vinegarSource();
+        if (vat.whiteVinegarMb() > 0) return com.gunmu.northeast_china_delight.fluid.ModFluids.whiteVinegarSource();
+        if (vat.fishSauceMb() > 0) return com.gunmu.northeast_china_delight.fluid.ModFluids.fishSauceSource();
+        if (vat.shrimpPasteMb() > 0) return com.gunmu.northeast_china_delight.fluid.ModFluids.shrimpPasteSource();
+        if (vat.kvassMb() > 0) return com.gunmu.northeast_china_delight.fluid.ModFluids.kvassSource();
+        return null;
     }
 
     @Nullable
     public static Item bottleFor(VatBlockEntity vat) {
-        VatRecipe.Fluid fluid = productOf(vat);
-        Serving serving = fluid == null ? null : servingOf(fluid);
+        Serving serving = servingOf(vat);
         return serving == null ? null : serving.item();
     }
 }

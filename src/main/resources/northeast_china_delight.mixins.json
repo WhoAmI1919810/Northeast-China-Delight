@@ -7,7 +7,7 @@
     "AbstractFurnaceBlockEntityMixin",
     "CookingPotBlockEntityInvoker",
     "CookingPotBlockEntityMixin",
-    "PowderSnowBlockMixin"
+    "PowderSnowBlockMixin", "SoundEngineMixin"
   ],
   "injectors": {
     "defaultRequire": 1

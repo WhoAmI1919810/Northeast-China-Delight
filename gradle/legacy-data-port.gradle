@@ -143,6 +143,13 @@ ext.legacyTransformNode = { Object node, Map env ->
                         'items': items instanceof List ? items : [items],
                         'nbt': '{"northeast_china_delight:sea_water":1b}']
             }
+            // minecraft:damage 组件 → NBT 的 Damage 标签（int）。emptying 配方用它卡"满瓶"（damage:0）。
+            if (components instanceof Map && components.containsKey('minecraft:damage')) {
+                def dmg = components.get('minecraft:damage')
+                return ['type': 'forge:partial_nbt',
+                        'items': items instanceof List ? items : [items],
+                        'nbt': "{\"Damage\":${dmg}}"]
+            }
             return ['item': one]
         }
         def out = new LinkedHashMap()
@@ -342,6 +349,15 @@ ext.portLegacyDataTree = { File resourcesDir ->
             return
         }
 
+        // 「大锤小用」的图标和玩法都靠 1.21 才有的重锤，「家乡之声」的判据指着 1.21 才有的唱片，
+        // <1.20.5 整条丢掉（留着会刷 Unknown item，这两条进度也会加载失败）
+        if (newRel == 'northeast_china_delight/advancements/mace_pound.json'
+                || newRel == 'northeast_china_delight/advancements/home_voice.json') {
+            src.delete()
+            stats.dropped++
+            return
+        }
+
         def env = [changed: false, recipe: newRel.contains('/recipes/')
                    && !newRel.contains('/recipes/vat/') && !newRel.contains('/recipes/grill/')
                    && !newRel.contains('/recipes/drying/'),
@@ -349,6 +365,20 @@ ext.portLegacyDataTree = { File resourcesDir ->
         if (rel.endsWith('.json')) {
             def root = slurper.parse(src, 'UTF-8')
             def rewritten = legacyTransformNode(root, env)
+            // 舂捣配方的工具列表里带着 1.21 的重锤，<1.20.5 得摘掉，否则整条配方加载失败
+            if (newRel.contains('/recipes/pounding/') && rewritten instanceof Map) {
+                def cfg = (rewritten as Map).get('config')
+                def tool = cfg instanceof Map ? (cfg as Map).get('tool') : null
+                if (tool instanceof List) {
+                    def kept = (tool as List).findAll { Object e ->
+                        e != 'minecraft:mace'
+                                && !(e instanceof Map && (e as Map).get('item') == 'minecraft:mace') }
+                    if (kept.size() != tool.size()) {
+                        (cfg as Map).put('tool', kept)
+                        env.changed = true
+                    }
+                }
+            }
             if (env.recipe && rewritten instanceof Map
                     && (rewritten as Map).containsKey('forge:conditions')) {
                 def wrapper = new LinkedHashMap(rewritten as Map)

@@ -1,0 +1,20 @@
+{
+  "type": "farmersdelight:cooking",
+  "experience": 0.35,
+  "ingredients": [
+    {
+      "tag": "c:crops/rice"
+    },
+    {
+      "tag": "c:crops/red_bean"
+    },
+    {
+      "tag": "c:sugar"
+    }
+  ],
+  "recipe_book_tab": "misc",
+  "result": {
+    "count": 1,
+    "id": "northeast_china_delight:red_bean_songpyeon"
+  }
+}

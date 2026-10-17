@@ -12,7 +12,7 @@
       "water_min": 0,
       "water_max": 0,
       "water_after": "KEEP",
-      "product": "SHRIMP_PASTE",
+      "product": "northeast_china_delight:shrimp_paste",
       "product_mb": 250
     },
     "slots": [

@@ -224,10 +224,12 @@ public class GrillCampfireBlock extends CampfireBlock {
         }
 
         if (GrillSeasonings.isSauce(seasoning)) {
+            // 名字要在消耗之前拿：consume 会把这一份扣光，之后 getHoverName 读到的是空栈，显示成「空气」
+            net.minecraft.network.chat.Component name = seasoning.getHoverName();
             if (!DdPlayers.hasInfiniteMaterials(player)) {
                 DdStacks.consume(seasoning, 1, player);
             }
-            hint(player, "message.northeast_china_delight.grill.brushed_sauce", seasoning.getHoverName());
+            hint(player, "message.northeast_china_delight.grill.brushed_sauce", name);
         } else if (SeasoningBottleItem.isBottle(seasoning)) {
             if (!DdPlayers.hasInfiniteMaterials(player)) {
                 player.setItemInHand(InteractionHand.OFF_HAND,

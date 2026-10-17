@@ -8,7 +8,7 @@
     "container": "northeast_china_delight:block/container_bowl",
     "face_0": "northeast_china_delight:block/dish_generated/top_northeast_china_delight_item_harvest_stew_bowl",
     "face_1": "northeast_china_delight:block/dish_generated/stew_broth",
-    "face_2": "minecraft:item/pumpkin",
+    "face_2": "minecraft:block/pumpkin_side",
     "face_3": "northeast_china_delight:block/dish_generated/top_minecraft_item_potato",
     "face_4": "northeast_china_delight:block/dish_generated/top_northeast_china_delight_item_sweet_potato"
   },

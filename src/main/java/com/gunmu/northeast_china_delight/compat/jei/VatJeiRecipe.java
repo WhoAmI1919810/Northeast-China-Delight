@@ -34,6 +34,7 @@ public record VatJeiRecipe(net.minecraft.resources.ResourceLocation id, List<Sta
             long resultFluidCapacityMb,
             int seconds,
             net.minecraft.network.chat.Component verb,
+            String timeKey,
             List<ItemStack> collectionContainers,
             @Nullable net.minecraft.network.chat.Component note) {
 

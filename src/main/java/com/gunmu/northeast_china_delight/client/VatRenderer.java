@@ -4,6 +4,7 @@ import com.gunmu.northeast_china_delight.block.Vat;
 import com.gunmu.northeast_china_delight.block.VatBlockEntity;
 import com.gunmu.northeast_china_delight.crafting.VatRecipe;
 import com.gunmu.northeast_china_delight.crafting.VatRecipes;
+import com.gunmu.northeast_china_delight.fluid.ModFluids;
 import com.gunmu.northeast_china_delight.item.ModItems;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
@@ -60,16 +61,12 @@ public class VatRenderer implements BlockEntityRenderer<VatBlockEntity> {
         boolean fermented = vat.getBlockState().getValue(Vat.FERMENTED);
 
         if (fermented) {
-            var liquid = liquidOf(vat);
-            if (liquid != null) {
-                float ratio = liquid.ratio();
-                float height = 0.15F + 0.7F * ratio;
-                pose.pushPose();
-                pose.translate(0.14F, 0.10F, 0.14F);
-                pose.scale(0.72F, height, 0.72F);
-                blockRenderer.renderSingleBlock(liquid.state(), pose, buffer, light, packedOverlay,
-                        ModelData.EMPTY, null);
-                pose.popPose();
+            net.minecraft.world.level.material.Fluid product = VatRecipes.productOf(vat);
+            int amount = product == null ? 0 : vat.productMb(product);
+            // 酸引水的水面由方块状态里的 water_level 模型画，这里再画会叠出两层
+            if (product != null && amount > 0 && !product.isSame(ModFluids.sourWaterSource())) {
+                float ratio = amount / (float) capacityOf(product);
+                renderFluidSurface(pose, buffer, product, 0.10F + 0.72F * ratio, light);
             }
         }
 
@@ -174,35 +171,74 @@ public class VatRenderer implements BlockEntityRenderer<VatBlockEntity> {
         }
     }
 
-    /**
-     * 成品液体对应的方块与剩余比例
-     */
-    private record Liquid(net.minecraft.world.level.block.state.BlockState state, float ratio) {
+    /** 液面高度按这种液体的缸容量折算。格瓦斯一缸的量跟别的不一样，单独算 */
+    private static int capacityOf(net.minecraft.world.level.material.Fluid fluid) {
+        if (fluid.isSame(ModFluids.kvassSource())) {
+            return VatRecipes.KVASS_SERVINGS * VatRecipes.SERVING_MB;
+        }
+        if (fluid.isSame(ModFluids.sourWaterSource())) {
+            return VatRecipes.SOUR_WATER_MB;
+        }
+        return VatRecipes.PRODUCT_CAPACITY_MB;
     }
 
-    private static Liquid liquidOf(VatBlockEntity vat) {
-        float cap = VatRecipes.PRODUCT_CAPACITY_MB;
-        VatRecipe.Fluid product = VatRecipes.productOf(vat);
-        return switch (product == null ? VatRecipe.Fluid.WATER : product) {
-            case PASTE -> vat.pasteMb() > 0
-                    ? new Liquid(Blocks.BROWN_CONCRETE.defaultBlockState(), vat.pasteMb() / cap) : null;
-            case SOY_SAUCE -> vat.soySauceMb() > 0
-                    ? new Liquid(Blocks.BROWN_TERRACOTTA.defaultBlockState(), vat.soySauceMb() / cap) : null;
-            case VINEGAR -> vat.vinegarMb() > 0
-                    ? new Liquid(Blocks.RED_TERRACOTTA.defaultBlockState(), vat.vinegarMb() / cap) : null;
-            case WHITE_VINEGAR -> vat.whiteVinegarMb() > 0
-                    ? new Liquid(Blocks.WHITE_TERRACOTTA.defaultBlockState(), vat.whiteVinegarMb() / cap) : null;
-            case FISH_SAUCE -> vat.fishSauceMb() > 0
-                    ? new Liquid(Blocks.ORANGE_TERRACOTTA.defaultBlockState(), vat.fishSauceMb() / cap) : null;
-            case SHRIMP_PASTE -> vat.shrimpPasteMb() > 0
-                    ? new Liquid(Blocks.PINK_TERRACOTTA.defaultBlockState(), vat.shrimpPasteMb() / cap) : null;
-            case KVASS -> vat.kvassMb() > 0
-                    ? new Liquid(Blocks.TERRACOTTA.defaultBlockState(),
-                            vat.kvassMb() / (float) (VatRecipes.KVASS_SERVINGS * VatRecipes.SERVING_MB)) : null;
-            // 泡菜缸的水面由方块状态里的 water_level 模型画（液面高度、酸引水颜色都在那边），
-            // 这里绝对不能再画一层，否则缸里会出现两层水面
-            default -> null;
-        };
+    /**
+     * 在缸口高度画一层液面，贴图和颜色都取这种流体自己注册的静图和染色。
+     * 所以数据包让配方产出什么流体，缸里就显示那种流体的液面，不用再为每种液体配一个冒充颜色的方块。
+     */
+    private static void renderFluidSurface(PoseStack pose, MultiBufferSource buffer,
+                                           net.minecraft.world.level.material.Fluid fluid,
+                                           float y, int light) {
+        net.minecraft.client.renderer.texture.TextureAtlasSprite sprite = fluidSprite(fluid);
+        if (sprite == null) {
+            return;
+        }
+        int tint = fluidTint(fluid);
+        float red = ((tint >> 16) & 0xFF) / 255.0F;
+        float green = ((tint >> 8) & 0xFF) / 255.0F;
+        float blue = (tint & 0xFF) / 255.0F;
+        float alpha = ((tint >>> 24) & 0xFF) / 255.0F;
+        // 缸内壁大约在 2/16 到 14/16，液面贴着内壁画
+        float min = 0.125F;
+        float max = 0.875F;
+        var consumer = buffer.getBuffer(RenderType.translucent());
+        // 液面略微抬高，避免和缸壁内侧重叠时闪烁
+        quad(consumer, pose.last(), light, 0xF000F0, red, green, blue, alpha,
+                min, y, min, sprite.getU0(), sprite.getV0(),
+                min, y, max, sprite.getU0(), sprite.getV1(),
+                max, y, max, sprite.getU1(), sprite.getV1(),
+                max, y, min, sprite.getU1(), sprite.getV0(),
+                0, 1, 0);
+    }
+
+    @org.jetbrains.annotations.Nullable
+    private static net.minecraft.client.renderer.texture.TextureAtlasSprite fluidSprite(
+            net.minecraft.world.level.material.Fluid fluid) {
+        net.minecraft.resources.ResourceLocation texture = fluidExtensions(fluid).getStillTexture();
+        if (texture == null) {
+            return null;
+        }
+        return Minecraft.getInstance()
+                .getTextureAtlas(net.minecraft.world.inventory.InventoryMenu.BLOCK_ATLAS).apply(texture);
+    }
+
+    //? if <1.20.2 {
+    /*private static net.minecraftforge.client.extensions.common.IClientFluidTypeExtensions fluidExtensions(
+            net.minecraft.world.level.material.Fluid fluid) {
+        return net.minecraftforge.client.extensions.common.IClientFluidTypeExtensions.of(fluid);
+    }*/
+    //?} else {
+    private static net.neoforged.neoforge.client.extensions.common.IClientFluidTypeExtensions fluidExtensions(
+            net.minecraft.world.level.material.Fluid fluid) {
+        return net.neoforged.neoforge.client.extensions.common.IClientFluidTypeExtensions.of(fluid);
+    }
+    //?}
+
+    private static int fluidTint(net.minecraft.world.level.material.Fluid fluid) {
+        if (fluid.isSame(net.minecraft.world.level.material.Fluids.WATER)) {
+            return 0xFF3F76E4;
+        }
+        return fluidExtensions(fluid).getTintColor();
     }
 
     private static boolean isSeasoning(ItemStack stack) {

@@ -12,7 +12,7 @@
       "water_min": 0,
       "water_max": 0,
       "water_after": "KEEP",
-      "product": "FISH_SAUCE",
+      "product": "northeast_china_delight:fish_sauce",
       "product_mb": 250
     },
     "slots": [

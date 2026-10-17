@@ -538,7 +538,7 @@ public class VatRecipeCategory implements IRecipeCategory<VatJeiRecipe> {
     //?}
 
     private static void drawProcessTime(GuiGraphics graphics, VatJeiRecipe.State state, int arrowWidth) {
-        Component text = Component.translatable("jei.northeast_china_delight.vat.process_time",
+        Component text = Component.translatable(state.timeKey(),
                 state.verb(), timeText(state.seconds()));
         Font font = Minecraft.getInstance().font;
         int width = font.width(text);

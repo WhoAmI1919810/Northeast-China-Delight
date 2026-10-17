@@ -26,6 +26,16 @@ public class SeasoningBottleItem extends Item {
         super(properties);
     }
 
+    //? if <1.20.2 {
+    /*@Override
+    public net.minecraftforge.common.capabilities.ICapabilityProvider initCapabilities(
+            ItemStack stack, net.minecraft.nbt.CompoundTag nbt) {
+        // 1.20.1 没有 RegisterCapabilitiesEvent 的物品注册，流体能力从这里挂。
+        // 没有对应流体的瓶子（食用油）返回 null，不暴露能力
+        return SeasoningBottleFluidHandler.provider(stack);
+    }
+    *///?}
+
     /** 耐久只用来记剩余毫升，不是工具，不能附魔。 */
     @Override
     public boolean isEnchantable(ItemStack stack) {
