@@ -1,11 +1,16 @@
 package com.gunmu.northeast_china_delight.event;
 
+import com.gunmu.northeast_china_delight.NortheastChinaDelight;
+import com.gunmu.northeast_china_delight.advancement.ModAdvancements;
 import com.gunmu.northeast_china_delight.block.GinsengCropBlock;
 import com.gunmu.northeast_china_delight.block.ModBlocks;
 import com.gunmu.northeast_china_delight.NortheastChinaConfig;
+import com.gunmu.northeast_china_delight.block.WoodenMortarBlock;
 import com.gunmu.northeast_china_delight.item.ModItems;
 import com.gunmu.northeast_china_delight.item.SeaWaterBucketItem;
 import com.gunmu.northeast_china_delight.item.SeaWaterBuckets;
+import com.gunmu.northeast_china_delight.util.DdIds;
+import com.gunmu.northeast_china_delight.worldgen.CourtyardPiece;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import com.gunmu.northeast_china_delight.util.DdStacks;
@@ -16,8 +21,15 @@ import net.minecraft.stats.Stats;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.monster.EnderMan;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.ItemUtils;
@@ -33,6 +45,9 @@ import net.minecraft.world.level.block.BucketPickup;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.gameevent.GameEvent;
+import net.minecraft.world.level.levelgen.structure.Structure;
+import net.minecraft.world.level.levelgen.structure.StructurePiece;
+import net.minecraft.world.level.levelgen.structure.StructureStart;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
@@ -73,14 +88,143 @@ import net.neoforged.neoforge.event.entity.player.FillBucketEvent;
 //? if >=1.20.5 {
 /*import net.minecraft.world.phys.HitResult;
 *///?}
+//? if <1.20.2 {
+import net.minecraftforge.event.entity.living.LivingChangeTargetEvent;
+//?} else {
+/*import net.neoforged.neoforge.event.entity.living.LivingChangeTargetEvent;
+*///?}
+//? if <1.20.2 {
+import net.minecraftforge.event.TickEvent;
+//?} else {
+/*import net.neoforged.neoforge.event.tick.ServerTickEvent;
+*///?}
 
 public final class ModGameplayEvents
 {
     public static final float WOOD_EAR_FOREST_CHANCE = 0.07F;
     public static final float WOOD_EAR_OAK_CHANCE = 0.05F;
 
+    /** 「挨户串门」每隔多少 tick 查一次玩家脚下的小院（20 tick = 1 秒） */
+    public static final int YARD_CHECK_INTERVAL = 20;
+
+    /** 小院群落的注册名，见 data/northeast_china_delight/worldgen/structure/northeast_yard.json */
+    private static final ResourceLocation YARD_STRUCTURE =
+            DdIds.of(NortheastChinaDelight.MODID, "northeast_yard");
+
     private ModGameplayEvents()
     {
+    }
+
+    /**
+     * 左键敲木臼 = 舂捣一次。木臼里还有料时顺手把这一下拦下来，别把臼当方块拆了
+     * （{@code Block#attack} 只在客户端跑，改方块必须挂在服务端的左键事件上）。
+     *
+     * <p>只认 {@code Action.START}：一次左键会按 START（按下）、ABORT（松手）、STOP（挖穿）分别触发事件，不过滤的话一次点击会敲两下（掉 2 点耐久、进度走两步）。</p>
+     *
+     * <p>还得攒够当前配方要求的蓄力才能响这一下（连点没用）；旧配方默认仍是 90%。
+     * 敲成之后手动把挥击计数器归零 —— 原版只在客户端重置它，服务端那个只增不减，
+     * 不归零的话蓄力门槛从第二下起就永远满足，等于没做。</p>
+     */
+    @SubscribeEvent
+    public static void onLeftClickBlock(PlayerInteractEvent.LeftClickBlock event) {
+        if (event.getAction() != PlayerInteractEvent.LeftClickBlock.Action.START) {
+            return;
+        }
+        if (event.getLevel().isClientSide()) {
+            return;
+        }
+        Player player = event.getEntity();
+        if (WoodenMortarBlock.pound(player, event.getLevel(), event.getPos())) {
+            player.resetAttackStrengthTicker();
+            event.setCanceled(true);
+        }
+    }
+
+    /**
+     * 「你瞅啥？」：头戴大脸盆、手持木槌的玩家被末影人锁定（盯着它看把它惹毛）时发进度。
+     *
+     * <p>末影人被激怒走的是 {@code EnderMan#setTarget}，而 {@code Mob#setTarget} 上挂着平台事件，
+     * 不用 mixin 就能拿到「目标要变成谁」。NeoForge 1.21.1 把这两个访问器改了名
+     * （{@code getNewTarget} → {@code getNewAboutToBeSetTarget}），差异收在下面的条件编译里。</p>
+     */
+    @SubscribeEvent
+    public static void onLivingChangeTarget(LivingChangeTargetEvent event) {
+        if (event.getEntity().level().isClientSide() || !(event.getEntity() instanceof EnderMan)) {
+            return;
+        }
+        LivingEntity target = event.getNewTarget();
+        if (!(target instanceof ServerPlayer player)) {
+            return;
+        }
+        if (!player.getItemBySlot(EquipmentSlot.HEAD).is(ModItems.LARGE_BASIN.get())) {
+            return;
+        }
+        if (!player.getMainHandItem().is(ModItems.WOODEN_MALLET.get())) {
+            return;
+        }
+        ModAdvancements.award(player, ModAdvancements.STARE, "stare");
+    }
+
+    /**
+     * 「挨户串门」的驱动：进过所有种类的东北小院之后发进度。
+     *
+     * <p>这件事光靠数据包做不到：{@code minecraft:location} 触发器只知道「玩家站在哪个结构里」，
+     * 而菜园、四合院、牲口院三种院子共用同一个结构 id，分不出站的是哪一种。所以这里每秒查一次
+     * 玩家脚下的小院 —— 结构里的每个 {@link CourtyardPiece} 记着自己用的是哪个 NBT 模板，
+     * 找到罩住玩家的那一块，把模板名换算成判据名（{@link ModAdvancements#yardCriterion}）
+     * 判给玩家；判据一览见 {@code data/northeast_china_delight/advancement/visit_all_yards.json}，
+     * 那边漏写了哪个模板，这里就安静地跳过，不会报错。</p>
+     *
+     * <p>进度自己会把同一条判据去重，所以每秒重复判也没有副作用。</p>
+     */
+    //? if <1.20.2 {
+    @SubscribeEvent
+    public static void onServerTick(TickEvent.ServerTickEvent event)
+    {
+        // 1.20.1 的 Forge 只发一对 TickEvent，START / END 各来一次，只认 END（服务器跑完这一 tick）
+        if (event.phase != TickEvent.Phase.END) {
+            return;
+        }
+        awardYardVisits(event.getServer());
+    }
+    //?} else {
+    /*@SubscribeEvent
+    public static void onServerTick(ServerTickEvent.Post event)
+    {
+        awardYardVisits(event.getServer());
+    }
+    *///?}
+
+    private static void awardYardVisits(MinecraftServer server)
+    {
+        if (server.getTickCount() % YARD_CHECK_INTERVAL != 0) {
+            return;
+        }
+        for (ServerPlayer player : server.getPlayerList().getPlayers()) {
+            awardYardVisit(player);
+        }
+    }
+
+    private static void awardYardVisit(ServerPlayer player)
+    {
+        ServerLevel level = player.serverLevel();
+        Structure structure = level.registryAccess()
+                .registryOrThrow(Registries.STRUCTURE)
+                .get(ResourceKey.create(Registries.STRUCTURE, YARD_STRUCTURE));
+        if (structure == null) {
+            return;
+        }
+        BlockPos pos = player.blockPosition();
+        StructureStart start = level.structureManager().getStructureAt(pos, structure);
+        if (!start.isValid()) {
+            return;
+        }
+        for (StructurePiece piece : start.getPieces()) {
+            if (piece instanceof CourtyardPiece courtyard && piece.getBoundingBox().isInside(pos)) {
+                ModAdvancements.award(player, ModAdvancements.VISIT_ALL_YARDS,
+                        ModAdvancements.yardCriterion(courtyard.templateId()));
+            }
+        }
     }
 
     /**

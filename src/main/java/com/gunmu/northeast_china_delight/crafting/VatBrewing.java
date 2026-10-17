@@ -360,7 +360,8 @@ public final class VatBrewing {
                 .setValue(com.gunmu.northeast_china_delight.block.Vat.PROGRESS,
                         com.gunmu.northeast_china_delight.block.Vat.MAX_PROGRESS)
                 .setValue(com.gunmu.northeast_china_delight.block.Vat.FERMENTED, true),
-                net.minecraft.world.level.block.Block.UPDATE_CLIENTS);
+                net.minecraft.world.level.block.Block.UPDATE_CLIENTS
+                        | net.minecraft.world.level.block.Block.UPDATE_NEIGHBORS);
         level.playSound(null, pos, SoundEvents.COMPOSTER_READY, SoundSource.BLOCKS, 1.0F, 1.0F);
     }
 
@@ -372,13 +373,13 @@ public final class VatBrewing {
             }
             java.util.function.Predicate<ItemStack> same = stack -> stack.is(content.getItem());
             switch (slot.fate()) {
-                case CONSUME -> vat.removeOneMatching(same);
+                case CONSUME, ABSORB -> vat.removeOneMatching(same);
                 case CONVERT -> {
                     if (slot.product() != null) {
                         vat.replaceOneMatching(same, new ItemStack(slot.product()));
                     }
                 }
-                case KEEP, ABSORB -> {
+                case KEEP -> {
                 }
             }
         }
@@ -401,23 +402,18 @@ public final class VatBrewing {
         }
         VatRecipes.Kind kind = vat.kind();
         if (kind != VatRecipes.Kind.NONE) {
-            VatRecipe.Fluid product = vatProduct(vat);
-            VatRecipes.Serving serving = VatRecipes.servingOf(product);
+            net.minecraft.world.level.material.Fluid product = VatRecipes.productOf(vat);
+            VatRecipes.Serving serving = VatRecipes.servingOf(vat);
             if (serving != null && held.is(serving.container()) && vat.productMb(product) > 0) {
                 vat.takeOneServing(product);
                 return new ItemStack(serving.item());
             }
         }
         if (vat.sourWaterMb() > 0 && held.is(net.minecraft.world.item.Items.GLASS_BOTTLE)) {
-            vat.takeOneServing(VatRecipe.Fluid.SOUR_WATER);
+            vat.takeOneServing(com.gunmu.northeast_china_delight.fluid.ModFluids.sourWaterSource());
             return new ItemStack(com.gunmu.northeast_china_delight.item.ModItems.SOUR_WATER.get());
         }
         return null;
-    }
-
-    private static VatRecipe.Fluid vatProduct(VatBlockEntity vat) {
-        VatRecipe.Fluid fluid = VatRecipes.productOf(vat);
-        return fluid == null ? VatRecipe.Fluid.WATER : fluid;
     }
 
     public static ItemStack takeOne(VatBlockEntity vat, List<ItemStack> refund) {

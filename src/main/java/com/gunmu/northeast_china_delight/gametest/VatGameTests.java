@@ -16,6 +16,7 @@ import com.gunmu.northeast_china_delight.NortheastChinaDelight;
 import com.gunmu.northeast_china_delight.util.DdIds;
 import com.gunmu.northeast_china_delight.block.Vat;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
@@ -28,6 +29,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.GameType;
+import net.minecraft.world.level.block.state.BlockState;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.JsonParseException;
@@ -107,12 +109,12 @@ public final class VatGameTests {
     public static void vatFinishedSoyResidueCanBeTakenBeforeLiquid(GameTestHelper helper) {
         VatBlockEntity vat = finishedVat(helper, VatRecipes.Kind.PASTE);
         vat.addContent(new ItemStack(ModItems.SOY_RESIDUE.get()));
-        vat.setProductMb(VatRecipe.Fluid.PASTE, VatRecipes.SERVING_MB);
+        vat.setProductMb(com.gunmu.northeast_china_delight.fluid.ModFluids.soyPasteSource(), VatRecipes.SERVING_MB);
         Player player = mockPlayer(helper, GameType.SURVIVAL);
         click(helper, player, ItemStack.EMPTY);
         if (vat.countOf(ModItems.SOY_RESIDUE.get()) != 0
                 || player.getInventory().countItem(ModItems.SOY_RESIDUE.get()) != 1
-                || vat.productMb(VatRecipe.Fluid.PASTE) != VatRecipes.SERVING_MB) {
+                || vat.productMb(com.gunmu.northeast_china_delight.fluid.ModFluids.soyPasteSource()) != VatRecipes.SERVING_MB) {
             helper.fail("Solid residue should be collectible without draining the liquid first");
         }
         helper.succeed();
@@ -123,11 +125,11 @@ public final class VatGameTests {
         Item cabbage = ModItems.NAPA_CABBAGE.get();
         VatBlockEntity vat = finishedVat(helper, VatRecipes.Kind.PICKLE);
         vat.addContent(new ItemStack(cabbage));
-        vat.setProductMb(VatRecipe.Fluid.SOUR_WATER, VatRecipes.WATER_MB_PER_LEVEL);
+        vat.setProductMb(com.gunmu.northeast_china_delight.fluid.ModFluids.sourWaterSource(), VatRecipes.WATER_MB_PER_LEVEL);
         Player player = mockPlayer(helper, GameType.SURVIVAL);
         click(helper, player, ItemStack.EMPTY);
         if (vat.countOf(cabbage) != 0 || player.getInventory().countItem(ModItems.SOUR_CABBAGE.get()) != 1
-                || vat.productMb(VatRecipe.Fluid.SOUR_WATER) != VatRecipes.WATER_MB_PER_LEVEL) {
+                || vat.productMb(com.gunmu.northeast_china_delight.fluid.ModFluids.sourWaterSource()) != VatRecipes.WATER_MB_PER_LEVEL) {
             helper.fail("Finished cabbage should convert on collection without losing the sour water");
         }
         helper.succeed();
@@ -137,16 +139,16 @@ public final class VatGameTests {
     public static void vatFinishedKvassRequiresBottle(GameTestHelper helper) {
         VatBlockEntity vat = finishedVat(helper, VatRecipes.Kind.KVASS);
         int amount = VatRecipes.KVASS_SERVINGS * VatRecipes.SERVING_MB;
-        vat.setProductMb(VatRecipe.Fluid.KVASS, amount);
+        vat.setProductMb(com.gunmu.northeast_china_delight.fluid.ModFluids.kvassSource(), amount);
         Player player = mockPlayer(helper, GameType.SURVIVAL);
         click(helper, player, ItemStack.EMPTY);
         click(helper, player, new ItemStack(Items.BOWL));
-        if (vat.productMb(VatRecipe.Fluid.KVASS) != amount) {
+        if (vat.productMb(com.gunmu.northeast_china_delight.fluid.ModFluids.kvassSource()) != amount) {
             helper.fail("An empty hand or bowl must not collect kvass");
         }
         click(helper, player, new ItemStack(Items.GLASS_BOTTLE));
         if (player.getInventory().countItem(ModItems.KVASS.get()) != 1
-                || vat.productMb(VatRecipe.Fluid.KVASS) != amount - VatRecipes.SERVING_MB) {
+                || vat.productMb(com.gunmu.northeast_china_delight.fluid.ModFluids.kvassSource()) != amount - VatRecipes.SERVING_MB) {
             helper.fail("A glass bottle should collect exactly one serving of kvass");
         }
         helper.succeed();
@@ -168,7 +170,7 @@ public final class VatGameTests {
     @GameTest(template = "empty")
     public static void vatJeiCollectionContainersFollowProducts(GameTestHelper helper) {
         for (VatRecipe recipe : VatRecipes.all(helper.getLevel())) {
-            VatRecipe.Fluid product = recipe.liquid().product();
+            net.minecraft.world.level.material.Fluid product = recipe.liquid().product();
             VatRecipes.Serving serving = product == null ? null : VatRecipes.servingOf(product);
             for (VatJeiRecipe.State state : VatJeiRecipes.pagesFor(recipe).get(0).states()) {
                 if (serving == null && !state.collectionContainers().isEmpty()
@@ -302,7 +304,7 @@ public final class VatGameTests {
     public static void vatPicklesProduceThreeBucketsOfSourWater(GameTestHelper helper) {
         for (VatRecipes.Kind kind : List.of(VatRecipes.Kind.PICKLE, VatRecipes.Kind.SPICY_PICKLE)) {
             VatRecipe recipe = VatRecipes.recipeOf(kind, helper.getLevel());
-            if (recipe == null || recipe.liquid().product() != VatRecipe.Fluid.SOUR_WATER
+            if (recipe == null || recipe.liquid().product() != com.gunmu.northeast_china_delight.fluid.ModFluids.sourWaterSource()
                     || recipe.productMbFor(3) != 3 * VatRecipes.WATER_MB_PER_LEVEL) {
                 helper.fail("Missing or invalid sour water recipe: " + kind);
             }
@@ -387,8 +389,8 @@ public final class VatGameTests {
         helper.getLevel().setBlock(vat.getBlockPos(), vat.getBlockState().setValue(Vat.FERMENTED, true), 3);
         vat.setRecipe(VatRecipe.of(VatRecipes.Kind.VINEGAR,
                 "northeast_china_delight:vat/disabled_for_test")
-                .product(VatRecipe.Fluid.WHITE_VINEGAR, VatRecipes.SERVING_MB, false).build());
-        vat.setProductMb(VatRecipe.Fluid.WHITE_VINEGAR, VatRecipes.SERVING_MB);
+                .product(com.gunmu.northeast_china_delight.fluid.ModFluids.whiteVinegarSource(), VatRecipes.SERVING_MB, false).build());
+        vat.setProductMb(com.gunmu.northeast_china_delight.fluid.ModFluids.whiteVinegarSource(), VatRecipes.SERVING_MB);
         if (vat.getFluidInTank(0).getFluid() != ModFluids.whiteVinegarSource()) {
             helper.fail("Disabled vat recipe should keep its brewed fluid accessible");
         }
@@ -468,8 +470,8 @@ public final class VatGameTests {
     public static void vatJeiPagesAreGenerated(GameTestHelper helper) {
         for (VatRecipe recipe : VatRecipes.all(helper.getLevel())) {
             List<VatJeiRecipe> pages = VatJeiRecipes.pagesFor(recipe);
-            if (pages.size() != 1) {
-                helper.fail("配方 " + recipe.id() + " 在 JEI 里应该正好一页，实际 " + pages.size() + " 页");
+            if (pages.isEmpty()) {
+                helper.fail("配方 " + recipe.id() + " 在 JEI 里一页都没有");
             }
             for (VatJeiRecipe page : pages) {
                 for (VatJeiRecipe.State state : page.states()) {
@@ -528,7 +530,7 @@ public final class VatGameTests {
         if (vat.residueCount() != VatRecipes.RESIDUE_COUNT) {
             helper.fail("大酱酿完缸里应该有 " + VatRecipes.RESIDUE_COUNT + " 份酱渣，实际 " + vat.residueCount());
         }
-        vat.setProductMb(VatRecipe.Fluid.PASTE, 0);
+        vat.setProductMb(com.gunmu.northeast_china_delight.fluid.ModFluids.soyPasteSource(), 0);
         vat.takeCover();
 
         if (VatBrewing.forInsert(vat, new ItemStack(ModItems.CORN_SEEDS.get())) == null) {
@@ -582,7 +584,7 @@ public final class VatGameTests {
         if (vat.residueCount() != VatRecipes.RESIDUE_COUNT) {
             helper.fail("酱油酿完酱渣数量不对");
         }
-        vat.setProductMb(VatRecipe.Fluid.SOY_SAUCE, 0);
+        vat.setProductMb(com.gunmu.northeast_china_delight.fluid.ModFluids.soySauceSource(), 0);
         vat.takeCover();
         for (int i = 0; i < 3; i++) {
             click(helper, player, new ItemStack(Items.WATER_BUCKET));
@@ -627,7 +629,7 @@ public final class VatGameTests {
         if (vat.waterLayers() != 0 || vat.soySauceMb() == 0 || vat.residueCount() != VatRecipes.RESIDUE_COUNT) {
             helper.fail("酱油没取完时不应续水，也不应拿走酱渣");
         }
-        vat.setProductMb(VatRecipe.Fluid.SOY_SAUCE, VatRecipes.SERVING_MB);
+        vat.setProductMb(com.gunmu.northeast_china_delight.fluid.ModFluids.soySauceSource(), VatRecipes.SERVING_MB);
         click(helper, player, new ItemStack(Items.GLASS_BOTTLE));
         click(helper, player, new ItemStack(Items.GLASS_BOTTLE));
         click(helper, player, new ItemStack(Items.DIRT));
@@ -766,6 +768,26 @@ public final class VatGameTests {
         click(helper, player, ItemStack.EMPTY);
         if (vat.isCovered()) {
             helper.fail("没发酵的缸取不回盖布");
+        }
+        helper.succeed();
+    }
+
+    @GameTest(template = "empty")
+    public static void vatCollisionStaysOpenUntilProductionStarts(GameTestHelper helper) {
+        placeVat(helper);
+        ServerLevel level = helper.getLevel();
+        BlockPos pos = helper.absolutePos(AT);
+        BlockState idle = level.getBlockState(pos);
+        if (idle.getCollisionShape(level, pos).max(Direction.Axis.Y, 0.5, 0.5) > 0.2) {
+            helper.fail("没开工的大缸碰撞箱应该留出缸口");
+        }
+        BlockState brewing = idle.setValue(Vat.PROGRESS, 1);
+        if (brewing.getCollisionShape(level, pos).max(Direction.Axis.Y, 0.5, 0.5) < 0.99) {
+            helper.fail("制作开始后大缸碰撞箱应该封上");
+        }
+        BlockState done = idle.setValue(Vat.FERMENTED, true);
+        if (done.getCollisionShape(level, pos).max(Direction.Axis.Y, 0.5, 0.5) < 0.99) {
+            helper.fail("制作完成后大缸碰撞箱应该封上");
         }
         helper.succeed();
     }

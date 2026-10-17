@@ -123,6 +123,16 @@ public class ModItems {
     public static final Supplier<Item> GRILL_RACK = simple("grill_rack");
     public static final Supplier<Item> BRASS_BOWL = simple("brass_bowl");
 
+    /**
+     * 木槌：木臼「舂捣」配方里的工具，本身也是一把钝器（耐久 118、攻击 5 / 攻速 1.0）。
+     * 物品栏是 2D 贴图、拿在手里是 3D 模型，分流在 {@code client/WoodenMalletItemRenderer}。
+     */
+    public static final Supplier<Item> WOODEN_MALLET = regItem(
+            "wooden_mallet",
+            WoodenMalletItem::new,
+            malletProperties()
+    );
+
     public static final Supplier<Item> HAZELNUT = selfSeedingFood("hazelnut", () -> ModBlocks.HAZELNUT_BUSH.get());
     public static final Supplier<Item> HAZEL_MUSHROOM = selfSeeding("hazel_mushroom", () -> ModBlocks.HAZEL_MUSHROOM.get());
     public static final Supplier<Item> HAZEL_MUSHROOM_COLONY = regItem(
@@ -209,6 +219,9 @@ public class ModItems {
     public static final Supplier<Item> YU_MI_LAO = bowlFood("corn_fritter", 7, 0.6F);
     public static final Supplier<Item> CHA_ZI_ZHOU = bowlFood("crushed_corn_porridge", 6, 0.5F);
     public static final Supplier<Item> NIAN_DOU_BAO = food("sticky_bean_bun", 7, 0.6F);
+    public static final Supplier<Item> HONG_DOU_SONG_BING = food("red_bean_songpyeon", 3, 0.3F);
+    public static final Supplier<Item> HUA_SHENG_SONG_BING = food("peanut_songpyeon", 3, 0.3F);
+    public static final Supplier<Item> DA_GAO = food("pounded_rice_cake", 3, 0.5F);
     public static final Supplier<Item> HAZELNUT_SUGAR_FIRE_BUN = food("hazelnut_sugar_fire_bun", 7, 0.6F);
     public static final Supplier<Item> XUN_JIANG_PIN_PAN = bowlFood("smoked_meat_platter", 10, 0.7F);
     public static final Supplier<Item> ORANGE_GUO_BAO_ROU = bowlFood("orange_crispy_pork", 9, 0.7F);
@@ -257,6 +270,11 @@ public class ModItems {
             new Item.Properties().stacksTo(1)
     );
 
+    public static final Supplier<Item> WOODEN_MORTAR = regItem(
+            "wooden_mortar",
+            (properties) -> new BlockItem(ModBlocks.WOODEN_MORTAR.get(), properties),
+            new Item.Properties().stacksTo(16)
+    );
     public static final Supplier<Item> ANIMAL_OIL_BLOCK_ITEM = regItem(
             "animal_oil_block",
             (properties) -> new BlockItem(ModBlocks.ANIMAL_OIL_BLOCK.get(), properties),
@@ -295,7 +313,7 @@ public class ModItems {
             WATER_DOUGH, BUCKWHEAT_NOODLES, DRIED_TOFU, TOFU, SWEET_POTATO_STARCH,
             VERMICELLI, LA_PI, CORN_FLOUR, CRACKLINGS, COLD_NOODLE_SHEET, BEAN_SPROUTS, SOUR_CORN_KERNELS, ROASTED_PEANUTS,
             CORN_STALK,
-            LARGE_BASIN, BRASS_BOWL, ANIMAL_OIL_BLOCK_ITEM,
+            LARGE_BASIN, BRASS_BOWL, WOODEN_MALLET, ANIMAL_OIL_BLOCK_ITEM,
             UNFIRED_VAT_BLANK
     );
 
@@ -316,11 +334,26 @@ public class ModItems {
         return regItem(id, properties -> new BlockItem(block.get(), properties), new Item.Properties());
     }
 
+    /**
+     * 木槌的物品属性：不可堆叠 + 118 点耐久。
+     * 1.21 的数据组件还能顺手把武器属性（攻击 5 / 攻速 1.0）也写进去，
+     * 1.20.1 没有数据组件，那部分由 {@link WoodenMalletItem#getDefaultAttributeModifiers} 给。
+     */
+    private static Item.Properties malletProperties() {
+        //? if <1.20.5 {
+        return new Item.Properties().stacksTo(1).durability(WoodenMalletItem.DURABILITY);
+        //?} else {
+        /*return new Item.Properties().stacksTo(1).durability(WoodenMalletItem.DURABILITY)
+                .attributes(WoodenMalletItem.createAttributes());
+        *///?}
+    }
+
     public static final List<Supplier<? extends Item>> BLOCK_TAB_ITEMS = blockTabItems();
 
     private static List<Supplier<? extends Item>> blockTabItems() {
         List<Supplier<? extends Item>> list = new ArrayList<>();
         list.add(VAT);
+        list.add(WOODEN_MORTAR);
         list.add(GRILL_RACK);
         list.add(CORN_SKEWER);
         list.add(CHILI_SKEWER);
@@ -344,7 +377,7 @@ public class ModItems {
             ZHAN_JIANG_CAI, MING_TAI_YU_SI, TIGER_SALAD, XIA_JIANG_CHAO_JI_DAN,
             JIANG_BAN_LA_PI, CONG_SHAO_HAI_SHEN, LA_ROU_DUN_DOU_JIAO,
             DRY_FRIED_HAIRTAIL, BRAISED_HAIRTAIL,
-            BAKED_SWEET_POTATO, DA_FAN_BAO, NIAN_DOU_BAO, HAZELNUT_SUGAR_FIRE_BUN,
+            BAKED_SWEET_POTATO, DA_FAN_BAO, NIAN_DOU_BAO, HONG_DOU_SONG_BING, HUA_SHENG_SONG_BING, HAZELNUT_SUGAR_FIRE_BUN, DA_GAO,
             GRILLED_CHICKEN_FRAME, GRILLED_CORN, GRILLED_OIL_EDGE, GRILLED_COLD_NOODLES,
             SUAN_CAI_JIAO_ZI, XIA_REN_ZHU_ROU_XIAN_SHUI_JIAO, SAN_XIAN_XIAN_SHUI_JIAO,
             JIANG_DA_GU, JIANG_NIU_ROU,

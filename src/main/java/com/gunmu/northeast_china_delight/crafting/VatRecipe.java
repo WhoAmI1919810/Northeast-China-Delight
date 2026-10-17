@@ -46,7 +46,11 @@ public final class VatRecipe {
     }
 
     /**
-     * 大缸里能存的那几种液体（纯存储用，配方里只是引用它们的名字）
+     * 大缸里能存的那几种液体。
+     * <p>
+     * 配方里的产物液体已经改成直接写流体 id（见 {@link #productFluid()}），这个枚举只剩下两处用途：
+     * 一是读旧数据包时把 {@code "SOY_SAUCE"} 这种旧名字翻译成流体 id，二是读旧存档里
+     * {@code brewed_product} 字段时做同样的翻译。新写的配方和存档都不再用它。
      */
     public enum Fluid {
         WATER,
@@ -57,7 +61,23 @@ public final class VatRecipe {
         WHITE_VINEGAR,
         FISH_SAUCE,
         SHRIMP_PASTE,
-        KVASS
+        KVASS;
+
+        /** 旧数据包 / 旧存档里的枚举名对应的流体；{@link #WATER} 不是成品液体，返回 null */
+        @Nullable
+        public net.minecraft.world.level.material.Fluid resolve() {
+            return switch (this) {
+                case PASTE -> com.gunmu.northeast_china_delight.fluid.ModFluids.soyPasteSource();
+                case SOY_SAUCE -> com.gunmu.northeast_china_delight.fluid.ModFluids.soySauceSource();
+                case VINEGAR -> com.gunmu.northeast_china_delight.fluid.ModFluids.vinegarSource();
+                case WHITE_VINEGAR -> com.gunmu.northeast_china_delight.fluid.ModFluids.whiteVinegarSource();
+                case FISH_SAUCE -> com.gunmu.northeast_china_delight.fluid.ModFluids.fishSauceSource();
+                case SHRIMP_PASTE -> com.gunmu.northeast_china_delight.fluid.ModFluids.shrimpPasteSource();
+                case KVASS -> com.gunmu.northeast_china_delight.fluid.ModFluids.kvassSource();
+                case SOUR_WATER -> com.gunmu.northeast_china_delight.fluid.ModFluids.sourWaterSource();
+                case WATER -> null;
+            };
+        }
     }
 
     /**
@@ -229,12 +249,15 @@ public final class VatRecipe {
 
     }
 
-    public record Liquid(int waterMin, int waterMax, int sourWaterMb, @Nullable Fluid product,
+    public record Liquid(int waterMin, int waterMax, int sourWaterMb,
+                         @Nullable net.minecraft.world.level.material.Fluid product,
                          int productMb, boolean productPerLayer,
-                         LiquidAfter waterAfter, LiquidAfter sourWaterAfter) {
+                         LiquidAfter waterAfter, LiquidAfter sourWaterAfter,
+                         @Nullable net.minecraft.world.item.Item servingContainer,
+                         @Nullable net.minecraft.world.item.Item servingItem) {
 
         public static final Liquid NONE = new Liquid(0, 0, 0, null, 0, false,
-                LiquidAfter.KEEP, LiquidAfter.KEEP);
+                LiquidAfter.KEEP, LiquidAfter.KEEP, null, null);
 
         public boolean waterFits(int water) {
             return water >= this.waterMin && water <= this.waterMax;
@@ -249,6 +272,21 @@ public final class VatRecipe {
     private final List<Slot> slots;
     private final int seconds;
     private final Component verb;
+    /**
+     * 进度文字的句式。三处各一个翻译键：Jade 的进度条、JEI 的时长、游戏内的动作条提示。
+     * 为 null 时用模组自带的句式（中文是「腌制中 50%」这种把动词嵌进去的写法）。
+     * 数据包想换语序或换说法，就在配方里给对应的键，占位符含义和默认句式一致。
+     */
+    @Nullable
+    private final String progressKey;
+    @Nullable
+    private final String doneKey;
+    @Nullable
+    private final String timeKey;
+    @Nullable
+    private final String hintKey;
+    @Nullable
+    private final String hintSecondsKey;
     private final boolean secondsPerLayer;
     private final boolean requiresSnowyBiome;
     @Nullable
@@ -257,7 +295,9 @@ public final class VatRecipe {
     private final java.util.EnumMap<BiomeBand, Float> biomeSecondsMultiplier;
 
     private VatRecipe(String id, VatRecipes.Kind kind, int priority, Seal seal, Liquid liquid, List<Slot> slots,
-                      int seconds, @Nullable Component verb, boolean secondsPerLayer, boolean requiresSnowyBiome,
+                      int seconds, @Nullable Component verb, @Nullable String progressKey, @Nullable String doneKey,
+                      @Nullable String timeKey, @Nullable String hintKey, @Nullable String hintSecondsKey,
+                      boolean secondsPerLayer, boolean requiresSnowyBiome,
                       @Nullable java.util.function.Predicate<ItemStack> requiredSealItem,
                       @Nullable java.util.EnumMap<BiomeBand, Float> biomeSecondsMultiplier) {
         this.id = id;
@@ -268,6 +308,11 @@ public final class VatRecipe {
         this.slots = List.copyOf(slots);
         this.seconds = seconds;
         this.verb = verb == null ? defaultVerb(kind) : verb.copy();
+        this.progressKey = progressKey;
+        this.doneKey = doneKey;
+        this.timeKey = timeKey;
+        this.hintKey = hintKey;
+        this.hintSecondsKey = hintSecondsKey;
         this.secondsPerLayer = secondsPerLayer;
         this.requiresSnowyBiome = requiresSnowyBiome;
         this.requiredSealItem = requiredSealItem;
@@ -304,7 +349,8 @@ public final class VatRecipe {
 
     public VatRecipe withId(String id) {
         return new VatRecipe(id, this.kind, this.priority, this.seal, this.liquid, this.slots,
-                this.seconds, this.verb, this.secondsPerLayer, this.requiresSnowyBiome,
+                this.seconds, this.verb, this.progressKey, this.doneKey, this.timeKey,
+                this.hintKey, this.hintSecondsKey, this.secondsPerLayer, this.requiresSnowyBiome,
                 this.requiredSealItem, this.biomeSecondsMultiplier);
     }
 
@@ -334,6 +380,32 @@ public final class VatRecipe {
 
     public Component verb() {
         return this.verb.copy();
+    }
+
+    /** Jade 进度条：进行中。默认「%s中 %s%%」，第一个占位符是工序动词，第二个是百分比 */
+    public String progressKey() {
+        return this.progressKey == null ? "jade.northeast_china_delight.vat.progress.custom" : this.progressKey;
+    }
+
+    /** Jade 进度条：完成。默认「%s完成」 */
+    public String doneKey() {
+        return this.doneKey == null ? "jade.northeast_china_delight.vat.done.custom" : this.doneKey;
+    }
+
+    /** JEI 页面上的时长。默认「%s %s」，第一个占位符是工序动词，第二个是时长 */
+    public String timeKey() {
+        return this.timeKey == null ? "jei.northeast_china_delight.vat.process_time" : this.timeKey;
+    }
+
+    /** 游戏内动作条：剩余超过一分钟。默认「%s进度 %s%%，还剩 %s 分 %s 秒」 */
+    public String hintKey() {
+        return this.hintKey == null ? "message.northeast_china_delight.vat.progress.hint" : this.hintKey;
+    }
+
+    /** 游戏内动作条：剩余不到一分钟。默认「%s进度 %s%%，还剩 %s 秒」 */
+    public String hintSecondsKey() {
+        return this.hintSecondsKey == null
+                ? "message.northeast_china_delight.vat.progress.hint_seconds" : this.hintSecondsKey;
     }
 
     private static Component defaultVerb(VatRecipes.Kind kind) {
@@ -406,8 +478,9 @@ public final class VatRecipe {
                 : this.liquid.productMb;
     }
 
+    /** 完成后缸里产出的液体；没有液体产物的配方（咸腊肉、豆芽这类）返回 null */
     @Nullable
-    public Fluid productFluid() {
+    public net.minecraft.world.level.material.Fluid productFluid() {
         return this.liquid.product();
     }
 
@@ -553,6 +626,16 @@ public final class VatRecipe {
         private final List<Slot> slots = new ArrayList<>();
         private int seconds = 2;
         private Component verb;
+        @Nullable
+        private String progressKey;
+        @Nullable
+        private String doneKey;
+        @Nullable
+        private String timeKey;
+        @Nullable
+        private String hintKey;
+        @Nullable
+        private String hintSecondsKey;
         private boolean secondsPerLayer;
         private boolean requiresSnowyBiome;
         private java.util.function.Predicate<ItemStack> requiredSealItem;
@@ -579,19 +662,29 @@ public final class VatRecipe {
         }
 
         public Builder water(int min, int max, LiquidAfter waterAfter) {
-            this.liquid = new Liquid(min, max, 0, null, 0, false, waterAfter, LiquidAfter.KEEP);
+            this.liquid = new Liquid(min, max, 0, null, 0, false, waterAfter, LiquidAfter.KEEP, null, null);
             return this;
         }
 
         public Builder sourWater(int mb, LiquidAfter sourAfter) {
-            this.liquid = new Liquid(0, 0, mb, null, 0, false, LiquidAfter.KEEP, sourAfter);
+            this.liquid = new Liquid(0, 0, mb, null, 0, false, LiquidAfter.KEEP, sourAfter, null, null);
             return this;
         }
 
-        public Builder product(Fluid fluid, int mb, boolean perLayer) {
+        public Builder product(net.minecraft.world.level.material.Fluid fluid, int mb, boolean perLayer) {
             Liquid old = this.liquid;
             this.liquid = new Liquid(old.waterMin(), old.waterMax(), old.sourWaterMb(),
-                    fluid, mb, perLayer, old.waterAfter(), old.sourWaterAfter());
+                    fluid, mb, perLayer, old.waterAfter(), old.sourWaterAfter(),
+                    old.servingContainer(), old.servingItem());
+            return this;
+        }
+
+        /** 用什么容器取这份液体，取出来变成什么物品。两个都给才算数 */
+        public Builder serving(net.minecraft.world.item.Item container, net.minecraft.world.item.Item item) {
+            Liquid old = this.liquid;
+            this.liquid = new Liquid(old.waterMin(), old.waterMax(), old.sourWaterMb(),
+                    old.product(), old.productMb(), old.productPerLayer(),
+                    old.waterAfter(), old.sourWaterAfter(), container, item);
             return this;
         }
 
@@ -599,7 +692,8 @@ public final class VatRecipe {
             Liquid old = this.liquid;
             this.liquid = new Liquid(old.waterMin(), old.waterMax(), old.sourWaterMb(),
                     old.product(), old.productMb(), old.productPerLayer(),
-                    LiquidAfter.CLEAR, old.sourWaterAfter());
+                    LiquidAfter.CLEAR, old.sourWaterAfter(),
+                    old.servingContainer(), old.servingItem());
             return this;
         }
 
@@ -607,15 +701,18 @@ public final class VatRecipe {
             Liquid old = this.liquid;
             this.liquid = new Liquid(old.waterMin(), old.waterMax(), old.sourWaterMb(),
                     old.product(), old.productMb(), old.productPerLayer(),
-                    old.waterAfter(), LiquidAfter.CLEAR);
+                    old.waterAfter(), LiquidAfter.CLEAR,
+                    old.servingContainer(), old.servingItem());
             return this;
         }
 
         public Builder waterBecomesSourWater() {
             Liquid old = this.liquid;
             this.liquid = new Liquid(old.waterMin(), old.waterMax(), old.sourWaterMb(),
-                    Fluid.SOUR_WATER, VatRecipes.WATER_MB_PER_LEVEL, true,
-                    LiquidAfter.CLEAR, LiquidAfter.KEEP);
+                    com.gunmu.northeast_china_delight.fluid.ModFluids.sourWaterSource(),
+                    VatRecipes.WATER_MB_PER_LEVEL, true,
+                    LiquidAfter.CLEAR, LiquidAfter.KEEP,
+                    old.servingContainer(), old.servingItem());
             return this;
         }
 
@@ -626,6 +723,27 @@ public final class VatRecipe {
 
         public Builder verb(Component verb) {
             this.verb = verb.copy();
+            return this;
+        }
+
+        public Builder progressText(String key) {
+            this.progressKey = key;
+            return this;
+        }
+
+        public Builder doneText(String key) {
+            this.doneKey = key;
+            return this;
+        }
+
+        public Builder timeText(String key) {
+            this.timeKey = key;
+            return this;
+        }
+
+        public Builder hintText(String key, String secondsKey) {
+            this.hintKey = key;
+            this.hintSecondsKey = secondsKey;
             return this;
         }
 
@@ -659,7 +777,8 @@ public final class VatRecipe {
 
         public VatRecipe build() {
             return new VatRecipe(this.id, this.kind, this.priority, this.seal, this.liquid,
-                    this.slots, this.seconds, this.verb, this.secondsPerLayer, this.requiresSnowyBiome,
+                    this.slots, this.seconds, this.verb, this.progressKey, this.doneKey, this.timeKey,
+                    this.hintKey, this.hintSecondsKey, this.secondsPerLayer, this.requiresSnowyBiome,
                     this.requiredSealItem, this.biomeSecondsMultiplier);
         }
     }

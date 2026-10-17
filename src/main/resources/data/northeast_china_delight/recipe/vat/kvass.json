@@ -12,7 +12,7 @@
       "water_min": 3,
       "water_max": 3,
       "water_after": "CLEAR",
-      "product": "KVASS",
+      "product": "northeast_china_delight:kvass",
       "product_mb": 1500
     },
     "slots": [

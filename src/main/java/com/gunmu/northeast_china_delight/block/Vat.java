@@ -29,6 +29,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.context.BlockPlaceContext;
+import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.EntityBlock;
@@ -39,6 +40,10 @@ import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
 import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.shapes.BooleanOp;
+import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.phys.shapes.Shapes;
+import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -73,6 +78,31 @@ public class Vat extends Block implements EntityBlock {
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
         super.createBlockStateDefinition(builder);
         builder.add(WATER_LEVEL, FERMENTED, SALTED, PROGRESS);
+    }
+
+    @Override
+    public boolean hasAnalogOutputSignal(BlockState state) {
+        return true;
+    }
+
+    @Override
+    public int getAnalogOutputSignal(BlockState state, Level level, BlockPos pos) {
+        return level.getBlockEntity(pos) instanceof VatBlockEntity vat ? vat.comparatorOutput() : 0;
+    }
+
+    /** 和堆肥桶空缸一致：底厚 2 像素，四壁厚 2 像素，缸口挖到顶。 */
+    private static final VoxelShape OPEN_SHAPE = Shapes.join(
+            Shapes.block(),
+            Block.box(2.0, 2.0, 2.0, 14.0, 16.0, 14.0),
+            BooleanOp.ONLY_FIRST);
+
+    private static boolean productionStarted(BlockState state) {
+        return state.getValue(FERMENTED) || state.getValue(PROGRESS) > 0;
+    }
+
+    @Override
+    public VoxelShape getCollisionShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
+        return productionStarted(state) ? Shapes.block() : OPEN_SHAPE;
     }
 
     @Override
@@ -448,11 +478,11 @@ public class Vat extends Block implements EntityBlock {
         long seconds = remainTicks / 20L;
         if (seconds >= 60) {
             player.displayClientMessage(Component.translatable(
-                    "message.northeast_china_delight.vat.progress.hint",
+                    recipe.hintKey(),
                     recipe.verb(), percent, seconds / 60, seconds % 60), true);
         } else {
             player.displayClientMessage(Component.translatable(
-                    "message.northeast_china_delight.vat.progress.hint_seconds",
+                    recipe.hintSecondsKey(),
                     recipe.verb(), percent, seconds), true);
         }
     }
@@ -561,7 +591,8 @@ public class Vat extends Block implements EntityBlock {
         if (progress >= MAX_PROGRESS) {
             VatBrewing.complete(level, pos, vat, recipe);
         } else {
-            level.setBlock(pos, state.setValue(PROGRESS, progress), Block.UPDATE_CLIENTS);
+            level.setBlock(pos, state.setValue(PROGRESS, progress),
+                    Block.UPDATE_CLIENTS | Block.UPDATE_NEIGHBORS);
             level.scheduleTick(pos, this, VatBrewing.stepTicks(recipe, vat));
         }
     }
@@ -634,8 +665,7 @@ public class Vat extends Block implements EntityBlock {
     }
 
     private static void showContainerHint(Player player, VatBlockEntity vat) {
-        VatRecipe.Fluid product = VatRecipes.productOf(vat);
-        VatRecipes.Serving serving = product == null ? null : VatRecipes.servingOf(product);
+        VatRecipes.Serving serving = VatRecipes.servingOf(vat);
         if (serving != null) {
             player.displayClientMessage(Component.translatable(
                     "message.northeast_china_delight.vat.take_with_container",

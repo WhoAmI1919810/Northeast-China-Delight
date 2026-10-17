@@ -1,0 +1,40 @@
+{
+  "parent": "northeast_china_delight:northeast_yard",
+  "display": {
+    "icon": {
+      "id": "northeast_china_delight:corn_skewer"
+    },
+    "title": {
+      "translate": "advancements.northeast_china_delight.visit_all_yards.title"
+    },
+    "description": {
+      "translate": "advancements.northeast_china_delight.visit_all_yards.description"
+    },
+    "frame": "challenge",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "garden": {
+      "trigger": "minecraft:impossible"
+    },
+    "compound": {
+      "trigger": "minecraft:impossible"
+    },
+    "livestock": {
+      "trigger": "minecraft:impossible"
+    }
+  },
+  "requirements": [
+    [
+      "garden"
+    ],
+    [
+      "compound"
+    ],
+    [
+      "livestock"
+    ]
+  ]
+}

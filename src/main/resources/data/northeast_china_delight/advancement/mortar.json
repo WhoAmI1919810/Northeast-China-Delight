@@ -1,0 +1,37 @@
+{
+  "parent": "northeast_china_delight:root",
+  "display": {
+    "icon": {
+      "id": "northeast_china_delight:wooden_mortar"
+    },
+    "title": {
+      "translate": "advancements.northeast_china_delight.mortar.title"
+    },
+    "description": {
+      "translate": "advancements.northeast_china_delight.mortar.description"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "placed": {
+      "trigger": "minecraft:placed_block",
+      "conditions": {
+        "location": [
+          {
+            "condition": "minecraft:location_check",
+            "predicate": {
+              "block": {
+                "blocks": [
+                  "northeast_china_delight:wooden_mortar"
+                ]
+              }
+            }
+          }
+        ]
+      }
+    }
+  }
+}

@@ -1,0 +1,131 @@
+{
+  "credit": "木槌：parent 写 builtin/entity 表示走自定义渲染器（WoodenMalletItemRenderer）——物品栏画 2D 贴图，手/地面/展示框画 3D 模型；display 照拄 Blockbench 导出的那份",
+  "parent": "builtin/entity",
+  "gui_light": "front",
+  "textures": {
+    "particle": "northeast_china_delight:item/wooden_mallet"
+  },
+  "display": {
+    "thirdperson_righthand": {
+      "rotation": [
+        -84.95,
+        -87.58,
+        -84.54
+      ],
+      "translation": [
+        -0.25,
+        5,
+        2
+      ]
+    },
+    "thirdperson_lefthand": {
+      "rotation": [
+        -84.95,
+        -87.58,
+        -84.54
+      ],
+      "translation": [
+        -0.25,
+        5,
+        1.25
+      ]
+    },
+    "firstperson_righthand": {
+      "rotation": [
+        26.31,
+        -84.28,
+        33.49
+      ],
+      "translation": [
+        -0.75,
+        2,
+        0
+      ],
+      "scale": [
+        1.2,
+        1.2,
+        1.2
+      ]
+    },
+    "firstperson_lefthand": {
+      "rotation": [
+        26.31,
+        -84.28,
+        33.49
+      ],
+      "translation": [
+        -0.75,
+        2,
+        0
+      ],
+      "scale": [
+        1.2,
+        1.2,
+        1.2
+      ]
+    },
+    "ground": {
+      "translation": [
+        0,
+        6,
+        1.25
+      ],
+      "scale": [
+        1.2,
+        1.2,
+        1.2
+      ]
+    },
+    "gui": {
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "translation": [
+        0,
+        0,
+        0
+      ],
+      "scale": [
+        1,
+        1,
+        1
+      ]
+    },
+    "head": {
+      "rotation": [
+        -153.83,
+        -87.94,
+        -15.33
+      ],
+      "translation": [
+        -0.75,
+        18.5,
+        4.25
+      ],
+      "scale": [
+        1.5,
+        1.5,
+        1.5
+      ]
+    },
+    "fixed": {
+      "rotation": [
+        0,
+        0,
+        -44.75
+      ],
+      "translation": [
+        -1.75,
+        -2.25,
+        0
+      ],
+      "scale": [
+        1.2,
+        1.2,
+        1.2
+      ]
+    }
+  }
+}

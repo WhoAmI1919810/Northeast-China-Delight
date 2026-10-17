@@ -143,6 +143,13 @@ ext.legacyTransformNode = { Object node, Map env ->
                         'items': items instanceof List ? items : [items],
                         'nbt': '{"northeast_china_delight:sea_water":1b}']
             }
+            // minecraft:damage 组件 → NBT 的 Damage 标签（int）。emptying 配方用它卡"满瓶"（damage:0）。
+            if (components instanceof Map && components.containsKey('minecraft:damage')) {
+                def dmg = components.get('minecraft:damage')
+                return ['type': 'forge:partial_nbt',
+                        'items': items instanceof List ? items : [items],
+                        'nbt': "{\"Damage\":${dmg}}"]
+            }
             return ['item': one]
         }
         def out = new LinkedHashMap()

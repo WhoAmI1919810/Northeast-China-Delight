@@ -1,0 +1,17 @@
+{
+  "type": "northeast_china_delight:pounding",
+  "config": {
+    "input": { "item": "farmersdelight:cooked_rice" },
+    "return_container": { "item": "minecraft:bowl" },
+    "tool": { "item": "northeast_china_delight:wooden_mallet" },
+    "pound_times": 4,
+    "stage_models": [
+      "northeast_china_delight:block/wooden_mortar_1",
+      "northeast_china_delight:block/wooden_mortar_2",
+      "northeast_china_delight:block/wooden_mortar_3",
+      "northeast_china_delight:block/wooden_mortar_4"
+    ],
+    "result": { "item": "northeast_china_delight:pounded_rice_cake", "count": 2 },
+    "transition": "sequential"
+  }
+}

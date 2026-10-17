@@ -41,18 +41,70 @@ public final class VatJeiRecipes {
         return expand(recipe);
     }
 
+    /**
+     * 一页对应配方的一个水位档。
+     * <p>
+     * 泡菜是例外：一条配方覆盖几种蔬菜，为了能在缸里混着放，实际判定仍是同一个配方 id；
+     * 但 JEI 用配方 id 当页面的唯一键，同一 id 的多页会被并成一页，所以这里按「放进去的蔬菜 → 拿出来的泡菜」
+     * 拆成多页，每页用产物的注册名当后缀区分。拆页只是给人看的，不改变游戏里怎么酵。
+     */
     private static List<VatJeiRecipe> expand(VatRecipe recipe) {
         List<VatRecipe.Slot> slots = recipe.slots();
         List<List<ItemStack>> candidates = new ArrayList<>(slots.size());
         for (VatRecipe.Slot slot : slots) {
             candidates.add(candidatesOf(slot));
         }
+        int splitting = splittingSlot(slots, candidates);
+        if (splitting < 0) {
+            return List.of(page(recipe, candidates, null, null));
+        }
+        List<VatJeiRecipe> pages = new ArrayList<>();
+        for (ItemStack sample : candidates.get(splitting)) {
+            ItemStack produced = productOf(slots.get(splitting), sample, 1);
+            if (produced.isEmpty()) {
+                continue;
+            }
+            ResourceLocation productId = BuiltInRegistries.ITEM.getKey(produced.getItem());
+            pages.add(page(recipe, candidates, sample.getItem(), productId.getPath()));
+        }
+        return pages.isEmpty() ? List.of(page(recipe, candidates, null, null)) : List.copyOf(pages);
+    }
+
+    /**
+     * 找出「一格放进去的东西会按种类变出不同产物」的那一格。泡菜是这样（白菜→酸菜、黄瓜→腌黄瓜），
+     * 而咸腊肉那种几种生肉都变成同一块咸腊肉的不算，仍旧合在一页里滚动展示。
+     */
+    private static int splittingSlot(List<VatRecipe.Slot> slots, List<List<ItemStack>> candidates) {
+        for (int i = 0; i < slots.size(); i++) {
+            if (distinctProducts(slots.get(i), candidates.get(i)).size() > 1) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    private static List<Item> distinctProducts(VatRecipe.Slot slot, List<ItemStack> samples) {
+        List<Item> products = new ArrayList<>();
+        for (ItemStack sample : samples) {
+            ItemStack produced = productOf(slot, sample, 1);
+            if (!produced.isEmpty() && !products.contains(produced.getItem())) {
+                products.add(produced.getItem());
+            }
+        }
+        return products;
+    }
+
+    private static VatJeiRecipe page(VatRecipe recipe, List<List<ItemStack>> candidates,
+                                     @Nullable Item only, @Nullable String suffix) {
         List<VatJeiRecipe.State> states = new ArrayList<>();
         for (int level : levelsOf(recipe)) {
-            states.add(stateOf(recipe, candidates, level));
+            states.add(stateOf(recipe, candidates, level, only));
         }
-        return List.of(new VatJeiRecipe(com.gunmu.northeast_china_delight.util.DdIds.parse(recipe.id()),
-                List.copyOf(states)));
+        ResourceLocation id = com.gunmu.northeast_china_delight.util.DdIds.parse(recipe.id());
+        if (suffix != null) {
+            id = com.gunmu.northeast_china_delight.util.DdIds.of(id.getNamespace(), id.getPath() + "/" + suffix);
+        }
+        return new VatJeiRecipe(id, List.copyOf(states));
     }
 
     private static int[] levelsOf(VatRecipe recipe) {
@@ -69,7 +121,7 @@ public final class VatJeiRecipes {
     }
 
     private static VatJeiRecipe.State stateOf(VatRecipe recipe, List<List<ItemStack>> candidates,
-                                             int level) {
+                                             int level, @Nullable Item only) {
         int[] counts = resolveCounts(recipe, candidates, level);
         List<List<ItemStack>> seasoning = new ArrayList<>();
         List<List<ItemStack>> primary = new ArrayList<>();
@@ -77,7 +129,8 @@ public final class VatJeiRecipes {
 
         for (int i = 0; i < recipe.slots().size(); i++) {
             VatRecipe.Slot slot = recipe.slots().get(i);
-            List<ItemStack> items = candidates.get(i);
+            List<ItemStack> items = only == null ? candidates.get(i)
+                    : candidates.get(i).stream().filter(stack -> stack.is(only)).toList();
             if (items.isEmpty()) {
                 continue;
             }
@@ -94,11 +147,10 @@ public final class VatJeiRecipes {
         }
 
         VatRecipe.Liquid liquid = recipe.liquid();
-        VatRecipe.Fluid baseKind = liquid.waterMin() > 0 ? VatRecipe.Fluid.WATER
-                : liquid.sourWaterMb() > 0 ? VatRecipe.Fluid.SOUR_WATER : null;
-        Fluid base = fluidOf(baseKind);
-        long baseMb = baseKind == VatRecipe.Fluid.WATER ? level * ONE_LAYER : liquid.sourWaterMb();
-        Fluid product = fluidOf(liquid.product());
+        Fluid base = liquid.waterMin() > 0 ? Fluids.WATER
+                : liquid.sourWaterMb() > 0 ? ModFluids.SOUR_WATER.get() : null;
+        long baseMb = liquid.waterMin() > 0 ? level * ONE_LAYER : liquid.sourWaterMb();
+        Fluid product = liquid.product();
         long productMb = product == null ? 0 : recipe.productMbFor(level);
         List<ItemStack> results = mergeAll(products);
 
@@ -107,29 +159,16 @@ public final class VatJeiRecipes {
                 List.copyOf(seasoning), List.copyOf(primary), sealOf(recipe),
                 results, product, productMb,
                 Math.max(productMb, VatRecipes.PRODUCT_CAPACITY_MB),
-                recipe.secondsFor(level), recipe.verb(), collectionContainersOf(liquid.product()), noteOf(recipe));
+                recipe.secondsFor(level), recipe.verb(), recipe.timeKey(),
+                collectionContainersOf(recipe), noteOf(recipe));
     }
 
-    @Nullable
-    private static Fluid fluidOf(@Nullable VatRecipe.Fluid fluid) {
-        if (fluid == null) {
-            return null;
+    private static List<ItemStack> collectionContainersOf(VatRecipe recipe) {
+        net.minecraft.world.item.Item container = recipe.liquid().servingContainer();
+        if (container != null && recipe.liquid().servingItem() != null) {
+            return List.of(new ItemStack(container));
         }
-        return switch (fluid) {
-            case WATER -> Fluids.WATER;
-            case SOUR_WATER -> ModFluids.SOUR_WATER.get();
-            case PASTE -> ModFluids.SOY_PASTE.get();
-            case SOY_SAUCE -> ModFluids.SOY_SAUCE.get();
-            case VINEGAR -> ModFluids.VINEGAR.get();
-            case WHITE_VINEGAR -> ModFluids.WHITE_VINEGAR.get();
-            case FISH_SAUCE -> ModFluids.FISH_SAUCE.get();
-            case SHRIMP_PASTE -> ModFluids.SHRIMP_PASTE.get();
-            case KVASS -> ModFluids.KVASS.get();
-        };
-    }
-
-    private static List<ItemStack> collectionContainersOf(@Nullable VatRecipe.Fluid product) {
-        VatRecipes.Serving serving = product == null ? null : VatRecipes.servingOf(product);
+        VatRecipes.Serving serving = VatRecipes.servingOf(recipe.productFluid());
         return serving == null ? List.of() : List.of(new ItemStack(serving.container()));
     }
 

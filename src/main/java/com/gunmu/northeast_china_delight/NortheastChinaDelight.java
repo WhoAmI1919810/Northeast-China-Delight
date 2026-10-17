@@ -7,11 +7,13 @@ import com.gunmu.northeast_china_delight.block.Vat;
 import com.gunmu.northeast_china_delight.block.VatBlockEntity;
 import com.gunmu.northeast_china_delight.client.GrillCampfireRenderer;
 import com.gunmu.northeast_china_delight.client.VatRenderer;
+import com.gunmu.northeast_china_delight.client.WoodenMortarRenderer;
 import com.gunmu.northeast_china_delight.compat.create.ModFanProcessingTypes;
 import com.gunmu.northeast_china_delight.compat.jei.VatJeiSync;
 import com.gunmu.northeast_china_delight.crafting.ModVatRecipes;
 import com.gunmu.northeast_china_delight.crafting.ModGrillRecipes;
 import com.gunmu.northeast_china_delight.crafting.ModDryingRecipes;
+import com.gunmu.northeast_china_delight.crafting.ModPoundRecipes;
 import com.gunmu.northeast_china_delight.effect.DishEffectEvents;
 import com.gunmu.northeast_china_delight.effect.ModEffects;
 import com.gunmu.northeast_china_delight.event.ModGameplayEvents;
@@ -129,6 +131,7 @@ import net.minecraftforge.client.extensions.common.IClientFluidTypeExtensions;
 //? if >=1.20.5 {
 /*import com.gunmu.northeast_china_delight.client.DdFeastItemRenderer;
 import com.gunmu.northeast_china_delight.client.LargeBasinItemRenderer;
+import com.gunmu.northeast_china_delight.client.WoodenMalletItemRenderer;
 import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.neoforged.neoforge.client.extensions.common.RegisterClientExtensionsEvent;
 *///?}
@@ -163,6 +166,7 @@ public class NortheastChinaDelight
         ModVatRecipes.register(modEventBus);
         ModGrillRecipes.register(modEventBus);
         ModDryingRecipes.register(modEventBus);
+        ModPoundRecipes.register(modEventBus);
         ModCreativeTabs.register(modEventBus);
         ModLootModifiers.register(modEventBus);
         ModEffects.register(modEventBus);
@@ -380,6 +384,7 @@ public class NortheastChinaDelight
         {
             event.registerBlockEntityRenderer(ModBlockEntities.VAT.get(), VatRenderer::new);
             event.registerBlockEntityRenderer(ModBlockEntities.GRILL_CAMPFIRE.get(), GrillCampfireRenderer::new);
+            event.registerBlockEntityRenderer(ModBlockEntities.WOODEN_MORTAR.get(), WoodenMortarRenderer::new);
         }
 
         /**
@@ -391,6 +396,8 @@ public class NortheastChinaDelight
         public static void onRegisterAdditionalModels(ModelEvent.RegisterAdditional event)
         {
             registerItemIcon(event, "large_basin_icon");
+            registerItemIcon(event, "wooden_mallet_icon");
+            registerItemIcon(event, "wooden_mallet_model");
             registerItemIcon(event, "sauerkraut_bone_stew_icon");
             registerItemIcon(event, "ground_pot_chicken_icon");
             registerItemIcon(event, "ground_pot_ribs_icon");
@@ -399,6 +406,29 @@ public class NortheastChinaDelight
             registerItemIcon(event, "harvest_stew_icon");
             registerItemIcon(event, "sauerkraut_seafood_stew_icon");
             registerItemIcon(event, "chicken_mushroom_stew_icon");
+            registerAllBlockModels(event);
+        }
+
+        /**
+         * 舂捣的 {@code stage_models} 可以引用任意数据包方块模型，这些模型不一定出现在任何
+         * blockstate 里。这里把资源包内所有 {@code models/block/*.json} 登记为可单独烘焙的模型，
+         * 之后 BER 和 JEI 才能按 id 取到它们。
+         */
+        private static void registerAllBlockModels(ModelEvent.RegisterAdditional event)
+        {
+            var resources = Minecraft.getInstance().getResourceManager()
+                    .listResources("models/block", path -> path.getPath().endsWith(".json"));
+            for (ResourceLocation location : resources.keySet())
+            {
+                String path = location.getPath();
+                String modelPath = path.substring("models/".length(), path.length() - ".json".length());
+                ResourceLocation modelId = DdIds.of(location.getNamespace(), modelPath);
+                //? if <1.20.2 {
+                event.register(modelId);
+                //?} else {
+                /*event.register(ModelResourceLocation.standalone(modelId));
+                *///?}
+            }
         }
 
         private static void registerItemIcon(ModelEvent.RegisterAdditional event, String iconPath)
@@ -423,6 +453,9 @@ public class NortheastChinaDelight
         {
             // 大脸盆：物品栏画贴图、手/地面/头上画方块，分流在 LargeBasinItemRenderer 里
             event.registerItem(LargeBasinItemRenderer.CLIENT_EXTENSION, ModItems.LARGE_BASIN.get());
+
+            // 木槌：物品栏画贴图、手/地面/展示框画 3D 模型，分流在 WoodenMalletItemRenderer 里
+            event.registerItem(WoodenMalletItemRenderer.CLIENT_EXTENSION, ModItems.WOODEN_MALLET.get());
 
             // 8 道大盆菜：物品栏画贴图、手/地面画方块，分流在 DdFeastItemRenderer 里
             event.registerItem(DdFeastItemRenderer.CLIENT_EXTENSION,

@@ -1,0 +1,23 @@
+{
+  "parent": "northeast_china_delight:pound",
+  "display": {
+    "icon": {
+      "id": "northeast_china_delight:wooden_mallet"
+    },
+    "title": {
+      "translate": "advancements.northeast_china_delight.stare.title"
+    },
+    "description": {
+      "translate": "advancements.northeast_china_delight.stare.description"
+    },
+    "frame": "goal",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": true
+  },
+  "criteria": {
+    "stare": {
+      "trigger": "minecraft:impossible"
+    }
+  }
+}

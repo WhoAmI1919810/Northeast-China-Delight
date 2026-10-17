@@ -30,6 +30,7 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Fluid;
+import net.minecraft.world.level.material.Fluids;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.resources.ResourceLocation;
@@ -101,8 +102,10 @@ public class VatBlockEntity extends BlockEntity implements IFluidHandler {
     private VatRecipes.Kind kind = VatRecipes.Kind.NONE;
     @Nullable
     private String recipeId;
+    /** 缸里的成品液体。清水和酸引水不在这里，它们决定水位 */
     @Nullable
-    private com.gunmu.northeast_china_delight.crafting.VatRecipe.Fluid brewedProduct;
+    private Fluid brewedFluid;
+    private int brewedMb;
 
     public VatBlockEntity(BlockPos pos, BlockState state) {
         super(ModBlockEntities.VAT.get(), pos, state);
@@ -118,8 +121,12 @@ public class VatBlockEntity extends BlockEntity implements IFluidHandler {
     }
 
     @Nullable
-    public com.gunmu.northeast_china_delight.crafting.VatRecipe.Fluid brewedProduct() {
-        return this.brewedProduct;
+    public Fluid brewedFluid() {
+        return this.brewedFluid;
+    }
+
+    public int brewedMb() {
+        return this.brewedMb;
     }
 
     public boolean isFermented() {
@@ -132,7 +139,7 @@ public class VatBlockEntity extends BlockEntity implements IFluidHandler {
 
     public boolean isEmpty() {
         // 只用盐不算「有东西」：盐已经被吸收了，不该挡住加水或继续操作
-        return this.kind == VatRecipes.Kind.NONE && this.pasteMb <= 0 && this.soySauceMb <= 0 && this.vinegarMb <= 0
+        return this.kind == VatRecipes.Kind.NONE && this.brewedMb <= 0 && this.pasteMb <= 0 && this.soySauceMb <= 0 && this.vinegarMb <= 0
                 && this.sourWaterMb <= 0 && this.whiteVinegarMb <= 0
                 && this.fishSauceMb <= 0 && this.shrimpPasteMb <= 0 && this.kvassMb <= 0
                 && this.count(stack -> !stack.is(ModTags.FOODS_SALT)) == 0;
@@ -171,7 +178,7 @@ public class VatBlockEntity extends BlockEntity implements IFluidHandler {
     }
 
     public boolean hasProductLiquid() {
-        return this.pasteMb > 0 || this.soySauceMb > 0 || this.vinegarMb > 0
+        return this.brewedMb > 0 || this.pasteMb > 0 || this.soySauceMb > 0 || this.vinegarMb > 0
                 || this.sourWaterMb > 0 || this.whiteVinegarMb > 0
                 || this.fishSauceMb > 0 || this.shrimpPasteMb > 0 || this.kvassMb > 0;
     }
@@ -325,14 +332,16 @@ public class VatBlockEntity extends BlockEntity implements IFluidHandler {
     public void setKind(VatRecipes.Kind kind) {
         this.kind = kind;
         this.recipeId = null;
-        this.brewedProduct = null;
+        this.brewedFluid = null;
+        this.brewedMb = 0;
         this.sync();
     }
 
     public void setRecipe(com.gunmu.northeast_china_delight.crafting.VatRecipe recipe) {
         this.kind = recipe.kind();
         this.recipeId = recipe.id();
-        this.brewedProduct = recipe.liquid().product();
+        this.brewedFluid = recipe.productFluid();
+        this.brewedMb = 0;
         this.sync();
     }
 
@@ -431,45 +440,60 @@ public class VatBlockEntity extends BlockEntity implements IFluidHandler {
         }
     }
 
-    public void addProduct(com.gunmu.northeast_china_delight.crafting.VatRecipe.Fluid fluid, int mb) {
-        if (mb <= 0) {
+    /**
+     * 往缸里加成品液体。酸引水不进成品槽：它决定水位，记在 {@link #sourWaterMb}。
+     * 缸里已经有另一种成品液体时不加（一缸只出一种液体）。
+     */
+    public void addProduct(Fluid fluid, int mb) {
+        if (mb <= 0 || fluid == null) {
             return;
         }
-        this.setProductMb(fluid, this.productMb(fluid) + mb);
+        if (fluid.isSame(ModFluids.sourWaterSource())) {
+            this.sourWaterMb += mb;
+            this.refreshLiquidLevel();
+            this.sync();
+            return;
+        }
+        if (this.brewedFluid != null && !this.brewedFluid.isSame(fluid)) {
+            return;
+        }
+        this.brewedFluid = fluid;
+        this.brewedMb += mb;
+        this.sync();
     }
 
-    public int productMb(com.gunmu.northeast_china_delight.crafting.VatRecipe.Fluid fluid) {
-        return switch (fluid) {
-            case WATER -> this.waterMb;
-            case SOUR_WATER -> this.sourWaterMb;
-            case PASTE -> this.pasteMb;
-            case SOY_SAUCE -> this.soySauceMb;
-            case VINEGAR -> this.vinegarMb;
-            case WHITE_VINEGAR -> this.whiteVinegarMb;
-            case FISH_SAUCE -> this.fishSauceMb;
-            case SHRIMP_PASTE -> this.shrimpPasteMb;
-            case KVASS -> this.kvassMb;
-        };
+    public int productMb(Fluid fluid) {
+        if (fluid == null) {
+            return 0;
+        }
+        if (fluid.isSame(Fluids.WATER)) {
+            return this.waterMb;
+        }
+        if (fluid.isSame(ModFluids.sourWaterSource())) {
+            return this.sourWaterMb;
+        }
+        return this.brewedFluid != null && this.brewedFluid.isSame(fluid) ? this.brewedMb : 0;
     }
 
-    public void setProductMb(com.gunmu.northeast_china_delight.crafting.VatRecipe.Fluid fluid, int mb) {
+    public void setProductMb(Fluid fluid, int mb) {
+        if (fluid == null) {
+            return;
+        }
         int amount = Math.max(0, mb);
-        switch (fluid) {
-            case WATER -> {
-                this.waterMb = amount;
-                this.refreshLiquidLevel();
+        if (fluid.isSame(Fluids.WATER)) {
+            this.waterMb = amount;
+            this.refreshLiquidLevel();
+        } else if (fluid.isSame(ModFluids.sourWaterSource())) {
+            this.sourWaterMb = amount;
+            this.refreshLiquidLevel();
+        } else if (amount == 0) {
+            if (this.brewedFluid != null && this.brewedFluid.isSame(fluid)) {
+                this.brewedFluid = null;
+                this.brewedMb = 0;
             }
-            case SOUR_WATER -> {
-                this.sourWaterMb = amount;
-                this.refreshLiquidLevel();
-            }
-            case PASTE -> this.pasteMb = amount;
-            case SOY_SAUCE -> this.soySauceMb = amount;
-            case VINEGAR -> this.vinegarMb = amount;
-            case WHITE_VINEGAR -> this.whiteVinegarMb = amount;
-            case FISH_SAUCE -> this.fishSauceMb = amount;
-            case SHRIMP_PASTE -> this.shrimpPasteMb = amount;
-            case KVASS -> this.kvassMb = amount;
+        } else {
+            this.brewedFluid = fluid;
+            this.brewedMb = amount;
         }
         this.sync();
     }
@@ -478,7 +502,7 @@ public class VatBlockEntity extends BlockEntity implements IFluidHandler {
      * 用容器取走一份（{@link VatRecipes#SERVING_MB} mB）成品液体。
      * 返回是否取到了（不够一份时把剩下的都取走，和以前一样）。
      */
-    public boolean takeOneServing(com.gunmu.northeast_china_delight.crafting.VatRecipe.Fluid fluid) {
+    public boolean takeOneServing(Fluid fluid) {
         int have = this.productMb(fluid);
         if (have <= 0) {
             return false;
@@ -488,7 +512,7 @@ public class VatBlockEntity extends BlockEntity implements IFluidHandler {
     }
 
     public int drainProduct(int want) {
-        com.gunmu.northeast_china_delight.crafting.VatRecipe.Fluid fluid = VatRecipes.productOf(this);
+        Fluid fluid = VatRecipes.productOf(this);
         if (want <= 0 || fluid == null) {
             return 0;
         }
@@ -539,7 +563,8 @@ public class VatBlockEntity extends BlockEntity implements IFluidHandler {
         }
         this.kind = VatRecipes.Kind.NONE;
         this.recipeId = null;
-        this.brewedProduct = null;
+        this.brewedFluid = null;
+        this.brewedMb = 0;
         this.pasteMb = 0;
         this.soySauceMb = 0;
         this.vinegarMb = 0;
@@ -557,64 +582,34 @@ public class VatBlockEntity extends BlockEntity implements IFluidHandler {
         if (this.level instanceof net.minecraft.server.level.ServerLevel server) {
             server.getChunkSource().blockChanged(this.worldPosition);
             server.sendBlockUpdated(this.worldPosition, this.getBlockState(), this.getBlockState(), Block.UPDATE_CLIENTS);
+            server.updateNeighbourForOutputSignal(this.worldPosition, this.getBlockState().getBlock());
         }
     }
 
+    /** 缸里现在能被抽走 / 装瓶的成品液体。没发酵完、盖着盖子、或者没有液体时返回 null */
     private Fluid productFluid() {
         if (!this.getBlockState().getValue(Vat.FERMENTED) || this.isCovered()) {
             return null;
         }
-        com.gunmu.northeast_china_delight.crafting.VatRecipe.Fluid product = VatRecipes.productOf(this);
-        if (this.recipeId != null) {
-            return product != null && this.productMb(product) > 0 ? fluidFor(product) : null;
-        }
-        return switch (this.kind) {
-            case PASTE -> this.pasteMb > 0 ? ModFluids.soyPasteSource() : null;
-            case SOY_SAUCE -> this.soySauceMb > 0 ? ModFluids.soySauceSource() : null;
-            case VINEGAR -> this.vinegarMb > 0 ? ModFluids.vinegarSource() : null;
-            case WHITE_VINEGAR -> this.whiteVinegarMb > 0 ? ModFluids.whiteVinegarSource() : null;
-            case FISH_SAUCE -> this.fishSauceMb > 0 ? ModFluids.fishSauceSource() : null;
-            case SHRIMP_PASTE -> this.shrimpPasteMb > 0 ? ModFluids.shrimpPasteSource() : null;
-            case KVASS -> this.kvassMb > 0 ? ModFluids.kvassSource() : null;
-            case PICKLE, SPICY_PICKLE -> this.sourWaterMb > 0 ? ModFluids.sourWaterSource() : null;
-            case NONE, MEAT, SALTED_FISH, BEAN_SPROUTS, SOUR_CORN, FROZEN_PEAR -> null;
-        };
+        Fluid product = VatRecipes.productOf(this);
+        return product != null && this.productMb(product) > 0 ? product : null;
     }
 
     private int productAmount() {
-        com.gunmu.northeast_china_delight.crafting.VatRecipe.Fluid product = VatRecipes.productOf(this);
-        if (this.recipeId != null) {
-            return product == null ? 0 : this.productMb(product);
-        }
-        if (product != null) {
-            return this.productMb(product);
-        }
-        return switch (this.kind) {
-            case PASTE -> this.pasteMb;
-            case SOY_SAUCE -> this.soySauceMb;
-            case VINEGAR -> this.vinegarMb;
-            case WHITE_VINEGAR -> this.whiteVinegarMb;
-            case FISH_SAUCE -> this.fishSauceMb;
-            case SHRIMP_PASTE -> this.shrimpPasteMb;
-            case PICKLE, SPICY_PICKLE -> this.sourWaterMb;
-            case KVASS -> this.kvassMb;
-            case NONE, MEAT, SALTED_FISH, BEAN_SPROUTS, SOUR_CORN, FROZEN_PEAR -> 0;
-        };
+        Fluid product = VatRecipes.productOf(this);
+        return product == null ? 0 : this.productMb(product);
     }
 
-    @Nullable
-    private static Fluid fluidFor(com.gunmu.northeast_china_delight.crafting.VatRecipe.Fluid product) {
-        return switch (product) {
-            case PASTE -> ModFluids.soyPasteSource();
-            case SOY_SAUCE -> ModFluids.soySauceSource();
-            case VINEGAR -> ModFluids.vinegarSource();
-            case WHITE_VINEGAR -> ModFluids.whiteVinegarSource();
-            case FISH_SAUCE -> ModFluids.fishSauceSource();
-            case SHRIMP_PASTE -> ModFluids.shrimpPasteSource();
-            case KVASS -> ModFluids.kvassSource();
-            case SOUR_WATER -> ModFluids.sourWaterSource();
-            case WATER -> null;
-        };
+    /** 红石比较器读发酵进度：没开始 0，做完 15，中间按进度涨 */
+    public int comparatorOutput() {
+        int progress = this.getBlockState().getValue(Vat.PROGRESS);
+        if (progress <= 0) {
+            return 0;
+        }
+        if (progress >= Vat.MAX_PROGRESS) {
+            return 15;
+        }
+        return net.minecraft.util.Mth.clamp(progress * 15 / Vat.MAX_PROGRESS, 1, 14);
     }
 
     @Override
@@ -630,7 +625,8 @@ public class VatBlockEntity extends BlockEntity implements IFluidHandler {
 
     @Override
     public int getTankCapacity(int tank) {
-        return VatRecipes.productOf(this) == com.gunmu.northeast_china_delight.crafting.VatRecipe.Fluid.SOUR_WATER
+        Fluid product = VatRecipes.productOf(this);
+        return product != null && product.isSame(ModFluids.sourWaterSource())
                 ? VatRecipes.SOUR_WATER_MB : VatRecipes.PRODUCT_CAPACITY_MB;
     }
 
@@ -666,10 +662,7 @@ public class VatBlockEntity extends BlockEntity implements IFluidHandler {
         }
         int drained = Math.min(maxDrain, available);
         if (action.execute()) {
-            com.gunmu.northeast_china_delight.crafting.VatRecipe.Fluid product = VatRecipes.productOf(this);
-            if (product != null) {
-                this.setProductMb(product, this.productMb(product) - drained);
-            }
+            this.setProductMb(fluid, this.productMb(fluid) - drained);
             // 液体抽空后酱渣还留在缸里，等玩家取走（所以这里不能 reset）
             this.sync();
             awardPumpSeasoning();
@@ -682,7 +675,8 @@ public class VatBlockEntity extends BlockEntity implements IFluidHandler {
                 if (isEmpty()) {
                     this.kind = VatRecipes.Kind.NONE;
                     this.recipeId = null;
-                    this.brewedProduct = null;
+                    this.brewedFluid = null;
+        this.brewedMb = 0;
                 }
             }
         }
@@ -746,8 +740,9 @@ public class VatBlockEntity extends BlockEntity implements IFluidHandler {
         if (this.recipeId != null) {
             tag.putString("recipe_id", this.recipeId);
         }
-        if (this.brewedProduct != null) {
-            tag.putString("brewed_product", this.brewedProduct.name());
+        if (this.brewedFluid != null) {
+            tag.putString("brewed_fluid", net.minecraft.core.registries.BuiltInRegistries.FLUID.getKey(this.brewedFluid).toString());
+            tag.putInt("brewed_mb", this.brewedMb);
         }
     }
 
@@ -782,13 +777,19 @@ public class VatBlockEntity extends BlockEntity implements IFluidHandler {
         // 认不出来就当成空缸，绝不因为一条老数据把存档读崩
         this.kind = parseKind(tag.getString("kind"));
         this.recipeId = tag.contains("recipe_id") ? tag.getString("recipe_id") : null;
-        this.brewedProduct = null;
-        if (tag.contains("brewed_product")) {
+        this.brewedFluid = null;
+        this.brewedMb = 0;
+        if (tag.contains("brewed_fluid")) {
+            net.minecraft.core.registries.BuiltInRegistries.FLUID
+                    .getOptional(com.gunmu.northeast_china_delight.util.DdIds.parse(tag.getString("brewed_fluid")))
+                    .ifPresent(fluid -> this.brewedFluid = fluid);
+            this.brewedMb = Math.max(0, tag.getInt("brewed_mb"));
+        } else if (tag.contains("brewed_product")) {
             try {
-                this.brewedProduct = com.gunmu.northeast_china_delight.crafting.VatRecipe.Fluid.valueOf(
-                        tag.getString("brewed_product"));
+                this.brewedFluid = com.gunmu.northeast_china_delight.crafting.VatRecipe.Fluid
+                        .valueOf(tag.getString("brewed_product")).resolve();
             } catch (IllegalArgumentException ignored) {
-                this.brewedProduct = null;
+                this.brewedFluid = null;
             }
         }
 

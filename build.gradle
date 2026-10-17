@@ -21,6 +21,17 @@ allprojects {
         maven { name = 'Modrinth'; url = 'https://api.modrinth.com/maven' }
         maven { name = 'BlameJared'; url = 'https://maven.blamejared.com' }
     }
+
+    // NeoForge 的 moddev 插件会先注册 maven.neoforged.net，而 Gradle 按仓库声明顺序查询，
+    // 于是每个 maven.modrinth 依赖都会先打到 neoforged 那边去（那边没有这个组，偶发连接超时
+    // 会让整个构建失败）。把 maven.modrinth 组从 neoforged 仓库排除，别的依赖解析不受影响。
+    repositories.configureEach { repo ->
+        if (repo instanceof MavenArtifactRepository && String.valueOf(repo.url).contains('maven.neoforged.net/releases')) {
+            repo.content {
+                excludeGroup 'maven.modrinth'
+            }
+        }
+    }
 }
 
 if (sc.current.version.compareTo('1.20.2') < 0) {
@@ -174,6 +185,10 @@ dependencies {
         compileOnly "mezz.jei:jei-${minecraft_version}-common-api:${jei_version}"
         compileOnly "mezz.jei:jei-${minecraft_version}-forge-api:${jei_version}"
         localRuntime "mezz.jei:jei-${minecraft_version}-forge:${jei_version}"
+
+        // 高级战利品显示（ALI）兼容：只用它的插件 API 做展示，没装 ALI 时本模组的类不会被加载
+        compileOnly "maven.modrinth:advanced-loot-info:${ali_version}"
+        compileOnly "maven.modrinth:advanced-core-info:${aci_version}"
 
         annotationProcessor "org.spongepowered:mixin:0.8.5:processor"
 

@@ -12,7 +12,7 @@
       "water_min": 1,
       "water_max": 3,
       "water_after": "CLEAR",
-      "product": "SOUR_WATER",
+      "product": "northeast_china_delight:sour_water",
       "product_mb": 1000,
       "product_per_layer": true
     },

@@ -94,7 +94,7 @@ public enum VatComponentProvider implements IBlockComponentProvider {
             if (fermented) {
                 text = recipe == null
                         ? Component.translatable("jade.northeast_china_delight.vat.done." + stage)
-                        : Component.translatable("jade.northeast_china_delight.vat.done.custom", recipe.verb());
+                        : Component.translatable(recipe.doneKey(), recipe.verb());
             } else {
                 boolean started = progress > 0 || com.gunmu.northeast_china_delight.crafting.VatBrewing
                         .ready(vat) != null;
@@ -102,7 +102,7 @@ public enum VatComponentProvider implements IBlockComponentProvider {
                         ? recipe == null
                                 ? Component.translatable("jade.northeast_china_delight.vat.progress." + stage,
                                         Math.round(ratio * 100.0F))
-                                : Component.translatable("jade.northeast_china_delight.vat.progress.custom",
+                                : Component.translatable(recipe.progressKey(),
                                         recipe.verb(), Math.round(ratio * 100.0F))
                         : Component.translatable("jade.northeast_china_delight.vat.waiting");
             }

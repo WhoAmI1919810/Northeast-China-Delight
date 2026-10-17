@@ -204,6 +204,16 @@ public class ModBlocks {
                     .ignitedByLava()
     );
 
+    public static final Supplier<Block> WOODEN_MORTAR = block(
+            "wooden_mortar",
+            WoodenMortarBlock::new,
+            BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.WOOD)
+                    .instrument(NoteBlockInstrument.BASS)
+                    .strength(2.0F)
+                    .sound(SoundType.WOOD)
+                    .noOcclusion()
+    );
     public static final Supplier<Block> ANIMAL_OIL_BLOCK = block(
             "animal_oil_block",
             AnimalOilBlock::new,
@@ -233,6 +243,7 @@ public class ModBlocks {
             "harvest_stew_bowl", "demoli_fish_stew", "borscht", "ginseng_chicken_soup",
             "chicken_mushroom_stew_bowl", "sauerkraut_seafood_stew_bowl", "bibimbap",
             "grilled_cold_noodles", "baked_sweet_potato", "northeast_rice_wrap", "sticky_bean_bun",
+            "red_bean_songpyeon", "peanut_songpyeon",
             "grilled_chicken_frame", "grilled_corn", "sauerkraut_crackling_dumpling",
             "shrimp_pork_dumpling", "three_delicacy_dumpling", "dry_fried_hairtail",
             "braised_hairtail", "hazelnut_sugar_fire_bun"
@@ -253,7 +264,8 @@ public class ModBlocks {
     /** 本身不带独立碗或盘；模型只借用展示餐盘承载体积，不能归入盘装菜。 */
     public static final List<String> NO_CONTAINER_DISH_IDS = List.of(
             "grilled_oil_edge", "grilled_cold_noodles", "baked_sweet_potato", "northeast_rice_wrap",
-            "sticky_bean_bun", "grilled_chicken_frame", "grilled_corn", "sauerkraut_crackling_dumpling",
+            "sticky_bean_bun", "red_bean_songpyeon", "peanut_songpyeon",
+            "grilled_chicken_frame", "grilled_corn", "sauerkraut_crackling_dumpling",
             "shrimp_pork_dumpling", "three_delicacy_dumpling", "hazelnut_sugar_fire_bun"
     );
 

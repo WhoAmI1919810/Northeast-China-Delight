@@ -14,7 +14,7 @@
       "water_after": "KEEP",
       "sour_water_mb": 3000,
       "sour_water_after": "DRAIN_REQUIRED",
-      "product": "WHITE_VINEGAR",
+      "product": "northeast_china_delight:white_vinegar",
       "product_mb": 2500
     },
     "slots": [

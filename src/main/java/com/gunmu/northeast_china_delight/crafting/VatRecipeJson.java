@@ -39,6 +39,19 @@ public final class VatRecipeJson {
         if (config.has("verb")) {
             builder.verb(verb(config.get("verb")));
         }
+        if (config.has("progress")) {
+            builder.progressText(translationKey(config.get("progress")));
+        }
+        if (config.has("done")) {
+            builder.doneText(translationKey(config.get("done")));
+        }
+        if (config.has("time")) {
+            builder.timeText(translationKey(config.get("time")));
+        }
+        if (config.has("hint")) {
+            JsonObject hint = GsonHelper.getAsJsonObject(config, "hint");
+            builder.hintText(translationKey(hint.get("long")), translationKey(hint.get("short")));
+        }
         if (GsonHelper.getAsBoolean(config, "seconds_per_layer", false)) {
             builder.perLayerSeconds();
         }
@@ -78,17 +91,24 @@ public final class VatRecipeJson {
                     enumValue(VatRecipe.LiquidAfter.class, GsonHelper.getAsString(liquid, "sour_water_after", "KEEP")));
         }
         if (liquid.has("product")) {
-            VatRecipe.Fluid product = enumValue(VatRecipe.Fluid.class, GsonHelper.getAsString(liquid, "product"));
+            net.minecraft.world.level.material.Fluid product = productFluid(GsonHelper.getAsString(liquid, "product"));
             int productMb = GsonHelper.getAsInt(liquid, "product_mb");
-            int capacity = product == VatRecipe.Fluid.SOUR_WATER
-                    ? VatRecipes.SOUR_WATER_MB : VatRecipes.PRODUCT_CAPACITY_MB;
-            if (product == VatRecipe.Fluid.WATER || productMb <= 0
+            if (productMb <= 0
                     || (long) productMb * (GsonHelper.getAsBoolean(liquid, "product_per_layer", false)
-                    ? Math.max(1, waterMax) : 1) > capacity) {
+                    ? Math.max(1, waterMax) : 1) > VatRecipes.SOUR_WATER_MB) {
                 throw new JsonParseException("大缸产物需是可存放的液体，且总量不得超过缸容量");
             }
             builder.product(product, productMb,
                     GsonHelper.getAsBoolean(liquid, "product_per_layer", false));
+            boolean hasContainer = liquid.has("serving_container");
+            boolean hasItem = liquid.has("serving_item");
+            if (hasContainer != hasItem) {
+                throw new JsonParseException("装瓶需同时给出 serving_container 和 serving_item");
+            }
+            if (hasContainer) {
+                builder.serving(item(GsonHelper.getAsString(liquid, "serving_container")),
+                        item(GsonHelper.getAsString(liquid, "serving_item")));
+            }
         }
         JsonArray slots = GsonHelper.getAsJsonArray(config, "slots");
         if (slots.isEmpty() || slots.size() > 12) {
@@ -121,6 +141,24 @@ public final class VatRecipeJson {
             return translated ? Component.translatable(value) : Component.literal(value);
         }
         throw new JsonParseException("大缸工序动词需是字符串或 text/translate 对象");
+    }
+
+    /** 句式翻译键：写成字符串，或者 {"translate": "..."} */
+    private static String translationKey(JsonElement json) {
+        if (json == null || json.isJsonNull()) {
+            throw new JsonParseException("大缸进度文字需提供翻译键");
+        }
+        if (json.isJsonPrimitive() && json.getAsJsonPrimitive().isString()) {
+            String key = json.getAsString();
+            if (key.isBlank()) {
+                throw new JsonParseException("大缸进度文字的翻译键不能为空");
+            }
+            return key;
+        }
+        if (json.isJsonObject() && json.getAsJsonObject().has("translate")) {
+            return translationKey(json.getAsJsonObject().get("translate"));
+        }
+        throw new JsonParseException("大缸进度文字需是翻译键字符串");
     }
 
     private static VatRecipe.Slot slot(JsonObject json, int index) {
@@ -238,6 +276,25 @@ public final class VatRecipeJson {
         ResourceLocation key = DdIds.parse(id);
         return BuiltInRegistries.ITEM.getOptional(key)
                 .orElseThrow(() -> new JsonParseException("不存在的物品：" + key));
+    }
+
+    /** 产物液体：带冒号的按流体 id 找，没有冒号的按旧枚举名翻译 */
+    private static net.minecraft.world.level.material.Fluid productFluid(String value) {
+        if (!value.contains(":")) {
+            net.minecraft.world.level.material.Fluid legacy = enumValue(VatRecipe.Fluid.class, value).resolve();
+            if (legacy == null) {
+                throw new JsonParseException("大缸产物不能是清水：" + value);
+            }
+            return legacy;
+        }
+        ResourceLocation key = DdIds.parse(value);
+        net.minecraft.world.level.material.Fluid fluid = BuiltInRegistries.FLUID.getOptional(key)
+                .orElseThrow(() -> new JsonParseException("不存在的流体：" + key));
+        if (fluid.isSame(net.minecraft.world.level.material.Fluids.EMPTY)
+                || fluid.isSame(net.minecraft.world.level.material.Fluids.WATER)) {
+            throw new JsonParseException("大缸产物需是可存放的液体：" + key);
+        }
+        return fluid;
     }
 
     private static <T extends Enum<T>> T enumValue(Class<T> type, String value) {

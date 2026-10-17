@@ -1,0 +1,23 @@
+{
+  "parent": "northeast_china_delight:mortar",
+  "display": {
+    "icon": {
+      "id": "northeast_china_delight:pounded_rice_cake"
+    },
+    "title": {
+      "translate": "advancements.northeast_china_delight.pound.title"
+    },
+    "description": {
+      "translate": "advancements.northeast_china_delight.pound.description"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "pound": {
+      "trigger": "minecraft:impossible"
+    }
+  }
+}

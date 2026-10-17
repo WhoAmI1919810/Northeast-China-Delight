@@ -12,7 +12,7 @@
       "water_min": 3,
       "water_max": 3,
       "water_after": "CLEAR",
-      "product": "VINEGAR",
+      "product": "northeast_china_delight:vinegar",
       "product_mb": 2500
     },
     "slots": [

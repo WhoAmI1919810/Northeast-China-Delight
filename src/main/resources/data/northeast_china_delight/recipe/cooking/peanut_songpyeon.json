@@ -1,0 +1,20 @@
+{
+  "type": "farmersdelight:cooking",
+  "experience": 0.35,
+  "ingredients": [
+    {
+      "tag": "c:crops/rice"
+    },
+    {
+      "item": "northeast_china_delight:roasted_peanuts"
+    },
+    {
+      "tag": "c:sugar"
+    }
+  ],
+  "recipe_book_tab": "misc",
+  "result": {
+    "count": 1,
+    "id": "northeast_china_delight:peanut_songpyeon"
+  }
+}
