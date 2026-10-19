@@ -76,7 +76,10 @@ public final class VatRecipeJson {
             });
         }
 
-        JsonObject liquid = GsonHelper.getAsJsonObject(config, "liquid");
+        // liquid 是可选的：不写就是无液体配方（辣白菜这类干腌）。
+        // 1.21.1 的 GsonHelper 对缺失键会直接抛异常，不能依赖它返回空对象。
+        JsonObject liquid = config.has("liquid")
+                ? GsonHelper.getAsJsonObject(config, "liquid") : new JsonObject();
         int waterMin = GsonHelper.getAsInt(liquid, "water_min", 0);
         int waterMax = GsonHelper.getAsInt(liquid, "water_max", 0);
         if (waterMin < 0 || waterMax > 3 || waterMin > waterMax) {

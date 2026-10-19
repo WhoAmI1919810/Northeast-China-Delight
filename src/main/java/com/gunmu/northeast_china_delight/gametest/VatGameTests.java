@@ -302,17 +302,33 @@ public final class VatGameTests {
     }
 
     @GameTest(template = "empty")
-    public static void vatPicklesProduceThreeBucketsOfSourWater(GameTestHelper helper) {
-        for (VatRecipes.Kind kind : List.of(VatRecipes.Kind.PICKLE, VatRecipes.Kind.SPICY_PICKLE)) {
-            VatRecipe recipe = VatRecipes.recipeOf(kind, helper.getLevel());
-            if (recipe == null || recipe.liquid().product() != com.gunmu.northeast_china_delight.fluid.ModFluids.sourWaterSource()
-                    || recipe.productMbFor(3) != 3 * VatRecipes.WATER_MB_PER_LEVEL) {
-                helper.fail("Missing or invalid sour water recipe: " + kind);
-            }
-            VatBlockEntity vat = placeVat(helper);
-            vat.setRecipe(recipe);
-            if (vat.getTankCapacity(0) != VatRecipes.SOUR_WATER_MB) {
-                helper.fail("Sour water tank is smaller than its recipe output: " + kind);
+    public static void vatPickleProducesThreeBucketsOfSourWater(GameTestHelper helper) {
+        VatRecipe recipe = VatRecipes.recipeOf(VatRecipes.Kind.PICKLE, helper.getLevel());
+        if (recipe == null || recipe.liquid().product() != com.gunmu.northeast_china_delight.fluid.ModFluids.sourWaterSource()
+                || recipe.productMbFor(3) != 3 * VatRecipes.WATER_MB_PER_LEVEL) {
+            helper.fail("Missing or invalid sour water recipe: " + VatRecipes.Kind.PICKLE);
+        }
+        VatBlockEntity vat = placeVat(helper);
+        vat.setRecipe(recipe);
+        if (vat.getTankCapacity(0) != VatRecipes.SOUR_WATER_MB) {
+            helper.fail("Sour water tank is smaller than the pickle recipe output");
+        }
+        helper.succeed();
+    }
+
+    @GameTest(template = "empty")
+    public static void vatSpicyPickleNeedsNoLiquid(GameTestHelper helper) {
+        VatRecipe recipe = VatRecipes.recipeOf(VatRecipes.Kind.SPICY_PICKLE, helper.getLevel());
+        if (recipe == null || recipe.liquid().waterMax() != 0 || recipe.liquid().sourWaterMb() != 0
+                || recipe.liquid().product() != null || recipe.liquid().servingContainer() != null
+                || recipe.secondsFor(0) != 60) {
+            helper.fail("辣白菜应为无水、无酸引水、无液体容器、60 秒基准的配方");
+        }
+        for (VatJeiRecipe page : VatJeiRecipes.pagesFor(recipe)) {
+            for (VatJeiRecipe.State state : page.states()) {
+                if (state.hasLiquid() || state.hasResultFluid() || !state.collectionContainers().isEmpty()) {
+                    helper.fail("辣白菜的 JEI 页面不应显示液体或取液容器");
+                }
             }
         }
         helper.succeed();
@@ -326,6 +342,16 @@ public final class VatGameTests {
     @GameTest(template = "empty")
     public static void vatSpicyPickleCanBeMade(GameTestHelper helper) {
         assertPickleCanBeMade(helper, true);
+    }
+
+    @GameTest(template = "empty")
+    public static void vatSpicyPickleSupportsFourCabbages(GameTestHelper helper) {
+        assertSpicyPickleBatch(helper, 4, 2);
+    }
+
+    @GameTest(template = "empty")
+    public static void vatSpicyPickleSupportsSixCabbages(GameTestHelper helper) {
+        assertSpicyPickleBatch(helper, 6, 3);
     }
 
     @GameTest(template = "empty")
@@ -370,7 +396,9 @@ public final class VatGameTests {
 
     private static void assertPickleCanBeMade(GameTestHelper helper, boolean spicy) {
         VatBlockEntity vat = placeVat(helper);
-        vat.addWater(VatRecipes.WATER_MB_PER_LEVEL);
+        if (!spicy) {
+            vat.addWater(VatRecipes.WATER_MB_PER_LEVEL);
+        }
         for (int i = 0; i < 2; i++) {
             vat.addContent(new ItemStack(ModItems.NAPA_CABBAGE.get()));
         }
@@ -390,9 +418,44 @@ public final class VatGameTests {
         VatBrewing.complete(helper.getLevel(), helper.absolutePos(AT), vat, recipe);
         ItemStack result = VatBrewing.takeOne(vat, new ArrayList<>());
         Item expected = spicy ? ModItems.SPICY_CABBAGE.get() : ModItems.SOUR_CABBAGE.get();
-        if (!result.is(expected) || vat.sourWaterMb() < VatRecipes.WATER_MB_PER_LEVEL) {
+        boolean liquidOk = spicy ? vat.sourWaterMb() == 0 && vat.waterLayers() == 0
+                : vat.sourWaterMb() >= VatRecipes.WATER_MB_PER_LEVEL;
+        if (!result.is(expected) || !liquidOk) {
             helper.fail((spicy ? "辣白菜" : "酸菜") + "制作/取出失败，结果 "
                     + BuiltInRegistries.ITEM.getKey(result.getItem()));
+        }
+        helper.succeed();
+    }
+
+    private static void assertSpicyPickleBatch(GameTestHelper helper, int cabbages, int salt) {
+        VatBlockEntity vat = placeVat(helper);
+        for (int i = 0; i < cabbages; i++) {
+            vat.addContent(new ItemStack(ModItems.NAPA_CABBAGE.get()));
+        }
+        for (int i = 0; i < salt; i++) {
+            vat.addContent(new ItemStack(ModItems.SALT.get()));
+        }
+        vat.addContent(new ItemStack(ModItems.CHILI_SAUCE.get()));
+        vat.setPress(new ItemStack(Items.STONE));
+
+        VatRecipe recipe = VatBrewing.ready(vat);
+        if (recipe == null || recipe.kind() != VatRecipes.Kind.SPICY_PICKLE) {
+            helper.fail("辣白菜 " + cabbages + " 棵批次没有正确认配方");
+        }
+        VatBrewing.complete(helper.getLevel(), helper.absolutePos(AT), vat, recipe);
+
+        int produced = 0;
+        for (int i = 0; i < cabbages; i++) {
+            ItemStack result = VatBrewing.takeOne(vat, new ArrayList<>());
+            if (!result.is(ModItems.SPICY_CABBAGE.get())) {
+                helper.fail("辣白菜 " + cabbages + " 棵批次取出失败，结果 "
+                        + BuiltInRegistries.ITEM.getKey(result.getItem()));
+            }
+            produced += result.getCount();
+        }
+        if (produced != cabbages || vat.waterLayers() != 0 || vat.sourWaterMb() != 0) {
+            helper.fail("辣白菜 " + cabbages + " 棵批次应产出 " + cabbages + " 个且无液体，实际 "
+                    + produced + " 个");
         }
         helper.succeed();
     }

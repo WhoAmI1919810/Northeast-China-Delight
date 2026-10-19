@@ -8,14 +8,6 @@
     "priority": 20,
     "seal": "PRESS",
     "seconds": 60,
-    "liquid": {
-      "water_min": 1,
-      "water_max": 3,
-      "water_after": "CLEAR",
-      "product": "northeast_china_delight:sour_water",
-      "product_mb": 1000,
-      "product_per_layer": true
-    },
     "slots": [
       {
         "ingredient": {
@@ -23,9 +15,9 @@
         },
         "fate": "KEEP",
         "bounds": {
-          "type": "min_with_per_layer_max",
+          "type": "between",
           "min": 1,
-          "max_per_layer": 2
+          "max": 6
         },
         "converter": {
           "type": "mapped",
@@ -45,8 +37,9 @@
         },
         "fate": "ABSORB",
         "bounds": {
-          "type": "per_layer_exact",
-          "count": 1
+          "type": "half_of",
+          "slot": 0,
+          "max": 3
         },
         "layer": "SEASONING"
       },
@@ -73,20 +66,14 @@
         ],
         "fate": "ABSORB",
         "bounds": {
-          "type": "min_by_water",
-          "min_by_water": [
-            0,
-            1,
-            1,
-            2
-          ],
+          "type": "between",
+          "min": 0,
           "max": 2
         },
         "per_dose": true,
         "layer": "SEASONING"
       }
     ],
-    "seconds_per_layer": true,
     "biome_seconds": {
       "COLD": 1.5,
       "WARM": 0.5,
