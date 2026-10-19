@@ -3,6 +3,7 @@ package com.gunmu.northeast_china_delight.villager;
 import com.gunmu.northeast_china_delight.item.ModItems;
 import com.gunmu.northeast_china_delight.item.SeasoningBottleItem;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
+import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import net.minecraft.world.entity.npc.Villager;
 import net.minecraft.world.entity.npc.VillagerTrades;
 import net.minecraft.world.entity.npc.VillagerType;
@@ -20,6 +21,7 @@ import net.minecraftforge.event.village.VillagerTradesEvent;
 /*import net.neoforged.neoforge.event.village.VillagerTradesEvent;
 *///?}
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static com.gunmu.northeast_china_delight.villager.TradeHelpers.buy;
@@ -37,7 +39,29 @@ public final class SideDishMerchantTrades
         {
             return;
         }
-        Int2ObjectMap<List<VillagerTrades.ItemListing>> trades = event.getTrades();
+        populateTrades(event.getTrades());
+    }
+
+    /** ALI 等展示端不会收到 VillagerTradesEvent，需要一份与运行时完全相同的交易候选表。 */
+    public static Int2ObjectMap<VillagerTrades.ItemListing[]> tradeListingArrays()
+    {
+        Int2ObjectMap<List<VillagerTrades.ItemListing>> lists = new Int2ObjectOpenHashMap<>();
+        for (int level = 1; level <= 5; level++)
+        {
+            lists.put(level, new ArrayList<>());
+        }
+        populateTrades(lists);
+
+        Int2ObjectMap<VillagerTrades.ItemListing[]> arrays = new Int2ObjectOpenHashMap<>();
+        for (int level = 1; level <= 5; level++)
+        {
+            arrays.put(level, lists.get(level).toArray(new VillagerTrades.ItemListing[0]));
+        }
+        return arrays;
+    }
+
+    private static void populateTrades(Int2ObjectMap<List<VillagerTrades.ItemListing>> trades)
+    {
 
         trades.get(1).add(sell(2, ModItems.SALT.get(), 1, 16, 2));
         trades.get(1).add(sell(3, Items.SUGAR, 1, 16, 2));
@@ -66,6 +90,7 @@ public final class SideDishMerchantTrades
         trades.get(4).add(sell(10, ModItems.COLD_NOODLE_SHEET.get(), 1, 12, 15));
         trades.get(4).add(buy(ModItems.CORN.get(), 20, 16, 15));
 
+        trades.get(5).add(cannedYellowPeachTrade());
         trades.get(5).add(sellFull(ModItems.SHRIMP_PASTE.get(), 12, 12, 30));
         trades.get(5).add(sellFull(ModItems.ANIMAL_OIL.get(), 10, 12, 30));
         trades.get(5).add(sell(6, ModItems.SWEET_POTATO_STARCH.get(), 1, 12, 30));
@@ -89,21 +114,37 @@ public final class SideDishMerchantTrades
         return new BasicItemListing(emeralds, stack, maxUses, xp);
     }
 
+    /** 价格在 min..max 之间随机，交易生成后固定，直到补货刷新。 */
+    private static VillagerTrades.ItemListing sellBetween(int minEmeralds, int maxEmeralds,
+                                                          Item item, int count, int maxUses, int xp)
+    {
+        return (trader, random) -> new BasicItemListing(
+                minEmeralds + random.nextInt(maxEmeralds - minEmeralds + 1),
+                new ItemStack(item, count), maxUses, xp).getOffer(trader, random);
+    }
+
     private static VillagerTrades.ItemListing sellFull(Item item, int price, int maxUses, int xp)
     {
         return new BasicItemListing(price, new ItemStack(item), maxUses, xp);
     }
 
+    /** 大师级固定交易；等级提升时由 SideDishMerchantTradeMixin 补入，避免被原版二选一随机掉。 */
+    public static VillagerTrades.ItemListing cannedYellowPeachTrade()
+    {
+        return sellBetween(10, 12, ModItems.CANNED_YELLOW_PEACH.get(), 1, 12, 30);
+    }
+
     private static VillagerTrades.ItemListing coldOnly(VillagerTrades.ItemListing listing)
     {
         return (trader, random) -> {
-            if (trader instanceof Villager villager)
+            if (!(trader instanceof Villager villager))
             {
-                VillagerType type = villager.getVillagerData().getType();
-                if (type == VillagerType.SNOW || type == VillagerType.TAIGA)
-                {
-                    return listing.getOffer(trader, random);
-                }
+                return listing.getOffer(trader, random);
+            }
+            if (villager.getVillagerData().getType() == VillagerType.SNOW
+                    || villager.getVillagerData().getType() == VillagerType.TAIGA)
+            {
+                return listing.getOffer(trader, random);
             }
             return null;
         };

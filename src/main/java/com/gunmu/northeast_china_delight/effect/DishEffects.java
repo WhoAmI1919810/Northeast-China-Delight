@@ -52,6 +52,12 @@ public final class DishEffects {
         return list;
     }
 
+    public static List<Applied> cannedYellowPeachExtras() {
+        List<Applied> list = new ArrayList<>();
+        list.add(new Applied(DdEffects.hold(MobEffects.REGENERATION), 200, 0));
+        return list;
+    }
+
     public static List<Applied> orangeJuiceExtras() {
         List<Applied> list = new ArrayList<>();
         list.add(new Applied(DdEffects.hold(MobEffects.REGENERATION), 100, 0));

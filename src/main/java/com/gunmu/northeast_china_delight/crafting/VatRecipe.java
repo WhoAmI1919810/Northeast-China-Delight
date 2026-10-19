@@ -413,7 +413,7 @@ public final class VatRecipe {
             case PICKLE, SPICY_PICKLE, MEAT, SALTED_FISH -> "curing";
             case SOY_SAUCE, VINEGAR, WHITE_VINEGAR, KVASS -> "brewing";
             case BEAN_SPROUTS -> "sprouting";
-            case FROZEN_PEAR -> "freezing";
+            case FROZEN_PEAR, FROZEN_TOFU -> "freezing";
             default -> "fermenting";
         };
         return Component.translatable("process.northeast_china_delight.vat." + action);

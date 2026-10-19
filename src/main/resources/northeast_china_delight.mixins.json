@@ -7,7 +7,8 @@
     "AbstractFurnaceBlockEntityMixin",
     "CookingPotBlockEntityInvoker",
     "CookingPotBlockEntityMixin",
-    "PowderSnowBlockMixin"
+    "PowderSnowBlockMixin",
+    "SideDishMerchantTradeMixin"
   ],
   "injectors": {
     "defaultRequire": 1

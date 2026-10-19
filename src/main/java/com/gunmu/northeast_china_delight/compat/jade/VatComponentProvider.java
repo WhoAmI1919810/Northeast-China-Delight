@@ -85,7 +85,7 @@ public enum VatComponentProvider implements IBlockComponentProvider {
             String stage = switch (kind) {
                 case MEAT, SALTED_FISH -> "curing";
                 case PASTE, SOY_SAUCE, FISH_SAUCE, SHRIMP_PASTE -> "brewing";
-                case FROZEN_PEAR -> "making";
+                case FROZEN_PEAR, FROZEN_TOFU -> "making";
                 case BEAN_SPROUTS -> "sprouting";
                 default -> "fermenting";
             };

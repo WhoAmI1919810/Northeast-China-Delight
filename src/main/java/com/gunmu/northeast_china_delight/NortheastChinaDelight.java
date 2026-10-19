@@ -398,6 +398,8 @@ public class NortheastChinaDelight
             registerItemIcon(event, "large_basin_icon");
             registerItemIcon(event, "wooden_mallet_icon");
             registerItemIcon(event, "wooden_mallet_model");
+            registerItemIcon(event, "canned_yellow_peach_icon");
+            registerItemIcon(event, "canned_yellow_peach_model");
             registerItemIcon(event, "sauerkraut_bone_stew_icon");
             registerItemIcon(event, "ground_pot_chicken_icon");
             registerItemIcon(event, "ground_pot_ribs_icon");

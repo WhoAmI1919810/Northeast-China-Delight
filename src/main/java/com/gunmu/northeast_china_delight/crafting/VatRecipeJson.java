@@ -15,6 +15,8 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 import java.util.function.Predicate;
 
@@ -185,15 +187,57 @@ public final class VatRecipeJson {
     }
 
     private static VatRecipe.Converter converter(JsonObject json) {
-        if (json.has("converter")) {
-            return switch (GsonHelper.getAsString(json, "converter")) {
+        JsonElement value = json.get("converter");
+        if (value != null) {
+            if (value.isJsonObject()) {
+                return mappedConverter(value.getAsJsonObject());
+            }
+            if (!value.isJsonPrimitive()) {
+                throw new JsonParseException("大缸换算必须是字符串或映射对象");
+            }
+            return switch (value.getAsString()) {
                 case "pickle" -> VatRecipes::convertPickle;
                 case "spicy_pickle" -> VatRecipes::convertSpicyPickle;
-                default -> throw new JsonParseException("未知的大缸换算：" + json.get("converter"));
+                default -> throw new JsonParseException("未知的大缸换算：" + value);
             };
         }
         return json.has("result") ? VatRecipe.Converter.to(item(GsonHelper.getAsString(json, "result")))
                 : VatRecipe.Converter.same();
+    }
+
+    /**
+     * 按输入分别指定取货结果。第一个匹配的条目生效，没有匹配时原样返还。
+     * 泡菜 / 辣白菜这类“同一槽位放不同蔬菜、取出不同成品”的配方用它扩展，不用再改 Java。
+     */
+    private static VatRecipe.Converter mappedConverter(JsonObject json) {
+        String type = GsonHelper.getAsString(json, "type", "mapped");
+        if (!type.equals("mapped")) {
+            throw new JsonParseException("未知的大缸映射换算类型：" + type);
+        }
+        JsonArray entries = GsonHelper.getAsJsonArray(json, "entries");
+        if (entries.isEmpty()) {
+            throw new JsonParseException("大缸映射换算至少要有一个 entries 条目");
+        }
+        List<Mapping> mappings = new ArrayList<>(entries.size());
+        for (JsonElement entry : entries) {
+            if (!entry.isJsonObject()) {
+                throw new JsonParseException("大缸映射换算条目必须是对象");
+            }
+            JsonObject mapping = entry.getAsJsonObject();
+            mappings.add(new Mapping(ingredient(mapping.get("ingredient")),
+                    item(GsonHelper.getAsString(mapping, "result"))));
+        }
+        return stack -> {
+            for (Mapping mapping : mappings) {
+                if (mapping.input().test(stack)) {
+                    return new ItemStack(mapping.result());
+                }
+            }
+            return stack;
+        };
+    }
+
+    private record Mapping(Predicate<ItemStack> input, Item result) {
     }
 
     private static VatRecipe.BoundsRule bounds(JsonObject json, int index) {

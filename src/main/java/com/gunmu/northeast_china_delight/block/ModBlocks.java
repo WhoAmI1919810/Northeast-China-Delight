@@ -321,6 +321,15 @@ public class ModBlocks {
                             .sound(SoundType.WOOD)
                             .noOcclusion());
 
+    /** 黄桃罐头放下后的方块形态：玻璃瓶装饰，可回收。 */
+    public static final Supplier<Block> CANNED_YELLOW_PEACH =
+            block("canned_yellow_peach",
+                    properties -> new DishBlock(properties, DishBlock.CANNED_YELLOW_PEACH_SHAPE),
+                    BlockBehaviour.Properties.of()
+                            .mapColor(MapColor.COLOR_YELLOW)
+                            .strength(0.2F)
+                            .sound(SoundType.GLASS)
+                            .noOcclusion());
     public static final Supplier<Block> DA_FENG_SHOU_POT =
             feastBlock("harvest_stew", () -> ModItems.DA_FENG_SHOU_BOWL.get());
     public static final Supplier<Block> DI_GUO_JI_POT =

@@ -15,7 +15,9 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 大缸在 JEI 里展示的全部配方 —— 从数据包配方自动生成，这里不再手写任何一份"投料 / 时长 / 产物"的副本，所以游戏里
@@ -56,18 +58,23 @@ public final class VatJeiRecipes {
         }
         int splitting = splittingSlot(slots, candidates);
         if (splitting < 0) {
-            return List.of(page(recipe, candidates, null, null));
+            return List.of(page(recipe, candidates, null));
         }
-        List<VatJeiRecipe> pages = new ArrayList<>();
+        Map<Item, List<ItemStack>> samplesByProduct = new LinkedHashMap<>();
         for (ItemStack sample : candidates.get(splitting)) {
             ItemStack produced = productOf(slots.get(splitting), sample, 1);
-            if (produced.isEmpty()) {
-                continue;
+            if (!produced.isEmpty()) {
+                samplesByProduct.computeIfAbsent(produced.getItem(), key -> new ArrayList<>()).add(sample);
             }
-            ResourceLocation productId = BuiltInRegistries.ITEM.getKey(produced.getItem());
-            pages.add(page(recipe, candidates, sample.getItem(), productId.getPath()));
         }
-        return pages.isEmpty() ? List.of(page(recipe, candidates, null, null)) : List.copyOf(pages);
+        List<VatJeiRecipe> pages = new ArrayList<>();
+        for (Map.Entry<Item, List<ItemStack>> entry : samplesByProduct.entrySet()) {
+            List<List<ItemStack>> pageCandidates = new ArrayList<>(candidates);
+            pageCandidates.set(splitting, List.copyOf(entry.getValue()));
+            ResourceLocation productId = BuiltInRegistries.ITEM.getKey(entry.getKey());
+            pages.add(page(recipe, pageCandidates, productId.getPath()));
+        }
+        return pages.isEmpty() ? List.of(page(recipe, candidates, null)) : List.copyOf(pages);
     }
 
     /**
@@ -95,10 +102,10 @@ public final class VatJeiRecipes {
     }
 
     private static VatJeiRecipe page(VatRecipe recipe, List<List<ItemStack>> candidates,
-                                     @Nullable Item only, @Nullable String suffix) {
+                                     @Nullable String suffix) {
         List<VatJeiRecipe.State> states = new ArrayList<>();
         for (int level : levelsOf(recipe)) {
-            states.add(stateOf(recipe, candidates, level, only));
+            states.add(stateOf(recipe, candidates, level));
         }
         ResourceLocation id = com.gunmu.northeast_china_delight.util.DdIds.parse(recipe.id());
         if (suffix != null) {
@@ -121,7 +128,7 @@ public final class VatJeiRecipes {
     }
 
     private static VatJeiRecipe.State stateOf(VatRecipe recipe, List<List<ItemStack>> candidates,
-                                             int level, @Nullable Item only) {
+                                             int level) {
         int[] counts = resolveCounts(recipe, candidates, level);
         List<List<ItemStack>> seasoning = new ArrayList<>();
         List<List<ItemStack>> primary = new ArrayList<>();
@@ -129,8 +136,7 @@ public final class VatJeiRecipes {
 
         for (int i = 0; i < recipe.slots().size(); i++) {
             VatRecipe.Slot slot = recipe.slots().get(i);
-            List<ItemStack> items = only == null ? candidates.get(i)
-                    : candidates.get(i).stream().filter(stack -> stack.is(only)).toList();
+            List<ItemStack> items = candidates.get(i);
             if (items.isEmpty()) {
                 continue;
             }

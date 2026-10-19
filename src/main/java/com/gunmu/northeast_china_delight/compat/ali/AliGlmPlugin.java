@@ -10,14 +10,19 @@ import com.gunmu.northeast_china_delight.loot.NortheastFishingLootModifier;
 import com.gunmu.northeast_china_delight.loot.PigOffalLootModifier;
 import com.gunmu.northeast_china_delight.loot.StructureSeedsLootModifier;
 import com.gunmu.northeast_china_delight.loot.VillageSeedsLootModifier;
+import com.gunmu.northeast_china_delight.util.DdIds;
+import com.gunmu.northeast_china_delight.villager.SideDishMerchantTrades;
 import com.yanny.aci.api.NumberExpr;
 import com.yanny.ali.api.AliEntrypoint;
 import com.yanny.ali.api.IOperation;
 import com.yanny.ali.api.IServerUtils;
+import com.yanny.ali.api.IServerRegistry;
+import com.yanny.ali.api.TradeLevelInfo;
 import com.yanny.ali.plugin.glm.GlobalLootModifierUtils;
 import com.yanny.ali.plugin.glm.IGlobalLootModifierPlugin;
 import com.yanny.ali.plugin.glm.IPageLootModifier;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
 import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
@@ -56,6 +61,19 @@ public final class AliGlmPlugin implements IGlobalLootModifierPlugin {
         registry.registerGlobalLootModifier(StructureSeedsLootModifier.class, AliGlmPlugin::structureSeeds);
         registry.registerGlobalLootModifier(VillageSeedsLootModifier.class, AliGlmPlugin::villageSeeds);
         registry.registerGlobalLootModifier(ChestLootConfigModifier.class, AliGlmPlugin::chestLootConfig);
+    }
+
+    /**
+     * 副食商是 Java 里动态注册的职业，ALI 无法从原版交易表自动发现；这里把同一份候选表交给 ALI。
+     * 1–4 级随机展示 2 条，5 级还会由 Mixin 保底补入黄桃罐头，所以展示 3 条。
+     */
+    @Override
+    public void registerServer(IServerRegistry registry) {
+        registry.registerTrades(
+                DdIds.of(NortheastChinaDelight.MODID, "side_dish_merchant"),
+                EntityType.VILLAGER,
+                SideDishMerchantTrades::tradeListingArrays,
+                level -> new TradeLevelInfo(NumberExpr.constant(level >= 5 ? 3.0 : 2.0)));
     }
 
     /** 宰猪：每种副产物基础 10%（Java 里再按抢夺等级 +5%/级、一次最多 2 种），着火时换成熏制版 */
