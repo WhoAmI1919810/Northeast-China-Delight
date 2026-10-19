@@ -7,8 +7,8 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 
 /**
- * JEI 里展示的一条大缸配方。纯图形，没有任何文字。一条配方可以有多个「档位」：大缸的不少配方是按水位配比的（水位几层就配几份料），例如辣白菜在 1 / 2 / 3 层水时白菜
- * 分别是 2 / 4 / 6 份、调味品是 1 / 1 / 2 份。多档配方在 JEI 里每隔 1.5 秒自动轮换一档，把每个水位下的投料和产物都演一遍。
+ * JEI 里展示的一条大缸配方。纯图形，没有任何文字。一条配方可以有多个「档位」：大缸的不少配方是按水位配比的（水位几层就配几份料），
+ * 多档配方在 JEI 里每隔 1.5 秒自动轮换一档，把每个水位下的投料和产物都演一遍。无液体配方只有一个档位。
  */
 public record VatJeiRecipe(net.minecraft.resources.ResourceLocation id, List<State> states) {
 
