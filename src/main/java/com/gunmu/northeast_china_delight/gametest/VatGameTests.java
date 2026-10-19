@@ -30,6 +30,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.GameType;
 import net.minecraft.world.level.block.state.BlockState;
+import org.jetbrains.annotations.Nullable;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.JsonParseException;
@@ -318,6 +319,85 @@ public final class VatGameTests {
     }
 
     @GameTest(template = "empty")
+    public static void vatPickleCanBeMade(GameTestHelper helper) {
+        assertPickleCanBeMade(helper, false);
+    }
+
+    @GameTest(template = "empty")
+    public static void vatSpicyPickleCanBeMade(GameTestHelper helper) {
+        assertPickleCanBeMade(helper, true);
+    }
+
+    @GameTest(template = "empty")
+    public static void vatSpicyPickleUsesOnlyItsFamilyTag(GameTestHelper helper) {
+        VatRecipe recipe = VatRecipes.recipeOf(VatRecipes.Kind.SPICY_PICKLE, helper.getLevel());
+        if (recipe == null || !recipe.accepts(0, new ItemStack(ModItems.NAPA_CABBAGE.get()))) {
+            helper.fail("辣味泡菜族没有接受大白菜");
+        }
+        for (Item item : List.of(ModItems.CUCUMBER.get(), Items.CARROT, ModItems.GREEN_RADISH.get())) {
+            if (recipe.accepts(0, new ItemStack(item))) {
+                helper.fail("辣味泡菜族不应接受普通泡菜原料：" + BuiltInRegistries.ITEM.getKey(item));
+            }
+        }
+        helper.succeed();
+    }
+
+    @GameTest(template = "empty")
+    public static void vatMappedConverterSurvivesNetwork(GameTestHelper helper) {
+        JsonObject config = JsonParser.parseString("""
+                {"kind":"SPICY_PICKLE","seal":"PRESS","seconds":1,"liquid":{},
+                 "slots":[{"ingredient":{"tag":"northeast_china_delight:spicy_pickle_ingredients"},
+                   "fate":"KEEP","bounds":{"type":"exact","count":1},
+                   "converter":{"type":"mapped","entries":[
+                     {"ingredient":{"tag":"c:crops/napa_cabbage"},
+                      "result":"northeast_china_delight:spicy_cabbage"}]}}]}
+                """).getAsJsonObject();
+        VatRecipe recipe = roundTripVerbRecipe(helper, config);
+        if (recipe == null || recipe.slots().get(0).converter() == null) {
+            helper.fail("映射换算没有通过配方同步");
+        }
+        VatRecipe.Converter converter = recipe.slots().get(0).converter();
+        if (!converter.apply(new ItemStack(ModItems.NAPA_CABBAGE.get()))
+                .is(ModItems.SPICY_CABBAGE.get())) {
+            helper.fail("大白菜没有按映射转成辣白菜");
+        }
+        ItemStack cucumber = new ItemStack(ModItems.CUCUMBER.get());
+        if (!converter.apply(cucumber).is(cucumber.getItem())) {
+            helper.fail("未命中映射的输入应原样返还");
+        }
+        helper.succeed();
+    }
+
+    private static void assertPickleCanBeMade(GameTestHelper helper, boolean spicy) {
+        VatBlockEntity vat = placeVat(helper);
+        vat.addWater(VatRecipes.WATER_MB_PER_LEVEL);
+        for (int i = 0; i < 2; i++) {
+            vat.addContent(new ItemStack(ModItems.NAPA_CABBAGE.get()));
+        }
+        vat.addContent(new ItemStack(ModItems.SALT.get()));
+        if (spicy) {
+            vat.addContent(new ItemStack(ModItems.CHILI_SAUCE.get()));
+            vat.addContent(new ItemStack(ModItems.FISH_SAUCE.get()));
+        }
+        vat.setPress(new ItemStack(Items.STONE));
+
+        VatRecipes.Kind expectedKind = spicy ? VatRecipes.Kind.SPICY_PICKLE : VatRecipes.Kind.PICKLE;
+        VatRecipe recipe = VatBrewing.ready(vat);
+        if (recipe == null || recipe.kind() != expectedKind) {
+            helper.fail((spicy ? "辣白菜" : "酸菜") + "配方没有正确认出，实际 "
+                    + (recipe == null ? "null" : recipe.kind()));
+        }
+        VatBrewing.complete(helper.getLevel(), helper.absolutePos(AT), vat, recipe);
+        ItemStack result = VatBrewing.takeOne(vat, new ArrayList<>());
+        Item expected = spicy ? ModItems.SPICY_CABBAGE.get() : ModItems.SOUR_CABBAGE.get();
+        if (!result.is(expected) || vat.sourWaterMb() < VatRecipes.WATER_MB_PER_LEVEL) {
+            helper.fail((spicy ? "辣白菜" : "酸菜") + "制作/取出失败，结果 "
+                    + BuiltInRegistries.ITEM.getKey(result.getItem()));
+        }
+        helper.succeed();
+    }
+
+    @GameTest(template = "empty")
     public static void vatDisabledRecipeReturnsItsIngredients(GameTestHelper helper) {
         VatBlockEntity vat = placeVat(helper);
         vat.setRecipe(VatRecipe.of(VatRecipes.Kind.SPICY_PICKLE,
@@ -484,6 +564,45 @@ public final class VatGameTests {
             checkPageFollowsIngredient(helper, recipe, pages, VatRecipes.Kind.SALTED_FISH);
         }
         helper.succeed();
+    }
+
+    @GameTest(template = "empty")
+    public static void vatJeiPicklePagesKeepAllIngredients(GameTestHelper helper) {
+        VatRecipe pickle = VatRecipes.recipeOf(VatRecipes.Kind.PICKLE, helper.getLevel());
+        VatRecipe spicyPickle = VatRecipes.recipeOf(VatRecipes.Kind.SPICY_PICKLE, helper.getLevel());
+        VatJeiRecipe sourPage = pageProducing(VatJeiRecipes.pagesFor(pickle), ModItems.SOUR_CABBAGE.get());
+        VatJeiRecipe spicyPage = pageProducing(VatJeiRecipes.pagesFor(spicyPickle), ModItems.SPICY_CABBAGE.get());
+        if (sourPage == null || spicyPage == null) {
+            helper.fail("JEI 缺少酸菜或辣白菜页面");
+        }
+        for (VatJeiRecipe.State state : sourPage.states()) {
+            if (state.primary().size() != 1 || state.seasoning().size() != 1) {
+                helper.fail("酸菜的 JEI 页面丢了盐格：主料 " + state.primary().size()
+                        + " / 调味 " + state.seasoning().size());
+            }
+        }
+        for (VatJeiRecipe.State state : spicyPage.states()) {
+            if (state.primary().size() != 1 || state.seasoning().size() != 3) {
+                helper.fail("辣白菜的 JEI 页面丢了盐、辣椒酱或鱼露/虾酱格：主料 "
+                        + state.primary().size() + " / 调味 " + state.seasoning().size());
+            }
+        }
+        if (sourPage.id().equals(spicyPage.id())) {
+            helper.fail("酸菜和辣白菜的 JEI 页面 ID 不能相同");
+        }
+        helper.succeed();
+    }
+
+    @Nullable
+    private static VatJeiRecipe pageProducing(List<VatJeiRecipe> pages, Item item) {
+        for (VatJeiRecipe page : pages) {
+            for (VatJeiRecipe.State state : page.states()) {
+                if (state.results().stream().anyMatch(stack -> stack.is(item))) {
+                    return page;
+                }
+            }
+        }
+        return null;
     }
 
     /** 抽查"盐数 = 主料数"：JEI 页面上主料格与盐格的份数必须相等 */
@@ -661,6 +780,97 @@ public final class VatGameTests {
             helper.fail("酱渣留在缸里时，加水、加谷物并盖粗布毯后应开始酿醋");
         }
         assertScheduled(helper, level, pos);
+        helper.succeed();
+    }
+
+    @GameTest(template = "empty")
+    public static void finishedProductBlocksFollowUpUntilDrained(GameTestHelper helper) {
+        Player player = mockPlayer(helper, GameType.CREATIVE);
+        VatBlockEntity vat = placeVat(helper);
+        ServerLevel level = helper.getLevel();
+        BlockPos pos = helper.absolutePos(AT);
+        finishSoySauce(helper, level, pos, vat);
+        vat.takeCover();
+
+        if (vat.brewedMb() <= 0 || !vat.hasBottledProduct()) {
+            helper.fail("酱油完成后应记录在新成品槽里");
+        }
+        if (VatBrewing.forInsert(vat, new ItemStack(ModItems.CORN_SEEDS.get())) != null
+                || VatBrewing.ready(vat) != null) {
+            helper.fail("成品液体没取完时不应接下一条配方");
+        }
+        click(helper, player, new ItemStack(Items.WATER_BUCKET));
+        if (vat.waterLayers() != 0) {
+            helper.fail("成品液体没取完时不应继续加水");
+        }
+        Item cloth = clothRug();
+        if (cloth != null) {
+            click(helper, player, new ItemStack(cloth));
+            if (vat.isCovered()) {
+                helper.fail("成品液体没取完时不应封口开始下一道工序");
+            }
+        }
+
+        vat.setProductMb(ModFluids.soySauceSource(), 0);
+        if (VatBrewing.forInsert(vat, new ItemStack(ModItems.CORN_SEEDS.get())) == null) {
+            helper.fail("成品取完后酱渣应能接上醋的配方");
+        }
+        helper.succeed();
+    }
+
+    @GameTest(template = "empty")
+    public static void processingVatRejectsWaterBeyondRecipeLimit(GameTestHelper helper) {
+        Player player = mockPlayer(helper, GameType.CREATIVE);
+        VatBlockEntity vat = placeVat(helper);
+        ServerLevel level = helper.getLevel();
+        BlockPos pos = helper.absolutePos(AT);
+        Item cloth = clothRug();
+        if (cloth == null) {
+            helper.succeed();
+            return;
+        }
+
+        vat.addContent(new ItemStack(ModItems.SOYBEAN.get()));
+        click(helper, player, new ItemStack(Items.WATER_BUCKET));
+        click(helper, player, new ItemStack(cloth));
+        VatRecipe recipe = VatBrewing.ready(vat);
+        if (recipe == null || vat.recipeId() == null || vat.waterLayers() != 1) {
+            helper.fail("豆芽应在一层水 + 粗布毯后开工");
+        }
+
+        click(helper, player, new ItemStack(Items.WATER_BUCKET));
+        if (vat.waterLayers() != 1 || VatBrewing.ready(vat) == null) {
+            helper.fail("豆芽只允许一层水，开工后第二桶水必须被拒绝");
+        }
+        assertScheduled(helper, level, pos);
+        helper.succeed();
+    }
+
+    @GameTest(template = "empty")
+    public static void stalledProgressReturnsToZeroOnInteraction(GameTestHelper helper) {
+        Player player = mockPlayer(helper, GameType.CREATIVE);
+        VatBlockEntity vat = placeVat(helper);
+        ServerLevel level = helper.getLevel();
+        BlockPos pos = helper.absolutePos(AT);
+        Item cloth = clothRug();
+        if (cloth == null) {
+            helper.succeed();
+            return;
+        }
+
+        vat.addContent(new ItemStack(ModItems.SOYBEAN.get()));
+        vat.setKind(VatRecipes.Kind.BEAN_SPROUTS);
+        vat.setCover(new ItemStack(cloth));
+        vat.addWater(2 * VatRecipes.WATER_MB_PER_LEVEL);
+        level.setBlock(pos, level.getBlockState(pos).setValue(Vat.PROGRESS, 5), 3);
+        if (VatBrewing.ready(vat) != null) {
+            helper.fail("测试状态应超过豆芽的一层水上限");
+        }
+
+        click(helper, player, ItemStack.EMPTY);
+        if (level.getBlockState(pos).getValue(Vat.PROGRESS) != 0 || vat.recipeId() != null) {
+            helper.fail("配方失配后，空手右键应把进度退回 0 并解除旧配方绑定");
+        }
         helper.succeed();
     }
 

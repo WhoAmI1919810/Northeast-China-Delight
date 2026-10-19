@@ -67,6 +67,11 @@ public class DishEffectEvents {
             return;
         }
         ItemStack stack = event.getItem();
+        if (stack.is(ModItems.CANNED_YELLOW_PEACH.get())) {
+            for (DishEffects.Applied applied : DishEffects.cannedYellowPeachExtras()) {
+                player.addEffect(applied.instance());
+            }
+        }
         DishFlavors.Info info = DishFlavors.of(stack.getItem());
         if (info == null) {
             return;
@@ -117,19 +122,26 @@ public class DishEffectEvents {
                     .withStyle(ChatFormatting.GRAY));
         }
         DishFlavors.Info info = DishFlavors.of(stack.getItem());
-        if (info == null) {
+        boolean cannedYellowPeach = stack.is(ModItems.CANNED_YELLOW_PEACH.get());
+        if (info == null && !cannedYellowPeach) {
             return;
         }
-        List<DishEffects.Applied> effects = new ArrayList<>(DishEffects.of(info));
-        int warmth = DishFlavors.warmthTicks(stack.getItem(), info);
-        if (warmth > 0) {
-            effects.addAll(DishEffects.warmth(warmth));
-        }
-        if (givesNourishing(stack)) {
-            effects.addAll(DishEffects.nourishingExtras());
+        List<DishEffects.Applied> effects = new ArrayList<>();
+        if (info != null) {
+            effects.addAll(DishEffects.of(info));
+            int warmth = DishFlavors.warmthTicks(stack.getItem(), info);
+            if (warmth > 0) {
+                effects.addAll(DishEffects.warmth(warmth));
+            }
+            if (givesNourishing(stack)) {
+                effects.addAll(DishEffects.nourishingExtras());
+            }
         }
         if (stack.is(ModItems.ORANGE_GUO_BAO_ROU.get())) {
             effects.addAll(DishEffects.orangeJuiceExtras());
+        }
+        if (cannedYellowPeach) {
+            effects.addAll(DishEffects.cannedYellowPeachExtras());
         }
         if (effects.isEmpty()) {
             return;

@@ -141,12 +141,22 @@ public class VatBlockEntity extends BlockEntity implements IFluidHandler {
         return this.recipeId != null && !isFermented() && VatRecipes.recipeOf(this) == null;
     }
 
+    /**
+     * 缸里还有没取完的成品液体（不含酸引水）。
+     *
+     * <p>成品液体可能来自新字段 {@link #brewedFluid}/{@link #brewedMb}，也可能来自旧存档的
+     * 分液体字段。所有"能不能接下一道工序"的判断都必须走这里，否则只看旧字段时会漏掉新酿好的
+     * 酱油 / 醋，玩家就能在成品还没取完时继续投料或加水，把这一缸液体卡在取不出来的状态。
+     */
+    public boolean hasBottledProduct() {
+        return this.brewedMb > 0 || this.pasteMb > 0 || this.soySauceMb > 0 || this.vinegarMb > 0
+                || this.whiteVinegarMb > 0 || this.fishSauceMb > 0
+                || this.shrimpPasteMb > 0 || this.kvassMb > 0;
+    }
+
     public boolean isEmpty() {
         // 只用盐不算「有东西」：盐已经被吸收了，不该挡住加水或继续操作
-        return this.kind == VatRecipes.Kind.NONE && this.brewedMb <= 0
-                && this.pasteMb <= 0 && this.soySauceMb <= 0 && this.vinegarMb <= 0
-                && this.sourWaterMb <= 0 && this.whiteVinegarMb <= 0
-                && this.fishSauceMb <= 0 && this.shrimpPasteMb <= 0 && this.kvassMb <= 0
+        return this.kind == VatRecipes.Kind.NONE && !this.hasProductLiquid()
                 && this.count(stack -> !stack.is(ModTags.FOODS_SALT)) == 0;
     }
 
@@ -183,9 +193,7 @@ public class VatBlockEntity extends BlockEntity implements IFluidHandler {
     }
 
     public boolean hasProductLiquid() {
-        return this.brewedMb > 0 || this.pasteMb > 0 || this.soySauceMb > 0 || this.vinegarMb > 0
-                || this.sourWaterMb > 0 || this.whiteVinegarMb > 0
-                || this.fishSauceMb > 0 || this.shrimpPasteMb > 0 || this.kvassMb > 0;
+        return this.hasBottledProduct() || this.sourWaterMb > 0;
     }
 
     /**
@@ -271,27 +279,27 @@ public class VatBlockEntity extends BlockEntity implements IFluidHandler {
     }
 
     public int paste() {
-        return this.pasteMb / VatRecipes.SERVING_MB;
+        return this.pasteMb() / VatRecipes.SERVING_MB;
     }
 
     public int pasteMb() {
-        return this.pasteMb;
+        return this.effectiveProductMb(ModFluids.soyPasteSource(), this.pasteMb);
     }
 
     public int soySauce() {
-        return this.soySauceMb / VatRecipes.SERVING_MB;
+        return this.soySauceMb() / VatRecipes.SERVING_MB;
     }
 
     public int soySauceMb() {
-        return this.soySauceMb;
+        return this.effectiveProductMb(ModFluids.soySauceSource(), this.soySauceMb);
     }
 
     public int vinegar() {
-        return this.vinegarMb / VatRecipes.SERVING_MB;
+        return this.vinegarMb() / VatRecipes.SERVING_MB;
     }
 
     public int vinegarMb() {
-        return this.vinegarMb;
+        return this.effectiveProductMb(ModFluids.vinegarSource(), this.vinegarMb);
     }
 
     public int sourWater() {
@@ -303,35 +311,35 @@ public class VatBlockEntity extends BlockEntity implements IFluidHandler {
     }
 
     public int whiteVinegar() {
-        return this.whiteVinegarMb / VatRecipes.SERVING_MB;
+        return this.whiteVinegarMb() / VatRecipes.SERVING_MB;
     }
 
     public int whiteVinegarMb() {
-        return this.whiteVinegarMb;
+        return this.effectiveProductMb(ModFluids.whiteVinegarSource(), this.whiteVinegarMb);
     }
 
     public int fishSauce() {
-        return this.fishSauceMb / VatRecipes.SERVING_MB;
+        return this.fishSauceMb() / VatRecipes.SERVING_MB;
     }
 
     public int fishSauceMb() {
-        return this.fishSauceMb;
+        return this.effectiveProductMb(ModFluids.fishSauceSource(), this.fishSauceMb);
     }
 
     public int shrimpPaste() {
-        return this.shrimpPasteMb / VatRecipes.SERVING_MB;
+        return this.shrimpPasteMb() / VatRecipes.SERVING_MB;
     }
 
     public int shrimpPasteMb() {
-        return this.shrimpPasteMb;
+        return this.effectiveProductMb(ModFluids.shrimpPasteSource(), this.shrimpPasteMb);
     }
 
     public int kvass() {
-        return this.kvassMb / VatRecipes.SERVING_MB;
+        return this.kvassMb() / VatRecipes.SERVING_MB;
     }
 
     public int kvassMb() {
-        return this.kvassMb;
+        return this.effectiveProductMb(ModFluids.kvassSource(), this.kvassMb);
     }
 
     public void setKind(VatRecipes.Kind kind) {
@@ -348,6 +356,14 @@ public class VatBlockEntity extends BlockEntity implements IFluidHandler {
         this.brewedFluid = recipe.productFluid();
         this.brewedMb = 0;
         this.sync();
+    }
+
+    /** 解除"正在做哪条配方"的绑定，但保留内容物和液体；进度失配时用它把缸退回可重新选配方的状态。 */
+    public void clearRecipeBinding() {
+        if (this.recipeId != null) {
+            this.recipeId = null;
+            this.sync();
+        }
     }
 
     public boolean addContent(ItemStack stack) {
@@ -464,6 +480,9 @@ public class VatBlockEntity extends BlockEntity implements IFluidHandler {
         }
         this.brewedFluid = fluid;
         this.brewedMb += mb;
+        // 旧字段只用于读旧存档，运行时统一以 brewedFluid / brewedMb 为准，
+        // 否则同一缸液体会被两套记账同时算到。
+        this.clearLegacyProductMb(fluid);
         this.sync();
     }
 
@@ -477,7 +496,7 @@ public class VatBlockEntity extends BlockEntity implements IFluidHandler {
         if (fluid.isSame(ModFluids.sourWaterSource())) {
             return this.sourWaterMb;
         }
-        return this.brewedFluid != null && this.brewedFluid.isSame(fluid) ? this.brewedMb : 0;
+        return this.effectiveProductMb(fluid, this.legacyProductMb(fluid));
     }
 
     public void setProductMb(Fluid fluid, int mb) {
@@ -496,11 +515,63 @@ public class VatBlockEntity extends BlockEntity implements IFluidHandler {
                 this.brewedFluid = null;
                 this.brewedMb = 0;
             }
+            this.clearLegacyProductMb(fluid);
         } else {
             this.brewedFluid = fluid;
             this.brewedMb = amount;
+            this.clearLegacyProductMb(fluid);
         }
         this.sync();
+    }
+
+    /** 旧存档把每种成品液体分开记账；这里按流体读取对应的旧字段。 */
+    private int legacyProductMb(Fluid fluid) {
+        if (fluid.isSame(ModFluids.soyPasteSource())) {
+            return this.pasteMb;
+        }
+        if (fluid.isSame(ModFluids.soySauceSource())) {
+            return this.soySauceMb;
+        }
+        if (fluid.isSame(ModFluids.vinegarSource())) {
+            return this.vinegarMb;
+        }
+        if (fluid.isSame(ModFluids.whiteVinegarSource())) {
+            return this.whiteVinegarMb;
+        }
+        if (fluid.isSame(ModFluids.fishSauceSource())) {
+            return this.fishSauceMb;
+        }
+        if (fluid.isSame(ModFluids.shrimpPasteSource())) {
+            return this.shrimpPasteMb;
+        }
+        if (fluid.isSame(ModFluids.kvassSource())) {
+            return this.kvassMb;
+        }
+        return 0;
+    }
+
+    /** 读取成品量时兼容旧字段：新字段已经记了同一种液体，就以新字段为准。 */
+    private int effectiveProductMb(Fluid fluid, int legacy) {
+        int brewed = this.brewedFluid != null && this.brewedFluid.isSame(fluid) ? this.brewedMb : 0;
+        return Math.max(legacy, brewed);
+    }
+
+    private void clearLegacyProductMb(Fluid fluid) {
+        if (fluid.isSame(ModFluids.soyPasteSource())) {
+            this.pasteMb = 0;
+        } else if (fluid.isSame(ModFluids.soySauceSource())) {
+            this.soySauceMb = 0;
+        } else if (fluid.isSame(ModFluids.vinegarSource())) {
+            this.vinegarMb = 0;
+        } else if (fluid.isSame(ModFluids.whiteVinegarSource())) {
+            this.whiteVinegarMb = 0;
+        } else if (fluid.isSame(ModFluids.fishSauceSource())) {
+            this.fishSauceMb = 0;
+        } else if (fluid.isSame(ModFluids.shrimpPasteSource())) {
+            this.shrimpPasteMb = 0;
+        } else if (fluid.isSame(ModFluids.kvassSource())) {
+            this.kvassMb = 0;
+        }
     }
 
     /**
@@ -850,6 +921,65 @@ public class VatBlockEntity extends BlockEntity implements IFluidHandler {
                 && this.countOf(ModItems.SOY_PASTE_CHUNK.get()) > 0) {
             this.finishBrewing();
         }
+        this.migrateLegacyProductAccounting();
+    }
+
+    /**
+     * 把旧存档里按液体种类分开的字段并到统一成品槽。
+     *
+     * <p>旧版本只在 {@code brewed_product} 里记了液体种类，份数却还在 {@code soy_sauce_mb} 这类
+     * 字段里；迁移时如果不把份数带过来，缸会显示"有成品"但任何容器都取不出，正好是最难自救的卡死状态。
+     */
+    private void migrateLegacyProductAccounting() {
+        if (this.brewedMb <= 0) {
+            Fluid fluid = this.brewedFluid;
+            int amount = fluid == null ? 0 : this.legacyProductMb(fluid);
+            if (amount <= 0) {
+                fluid = this.firstLegacyProductFluid();
+                amount = fluid == null ? 0 : this.legacyProductMb(fluid);
+            }
+            if (fluid != null && amount > 0) {
+                this.brewedFluid = fluid;
+                this.brewedMb = amount;
+            } else {
+                this.brewedFluid = null;
+                this.brewedMb = 0;
+            }
+        }
+        // 运行时只保留一套记账，避免存档里新旧字段各有一份而被重复计算。
+        this.pasteMb = 0;
+        this.soySauceMb = 0;
+        this.vinegarMb = 0;
+        this.whiteVinegarMb = 0;
+        this.fishSauceMb = 0;
+        this.shrimpPasteMb = 0;
+        this.kvassMb = 0;
+    }
+
+    @Nullable
+    private Fluid firstLegacyProductFluid() {
+        if (this.pasteMb > 0) {
+            return ModFluids.soyPasteSource();
+        }
+        if (this.soySauceMb > 0) {
+            return ModFluids.soySauceSource();
+        }
+        if (this.vinegarMb > 0) {
+            return ModFluids.vinegarSource();
+        }
+        if (this.whiteVinegarMb > 0) {
+            return ModFluids.whiteVinegarSource();
+        }
+        if (this.fishSauceMb > 0) {
+            return ModFluids.fishSauceSource();
+        }
+        if (this.shrimpPasteMb > 0) {
+            return ModFluids.shrimpPasteSource();
+        }
+        if (this.kvassMb > 0) {
+            return ModFluids.kvassSource();
+        }
+        return null;
     }
 
     @Override

@@ -53,9 +53,7 @@ public final class VatBrewing {
     }
 
     private static boolean hasBottledProduct(VatBlockEntity vat) {
-        return vat.pasteMb() > 0 || vat.soySauceMb() > 0 || vat.vinegarMb() > 0
-                || vat.whiteVinegarMb() > 0 || vat.fishSauceMb() > 0
-                || vat.shrimpPasteMb() > 0 || vat.kvassMb() > 0;
+        return vat.hasBottledProduct();
     }
 
     @Nullable
@@ -73,8 +71,10 @@ public final class VatBrewing {
         // 注意这里必须排掉"已经做完"的缸：完成时 PROGRESS 会写到 MAX_PROGRESS，
         // 把 FERMENTED 的缸也算成"发酵中"的话，二次发酵（泡菜→白醋、酱渣→醋、大酱加小麦→酱油）
         // 就永远投不进料了 —— 那几条正是本轮要修的玩法。
-        boolean processing = vat.getBlockState()
-                .getValue(com.gunmu.northeast_china_delight.block.Vat.PROGRESS) > 0 && !vat.isFermented();
+        // 封口后到第一次 tick 之间 PROGRESS 还是 0，但配方已经绑定；必须把 recipeId 也算进去，
+        // 否则这段窗口里还能塞进另一条配方的材料。
+        boolean processing = !vat.isFermented() && (vat.recipeId() != null
+                || vat.getBlockState().getValue(com.gunmu.northeast_china_delight.block.Vat.PROGRESS) > 0);
 
         VatRecipe best = null;
         int[] bestScore = null;
@@ -165,6 +165,11 @@ public final class VatBrewing {
         if (vat.hasMissingUnfinishedRecipe()) {
             return null;
         }
+        // 上一道工序的成品还没取完时，不允许开始下一道工序：
+        // 否则新配方会消耗原料，而 addProduct 又因为缸里已有另一种液体而拒绝写入，成品直接丢失。
+        if (vat.hasBottledProduct()) {
+            return null;
+        }
         VatRecipe.Counts counts = counts(vat, null);
         int sour = vat.sourWaterMb();
         VatRecipe best = null;
@@ -232,6 +237,10 @@ public final class VatBrewing {
     @Nullable
     public static VatRecipe sealRecipe(VatBlockEntity vat, ItemStack stack) {
         if (vat.hasMissingUnfinishedRecipe()) {
+            return null;
+        }
+        // 成品液体没取完时不能封口开工；先把液体装走，再继续下一道工序。
+        if (vat.hasBottledProduct()) {
             return null;
         }
         VatRecipe now = current(vat);

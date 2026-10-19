@@ -19,7 +19,7 @@
     "slots": [
       {
         "ingredient": {
-          "matcher": "pickle_ingredient"
+          "tag": "northeast_china_delight:spicy_pickle_ingredients"
         },
         "fate": "KEEP",
         "bounds": {
@@ -27,7 +27,17 @@
           "min": 1,
           "max_per_layer": 2
         },
-        "converter": "spicy_pickle"
+        "converter": {
+          "type": "mapped",
+          "entries": [
+            {
+              "ingredient": {
+                "tag": "c:crops/napa_cabbage"
+              },
+              "result": "northeast_china_delight:spicy_cabbage"
+            }
+          ]
+        }
       },
       {
         "ingredient": {

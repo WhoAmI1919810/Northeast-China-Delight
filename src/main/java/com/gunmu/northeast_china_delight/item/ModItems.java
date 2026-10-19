@@ -103,10 +103,21 @@ public class ModItems {
     public static final Supplier<Item> BUCKWHEAT_NOODLES = plain("buckwheat_noodles");
     public static final Supplier<Item> DRIED_TOFU = food("dried_tofu", 3, 0.4F);
     public static final Supplier<Item> TOFU = food("tofu", 3, 0.4F);
+    public static final Supplier<Item> FROZEN_TOFU = food("frozen_tofu", 3, 0.4F);
     public static final Supplier<Item> COOKING_OIL = bottled("cooking_oil");
     public static final Supplier<Item> CHILI_OIL = bottled("chili_oil");
     public static final Supplier<Item> ANIMAL_OIL = bottled("animal_oil");
     public static final Supplier<Item> KVASS = bottledDrink("kvass", 2, 0.25F);
+    /**
+     * 黄桃罐头：7 点饥饿值、实际 3 点饱和度（原版公式为 nutrition × modifier × 2，
+     * 因此这里换算成 3/14 的饱和度系数）；吃完返还玻璃瓶。
+     * 物品栏贴图与手持 / 掉落模型的分流见 {@code client/CannedYellowPeachItemRenderer}。
+     */
+    public static final Supplier<Item> CANNED_YELLOW_PEACH = regItem("canned_yellow_peach",
+            properties -> new CannedYellowPeachItem(ModBlocks.CANNED_YELLOW_PEACH.get(), properties),
+            new Item.Properties()
+                    .craftRemainder(Items.GLASS_BOTTLE)
+                    .food(foodReturning(statsWithSaturationPoints(7, 3.0F), Items.GLASS_BOTTLE)));
     public static final Supplier<Item> PEANUT_BUTTER = bottled("peanut_butter");
     public static final Supplier<Item> ROASTED_PEANUTS = food("roasted_peanuts", 4, 0.5F);
     public static final Supplier<Item> CHILI_SAUCE = seasoningBowl("chili_sauce");
@@ -339,7 +350,7 @@ public class ModItems {
             SALT, SEA_WATER_BUCKET, SOY_PASTE, CHILI_SAUCE, SOY_SAUCE, VINEGAR, SOUR_WATER, WHITE_VINEGAR,
             FISH_SAUCE, SHRIMP_PASTE, CHILI_OIL, PEANUT_BUTTER, COOKING_OIL, ANIMAL_OIL,
             SOY_PASTE_CHUNK, SOY_RESIDUE,
-            WATER_DOUGH, BUCKWHEAT_NOODLES, DRIED_TOFU, TOFU, SWEET_POTATO_STARCH,
+            WATER_DOUGH, BUCKWHEAT_NOODLES, DRIED_TOFU, TOFU, FROZEN_TOFU, SWEET_POTATO_STARCH,
             VERMICELLI, LA_PI, CORN_FLOUR, CRACKLINGS, COLD_NOODLE_SHEET, BEAN_SPROUTS, SOUR_CORN_KERNELS, ROASTED_PEANUTS,
             CORN_STALK,
             LARGE_BASIN, BRASS_BOWL, WOODEN_MALLET, ANIMAL_OIL_BLOCK_ITEM,
@@ -395,7 +406,7 @@ public class ModItems {
      * 无容器菜单独列出，不能因为借用餐盘模型就误归入碗装。
      */
     public static final List<Supplier<? extends Item>> DISH_TAB_ITEMS = List.of(
-            KVASS,
+            KVASS, CANNED_YELLOW_PEACH,
             OLD_STYLE_GUO_BAO_ROU, NEW_STYLE_GUO_BAO_ROU, ORANGE_GUO_BAO_ROU,
             LIU_ROU_DUAN, HONG_SHAO_PAI_GU, DI_SAN_XIAN, JIAN_JIAO_GAN_DOU_FU,
             BRAISED_PORK_HOCK, BRAISED_PORK_STRIPS, BA_SI_TU_DOU,
@@ -614,6 +625,14 @@ public class ModItems {
 
     private static FoodProperties.Builder stats(int nutrition, float saturation) {
         return withSaturation(new FoodProperties.Builder().nutrition(nutrition), saturation);
+    }
+
+    /**
+     * 按「实际饱和度点数」构造食物属性。原版实际饱和度 = 饥饿值 × 饱和度系数 × 2，
+     * 所以 7 点饥饿值、3 点实际饱和度对应系数 3/14。
+     */
+    private static FoodProperties.Builder statsWithSaturationPoints(int nutrition, float saturationPoints) {
+        return stats(nutrition, saturationPoints / (nutrition * 2.0F));
     }
 
     public static void register(IEventBus eventBus) {

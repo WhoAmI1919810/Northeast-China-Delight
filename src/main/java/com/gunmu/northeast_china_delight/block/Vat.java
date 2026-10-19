@@ -200,7 +200,15 @@ public class Vat extends Block implements EntityBlock {
         BlockState state = level.getBlockState(pos);
         boolean fermented = state.getValue(FERMENTED);
         if (!fermented && state.getValue(PROGRESS) > 0) {
-            return;
+            // 配方被数据包删掉时保留绑定和进度，交给空手右键的「返还原料」流程处理。
+            if (VatBrewing.ready(vat) != null || vat.hasMissingUnfinishedRecipe()) {
+                return;
+            }
+            // 进度已经跑起来、配方却因数据包改动或误操作不再匹配：把进度退回 0，
+            // 否则 tryStart 永远因为 progress > 0 提前返回，这一缸就再也没有开工机会。
+            level.setBlock(pos, state.setValue(PROGRESS, 0), 3);
+            vat.clearRecipeBinding();
+            state = level.getBlockState(pos);
         }
         VatRecipe recipe = VatBrewing.ready(vat);
         if (recipe == null || (fermented && VatBrewing.isCurrent(vat, recipe))) {
@@ -224,6 +232,13 @@ public class Vat extends Block implements EntityBlock {
         // 酸引水和清水不能混：混了水位会算错，水还会凭空少掉
         if (vat.sourWaterMb() > 0) {
             return false;
+        }
+        if (!vat.isFermented() && (vat.recipeId() != null
+                || vat.getBlockState().getValue(PROGRESS) > 0)) {
+            // 已经开始计时的配方可能只要 0~1 层水（冻梨、豆芽等）。这时再倒水会超过
+            // water_max，ready() 返回 null，而 tick 又不会继续排程 —— 正是最典型的卡死路径。
+            VatRecipe recipe = VatRecipes.recipeOf(vat);
+            return recipe != null && vat.waterLayers() < recipe.liquid().waterMax();
         }
         return !vat.isFermented() || VatBrewing.canContinueWithWater(vat);
     }
@@ -271,6 +286,10 @@ public class Vat extends Block implements EntityBlock {
         VatBlockEntity vat = vatAt(level, pos);
         if (vat == null) {
             return InteractionResult.PASS;
+        }
+        if (!level.isClientSide) {
+            resetStalledProgress(level, pos, state, vat);
+            state = level.getBlockState(pos);
         }
 
         if (player.isSecondaryUseActive() && (vat.isPressed() || vat.isCovered())) {
@@ -506,6 +525,10 @@ public class Vat extends Block implements EntityBlock {
         if (vat == null || vat.isEmpty()) {
             return InteractionResult.PASS;
         }
+        if (!level.isClientSide) {
+            resetStalledProgress(level, pos, state, vat);
+            state = level.getBlockState(pos);
+        }
 
         if (player.isSecondaryUseActive() && (vat.isPressed() || vat.isCovered())) {
             if (!level.isClientSide) {
@@ -525,6 +548,13 @@ public class Vat extends Block implements EntityBlock {
 
         if (vat.hasMissingUnfinishedRecipe()) {
             return returnRemovedRecipe(level, pos, state, vat, player);
+        }
+
+        // 还没开工就盖上的布/石头，普通空手右键即可取回；
+        // 已经开工的缸仍然只显示进度，避免误触把计时清零（要中断请 Shift 右键）。
+        if (!state.getValue(FERMENTED) && state.getValue(PROGRESS) == 0 && vat.recipeId() == null
+                && (vat.isPressed() || vat.isCovered())) {
+            return takeSeal(level, pos, state, vat, player);
         }
 
         if (!state.getValue(FERMENTED)) {
@@ -588,6 +618,16 @@ public class Vat extends Block implements EntityBlock {
 
         VatRecipe recipe = VatBrewing.ready(vat);
         if (recipe == null) {
+            // 没有合法配方时不能停在 PROGRESS > 0：那会让 tryStart 永远提前返回。
+            // 但"配方被删掉"要保留原状态，玩家空手右键才能把所有原料拿回来。
+            if (vat.hasMissingUnfinishedRecipe()) {
+                return;
+            }
+            if (state.getValue(PROGRESS) > 0) {
+                level.setBlock(pos, state.setValue(PROGRESS, 0),
+                        Block.UPDATE_CLIENTS | Block.UPDATE_NEIGHBORS);
+                vat.clearRecipeBinding();
+            }
             return;
         }
 
@@ -675,6 +715,16 @@ public class Vat extends Block implements EntityBlock {
             player.displayClientMessage(Component.translatable(
                     "message.northeast_china_delight.vat.take_with_container",
                     new ItemStack(serving.container()).getHoverName()), true);
+        }
+    }
+
+    /** 进度大于 0 但当前已没有任何配方能匹配时，退回未开工状态，保证玩家还能重新封口开工。 */
+    private static void resetStalledProgress(Level level, BlockPos pos, BlockState state, VatBlockEntity vat) {
+        if (!state.getValue(FERMENTED) && state.getValue(PROGRESS) > 0
+                && !vat.hasMissingUnfinishedRecipe() && VatBrewing.ready(vat) == null) {
+            level.setBlock(pos, state.setValue(PROGRESS, 0),
+                    Block.UPDATE_CLIENTS | Block.UPDATE_NEIGHBORS);
+            vat.clearRecipeBinding();
         }
     }
 

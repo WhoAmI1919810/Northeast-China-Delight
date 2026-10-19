@@ -42,7 +42,8 @@ public final class VatRecipes {
         BEAN_SPROUTS,
         SOUR_CORN,
         KVASS,
-        FROZEN_PEAR
+        FROZEN_PEAR,
+        FROZEN_TOFU
     }
 
     public static final int VEGETABLES_PER_WATER = 2;
@@ -103,6 +104,7 @@ public final class VatRecipes {
     public static final int SOUR_CORN_SECONDS = 60;
     public static final int KVASS_SECONDS = 60;
     public static final int FROZEN_PEAR_SECONDS = 30;
+    public static final int FROZEN_TOFU_SECONDS = 30;
 
     public static final int TICKS_PER_SECOND = 20;
 

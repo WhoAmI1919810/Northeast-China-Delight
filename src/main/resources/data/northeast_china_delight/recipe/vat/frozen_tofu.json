@@ -1,0 +1,35 @@
+{
+  "type": "northeast_china_delight:vat",
+  "config": {
+    "kind": "FROZEN_TOFU",
+    "verb": {
+      "translate": "process.northeast_china_delight.vat.freezing"
+    },
+    "priority": 10,
+    "seal": "PRESS",
+    "seconds": 30,
+    "liquid": {
+      "water_min": 0,
+      "water_max": 0,
+      "water_after": "KEEP"
+    },
+    "slots": [
+      {
+        "ingredient": {
+          "tag": "c:foods/tofu"
+        },
+        "fate": "CONVERT",
+        "bounds": {
+          "type": "between",
+          "min": 1,
+          "max": 6
+        },
+        "result": "northeast_china_delight:frozen_tofu"
+      }
+    ],
+    "required_seal_item": {
+      "item": "minecraft:snow_block"
+    },
+    "requires_snowy_biome": true
+  }
+}
