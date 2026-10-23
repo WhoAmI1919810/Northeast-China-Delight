@@ -132,7 +132,7 @@ public final class DishFlavors {
         put(map, Flavor.REFRESHING, 7, "shredded_pollack");
         put(map, Flavor.REFRESHING, 8, "dip_veggie_platter");
         put(map, Flavor.REFRESHING, 4, "stuffed_cucumber_pickle");
-        put(map, Flavor.REFRESHING, 8, "mixed_vegetable_salad");
+        put(map, Flavor.REFRESHING, 8, "peanut_potato_salad");
         put(map, Flavor.REFRESHING, 3, "cabbage_tofu_vermicelli_stew");
         put(map, Flavor.REFRESHING, 3, "pickled_cucumber_pork_stirfry");
         put(map, Flavor.REFRESHING, 5, "tiger_salad");

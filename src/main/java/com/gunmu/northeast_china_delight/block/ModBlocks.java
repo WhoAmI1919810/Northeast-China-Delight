@@ -242,7 +242,7 @@ public class ModBlocks {
             "candied_peanuts", "grilled_oil_edge", "potato_pancake", "corn_fritter", "salted_fish_flatbread",
             "kimchi_pancake", "sauerkraut_fried_vermicelli", "pepper_dried_tofu",
             "cabbage_tofu_vermicelli_stew", "kimchi_tofu_soup", "pickled_cucumber_pork_stirfry",
-            "pickled_veggie_salad", "mixed_vegetable_salad", "stuffed_cucumber_pickle",
+            "pickled_veggie_salad", "peanut_potato_salad", "stuffed_cucumber_pickle",
             "dip_veggie_platter", "shredded_pollack", "buckwheat_cold_noodles", "sour_noodle_soup",
             "crushed_corn_porridge", "sweet_potato_porridge", "soy_paste_soup", "tiger_salad",
             "steamed_egg_soy_paste", "sauerkraut_bone_stew_bowl", "pork_vermicelli_stew_bowl",
@@ -264,7 +264,7 @@ public class ModBlocks {
             "braised_pork_hock", "braised_pork_strips", "candied_sweet_potato", "smoked_meat_platter",
             "snowy_bean_paste", "candied_peanuts", "potato_pancake", "corn_fritter", "salted_fish_flatbread",
             "kimchi_pancake", "sauerkraut_fried_vermicelli", "pepper_dried_tofu", "pickled_cucumber_pork_stirfry",
-            "pickled_veggie_salad", "mixed_vegetable_salad", "stuffed_cucumber_pickle", "dip_veggie_platter",
+            "pickled_veggie_salad", "peanut_potato_salad", "stuffed_cucumber_pickle", "dip_veggie_platter",
             "shredded_pollack", "tiger_salad", "shrimp_paste_scrambled_egg", "mung_bean_sheet_salad",
             "braised_sea_cucumber_scallion", "cured_pork_bean_stew", "dry_fried_hairtail",
             "braised_hairtail"
@@ -284,7 +284,7 @@ public class ModBlocks {
             "peanut_songpyeon", "grilled_corn", "hazelnut_sugar_fire_bun"
     );
 
-    /** 黄铜碗料理必须复用 brass_bowl 的 8×8×4 像素边界。 */
+    /** 黄铜碗料理统一用 block/brass_bowl 的碗体，边界见 DishBlock.BRASS_BOWL_SHAPE。 */
     public static final List<String> BRASS_BOWL_DISH_IDS = List.of(
             "buckwheat_cold_noodles", "spicy_beef_soup", "kimchi_fried_rice",
             "kimchi_tofu_soup", "soy_paste_soup", "ginseng_chicken_soup", "bibimbap"
@@ -305,6 +305,8 @@ public class ModBlocks {
                     ? DishBlock.TRAY_SHAPE
                     : SMALL_PLATE_DISH_IDS.contains(id)
                     ? DishBlock.SMALL_PLATE_SHAPE
+                    : BRASS_BOWL_DISH_IDS.contains(id)
+                    ? DishBlock.BRASS_BOWL_SHAPE
                     : NO_CONTAINER_DISH_IDS.contains(id)
                     ? DishBlock.TRAY_SHAPE
                     : DishBlock.BOWL_SHAPE;
