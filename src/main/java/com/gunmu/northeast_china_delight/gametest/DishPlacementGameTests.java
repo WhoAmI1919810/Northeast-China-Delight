@@ -124,8 +124,16 @@ public final class DishPlacementGameTests
                                 //?}
                                 .RightClickBlock(
                                 player, InteractionHand.MAIN_HAND, ground, hit));
-                helper.assertTrue(level.getBlockState(target).is(dishBlock.get()),
-                        "料理未沿用统一的潜行右键放置路径: " + id);
+                if (ModBlocks.canPlaceDish(id))
+                {
+                    helper.assertTrue(level.getBlockState(target).is(dishBlock.get()),
+                            "料理未沿用统一的潜行右键放置路径: " + id);
+                }
+                else
+                {
+                    helper.assertTrue(level.getBlockState(target).isAir(),
+                            "没装展示乐事时无器具料理不应放置: " + id);
+                }
             }
         }
         finally

@@ -66,3 +66,11 @@ description='''${mod_description}'''
     versionRange="${jei_version_range}"
     ordering="AFTER"
     side="CLIENT"
+
+# 展示乐事（Display Delight）：可选，装了它才能把无器具菜肴潜行右键摆成餐盘 / 小餐盘上的方块
+[[dependencies.${mod_id}]]
+    modId="displaydelight"
+    mandatory=false
+    versionRange="[0,)"
+    ordering="NONE"
+    side="BOTH"
