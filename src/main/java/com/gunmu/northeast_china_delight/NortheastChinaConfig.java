@@ -142,7 +142,7 @@ public final class NortheastChinaConfig
         DISH_PLACEMENT_ENABLED = builder
                 .comment("测试功能，尚未完善。",
                         "设为 true 时，允许玩家潜行右键放置菜肴的方块形态。")
-                .define("dish_placement_enabled", false);
+                .define("dish_placement_enabled", true);
         builder.pop();
 
         builder.comment("世界生成").push("worldgen");
