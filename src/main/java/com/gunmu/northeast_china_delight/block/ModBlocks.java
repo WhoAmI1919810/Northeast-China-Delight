@@ -256,7 +256,8 @@ public class ModBlocks {
             "red_bean_songpyeon", "peanut_songpyeon",
             "grilled_chicken_frame", "grilled_corn", "sauerkraut_crackling_dumpling",
             "shrimp_pork_dumpling", "three_delicacy_dumpling", "dry_fried_hairtail",
-            "braised_hairtail", "hazelnut_sugar_fire_bun"
+            "braised_hairtail", "hazelnut_sugar_fire_bun",
+            "soy_milk", "snow_mustard_tofu_stew", "dog_bao_pickles"
     );
 
     public static final List<String> TRAY_DISH_IDS = List.of(
@@ -288,7 +289,7 @@ public class ModBlocks {
     /** 黄铜碗料理统一用 block/brass_bowl 的碗体，边界见 DishBlock.BRASS_BOWL_SHAPE。 */
     public static final List<String> BRASS_BOWL_DISH_IDS = List.of(
             "buckwheat_cold_noodles", "spicy_beef_soup", "kimchi_fried_rice",
-            "kimchi_tofu_soup", "soy_paste_soup", "ginseng_chicken_soup", "bibimbap"
+            "kimchi_tofu_soup", "soy_paste_soup", "ginseng_chicken_soup", "bibimbap", "dog_bao_pickles"
     );
 
     public static final Map<String, Supplier<Block>> DISH_BLOCKS = registerDishBlocks();

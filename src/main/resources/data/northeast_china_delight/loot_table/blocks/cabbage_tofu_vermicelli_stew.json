@@ -1,0 +1,11 @@
+{
+  "type": "minecraft:block",
+  "pools": [
+    {
+      "bonus_rolls": 0.0,
+      "entries": [ { "type": "minecraft:item", "name": "northeast_china_delight:cabbage_tofu_vermicelli_stew" } ],
+      "rolls": 1.0
+    }
+  ],
+  "random_sequence": "northeast_china_delight:blocks/cabbage_tofu_vermicelli_stew"
+}

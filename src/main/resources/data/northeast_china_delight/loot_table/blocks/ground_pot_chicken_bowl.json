@@ -1,0 +1,11 @@
+{
+  "type": "minecraft:block",
+  "pools": [
+    {
+      "bonus_rolls": 0.0,
+      "entries": [ { "type": "minecraft:item", "name": "northeast_china_delight:ground_pot_chicken_bowl" } ],
+      "rolls": 1.0
+    }
+  ],
+  "random_sequence": "northeast_china_delight:blocks/ground_pot_chicken_bowl"
+}
