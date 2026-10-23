@@ -34,11 +34,12 @@ final class AliGlmData {
     static final float VILLAGE_SEEDS = 0.55F;
     /** {@code VillageSeedsLootModifier.doApply}：加工品一次 15% */
     static final float VILLAGE_SEEDS_PROCESSED = 0.15F;
-    /** {@code VillageSeedsLootModifier.rollProcessed}：nextInt(12) 的权重 */
-    static final int VILLAGE_PROCESSED_TOTAL = 12;
+    /** {@code VillageSeedsLootModifier.rollProcessed}：nextInt(14) 的权重 */
+    static final int VILLAGE_PROCESSED_TOTAL = 14;
     static final int VILLAGE_PROCESSED_CORN_FLOUR = 5;
     static final int VILLAGE_PROCESSED_WATER_DOUGH = 4;
     static final int VILLAGE_PROCESSED_PEANUT_BUTTER = 3;
+    static final int VILLAGE_PROCESSED_PICKLED_SNOW_MUSTARD = 2;
 
     /**
      * {@code PigOffalLootModifier.doApply} 里的内联候选表（每种基础概率 10%，每级抢夺 +5%，

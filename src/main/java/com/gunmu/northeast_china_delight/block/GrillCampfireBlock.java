@@ -59,6 +59,7 @@ public class GrillCampfireBlock extends CampfireBlock {
     public static final int MAX_PROGRESS = ModBlockStateProperties.GRILL_MAX_PROGRESS;
 
     private static final VoxelShape INTERACTION_SHAPE = Block.box(0.0, 0.0, 0.0, 16.0, 16.0, 16.0);
+    private static final VoxelShape RACK_SHAPE = Block.box(0.0, 0.0, 0.0, 16.0, 15.0, 16.0);
 
     public GrillCampfireBlock(Properties properties) {
         super(true, 1, properties);
@@ -90,10 +91,10 @@ public class GrillCampfireBlock extends CampfireBlock {
         return INTERACTION_SHAPE;
     }
 
-    /** 碰撞还是原版营火的 7/16 高，走路照样能踩过去 */
+    /** 架上烤架后按烤架模型的 15/16 高计算碰撞；拆架后会还原成原版营火。 */
     @Override
     public VoxelShape getCollisionShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
-        return SHAPE;
+        return RACK_SHAPE;
     }
 
     @Override
@@ -152,6 +153,9 @@ public class GrillCampfireBlock extends CampfireBlock {
      */
     private InteractionResult useOnGrill(ItemStack stack, BlockState state, Level level, BlockPos pos,
                                          Player player, InteractionHand hand, BlockHitResult hit) {
+        if (stack.is(Items.FLINT_AND_STEEL) || stack.is(Items.FIRE_CHARGE)) {
+            return InteractionResult.PASS;
+        }
         GrillBlockEntity grill = level.getBlockEntity(pos) instanceof GrillBlockEntity existing ? existing : null;
         if (level.isClientSide) {
             return InteractionResult.sidedSuccess(true);

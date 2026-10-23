@@ -5,7 +5,8 @@
     "ginseng": {"trigger": "minecraft:inventory_changed", "conditions": {"items": [{"items": ["northeast_china_delight:ginseng"]}]}},
     "hazelnut": {"trigger": "minecraft:inventory_changed", "conditions": {"items": [{"items": ["northeast_china_delight:hazelnut"]}]}},
     "wood_ear": {"trigger": "minecraft:inventory_changed", "conditions": {"items": [{"items": ["northeast_china_delight:wood_ear"]}]}},
-    "hazel_mushroom": {"trigger": "minecraft:inventory_changed", "conditions": {"items": [{"items": ["northeast_china_delight:hazel_mushroom"]}]}}
+    "hazel_mushroom": {"trigger": "minecraft:inventory_changed", "conditions": {"items": [{"items": ["northeast_china_delight:hazel_mushroom"]}]}},
+    "bellflower_root": {"trigger": "minecraft:inventory_changed", "conditions": {"items": [{"items": ["northeast_china_delight:bellflower_root"]}]}}
   },
-  "requirements": [["ginseng"], ["hazelnut"], ["wood_ear"], ["hazel_mushroom"]]
+  "requirements": [["ginseng"], ["hazelnut"], ["wood_ear"], ["hazel_mushroom"], ["bellflower_root"]]
 }

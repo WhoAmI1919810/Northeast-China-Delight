@@ -114,6 +114,7 @@ public final class VatRecipes {
         if (pickles == null) {
             Map<Item, Item> map = new HashMap<>();
             map.put(ModItems.NAPA_CABBAGE.get(), ModItems.SOUR_CABBAGE.get());
+            map.put(ModItems.SNOW_MUSTARD.get(), ModItems.PICKLED_SNOW_MUSTARD.get());
             map.put(ModItems.CUCUMBER.get(), ModItems.PICKLED_CUCUMBER.get());
             map.put(Items.CARROT, ModItems.PICKLED_CARROT.get());
             map.put(ModItems.GREEN_RADISH.get(), ModItems.PICKLED_GREEN_RADISH.get());
@@ -131,6 +132,7 @@ public final class VatRecipes {
     public static boolean isPickleIngredient(ItemStack stack) {
         return pickles().containsKey(stack.getItem())
                 || stack.is(ModTags.CROPS_NAPA_CABBAGE)
+                || stack.is(ModTags.CROPS_SNOW_MUSTARD)
                 || stack.is(ModTags.CROPS_CUCUMBER)
                 || stack.is(ModTags.CROPS_CARROT)
                 || stack.is(ModTags.CROPS_RADISH);
@@ -141,6 +143,7 @@ public final class VatRecipes {
         if (result != null) {
             return new ItemStack(result);
         }
+        if (stack.is(ModTags.CROPS_SNOW_MUSTARD)) return new ItemStack(ModItems.PICKLED_SNOW_MUSTARD.get());
         if (stack.is(ModTags.CROPS_CUCUMBER)) return new ItemStack(ModItems.PICKLED_CUCUMBER.get());
         if (stack.is(ModTags.CROPS_CARROT)) return new ItemStack(ModItems.PICKLED_CARROT.get());
         if (stack.is(ModTags.CROPS_RADISH)) return new ItemStack(ModItems.PICKLED_GREEN_RADISH.get());

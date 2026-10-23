@@ -64,6 +64,7 @@ public class ModItems {
     public static final Supplier<Item> GREEN_BEANS = food("green_beans", 1, 0.3F);
     public static final Supplier<Item> BUCKWHEAT = selfSeeding("buckwheat", () -> ModBlocks.BUCKWHEAT_CROP.get());
     public static final Supplier<Item> NAPA_CABBAGE = food("napa_cabbage", 2, 0.4F);
+    public static final Supplier<Item> SNOW_MUSTARD = food("snow_mustard", 2, 0.4F);
     public static final Supplier<Item> CUCUMBER = food("cucumber", 2, 0.4F);
     public static final Supplier<Item> SWEET_POTATO = selfSeedingFood("sweet_potato", () -> ModBlocks.SWEET_POTATO_CROP.get());
     public static final Supplier<Item> PEANUT = selfSeedingFood("peanut", () -> ModBlocks.PEANUT_CROP.get());
@@ -71,6 +72,7 @@ public class ModItems {
     public static final Supplier<Item> RED_CHILI = food("red_chili", 1, 0.3F);
     public static final Supplier<Item> GREEN_ONION = food("green_onion", 1, 0.3F);
     public static final Supplier<Item> GREEN_RADISH = food("green_radish", 2, 0.4F);
+    public static final Supplier<Item> BELLFLOWER_ROOT = food("bellflower_root", 2, 0.3F);
     public static final Supplier<Item> SHRIMP = food("shrimp", 2, 0.1F);
     public static final Supplier<Item> SPICY_CABBAGE = food("spicy_cabbage", 4, 0.5F);
 
@@ -79,13 +81,19 @@ public class ModItems {
     public static final Supplier<Item> CORN_SEEDS = seeds("corn_seeds", () -> ModBlocks.CORN_CROP.get());
     public static final Supplier<Item> GREEN_BEANS_SEEDS = seeds("green_beans_seeds", () -> ModBlocks.GREEN_BEANS_CROP.get());
     public static final Supplier<Item> NAPA_CABBAGE_SEEDS = seeds("napa_cabbage_seeds", () -> ModBlocks.NAPA_CABBAGE_CROP.get());
+    public static final Supplier<Item> SNOW_MUSTARD_SEEDS = seeds("snow_mustard_seeds", () -> ModBlocks.SNOW_MUSTARD_CROP.get());
     public static final Supplier<Item> CUCUMBER_SEEDS = seeds("cucumber_seeds", () -> ModBlocks.CUCUMBER_CROP.get());
     public static final Supplier<Item> RED_CHILI_SEEDS = seeds("red_chili_seeds", () -> ModBlocks.RED_CHILI_CROP.get());
     public static final Supplier<Item> GREEN_ONION_SEEDS = seeds("green_onion_seeds", () -> ModBlocks.GREEN_ONION_CROP.get());
     public static final Supplier<Item> GREEN_RADISH_SEEDS = seeds("green_radish_seeds", () -> ModBlocks.GREEN_RADISH_CROP.get());
     public static final Supplier<Item> GINSENG_SEEDS = seeds("ginseng_seeds", () -> ModBlocks.GINSENG_CROP.get());
+    public static final Supplier<Item> BELLFLOWER_SEEDS = regItem(
+            "bellflower_seeds",
+            properties -> new BellflowerSeedItem(ModBlocks.BELLFLOWER_CROP.get(), properties),
+            new Item.Properties());
 
     public static final Supplier<Item> SOUR_CABBAGE = food("sour_cabbage", 3, 0.4F);
+    public static final Supplier<Item> PICKLED_SNOW_MUSTARD = food("pickled_snow_mustard", 3, 0.4F);
     public static final Supplier<Item> SOY_PASTE = plain("soy_paste");
     public static final Supplier<Item> SOY_PASTE_CHUNK = simple("soy_paste_chunk");
     public static final Supplier<Item> SOY_RESIDUE = simple("soy_residue");
@@ -217,6 +225,7 @@ public class ModItems {
     public static final Supplier<Item> ZHU_ROU_DUN_FEN_TIAO_BOWL = bowlFood("pork_vermicelli_stew_bowl", 10, 0.7F);
     public static final Supplier<Item> SUAN_CAI_CHAO_FEN_TIAO = bowlFood("sauerkraut_fried_vermicelli", 6, 0.5F);
     public static final Supplier<Item> BUCKWHEAT_COLD_NOODLES = brassBowlFood("buckwheat_cold_noodles", 9, 0.6F);
+    public static final Supplier<Item> DOG_BAO_PICKLES = brassBowlFood("dog_bao_pickles", 6, 0.6F);
     public static final Supplier<Item> LIANG_BAN_XIAN_CAI = bowlFood("pickled_veggie_salad", 6, 0.5F);
     public static final Supplier<Item> MING_TAI_YU_SI = bowlFood("shredded_pollack", 6, 0.5F);
     public static final Supplier<Item> ZHAN_JIANG_CAI = bowlFood("dip_veggie_platter", 7, 0.5F);
@@ -233,6 +242,7 @@ public class ModItems {
     public static final Supplier<Item> XIA_JIANG_CHAO_JI_DAN = bowlFood("shrimp_paste_scrambled_egg", 7, 0.6F);
     public static final Supplier<Item> XIA_JIANG_DUN_DOU_FU = bowlFood("shrimp_paste_tofu_stew", 7, 0.6F);
     public static final Supplier<Item> HAI_XIAN_DOU_FU_TANG = bowlFood("seafood_tofu_soup", 8, 0.6F);
+    public static final Supplier<Item> SNOW_MUSTARD_TOFU_STEW = bowlFood("snow_mustard_tofu_stew", 8, 0.6F);
     public static final Supplier<Item> SAN_XIAN_XIAN_SHUI_JIAO = food("three_delicacy_dumpling", 10, 0.7F);
     public static final Supplier<Item> LA_BAI_CAI_TANG_FAN = brassBowlFood("kimchi_tofu_soup", 9, 0.6F);
     public static final Supplier<Item> YU_MI_LAO = bowlFood("corn_fritter", 7, 0.6F);
@@ -334,10 +344,10 @@ public class ModItems {
 
     public static final List<Supplier<? extends Item>> INGREDIENT_TAB_ITEMS = List.of(
             EGGPLANT_SEEDS, GREEN_PEPPER_SEEDS, CORN_SEEDS, GREEN_BEANS_SEEDS,
-            NAPA_CABBAGE_SEEDS, CUCUMBER_SEEDS, RED_CHILI_SEEDS, GREEN_ONION_SEEDS, GREEN_RADISH_SEEDS,
-            GINSENG_SEEDS,
-            NAPA_CABBAGE, CUCUMBER, EGGPLANT, GREEN_PEPPER, GREEN_ONION, RED_CHILI,
-            GREEN_BEANS, CORN, SWEET_POTATO, GREEN_RADISH,
+            NAPA_CABBAGE_SEEDS, SNOW_MUSTARD_SEEDS, CUCUMBER_SEEDS, RED_CHILI_SEEDS, GREEN_ONION_SEEDS, GREEN_RADISH_SEEDS,
+            GINSENG_SEEDS, BELLFLOWER_SEEDS,
+            NAPA_CABBAGE, SNOW_MUSTARD, CUCUMBER, EGGPLANT, GREEN_PEPPER, GREEN_ONION, RED_CHILI,
+            GREEN_BEANS, CORN, SWEET_POTATO, GREEN_RADISH, BELLFLOWER_ROOT,
             SOYBEAN, PEANUT, RED_BEAN, BUCKWHEAT,
             HAZELNUT, HAZEL_MUSHROOM, HAZEL_MUSHROOM_COLONY, WOOD_EAR, GINSENG,
             FROZEN_PEAR,
@@ -345,7 +355,7 @@ public class ModItems {
             SHRIMP, HAIRTAIL, OYSTER, SEA_CUCUMBER,
             RAW_SAUSAGE, BLOOD_SAUSAGE, RICE_SAUSAGE, RED_SAUSAGE,
             SMOKED_PORK_HOCK, SMOKED_PIG_LIVER,
-            SOUR_CABBAGE, SPICY_CABBAGE, PICKLED_CUCUMBER, PICKLED_CARROT, PICKLED_GREEN_RADISH,
+            SOUR_CABBAGE, PICKLED_SNOW_MUSTARD, SPICY_CABBAGE, PICKLED_CUCUMBER, PICKLED_CARROT, PICKLED_GREEN_RADISH,
             SALTED_PORK, SALTED_FISH,
             SALT, SEA_WATER_BUCKET, SOY_PASTE, CHILI_SAUCE, SOY_SAUCE, VINEGAR, SOUR_WATER, WHITE_VINEGAR,
             FISH_SAUCE, SHRIMP_PASTE, CHILI_OIL, PEANUT_BUTTER, COOKING_OIL, ANIMAL_OIL,
@@ -422,14 +432,14 @@ public class ModItems {
             SUAN_CAI_JIAO_ZI, XIA_REN_ZHU_ROU_XIAN_SHUI_JIAO, SAN_XIAN_XIAN_SHUI_JIAO,
             JIANG_DA_GU, JIANG_NIU_ROU,
             SOY_MILK, SOUR_TANGZI, CHA_ZI_ZHOU, SWEET_POTATO_PORRIDGE,
-            EGG_SOY_PASTE, XIA_JIANG_DUN_DOU_FU, HAI_XIAN_DOU_FU_TANG,
+            EGG_SOY_PASTE, XIA_JIANG_DUN_DOU_FU, HAI_XIAN_DOU_FU_TANG, SNOW_MUSTARD_TOFU_STEW,
             HAI_SHEN_DOU_FU_TANG, DE_MO_LI_DUN_YU, SU_BO_TANG,
             BAI_CAI_DOU_FU_DUN_FEN_TIAO,
             DI_GUO_JI_BOWL, DI_GUO_PAI_GU_BOWL, SHA_ZHU_CAI_BOWL,
             SUAN_CAI_DUN_GU_TOU_BOWL, ZHU_ROU_DUN_FEN_TIAO_BOWL,
             XIAO_JI_DUN_MO_GU_BOWL, SUAN_CAI_HAI_XIAN_GUO_BOWL, DA_FENG_SHOU_BOWL,
             LA_NIU_ROU_TANG_FAN, LA_BAI_CAI_CHAO_FAN, LA_BAI_CAI_TANG_FAN,
-            DA_JIANG_TANG, SHEN_JI_TANG, BUCKWHEAT_COLD_NOODLES, BIBIMBAP,
+            DA_JIANG_TANG, SHEN_JI_TANG, BUCKWHEAT_COLD_NOODLES, DOG_BAO_PICKLES, BIBIMBAP,
             DI_GUO_JI, DI_GUO_PAI_GU, SHA_ZHU_CAI, DA_FENG_SHOU,
             SUAN_CAI_DUN_GU_TOU, ZHU_ROU_DUN_FEN_TIAO,
             XIAO_JI_DUN_MO_GU, SUAN_CAI_HAI_XIAN_GUO

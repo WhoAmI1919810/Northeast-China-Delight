@@ -26,8 +26,8 @@ import net.neoforged.neoforge.common.loot.LootModifier;
  * 以及村庄里的非住宅箱）小概率塞东北乐事的种子与可种植谷物。
  *
  * <p>与村庄住宅用的 {@link VillageSeedsLootModifier} 不同：这一份概率刻意压低
- * （约 15% 出 1 份），并且把 15 种可种植物品全放进同一个池子——
- * 包括能直接当种子种的红薯、花生、大豆、红豆、荞麦。</p>
+ * （约 15% 出 1 份），并且把 18 种可种植物品和桔梗本体放进同一个池子——
+ * 可种植物品包括能直接当种子种的红薯、花生、大豆、红豆、荞麦。</p>
  */
 public class StructureSeedsLootModifier extends LootModifier
 {
@@ -44,6 +44,8 @@ public class StructureSeedsLootModifier extends LootModifier
             new Entry(() -> ModItems.CORN_SEEDS.get(), 8),
             new Entry(() -> ModItems.SOYBEAN.get(), 8),
             new Entry(() -> ModItems.NAPA_CABBAGE_SEEDS.get(), 7),
+            new Entry(() -> ModItems.SNOW_MUSTARD_SEEDS.get(), 5),
+            new Entry(() -> ModItems.SNOW_MUSTARD.get(), 4),
             new Entry(() -> ModItems.CUCUMBER_SEEDS.get(), 7),
             new Entry(() -> ModItems.GREEN_RADISH_SEEDS.get(), 7),
             new Entry(() -> ModItems.GREEN_ONION_SEEDS.get(), 7),
@@ -55,7 +57,9 @@ public class StructureSeedsLootModifier extends LootModifier
             new Entry(() -> ModItems.EGGPLANT_SEEDS.get(), 6),
             new Entry(() -> ModItems.GREEN_BEANS_SEEDS.get(), 6),
             new Entry(() -> ModItems.RED_CHILI_SEEDS.get(), 5),
-            new Entry(() -> ModItems.GINSENG_SEEDS.get(), 2)
+            new Entry(() -> ModItems.GINSENG_SEEDS.get(), 2),
+            new Entry(() -> ModItems.BELLFLOWER_ROOT.get(), 4),
+            new Entry(() -> ModItems.BELLFLOWER_SEEDS.get(), 4)
     };
 
     public StructureSeedsLootModifier(LootItemCondition[] conditions)

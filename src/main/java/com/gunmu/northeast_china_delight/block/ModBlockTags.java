@@ -34,6 +34,11 @@ public final class ModBlockTags
             TagKey.create(Registries.BLOCK,
                     DdIds.of(NortheastChinaDelight.MODID, "ginseng_snow_nearby"));
 
+    /** 桔梗能扎根的地面：土类方块，以及玩家播种用的耕地。 */
+    public static final TagKey<Block> BELLFLOWER_PLANTABLE_ON =
+            TagKey.create(Registries.BLOCK,
+                    DdIds.of(NortheastChinaDelight.MODID, "bellflower_plantable_on"));
+
     private ModBlockTags()
     {
     }

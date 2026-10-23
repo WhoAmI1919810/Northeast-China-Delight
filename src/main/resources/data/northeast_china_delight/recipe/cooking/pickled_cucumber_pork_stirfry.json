@@ -7,7 +7,7 @@
   "experience": 1.0,
   "ingredients": [
     {
-      "tag": "c:foods/pickles"
+      "tag": "northeast_china_delight:pickled_cucumbers"
     },
     {
       "tag": "c:foods/raw_pork"

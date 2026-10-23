@@ -1,0 +1,25 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "northeast_china_delight:bellflower_root"
+    },
+    {
+      "item": "northeast_china_delight:brass_bowl"
+    },
+    {
+      "tag": "c:sugar"
+    },
+    {
+      "tag": "c:foods/seasonings/salt"
+    },
+    {
+      "tag": "c:foods/seasonings/chili_sauce"
+    }
+  ],
+  "result": {
+    "count": 1,
+    "id": "northeast_china_delight:dog_bao_pickles"
+  }
+}

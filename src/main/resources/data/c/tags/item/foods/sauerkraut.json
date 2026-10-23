@@ -1,6 +1,7 @@
 {
   "values": [
     "northeast_china_delight:sour_cabbage",
+    "northeast_china_delight:pickled_snow_mustard",
     {
       "id": "extradelight:sauerkraut_item",
       "required": false

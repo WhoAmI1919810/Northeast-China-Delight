@@ -206,7 +206,7 @@ public final class GenerationConfigGameTests {
     public static void farmDefaultsCoverEveryClimate(GameTestHelper helper) {
         Set<String> seen = new HashSet<>();
         var rules = farmRules();
-        helper.assertTrue(rules.size() == 26, "六份处理器应覆盖 26 条本模组作物规则");
+        helper.assertTrue(rules.size() == 30, "六份处理器应覆盖 30 条本模组作物规则");
         for (var rule : rules) {
             String crop = rule.getAsJsonObject("input_predicate").get("crop_item").getAsString();
             seen.add(crop);
@@ -217,7 +217,7 @@ public final class GenerationConfigGameTests {
                     "农田自定义规则必须能通过注册表双向编解码");
         }
         helper.assertTrue(seen.equals(Set.copyOf(NortheastChinaConfig.DEFAULT_VILLAGE_FARM_CROPS)),
-                "默认允许列表必须包含全部 14 种农田作物");
+                "默认允许列表必须包含全部 15 种农田作物");
         helper.succeed();
     }
 
@@ -290,7 +290,7 @@ public final class GenerationConfigGameTests {
     @GameTest(template = "empty")
     public static void chestDefaultsCoverExistingChestTables(GameTestHelper helper) {
         var allowed = Set.copyOf(NortheastChinaConfig.DEFAULT_CHEST_LOOT_ITEMS);
-        helper.assertTrue(allowed.size() == 63, "默认箱子列表应包含全部 63 种现有候选");
+        helper.assertTrue(allowed.size() == 66, "默认箱子列表应包含全部 66 种现有候选");
         for (String id : allowed) {
             helper.assertTrue(BuiltInRegistries.ITEM.containsKey(DdIds.parse(id)), "默认候选必须是已注册物品：" + id);
         }

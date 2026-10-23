@@ -60,7 +60,8 @@ public class ModBlocks {
             "napa_cabbage_crate", "cucumber_crate", "green_radish_crate", "green_onion_crate",
             "eggplant_crate", "green_pepper_crate", "red_chili_crate", "green_beans_crate",
             "corn_crate", "sweet_potato_crate", "sour_cabbage_crate", "spicy_cabbage_crate",
-            "pickled_cucumber_crate", "pickled_carrot_crate", "pickled_green_radish_crate", "frozen_pear_crate"
+            "pickled_cucumber_crate", "pickled_carrot_crate", "pickled_green_radish_crate", "frozen_pear_crate",
+            "bellflower_crate", "snow_mustard_crate", "pickled_snow_mustard_crate"
     );
 
     public static final List<String> SACK_IDS = List.of(
@@ -108,6 +109,8 @@ public class ModBlocks {
             crop("buckwheat", () -> ModItems.BUCKWHEAT.get());
     public static final Supplier<Block> NAPA_CABBAGE_CROP =
             cabbageCrop("napa_cabbage", () -> ModItems.NAPA_CABBAGE_SEEDS.get());
+    public static final Supplier<Block> SNOW_MUSTARD_CROP =
+            cabbageCrop("snow_mustard", () -> ModItems.SNOW_MUSTARD_SEEDS.get());
     public static final Supplier<Block> CUCUMBER_CROP =
             fruitCrop("cucumber", () -> ModItems.CUCUMBER_SEEDS.get(), () -> ModItems.CUCUMBER.get());
     public static final Supplier<Block> SWEET_POTATO_CROP =
@@ -122,6 +125,11 @@ public class ModBlocks {
             smallCrop("green_onion", () -> ModItems.GREEN_ONION_SEEDS.get());
     public static final Supplier<Block> GREEN_RADISH_CROP =
             crop("green_radish", () -> ModItems.GREEN_RADISH_SEEDS.get());
+    public static final Supplier<Block> BELLFLOWER_CROP = block(
+            "bellflower_crop",
+            properties -> new BellflowerCropBlock(properties, () -> ModItems.BELLFLOWER_SEEDS.get()),
+            cropProperties()
+    );
 
     public static final Supplier<Block> HAZELNUT_BUSH = block(
             "hazelnut_bush",

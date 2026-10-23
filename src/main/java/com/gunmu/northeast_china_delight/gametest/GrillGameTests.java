@@ -17,6 +17,7 @@ import com.gunmu.northeast_china_delight.item.ModItems;
 import com.gunmu.northeast_china_delight.util.DdIds;
 import io.netty.buffer.Unpooled;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.nbt.CompoundTag;
@@ -450,6 +451,19 @@ public final class GrillGameTests {
         helper.assertTrue(grill.recipeOf(0, manager) == null && grill.progress(0) == 0
                 && grill.recipeOf(1, manager).id().equals(otherId) && grill.progress(1) == 2
                 && grill.seasoningsOf(1).isEmpty(), "一个槽位的配方或调料不能影响另一个槽位");
+        helper.succeed();
+    }
+
+    @GameTest(template = "empty")
+    public static void grillCollisionMatchesRackHeight(GameTestHelper helper) {
+        BlockPos localPos = new BlockPos(1, 2, 1);
+        helper.setBlock(localPos, ModBlocks.GRILL_CAMPFIRE.get().defaultBlockState());
+        BlockPos pos = helper.absolutePos(localPos);
+        double top = helper.getLevel().getBlockState(pos)
+                .getCollisionShape(helper.getLevel(), pos)
+                .max(Direction.Axis.Y, 0.5, 0.5);
+        helper.assertTrue(Math.abs(top - 15.0 / 16.0) < 1.0E-4,
+                "带烤架的营火碰撞箱应为烤架的 15/16 高，而不是原版营火的 7/16");
         helper.succeed();
     }
 

@@ -33,9 +33,11 @@ public final class VatItemShapes {
         Item item = stack.getItem();
         int fresh = 0xFFFFFF;
 
-        if (item == ModItems.NAPA_CABBAGE.get() || item == ModItems.SOUR_CABBAGE.get()
+        if (item == ModItems.NAPA_CABBAGE.get() || item == ModItems.SNOW_MUSTARD.get()
+                || item == ModItems.SOUR_CABBAGE.get() || item == ModItems.PICKLED_SNOW_MUSTARD.get()
                 || item == ModItems.SPICY_CABBAGE.get()) {
             int tint = item == ModItems.SOUR_CABBAGE.get() ? 0xE8F0C8
+                    : item == ModItems.PICKLED_SNOW_MUSTARD.get() ? 0xE8F0C8
                     : item == ModItems.SPICY_CABBAGE.get() ? 0xFFD8C0 : fresh;
             return List.of(
                     box(0.30F, 0.00F, 0.30F, 0.70F, 0.34F, 0.70F, tint),
@@ -174,7 +176,8 @@ public final class VatItemShapes {
      */
     static float heightScale(ItemStack stack) {
         Item item = stack.getItem();
-        if (item == ModItems.NAPA_CABBAGE.get() || item == ModItems.SOUR_CABBAGE.get()
+        if (item == ModItems.NAPA_CABBAGE.get() || item == ModItems.SNOW_MUSTARD.get()
+                || item == ModItems.SOUR_CABBAGE.get() || item == ModItems.PICKLED_SNOW_MUSTARD.get()
                 || item == ModItems.SPICY_CABBAGE.get()) {
             return 1.16F;
         }
@@ -204,9 +207,11 @@ public final class VatItemShapes {
         if (item == ModItems.SHRIMP.get()) {
             return 0xE8A88C;
         }
-        if (item == ModItems.NAPA_CABBAGE.get() || item == ModItems.CUCUMBER.get()
+        if (item == ModItems.NAPA_CABBAGE.get() || item == ModItems.SNOW_MUSTARD.get()
+                || item == ModItems.CUCUMBER.get()
                 || item == ModItems.GREEN_RADISH.get() || item == Items.CARROT
-                || item == ModItems.SOUR_CABBAGE.get() || item == ModItems.SPICY_CABBAGE.get()) {
+                || item == ModItems.SOUR_CABBAGE.get() || item == ModItems.PICKLED_SNOW_MUSTARD.get()
+                || item == ModItems.SPICY_CABBAGE.get()) {
             return 0xA8C070;
         }
         if (item == Items.BREAD || item == ModItems.CORN_SEEDS.get() || item == ModItems.BUCKWHEAT.get()

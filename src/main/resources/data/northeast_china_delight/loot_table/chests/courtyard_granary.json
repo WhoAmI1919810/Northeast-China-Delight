@@ -45,6 +45,22 @@
             { "function": "minecraft:set_count", "count": { "min": 2, "max": 6 } }
           ]
         },
+        {
+          "type": "minecraft:item",
+          "name": "northeast_china_delight:bellflower_seeds",
+          "weight": 5,
+          "functions": [
+            { "function": "minecraft:set_count", "count": { "min": 1, "max": 4 } }
+          ]
+        },
+        {
+          "type": "minecraft:item",
+          "name": "northeast_china_delight:snow_mustard_seeds",
+          "weight": 6,
+          "functions": [
+            { "function": "minecraft:set_count", "count": { "min": 1, "max": 4 } }
+          ]
+        },
         { "type": "minecraft:item", "name": "northeast_china_delight:corn_seeds_sack", "weight": 4 },
         { "type": "minecraft:item", "name": "northeast_china_delight:soybean_sack", "weight": 4 },
         { "type": "minecraft:item", "name": "northeast_china_delight:buckwheat_sack", "weight": 3 },

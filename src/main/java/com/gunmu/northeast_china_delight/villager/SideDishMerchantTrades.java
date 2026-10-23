@@ -80,6 +80,7 @@ public final class SideDishMerchantTrades
         trades.get(3).add(sellWithUses(ModItems.CHILI_SAUCE.get(), 2, 5, 12, 10));
         trades.get(3).add(coldOnly(sell(5, ModItems.PICKLED_GREEN_RADISH.get(), 1, 12, 10)));
         trades.get(3).add(coldOnly(sell(6, ModItems.SOUR_CABBAGE.get(), 1, 12, 10)));
+        trades.get(3).add(sell(6, ModItems.PICKLED_SNOW_MUSTARD.get(), 1, 12, 10));
         trades.get(3).add(coldOnly(sell(9, ModItems.SPICY_CABBAGE.get(), 1, 12, 10)));
         trades.get(3).add(buy(ModItems.RED_CHILI.get(), 18, 16, 10));
 
@@ -105,6 +106,7 @@ public final class SideDishMerchantTrades
         trades.get(5).add(sell(5, ModItems.WATER_DOUGH.get(), 1, 12, 30));
         trades.get(5).add(sellFull(ModItems.PEANUT_BUTTER.get(), 8, 12, 30));
         trades.get(5).add(buy(ModItems.PEANUT.get(), 22, 16, 30));
+        trades.get(5).add(sellBetween(8, 10, ModItems.DOG_BAO_PICKLES.get(), 1, 12, 30));
     }
 
     private static VillagerTrades.ItemListing sellWithUses(Item item, int uses, int emeralds, int maxUses, int xp)

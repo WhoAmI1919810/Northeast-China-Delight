@@ -41,6 +41,8 @@ public final class ModFarmerTrades
         trades.get(2).add(sell(3, ModItems.EGGPLANT.get(), 1, 16, 5));
         trades.get(2).add(sell(3, ModItems.GREEN_PEPPER.get(), 1, 16, 5));
         trades.get(2).add(sell(4, ModItems.RED_CHILI.get(), 1, 16, 5));
+        trades.get(2).add(sell(3, ModItems.SNOW_MUSTARD.get(), 1, 16, 5));
+        trades.get(2).add(buy(ModItems.BELLFLOWER_ROOT.get(), 20, 16, 5));
 
         trades.get(3).add(sell(4, ModItems.CORN.get(), 1, 16, 10));
         trades.get(3).add(buy(ModItems.CORN_STALK.get(), 18, 16, 10));

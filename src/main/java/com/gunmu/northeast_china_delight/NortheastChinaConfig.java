@@ -31,10 +31,13 @@ public final class NortheastChinaConfig
             "northeast_china_delight:peanut",
             "northeast_china_delight:sweet_potato",
             "northeast_china_delight:green_pepper_seeds",
-            "northeast_china_delight:red_chili_seeds");
+            "northeast_china_delight:red_chili_seeds",
+            "northeast_china_delight:snow_mustard_seeds");
 
     public static final List<String> DEFAULT_CHEST_LOOT_ITEMS = List.of(
             "northeast_china_delight:animal_oil",
+            "northeast_china_delight:bellflower_root",
+            "northeast_china_delight:bellflower_seeds",
             "northeast_china_delight:blood_sausage",
             "northeast_china_delight:braised_pork_ribs",
             "northeast_china_delight:braised_sea_cucumber_scallion",
@@ -70,6 +73,7 @@ public final class NortheastChinaConfig
             "northeast_china_delight:oyster",
             "northeast_china_delight:peanut",
             "northeast_china_delight:peanut_butter",
+            "northeast_china_delight:pickled_snow_mustard",
             "northeast_china_delight:pig_blood",
             "northeast_china_delight:pig_liver",
             "northeast_china_delight:pork_hock",
@@ -89,6 +93,8 @@ public final class NortheastChinaConfig
             "northeast_china_delight:shrimp",
             "northeast_china_delight:shrimp_paste",
             "northeast_china_delight:smoked_meat_platter",
+            "northeast_china_delight:snow_mustard",
+            "northeast_china_delight:snow_mustard_seeds",
             "northeast_china_delight:sour_dough",
             "northeast_china_delight:soy_paste",
             "northeast_china_delight:soy_sauce",
@@ -151,7 +157,7 @@ public final class NortheastChinaConfig
                 .define("village_farm_crops_enabled", true);
         VILLAGE_FARM_ALLOWED_CROPS = builder
                 .comment("村庄农田允许生成的作物，填写播种物品的完整注册 ID。",
-                        "默认包含全部 14 种农田作物，空列表表示不生成任何本模组农田作物。")
+                        "默认包含全部 15 种农田作物，空列表表示不生成任何本模组农田作物。")
                 .defineListAllowEmpty("village_farm_allowed_crops", DEFAULT_VILLAGE_FARM_CROPS,
                         //? if >=1.20.5 {
                         () -> "northeast_china_delight:soybean",
@@ -166,7 +172,7 @@ public final class NortheastChinaConfig
                 .define("enabled", true);
         CHEST_LOOT_ALLOWED_ITEMS = builder
                 .comment("箱子战利品允许生成的本模组物品，填写完整注册 ID。",
-                        "默认包含全部 63 种现有候选，空列表表示不生成任何本模组箱子物品。")
+                        "默认包含全部 69 种现有候选，空列表表示不生成任何本模组箱子物品。")
                 .defineListAllowEmpty("allowed_items", DEFAULT_CHEST_LOOT_ITEMS,
                         //? if >=1.20.5 {
                         () -> "northeast_china_delight:soybean",

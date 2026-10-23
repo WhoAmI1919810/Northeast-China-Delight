@@ -102,6 +102,9 @@ public class NortheastJeiPlugin implements IModPlugin {
         registration.addItemStackInfo(new ItemStack(ModItems.SEA_WATER_BUCKET.get()),
                 Component.translatable("jei.northeast_china_delight.info.sea_water_bucket"));
         registration.addItemStackInfo(new ItemStack(ModItems.FROZEN_PEAR.get()), frozenPearInfo());
+        Component bellflowerInfo = Component.translatable("jei.northeast_china_delight.info.bellflower");
+        registration.addItemStackInfo(new ItemStack(ModItems.BELLFLOWER_ROOT.get()), bellflowerInfo);
+        registration.addItemStackInfo(new ItemStack(ModItems.BELLFLOWER_SEEDS.get()), bellflowerInfo);
     }
 
     /**
