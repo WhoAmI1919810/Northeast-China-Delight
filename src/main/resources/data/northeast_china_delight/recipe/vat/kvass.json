@@ -31,6 +31,20 @@
       "COLD": 1.25,
       "WARM": 0.75,
       "HOT": 0.75
-    }
+    },
+    "display_models": [
+      {
+        "ingredient": {
+          "item": "minecraft:bread"
+        },
+        "model": "northeast_china_delight:block/vat/bread"
+      },
+      {
+        "ingredient": {
+          "tag": "c:foods/bread"
+        },
+        "model": "northeast_china_delight:block/vat/bread"
+      }
+    ]
   }
 }

@@ -78,6 +78,26 @@
       "COLD": 1.5,
       "WARM": 0.5,
       "HOT": 0.25
-    }
+    },
+    "display_models": [
+      {
+        "ingredient": {
+          "item": "northeast_china_delight:spicy_cabbage"
+        },
+        "model": "northeast_china_delight:block/vat/spicy_cabbage"
+      },
+      {
+        "ingredient": {
+          "item": "northeast_china_delight:napa_cabbage"
+        },
+        "model": "northeast_china_delight:block/vat/napa_cabbage"
+      },
+      {
+        "ingredient": {
+          "tag": "c:crops/napa_cabbage"
+        },
+        "model": "northeast_china_delight:block/vat/napa_cabbage"
+      }
+    ]
   }
 }

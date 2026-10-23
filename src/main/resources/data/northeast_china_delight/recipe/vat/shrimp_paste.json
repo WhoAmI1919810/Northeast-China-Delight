@@ -42,6 +42,20 @@
       "COLD": 1.25,
       "WARM": 0.5,
       "HOT": 0.5
-    }
+    },
+    "display_models": [
+      {
+        "ingredient": {
+          "item": "northeast_china_delight:shrimp"
+        },
+        "model": "northeast_china_delight:block/vat/shrimp"
+      },
+      {
+        "ingredient": {
+          "tag": "c:foods/shrimp"
+        },
+        "model": "northeast_china_delight:block/vat/shrimp"
+      }
+    ]
   }
 }

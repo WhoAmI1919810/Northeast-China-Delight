@@ -43,6 +43,20 @@
       "COLD": 1.25,
       "WARM": 0.5,
       "HOT": 0.5
-    }
+    },
+    "display_models": [
+      {
+        "ingredient": {
+          "item": "northeast_china_delight:soy_paste_chunk"
+        },
+        "model": "northeast_china_delight:block/vat/soy_paste_chunk"
+      },
+      {
+        "ingredient": {
+          "item": "northeast_china_delight:soy_residue"
+        },
+        "model": "northeast_china_delight:block/vat/soy_residue"
+      }
+    ]
   }
 }

@@ -127,6 +127,7 @@ main 分支为 1.21.1（NeoForge）开发主线；1.20.1（Forge）版本线见 
 | `liquid` | 清水要求、产物液体与装瓶。`water_min`、`water_max` 是 `0–3` 层水位，每层 `1000 mB`；`water_after=CLEAR` 表示完成后清掉原来的清水。`product` 写流体 ID（如 `create:tea`），`product_mb` 是总量，上限 `3000 mB`；`product_per_layer=true` 时按水位层数倍增。旧数据包里不带冒号的枚举名（`PASTE`、`SOY_SAUCE` 等）仍可解析 |
 | `slots` | 1–12 个投料条目；`ingredient` 支持 `item`、`tag`、内置 `matcher` 或任选数组；示例的 `bounds` 允许 1–2 份大豆，`CONVERT` 将每份原料转为 `result` 指定的豆芽 |
 | `biome_seconds` | 可选群系时长倍率；示例在冷群系乘 `1.5`，热群系乘 `0.75`，未指定的气候类型乘 `1` |
+| `display_models` | 可选的展示模型列表，决定缸里的东西画成哪个方块模型，见下文 |
 
 `verb` 还支持 `{"text":"催芽"}` 或 `{"translate":"example.process.sprouting"}`；翻译键需在客户端语言资源中定义，直接写文字则不需要额外资源。默认的显示句式是中文语序（「腌制中 50%」），别的语言会拼不对，所以每处显示都可以换整句的翻译键，不写就用默认的：
 
@@ -142,6 +143,8 @@ main 分支为 1.21.1（NeoForge）开发主线；1.20.1（Forge）版本线见 
 固体处理：`KEEP` 和 `CONVERT` 的成品完成后留在缸里，空手逐份取出；`ABSORB` 和 `CONSUME` 在发酵完成时就消耗掉，`ABSORB` 可以写 `refund` 返还一个容器（辣椒酱还一个碗），没有 `refund` 的直接消失。复杂数量规则请以对应的内置配方为基础修改，不要仅修改 `kind` 来决定产物。
 
 完成后先移除封口物。固液混合配方可分别取货，取走固体不会清掉剩余液体。JEI 会显示取货方式及对应容器，容器不算加工原料。
+
+缸里的东西按 `display_models` 画成实体模型，例如 `[{"ingredient": {"item": "northeast_china_delight:napa_cabbage"}, "model": "northeast_china_delight:block/vat/napa_cabbage"}]`。按顺序取第一个匹配的条目；`ingredient` 写法与投料条目相同（物品、标签、`matcher` 或任选数组），原料和产物都可以写，加工完成后缸里显示的是产物。模型属于客户端资源，放在资源包的 `assets/<命名空间>/models/block/` 下会被自动加载；按方块像素的原尺寸建模，以 `(8, 0, 8)` 为底面中心，一件大约占 6×4.5 像素（缸里半层的一个位置），面上写 `"tintindex": 0` 会被辣酱等调料染色。没有写对应条目、条目引用的物品不存在或模型没有加载时，仍按物品贴图拼成小盒子显示。本模组自带的展示模型在 `northeast_china_delight:block/vat/` 下，可直接引用。
 
 新增配方使用不同文件名或命名空间即可获得新 ID，例如 `data/example/recipe/vat/bean_sprouts.json`（1.20.1 使用 `recipes/`）。配方应作为世界数据包加载，而不是客户端资源包；执行 `/reload` 后重新加载规则并刷新 JEI 页面。
 

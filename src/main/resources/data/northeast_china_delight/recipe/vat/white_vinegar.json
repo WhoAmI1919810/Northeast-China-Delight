@@ -34,6 +34,32 @@
       "COLD": 1.25,
       "WARM": 0.5,
       "HOT": 0.5
-    }
+    },
+    "display_models": [
+      {
+        "ingredient": {
+          "item": "northeast_china_delight:corn_seeds"
+        },
+        "model": "northeast_china_delight:block/vat/corn_seeds"
+      },
+      {
+        "ingredient": {
+          "tag": "c:seeds/corn"
+        },
+        "model": "northeast_china_delight:block/vat/corn_seeds"
+      },
+      {
+        "ingredient": {
+          "item": "northeast_china_delight:buckwheat"
+        },
+        "model": "northeast_china_delight:block/vat/buckwheat"
+      },
+      {
+        "ingredient": {
+          "tag": "c:crops/buckwheat"
+        },
+        "model": "northeast_china_delight:block/vat/buckwheat"
+      }
+    ]
   }
 }

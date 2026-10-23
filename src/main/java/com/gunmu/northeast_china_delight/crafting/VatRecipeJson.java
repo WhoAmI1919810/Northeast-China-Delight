@@ -122,7 +122,33 @@ public final class VatRecipeJson {
         for (int index = 0; index < slots.size(); index++) {
             builder.slot(slot(slots.get(index).getAsJsonObject(), index));
         }
+        if (config.has("display_models")) {
+            displayModels(builder, GsonHelper.getAsJsonArray(config, "display_models"));
+        }
         return builder.build();
+    }
+
+    /**
+     * 缸里东西的展示模型：{@code [{"ingredient": {...}, "model": "ns:block/..."}]}，先匹配到的条目生效。
+     * 原料写法和投料格一样（item / tag / matcher）；原料写不出来的条目（多半是引用了没装的模组物品）只跳过这一条，
+     * 不让整条配方失效 —— 展示模型只管外观。
+     * 模型要放在 {@code assets/<ns>/models/block/} 下（会被自动登记烘焙），找不到时渲染端退回贴图盒子。
+     */
+    private static void displayModels(VatRecipe.Builder builder, JsonArray entries) {
+        for (JsonElement entry : entries) {
+            if (!entry.isJsonObject()) {
+                throw new JsonParseException("大缸展示模型条目必须是对象");
+            }
+            JsonObject object = entry.getAsJsonObject();
+            ResourceLocation model = DdIds.parse(GsonHelper.getAsString(object, "model"));
+            Predicate<ItemStack> matcher;
+            try {
+                matcher = ingredient(object.get("ingredient"));
+            } catch (JsonParseException missingItem) {
+                continue;
+            }
+            builder.displayModel(matcher, model);
+        }
     }
 
     private static Component verb(JsonElement json) {

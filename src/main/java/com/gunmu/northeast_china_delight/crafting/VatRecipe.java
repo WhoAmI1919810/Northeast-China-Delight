@@ -1,6 +1,7 @@
 package com.gunmu.northeast_china_delight.crafting;
 
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.Nullable;
@@ -293,13 +294,16 @@ public final class VatRecipe {
     private final java.util.function.Predicate<ItemStack> requiredSealItem;
     @Nullable
     private final java.util.EnumMap<BiomeBand, Float> biomeSecondsMultiplier;
+    /** 缸里摆的东西用哪个方块模型展示；没有对应条目的物品按物品贴图拼盒子画 */
+    private final List<DisplayModel> displayModels;
 
     private VatRecipe(String id, VatRecipes.Kind kind, int priority, Seal seal, Liquid liquid, List<Slot> slots,
                       int seconds, @Nullable Component verb, @Nullable String progressKey, @Nullable String doneKey,
                       @Nullable String timeKey, @Nullable String hintKey, @Nullable String hintSecondsKey,
                       boolean secondsPerLayer, boolean requiresSnowyBiome,
                       @Nullable java.util.function.Predicate<ItemStack> requiredSealItem,
-                      @Nullable java.util.EnumMap<BiomeBand, Float> biomeSecondsMultiplier) {
+                      @Nullable java.util.EnumMap<BiomeBand, Float> biomeSecondsMultiplier,
+                      List<DisplayModel> displayModels) {
         this.id = id;
         this.kind = kind;
         this.priority = priority;
@@ -317,6 +321,22 @@ public final class VatRecipe {
         this.requiresSnowyBiome = requiresSnowyBiome;
         this.requiredSealItem = requiredSealItem;
         this.biomeSecondsMultiplier = biomeSecondsMultiplier == null ? null : new java.util.EnumMap<>(biomeSecondsMultiplier);
+        this.displayModels = List.copyOf(displayModels);
+    }
+
+    /** 一条展示模型：匹配到的物品在缸里画成 {@code model} 这个方块模型 */
+    public record DisplayModel(Predicate<ItemStack> matcher, ResourceLocation model) {
+    }
+
+    /** 这件东西在缸里用的展示模型；配方没写就返回 null */
+    @Nullable
+    public ResourceLocation displayModel(ItemStack stack) {
+        for (DisplayModel entry : this.displayModels) {
+            if (entry.matcher().test(stack)) {
+                return entry.model();
+            }
+        }
+        return null;
     }
 
     /**
@@ -351,7 +371,7 @@ public final class VatRecipe {
         return new VatRecipe(id, this.kind, this.priority, this.seal, this.liquid, this.slots,
                 this.seconds, this.verb, this.progressKey, this.doneKey, this.timeKey,
                 this.hintKey, this.hintSecondsKey, this.secondsPerLayer, this.requiresSnowyBiome,
-                this.requiredSealItem, this.biomeSecondsMultiplier);
+                this.requiredSealItem, this.biomeSecondsMultiplier, this.displayModels);
     }
 
     public VatRecipes.Kind kind() {
@@ -640,6 +660,7 @@ public final class VatRecipe {
         private boolean requiresSnowyBiome;
         private java.util.function.Predicate<ItemStack> requiredSealItem;
         private java.util.EnumMap<BiomeBand, Float> biomeSecondsMultiplier;
+        private final List<DisplayModel> displayModels = new ArrayList<>();
 
         private Builder(VatRecipes.Kind kind, String id) {
             this.kind = kind;
@@ -775,11 +796,16 @@ public final class VatRecipe {
             return this;
         }
 
+        public Builder displayModel(Predicate<ItemStack> matcher, ResourceLocation model) {
+            this.displayModels.add(new DisplayModel(matcher, model));
+            return this;
+        }
+
         public VatRecipe build() {
             return new VatRecipe(this.id, this.kind, this.priority, this.seal, this.liquid,
                     this.slots, this.seconds, this.verb, this.progressKey, this.doneKey, this.timeKey,
                     this.hintKey, this.hintSecondsKey, this.secondsPerLayer, this.requiresSnowyBiome,
-                    this.requiredSealItem, this.biomeSecondsMultiplier);
+                    this.requiredSealItem, this.biomeSecondsMultiplier, this.displayModels);
         }
     }
 }
