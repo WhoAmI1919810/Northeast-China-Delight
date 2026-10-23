@@ -1,6 +1,7 @@
 package com.gunmu.northeast_china_delight.block;
 
 import com.gunmu.northeast_china_delight.NortheastChinaDelight;
+import com.gunmu.northeast_china_delight.compat.displaydelight.DisplayDelightCompat;
 import com.gunmu.northeast_china_delight.fluid.ModFluids;
 import com.gunmu.northeast_china_delight.item.ModItems;
 import net.minecraft.world.level.block.CampfireBlock;
@@ -312,6 +313,12 @@ public class ModBlocks {
             map.put(id, dishBlock(id, shape));
         }
         return Collections.unmodifiableMap(map);
+    }
+
+    /** 无器具菜肴摆在展示乐事风格的餐盘 / 小餐盘上，只有装了展示乐事才能放置。 */
+    public static boolean canPlaceDish(String id)
+    {
+        return !NO_CONTAINER_DISH_IDS.contains(id) || DisplayDelightCompat.isLoaded();
     }
 
     private static Supplier<Block> dishBlock(String name, net.minecraft.world.phys.shapes.VoxelShape shape) {

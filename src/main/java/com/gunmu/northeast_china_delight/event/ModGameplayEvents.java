@@ -401,7 +401,8 @@ public final class ModGameplayEvents
         }
 
         Player player = event.getEntity();
-        if (player.isSecondaryUseActive() && NortheastChinaConfig.DISH_PLACEMENT_ENABLED.get())
+        if (player.isSecondaryUseActive() && NortheastChinaConfig.DISH_PLACEMENT_ENABLED.get()
+                && ModBlocks.canPlaceDish(id))
         {
             BlockPlaceContext placement = new BlockPlaceContext(
                     event.getLevel(), player, event.getHand(), stack, event.getHitVec());
