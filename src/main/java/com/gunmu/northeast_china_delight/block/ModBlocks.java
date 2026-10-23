@@ -281,7 +281,7 @@ public class ModBlocks {
     /** 无器具菜肴里单个 / 少量的放小餐盘，其余仍放餐盘。 */
     public static final List<String> SMALL_PLATE_DISH_IDS = List.of(
             "baked_sweet_potato", "northeast_rice_wrap", "sticky_bean_bun", "red_bean_songpyeon",
-            "peanut_songpyeon", "grilled_corn", "hazelnut_sugar_fire_bun"
+            "peanut_songpyeon"
     );
 
     /** 黄铜碗料理统一用 block/brass_bowl 的碗体，边界见 DishBlock.BRASS_BOWL_SHAPE。 */
