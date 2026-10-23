@@ -14,6 +14,8 @@ public class DishBlock extends Block
     public static final VoxelShape TRAY_SHAPE = Block.box(1.0, 0.0, 1.0, 15.0, 2.0, 15.0);
     /** 小餐盘（无器具的单个 / 少量菜肴）：与 block/dish/small_plate 对齐，8×8 像素、1 像素厚。 */
     public static final VoxelShape SMALL_PLATE_SHAPE = Block.box(4.0, 0.0, 4.0, 12.0, 1.0, 12.0);
+    /** 黄铜碗：与 block/brass_bowl 的模型外轮廓对齐，10×10 像素、碗沿 3.5 像素。 */
+    public static final VoxelShape BRASS_BOWL_SHAPE = Block.box(3.0, 0.0, 3.0, 13.0, 3.5, 13.0);
     /** 大脸盆盆体（放地上的空盆）：与 block/large_basin 的实体模型对齐，盆沿 5.5 像素。 */
     public static final VoxelShape BASIN_SHAPE = Block.box(1.0, 0.0, 1.0, 15.0, 5.5, 15.0);
     /** 黄桃罐头瓶身：模型外轮廓 3..13 × 0..16 × 3..13。 */
