@@ -30,6 +30,26 @@
       "COLD": 1.5,
       "WARM": 0.5,
       "HOT": 0.25
-    }
+    },
+    "display_models": [
+      {
+        "ingredient": {
+          "item": "northeast_china_delight:sour_corn_kernels"
+        },
+        "model": "northeast_china_delight:block/vat/sour_corn_kernels"
+      },
+      {
+        "ingredient": {
+          "item": "northeast_china_delight:corn_seeds"
+        },
+        "model": "northeast_china_delight:block/vat/corn_seeds"
+      },
+      {
+        "ingredient": {
+          "tag": "c:seeds/corn"
+        },
+        "model": "northeast_china_delight:block/vat/corn_seeds"
+      }
+    ]
   }
 }

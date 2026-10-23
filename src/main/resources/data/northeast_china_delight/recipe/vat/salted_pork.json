@@ -41,6 +41,26 @@
     ],
     "biome_seconds": {
       "HOT": 1.5
-    }
+    },
+    "display_models": [
+      {
+        "ingredient": {
+          "item": "northeast_china_delight:salted_pork"
+        },
+        "model": "northeast_china_delight:block/vat/salted_pork"
+      },
+      {
+        "ingredient": {
+          "item": "minecraft:porkchop"
+        },
+        "model": "northeast_china_delight:block/vat/porkchop"
+      },
+      {
+        "ingredient": {
+          "tag": "c:foods/raw_pork"
+        },
+        "model": "northeast_china_delight:block/vat/porkchop"
+      }
+    ]
   }
 }

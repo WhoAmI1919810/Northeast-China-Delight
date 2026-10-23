@@ -30,6 +30,26 @@
     "required_seal_item": {
       "item": "minecraft:snow_block"
     },
-    "requires_snowy_biome": true
+    "requires_snowy_biome": true,
+    "display_models": [
+      {
+        "ingredient": {
+          "item": "northeast_china_delight:frozen_tofu"
+        },
+        "model": "northeast_china_delight:block/vat/frozen_tofu"
+      },
+      {
+        "ingredient": {
+          "item": "northeast_china_delight:tofu"
+        },
+        "model": "northeast_china_delight:block/vat/tofu"
+      },
+      {
+        "ingredient": {
+          "tag": "c:foods/tofu"
+        },
+        "model": "northeast_china_delight:block/vat/tofu"
+      }
+    ]
   }
 }

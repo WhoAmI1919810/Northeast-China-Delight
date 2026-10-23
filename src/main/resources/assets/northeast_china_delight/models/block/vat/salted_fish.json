@@ -1,0 +1,11 @@
+{
+  "credit": "Northeast China Delight vat display model",
+  "parent": "block/block",
+  "render_type": "minecraft:cutout",
+  "textures": {"particle": "northeast_china_delight:block/vat/salted_fish", "0": "northeast_china_delight:block/vat/salted_fish"},
+  "elements": [
+    {"from": [6.4, 0, 5.4], "to": [9.6, 0.9, 10.4], "faces": {"north": {"uv": [5, 0, 6.5, 0.5], "texture": "#0", "tintindex": 0}, "east": {"uv": [4.5, 0.5, 7, 1], "texture": "#0", "tintindex": 0}, "south": {"uv": [4.5, 0.5, 6, 1], "texture": "#0", "tintindex": 0}, "west": {"uv": [3.5, 0, 6, 0.5], "texture": "#0", "tintindex": 0}, "up": {"uv": [1, 0.5, 2.5, 3], "texture": "#0", "tintindex": 0}}},
+    {"from": [6.8, 0.05, 10.4], "to": [9.2, 0.8, 11], "faces": {"north": {"uv": [4.5, 0.5, 5.5, 1], "texture": "#0", "tintindex": 0}, "east": {"uv": [4.5, 0, 5, 0.5], "texture": "#0", "tintindex": 0}, "south": {"uv": [3, 0, 4, 0.5], "texture": "#0", "tintindex": 0}, "west": {"uv": [6, 0.5, 6.5, 1], "texture": "#0", "tintindex": 0}, "up": {"uv": [1.5, 3.5, 2.5, 4], "texture": "#0", "tintindex": 0}}},
+    {"from": [6.9, 0.1, 4.6], "to": [9.1, 0.6, 5.4], "faces": {"north": {"uv": [8, 0.5, 9, 1], "texture": "#0", "tintindex": 0}, "east": {"uv": [8, 0.5, 8.5, 1], "texture": "#0", "tintindex": 0}, "south": {"uv": [7, 0.5, 8, 1], "texture": "#0", "tintindex": 0}, "west": {"uv": [8, 0.5, 8.5, 1], "texture": "#0", "tintindex": 0}, "up": {"uv": [7, 0, 8, 0.5], "texture": "#0", "tintindex": 0}}}
+  ]
+}

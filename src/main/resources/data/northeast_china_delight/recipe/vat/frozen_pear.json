@@ -30,6 +30,20 @@
     "required_seal_item": {
       "item": "minecraft:snow_block"
     },
-    "requires_snowy_biome": true
+    "requires_snowy_biome": true,
+    "display_models": [
+      {
+        "ingredient": {
+          "item": "northeast_china_delight:frozen_pear"
+        },
+        "model": "northeast_china_delight:block/vat/frozen_pear"
+      },
+      {
+        "ingredient": {
+          "tag": "c:foods/fruits/pear"
+        },
+        "model": "northeast_china_delight:block/vat/pear"
+      }
+    ]
   }
 }

@@ -30,6 +30,26 @@
     "biome_seconds": {
       "COLD": 1.5,
       "HOT": 0.75
-    }
+    },
+    "display_models": [
+      {
+        "ingredient": {
+          "item": "northeast_china_delight:soybean"
+        },
+        "model": "northeast_china_delight:block/vat/soybean"
+      },
+      {
+        "ingredient": {
+          "tag": "c:crops/soybean"
+        },
+        "model": "northeast_china_delight:block/vat/soybean"
+      },
+      {
+        "ingredient": {
+          "item": "northeast_china_delight:bean_sprouts"
+        },
+        "model": "northeast_china_delight:block/vat/bean_sprouts"
+      }
+    ]
   }
 }

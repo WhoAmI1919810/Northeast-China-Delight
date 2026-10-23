@@ -129,13 +129,21 @@ public class VatRenderer implements BlockEntityRenderer<VatBlockEntity> {
                 contentTop = shapeTop;
             }
 
+            BakedModel displayModel = displayModel(vat, display);
             pose.pushPose();
             pose.translate(x, y, z);
             pose.mulPose(Axis.YP.rotationDegrees((shown % 2) * 90 + ((shown * 7) % 8) - 4));
-            pose.translate(-ITEM_W * 0.5F, 0.0F, -ITEM_W * 0.5F);
-            pose.scale(ITEM_W, shapeH, ITEM_W);
-            renderShape(pose, buffer, display, itemRenderer, level, light, packedOverlay,
-                    saltCoat, seasoningTint, seasoningAmount);
+            if (displayModel != null) {
+                // 配方给了展示模型：按方块模型的原始像素尺寸画，模型以 (8, 0, 8) 为底面中心
+                pose.translate(-0.5F, 0.0F, -0.5F);
+                renderDisplayModel(pose, buffer, vat, displayModel, light, packedOverlay,
+                        seasoningTint, seasoningAmount);
+            } else {
+                pose.translate(-ITEM_W * 0.5F, 0.0F, -ITEM_W * 0.5F);
+                pose.scale(ITEM_W, shapeH, ITEM_W);
+                renderShape(pose, buffer, display, itemRenderer, level, light, packedOverlay,
+                        saltCoat, seasoningTint, seasoningAmount);
+            }
             pose.popPose();
             shown++;
         }
@@ -169,6 +177,35 @@ public class VatRenderer implements BlockEntityRenderer<VatBlockEntity> {
                     light, packedOverlay, ModelData.EMPTY, null);
             pose.popPose();
         }
+    }
+
+    /**
+     * 配方 {@code display_models} 里给这件东西指定的方块模型。没写、或者模型没被烘焙（路径写错 / 资源包缺文件）
+     * 都返回 null，调用方退回 {@link VatItemShapes} 的贴图盒子。
+     */
+    @org.jetbrains.annotations.Nullable
+    private static BakedModel displayModel(VatBlockEntity vat, ItemStack stack) {
+        net.minecraft.resources.ResourceLocation id = VatRecipes.displayModelFor(vat, stack);
+        if (id == null) {
+            return null;
+        }
+        BakedModel model = WoodenMortarRenderer.bakedModel(id);
+        return model == Minecraft.getInstance().getModelManager().getMissingModel() ? null : model;
+    }
+
+    /**
+     * 调料的颜色只染带 tintindex 的面（本模组的展示模型都带），数据包模型不写 tintindex 就保持原色。
+     * 用实体式的方块图集缓冲画：按面的法线分明暗，小模型才有立体感（普通 cutout 方块缓冲在 BER 里各面一样亮）。
+     */
+    private static void renderDisplayModel(PoseStack pose, MultiBufferSource buffer, VatBlockEntity vat,
+                                           BakedModel model, int light, int overlay,
+                                           int seasoningTint, float seasoningAmount) {
+        int tint = seasoningAmount > 0.0F ? blend(0xFFFFFF, seasoningTint, seasoningAmount) : 0xFFFFFF;
+        Minecraft.getInstance().getBlockRenderer().getModelRenderer().renderModel(
+                pose.last(), buffer.getBuffer(net.minecraft.client.renderer.Sheets.cutoutBlockSheet()),
+                vat.getBlockState(), model,
+                ((tint >> 16) & 0xFF) / 255.0F, ((tint >> 8) & 0xFF) / 255.0F, (tint & 0xFF) / 255.0F,
+                light, overlay);
     }
 
     /** 液面高度按这种液体的缸容量折算。格瓦斯一缸的量跟别的不一样，单独算 */

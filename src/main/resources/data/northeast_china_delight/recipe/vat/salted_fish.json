@@ -39,6 +39,38 @@
     ],
     "biome_seconds": {
       "HOT": 1.5
-    }
+    },
+    "display_models": [
+      {
+        "ingredient": {
+          "item": "northeast_china_delight:salted_fish"
+        },
+        "model": "northeast_china_delight:block/vat/salted_fish"
+      },
+      {
+        "ingredient": {
+          "item": "minecraft:cod"
+        },
+        "model": "northeast_china_delight:block/vat/cod"
+      },
+      {
+        "ingredient": {
+          "item": "minecraft:salmon"
+        },
+        "model": "northeast_china_delight:block/vat/salmon"
+      },
+      {
+        "ingredient": {
+          "item": "northeast_china_delight:hairtail"
+        },
+        "model": "northeast_china_delight:block/vat/hairtail"
+      },
+      {
+        "ingredient": {
+          "tag": "c:foods/raw_fish"
+        },
+        "model": "northeast_china_delight:block/vat/cod"
+      }
+    ]
   }
 }

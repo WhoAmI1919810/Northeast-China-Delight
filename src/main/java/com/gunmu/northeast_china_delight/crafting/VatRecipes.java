@@ -321,6 +321,27 @@ public final class VatRecipes {
         return ModItems.KVASS.get();
     }
 
+    /**
+     * 缸里这件东西的展示模型：先看缸当前对应的配方，再看其它配方；都没写就返回 null（渲染端按贴图拼盒子）。
+     */
+    @Nullable
+    public static ResourceLocation displayModelFor(VatBlockEntity vat, ItemStack stack) {
+        VatRecipe current = recipeOf(vat);
+        if (current != null) {
+            ResourceLocation model = current.displayModel(stack);
+            if (model != null) {
+                return model;
+            }
+        }
+        for (VatRecipe recipe : all(vat.getLevel())) {
+            ResourceLocation model = recipe.displayModel(stack);
+            if (model != null) {
+                return model;
+            }
+        }
+        return null;
+    }
+
     @Nullable
     public static Item resultFor(VatBlockEntity vat, Item input) {
         Item found = keepResult(recipeOf(vat), input);

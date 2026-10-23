@@ -46,6 +46,98 @@
       "COLD": 1.5,
       "WARM": 0.5,
       "HOT": 0.25
-    }
+    },
+    "display_models": [
+      {
+        "ingredient": {
+          "item": "northeast_china_delight:sour_cabbage"
+        },
+        "model": "northeast_china_delight:block/vat/sour_cabbage"
+      },
+      {
+        "ingredient": {
+          "item": "northeast_china_delight:pickled_snow_mustard"
+        },
+        "model": "northeast_china_delight:block/vat/pickled_snow_mustard"
+      },
+      {
+        "ingredient": {
+          "item": "northeast_china_delight:pickled_cucumber"
+        },
+        "model": "northeast_china_delight:block/vat/pickled_cucumber"
+      },
+      {
+        "ingredient": {
+          "item": "northeast_china_delight:pickled_carrot"
+        },
+        "model": "northeast_china_delight:block/vat/pickled_carrot"
+      },
+      {
+        "ingredient": {
+          "item": "northeast_china_delight:pickled_green_radish"
+        },
+        "model": "northeast_china_delight:block/vat/pickled_green_radish"
+      },
+      {
+        "ingredient": {
+          "item": "northeast_china_delight:napa_cabbage"
+        },
+        "model": "northeast_china_delight:block/vat/napa_cabbage"
+      },
+      {
+        "ingredient": {
+          "tag": "c:crops/napa_cabbage"
+        },
+        "model": "northeast_china_delight:block/vat/napa_cabbage"
+      },
+      {
+        "ingredient": {
+          "item": "northeast_china_delight:snow_mustard"
+        },
+        "model": "northeast_china_delight:block/vat/snow_mustard"
+      },
+      {
+        "ingredient": {
+          "item": "northeast_china_delight:cucumber"
+        },
+        "model": "northeast_china_delight:block/vat/cucumber"
+      },
+      {
+        "ingredient": {
+          "item": "minecraft:carrot"
+        },
+        "model": "northeast_china_delight:block/vat/carrot"
+      },
+      {
+        "ingredient": {
+          "item": "northeast_china_delight:green_radish"
+        },
+        "model": "northeast_china_delight:block/vat/green_radish"
+      },
+      {
+        "ingredient": {
+          "tag": "c:crops/snow_mustard"
+        },
+        "model": "northeast_china_delight:block/vat/snow_mustard"
+      },
+      {
+        "ingredient": {
+          "tag": "c:crops/cucumber"
+        },
+        "model": "northeast_china_delight:block/vat/cucumber"
+      },
+      {
+        "ingredient": {
+          "tag": "c:crops/carrot"
+        },
+        "model": "northeast_china_delight:block/vat/carrot"
+      },
+      {
+        "ingredient": {
+          "tag": "c:crops/radish"
+        },
+        "model": "northeast_china_delight:block/vat/green_radish"
+      }
+    ]
   }
 }

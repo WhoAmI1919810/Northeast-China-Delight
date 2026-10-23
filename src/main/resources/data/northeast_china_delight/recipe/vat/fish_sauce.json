@@ -42,6 +42,32 @@
       "COLD": 1.25,
       "WARM": 0.5,
       "HOT": 0.5
-    }
+    },
+    "display_models": [
+      {
+        "ingredient": {
+          "item": "minecraft:cod"
+        },
+        "model": "northeast_china_delight:block/vat/cod"
+      },
+      {
+        "ingredient": {
+          "item": "minecraft:salmon"
+        },
+        "model": "northeast_china_delight:block/vat/salmon"
+      },
+      {
+        "ingredient": {
+          "item": "northeast_china_delight:hairtail"
+        },
+        "model": "northeast_china_delight:block/vat/hairtail"
+      },
+      {
+        "ingredient": {
+          "tag": "c:foods/raw_fish"
+        },
+        "model": "northeast_china_delight:block/vat/cod"
+      }
+    ]
   }
 }
