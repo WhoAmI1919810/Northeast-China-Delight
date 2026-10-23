@@ -63,6 +63,8 @@ public final class ModTags {
     public static final TagKey<Item> CROPS_CHILE_PEPPER = item("crops/chile_pepper");
     public static final TagKey<Item> CROPS_GREEN_BEAN = item("crops/green_bean");
     public static final TagKey<Item> CROPS_NAPA_CABBAGE = item("crops/napa_cabbage");
+    public static final TagKey<Item> CROPS_SNOW_MUSTARD = item("crops/snow_mustard");
+    public static final TagKey<Item> SEEDS_SNOW_MUSTARD = item("seeds/snow_mustard");
     public static final TagKey<Item> CROPS_CABBAGE = item("crops/cabbage");
     public static final TagKey<Item> CROPS_GREEN_ONION = item("crops/green_onion");
     public static final TagKey<Item> CROPS_RADISH = item("crops/radish");
@@ -70,6 +72,8 @@ public final class ModTags {
     public static final TagKey<Item> CROPS_PEANUT = item("crops/peanut");
     public static final TagKey<Item> CROPS_RED_BEAN = item("crops/red_bean");
     public static final TagKey<Item> CROPS_GINSENG = item("crops/ginseng");
+    public static final TagKey<Item> CROPS_BELLFLOWER = item("crops/bellflower");
+    public static final TagKey<Item> SEEDS_BELLFLOWER = item("seeds/bellflower");
     public static final TagKey<Item> MUSHROOMS = item("mushrooms");
     public static final TagKey<Item> FOODS_SHRIMP = item("foods/shrimp");
     public static final TagKey<Item> FOODS_OYSTER = item("foods/oyster");

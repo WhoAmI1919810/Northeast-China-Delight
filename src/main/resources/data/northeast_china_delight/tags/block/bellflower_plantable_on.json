@@ -1,0 +1,16 @@
+{
+  "__说明": "桔梗能扎根的地面：原版土类方块、耕地，以及农夫乐事的沃土/沃土耕地。",
+  "values": [
+    "#minecraft:dirt",
+    "minecraft:farmland",
+    "minecraft:dirt_path",
+    {
+      "id": "farmersdelight:rich_soil",
+      "required": false
+    },
+    {
+      "id": "farmersdelight:rich_soil_farmland",
+      "required": false
+    }
+  ]
+}

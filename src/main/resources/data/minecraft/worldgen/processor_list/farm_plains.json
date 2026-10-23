@@ -58,6 +58,23 @@
           "input_predicate": {
             "block": "minecraft:wheat",
             "predicate_type": "northeast_china_delight:village_farm_crop",
+            "crop_item": "northeast_china_delight:snow_mustard_seeds",
+            "probability": 0.04
+          },
+          "location_predicate": {
+            "predicate_type": "minecraft:always_true"
+          },
+          "output_state": {
+            "Name": "northeast_china_delight:snow_mustard_crop",
+            "Properties": {
+              "age": "7"
+            }
+          }
+        },
+        {
+          "input_predicate": {
+            "block": "minecraft:wheat",
+            "predicate_type": "northeast_china_delight:village_farm_crop",
             "crop_item": "northeast_china_delight:cucumber_seeds",
             "probability": 0.04
           },

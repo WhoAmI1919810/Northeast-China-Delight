@@ -41,6 +41,10 @@ public class ModWorldGen
     public static final Supplier<GinsengPatchFeature> GINSENG_PATCH_FEATURE =
             FEATURES.register("ginseng_patch", () -> new GinsengPatchFeature(NoneFeatureConfiguration.CODEC));
 
+    public static final Supplier<BellflowerScatterFeature> BELLFLOWER_SCATTER_FEATURE =
+            FEATURES.register("bellflower_scatter",
+                    () -> new BellflowerScatterFeature(NoneFeatureConfiguration.CODEC));
+
     public static final DeferredRegister<StructureType<?>> STRUCTURE_TYPES =
             DeferredRegister.create(Registries.STRUCTURE_TYPE, NortheastChinaDelight.MODID);
     public static final DeferredRegister<StructurePieceType> PIECE_TYPES =

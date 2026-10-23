@@ -36,6 +36,7 @@ public final class DishFlavors {
     private static final Map<String, Integer> WARMTH_PATHS = Map.ofEntries(
             Map.entry("soy_paste_soup", 0),
             Map.entry("seafood_tofu_soup", 0),
+            Map.entry("snow_mustard_tofu_stew", 0),
             Map.entry("sea_cucumber_tofu_soup", 0),
             Map.entry("sauerkraut_seafood_stew", 0),
             Map.entry("spicy_beef_soup", 0),
@@ -135,6 +136,7 @@ public final class DishFlavors {
         put(map, Flavor.REFRESHING, 3, "cabbage_tofu_vermicelli_stew");
         put(map, Flavor.REFRESHING, 3, "pickled_cucumber_pork_stirfry");
         put(map, Flavor.REFRESHING, 5, "tiger_salad");
+        put(map, Flavor.REFRESHING, 4, "dog_bao_pickles");
         put(map, Flavor.REFRESHING, 1, 200, "kvass");
 
         put(map, Flavor.WARM, 6, "kimchi_tofu_soup");
@@ -154,6 +156,7 @@ public final class DishFlavors {
         put(map, Flavor.BALANCED, 3, "shrimp_paste_scrambled_egg");
         put(map, Flavor.BALANCED, 3, "shrimp_paste_tofu_stew");
         put(map, Flavor.BALANCED, 4, "seafood_tofu_soup");
+        put(map, Flavor.BALANCED, 2, "snow_mustard_tofu_stew");
         put(map, Flavor.BALANCED, 5, "three_delicacy_dumpling");
         put(map, Flavor.BALANCED, 3, "sauerkraut_crackling_dumpling");
         put(map, Flavor.BALANCED, 3, "cured_pork_bean_stew");

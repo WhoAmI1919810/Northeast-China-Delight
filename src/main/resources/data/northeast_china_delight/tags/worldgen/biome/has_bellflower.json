@@ -1,0 +1,14 @@
+{
+  "__说明": "森林与白桦林只取林缘；繁花森林、针叶林可整片生成；草甸/平原只取靠近森林的交界，且雪地群系不列入。",
+  "values": [
+    "minecraft:forest",
+    "minecraft:birch_forest",
+    "minecraft:old_growth_birch_forest",
+    "minecraft:flower_forest",
+    "minecraft:taiga",
+    "minecraft:old_growth_pine_taiga",
+    "minecraft:old_growth_spruce_taiga",
+    "minecraft:meadow",
+    "minecraft:plains"
+  ]
+}

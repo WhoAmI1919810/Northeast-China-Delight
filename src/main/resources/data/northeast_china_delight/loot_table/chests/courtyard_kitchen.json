@@ -59,6 +59,14 @@
           ]
         },
         { "type": "minecraft:item", "name": "northeast_china_delight:peanut_butter", "weight": 3 },
+        {
+          "type": "minecraft:item",
+          "name": "northeast_china_delight:pickled_snow_mustard",
+          "weight": 3,
+          "functions": [
+            { "function": "minecraft:set_count", "count": { "min": 1, "max": 2 } }
+          ]
+        },
         { "type": "minecraft:empty", "weight": 6 }
       ]
     }

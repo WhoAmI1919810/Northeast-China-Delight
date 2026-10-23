@@ -35,6 +35,8 @@ public class VillageSeedsLootModifier extends LootModifier
             new Entry(() -> ModItems.CORN_SEEDS.get(), 8),
             new Entry(() -> ModItems.SOYBEAN.get(), 8),
             new Entry(() -> ModItems.NAPA_CABBAGE_SEEDS.get(), 7),
+            new Entry(() -> ModItems.SNOW_MUSTARD_SEEDS.get(), 5),
+            new Entry(() -> ModItems.SNOW_MUSTARD.get(), 4),
             new Entry(() -> ModItems.CUCUMBER_SEEDS.get(), 7),
             new Entry(() -> ModItems.GREEN_RADISH_SEEDS.get(), 7),
             new Entry(() -> ModItems.GREEN_ONION_SEEDS.get(), 7),
@@ -46,7 +48,9 @@ public class VillageSeedsLootModifier extends LootModifier
             new Entry(() -> ModItems.EGGPLANT_SEEDS.get(), 6),
             new Entry(() -> ModItems.GREEN_BEANS_SEEDS.get(), 6),
             new Entry(() -> ModItems.RED_CHILI_SEEDS.get(), 5),
-            new Entry(() -> ModItems.GINSENG_SEEDS.get(), 2)
+            new Entry(() -> ModItems.GINSENG_SEEDS.get(), 2),
+            new Entry(() -> ModItems.BELLFLOWER_ROOT.get(), 4),
+            new Entry(() -> ModItems.BELLFLOWER_SEEDS.get(), 4)
     };
 
     public VillageSeedsLootModifier(LootItemCondition[] conditions)
@@ -90,10 +94,10 @@ public class VillageSeedsLootModifier extends LootModifier
         return generatedLoot;
     }
 
-    /** 权重 5/4/3。玉米面和水面团 1~3 个，花生酱固定 1 瓶。不替换种子那一抽。 */
+    /** 权重 5/4/3/2。玉米面和水面团 1~3 个，花生酱固定 1 瓶，腌雪里蕻 1~2 份。不替换种子那一抽。 */
     private static ItemStack rollProcessed(net.minecraft.util.RandomSource random)
     {
-        int roll = random.nextInt(12);
+        int roll = random.nextInt(14);
         if (roll < 5)
         {
             return new ItemStack(ModItems.CORN_FLOUR.get(), 1 + random.nextInt(3));
@@ -102,7 +106,11 @@ public class VillageSeedsLootModifier extends LootModifier
         {
             return new ItemStack(ModItems.WATER_DOUGH.get(), 1 + random.nextInt(3));
         }
-        return new ItemStack(ModItems.PEANUT_BUTTER.get());
+        if (roll < 12)
+        {
+            return new ItemStack(ModItems.PEANUT_BUTTER.get());
+        }
+        return new ItemStack(ModItems.PICKLED_SNOW_MUSTARD.get(), 1 + random.nextInt(2));
     }
 
     private static ItemStack roll(net.minecraft.util.RandomSource random, Entry[] table)

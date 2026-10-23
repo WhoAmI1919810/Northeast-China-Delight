@@ -40,7 +40,8 @@ public final class ModWandererTrades
             ModItems.CORN_SEEDS.get(), ModItems.SOYBEAN.get(),
             ModItems.BUCKWHEAT.get(), ModItems.SWEET_POTATO.get(),
             ModItems.PEANUT.get(), ModItems.RED_BEAN.get(),
-            ModItems.HAZELNUT.get());
+            ModItems.HAZELNUT.get(), ModItems.BELLFLOWER_SEEDS.get(),
+            ModItems.SNOW_MUSTARD_SEEDS.get());
 
     public static void addTrades(WandererTradesEvent event)
     {
@@ -53,6 +54,7 @@ public final class ModWandererTrades
         generic.add(new BasicItemListing(1, new ItemStack(ModItems.HAZELNUT.get()), 12, 1));
         generic.add(new BasicItemListing(1, new ItemStack(ModItems.HAZEL_MUSHROOM.get()), 12, 1));
         generic.add(new BasicItemListing(1, new ItemStack(ModItems.WOOD_EAR.get()), 12, 1));
+        generic.add(new BasicItemListing(1, new ItemStack(ModItems.BELLFLOWER_ROOT.get()), 12, 1));
         for (Item seed : SEEDS)
         {
             generic.add(new BasicItemListing(1, new ItemStack(seed), 12, 1));

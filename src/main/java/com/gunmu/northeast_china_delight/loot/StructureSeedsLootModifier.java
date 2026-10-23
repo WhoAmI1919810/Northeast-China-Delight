@@ -35,6 +35,8 @@ public class StructureSeedsLootModifier extends LootModifier
             new Entry(() -> ModItems.CORN_SEEDS.get(), 8),
             new Entry(() -> ModItems.SOYBEAN.get(), 8),
             new Entry(() -> ModItems.NAPA_CABBAGE_SEEDS.get(), 7),
+            new Entry(() -> ModItems.SNOW_MUSTARD_SEEDS.get(), 5),
+            new Entry(() -> ModItems.SNOW_MUSTARD.get(), 4),
             new Entry(() -> ModItems.CUCUMBER_SEEDS.get(), 7),
             new Entry(() -> ModItems.GREEN_RADISH_SEEDS.get(), 7),
             new Entry(() -> ModItems.GREEN_ONION_SEEDS.get(), 7),
@@ -46,7 +48,9 @@ public class StructureSeedsLootModifier extends LootModifier
             new Entry(() -> ModItems.EGGPLANT_SEEDS.get(), 6),
             new Entry(() -> ModItems.GREEN_BEANS_SEEDS.get(), 6),
             new Entry(() -> ModItems.RED_CHILI_SEEDS.get(), 5),
-            new Entry(() -> ModItems.GINSENG_SEEDS.get(), 2)
+            new Entry(() -> ModItems.GINSENG_SEEDS.get(), 2),
+            new Entry(() -> ModItems.BELLFLOWER_ROOT.get(), 4),
+            new Entry(() -> ModItems.BELLFLOWER_SEEDS.get(), 4)
     };
 
     public StructureSeedsLootModifier(LootItemCondition[] conditions)

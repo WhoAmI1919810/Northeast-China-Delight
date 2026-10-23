@@ -142,6 +142,8 @@ public final class AliGlmPlugin implements IGlobalLootModifierPlugin {
                     processed * AliGlmData.VILLAGE_PROCESSED_WATER_DOUGH, AliGlmNodes.count(1, 3)));
             operations.add(AliGlmNodes.add(utils, conditions, ModItems.PEANUT_BUTTER.get(),
                     processed * AliGlmData.VILLAGE_PROCESSED_PEANUT_BUTTER, AliGlmNodes.count(1, 1)));
+            operations.add(AliGlmNodes.add(utils, conditions, ModItems.PICKLED_SNOW_MUSTARD.get(),
+                    processed * AliGlmData.VILLAGE_PROCESSED_PICKLED_SNOW_MUSTARD, AliGlmNodes.count(1, 2)));
 
             return operations;
         }));

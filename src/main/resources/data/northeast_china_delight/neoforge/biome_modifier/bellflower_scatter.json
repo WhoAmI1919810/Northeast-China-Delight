@@ -1,0 +1,6 @@
+{
+  "type": "neoforge:add_features",
+  "biomes": "#northeast_china_delight:has_bellflower",
+  "features": "northeast_china_delight:bellflower_scatter",
+  "step": "vegetal_decoration"
+}

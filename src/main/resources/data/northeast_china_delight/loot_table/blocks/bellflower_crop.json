@@ -1,0 +1,77 @@
+{
+  "type": "minecraft:block",
+  "functions": [
+    {
+      "function": "minecraft:explosion_decay"
+    }
+  ],
+  "pools": [
+    {
+      "bonus_rolls": 0.0,
+      "rolls": 1.0,
+      "entries": [
+        {
+          "type": "minecraft:alternatives",
+          "children": [
+            {
+              "type": "minecraft:item",
+              "name": "northeast_china_delight:bellflower_root",
+              "conditions": [
+                {
+                  "condition": "minecraft:block_state_property",
+                  "block": "northeast_china_delight:bellflower_crop",
+                  "properties": {
+                    "age": "7"
+                  }
+                }
+              ]
+            },
+            {
+              "type": "minecraft:item",
+              "name": "northeast_china_delight:bellflower_seeds"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "bonus_rolls": 0.0,
+      "conditions": [
+        {
+          "condition": "minecraft:block_state_property",
+          "block": "northeast_china_delight:bellflower_crop",
+          "properties": {
+            "age": "7"
+          }
+        }
+      ],
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "northeast_china_delight:bellflower_seeds"
+        }
+      ],
+      "functions": [
+        {
+          "add": false,
+          "count": {
+            "type": "minecraft:uniform",
+            "max": 2.0,
+            "min": 1.0
+          },
+          "function": "minecraft:set_count"
+        },
+        {
+          "enchantment": "minecraft:fortune",
+          "formula": "minecraft:uniform_bonus_count",
+          "function": "minecraft:apply_bonus",
+          "parameters": {
+            "bonusMultiplier": 1
+          }
+        }
+      ],
+      "rolls": 1.0
+    }
+  ],
+  "random_sequence": "northeast_china_delight:blocks/bellflower_crop"
+}

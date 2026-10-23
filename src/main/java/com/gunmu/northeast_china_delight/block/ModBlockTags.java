@@ -34,6 +34,10 @@ public final class ModBlockTags
             TagKey.create(Registries.BLOCK,
                     DdIds.of(NortheastChinaDelight.MODID, "ginseng_snow_nearby"));
 
+    public static final TagKey<Block> BELLFLOWER_PLANTABLE_ON =
+            TagKey.create(Registries.BLOCK,
+                    DdIds.of(NortheastChinaDelight.MODID, "bellflower_plantable_on"));
+
     private ModBlockTags()
     {
     }

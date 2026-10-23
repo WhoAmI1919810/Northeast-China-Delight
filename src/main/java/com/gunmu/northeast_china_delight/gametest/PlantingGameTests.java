@@ -113,6 +113,34 @@ public final class PlantingGameTests
         helper.succeed();
     }
 
+    @GameTest(template = "empty")
+    public static void bellflowerSeedsPlantOnFarmland(GameTestHelper helper)
+    {
+        ServerLevel level = helper.getLevel();
+        BlockPos ground = helper.absolutePos(new BlockPos(1, 1, 1));
+        BlockPos plant = ground.above();
+        level.setBlockAndUpdate(ground, Blocks.FARMLAND.defaultBlockState());
+        Player player = mockPlayer(helper, GameType.SURVIVAL);
+        placeOn(level, player, ModItems.BELLFLOWER_SEEDS.get(), ground);
+        helper.assertTrue(level.getBlockState(plant).is(ModBlocks.BELLFLOWER_CROP.get()),
+                "桔梗种子应该能种在耕地上");
+        helper.succeed();
+    }
+
+    @GameTest(template = "empty")
+    public static void bellflowerSeedsRejectPlainDirt(GameTestHelper helper)
+    {
+        ServerLevel level = helper.getLevel();
+        BlockPos ground = helper.absolutePos(new BlockPos(1, 1, 1));
+        BlockPos plant = ground.above();
+        level.setBlockAndUpdate(ground, Blocks.DIRT.defaultBlockState());
+        Player player = mockPlayer(helper, GameType.SURVIVAL);
+        placeOn(level, player, ModItems.BELLFLOWER_SEEDS.get(), ground);
+        helper.assertFalse(level.getBlockState(plant).is(ModBlocks.BELLFLOWER_CROP.get()),
+                "桔梗种子不应绕过耕地直接种在泥土上；野生植株由世界生成放置");
+        helper.succeed();
+    }
+
     private static void placeOn(ServerLevel level, Player player, Item item, BlockPos clickedPos)
     {
         ItemStack stack = new ItemStack(item);

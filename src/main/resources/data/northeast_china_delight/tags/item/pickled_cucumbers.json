@@ -1,0 +1,9 @@
+{
+  "values": [
+    "northeast_china_delight:pickled_cucumber",
+    {
+      "id": "croptopia:pickled_cucumber",
+      "required": false
+    }
+  ]
+}
