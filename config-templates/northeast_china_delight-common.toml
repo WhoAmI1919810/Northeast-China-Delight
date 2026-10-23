@@ -2,7 +2,7 @@
 [dishes]
 	#测试功能，尚未完善。
 	#设为 true 时，允许玩家潜行右键放置菜肴的方块形态。
-	dish_placement_enabled = false
+	dish_placement_enabled = true
 
 #世界生成
 [worldgen]

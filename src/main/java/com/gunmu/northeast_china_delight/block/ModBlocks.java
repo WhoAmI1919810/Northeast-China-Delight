@@ -278,6 +278,12 @@ public class ModBlocks {
             "shrimp_pork_dumpling", "three_delicacy_dumpling", "hazelnut_sugar_fire_bun"
     );
 
+    /** 无器具菜肴里单个 / 少量的放小餐盘，其余仍放餐盘。 */
+    public static final List<String> SMALL_PLATE_DISH_IDS = List.of(
+            "baked_sweet_potato", "northeast_rice_wrap", "sticky_bean_bun", "red_bean_songpyeon",
+            "peanut_songpyeon", "grilled_corn", "hazelnut_sugar_fire_bun"
+    );
+
     /** 黄铜碗料理必须复用 brass_bowl 的 8×8×4 像素边界。 */
     public static final List<String> BRASS_BOWL_DISH_IDS = List.of(
             "buckwheat_cold_noodles", "spicy_beef_soup", "kimchi_fried_rice",
@@ -297,6 +303,8 @@ public class ModBlocks {
         {
             VoxelShape shape = TRAY_DISH_IDS.contains(id)
                     ? DishBlock.TRAY_SHAPE
+                    : SMALL_PLATE_DISH_IDS.contains(id)
+                    ? DishBlock.SMALL_PLATE_SHAPE
                     : NO_CONTAINER_DISH_IDS.contains(id)
                     ? DishBlock.TRAY_SHAPE
                     : DishBlock.BOWL_SHAPE;
