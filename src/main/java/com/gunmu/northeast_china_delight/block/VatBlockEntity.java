@@ -362,6 +362,30 @@ public class VatBlockEntity extends BlockEntity implements IFluidHandler {
         }
     }
 
+    /**
+     * 没做完就揭开封口：解除配方绑定，加工类型也退回「还没开工」。只解绑的话 kind 还会让旧配方优先，
+     * 大酱补了小麦照样酿成大酱。缸里有酸引水时按倒酸引水的规矩记作泡菜缸，免得之后倒不进酸引水。
+     */
+    public void releaseUnfinishedRecipe() {
+        this.recipeId = null;
+        this.kind = this.sourWaterMb > 0 ? VatRecipes.Kind.PICKLE : VatRecipes.Kind.NONE;
+        if (this.brewedMb <= 0) {
+            this.brewedFluid = null;
+        }
+        this.sync();
+    }
+
+    /**
+     * 液体被取走之后调用（容器、调料瓶、管道都走这里）：酱渣、泡菜这些固体还在就保持「做完了」，
+     * 等玩家空手逐份取；固体和液体都没了就整缸复位，下一次投料直接开新的一缸。
+     */
+    public void resetIfDrained() {
+        if (this.level != null && !this.level.isClientSide
+                && this.contents().isEmpty() && !this.hasProductLiquid()) {
+            Vat.reset(this.level, this.worldPosition, this.getBlockState(), this);
+        }
+    }
+
     public boolean addContent(ItemStack stack) {
         for (int i = 0; i < MAX_ENTRIES; i++) {
             if (this.contents.get(i).isEmpty()) {
@@ -735,22 +759,10 @@ public class VatBlockEntity extends BlockEntity implements IFluidHandler {
         int drained = Math.min(maxDrain, available);
         if (action.execute()) {
             this.setProductMb(fluid, this.productMb(fluid) - drained);
-            // 液体抽空后酱渣还留在缸里，等玩家取走（所以这里不能 reset）
             this.sync();
             awardPumpSeasoning();
-            if (productAmount() <= 0 && this.level != null) {
-                BlockState state = this.getBlockState();
-                if (state.getValue(Vat.FERMENTED)) {
-                    this.level.setBlock(this.worldPosition,
-                            state.setValue(Vat.FERMENTED, false).setValue(Vat.PROGRESS, 0), 3);
-                }
-                if (isEmpty()) {
-                    this.kind = VatRecipes.Kind.NONE;
-                    this.recipeId = null;
-                    this.brewedFluid = null;
-        this.brewedMb = 0;
-                }
-            }
+            // 抽空后和用容器取空一样：酱渣、泡菜还在就不能把缸退回「没做完」，否则空手取不出来
+            this.resetIfDrained();
         }
         return new FluidStack(fluid, drained);
     }

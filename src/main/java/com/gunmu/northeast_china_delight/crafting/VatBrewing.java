@@ -68,9 +68,9 @@ public final class VatBrewing {
         boolean bottled = hasBottledProduct(vat);
         boolean sourPot = sour > 0;
         // 正在发酵的那一缸只收"同一条配方"的料（泡菜中途还能再塞菜，但不许中途改酿大酱）。
+        // 揭开封口会解除绑定（Vat.interrupt），那之后就不受这条限制，可以补料改做别的。
         // 注意这里必须排掉"已经做完"的缸：完成时 PROGRESS 会写到 MAX_PROGRESS，
-        // 把 FERMENTED 的缸也算成"发酵中"的话，二次发酵（泡菜→白醋、酱渣→醋、大酱加小麦→酱油）
-        // 就永远投不进料了 —— 那几条正是本轮要修的玩法。
+        // 把 FERMENTED 的缸也算成"发酵中"的话，二次发酵（泡菜酸引水→白醋、酱渣→醋）就永远投不进料了。
         // 封口后到第一次 tick 之间 PROGRESS 还是 0，但配方已经绑定；必须把 recipeId 也算进去，
         // 否则这段窗口里还能塞进另一条配方的材料。
         boolean processing = !vat.isFermented() && (vat.recipeId() != null
@@ -199,6 +199,22 @@ public final class VatBrewing {
             }
         }
         return best;
+    }
+
+    /** 料、液体、封口都齐了，只差不在会下雪的群系（冻梨、冻豆腐）：封口时换一句提示，别说成"材料没凑齐" */
+    public static boolean onlyNeedsSnowyBiome(VatBlockEntity vat) {
+        if (vat.hasMissingUnfinishedRecipe() || vat.hasBottledProduct() || isSnowyBiome(vat)) {
+            return false;
+        }
+        VatRecipe.Counts counts = counts(vat, null);
+        int sour = vat.sourWaterMb();
+        for (VatRecipe recipe : VatRecipes.all(vat.getLevel())) {
+            if (recipe.requiresSnowyBiome() && recipe.materialsReady(counts, sour) && sealMatches(vat, recipe)
+                    && (sour <= 0 || recipe.liquid().sourWaterMb() > 0)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     @Nullable
@@ -406,11 +422,14 @@ public final class VatBrewing {
 
     @Nullable
     public static ItemStack fillContainer(VatBlockEntity vat, ItemStack held) {
-        if (!vat.isFermented() || vat.isCovered()) {
+        // 还没开工的缸（没绑配方、没计进度）里倒进去的酸引水，也能再用玻璃瓶装回来，倒多了、改主意了不至于白丢
+        boolean notStarted = vat.recipeId() == null
+                && vat.getBlockState().getValue(com.gunmu.northeast_china_delight.block.Vat.PROGRESS) == 0;
+        if ((!vat.isFermented() && !notStarted) || vat.isCovered()) {
             return null;
         }
         VatRecipes.Kind kind = vat.kind();
-        if (kind != VatRecipes.Kind.NONE) {
+        if (vat.isFermented() && kind != VatRecipes.Kind.NONE) {
             net.minecraft.world.level.material.Fluid product = VatRecipes.productOf(vat);
             VatRecipes.Serving serving = VatRecipes.servingOf(vat);
             if (serving != null && held.is(serving.container()) && vat.productMb(product) > 0) {

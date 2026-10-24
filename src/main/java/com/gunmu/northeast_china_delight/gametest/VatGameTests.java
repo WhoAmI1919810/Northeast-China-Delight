@@ -44,6 +44,11 @@ import net.minecraftforge.gametest.PrefixGameTestTemplate;
 //?} else {
 /*import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
 *///?}
+//? if <1.20.2 {
+import net.minecraftforge.fluids.capability.IFluidHandler;
+//?} else {
+/*import net.neoforged.neoforge.fluids.capability.IFluidHandler;
+*///?}
 
 import java.util.List;
 import java.util.ArrayList;
@@ -1043,6 +1048,163 @@ public final class VatGameTests {
             helper.fail("没发酵的缸取不回盖布");
         }
         helper.succeed();
+    }
+
+    /** 管道抽空酸引水后，腌好的菜还得能空手取出来（以前抽空会把缸退回「没做完」，菜就困在缸里） */
+    @GameTest(template = "empty")
+    public static void pumpDrainKeepsFinishedPicklesCollectible(GameTestHelper helper) {
+        VatBlockEntity vat = placeVat(helper);
+        ServerLevel level = helper.getLevel();
+        BlockPos pos = helper.absolutePos(AT);
+        vat.addWater(VatRecipes.WATER_MB_PER_LEVEL);
+        for (int i = 0; i < 2; i++) {
+            vat.addContent(new ItemStack(ModItems.NAPA_CABBAGE.get()));
+        }
+        vat.addContent(new ItemStack(ModItems.SALT.get()));
+        vat.setPress(new ItemStack(Items.STONE));
+        VatBrewing.complete(level, pos, vat, VatRecipes.recipeOf(VatRecipes.Kind.PICKLE, level));
+
+        if (vat.drain(Integer.MAX_VALUE, IFluidHandler.FluidAction.EXECUTE).isEmpty() || vat.sourWaterMb() != 0) {
+            helper.fail("管道应能把酸引水抽空");
+        }
+        if (!vat.isFermented() || vat.recipeId() == null) {
+            helper.fail("抽空酸引水后缸里还有菜，应保持做完的状态");
+        }
+        Player player = mockPlayer(helper, GameType.SURVIVAL);
+        for (int i = 0; i < 3; i++) {
+            click(helper, player, ItemStack.EMPTY);
+        }
+        if (player.getInventory().countItem(ModItems.SOUR_CABBAGE.get()) != 2
+                || vat.kind() != VatRecipes.Kind.NONE) {
+            helper.fail("抽空酸引水后应能先取下石头、再取出两颗酸菜，取完缸复位");
+        }
+        helper.succeed();
+    }
+
+    /** 只出液体的配方被管道抽空后整缸复位：压缸石拿得回来，下一缸换别的配方也能直接投料 */
+    @GameTest(template = "empty")
+    public static void pumpDrainResetsEmptiedVat(GameTestHelper helper) {
+        VatBlockEntity vat = placeVat(helper);
+        ServerLevel level = helper.getLevel();
+        BlockPos pos = helper.absolutePos(AT);
+        finishFishSauce(level, pos, vat);
+        vat.drain(Integer.MAX_VALUE, IFluidHandler.FluidAction.EXECUTE);
+        if (vat.kind() != VatRecipes.Kind.NONE || vat.recipeId() != null
+                || vat.isFermented() || vat.hasProductLiquid()) {
+            helper.fail("鱼露被抽空后大缸应整缸复位");
+        }
+        Player player = mockPlayer(helper, GameType.SURVIVAL);
+        click(helper, player, ItemStack.EMPTY);
+        if (vat.isPressed() || player.getInventory().countItem(Items.STONE) != 1) {
+            helper.fail("复位后的空缸，空手右键应能取回压缸石");
+        }
+        if (VatBrewing.forInsert(vat, new ItemStack(ModItems.SOY_PASTE_CHUNK.get())) == null) {
+            helper.fail("复位后的空缸应能投别的配方的料");
+        }
+        helper.succeed();
+    }
+
+    /** 用瓶子取完最后一份就复位：下一次右键直接投料，不用先空点一下 */
+    @GameTest(template = "empty")
+    public static void bottlingLastServingResetsVat(GameTestHelper helper) {
+        Player player = mockPlayer(helper, GameType.CREATIVE);
+        VatBlockEntity vat = placeVat(helper);
+        ServerLevel level = helper.getLevel();
+        BlockPos pos = helper.absolutePos(AT);
+        finishFishSauce(level, pos, vat);
+        vat.takePress();
+        click(helper, player, new ItemStack(Items.GLASS_BOTTLE));
+        if (vat.hasProductLiquid() || vat.isFermented() || vat.kind() != VatRecipes.Kind.NONE) {
+            helper.fail("鱼露装完最后一瓶，大缸应复位");
+        }
+        click(helper, player, new ItemStack(Items.COD));
+        if (vat.rawFishCount() != 1) {
+            helper.fail("复位后第一次右键就该把鱼放进缸里");
+        }
+        helper.succeed();
+    }
+
+    /** 没做完就揭开封口：要能补料改做别的配方（大酱补小麦改酿酱油） */
+    @GameTest(template = "empty")
+    public static void unsealingUnfinishedVatReleasesRecipe(GameTestHelper helper) {
+        Player player = mockPlayer(helper, GameType.CREATIVE);
+        VatBlockEntity vat = placeVat(helper);
+        ServerLevel level = helper.getLevel();
+        BlockPos pos = helper.absolutePos(AT);
+        vat.addWater(3 * VatRecipes.WATER_MB_PER_LEVEL);
+        for (int i = 0; i < VatRecipes.PASTE_CHUNKS; i++) {
+            vat.addContent(new ItemStack(ModItems.SOY_PASTE_CHUNK.get()));
+        }
+        for (int i = 0; i < VatRecipes.PASTE_SALT; i++) {
+            vat.addContent(new ItemStack(ModItems.SALT.get()));
+        }
+        click(helper, player, new ItemStack(Items.WHITE_CARPET));
+        VatRecipe paste = VatRecipes.recipeOf(VatRecipes.Kind.PASTE, level);
+        if (paste == null || !paste.id().equals(vat.recipeId())) {
+            helper.fail("大酱料齐盖上地毯应该开工");
+        }
+
+        player.setShiftKeyDown(true);
+        click(helper, player, ItemStack.EMPTY);
+        player.setShiftKeyDown(false);
+        if (vat.isCovered() || vat.recipeId() != null || level.getBlockState(pos).getValue(Vat.PROGRESS) != 0) {
+            helper.fail("没做完就揭开地毯，应清零进度并解除大酱的绑定");
+        }
+        click(helper, player, new ItemStack(Items.WHEAT));
+        if (vat.countOf(Items.WHEAT) != 1) {
+            helper.fail("揭开地毯后应能补进小麦");
+        }
+        click(helper, player, new ItemStack(Items.WHITE_CARPET));
+        VatRecipe recipe = VatBrewing.ready(vat);
+        if (recipe == null || recipe.kind() != VatRecipes.Kind.SOY_SAUCE || vat.kind() != VatRecipes.Kind.SOY_SAUCE) {
+            helper.fail("补了小麦再盖上地毯应改酿酱油");
+        }
+        assertScheduled(helper, level, pos);
+        helper.succeed();
+    }
+
+    /** 没开工的缸被拆掉（这里用非玩家的方式）：主料原样掉出来，只有盐算化进缸里 */
+    @GameTest(template = "empty")
+    public static void removingUnstartedVatDropsMainIngredients(GameTestHelper helper) {
+        VatBlockEntity vat = placeVat(helper);
+        for (int i = 0; i < VatRecipes.FISH_SAUCE_FISH; i++) {
+            vat.addContent(new ItemStack(Items.COD));
+        }
+        for (int i = 0; i < 2; i++) {
+            vat.addContent(new ItemStack(ModItems.SALT.get()));
+        }
+        helper.destroyBlock(AT);
+        helper.assertItemEntityCountIs(Items.COD, AT, 2.0, VatRecipes.FISH_SAUCE_FISH);
+        helper.assertItemEntityNotPresent(ModItems.SALT.get(), AT, 2.0);
+        helper.succeed();
+    }
+
+    /** 还没开工的缸里倒进去的酸引水，能再用玻璃瓶装回来；装空了缸就复位 */
+    @GameTest(template = "empty")
+    public static void pouredSourWaterCanBeBottledBack(GameTestHelper helper) {
+        Player player = mockPlayer(helper, GameType.SURVIVAL);
+        VatBlockEntity vat = placeVat(helper);
+        click(helper, player, new ItemStack(ModItems.SOUR_WATER.get()));
+        if (vat.sourWaterMb() != VatRecipes.SERVING_MB) {
+            helper.fail("空缸应能倒进一瓶酸引水");
+        }
+        click(helper, player, new ItemStack(Items.GLASS_BOTTLE));
+        if (vat.sourWaterMb() != 0 || player.getInventory().countItem(ModItems.SOUR_WATER.get()) != 1
+                || vat.kind() != VatRecipes.Kind.NONE) {
+            helper.fail("没开工的缸里的酸引水应能用玻璃瓶装回来，装空后缸复位");
+        }
+        helper.succeed();
+    }
+
+    private static void finishFishSauce(ServerLevel level, BlockPos pos, VatBlockEntity vat) {
+        for (int i = 0; i < VatRecipes.FISH_SAUCE_FISH; i++) {
+            vat.addContent(new ItemStack(Items.COD));
+        }
+        for (int i = 0; i < VatRecipes.FISH_SAUCE_SALT; i++) {
+            vat.addContent(new ItemStack(ModItems.SALT.get()));
+        }
+        vat.setPress(new ItemStack(Items.STONE));
+        VatBrewing.complete(level, pos, vat, VatRecipes.recipeOf(VatRecipes.Kind.FISH_SAUCE, level));
     }
 
     @GameTest(template = "empty")
