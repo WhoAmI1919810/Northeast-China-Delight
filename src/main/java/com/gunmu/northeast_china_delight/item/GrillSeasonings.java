@@ -4,6 +4,7 @@ import com.gunmu.northeast_china_delight.ModTags;
 import com.gunmu.northeast_china_delight.NortheastChinaDelight;
 import com.gunmu.northeast_china_delight.crafting.GrillVisual;
 import com.gunmu.northeast_china_delight.util.DdIds;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
@@ -40,6 +41,9 @@ public final class GrillSeasonings {
 
     /** 厚酱（辣酱）刷上去的颜色 */
     public static final int SAUCE_COLOR = 0xB5321C;
+    /** 番茄酱（农夫乐事）比辣酱鲜亮些 */
+    public static final int TOMATO_SAUCE_COLOR = 0xD8442A;
+    private static final ResourceLocation TOMATO_SAUCE = DdIds.of("farmersdelight", "tomato_sauce");
     /** 配方写了 brush 却没写颜色、调料又不是调料瓶 / 厚酱时的酱色 */
     private static final int GLAZE_COLOR = 0xA0521E;
     /** 撒料默认的颜色（盐、糖） */
@@ -64,7 +68,7 @@ public final class GrillSeasonings {
         }
         int color = declared.hasColor() ? declared.color()
                 : item instanceof SeasoningBottleItem ? BottleColors.of(item) & 0xFFFFFF
-                : isSauce(item) ? SAUCE_COLOR
+                : isSauce(item) ? (BuiltInRegistries.ITEM.getKey(item).equals(TOMATO_SAUCE) ? TOMATO_SAUCE_COLOR : SAUCE_COLOR)
                 : style == GrillVisual.Style.BRUSH ? GLAZE_COLOR
                 : POWDER_COLOR;
         float opacity = declared.hasOpacity() ? declared.opacity()

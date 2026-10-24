@@ -3,7 +3,7 @@
   "config": {
     "input": {"item": "northeast_china_delight:cold_noodle_sheet"},
     "seasonings": [
-      {"tag": "c:foods/seasonings/chili_sauce"},
+      [{"tag": "c:foods/seasonings/chili_sauce"}, {"item": "farmersdelight:tomato_sauce"}],
       {"tag": "c:eggs"},
       {"tag": "c:sugar"},
       {"tag": "c:foods/seasonings/vinegar"}

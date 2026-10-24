@@ -21,6 +21,7 @@ import com.gunmu.northeast_china_delight.util.DdIds;
 import io.netty.buffer.Unpooled;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.nbt.CompoundTag;
@@ -190,6 +191,12 @@ public final class GrillGameTests {
         }
         helper.assertTrue(rule.seasoningsReady(grill.seasoningsOf(0)), "四份调料都应被正确计数");
         helper.assertTrue(!grill.addSeasoning(0, new ItemStack(Items.SUGAR), manager), "不得多加调料");
+        Item tomatoSauce = BuiltInRegistries.ITEM.get(DdIds.of("farmersdelight", "tomato_sauce"));
+        grill.setFood(1, new ItemStack(ModItems.COLD_NOODLE_SHEET.get()), rule);
+        helper.assertTrue(grill.addSeasoning(1, new ItemStack(tomatoSauce), manager)
+                        && !grill.addSeasoning(1, new ItemStack(ModItems.CHILI_SAUCE.get()), manager)
+                        && GrillSeasonings.needsBrush(new ItemStack(tomatoSauce)),
+                "烤冷面的辣椒酱可换成番茄酱，二选一，番茄酱也要用刷子刷");
         helper.succeed();
     }
 
