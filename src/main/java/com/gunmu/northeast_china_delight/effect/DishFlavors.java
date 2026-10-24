@@ -8,6 +8,7 @@ import net.minecraft.world.item.Item;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * 菜肴的"口味"表：决定吃完给什么状态效果、持续多久。持续时长按食材数算：每种食材 10 秒（不计调料）。个别菜可以单独指定时长（比如烤鸡架只给 10 秒）。不在表里的食物（比如
@@ -22,7 +23,8 @@ public final class DishFlavors {
         WARM
     }
 
-    public record Info(Flavor flavor, int ingredientCount, int overrideTicks) {
+    /** {@code slowing}：油腻菜里吃完会不会缓慢（见 {@link #SLOWING_GREASY}） */
+    public record Info(Flavor flavor, int ingredientCount, int overrideTicks, boolean slowing) {
         public int durationTicks() {
             if (this.overrideTicks >= 0) {
                 return this.overrideTicks;
@@ -32,6 +34,13 @@ public final class DishFlavors {
     }
 
     private static Map<Item, Info> table;
+
+    /**
+     * 油腻菜里只有这几道给缓慢：配方里的食材多于 3 种（同一种算一种；盐、酱油、大酱、糖、醋、油、辣酱、番茄酱这类调料不算）。
+     * 其余油腻菜照常给生命提升、急迫和油腻，只是不拖慢脚步。
+     */
+    private static final Set<String> SLOWING_GREASY = Set.of(
+            "smoked_meat_platter", "slaughter_feast_bowl", "ground_pot_chicken_bowl", "ground_pot_ribs_bowl");
 
     private static final Map<String, Integer> WARMTH_PATHS = Map.ofEntries(
             Map.entry("soy_paste_soup", 0),
@@ -182,6 +191,7 @@ public final class DishFlavors {
 
     private static void put(Map<Item, Info> map, Flavor flavor, int ingredientCount, int overrideTicks, String path) {
         Item item = BuiltInRegistries.ITEM.get(DdIds.of(NortheastChinaDelight.MODID, path));
-        map.put(item, new Info(flavor, ingredientCount, overrideTicks));
+        map.put(item, new Info(flavor, ingredientCount, overrideTicks,
+                flavor == Flavor.GREASY && SLOWING_GREASY.contains(path)));
     }
 }
