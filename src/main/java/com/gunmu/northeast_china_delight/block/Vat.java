@@ -195,14 +195,19 @@ public class Vat extends Block implements EntityBlock {
      * <p>"条件齐了"这句话现在完全由 {@link VatBrewing#ready} 按配方表判断：
      * 材料配齐、液体对得上、封口物也对。这里只负责把缸标成这条配方、然后排一次 tick。
      * 创造大缸子类会覆盖这个方法，把「排 tick」换成「当场完成」。</p>
+     *
+     * @return 这一缸现在是不是在做（刚开工、本来就在做，或者创造大缸当场做完）
      */
-    protected void tryStart(Level level, BlockPos pos, VatBlockEntity vat) {
+    protected boolean tryStart(Level level, BlockPos pos, VatBlockEntity vat) {
         BlockState state = level.getBlockState(pos);
         boolean fermented = state.getValue(FERMENTED);
         if (!fermented && state.getValue(PROGRESS) > 0) {
+            if (VatBrewing.ready(vat) != null) {
+                return true;
+            }
             // 配方被数据包删掉时保留绑定和进度，交给空手右键的「返还原料」流程处理。
-            if (VatBrewing.ready(vat) != null || vat.hasMissingUnfinishedRecipe()) {
-                return;
+            if (vat.hasMissingUnfinishedRecipe()) {
+                return false;
             }
             // 进度已经跑起来、配方却因数据包改动或误操作不再匹配：把进度退回 0，
             // 否则 tryStart 永远因为 progress > 0 提前返回，这一缸就再也没有开工机会。
@@ -212,13 +217,14 @@ public class Vat extends Block implements EntityBlock {
         }
         VatRecipe recipe = VatBrewing.ready(vat);
         if (recipe == null || (fermented && VatBrewing.isCurrent(vat, recipe))) {
-            return;
+            return false;
         }
         if (fermented) {
             level.setBlock(pos, state.setValue(FERMENTED, false).setValue(PROGRESS, 0), 3);
         }
         vat.setRecipe(recipe);
         level.scheduleTick(pos, level.getBlockState(pos).getBlock(), VatBrewing.stepTicks(recipe, vat));
+        return true;
     }
 
     /** 现在能不能再往缸里倒一桶水 */
@@ -366,6 +372,7 @@ public class Vat extends Block implements EntityBlock {
             }
             SeasoningBottleItem.refill(stack, moved);
             playFill(level, pos);
+            vat.resetIfDrained();
             return InteractionResult.sidedSuccess(false);
         }
 
@@ -376,6 +383,8 @@ public class Vat extends Block implements EntityBlock {
             give(player, filled);
             level.playSound(null, pos, bowl
                     ? SoundEvents.HONEY_BLOCK_SLIDE : SoundEvents.BOTTLE_FILL, SoundSource.BLOCKS, 1.0F, 1.0F);
+            // 取完最后一份就复位，下一次投料不用先空点一下
+            vat.resetIfDrained();
             return InteractionResult.sidedSuccess(false);
         }
 
@@ -449,9 +458,11 @@ public class Vat extends Block implements EntityBlock {
         }
         consume(player, stack);
         playFill(level, pos);
-        tryStart(level, pos, vat);
-        if (VatBrewing.ready(vat) == null) {
-            hint(player, "message.northeast_china_delight.vat.materials_not_ready");
+        // 创造大缸当场做完后 ready() 已经是 null，所以看 tryStart 的结果，不再看 ready()
+        if (!tryStart(level, pos, vat)) {
+            hint(player, VatBrewing.onlyNeedsSnowyBiome(vat)
+                    ? "message.northeast_china_delight.vat.needs_snowy_biome"
+                    : "message.northeast_china_delight.vat.materials_not_ready");
         }
         return true;
     }
@@ -461,9 +472,7 @@ public class Vat extends Block implements EntityBlock {
         if (vat.isPressed()) {
             if (!level.isClientSide) {
                 give(player, vat.takePress());
-                if (!state.getValue(FERMENTED)) {
-                    level.setBlock(pos, state.setValue(PROGRESS, 0), 3);
-                }
+                interrupt(level, pos, state, vat);
                 level.playSound(null, pos, SoundEvents.STONE_BREAK, SoundSource.BLOCKS, 1.0F, 1.0F);
             }
             return InteractionResult.sidedSuccess(level.isClientSide());
@@ -471,14 +480,26 @@ public class Vat extends Block implements EntityBlock {
         if (vat.isCovered()) {
             if (!level.isClientSide) {
                 give(player, vat.takeCover());
-                if (!state.getValue(FERMENTED)) {
-                    level.setBlock(pos, state.setValue(PROGRESS, 0), 3);
-                }
+                interrupt(level, pos, state, vat);
                 level.playSound(null, pos, SoundEvents.BUCKET_FILL, SoundSource.BLOCKS, 1.0F, 1.0F);
             }
             return InteractionResult.sidedSuccess(level.isClientSide());
         }
         return InteractionResult.PASS;
+    }
+
+    /**
+     * 没做完就揭开封口：进度清零，并放开配方绑定。揭盖多半是要补料或改做别的，
+     * 还锁在原配方上的话，大酱补不进小麦、咸鱼加不成鱼露。配方被数据包删掉时保留绑定，空手右键才能退回原料。
+     */
+    private static void interrupt(Level level, BlockPos pos, BlockState state, VatBlockEntity vat) {
+        if (state.getValue(FERMENTED)) {
+            return;
+        }
+        level.setBlock(pos, state.setValue(PROGRESS, 0), 3);
+        if (!vat.hasMissingUnfinishedRecipe()) {
+            vat.releaseUnfinishedRecipe();
+        }
     }
 
     private static void showProgress(Player player, Level level, BlockPos pos, BlockState state, VatBlockEntity vat) {
@@ -522,7 +543,8 @@ public class Vat extends Block implements EntityBlock {
     private @NotNull InteractionResult vatUseWithdrawn(BlockState state, Level level, BlockPos pos,
                                                        Player player, BlockHitResult hit) {
         VatBlockEntity vat = vatAt(level, pos);
-        if (vat == null || vat.isEmpty()) {
+        // 取空后复位的缸可能还压着石头 / 盖着布，空缸也得让玩家把封口物拿回去
+        if (vat == null || (vat.isEmpty() && !vat.isPressed() && !vat.isCovered())) {
             return InteractionResult.PASS;
         }
         if (!level.isClientSide) {
@@ -539,9 +561,7 @@ public class Vat extends Block implements EntityBlock {
                     give(player, vat.takeCover());
                     level.playSound(null, pos, SoundEvents.BUCKET_FILL, SoundSource.BLOCKS, 1.0F, 1.0F);
                 }
-                if (!state.getValue(FERMENTED)) {
-                    level.setBlock(pos, state.setValue(PROGRESS, 0), 3);
-                }
+                interrupt(level, pos, state, vat);
             }
             return InteractionResult.sidedSuccess(level.isClientSide());
         }
@@ -618,16 +638,14 @@ public class Vat extends Block implements EntityBlock {
 
         VatRecipe recipe = VatBrewing.ready(vat);
         if (recipe == null) {
-            // 没有合法配方时不能停在 PROGRESS > 0：那会让 tryStart 永远提前返回。
-            // 但"配方被删掉"要保留原状态，玩家空手右键才能把所有原料拿回来。
+            // 没有合法配方时不能停在 PROGRESS > 0 或旧绑定上：那会让 tryStart 永远提前返回。
+            // 但"配方被删掉"要保留原状态（resetStalledProgress 不动它），玩家空手右键才能把所有原料拿回来。
             if (vat.hasMissingUnfinishedRecipe()) {
                 return;
             }
-            if (state.getValue(PROGRESS) > 0) {
-                level.setBlock(pos, state.setValue(PROGRESS, 0),
-                        Block.UPDATE_CLIENTS | Block.UPDATE_NEIGHBORS);
-                vat.clearRecipeBinding();
-            }
+            resetStalledProgress(level, pos, state, vat);
+            // 解绑后要是另一条配方已经齐了，接着开工，不用等玩家再点一下
+            tryStart(level, pos, vat);
             return;
         }
 
@@ -648,15 +666,9 @@ public class Vat extends Block implements EntityBlock {
     *///?} else {
     public BlockState playerWillDestroy(Level level, BlockPos pos, BlockState state, Player player) {
     //?}
-        VatBlockEntity destroyed = vatAt(level, pos);
-        if (!level.isClientSide && destroyed != null) {
-            VatBlockEntity vat = destroyed;
-            for (ItemStack content : vat.contents()) {
-                if (isAbsorbedSeasoning(level, destroyed, content)) {
-                    continue;
-                }
-                popResource(level, pos, content);
-            }
+        VatBlockEntity vat = vatAt(level, pos);
+        if (!level.isClientSide && vat != null) {
+            // 封口物直接还给玩家；缸里的东西在 onRemove 里掉落，爆炸、指令拆掉时也一样
             give(player, vat.takePress());
             give(player, vat.takeCover());
         }
@@ -667,25 +679,46 @@ public class Vat extends Block implements EntityBlock {
         //?}
     }
 
+    @Override
+    public void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean movedByPiston) {
+        if (!state.is(newState.getBlock()) && !level.isClientSide) {
+            VatBlockEntity vat = vatAt(level, pos);
+            if (vat != null) {
+                for (ItemStack content : vat.contents()) {
+                    if (!isAbsorbedSeasoning(vat, content)) {
+                        popResource(level, pos, content.copy());
+                    }
+                }
+                // 玩家拆缸时封口物已经在 playerWillDestroy 里还回去了，这里只剩别的拆法
+                if (vat.isPressed()) {
+                    popResource(level, pos, vat.press().copy());
+                }
+                if (vat.isCovered()) {
+                    popResource(level, pos, vat.cover().copy());
+                }
+            }
+        }
+        super.onRemove(state, level, pos, newState, movedByPiston);
+    }
+
     /**
-     * 这份内容物是不是"投进去就已经溶进缸里"的调料：
-     * 盐在任何配方里都是调料；ABSORB / CONSUME 的格子（辣椒酱、鱼露、虾酱、小麦、谷物…）
-     * 也都已经被大缸吸收，不该在破坏时掉出来。
+     * 这份内容物是不是"投进去就已经溶进缸里"的调料：盐在任何配方里都是调料；
+     * 这缸所走配方里 ABSORB / CONSUME 的调料格（辣椒酱、鱼露、虾酱、小麦、谷物…）也已经被大缸吸收，不该在破坏时掉出来。
+     * 生鱼、虾、面包、酱渣这些主料没做完前还是原样，拆缸照常掉出。还没绑定配方的缸按它眼下最像的那条配方（{@link VatBrewing#current}）算。
      */
-    private static boolean isAbsorbedSeasoning(Level level, VatBlockEntity vat, ItemStack stack) {
+    private static boolean isAbsorbedSeasoning(VatBlockEntity vat, ItemStack stack) {
         if (VatRecipes.isSalt(stack)) {
             return true;
         }
-        VatRecipe bound = VatRecipes.recipeOf(vat);
-        if (bound == null && vat.recipeId() != null) {
+        VatRecipe recipe = vat.recipeId() != null ? VatRecipes.recipeOf(vat) : VatBrewing.current(vat);
+        if (recipe == null) {
             return false;
         }
-        for (VatRecipe recipe : vat.recipeId() == null ? VatRecipes.all(level) : List.of(bound)) {
-            for (VatRecipe.Slot slot : recipe.slots()) {
-                if (slot.fate() != VatRecipe.Fate.KEEP && slot.fate() != VatRecipe.Fate.CONVERT
-                        && slot.matcher().test(stack)) {
-                    return true;
-                }
+        for (VatRecipe.Slot slot : recipe.slots()) {
+            if (slot.layer() == VatRecipe.Layer.SEASONING
+                    && slot.fate() != VatRecipe.Fate.KEEP && slot.fate() != VatRecipe.Fate.CONVERT
+                    && slot.matcher().test(stack)) {
+                return true;
             }
         }
         return false;
@@ -718,14 +751,20 @@ public class Vat extends Block implements EntityBlock {
         }
     }
 
-    /** 进度大于 0 但当前已没有任何配方能匹配时，退回未开工状态，保证玩家还能重新封口开工。 */
+    /**
+     * 没做完的缸已经计了进度、或者绑着配方，却没有任何配方能匹配时，退回未开工状态并解除旧绑定，
+     * 保证玩家还能补料、重新封口开工。只绑定没计进度的情况（封口后第一次 tick 前就被打断、旧版本管道抽空留下的缸）也算。
+     */
     private static void resetStalledProgress(Level level, BlockPos pos, BlockState state, VatBlockEntity vat) {
-        if (!state.getValue(FERMENTED) && state.getValue(PROGRESS) > 0
-                && !vat.hasMissingUnfinishedRecipe() && VatBrewing.ready(vat) == null) {
+        if (state.getValue(FERMENTED) || (state.getValue(PROGRESS) == 0 && vat.recipeId() == null)
+                || vat.hasMissingUnfinishedRecipe() || VatBrewing.ready(vat) != null) {
+            return;
+        }
+        if (state.getValue(PROGRESS) > 0) {
             level.setBlock(pos, state.setValue(PROGRESS, 0),
                     Block.UPDATE_CLIENTS | Block.UPDATE_NEIGHBORS);
-            vat.clearRecipeBinding();
         }
+        vat.clearRecipeBinding();
     }
 
     /**

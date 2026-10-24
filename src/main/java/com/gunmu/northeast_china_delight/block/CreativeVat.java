@@ -18,13 +18,15 @@ public class CreativeVat extends Vat {
     }
 
     @Override
-    protected void tryStart(Level level, BlockPos pos, VatBlockEntity vat) {
+    protected boolean tryStart(Level level, BlockPos pos, VatBlockEntity vat) {
         if (level instanceof ServerLevel serverLevel) {
             VatRecipe recipe = VatBrewing.ready(vat);
             if (recipe != null) {
                 vat.setRecipe(recipe);
                 VatBrewing.complete(serverLevel, pos, vat, recipe);
+                return true;
             }
         }
+        return false;
     }
 }

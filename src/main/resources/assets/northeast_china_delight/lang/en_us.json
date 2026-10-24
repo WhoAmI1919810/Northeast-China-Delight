@@ -209,6 +209,7 @@
   "message.northeast_china_delight.vat.already_fermented": "This vat is already fermented - empty it first",
   "message.northeast_china_delight.vat.need_chunks_first": "Add soy paste chunks before the wheat",
   "message.northeast_china_delight.vat.materials_not_ready": "Materials are not complete yet",
+  "message.northeast_china_delight.vat.needs_snowy_biome": "Requires a snowy biome to freeze",
   "message.northeast_china_delight.vat.progress.idle": "Nothing is brewing yet",
   "message.northeast_china_delight.vat.progress.done": "Ready - take the goods out",
   "message.northeast_china_delight.vat.progress.hint": "%s progress %s%%, %s m %s s left",

@@ -208,6 +208,7 @@
   "message.northeast_china_delight.vat.already_fermented": "缸里已经酿好了，先取空再酿新的",
   "message.northeast_china_delight.vat.need_chunks_first": "先放大酱块，再加小麦酿酱油",
   "message.northeast_china_delight.vat.materials_not_ready": "材料还没凑齐，暂时不会开始发酵",
+  "message.northeast_china_delight.vat.needs_snowy_biome": "需在会下雪的生物群系才冻得上",
   "message.northeast_china_delight.vat.progress.idle": "这缸还没开始干活",
   "message.northeast_china_delight.vat.progress.done": "酿好了，可以取货了",
   "message.northeast_china_delight.vat.progress.hint": "%s进度 %s%%，还剩 %s 分 %s 秒",
