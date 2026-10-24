@@ -9,6 +9,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
@@ -16,16 +17,27 @@ public final class GrillRecipes {
 
     public static final int MAX_SEASONINGS = 4;
 
+    /** {@code visuals} 与 {@code seasonings} 一一对应：第 i 份调料加上去之后的样子 */
     public record Recipe(ResourceLocation id, int priority, Ingredient input, List<Ingredient> seasonings,
-                         ItemStack result, int seconds) {
+                         ItemStack result, int seconds, List<GrillVisual> visuals) {
 
         public Recipe {
             seasonings = List.copyOf(seasonings);
             result = result.copy();
+            visuals = List.copyOf(visuals);
+            if (visuals.size() != seasonings.size()) {
+                throw new IllegalArgumentException("烤架调料视觉必须和调料一一对应");
+            }
+        }
+
+        public Recipe(ResourceLocation id, int priority, Ingredient input, List<Ingredient> seasonings,
+                      ItemStack result, int seconds) {
+            this(id, priority, input, seasonings, result, seconds,
+                    Collections.nCopies(seasonings.size(), GrillVisual.AUTO));
         }
 
         public Recipe withId(ResourceLocation id) {
-            return new Recipe(id, this.priority, this.input, this.seasonings, this.result, this.seconds);
+            return new Recipe(id, this.priority, this.input, this.seasonings, this.result, this.seconds, this.visuals);
         }
 
         public int ticks() {
@@ -33,15 +45,37 @@ public final class GrillRecipes {
         }
 
         private int matchedSeasonings(List<Item> applied) {
-            int[] assigned = new int[this.seasonings.size()];
-            Arrays.fill(assigned, -1);
+            int[] assigned = assign(applied);
             int matched = 0;
-            for (int appliedIndex = 0; appliedIndex < applied.size(); appliedIndex++) {
-                if (assignSeasoning(appliedIndex, applied, assigned, new boolean[assigned.length])) {
+            for (int appliedIndex : assigned) {
+                if (appliedIndex >= 0) {
                     matched++;
                 }
             }
             return matched;
+        }
+
+        /** 每份调料条目分到了第几份已加的调料（-1 = 还没加） */
+        private int[] assign(List<Item> applied) {
+            int[] assigned = new int[this.seasonings.size()];
+            Arrays.fill(assigned, -1);
+            for (int appliedIndex = 0; appliedIndex < applied.size(); appliedIndex++) {
+                assignSeasoning(appliedIndex, applied, assigned, new boolean[assigned.length]);
+            }
+            return assigned;
+        }
+
+        /** 已加的每份调料按所占的调料条目取视觉；多出来、没占到条目的按 AUTO */
+        public List<GrillVisual> visualsFor(List<Item> applied) {
+            GrillVisual[] visuals = new GrillVisual[applied.size()];
+            Arrays.fill(visuals, GrillVisual.AUTO);
+            int[] assigned = assign(applied);
+            for (int requiredIndex = 0; requiredIndex < assigned.length; requiredIndex++) {
+                if (assigned[requiredIndex] >= 0) {
+                    visuals[assigned[requiredIndex]] = this.visuals.get(requiredIndex);
+                }
+            }
+            return Arrays.asList(visuals);
         }
 
         private boolean assignSeasoning(int appliedIndex, List<Item> applied, int[] assigned, boolean[] visited) {

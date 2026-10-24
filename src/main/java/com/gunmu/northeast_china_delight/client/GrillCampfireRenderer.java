@@ -1,38 +1,37 @@
 package com.gunmu.northeast_china_delight.client;
 
 import com.gunmu.northeast_china_delight.block.GrillBlockEntity;
-import com.gunmu.northeast_china_delight.item.BottleColors;
+import com.gunmu.northeast_china_delight.block.ModBlocks;
+import com.gunmu.northeast_china_delight.crafting.GrillRecipes;
+import com.gunmu.northeast_china_delight.crafting.GrillVisual;
 import com.gunmu.northeast_china_delight.item.GrillSeasonings;
-import com.gunmu.northeast_china_delight.item.ModItems;
-import com.gunmu.northeast_china_delight.item.SeasoningBottleItem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.client.renderer.entity.ItemRenderer;
-import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.NonNullList;
-import net.minecraft.util.RandomSource;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.Level;
 import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.CampfireBlock;
-import com.gunmu.northeast_china_delight.block.ModBlocks;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 /**
- * 烤架营火的渲染。所以位置、朝向、透明轮廓和食材完全一致；盐、糖这类则在食材的实心像素上撒几个白点；</li>
+ * 烤架营火的渲染：4 份食材按原版营火的位置平躺在铁条上，加过的调料按配方里写的视觉
+ * （没写就按调料本身：调料瓶和厚酱刷、鸡蛋打、其余撒）叠在食材上面，最后画烤架。
  */
 public class GrillCampfireRenderer implements BlockEntityRenderer<GrillBlockEntity> {
 
@@ -40,21 +39,9 @@ public class GrillCampfireRenderer implements BlockEntityRenderer<GrillBlockEnti
     private static final float ITEM_OFFSET = 0.3125F;
     private static final float ITEM_SCALE = 0.375F;
 
-    private static final float SEASON_LIFT = 0.0135F;
-    private static final float SEASON_ALPHA = 0.32F;
-
-    private static final int SAUCE_TINT = 0xB5321C;
-    private static final float SAUCE_ALPHA = 0.55F;
-    private static final int SAUCE_FLECK_COLOR = 0x7A1A0C;
-    private static final float SAUCE_FLECK_ALPHA = 0.9F;
-    private static final int SAUCE_FLECK_COUNT = 7;
-    private static final float SAUCE_FLECK_HALF_PX = 0.9F;
-
-    private static final int SPECK_COUNT = 4;
-    private static final float SPECK_HALF_PX = 0.6F;
-    private static final float SPECK_ALPHA = 0.9F;
-    /** 只有足够实的像素才撒点，避免点在半透明的边缘上 */
-    private static final int SPECK_MIN_ALPHA = 200;
+    /** 3D 物品模型画不了逐像素的调料，退回把整件食材再画一遍并染色 */
+    private static final float FALLBACK_LIFT = 0.0135F;
+    private static final int FALLBACK_EGG_COLOR = 0xF2C65A;
 
     private final ItemRenderer itemRenderer;
 
@@ -75,52 +62,23 @@ public class GrillCampfireRenderer implements BlockEntityRenderer<GrillBlockEnti
                 continue;
             }
             Direction direction = Direction.from2DDataValue(Math.floorMod(slot + facing.get2DDataValue(), 4));
-            List<Item> applied = grill.seasoningsOf(slot);
 
             pose.pushPose();
             translateToItem(pose, direction);
             drawItem(stack, buffer, pose, packedLight, packedOverlay, grill, seed + slot);
             pose.popPose();
 
-            for (Item seasoning : applied) {
-                if (!(seasoning instanceof SeasoningBottleItem)) {
-                    continue;
-                }
-                int argb = BottleColors.of(seasoning);
-                MultiBufferSource tinted = new TintBufferSource(buffer,
-                        ((argb >> 16) & 0xFF) / 255.0F,
-                        ((argb >> 8) & 0xFF) / 255.0F,
-                        (argb & 0xFF) / 255.0F,
-                        SEASON_ALPHA);
-                pose.pushPose();
-                pose.translate(0.0F, SEASON_LIFT, 0.0F);
-                translateToItem(pose, direction);
-                drawItem(stack, tinted, pose, packedLight, packedOverlay, grill, seed + slot);
-                pose.popPose();
+            List<GrillSeasoningOverlay.Layer> layers = seasoningLayers(grill, slot);
+            if (layers.isEmpty()) {
+                continue;
             }
-
-            boolean hasSauce = applied.stream().anyMatch(GrillSeasonings::isSauce);
-            if (hasSauce) {
-                MultiBufferSource sauce = new TintBufferSource(buffer,
-                        ((SAUCE_TINT >> 16) & 0xFF) / 255.0F,
-                        ((SAUCE_TINT >> 8) & 0xFF) / 255.0F,
-                        (SAUCE_TINT & 0xFF) / 255.0F,
-                        SAUCE_ALPHA);
-                pose.pushPose();
-                pose.translate(0.0F, SEASON_LIFT, 0.0F);
-                translateToItem(pose, direction);
-                drawItem(stack, sauce, pose, packedLight, packedOverlay, grill, seed + slot);
-                pose.popPose();
-                renderSpecks(pose, buffer, stack, direction, grill.getLevel(), seed + slot,
-                        packedLight, packedOverlay,
-                        SAUCE_FLECK_COLOR, SAUCE_FLECK_ALPHA, SAUCE_FLECK_HALF_PX, SAUCE_FLECK_COUNT);
-            }
-
-            boolean hasDrySeasoning = applied.stream().anyMatch(item -> !GrillSeasonings.needsBrush(new ItemStack(item)));
-            if (hasDrySeasoning) {
-                renderSpecks(pose, buffer, stack, direction, grill.getLevel(), seed + slot,
-                        packedLight, packedOverlay,
-                        0xFFFFFF, SPECK_ALPHA, SPECK_HALF_PX, SPECK_COUNT);
+            BakedModel model = this.itemRenderer.getModel(stack, grill.getLevel(), null, seed + slot);
+            pose.pushPose();
+            translateToItem(pose, direction);
+            boolean drawn = GrillSeasoningOverlay.draw(pose, buffer, model, layers, slot, packedLight, packedOverlay);
+            pose.popPose();
+            if (!drawn) {
+                drawTinted(stack, layers, direction, pose, buffer, packedLight, packedOverlay, grill, seed + slot);
             }
         }
 
@@ -131,6 +89,66 @@ public class GrillCampfireRenderer implements BlockEntityRenderer<GrillBlockEnti
                 linked(level, pos, Direction.WEST),
                 linked(level, pos, Direction.NORTH),
                 linked(level, pos, Direction.SOUTH));
+    }
+
+    /**
+     * 这份食材上已加调料的样子，按打蛋 → 刷酱 → 撒料从下往上叠（不管玩家先加的哪样）。
+     * 客户端也有同步过来的配方，按绑定的配方 ID 找每份调料占的条目，读条目里写的视觉。
+     */
+    private static List<GrillSeasoningOverlay.Layer> seasoningLayers(GrillBlockEntity grill, int slot) {
+        List<Item> applied = grill.seasoningsOf(slot);
+        if (applied.isEmpty()) {
+            return List.of();
+        }
+        List<GrillVisual> declared = null;
+        ResourceLocation id = grill.recipeIdOf(slot);
+        Level level = grill.getLevel();
+        if (id != null && level != null) {
+            GrillRecipes.Recipe recipe = GrillRecipes.byId(level.getRecipeManager(), id);
+            if (recipe != null) {
+                declared = recipe.visualsFor(applied);
+            }
+        }
+        List<GrillSeasoningOverlay.Layer> layers = new ArrayList<>();
+        for (int i = 0; i < applied.size(); i++) {
+            GrillVisual visual = GrillSeasonings.resolve(declared == null ? GrillVisual.AUTO : declared.get(i),
+                    applied.get(i));
+            if (visual.style() != GrillVisual.Style.NONE) {
+                layers.add(new GrillSeasoningOverlay.Layer(visual.style(), visual.color(), visual.opacity()));
+            }
+        }
+        layers.sort(Comparator.comparingInt(GrillCampfireRenderer::layerOrder));
+        return layers;
+    }
+
+    private static int layerOrder(GrillSeasoningOverlay.Layer layer) {
+        return switch (layer.style()) {
+            case EGG -> 0;
+            case BRUSH -> 1;
+            default -> 2;
+        };
+    }
+
+    private void drawTinted(ItemStack stack, List<GrillSeasoningOverlay.Layer> layers, Direction direction,
+                            PoseStack pose, MultiBufferSource buffer, int packedLight, int packedOverlay,
+                            GrillBlockEntity grill, int seed) {
+        for (GrillSeasoningOverlay.Layer layer : layers) {
+            if (layer.style() == GrillVisual.Style.SPRINKLE) {
+                continue;
+            }
+            boolean egg = layer.style() == GrillVisual.Style.EGG;
+            int rgb = egg ? FALLBACK_EGG_COLOR : layer.color();
+            MultiBufferSource tinted = new TintBufferSource(buffer,
+                    ((rgb >> 16) & 0xFF) / 255.0F,
+                    ((rgb >> 8) & 0xFF) / 255.0F,
+                    (rgb & 0xFF) / 255.0F,
+                    layer.opacity() * (egg ? 0.75F : 0.5F));
+            pose.pushPose();
+            pose.translate(0.0F, FALLBACK_LIFT, 0.0F);
+            translateToItem(pose, direction);
+            drawItem(stack, tinted, pose, packedLight, packedOverlay, grill, seed);
+            pose.popPose();
+        }
     }
 
     private void drawItem(ItemStack stack, MultiBufferSource buffer, PoseStack pose,
@@ -149,71 +167,6 @@ public class GrillCampfireRenderer implements BlockEntityRenderer<GrillBlockEnti
         pose.mulPose(Axis.XP.rotationDegrees(90.0F));
         pose.translate(-ITEM_OFFSET, -ITEM_OFFSET, 0.0F);
         pose.scale(ITEM_SCALE, ITEM_SCALE, ITEM_SCALE);
-    }
-
-    private static void translateToItemLocal(PoseStack pose, Direction direction) {
-        pose.translate(0.0F, SEASON_LIFT, 0.0F);
-        translateToItem(pose, direction);
-    }
-
-    private void renderSpecks(PoseStack pose, MultiBufferSource buffer, ItemStack stack, Direction direction,
-                              net.minecraft.world.level.Level level, int seed,
-                              int packedLight, int packedOverlay,
-                              int color, float alpha, float halfPx, int count) {
-        BakedModel model = this.itemRenderer.getModel(stack, level, null, seed);
-        RandomSource random = RandomSource.create(42L);
-        List<BakedQuad> quads = model.getQuads(null, null, random);
-        if (quads.isEmpty()) {
-            return;
-        }
-        TextureAtlasSprite sprite = quads.get(0).getSprite();
-        int width = sprite.contents().width();
-        int height = sprite.contents().height();
-
-        List<int[]> candidates = new ArrayList<>();
-        for (int y = 0; y < height; y++) {
-            for (int x = 0; x < width; x++) {
-                if ((sprite.getPixelRGBA(0, x, y) >>> 24) >= SPECK_MIN_ALPHA) {
-                    candidates.add(new int[] {x, y});
-                }
-            }
-        }
-        if (candidates.isEmpty()) {
-            return;
-        }
-
-        VertexConsumer consumer = buffer.getBuffer(RenderType.debugQuads());
-        float red = ((color >> 16) & 0xFF) / 255.0F;
-        float green = ((color >> 8) & 0xFF) / 255.0F;
-        float blue = (color & 0xFF) / 255.0F;
-        pose.pushPose();
-        translateToItemLocal(pose, direction);
-        PoseStack.Pose last = pose.last();
-        for (int i = 0; i < count; i++) {
-            int[] pixel = candidates.get((int) ((long) i * candidates.size() / count) % candidates.size());
-            float x0 = (pixel[0] + 0.5F - halfPx) / width - 0.5F;
-            float x1 = (pixel[0] + 0.5F + halfPx) / width - 0.5F;
-            float y0 = (pixel[1] + 0.5F - halfPx) / height - 0.5F;
-            float y1 = (pixel[1] + 0.5F + halfPx) / height - 0.5F;
-            addSpeckQuad(consumer, last, x0, y0, x1, y1, red, green, blue, alpha);
-        }
-        pose.popPose();
-    }
-
-    private static void addSpeckQuad(VertexConsumer consumer, PoseStack.Pose pose,
-                                     float x0, float y0, float x1, float y1,
-                                     float red, float green, float blue, float alpha) {
-        //? if <1.20.5 {
-        /*consumer.vertex(pose.pose(), x0, y0, 0.0F).color(red, green, blue, alpha).endVertex();
-        consumer.vertex(pose.pose(), x1, y0, 0.0F).color(red, green, blue, alpha).endVertex();
-        consumer.vertex(pose.pose(), x1, y1, 0.0F).color(red, green, blue, alpha).endVertex();
-        consumer.vertex(pose.pose(), x0, y1, 0.0F).color(red, green, blue, alpha).endVertex();*/
-        //?} else {
-        consumer.addVertex(pose, x0, y0, 0.0F).setColor(red, green, blue, alpha);
-        consumer.addVertex(pose, x1, y0, 0.0F).setColor(red, green, blue, alpha);
-        consumer.addVertex(pose, x1, y1, 0.0F).setColor(red, green, blue, alpha);
-        consumer.addVertex(pose, x0, y1, 0.0F).setColor(red, green, blue, alpha);
-        //?}
     }
 
     private record TintBufferSource(MultiBufferSource delegate,

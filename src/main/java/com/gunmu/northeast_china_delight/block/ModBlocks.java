@@ -4,6 +4,7 @@ import com.gunmu.northeast_china_delight.NortheastChinaDelight;
 import com.gunmu.northeast_china_delight.compat.displaydelight.DisplayDelightCompat;
 import com.gunmu.northeast_china_delight.fluid.ModFluids;
 import com.gunmu.northeast_china_delight.item.ModItems;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.CampfireBlock;
 import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.block.Block;
@@ -257,7 +258,7 @@ public class ModBlocks {
             "grilled_chicken_frame", "grilled_corn", "sauerkraut_crackling_dumpling",
             "shrimp_pork_dumpling", "three_delicacy_dumpling", "dry_fried_hairtail",
             "braised_hairtail", "hazelnut_sugar_fire_bun",
-            "soy_milk", "snow_mustard_tofu_stew", "dog_bao_pickles"
+            "soy_milk", "snow_mustard_tofu_stew", "dog_bao_pickles", "pounded_rice_cake"
     );
 
     public static final List<String> TRAY_DISH_IDS = List.of(
@@ -278,13 +279,13 @@ public class ModBlocks {
             "sticky_bean_bun", "red_bean_songpyeon", "peanut_songpyeon",
             "grilled_chicken_frame", "grilled_corn", "sauerkraut_crackling_dumpling",
             "shrimp_pork_dumpling", "three_delicacy_dumpling", "hazelnut_sugar_fire_bun",
-            "braised_beef_sauce", "braised_pork_bone_sauce"
+            "braised_beef_sauce", "braised_pork_bone_sauce", "pounded_rice_cake"
     );
 
     /** 无器具菜肴里单个 / 少量的放小餐盘，其余仍放餐盘。 */
     public static final List<String> SMALL_PLATE_DISH_IDS = List.of(
             "baked_sweet_potato", "northeast_rice_wrap", "sticky_bean_bun", "red_bean_songpyeon",
-            "peanut_songpyeon"
+            "peanut_songpyeon", "pounded_rice_cake"
     );
 
     /** 黄铜碗料理统一用 block/brass_bowl 的碗体，边界见 DishBlock.BRASS_BOWL_SHAPE。 */
@@ -313,20 +314,30 @@ public class ModBlocks {
                     : NO_CONTAINER_DISH_IDS.contains(id)
                     ? DishBlock.TRAY_SHAPE
                     : DishBlock.BOWL_SHAPE;
-            map.put(id, dishBlock(id, shape));
+            if (NO_CONTAINER_DISH_IDS.contains(id))
+            {
+                ResourceLocation plate = SMALL_PLATE_DISH_IDS.contains(id)
+                        ? DisplayDelightCompat.SMALL_PLATE : DisplayDelightCompat.PLATE;
+                map.put(id, dishBlock(id, properties -> new PlatedDishBlock(properties, shape, plate)));
+            }
+            else
+            {
+                map.put(id, dishBlock(id, properties -> new DishBlock(properties, shape)));
+            }
         }
         return Collections.unmodifiableMap(map);
     }
 
-    /** 无器具菜肴摆在展示乐事风格的餐盘 / 小餐盘上，只有装了展示乐事才能放置。 */
+    /** 能不能潜行右键放下。无器具菜肴不行：要右键展示乐事的餐盘 / 小餐盘摆上去（见 {@link PlatedDishBlock}）。 */
     public static boolean canPlaceDish(String id)
     {
-        return !NO_CONTAINER_DISH_IDS.contains(id) || DisplayDelightCompat.isLoaded();
+        return !NO_CONTAINER_DISH_IDS.contains(id);
     }
 
-    private static Supplier<Block> dishBlock(String name, net.minecraft.world.phys.shapes.VoxelShape shape) {
+    private static Supplier<Block> dishBlock(String name,
+                                             Function<BlockBehaviour.Properties, Block> factory) {
         return block(name,
-                properties -> new DishBlock(properties, shape),
+                factory,
                 BlockBehaviour.Properties.of()
                         .mapColor(MapColor.WOOD)
                         .strength(0.3F)
