@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:chest",
+  "random_sequence": "northeast_china_delight:chests/courtyard_disc",
+  "pools": [
+    {
+      "rolls": 1,
+      "entries": [
+        { "type": "minecraft:item", "name": "northeast_china_delight:music_disc_northeast" }
+      ]
+    }
+  ]
+}

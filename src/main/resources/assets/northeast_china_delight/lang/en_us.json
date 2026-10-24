@@ -61,7 +61,7 @@
   "tooltip.northeast_china_delight.sea_water_marker": "Can be used to make salt",
   "jei.northeast_china_delight.grill.seasoning_amount_brush": "%s mB · use brush",
   "jei.northeast_china_delight.info.ginseng": "Ginseng grows in cold, shaded, snowy places. Dig the soil beneath a mature plant by hand to harvest the root and seeds.",
-  "jei.northeast_china_delight.info.wood_ear": "Use an axe to strip logs for a chance to find Wood Ear: dark oak in Dark Forests, birch in Birch Forests or Old Growth Birch Forests, and oak in any biome.",
+  "jei.northeast_china_delight.info.wood_ear": "Use an axe to strip logs for a chance to find Wood Ear: dark oak in Dark Forests, birch in Birch Forests or Old Growth Birch Forests, and oak in any biome. Wild wood ears also grow on these trees and can be picked by hand. Right-click the side of an oak, birch or dark oak log that still has its bark to plant a wood ear; once it grows into a cluster, right-click to harvest.",
   "jei.northeast_china_delight.info.hazel_mushroom": "A wild delicacy found near hazelnut bushes and broadleaf trees. It can also be planted to grow a Hazel Mushroom Colony.",
   "jei.northeast_china_delight.info.hairtail": "A long, delicate sea fish. In a Deep Cold Ocean or Deep Frozen Ocean, Hairtail can be caught when the surrounding 150 blocks are open water and the depth reaches 20 blocks.",
   "jei.northeast_china_delight.info.oyster": "A shellfish found in the sea. Fish where a river meets an ocean to catch oysters.",
@@ -86,6 +86,7 @@
   "item.northeast_china_delight.buckwheat_noodles": "Buckwheat Noodles",
   "item.northeast_china_delight.dried_tofu": "Dried Tofu",
   "item.northeast_china_delight.tofu": "Tofu",
+  "item.northeast_china_delight.frozen_tofu": "Frozen Tofu",
   "item.northeast_china_delight.cooking_oil": "Vegetable Oil",
   "item.northeast_china_delight.pork_ribs": "Pork Ribs",
   "item.northeast_china_delight.pork_intestine": "Pig Intestine",
@@ -390,6 +391,8 @@
   "block.northeast_china_delight.hazelnut_sack": "Sack of Hazelnuts",
   "block.northeast_china_delight.hazel_mushroom_sack": "Sack of Hazel Mushrooms",
   "block.northeast_china_delight.wood_ear_sack": "Sack of Wood Ear",
+  "block.northeast_china_delight.wood_ear_crop": "Wood Ear",
+  "block.northeast_china_delight.wild_wood_ear": "Wild Wood Ear",
   "block.northeast_china_delight.ginseng_sack": "Sack of Ginseng",
   "entity.minecraft.villager.northeast_china_delight.side_dish_merchant": "Side Dish Merchant",
   "item.northeast_china_delight.frozen_pear": "Frozen Pear",
@@ -453,6 +456,8 @@
   "advancements.northeast_china_delight.stare.description": "Anger an enderman while wearing a large basin and holding a wooden mallet",
   "advancements.northeast_china_delight.visit_all_yards.title": "Door to Door",
   "advancements.northeast_china_delight.visit_all_yards.description": "Visit every kind of Northeast courtyard",
+  "advancements.northeast_china_delight.home_voice.title": "Voice of Home",
+  "advancements.northeast_china_delight.home_voice.description": "Play The Great Northeast Is Mine Own Native Land on a jukebox",
   "advancements.northeast_china_delight.pump_seasoning.title": "Pump the Seasoning",
   "advancements.northeast_china_delight.pump_seasoning.description": "Pump any seasoning",
   "advancements.northeast_china_delight.trade_ginseng.title": "Buy Some Ginseng",
@@ -476,5 +481,7 @@
   "advancements.northeast_china_delight.basin_master.title": "That Is One Hearty Dish",
   "advancements.northeast_china_delight.basin_master.description": "Make and place every basin dish",
   "advancements.northeast_china_delight.brass_bowl_master.title": "Korean-Northeast Delight",
-  "advancements.northeast_china_delight.brass_bowl_master.description": "Make every brass-bowl dish"
+  "advancements.northeast_china_delight.brass_bowl_master.description": "Make every brass-bowl dish",
+  "item.northeast_china_delight.music_disc_northeast": "Music Disc",
+  "item.northeast_china_delight.music_disc_northeast.desc": "The Great Northeast Is Mine Own Native Land"
 }

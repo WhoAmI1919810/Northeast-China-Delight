@@ -152,7 +152,7 @@ public final class PoundDataRecipe implements Recipe<
                     throw new JsonParseException("舂捣 inputs.count 必须为正整数");
                 }
                 ItemStack container = entry.has("return_container")
-                        ? decodeItemStack(entry, "return_container")
+                        ? decodeNestedItem(entry, "return_container")
                         : null;
                 inputs.add(new PoundingRecipes.Input(ingredient, count, container));
             }
@@ -161,7 +161,7 @@ public final class PoundDataRecipe implements Recipe<
 
         Ingredient ingredient = decodeIngredient(config, "input");
         ItemStack container = config.has("return_container")
-                ? decodeItemStack(config, "return_container")
+                ? decodeNestedItem(config, "return_container")
                 : null;
         inputs.add(new PoundingRecipes.Input(ingredient, 1, container));
         return inputs;
@@ -177,7 +177,7 @@ public final class PoundDataRecipe implements Recipe<
                     throw new JsonParseException("舂捣 results 的每一项都必须是对象");
                 }
                 JsonObject entry = element.getAsJsonObject();
-                ItemStack stack = decodeItemStack(entry, "item");
+                ItemStack stack = decodeItem(entry);
                 boolean byproduct = GsonHelper.getAsBoolean(entry, "byproduct", false);
                 float chance = decimal(entry, "chance", 1.0F);
                 if (chance < 0.0F || chance > 1.0F) {
@@ -225,7 +225,7 @@ public final class PoundDataRecipe implements Recipe<
                         throw new JsonParseException("舂捣 random_results.entries 的每一项都必须是对象");
                     }
                     JsonObject entry = entryElement.getAsJsonObject();
-                    ItemStack stack = decodeItemStack(entry, "item");
+                    ItemStack stack = decodeItem(entry);
                     int weight = integer(entry, "weight", 1);
                     if (weight <= 0) {
                         throw new JsonParseException("舂捣 random_results.entries.weight 必须为正整数");
@@ -253,7 +253,7 @@ public final class PoundDataRecipe implements Recipe<
         }
 
         JsonObject resultJson = GsonHelper.getAsJsonObject(config, "result");
-        ItemStack stack = decodeItemStack(resultJson, "item");
+        ItemStack stack = decodeItem(resultJson);
         int count = integer(resultJson, "count", 1);
         if (count <= 0) {
             throw new JsonParseException("舂捣 result.count 必须为正整数");
@@ -262,11 +262,12 @@ public final class PoundDataRecipe implements Recipe<
         return results;
     }
 
-    private static ItemStack decodeItemStack(JsonObject owner, String field) {
-        JsonObject json = field.equals("return_container") || field.equals("result")
-                ? GsonHelper.getAsJsonObject(owner, field)
-                : owner;
-        if (field.equals("item") && !owner.has("item")) {
+    private static ItemStack decodeNestedItem(JsonObject owner, String field) {
+        return decodeItem(GsonHelper.getAsJsonObject(owner, field));
+    }
+
+    private static ItemStack decodeItem(JsonObject json) {
+        if (!json.has("item")) {
             throw new JsonParseException("舂捣配方缺少字段：item");
         }
         ResourceLocation itemId = ResourceLocation.tryParse(GsonHelper.getAsString(json, "item"));

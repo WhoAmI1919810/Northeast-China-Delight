@@ -19,6 +19,7 @@ import com.gunmu.northeast_china_delight.effect.ModEffects;
 import com.gunmu.northeast_china_delight.event.ModGameplayEvents;
 import com.gunmu.northeast_china_delight.fluid.ModFluids;
 import com.gunmu.northeast_china_delight.item.ModItems;
+import com.gunmu.northeast_china_delight.item.ModSounds;
 import com.gunmu.northeast_china_delight.item.SeaWaterBuckets;
 import com.gunmu.northeast_china_delight.loot.ModLootModifiers;
 import com.gunmu.northeast_china_delight.util.DdIds;
@@ -159,6 +160,7 @@ public class NortheastChinaDelight
     {
     *///?}
         ModItems.register(modEventBus);
+        ModSounds.register(modEventBus);
         SeaWaterBuckets.register(modEventBus);
         ModBlocks.register(modEventBus);
         ModFluids.register(modEventBus);

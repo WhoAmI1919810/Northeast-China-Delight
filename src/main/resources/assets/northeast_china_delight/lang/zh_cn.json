@@ -67,7 +67,7 @@
   "tooltip.northeast_china_delight.sea_water_marker": "可用于制盐",
   "jei.northeast_china_delight.grill.seasoning_amount_brush": "%s mB·需刷子",
   "jei.northeast_china_delight.info.ginseng": "人参通常生长在寒冷、阴凉且覆雪的地方。空手挖开它脚下的土，可以得到人参和参籽。",
-  "jei.northeast_china_delight.info.wood_ear": "用斧头给原木去皮时，有机会获得木耳：黑森林中的深色橡木、白桦林或原始桦木林中的白桦木，以及任意群系中的橡木。",
+  "jei.northeast_china_delight.info.wood_ear": "用斧头给原木去皮时，有机会获得木耳：黑森林中的深色橡木、白桦林或原始桦木林中的白桦木，以及任意群系中的橡木。这些树上也会自己长出野生木耳，空手就能摘下。把木耳对着带树皮的橡木、白桦木或深色橡木的侧面右键即可种下，长成木耳丛后右键收获。",
   "jei.northeast_china_delight.info.hazel_mushroom": "一种生长在榛子丛和阔叶树附近的山珍。它也可以被种下，长成榛蘑菌落。",
   "jei.northeast_china_delight.info.hairtail": "一种身形狭长、肉质细嫩的海鱼。在深冷海洋或冰冻深海中，四周150格范围保持开阔且水深达到20格时，可以钓到带鱼。",
   "jei.northeast_china_delight.info.oyster": "一种生长在海中的贝类。在河流与海洋的交汇处钓鱼，可以钓到生蚝。",
@@ -85,6 +85,7 @@
   "item.northeast_china_delight.buckwheat_noodles": "荞麦面",
   "item.northeast_china_delight.dried_tofu": "干豆腐",
   "item.northeast_china_delight.tofu": "豆腐",
+  "item.northeast_china_delight.frozen_tofu": "冻豆腐",
   "item.northeast_china_delight.cooking_oil": "植物油",
   "item.northeast_china_delight.pork_ribs": "排骨",
   "item.northeast_china_delight.pork_intestine": "猪肠",
@@ -407,6 +408,8 @@
   "block.northeast_china_delight.hazelnut_sack": "袋装榛子",
   "block.northeast_china_delight.hazel_mushroom_sack": "袋装榛蘑",
   "block.northeast_china_delight.wood_ear_sack": "袋装木耳",
+  "block.northeast_china_delight.wood_ear_crop": "木耳",
+  "block.northeast_china_delight.wild_wood_ear": "野生木耳",
   "block.northeast_china_delight.ginseng_sack": "袋装人参",
   "entity.minecraft.villager.northeast_china_delight.side_dish_merchant": "副食商",
   "item.northeast_china_delight.frozen_pear": "冻梨",
@@ -452,6 +455,8 @@
   "advancements.northeast_china_delight.stare.description": "头戴大脸盆、手持木槌，盯得末影人记仇",
   "advancements.northeast_china_delight.visit_all_yards.title": "挨户串门",
   "advancements.northeast_china_delight.visit_all_yards.description": "进入所有种类的东北小院",
+  "advancements.northeast_china_delight.home_voice.title": "家乡之声",
+  "advancements.northeast_china_delight.home_voice.description": "在唱片机里播放《大东北是我的家乡》",
   "advancements.northeast_china_delight.pump_seasoning.title": "泵点调料",
   "advancements.northeast_china_delight.pump_seasoning.description": "用动力泵抽输任意一种调料",
   "advancements.northeast_china_delight.trade_ginseng.title": "买根人参",
@@ -475,5 +480,7 @@
   "advancements.northeast_china_delight.basin_master.title": "这菜挺硬",
   "advancements.northeast_china_delight.basin_master.description": "制作并放下所有盆装菜",
   "advancements.northeast_china_delight.brass_bowl_master.title": "朝鲜族乐事",
-  "advancements.northeast_china_delight.brass_bowl_master.description": "制作所有黄铜碗菜肴"
+  "advancements.northeast_china_delight.brass_bowl_master.description": "制作所有黄铜碗菜肴",
+  "item.northeast_china_delight.music_disc_northeast": "音乐唱片",
+  "item.northeast_china_delight.music_disc_northeast.desc": "大东北是我的家乡"
 }

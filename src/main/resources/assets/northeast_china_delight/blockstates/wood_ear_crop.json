@@ -1,0 +1,64 @@
+{
+  "variants": {
+    "age=0,facing=north": {
+      "model": "northeast_china_delight:block/wood_ear_stage0"
+    },
+    "age=1,facing=north": {
+      "model": "northeast_china_delight:block/wood_ear_stage1"
+    },
+    "age=2,facing=north": {
+      "model": "northeast_china_delight:block/wood_ear_stage2"
+    },
+    "age=3,facing=north": {
+      "model": "northeast_china_delight:block/wood_ear_stage3"
+    },
+    "age=0,facing=east": {
+      "model": "northeast_china_delight:block/wood_ear_stage0",
+      "y": 90
+    },
+    "age=1,facing=east": {
+      "model": "northeast_china_delight:block/wood_ear_stage1",
+      "y": 90
+    },
+    "age=2,facing=east": {
+      "model": "northeast_china_delight:block/wood_ear_stage2",
+      "y": 90
+    },
+    "age=3,facing=east": {
+      "model": "northeast_china_delight:block/wood_ear_stage3",
+      "y": 90
+    },
+    "age=0,facing=south": {
+      "model": "northeast_china_delight:block/wood_ear_stage0",
+      "y": 180
+    },
+    "age=1,facing=south": {
+      "model": "northeast_china_delight:block/wood_ear_stage1",
+      "y": 180
+    },
+    "age=2,facing=south": {
+      "model": "northeast_china_delight:block/wood_ear_stage2",
+      "y": 180
+    },
+    "age=3,facing=south": {
+      "model": "northeast_china_delight:block/wood_ear_stage3",
+      "y": 180
+    },
+    "age=0,facing=west": {
+      "model": "northeast_china_delight:block/wood_ear_stage0",
+      "y": 270
+    },
+    "age=1,facing=west": {
+      "model": "northeast_china_delight:block/wood_ear_stage1",
+      "y": 270
+    },
+    "age=2,facing=west": {
+      "model": "northeast_china_delight:block/wood_ear_stage2",
+      "y": 270
+    },
+    "age=3,facing=west": {
+      "model": "northeast_china_delight:block/wood_ear_stage3",
+      "y": 270
+    }
+  }
+}

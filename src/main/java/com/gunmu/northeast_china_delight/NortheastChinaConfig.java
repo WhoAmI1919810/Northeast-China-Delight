@@ -65,6 +65,7 @@ public final class NortheastChinaConfig
             "northeast_china_delight:grilled_oil_edge",
             "northeast_china_delight:hairtail",
             "northeast_china_delight:mung_bean_sheet",
+            "northeast_china_delight:music_disc_northeast",
             "northeast_china_delight:napa_cabbage",
             "northeast_china_delight:napa_cabbage_seeds",
             "northeast_china_delight:oil_edge",
@@ -171,7 +172,7 @@ public final class NortheastChinaConfig
                 .define("enabled", true);
         CHEST_LOOT_ALLOWED_ITEMS = builder
                 .comment("箱子战利品允许生成的本模组物品，填写完整注册 ID。",
-                        "默认包含全部 68 种现有候选，空列表表示不生成任何本模组箱子物品。")
+                        "默认包含全部 69 种现有候选，空列表表示不生成任何本模组箱子物品。")
                 .defineListAllowEmpty("allowed_items", DEFAULT_CHEST_LOOT_ITEMS,
                         //? if >=1.20.5 {
                         /*() -> "northeast_china_delight:soybean",*/

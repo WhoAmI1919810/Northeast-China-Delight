@@ -324,6 +324,15 @@ public class WoodenMortarBlock extends BaseEntityBlock {
                 level.playSound(null, pos, SoundEvents.ITEM_FRAME_REMOVE_ITEM, SoundSource.BLOCKS, 0.8F, 1.0F);
                 return InteractionResult.SUCCESS;
             }
+            if (state.getValue(STATE) > 0) {
+                if (level.isClientSide) {
+                    return InteractionResult.SUCCESS;
+                }
+                mortar.clear();
+                setStage(level, pos, state, 0);
+                level.playSound(null, pos, SoundEvents.ITEM_FRAME_REMOVE_ITEM, SoundSource.BLOCKS, 0.8F, 1.0F);
+                return InteractionResult.SUCCESS;
+            }
             return null;
         }
         if (state.getValue(STATE) < recipe.doneState()) {

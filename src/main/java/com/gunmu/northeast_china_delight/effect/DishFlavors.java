@@ -11,8 +11,11 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * 菜肴的"口味"表：决定吃完给什么状态效果、持续多久。持续时长按食材数算：每种食材 10 秒（不计调料）。个别菜可以单独指定时长（比如烤鸡架只给 10 秒）。不在表里的食物（比如
- * 豆浆、烤红薯）不给任何效果。
+ * 菜肴的"口味"表：决定吃完给什么状态效果、持续多久。持续时长按食材数算：每种食材 10 秒。不在表里的食物不给任何效果。
+ *
+ * <p>{@code put} 里的数是配方里的食材种数：同一种算一种；盐、酱油、大酱、糖、醋、各种油、辣酱、番茄酱、虾酱、鱼露、
+ * 花生酱、淀粉这类调料不算，水和碗、盆等容器也不算。再写一个数的是直接指定的时长（刻）：烤鸡架、格瓦斯本来就单独指定；
+ * 其余写了时长的，是食材数按上面的规矩改过以后，游戏里的效果时长暂时保持原样（原来的表连调料一起数）。</p>
  */
 public final class DishFlavors {
 
@@ -102,83 +105,83 @@ public final class DishFlavors {
     private static Map<Item, Info> build() {
         Map<Item, Info> map = new HashMap<>();
 
-        put(map, Flavor.GREASY, 5, "old_style_crispy_pork");
-        put(map, Flavor.GREASY, 4, "new_style_crispy_pork");
-        put(map, Flavor.GREASY, 5, "orange_crispy_pork");
-        put(map, Flavor.GREASY, 4, "crispy_pork_strips");
-        put(map, Flavor.GREASY, 3, "braised_pork_hock");
-        put(map, Flavor.GREASY, 2, "braised_pork_strips");
-        put(map, Flavor.GREASY, 2, "braised_pork_bone_sauce");
-        put(map, Flavor.GREASY, 3, "braised_beef_sauce");
-        put(map, Flavor.GREASY, 6, "smoked_meat_platter");
-        put(map, Flavor.GREASY, 5, "braised_pork_ribs");
-        put(map, Flavor.GREASY, 5, "candied_sweet_potato");
-        put(map, Flavor.GREASY, 4, "dry_fried_hairtail");
-        put(map, Flavor.GREASY, 4, "braised_hairtail");
-        put(map, Flavor.GREASY, 5, "hazelnut_sugar_fire_bun");
-        put(map, Flavor.GREASY, 5, "corn_fritter");
-        put(map, Flavor.GREASY, 5, "potato_pancake");
+        put(map, Flavor.GREASY, 1, 1000, "old_style_crispy_pork");
+        put(map, Flavor.GREASY, 1, 800, "new_style_crispy_pork");
+        put(map, Flavor.GREASY, 1, 1000, "orange_crispy_pork");
+        put(map, Flavor.GREASY, 2, 800, "crispy_pork_strips");
+        put(map, Flavor.GREASY, 2, 600, "braised_pork_hock");
+        put(map, Flavor.GREASY, 1, 400, "braised_pork_strips");
+        put(map, Flavor.GREASY, 1, 400, "braised_pork_bone_sauce");
+        put(map, Flavor.GREASY, 1, 600, "braised_beef_sauce");
+        put(map, Flavor.GREASY, 5, 1200, "smoked_meat_platter");
+        put(map, Flavor.GREASY, 2, 1000, "braised_pork_ribs");
+        put(map, Flavor.GREASY, 1, 1000, "candied_sweet_potato");
+        put(map, Flavor.GREASY, 1, 800, "dry_fried_hairtail");
+        put(map, Flavor.GREASY, 1, 800, "braised_hairtail");
+        put(map, Flavor.GREASY, 2, 1000, "hazelnut_sugar_fire_bun");
+        put(map, Flavor.GREASY, 1, 1000, "corn_fritter");
+        put(map, Flavor.GREASY, 1, 1000, "potato_pancake");
         put(map, Flavor.GREASY, 3, "three_fresh_veggies");
-        put(map, Flavor.GREASY, 3, "sticky_bean_bun");
+        put(map, Flavor.GREASY, 2, 600, "sticky_bean_bun");
         // 大盆菜：效果挂在碗装的那一份上（盆本身是方块物品，不能吃、没有效果）
-        put(map, Flavor.GREASY, 6, "slaughter_feast_bowl");
+        put(map, Flavor.GREASY, 5, 1200, "slaughter_feast_bowl");
         put(map, Flavor.GREASY, 4, "ground_pot_chicken_bowl");
         put(map, Flavor.GREASY, 4, "ground_pot_ribs_bowl");
         put(map, Flavor.GREASY, 2, "salted_fish_flatbread");
-        put(map, Flavor.GREASY, 4, "kimchi_pancake");
-        put(map, Flavor.GREASY, 5, "snowy_bean_paste");
-        put(map, Flavor.GREASY, 2, "candied_peanuts");
-        put(map, Flavor.GREASY, 3, "grilled_oil_edge");
-        put(map, Flavor.GREASY, 3, 200, "grilled_chicken_frame");
+        put(map, Flavor.GREASY, 2, 800, "kimchi_pancake");
+        put(map, Flavor.GREASY, 2, 1000, "snowy_bean_paste");
+        put(map, Flavor.GREASY, 1, 400, "candied_peanuts");
+        put(map, Flavor.GREASY, 1, 600, "grilled_oil_edge");
+        put(map, Flavor.GREASY, 1, 200, "grilled_chicken_frame");
 
-        put(map, Flavor.REFRESHING, 3, "sweet_potato_porridge");
-        put(map, Flavor.REFRESHING, 4, "crushed_corn_porridge");
-        put(map, Flavor.REFRESHING, 2, "sour_noodle_soup");
-        put(map, Flavor.REFRESHING, 3, "pepper_dried_tofu");
-        put(map, Flavor.REFRESHING, 3, "sauerkraut_fried_vermicelli");
-        put(map, Flavor.REFRESHING, 6, "buckwheat_cold_noodles");
-        put(map, Flavor.REFRESHING, 5, "pickled_veggie_salad");
-        put(map, Flavor.REFRESHING, 7, "shredded_pollack");
-        put(map, Flavor.REFRESHING, 8, "dip_veggie_platter");
-        put(map, Flavor.REFRESHING, 4, "stuffed_cucumber_pickle");
-        put(map, Flavor.REFRESHING, 8, "peanut_potato_salad");
+        put(map, Flavor.REFRESHING, 2, 600, "sweet_potato_porridge");
+        put(map, Flavor.REFRESHING, 2, 800, "crushed_corn_porridge");
+        put(map, Flavor.REFRESHING, 1, 400, "sour_noodle_soup");
+        put(map, Flavor.REFRESHING, 2, 600, "pepper_dried_tofu");
+        put(map, Flavor.REFRESHING, 2, 600, "sauerkraut_fried_vermicelli");
+        put(map, Flavor.REFRESHING, 4, 1200, "buckwheat_cold_noodles");
+        put(map, Flavor.REFRESHING, 1, 1000, "pickled_veggie_salad");
+        put(map, Flavor.REFRESHING, 2, 1400, "shredded_pollack");
+        put(map, Flavor.REFRESHING, 7, 1600, "dip_veggie_platter");
+        put(map, Flavor.REFRESHING, 3, 800, "stuffed_cucumber_pickle");
+        put(map, Flavor.REFRESHING, 5, 1600, "peanut_potato_salad");
         put(map, Flavor.REFRESHING, 3, "cabbage_tofu_vermicelli_stew");
-        put(map, Flavor.REFRESHING, 3, "pickled_cucumber_pork_stirfry");
-        put(map, Flavor.REFRESHING, 5, "tiger_salad");
-        put(map, Flavor.REFRESHING, 4, "dog_bao_pickles");
+        put(map, Flavor.REFRESHING, 2, 600, "pickled_cucumber_pork_stirfry");
+        put(map, Flavor.REFRESHING, 3, 1000, "tiger_salad");
+        put(map, Flavor.REFRESHING, 1, 800, "dog_bao_pickles");
         put(map, Flavor.REFRESHING, 1, 200, "kvass");
 
-        put(map, Flavor.WARM, 6, "kimchi_tofu_soup");
-        put(map, Flavor.WARM, 3, "soy_paste_soup");
+        put(map, Flavor.WARM, 5, 1200, "kimchi_tofu_soup");
+        put(map, Flavor.WARM, 1, 600, "soy_paste_soup");
         put(map, Flavor.WARM, 1, "soy_milk");
         put(map, Flavor.WARM, 1, "baked_sweet_potato");
         put(map, Flavor.WARM, 1, "grilled_corn");
 
-        put(map, Flavor.BALANCED, 3, "steamed_egg_soy_paste");
+        put(map, Flavor.BALANCED, 2, 600, "steamed_egg_soy_paste");
         put(map, Flavor.BALANCED, 4, "northeast_rice_wrap");
-        put(map, Flavor.BALANCED, 4, "sauerkraut_bone_stew_bowl");
+        put(map, Flavor.BALANCED, 3, 800, "sauerkraut_bone_stew_bowl");
         put(map, Flavor.BALANCED, 4, "pork_vermicelli_stew_bowl");
         put(map, Flavor.BALANCED, 6, "harvest_stew_bowl");
-        put(map, Flavor.BALANCED, 5, "spicy_beef_soup");
+        put(map, Flavor.BALANCED, 4, 1000, "spicy_beef_soup");
         put(map, Flavor.BALANCED, 4, "kimchi_fried_rice");
         put(map, Flavor.BALANCED, 4, "shrimp_pork_dumpling");
-        put(map, Flavor.BALANCED, 3, "shrimp_paste_scrambled_egg");
-        put(map, Flavor.BALANCED, 3, "shrimp_paste_tofu_stew");
-        put(map, Flavor.BALANCED, 4, "seafood_tofu_soup");
+        put(map, Flavor.BALANCED, 2, 600, "shrimp_paste_scrambled_egg");
+        put(map, Flavor.BALANCED, 2, 600, "shrimp_paste_tofu_stew");
+        put(map, Flavor.BALANCED, 3, 800, "seafood_tofu_soup");
         put(map, Flavor.BALANCED, 2, "snow_mustard_tofu_stew");
         put(map, Flavor.BALANCED, 5, "three_delicacy_dumpling");
-        put(map, Flavor.BALANCED, 3, "sauerkraut_crackling_dumpling");
-        put(map, Flavor.BALANCED, 3, "cured_pork_bean_stew");
-        put(map, Flavor.BALANCED, 5, "mung_bean_sheet_salad");
-        put(map, Flavor.BALANCED, 4, "braised_sea_cucumber_scallion");
+        put(map, Flavor.BALANCED, 4, 600, "sauerkraut_crackling_dumpling");
+        put(map, Flavor.BALANCED, 2, 600, "cured_pork_bean_stew");
+        put(map, Flavor.BALANCED, 3, 1000, "mung_bean_sheet_salad");
+        put(map, Flavor.BALANCED, 2, 800, "braised_sea_cucumber_scallion");
         put(map, Flavor.BALANCED, 2, "sea_cucumber_tofu_soup");
         put(map, Flavor.BALANCED, 6, "demoli_fish_stew");
-        put(map, Flavor.BALANCED, 6, "borscht");
+        put(map, Flavor.BALANCED, 5, 1200, "borscht");
         put(map, Flavor.BALANCED, 6, "sauerkraut_seafood_stew_bowl");
-        put(map, Flavor.BALANCED, 5, "ginseng_chicken_soup");
-        put(map, Flavor.BALANCED, 4, "chicken_mushroom_stew_bowl");
-        put(map, Flavor.BALANCED, 6, "bibimbap");
-        put(map, Flavor.BALANCED, 5, "grilled_cold_noodles");
+        put(map, Flavor.BALANCED, 3, 1000, "ginseng_chicken_soup");
+        put(map, Flavor.BALANCED, 3, 800, "chicken_mushroom_stew_bowl");
+        put(map, Flavor.BALANCED, 5, 1200, "bibimbap");
+        put(map, Flavor.BALANCED, 2, 1000, "grilled_cold_noodles");
         put(map, Flavor.BALANCED, 2, "red_bean_songpyeon");
         put(map, Flavor.BALANCED, 2, "peanut_songpyeon");
 

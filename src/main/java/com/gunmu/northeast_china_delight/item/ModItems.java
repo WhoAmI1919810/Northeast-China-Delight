@@ -8,6 +8,13 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
+//? if <1.20.5 {
+import net.minecraft.world.item.RecordItem;
+//?} else {
+/*import net.minecraft.world.item.JukeboxPlayable;
+import net.minecraft.world.item.JukeboxSong;
+*///?}
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.ItemNameBlockItem;
 import net.minecraft.world.food.FoodProperties;
@@ -159,7 +166,8 @@ public class ModItems {
             "hazel_mushroom_colony",
             properties -> new HazelMushroomColonyItem(ModBlocks.HAZEL_MUSHROOM_COLONY.get(), properties),
             new Item.Properties());
-    public static final Supplier<Item> WOOD_EAR = plain("wood_ear");
+    /** 木耳本身就是「种子」：对着带皮的橡木 / 白桦 / 深色橡木侧面右键种下段木木耳 */
+    public static final Supplier<Item> WOOD_EAR = selfSeeding("wood_ear", ModBlocks.WOOD_EAR_CROP);
     public static final Supplier<Item> GINSENG = plain("ginseng");
     public static final Supplier<Item> FROZEN_PEAR = food("frozen_pear", 4, 0.4F);
     public static final Supplier<Item> HAIRTAIL = food("hairtail", 2, 0.1F);
@@ -244,6 +252,25 @@ public class ModItems {
     public static final Supplier<Item> HONG_DOU_SONG_BING = food("red_bean_songpyeon", 3, 0.3F);
     public static final Supplier<Item> HUA_SHENG_SONG_BING = food("peanut_songpyeon", 3, 0.3F);
     public static final Supplier<Item> DA_GAO = food("pounded_rice_cake", 3, 0.5F);
+    /**
+     * 唱片「大东北是我的家乡」——播放时听范围内的玩家能看到歌词。
+     *
+     * <p>1.20.5+（1.21.1 / 1.21.4）走 jukebox_song 注册表 + jukeboxPlayable 数据组件；
+     * 1.20.x 没有这套东西，退回 RecordItem。Forge / NeoForge 都给 RecordItem 加了收
+     * Supplier&lt;SoundEvent&gt; 的构造器，正好避开「音效注册表比物品注册晚」的坑；
+     * 第四参是 tick 数（不是秒），116.3 秒 → 2326，与原版唱片机停曲时机一致。</p>
+     */
+    //? if >=1.20.5 {
+    /*public static final ResourceKey<JukeboxSong> SONG_NORTHEAST = ResourceKey.create(
+            Registries.JUKEBOX_SONG, DdIds.of(NortheastChinaDelight.MODID, "northeast"));
+    public static final Supplier<Item> MUSIC_DISC_NORTHEAST = regItem("music_disc_northeast",
+            Item::new, new Item.Properties().stacksTo(1)
+                    .jukeboxPlayable(SONG_NORTHEAST));
+    *///?} else {
+    public static final Supplier<Item> MUSIC_DISC_NORTHEAST = regItem("music_disc_northeast",
+            properties -> new RecordItem(15, ModSounds.MUSIC_DISC_NORTHEAST::get, properties, 2326),
+            new Item.Properties().stacksTo(1));
+    //?}
     public static final Supplier<Item> HAZELNUT_SUGAR_FIRE_BUN = food("hazelnut_sugar_fire_bun", 7, 0.6F);
     public static final Supplier<Item> XUN_JIANG_PIN_PAN = bowlFood("smoked_meat_platter", 10, 0.7F);
     public static final Supplier<Item> ORANGE_GUO_BAO_ROU = bowlFood("orange_crispy_pork", 9, 0.7F);
@@ -336,7 +363,7 @@ public class ModItems {
             VERMICELLI, LA_PI, CORN_FLOUR, CRACKLINGS, COLD_NOODLE_SHEET, BEAN_SPROUTS, SOUR_CORN_KERNELS, ROASTED_PEANUTS,
             CORN_STALK,
             LARGE_BASIN, BRASS_BOWL, WOODEN_MALLET, ANIMAL_OIL_BLOCK_ITEM,
-            UNFIRED_VAT_BLANK
+            UNFIRED_VAT_BLANK, MUSIC_DISC_NORTHEAST
     );
 
     public static final Map<String, Supplier<Item>> STORAGE_BLOCK_ITEMS = storageBlockItems();
