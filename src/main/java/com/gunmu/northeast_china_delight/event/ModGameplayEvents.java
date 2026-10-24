@@ -5,7 +5,6 @@ import com.gunmu.northeast_china_delight.advancement.ModAdvancements;
 import com.gunmu.northeast_china_delight.block.GinsengCropBlock;
 import com.gunmu.northeast_china_delight.block.ModBlocks;
 import com.gunmu.northeast_china_delight.block.PlatedDishBlock;
-import com.gunmu.northeast_china_delight.block.WoodEarRules;
 import com.gunmu.northeast_china_delight.compat.displaydelight.DisplayDelightCompat;
 import com.gunmu.northeast_china_delight.NortheastChinaConfig;
 import com.gunmu.northeast_china_delight.block.WoodenMortarBlock;
@@ -39,7 +38,6 @@ import net.minecraft.world.item.ItemUtils;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.biome.Biomes;
 import net.minecraft.world.level.block.Block;
@@ -68,9 +66,6 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 //? if <1.20.2 {
 import net.minecraftforge.event.furnace.FurnaceFuelBurnTimeEvent;
 //?}
-//? if >=1.20.5 {
-/*import net.neoforged.neoforge.common.ItemAbilities;
-*///?}
 //? if <1.20.2 {
 import net.minecraftforge.event.level.BlockEvent;
 //?} else {
@@ -513,38 +508,6 @@ public final class ModGameplayEvents
             DdStacks.consume(stack, 1, player);
         }
         return InteractionResult.sidedSuccess(context.getLevel().isClientSide);
-    }
-
-    private static boolean isAxeStrip(BlockEvent.BlockToolModificationEvent event)
-    {
-        //? if <1.20.2 {
-        return event.getToolAction() == net.minecraftforge.common.ToolActions.AXE_STRIP;
-        //?} else if <1.20.5 {
-        /*return event.getToolAction() == net.neoforged.neoforge.common.ToolActions.AXE_STRIP;*/
-        //?} else {
-        /*return event.getItemAbility() == ItemAbilities.AXE_STRIP;
-        *///?}
-    }
-
-    @SubscribeEvent
-    public static void onToolModification(BlockEvent.BlockToolModificationEvent event)
-    {
-        if (event.isSimulated() || !isAxeStrip(event))
-        {
-            return;
-        }
-        LevelAccessor accessor = event.getLevel();
-        if (!(accessor instanceof ServerLevel level))
-        {
-            return;
-        }
-        BlockPos pos = event.getPos();
-        float chance = WoodEarRules.chance(level, pos, event.getState());
-        if (chance <= 0.0F || level.random.nextFloat() >= chance)
-        {
-            return;
-        }
-        Block.popResource(level, pos, new ItemStack(ModItems.WOOD_EAR.get()));
     }
 
     @SubscribeEvent
