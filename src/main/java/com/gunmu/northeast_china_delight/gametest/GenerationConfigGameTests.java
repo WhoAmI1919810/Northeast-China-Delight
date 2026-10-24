@@ -69,7 +69,8 @@ public final class GenerationConfigGameTests {
     private static final List<String> COURTYARD_TABLES = List.of(
             "northeast_china_delight:chests/courtyard_kitchen",
             "northeast_china_delight:chests/courtyard_house",
-            "northeast_china_delight:chests/courtyard_granary");
+            "northeast_china_delight:chests/courtyard_granary",
+            "northeast_china_delight:chests/courtyard_disc");
 
     private GenerationConfigGameTests() {
     }
@@ -290,7 +291,7 @@ public final class GenerationConfigGameTests {
     @GameTest(template = "empty")
     public static void chestDefaultsCoverExistingChestTables(GameTestHelper helper) {
         var allowed = Set.copyOf(NortheastChinaConfig.DEFAULT_CHEST_LOOT_ITEMS);
-        helper.assertTrue(allowed.size() == 66, "默认箱子列表应包含全部 66 种现有候选");
+        helper.assertTrue(allowed.size() == 69, "默认箱子列表应包含全部 69 种现有候选");
         for (String id : allowed) {
             helper.assertTrue(BuiltInRegistries.ITEM.containsKey(DdIds.parse(id)), "默认候选必须是已注册物品：" + id);
         }

@@ -45,6 +45,9 @@ public class ModWorldGen
             FEATURES.register("bellflower_scatter",
                     () -> new BellflowerScatterFeature(NoneFeatureConfiguration.CODEC));
 
+    public static final Supplier<WildWoodEarFeature> WILD_WOOD_EAR_FEATURE =
+            FEATURES.register("wild_wood_ear", () -> new WildWoodEarFeature(NoneFeatureConfiguration.CODEC));
+
     public static final DeferredRegister<StructureType<?>> STRUCTURE_TYPES =
             DeferredRegister.create(Registries.STRUCTURE_TYPE, NortheastChinaDelight.MODID);
     public static final DeferredRegister<StructurePieceType> PIECE_TYPES =

@@ -166,7 +166,8 @@ public class ModItems {
             "hazel_mushroom_colony",
             properties -> new HazelMushroomColonyItem(ModBlocks.HAZEL_MUSHROOM_COLONY.get(), properties),
             new Item.Properties());
-    public static final Supplier<Item> WOOD_EAR = plain("wood_ear");
+    /** 木耳本身就是「种子」：对着带皮的橡木 / 白桦 / 深色橡木侧面右键种下段木木耳 */
+    public static final Supplier<Item> WOOD_EAR = selfSeeding("wood_ear", ModBlocks.WOOD_EAR_CROP);
     public static final Supplier<Item> GINSENG = plain("ginseng");
     public static final Supplier<Item> FROZEN_PEAR = food("frozen_pear", 4, 0.4F);
     public static final Supplier<Item> HAIRTAIL = food("hairtail", 2, 0.1F);

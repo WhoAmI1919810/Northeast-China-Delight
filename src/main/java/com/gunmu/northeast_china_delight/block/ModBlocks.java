@@ -157,6 +157,20 @@ public class ModBlocks {
             mushroomProperties()
     );
 
+    /** 段木木耳：木耳贴在原木侧面种下，四个阶段，成熟后右键收 */
+    public static final Supplier<Block> WOOD_EAR_CROP = block(
+            "wood_ear_crop",
+            WoodEarCropBlock::new,
+            woodEarProperties().randomTicks()
+    );
+
+    /** 野生木耳：树上自己长的一朵，不会长大 */
+    public static final Supplier<Block> WILD_WOOD_EAR = block(
+            "wild_wood_ear",
+            WildWoodEarBlock::new,
+            woodEarProperties()
+    );
+
     public static final Supplier<Block> GINSENG_CROP = block(
             "ginseng_crop",
             GinsengCropBlock::new,
@@ -445,6 +459,16 @@ public class ModBlocks {
                 .noCollission()
                 .instabreak()
                 .sound(SoundType.CROP)
+                .pushReaction(PushReaction.DESTROY);
+    }
+
+    private static BlockBehaviour.Properties woodEarProperties() {
+        return BlockBehaviour.Properties.of()
+                .mapColor(MapColor.COLOR_BROWN)
+                .noCollission()
+                .noOcclusion()
+                .strength(0.2F)
+                .sound(SoundType.FUNGUS)
                 .pushReaction(PushReaction.DESTROY);
     }
 

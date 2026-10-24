@@ -1,0 +1,6 @@
+{
+  "type": "neoforge:add_features",
+  "biomes": "#minecraft:is_overworld",
+  "features": "northeast_china_delight:wild_wood_ear",
+  "step": "top_layer_modification"
+}

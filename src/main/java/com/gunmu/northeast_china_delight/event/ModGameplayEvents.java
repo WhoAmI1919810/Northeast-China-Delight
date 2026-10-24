@@ -5,6 +5,7 @@ import com.gunmu.northeast_china_delight.advancement.ModAdvancements;
 import com.gunmu.northeast_china_delight.block.GinsengCropBlock;
 import com.gunmu.northeast_china_delight.block.ModBlocks;
 import com.gunmu.northeast_china_delight.block.PlatedDishBlock;
+import com.gunmu.northeast_china_delight.block.WoodEarRules;
 import com.gunmu.northeast_china_delight.compat.displaydelight.DisplayDelightCompat;
 import com.gunmu.northeast_china_delight.NortheastChinaConfig;
 import com.gunmu.northeast_china_delight.block.WoodenMortarBlock;
@@ -119,9 +120,6 @@ import net.neoforged.neoforge.event.tick.ServerTickEvent;
  */
 public final class ModGameplayEvents
 {
-    public static final float WOOD_EAR_FOREST_CHANCE = 0.07F;
-    public static final float WOOD_EAR_OAK_CHANCE = 0.05F;
-
     /** 「挨户串门」每隔多少 tick 查一次玩家脚下的小院（20 tick = 1 秒） */
     public static final int YARD_CHECK_INTERVAL = 20;
 
@@ -561,31 +559,12 @@ public final class ModGameplayEvents
             return;
         }
         BlockPos pos = event.getPos();
-        float chance = woodEarChance(level, pos, event.getState());
+        float chance = WoodEarRules.chance(level, pos, event.getState());
         if (chance <= 0.0F || level.random.nextFloat() >= chance)
         {
             return;
         }
         Block.popResource(level, pos, new ItemStack(ModItems.WOOD_EAR.get()));
-    }
-
-    private static float woodEarChance(ServerLevel level, BlockPos pos, BlockState logState)
-    {
-        Holder<Biome> biome = level.getBiome(pos);
-        if (logState.is(Blocks.DARK_OAK_LOG) || logState.is(Blocks.DARK_OAK_WOOD))
-        {
-            return biome.is(Biomes.DARK_FOREST) ? WOOD_EAR_FOREST_CHANCE : 0.0F;
-        }
-        if (logState.is(Blocks.BIRCH_LOG) || logState.is(Blocks.BIRCH_WOOD))
-        {
-            return biome.is(Biomes.BIRCH_FOREST) || biome.is(Biomes.OLD_GROWTH_BIRCH_FOREST)
-                    ? WOOD_EAR_FOREST_CHANCE : 0.0F;
-        }
-        if (logState.is(Blocks.OAK_LOG) || logState.is(Blocks.OAK_WOOD))
-        {
-            return WOOD_EAR_OAK_CHANCE;
-        }
-        return 0.0F;
     }
 
     @SubscribeEvent

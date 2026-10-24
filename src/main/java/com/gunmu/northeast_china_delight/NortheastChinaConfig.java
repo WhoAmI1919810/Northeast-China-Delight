@@ -21,6 +21,7 @@ public final class NortheastChinaConfig
             "northeast_china_delight:soybean",
             "northeast_china_delight:corn_seeds",
             "northeast_china_delight:napa_cabbage_seeds",
+            "northeast_china_delight:snow_mustard_seeds",
             "northeast_china_delight:cucumber_seeds",
             "northeast_china_delight:green_onion_seeds",
             "northeast_china_delight:green_radish_seeds",
@@ -31,8 +32,7 @@ public final class NortheastChinaConfig
             "northeast_china_delight:peanut",
             "northeast_china_delight:sweet_potato",
             "northeast_china_delight:green_pepper_seeds",
-            "northeast_china_delight:red_chili_seeds",
-            "northeast_china_delight:snow_mustard_seeds");
+            "northeast_china_delight:red_chili_seeds");
 
     public static final List<String> DEFAULT_CHEST_LOOT_ITEMS = List.of(
             "northeast_china_delight:animal_oil",

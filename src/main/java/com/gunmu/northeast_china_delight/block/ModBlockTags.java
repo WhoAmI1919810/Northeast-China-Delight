@@ -22,6 +22,11 @@ public final class ModBlockTags
             TagKey.create(Registries.BLOCK,
                     DdIds.of(NortheastChinaDelight.MODID, "rich_soil_converts_to_colony"));
 
+    /** 木耳（段木 / 野生）能挂在哪些原木上：带皮的橡木、白桦、深色橡木，去了皮的不行 */
+    public static final TagKey<Block> WOOD_EAR_LOGS =
+            TagKey.create(Registries.BLOCK,
+                    DdIds.of(NortheastChinaDelight.MODID, "wood_ear_logs"));
+
     public static final TagKey<Block> GINSENG_PLANTABLE_ON =
             TagKey.create(Registries.BLOCK,
                     DdIds.of(NortheastChinaDelight.MODID, "ginseng_plantable_on"));

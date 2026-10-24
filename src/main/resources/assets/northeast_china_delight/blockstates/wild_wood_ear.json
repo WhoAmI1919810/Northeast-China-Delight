@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "facing=north": {
+      "model": "northeast_china_delight:block/wild_wood_ear"
+    },
+    "facing=east": {
+      "model": "northeast_china_delight:block/wild_wood_ear",
+      "y": 90
+    },
+    "facing=south": {
+      "model": "northeast_china_delight:block/wild_wood_ear",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "northeast_china_delight:block/wild_wood_ear",
+      "y": 270
+    }
+  }
+}

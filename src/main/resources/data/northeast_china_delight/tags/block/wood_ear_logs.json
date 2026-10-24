@@ -1,0 +1,12 @@
+{
+  "__说明": "木耳（段木种植和野生）能挂在哪些原木上：带树皮的橡木、白桦、深色橡木（去了皮的不行，和刮树皮出木耳的树种一致）",
+  "replace": false,
+  "values": [
+    "minecraft:oak_log",
+    "minecraft:oak_wood",
+    "minecraft:birch_log",
+    "minecraft:birch_wood",
+    "minecraft:dark_oak_log",
+    "minecraft:dark_oak_wood"
+  ]
+}
