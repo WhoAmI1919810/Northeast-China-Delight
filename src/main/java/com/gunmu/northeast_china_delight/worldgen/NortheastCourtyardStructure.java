@@ -74,6 +74,7 @@ public class NortheastCourtyardStructure extends Structure
 
     public static final int TEMPLATE_BASE_Y = 4;
     public static final int GROUND_LAYER_IN_TEMPLATE = TEMPLATE_BASE_Y;
+    public static final int YARD_RAISE = 1;
     public static final int LATERAL_JITTER = 6;
     public static final int GATE_CHECK_WIDTH = 18;
     public static final int MAX_GATE_SLOPE = 4;
@@ -368,13 +369,12 @@ public class NortheastCourtyardStructure extends Structure
         }
         sizes.computeIfAbsent(template, id -> context.structureTemplateManager().getOrCreate(DdIds.parse(id)));
         boolean blackSoil = this.blackSoilChance > 0.0F && random.nextFloat() < this.blackSoilChance;
-        // 院子的草地要和外边的地面齐平。坑在于雪原：地表最上面那格是雪层，
-        // 高度图会把雪层也算进去，于是院子会被抬高整整一格（就是那块露在外面的砖）。
-        // 所以下雪的地方要多压一格，让院子地面落在雪层下面那层地面上。
+        // 院子的草地比外边地面高 YARD_RAISE 格。雪原的高度图会把雪层也算进去，
+        // 所以下雪的地方仍多压一格作为高度图补偿；YARD_RAISE 再统一抬高院面。
         boolean snowy = biome.value().getPrecipitationAt(new BlockPos(x, surface, z))
                 == net.minecraft.world.level.biome.Biome.Precipitation.SNOW;
         int sink = snowy ? 2 : 1;
-        BlockPos pos = new BlockPos(x, surface - GROUND_LAYER_IN_TEMPLATE - sink, z);
+        BlockPos pos = new BlockPos(x, surface - GROUND_LAYER_IN_TEMPLATE - sink + YARD_RAISE, z);
         Rotation rotation = this.pickRotation(context, template, pos, surface, random);
         if (rotation == null)
         {
