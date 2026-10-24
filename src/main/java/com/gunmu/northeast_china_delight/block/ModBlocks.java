@@ -262,7 +262,7 @@ public class ModBlocks {
 
     public static final List<String> TRAY_DISH_IDS = List.of(
             "new_style_crispy_pork", "orange_crispy_pork", "crispy_pork_strips", "three_fresh_veggies",
-            "braised_pork_ribs", "old_style_crispy_pork", "braised_pork_bone_sauce", "braised_beef_sauce",
+            "braised_pork_ribs", "old_style_crispy_pork",
             "braised_pork_hock", "braised_pork_strips", "candied_sweet_potato", "smoked_meat_platter",
             "snowy_bean_paste", "candied_peanuts", "potato_pancake", "corn_fritter", "salted_fish_flatbread",
             "kimchi_pancake", "sauerkraut_fried_vermicelli", "pepper_dried_tofu", "pickled_cucumber_pork_stirfry",
@@ -277,7 +277,8 @@ public class ModBlocks {
             "grilled_oil_edge", "grilled_cold_noodles", "baked_sweet_potato", "northeast_rice_wrap",
             "sticky_bean_bun", "red_bean_songpyeon", "peanut_songpyeon",
             "grilled_chicken_frame", "grilled_corn", "sauerkraut_crackling_dumpling",
-            "shrimp_pork_dumpling", "three_delicacy_dumpling", "hazelnut_sugar_fire_bun"
+            "shrimp_pork_dumpling", "three_delicacy_dumpling", "hazelnut_sugar_fire_bun",
+            "braised_beef_sauce", "braised_pork_bone_sauce"
     );
 
     /** 无器具菜肴里单个 / 少量的放小餐盘，其余仍放餐盘。 */
