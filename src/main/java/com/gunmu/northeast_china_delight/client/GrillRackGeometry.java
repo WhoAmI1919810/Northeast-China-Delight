@@ -58,18 +58,22 @@ public final class GrillRackGeometry {
             box(consumer, matrix, sprite, 0, crossY0, z, 1, crossY1, z + PX, packedLight, packedOverlay);
         }
 
+        // 腿的每个面都不能和营火木头（侧面在 0/1/5/11/15/16 px、底在 y = 0）或横条的面共面，
+        // 共面就会抢深度、一直闪。所以腿离边 2px、底抬 1px 埋进木头里、顶停在横条底下。
         float legSize = 2 * PX;
+        float legInset = 2 * PX;
+        float legY0 = PX;
         if (!west && !north) {
-            box(consumer, matrix, sprite, PX, 0, PX, PX + legSize, y0, PX + legSize, packedLight, packedOverlay);
+            box(consumer, matrix, sprite, legInset, legY0, legInset, legInset + legSize, crossY0, legInset + legSize, packedLight, packedOverlay);
         }
         if (!east && !north) {
-            box(consumer, matrix, sprite, 1 - PX - legSize, 0, PX, 1 - PX, y0, PX + legSize, packedLight, packedOverlay);
+            box(consumer, matrix, sprite, 1 - legInset - legSize, legY0, legInset, 1 - legInset, crossY0, legInset + legSize, packedLight, packedOverlay);
         }
         if (!west && !south) {
-            box(consumer, matrix, sprite, PX, 0, 1 - PX - legSize, PX + legSize, y0, 1 - PX, packedLight, packedOverlay);
+            box(consumer, matrix, sprite, legInset, legY0, 1 - legInset - legSize, legInset + legSize, crossY0, 1 - legInset, packedLight, packedOverlay);
         }
         if (!east && !south) {
-            box(consumer, matrix, sprite, 1 - PX - legSize, 0, 1 - PX - legSize, 1 - PX, y0, 1 - PX, packedLight, packedOverlay);
+            box(consumer, matrix, sprite, 1 - legInset - legSize, legY0, 1 - legInset - legSize, 1 - legInset, crossY0, 1 - legInset, packedLight, packedOverlay);
         }
     }
 
