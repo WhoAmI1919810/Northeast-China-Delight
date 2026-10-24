@@ -17,7 +17,7 @@ import net.minecraft.world.level.levelgen.feature.configurations.NoneFeatureConf
 
 /**
  * 野生木耳：每个区块跑一次（在树都长完之后的 top_layer_modification 阶段），逐列从树冠往下看，
- * 碰到橡木 / 白桦 / 深色橡木的原木就按 {@link WoodEarRules#chance 刮树皮出木耳的概率}掷一次，
+ * 碰到橡木 / 白桦 / 深色橡木的原木就按 {@link WoodEarRules#wildChance 配置的生成概率}掷一次，
  * 中了就在这根原木空着的一侧长一朵 {@link WildWoodEarBlock 野生木耳}。
  *
  * <p>只长在树上：掷中后再看头顶几格有没有树叶，村庄木屋的原木框架不会长出木耳。</p>
@@ -63,7 +63,7 @@ public class WildWoodEarFeature extends Feature<NoneFeatureConfiguration>
                     {
                         break;
                     }
-                    float chance = WoodEarRules.chance(level, pos, state);
+                    float chance = WoodEarRules.wildChance(level, pos, state);
                     if (chance > 0.0F && random.nextFloat() < chance && grow(level, pos.immutable(), random))
                     {
                         placed++;

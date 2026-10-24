@@ -1,6 +1,7 @@
 package com.gunmu.northeast_china_delight.gametest;
 
 import com.gunmu.northeast_china_delight.NortheastChinaDelight;
+import com.gunmu.northeast_china_delight.NortheastChinaConfig;
 import com.gunmu.northeast_china_delight.block.ModBlocks;
 import com.gunmu.northeast_china_delight.block.WildWoodEarBlock;
 import com.gunmu.northeast_china_delight.block.WoodEarCropBlock;
@@ -35,7 +36,7 @@ import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
 //?}
 
 /**
- * 木耳：段木木耳的种、长、收，野生木耳只长在树上，概率和刮树皮一致。
+ * 木耳：段木木耳的种、长、收，野生木耳只长在树上，生成概率由配置控制。
  */
 @GameTestHolder(NortheastChinaDelight.MODID)
 @PrefixGameTestTemplate(false)
@@ -138,12 +139,30 @@ public final class WoodEarGameTests {
     }
 
     @GameTest(template = "empty")
-    public static void wildWoodEarUsesTheBarkScrapingChance(GameTestHelper helper) {
+    public static void wildWoodEarUsesConfiguredChance(GameTestHelper helper) {
         BlockPos pos = helper.absolutePos(LOG);
-        helper.assertTrue(WoodEarRules.chance(helper.getLevel(), pos, Blocks.OAK_LOG.defaultBlockState()) == WoodEarRules.OAK_CHANCE
-                        && WoodEarRules.chance(helper.getLevel(), pos, Blocks.SPRUCE_LOG.defaultBlockState()) == 0.0F
-                        && WoodEarRules.chance(helper.getLevel(), pos, Blocks.STRIPPED_OAK_LOG.defaultBlockState()) == 0.0F,
-                "橡木 5%，针叶树和去了皮的原木不出");
+        double oldOak = NortheastChinaConfig.WILD_WOOD_EAR_OAK_CHANCE.get();
+        double oldForest = NortheastChinaConfig.WILD_WOOD_EAR_FOREST_CHANCE.get();
+        try {
+            NortheastChinaConfig.WILD_WOOD_EAR_OAK_CHANCE.set(0.23D);
+            NortheastChinaConfig.WILD_WOOD_EAR_FOREST_CHANCE.set(0.41D);
+            helper.assertTrue(Math.abs(NortheastChinaConfig.wildWoodEarOakChance() - 0.23F) < 0.0001F
+                            && Math.abs(NortheastChinaConfig.wildWoodEarForestChance() - 0.41F) < 0.0001F,
+                    "野生木耳应读取两项配置概率");
+            helper.assertTrue(Math.abs(WoodEarRules.wildChance(helper.getLevel(), pos,
+                                    Blocks.OAK_LOG.defaultBlockState()) - 0.23F) < 0.0001F
+                            && WoodEarRules.wildChance(helper.getLevel(), pos,
+                                    Blocks.SPRUCE_LOG.defaultBlockState()) == 0.0F
+                            && WoodEarRules.wildChance(helper.getLevel(), pos,
+                                    Blocks.STRIPPED_OAK_LOG.defaultBlockState()) == 0.0F,
+                    "橡木使用配置概率，针叶树和去了皮的原木不出");
+            NortheastChinaConfig.WILD_WOOD_EAR_OAK_CHANCE.set(0.0D);
+            helper.assertTrue(WoodEarRules.wildChance(helper.getLevel(), pos,
+                    Blocks.OAK_LOG.defaultBlockState()) == 0.0F, "概率为 0 时不生成野生木耳");
+        } finally {
+            NortheastChinaConfig.WILD_WOOD_EAR_OAK_CHANCE.set(oldOak);
+            NortheastChinaConfig.WILD_WOOD_EAR_FOREST_CHANCE.set(oldForest);
+        }
         helper.succeed();
     }
 }

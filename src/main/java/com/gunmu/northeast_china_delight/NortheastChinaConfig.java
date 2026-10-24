@@ -113,6 +113,8 @@ public final class NortheastChinaConfig
 
     // 东北小院里的小零件（灶棚、鸡架、水井、菜窖等）是否生成
     public static final ForgeConfigSpec.BooleanValue YARD_PARTS_ENABLED;
+    public static final ForgeConfigSpec.DoubleValue WILD_WOOD_EAR_OAK_CHANCE;
+    public static final ForgeConfigSpec.DoubleValue WILD_WOOD_EAR_FOREST_CHANCE;
     public static final ForgeConfigSpec.IntValue SEA_WATER_BUCKET_MODE;
     public static final ForgeConfigSpec.BooleanValue VILLAGE_FARM_CROPS_ENABLED;
     public static final ForgeConfigSpec.ConfigValue<List<? extends String>> VILLAGE_FARM_ALLOWED_CROPS;
@@ -124,6 +126,8 @@ public final class NortheastChinaConfig
     public static final ModConfigSpec.BooleanValue DISH_PLACEMENT_ENABLED;
 
     public static final ModConfigSpec.BooleanValue YARD_PARTS_ENABLED;
+    public static final ModConfigSpec.DoubleValue WILD_WOOD_EAR_OAK_CHANCE;
+    public static final ModConfigSpec.DoubleValue WILD_WOOD_EAR_FOREST_CHANCE;
     public static final ModConfigSpec.IntValue SEA_WATER_BUCKET_MODE;
     public static final ModConfigSpec.BooleanValue VILLAGE_FARM_CROPS_ENABLED;
     public static final ModConfigSpec.ConfigValue<List<? extends String>> VILLAGE_FARM_ALLOWED_CROPS;
@@ -151,6 +155,14 @@ public final class NortheastChinaConfig
                 .comment("东北小院里的小建筑（灶棚、鸡架、水井、菜窖、柴垛等）是否生成。",
                         "设为 false 时只生成院子主体，不生成零件。")
                 .define("yard_parts_enabled", false);
+        WILD_WOOD_EAR_OAK_CHANCE = builder
+                .comment("野生木耳在任意群系橡木上的生成概率，取值 0~1；0 表示不生成。",
+                        "只影响新生成区块；已生成区块不会回溯。")
+                .defineInRange("wild_wood_ear_oak_chance", 0.05D, 0.0D, 1.0D);
+        WILD_WOOD_EAR_FOREST_CHANCE = builder
+                .comment("野生木耳在黑森林深色橡木、白桦林 / 原始桦木林白桦上的生成概率，取值 0~1；0 表示不生成。",
+                        "只影响新生成区块；已生成区块不会回溯。")
+                .defineInRange("wild_wood_ear_forest_chance", 0.07D, 0.0D, 1.0D);
         VILLAGE_FARM_CROPS_ENABLED = builder
                 .comment("允许在新生成的村庄农田中，把一部分原版作物替换为本模组作物。",
                         "设为 false 时不替换，不影响原版及其他模组的规则。")
@@ -205,6 +217,16 @@ public final class NortheastChinaConfig
     {
         return value instanceof String itemId && itemId.indexOf(':') > 0
                 && ResourceLocation.tryParse(itemId) != null;
+    }
+
+    public static float wildWoodEarOakChance()
+    {
+        return SPEC.isLoaded() ? WILD_WOOD_EAR_OAK_CHANCE.get().floatValue() : 0.05F;
+    }
+
+    public static float wildWoodEarForestChance()
+    {
+        return SPEC.isLoaded() ? WILD_WOOD_EAR_FOREST_CHANCE.get().floatValue() : 0.07F;
     }
 
     public static boolean isVillageFarmCropAllowed(ResourceLocation cropItem)
