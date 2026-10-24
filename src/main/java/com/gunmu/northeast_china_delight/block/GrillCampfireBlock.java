@@ -25,6 +25,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.crafting.RecipeManager;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.block.Block;
@@ -181,67 +182,78 @@ public class GrillCampfireBlock extends CampfireBlock {
             return InteractionResult.sidedSuccess(false);
         }
 
-        GrillRecipes.Recipe inputRecipe = GrillRecipes.byInput(level.getRecipeManager(), stack);
-        if (inputRecipe != null) {
-            int slot = clickedSlot(state, hit);
-            if (!grill.getItems().get(slot).isEmpty()) {
-                slot = firstEmptySlot(grill);
+        // 刷子在哪只手都行：主手拿刷子就刷副手的调料，副手拿刷子就刷主手的调料
+        InteractionHand otherHand = hand == InteractionHand.MAIN_HAND ? InteractionHand.OFF_HAND : InteractionHand.MAIN_HAND;
+        boolean brushInHand = stack.is(Items.BRUSH);
+        boolean brushing = brushInHand || player.getItemInHand(otherHand).is(Items.BRUSH);
+        InteractionHand seasoningHand = brushInHand ? otherHand : hand;
+        ItemStack seasoning = player.getItemInHand(seasoningHand);
+        RecipeManager recipes = level.getRecipeManager();
+        int clicked = clickedSlot(state, hit);
+
+        // 点到的那份食材正缺这样调料就当调料加；否则它能烤就摆上架（同一样东西既能烤又能当调料时也不会被误放）
+        GrillRecipes.Recipe inputRecipe = brushInHand ? null : GrillRecipes.byInput(recipes, stack);
+        if (inputRecipe != null && !slotNeeds(grill, clicked, stack, recipes)) {
+            int slot = grill.getItems().get(clicked).isEmpty() ? clicked : firstEmptySlot(grill);
+            if (slot >= 0) {
+                grill.setFood(slot, DdStacks.consumeAndReturn(stack, 1, player), inputRecipe);
+                level.sendBlockUpdated(pos, state, state, 3);
+                level.playSound(null, pos, SoundEvents.COMPOSTER_FILL_SUCCESS, SoundSource.BLOCKS, 1.0F, 1.0F);
+                return InteractionResult.sidedSuccess(false);
             }
-            if (slot < 0) {
+            if (seasonTargetSlot(state, hit, grill, stack, recipes) < 0) {
                 hint(player, "message.northeast_china_delight.grill.full");
                 return InteractionResult.sidedSuccess(false);
             }
-            grill.setFood(slot, DdStacks.consumeAndReturn(stack, 1, player), inputRecipe);
-            level.sendBlockUpdated(pos, state, state, 3);
-            level.playSound(null, pos, SoundEvents.COMPOSTER_FILL_SUCCESS, SoundSource.BLOCKS, 1.0F, 1.0F);
-            return InteractionResult.sidedSuccess(false);
         }
 
-        boolean brushing = hand == InteractionHand.MAIN_HAND && stack.is(Items.BRUSH);
-        ItemStack seasoning = brushing ? player.getOffhandItem() : stack;
         if (seasoning.isEmpty()) {
             return InteractionResult.sidedSuccess(false);
         }
-        int slot = seasonTargetSlot(state, hit, grill);
+        int slot = seasonTargetSlot(state, hit, grill, seasoning, recipes);
         if (slot < 0) {
-            hint(player, "message.northeast_china_delight.grill.no_food");
-            return InteractionResult.sidedSuccess(false);
-        }
-        GrillRecipes.Recipe recipe = grill.recipeOf(slot, level.getRecipeManager());
-        if (recipe == null || !recipe.needsSeasoning(grill.seasoningsOf(slot), seasoning)) {
-            hint(player, "message.northeast_china_delight.grill.not_needed");
+            hint(player, grill.isEmpty()
+                    ? "message.northeast_china_delight.grill.no_food"
+                    : "message.northeast_china_delight.grill.not_needed");
             return InteractionResult.sidedSuccess(false);
         }
         if (GrillSeasonings.needsBrush(seasoning) && !brushing) {
             hint(player, "message.northeast_china_delight.grill.need_brush");
             return InteractionResult.sidedSuccess(false);
         }
-        if (!grill.addSeasoning(slot, seasoning, level.getRecipeManager())) {
+        // 名字、容器、种类都要在消耗之前拿：consume 会把最后一份扣光，之后读到的是空栈，名字显示成「空气」
+        Component name = seasoning.getHoverName();
+        ItemStack container = seasoning.getCraftingRemainingItem().copy();
+        boolean bottle = SeasoningBottleItem.isBottle(seasoning);
+        boolean sauce = GrillSeasonings.isSauce(seasoning);
+        boolean egg = GrillSeasonings.isEgg(seasoning.getItem());
+        if (!grill.addSeasoning(slot, seasoning, recipes)) {
             hint(player, "message.northeast_china_delight.grill.full");
             return InteractionResult.sidedSuccess(false);
         }
 
-        if (GrillSeasonings.isSauce(seasoning)) {
-            net.minecraft.network.chat.Component name = seasoning.getHoverName();
-            if (!DdPlayers.hasInfiniteMaterials(player)) {
-                DdStacks.consume(seasoning, 1, player);
+        boolean infinite = DdPlayers.hasInfiniteMaterials(player);
+        if (bottle) {
+            ItemStack left = seasoning;
+            if (!infinite) {
+                left = SeasoningBottleItem.use(seasoning, SeasoningBottleItem.GRILL_DOSE_MB);
+                player.setItemInHand(seasoningHand, left);
             }
-            hint(player, "message.northeast_china_delight.grill.brushed_sauce", name);
-        } else if (SeasoningBottleItem.isBottle(seasoning)) {
-            if (!DdPlayers.hasInfiniteMaterials(player)) {
-                player.setItemInHand(InteractionHand.OFF_HAND,
-                        SeasoningBottleItem.use(seasoning, SeasoningBottleItem.GRILL_DOSE_MB));
-            }
-            ItemStack left = player.getOffhandItem();
             if (SeasoningBottleItem.isBottle(left)) {
-                hint(player, "message.northeast_china_delight.grill.brushed",
-                        seasoning.getHoverName(), SeasoningBottleItem.remainingMb(left));
+                hint(player, "message.northeast_china_delight.grill.brushed", name, SeasoningBottleItem.remainingMb(left));
             } else {
-                hint(player, "message.northeast_china_delight.grill.brushed_empty", seasoning.getHoverName());
+                hint(player, "message.northeast_china_delight.grill.brushed_empty", name);
             }
         } else {
-            DdStacks.consume(seasoning, 1, player);
-            hint(player, "message.northeast_china_delight.grill.sprinkled", seasoning.getHoverName());
+            if (!infinite) {
+                DdStacks.consume(seasoning, 1, player);
+                // 碗装辣酱等用掉后把碗还给玩家
+                give(player, container);
+            }
+            hint(player, sauce
+                    ? "message.northeast_china_delight.grill.brushed_sauce"
+                    : egg ? "message.northeast_china_delight.grill.cracked_egg"
+                    : "message.northeast_china_delight.grill.sprinkled", name);
         }
         level.sendBlockUpdated(pos, state, state, 3);
         level.playSound(null, pos, SoundEvents.COMPOSTER_FILL_SUCCESS, SoundSource.BLOCKS, 1.0F, 0.8F);
@@ -271,10 +283,19 @@ public class GrillCampfireBlock extends CampfireBlock {
         return best;
     }
 
-    /** 刷料时刷哪一份：点到的那份有东西就刷它，否则刷离得最近的那份有食材的 */
-    private static int seasonTargetSlot(BlockState state, BlockHitResult hit, GrillBlockEntity grill) {
+    private static boolean slotNeeds(GrillBlockEntity grill, int slot, ItemStack seasoning, RecipeManager recipes) {
+        if (grill.getItems().get(slot).isEmpty() || seasoning.isEmpty()) {
+            return false;
+        }
+        GrillRecipes.Recipe recipe = grill.recipeOf(slot, recipes);
+        return recipe != null && recipe.needsSeasoning(grill.seasoningsOf(slot), seasoning);
+    }
+
+    /** 加调料加给哪一份：点到的那份缺这样调料就给它，否则给离得最近、也缺这样调料的那份；都不缺返回 -1 */
+    private static int seasonTargetSlot(BlockState state, BlockHitResult hit, GrillBlockEntity grill,
+                                        ItemStack seasoning, RecipeManager recipes) {
         int clicked = clickedSlot(state, hit);
-        if (!grill.getItems().get(clicked).isEmpty()) {
+        if (slotNeeds(grill, clicked, seasoning, recipes)) {
             return clicked;
         }
         Vec3 local = localHit(hit);
@@ -282,7 +303,7 @@ public class GrillCampfireBlock extends CampfireBlock {
         int best = -1;
         double bestDistance = Double.MAX_VALUE;
         for (int slot = 0; slot < GrillBlockEntity.SLOTS; slot++) {
-            if (grill.getItems().get(slot).isEmpty()) {
+            if (!slotNeeds(grill, slot, seasoning, recipes)) {
                 continue;
             }
             float[] offset = GrillBlockEntity.slotOffset(slot, facing);

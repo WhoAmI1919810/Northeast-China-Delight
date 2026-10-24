@@ -128,7 +128,7 @@ public final class DishPlacementGameTests
                 else
                 {
                     helper.assertTrue(level.getBlockState(target).isAir(),
-                            "没装展示乐事时无器具料理不应放置: " + id);
+                            "无器具料理不能潜行放下，只能摆到展示乐事的餐盘上: " + id);
                 }
             }
         }

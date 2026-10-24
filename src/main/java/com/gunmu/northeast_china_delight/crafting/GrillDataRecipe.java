@@ -70,12 +70,28 @@ public final class GrillDataRecipe implements Recipe<
         }
         Ingredient input = ingredient(config.get("input"));
         List<Ingredient> seasonings = new ArrayList<>();
+        List<GrillVisual> visuals = new ArrayList<>();
         JsonArray seasoningJson = GsonHelper.getAsJsonArray(config, "seasonings", new JsonArray());
         if (seasoningJson.size() > GrillRecipes.MAX_SEASONINGS) {
             throw new JsonParseException("烤架配方最多需要 4 份调料");
         }
         for (JsonElement entry : seasoningJson) {
-            seasonings.add(ingredient(entry));
+            // 调料条目可以直接写 visual / color：{"tag": "...", "visual": "egg"}；
+            // 任选数组没法再加字段，就包一层：{"ingredient": [...], "visual": "brush", "color": "#RRGGBB", "opacity": 0.5}
+            if (entry.isJsonObject() && GrillVisual.declaredIn(entry.getAsJsonObject())) {
+                JsonObject object = entry.getAsJsonObject();
+                JsonElement ingredientJson = object.get("ingredient");
+                if (ingredientJson == null) {
+                    JsonObject stripped = object.deepCopy();
+                    GrillVisual.strip(stripped);
+                    ingredientJson = stripped;
+                }
+                seasonings.add(ingredient(ingredientJson));
+                visuals.add(GrillVisual.fromJson(object));
+            } else {
+                seasonings.add(ingredient(entry));
+                visuals.add(GrillVisual.AUTO);
+            }
         }
         JsonObject output = GsonHelper.getAsJsonObject(config, "result");
         ResourceLocation outputId = ResourceLocation.tryParse(GsonHelper.getAsString(output, "item"));
@@ -93,7 +109,7 @@ public final class GrillDataRecipe implements Recipe<
             throw new JsonParseException("烤架配方 seconds 必须为正整数，且不能溢出刻数");
         }
         return new GrillRecipes.Recipe(id == null ? DdIds.of(NortheastChinaDelight.MODID, "grill/unbound") : id,
-                integer(config, "priority", 0), input, seasonings, result, seconds);
+                integer(config, "priority", 0), input, seasonings, result, seconds, visuals);
     }
 
     private static int integer(JsonObject config, String field, int fallback) {

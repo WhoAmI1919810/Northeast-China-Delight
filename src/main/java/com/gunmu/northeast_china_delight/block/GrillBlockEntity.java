@@ -80,6 +80,12 @@ public class GrillBlockEntity extends BlockEntity {
         return list;
     }
 
+    /** 这份食材绑定的配方 ID（客户端画调料时按它找配方里写的视觉） */
+    @Nullable
+    public ResourceLocation recipeIdOf(int slot) {
+        return this.recipeIds[slot];
+    }
+
     public void setFood(int slot, ItemStack stack, GrillRecipes.Recipe recipe) {
         clearSlot(slot);
         this.items.set(slot, stack.copyWithCount(1));

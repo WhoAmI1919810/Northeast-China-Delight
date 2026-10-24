@@ -4,6 +4,8 @@ import com.gunmu.northeast_china_delight.NortheastChinaDelight;
 import com.gunmu.northeast_china_delight.advancement.ModAdvancements;
 import com.gunmu.northeast_china_delight.block.GinsengCropBlock;
 import com.gunmu.northeast_china_delight.block.ModBlocks;
+import com.gunmu.northeast_china_delight.block.PlatedDishBlock;
+import com.gunmu.northeast_china_delight.compat.displaydelight.DisplayDelightCompat;
 import com.gunmu.northeast_china_delight.NortheastChinaConfig;
 import com.gunmu.northeast_china_delight.block.WoodenMortarBlock;
 import com.gunmu.northeast_china_delight.item.ModItems;
@@ -393,14 +395,27 @@ public final class ModGameplayEvents
         {
             return;
         }
-        String id = BuiltInRegistries.ITEM.getKey(stack.getItem()).getPath();
-        var dishBlock = ModBlocks.DISH_BLOCKS.get(id);
+        ResourceLocation itemId = BuiltInRegistries.ITEM.getKey(stack.getItem());
+        String id = itemId.getPath();
+        var dishBlock = itemId.getNamespace().equals(NortheastChinaDelight.MODID)
+                ? ModBlocks.DISH_BLOCKS.get(id) : null;
         if (dishBlock == null)
         {
             return;
         }
 
         Player player = event.getEntity();
+        if (NortheastChinaConfig.DISH_PLACEMENT_ENABLED.get()
+                && dishBlock.get() instanceof PlatedDishBlock plated)
+        {
+            InteractionResult onPlate = placeOnPlate(plated, event, stack, player);
+            if (onPlate != InteractionResult.PASS)
+            {
+                event.setCanceled(true);
+                event.setCancellationResult(onPlate);
+                return;
+            }
+        }
         if (player.isSecondaryUseActive() && NortheastChinaConfig.DISH_PLACEMENT_ENABLED.get()
                 && ModBlocks.canPlaceDish(id))
         {
@@ -426,6 +441,43 @@ public final class ModGameplayEvents
                 event.setCancellationResult(eaten);
             }
         }
+    }
+
+    /**
+     * 无器具菜肴：右键展示乐事的餐盘 / 小餐盘，把盘子换成摆好菜的方块（潜行与否都行）。
+     * 点的是另一种盘子就提示该摆哪种；点的不是展示乐事的盘子返回 PASS，照常走后面的吃。
+     */
+    private static InteractionResult placeOnPlate(PlatedDishBlock dish, PlayerInteractEvent.RightClickBlock event,
+                                                  ItemStack stack, Player player)
+    {
+        Level level = event.getLevel();
+        BlockPos pos = event.getPos();
+        ResourceLocation clicked = BuiltInRegistries.BLOCK.getKey(level.getBlockState(pos).getBlock());
+        if (!clicked.equals(DisplayDelightCompat.PLATE) && !clicked.equals(DisplayDelightCompat.SMALL_PLATE))
+        {
+            return InteractionResult.PASS;
+        }
+        if (!clicked.equals(dish.plate()))
+        {
+            if (!level.isClientSide)
+            {
+                Block wanted = DisplayDelightCompat.plateBlock(dish.plate());
+                player.displayClientMessage(Component.translatable("message.northeast_china_delight.dish.needs_plate",
+                        wanted == null ? Component.literal(dish.plate().toString()) : wanted.getName()), true);
+            }
+            return InteractionResult.sidedSuccess(level.isClientSide);
+        }
+        if (!level.isClientSide)
+        {
+            BlockState state = dish.defaultBlockState();
+            level.setBlock(pos, state, 3);
+            SoundType sound = state.getSoundType(level, pos, player);
+            level.playSound(null, pos, sound.getPlaceSound(), SoundSource.BLOCKS,
+                    (sound.getVolume() + 1.0F) / 2.0F, sound.getPitch() * 0.8F);
+            level.gameEvent(GameEvent.BLOCK_PLACE, pos, GameEvent.Context.of(player, state));
+            DdStacks.consume(stack, 1, player);
+        }
+        return InteractionResult.sidedSuccess(level.isClientSide);
     }
 
     /**

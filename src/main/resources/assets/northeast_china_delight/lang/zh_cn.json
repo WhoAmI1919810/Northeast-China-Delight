@@ -369,6 +369,8 @@
   "message.northeast_china_delight.grill.brushed": "刷上 %s，瓶里还剩 %s mB",
   "message.northeast_china_delight.grill.brushed_empty": "刷上 %s，瓶子用空了",
   "message.northeast_china_delight.grill.sprinkled": "加入 %s",
+  "message.northeast_china_delight.grill.cracked_egg": "打入 %s",
+  "message.northeast_china_delight.dish.needs_plate": "这道菜要摆在%s上",
   "message.northeast_china_delight.grill.no_food_here": "这一格上没有食材",
   "message.northeast_china_delight.grill.no_food": "烤架上还没有食材",
   "message.northeast_china_delight.grill.brushed_sauce": "给这份食材刷上了 %s",

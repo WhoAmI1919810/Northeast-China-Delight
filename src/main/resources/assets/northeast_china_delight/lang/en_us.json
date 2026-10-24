@@ -352,6 +352,8 @@
   "message.northeast_china_delight.grill.brushed": "Brushed on %s, %s mB left in the bottle",
   "message.northeast_china_delight.grill.brushed_empty": "Brushed on %s, the bottle is now empty",
   "message.northeast_china_delight.grill.sprinkled": "Added %s",
+  "message.northeast_china_delight.grill.cracked_egg": "Cracked %s onto the food",
+  "message.northeast_china_delight.dish.needs_plate": "This dish goes on a %s",
   "message.northeast_china_delight.grill.no_food_here": "There's nothing on that spot",
   "message.northeast_china_delight.grill.no_food": "There's no food on the grill yet",
   "message.northeast_china_delight.grill.brushed_sauce": "Brushed %s onto that piece",

@@ -12,7 +12,10 @@ import com.gunmu.northeast_china_delight.compat.jei.GrillJeiRecipe;
 import com.gunmu.northeast_china_delight.compat.jei.GrillJeiRecipes;
 import com.gunmu.northeast_china_delight.crafting.GrillDataRecipe;
 import com.gunmu.northeast_china_delight.crafting.GrillRecipes;
+import com.gunmu.northeast_china_delight.crafting.GrillVisual;
 import com.gunmu.northeast_china_delight.crafting.ModGrillRecipes;
+import com.gunmu.northeast_china_delight.item.BottleColors;
+import com.gunmu.northeast_china_delight.item.GrillSeasonings;
 import com.gunmu.northeast_china_delight.item.ModItems;
 import com.gunmu.northeast_china_delight.util.DdIds;
 import io.netty.buffer.Unpooled;
@@ -22,11 +25,14 @@ import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.RecipeManager;
+import net.minecraft.world.level.GameType;
 import net.minecraft.world.phys.AABB;
 //? if <1.20.5 {
 import net.minecraft.network.FriendlyByteBuf;
@@ -427,10 +433,101 @@ public final class GrillGameTests {
         JsonObject oversized = fixture();
         oversized.getAsJsonObject("config").addProperty("extra", "x".repeat(32768));
         assertRejected(helper, oversized);
+        for (String entry : List.of("{\"item\":\"minecraft:sugar\",\"visual\":\"glaze\"}",
+                "{\"item\":\"minecraft:sugar\",\"color\":\"#12345\"}",
+                "{\"item\":\"minecraft:sugar\",\"color\":16777215}",
+                "{\"item\":\"minecraft:sugar\",\"opacity\":0}",
+                "{\"item\":\"minecraft:sugar\",\"opacity\":1.5}",
+                "{\"item\":\"minecraft:sugar\",\"opacity\":\"0.5\"}",
+                "{\"ingredient\":[],\"visual\":\"egg\"}")) {
+            JsonObject invalid = fixture();
+            JsonArray single = new JsonArray();
+            single.add(JsonParser.parseString(entry));
+            invalid.getAsJsonObject("config").add("seasonings", single);
+            assertRejected(helper, invalid);
+        }
         JsonObject noSeasonings = fixture();
         noSeasonings.getAsJsonObject("config").add("seasonings", new JsonArray());
         helper.assertTrue(decode(SOURCE_ID, noSeasonings).rule(SOURCE_ID).seasoningsReady(List.of()),
                 "数据包应允许无需调料的烧烤配方");
+        helper.succeed();
+    }
+
+    @GameTest(template = "empty")
+    public static void grillSeasoningVisualsParseAndSync(GameTestHelper helper) {
+        JsonObject styled = fixture();
+        styled.getAsJsonObject("config").add("seasonings", JsonParser.parseString("""
+                [{"item":"minecraft:sugar","visual":"sprinkle","color":"#AA3311"},
+                 {"ingredient":[{"item":"minecraft:egg"},{"item":"minecraft:turtle_egg"}],"visual":"egg"},
+                 {"item":"minecraft:sugar","opacity":0.25}]
+                """));
+        GrillRecipes.Recipe rule = decode(SOURCE_ID, styled).rule(SOURCE_ID);
+        helper.assertTrue(rule.visuals().equals(List.of(new GrillVisual(GrillVisual.Style.SPRINKLE, 0xAA3311),
+                        new GrillVisual(GrillVisual.Style.EGG, -1), new GrillVisual(GrillVisual.Style.AUTO, -1, 0.25F)))
+                        && rule.input().test(new ItemStack(Items.CARROT))
+                        && rule.needsSeasoning(List.of(), new ItemStack(Items.TURTLE_EGG)),
+                "调料条目可直接写 visual / color / opacity，任选数组用 ingredient 包一层");
+        helper.assertTrue(rule.visualsFor(List.of(Items.EGG, Items.SUGAR)).equals(
+                        List.of(new GrillVisual(GrillVisual.Style.EGG, -1),
+                                new GrillVisual(GrillVisual.Style.SPRINKLE, 0xAA3311))),
+                "已加的调料应按占到的条目取视觉");
+        GrillRecipes.Recipe copy = networkCopy(helper, SOURCE_ID, decode(SOURCE_ID, styled)).rule(SOURCE_ID);
+        helper.assertTrue(copy.visuals().equals(rule.visuals()), "调料视觉必须随配方同步到客户端");
+        helper.succeed();
+    }
+
+    @GameTest(template = "empty")
+    public static void grillDefaultSeasoningVisuals(GameTestHelper helper) {
+        helper.assertTrue(GrillSeasonings.resolve(GrillVisual.AUTO, Items.EGG).style() == GrillVisual.Style.EGG,
+                "鸡蛋默认应显示为打蛋，而不是撒料");
+        GrillVisual sauce = GrillSeasonings.resolve(GrillVisual.AUTO, ModItems.CHILI_SAUCE.get());
+        GrillVisual vinegar = GrillSeasonings.resolve(GrillVisual.AUTO, ModItems.VINEGAR.get());
+        helper.assertTrue(sauce.style() == GrillVisual.Style.BRUSH && sauce.color() == GrillSeasonings.SAUCE_COLOR
+                        && vinegar.style() == GrillVisual.Style.BRUSH
+                        && vinegar.color() == (BottleColors.of(ModItems.VINEGAR.get()) & 0xFFFFFF),
+                "厚酱和调料瓶默认是刷，颜色取酱色 / 瓶里液体的颜色");
+        helper.assertTrue(sauce.opacity() == GrillSeasonings.THICK_OPACITY
+                        && vinegar.opacity() == GrillSeasonings.THIN_OPACITY
+                        && GrillSeasonings.resolve(new GrillVisual(GrillVisual.Style.BRUSH, -1, 0.3F),
+                        ModItems.CHILI_SAUCE.get()).opacity() == 0.3F,
+                "厚酱默认稠、瓶装调料默认稀；配方写了 opacity 就照写的来");
+        helper.assertTrue(GrillSeasonings.resolve(GrillVisual.AUTO, Items.SUGAR).style() == GrillVisual.Style.SPRINKLE
+                        && GrillSeasonings.resolve(new GrillVisual(GrillVisual.Style.BRUSH, 0x123456), Items.SUGAR)
+                        .equals(new GrillVisual(GrillVisual.Style.BRUSH, 0x123456, GrillSeasonings.THICK_OPACITY)),
+                "其余调料默认是撒；配方写了样式和颜色就照写的来");
+        helper.succeed();
+    }
+
+    @GameTest(template = "empty")
+    public static void grillSeasoningGoesToTheFoodThatNeedsIt(GameTestHelper helper) {
+        BlockPos localPos = new BlockPos(1, 2, 1);
+        helper.setBlock(localPos, ModBlocks.GRILL_CAMPFIRE.get().defaultBlockState());
+        GrillBlockEntity grill = (GrillBlockEntity) helper.getLevel().getBlockEntity(helper.absolutePos(localPos));
+        RecipeManager manager = helper.getLevel().getRecipeManager();
+        grill.setFood(0, new ItemStack(ModItems.CORN.get()),
+                GrillRecipes.byId(manager, DdIds.of(NortheastChinaDelight.MODID, "grill/grilled_corn")));
+        grill.setFood(1, new ItemStack(ModItems.COLD_NOODLE_SHEET.get()),
+                GrillRecipes.byId(manager, DdIds.of(NortheastChinaDelight.MODID, "grill/grilled_cold_noodles")));
+        //? if <1.20.5 {
+        Player player = helper.makeMockSurvivalPlayer();
+        //?} else {
+        /*Player player = helper.makeMockPlayer(GameType.SURVIVAL);
+        *///?}
+        // 点在方块正中（算作玉米那一份），刷子在副手、辣酱在主手：应刷到缺辣酱的冷面上，碗还回来
+        player.setItemInHand(InteractionHand.OFF_HAND, new ItemStack(Items.BRUSH));
+        player.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(ModItems.CHILI_SAUCE.get()));
+        helper.useBlock(localPos, player);
+        helper.assertTrue(grill.seasoningsOf(1).equals(List.of(ModItems.CHILI_SAUCE.get()))
+                        && grill.seasoningsOf(0).isEmpty()
+                        && player.getInventory().countItem(ModItems.CHILI_SAUCE.get()) == 0
+                        && player.getInventory().countItem(Items.BOWL) == 1,
+                "副手拿刷子也能刷；辣酱应刷给缺它的那份，用掉后还碗");
+        // 手上最后一个鸡蛋：照样打进冷面
+        player.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(Items.EGG));
+        helper.useBlock(localPos, player);
+        helper.assertTrue(grill.seasoningsOf(1).equals(List.of(ModItems.CHILI_SAUCE.get(), Items.EGG))
+                        && player.getMainHandItem().isEmpty(),
+                "刷完辣酱后应还能打鸡蛋");
         helper.succeed();
     }
 
