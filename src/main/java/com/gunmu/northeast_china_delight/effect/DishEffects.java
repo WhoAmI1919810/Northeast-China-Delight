@@ -35,7 +35,9 @@ public final class DishEffects {
         List<Applied> list = new ArrayList<>();
         switch (info.flavor()) {
             case GREASY -> {
-                list.add(new Applied(DdEffects.hold(MobEffects.MOVEMENT_SLOWDOWN), duration, 0));
+                if (info.slowing()) {
+                    list.add(new Applied(DdEffects.hold(MobEffects.MOVEMENT_SLOWDOWN), duration, 0));
+                }
                 list.add(new Applied(DdEffects.hold(MobEffects.HEALTH_BOOST), duration, 1));
                 list.add(new Applied(DdEffects.hold(MobEffects.DIG_SPEED), duration, 0));
                 list.add(new Applied(DdEffects.hold(ModEffects.GREASY), duration, 1));
