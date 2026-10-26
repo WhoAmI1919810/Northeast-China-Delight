@@ -98,7 +98,7 @@ public final class ModFluids {
             .descriptionId("fluid_type.northeast_china_delight.soy_paste")
             .density(1250)
             .viscosity(3200)
-            .motionScale(0.004D), "block/soy_paste_still", "block/soy_paste_still", 0xFF9A672E);
+            .motionScale(0.004D), "block/soy_paste_still", "block/soy_paste_still", 0xFFFFFFFF);
 
     private static final BaseFlowingFluid.Properties SOY_PASTE_PROPERTIES =
             new BaseFlowingFluid.Properties(() -> SOY_PASTE_TYPE,
@@ -320,7 +320,7 @@ public final class ModFluids {
             .descriptionId("fluid_type.northeast_china_delight.shrimp_paste")
             .density(1300)
             .viscosity(3000)
-            .motionScale(0.005D), "block/shrimp_paste_still", "block/shrimp_paste_still", 0xFF8A4A34);
+            .motionScale(0.005D), "block/shrimp_paste_still", "block/shrimp_paste_still", 0xFFFFFFFF);
 
     private static final BaseFlowingFluid.Properties SHRIMP_PASTE_PROPERTIES =
             new BaseFlowingFluid.Properties(() -> SHRIMP_PASTE_TYPE,
@@ -431,7 +431,7 @@ public final class ModFluids {
             .descriptionId("fluid_type.northeast_china_delight.peanut_butter")
             .density(1400)
             .viscosity(6000)
-            .motionScale(0.004D), "block/peanut_butter_still", "block/peanut_butter_still", 0xFFC9A05A);
+            .motionScale(0.004D), "block/peanut_butter_still", "block/peanut_butter_still", 0xFFFFFFFF);
 
     private static final BaseFlowingFluid.Properties PEANUT_BUTTER_PROPERTIES =
             new BaseFlowingFluid.Properties(() -> PEANUT_BUTTER_TYPE,
@@ -505,7 +505,7 @@ public final class ModFluids {
             .descriptionId("fluid_type.northeast_china_delight.chili_sauce")
             .density(1350)
             .viscosity(4000)
-            .motionScale(0.005D), "block/chili_sauce_still", "block/chili_sauce_still", 0xFFE04A1F);
+            .motionScale(0.005D), "block/chili_sauce_still", "block/chili_sauce_still", 0xFFFFFFFF);
 
     private static final BaseFlowingFluid.Properties CHILI_SAUCE_PROPERTIES =
             new BaseFlowingFluid.Properties(() -> CHILI_SAUCE_TYPE,

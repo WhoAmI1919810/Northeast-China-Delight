@@ -502,7 +502,7 @@ public class NortheastChinaDelight
                 @Override
                 public int getTintColor()
                 {
-                    return 0xFF9A672E;
+                    return 0xFFFFFFFF;
                 }
             }, ModFluids.SOY_PASTE_TYPE);
 
@@ -598,7 +598,7 @@ public class NortheastChinaDelight
                 @Override
                 public int getTintColor()
                 {
-                    return 0xFF8A4A34;
+                    return 0xFFFFFFFF;
                 }
             }, ModFluids.SHRIMP_PASTE_TYPE);
 
@@ -649,7 +649,7 @@ public class NortheastChinaDelight
                 @Override
                 public int getTintColor()
                 {
-                    return 0xFFC9A05A;
+                    return 0xFFFFFFFF;
                 }
             }, ModFluids.PEANUT_BUTTER_TYPE);
 
@@ -685,7 +685,7 @@ public class NortheastChinaDelight
                 @Override
                 public int getTintColor()
                 {
-                    return 0xFFE04A1F;
+                    return 0xFFFFFFFF;
                 }
             }, ModFluids.CHILI_SAUCE_TYPE);
 
