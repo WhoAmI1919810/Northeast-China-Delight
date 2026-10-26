@@ -130,7 +130,6 @@ import net.neoforged.neoforge.client.event.ModelEvent;
 import net.neoforged.neoforge.client.extensions.common.IClientFluidTypeExtensions;
 //?}
 //? if >=1.20.5 {
-import com.gunmu.northeast_china_delight.client.CannedYellowPeachItemRenderer;
 import com.gunmu.northeast_china_delight.client.DdFeastItemRenderer;
 import com.gunmu.northeast_china_delight.client.LargeBasinItemRenderer;
 import com.gunmu.northeast_china_delight.client.WoodenMalletItemRenderer;
@@ -432,8 +431,6 @@ public class NortheastChinaDelight
             registerItemIcon(event, "large_basin_icon");
             registerItemIcon(event, "wooden_mallet_icon");
             registerItemIcon(event, "wooden_mallet_model");
-            registerItemIcon(event, "canned_yellow_peach_icon");
-            registerItemIcon(event, "canned_yellow_peach_model");
             registerItemIcon(event, "sauerkraut_bone_stew_icon");
             registerItemIcon(event, "ground_pot_chicken_icon");
             registerItemIcon(event, "ground_pot_ribs_icon");
@@ -492,10 +489,6 @@ public class NortheastChinaDelight
 
             // 木槌：物品栏画贴图、手/地面/展示框画 3D 模型，分流在 WoodenMalletItemRenderer 里
             event.registerItem(WoodenMalletItemRenderer.CLIENT_EXTENSION, ModItems.WOODEN_MALLET.get());
-
-            // 黄桃罐头：物品栏画贴图、手/地面/展示框画 3D 模型
-            event.registerItem(CannedYellowPeachItemRenderer.CLIENT_EXTENSION,
-                    ModItems.CANNED_YELLOW_PEACH.get());
 
             // 8 道大盆菜：物品栏画贴图、手/地面画方块，分流在 DdFeastItemRenderer 里
             event.registerItem(DdFeastItemRenderer.CLIENT_EXTENSION,

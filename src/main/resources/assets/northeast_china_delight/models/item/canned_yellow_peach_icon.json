@@ -1,7 +1,42 @@
 {
-  "credit": "黄桃罐头的 2D 图标：只给物品栏/配方书/JEI 这类 GUI 用；手、地面、展示框由 CannedYellowPeachItemRenderer 画 3D 模型",
-  "parent": "item/generated",
+  "credit": "黄桃罐头的 2D 图标：只给物品栏/配方书/JEI 这类 GUI 用（canned_yellow_peach.json 的 separate_transforms 分过来）。这里不能写 parent item/generated —— 分视角加载器直接烘焙子模型，走不到原版把 item/generated 贴图挤成方块的那一步，烘出来是空模型、物品栏里就全透明了；所以用一片贴图正反两面的薄元素代替，正面看和 item/generated 一样",
+  "gui_light": "front",
   "textures": {
-    "layer0": "northeast_china_delight:item/canned_yellow_peach"
-  }
+    "icon": "northeast_china_delight:item/canned_yellow_peach",
+    "particle": "northeast_china_delight:item/canned_yellow_peach"
+  },
+  "elements": [
+    {
+      "from": [
+        0,
+        0,
+        7.5
+      ],
+      "to": [
+        16,
+        16,
+        8.5
+      ],
+      "faces": {
+        "south": {
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ],
+          "texture": "#icon"
+        },
+        "north": {
+          "uv": [
+            16,
+            0,
+            0,
+            16
+          ],
+          "texture": "#icon"
+        }
+      }
+    }
+  ]
 }

@@ -119,7 +119,7 @@ public class ModItems {
     /**
      * 黄桃罐头：7 点饥饿值、实际 3 点饱和度（原版公式为 nutrition × modifier × 2，
      * 因此这里换算成 3/14 的饱和度系数）；吃完返还玻璃瓶。
-     * 物品栏贴图与手持 / 掉落模型的分流见 {@code client/CannedYellowPeachItemRenderer}。
+     * 物品栏贴图与手持 / 掉落模型的分流见 {@code models/item/canned_yellow_peach.json}。
      */
     public static final Supplier<Item> CANNED_YELLOW_PEACH = regItem("canned_yellow_peach",
             properties -> new CannedYellowPeachItem(ModBlocks.CANNED_YELLOW_PEACH.get(), properties),
