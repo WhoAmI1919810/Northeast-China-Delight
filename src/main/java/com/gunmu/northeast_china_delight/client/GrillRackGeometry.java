@@ -12,7 +12,7 @@ import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.resources.ResourceLocation;
 
 /**
- * 烤架铁条的几何：1px 粗的密集铁条 + 四边边框 + 四角立柱，贴的是原版铁栏杆的贴图。
+ * 烤架铁条的几何：上下两层各 8 根 1px 粗的铁条交叉成网格 + 四角立柱。
  */
 public final class GrillRackGeometry {
 
@@ -46,16 +46,17 @@ public final class GrillRackGeometry {
         float y0 = RACK_TOP_Y;
         float y1 = RACK_TOP_Y + PX;
 
+        // 上下两层铁条叠着放、不互相插：横条整根在纵条下面，两层只在交叉处上下贴着（贴着的面夹在铁条中间，看不见）。
+        // 铁条都离边半格居中（0.5、2.5 … 14.5 px），这样一层的外侧面不会和另一层的端面落在同一平面上抢深度、闪烁。
         for (int i = 0; i < BAR_COUNT; i++) {
-            float x = (1 + i * 2) * PX;
+            float x = (0.5F + i * 2) * PX;
             box(consumer, matrix, sprite, x, y0, 0, x + PX, y1, 1, packedLight, packedOverlay);
         }
 
-        float crossY0 = y0 - PX * 0.5F;
-        float crossY1 = y0 + PX * 0.5F;
+        float crossY0 = y0 - PX;
         for (int i = 0; i < BAR_COUNT; i++) {
-            float z = (1 + i * 2) * PX;
-            box(consumer, matrix, sprite, 0, crossY0, z, 1, crossY1, z + PX, packedLight, packedOverlay);
+            float z = (0.5F + i * 2) * PX;
+            box(consumer, matrix, sprite, 0, crossY0, z, 1, y0, z + PX, packedLight, packedOverlay);
         }
 
         // 腿的每个面都不能和营火木头（侧面在 0/1/5/11/15/16 px、底在 y = 0）或横条的面共面，
