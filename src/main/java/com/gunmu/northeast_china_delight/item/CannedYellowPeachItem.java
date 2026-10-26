@@ -11,7 +11,7 @@ import net.minecraft.world.level.block.Block;
  * 黄桃罐头：玻璃瓶装的甜食，右键方块放置，右键空气照常食用并返还玻璃瓶。
  *
  * <p>物品栏画 16×16 贴图，拿在手上 / 掉落 / 展示框画方块模型，
- * 分流逻辑见 {@code client/CannedYellowPeachItemRenderer}。</p>
+ * 分视角见 {@code models/item/canned_yellow_peach.json}（separate_transforms）。</p>
  */
 public class CannedYellowPeachItem extends BlockItem
 {
@@ -42,18 +42,6 @@ public class CannedYellowPeachItem extends BlockItem
             }
         }
         return stack;
-    }
-    //?}
-
-    /*
-     * 1.20.1 没有 RegisterClientExtensionsEvent，客户端渲染器只能从物品这里挂；
-     * 1.21.1 那份在 NortheastChinaDelight.ClientModEvents#onRegisterClientExtensions。
-     */
-    //? if <1.20.2 {
-    @Override
-    public void initializeClient(java.util.function.Consumer<net.minecraftforge.client.extensions.common.IClientItemExtensions> consumer)
-    {
-        consumer.accept(com.gunmu.northeast_china_delight.client.CannedYellowPeachItemRenderer.CLIENT_EXTENSION);
     }
     //?}
 }

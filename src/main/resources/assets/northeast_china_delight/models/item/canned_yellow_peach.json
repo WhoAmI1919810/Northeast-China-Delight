@@ -1,45 +1,120 @@
 {
-  "credit": "黄桃罐头：parent 写 builtin/entity 表示走自定义渲染器（CannedYellowPeachItemRenderer）——物品栏画 2D 贴图，手/地面/展示框画 3D 模型；GUI 变换必须保持单位矩阵，否则图标会被二次缩放",
-  "parent": "builtin/entity",
+  "credit": "黄桃罐头：物品栏 / 配方书 / JEI 这类 GUI 用 canned_yellow_peach_icon 的 2D 贴图，手上、地面、展示框用 canned_yellow_peach_model 的 3D 罐子；分视角由加载器的 separate_transforms 处理，不走自定义渲染器",
+  "loader": "forge:separate_transforms",
   "gui_light": "front",
   "textures": {
     "particle": "northeast_china_delight:item/canned_yellow_peach"
   },
-  "display": {
+  "base": {
+    "parent": "northeast_china_delight:item/canned_yellow_peach_model",
+    "display": {
+      "ground": {
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "translation": [
+          0,
+          3,
+          0
+        ],
+        "scale": [
+          0.5,
+          0.5,
+          0.5
+        ]
+      },
+      "fixed": {
+        "rotation": [
+          0,
+          0,
+          0
+        ],
+        "translation": [
+          0,
+          0,
+          0
+        ],
+        "scale": [
+          0.75,
+          0.75,
+          0.75
+        ]
+      },
+      "thirdperson_righthand": {
+        "rotation": [
+          75,
+          45,
+          0
+        ],
+        "translation": [
+          0,
+          3,
+          0
+        ],
+        "scale": [
+          0.45,
+          0.45,
+          0.45
+        ]
+      },
+      "thirdperson_lefthand": {
+        "rotation": [
+          75,
+          45,
+          0
+        ],
+        "translation": [
+          0,
+          3,
+          0
+        ],
+        "scale": [
+          0.45,
+          0.45,
+          0.45
+        ]
+      },
+      "firstperson_righthand": {
+        "rotation": [
+          0,
+          45,
+          0
+        ],
+        "translation": [
+          0,
+          2.5,
+          0
+        ],
+        "scale": [
+          0.45,
+          0.45,
+          0.45
+        ]
+      },
+      "firstperson_lefthand": {
+        "rotation": [
+          0,
+          45,
+          0
+        ],
+        "translation": [
+          0,
+          2.5,
+          0
+        ],
+        "scale": [
+          0.45,
+          0.45,
+          0.45
+        ]
+      }
+    }
+  },
+  "perspectives": {
     "gui": {
-      "rotation": [0, 0, 0],
-      "translation": [0, 0, 0],
-      "scale": [1, 1, 1]
-    },
-    "ground": {
-      "rotation": [0, 0, 0],
-      "translation": [0, 3, 0],
-      "scale": [0.5, 0.5, 0.5]
-    },
-    "fixed": {
-      "rotation": [0, 0, 0],
-      "translation": [0, 0, 0],
-      "scale": [0.75, 0.75, 0.75]
-    },
-    "thirdperson_righthand": {
-      "rotation": [75, 45, 0],
-      "translation": [0, 3, 0],
-      "scale": [0.45, 0.45, 0.45]
-    },
-    "thirdperson_lefthand": {
-      "rotation": [75, 45, 0],
-      "translation": [0, 3, 0],
-      "scale": [0.45, 0.45, 0.45]
-    },
-    "firstperson_righthand": {
-      "rotation": [0, 45, 0],
-      "translation": [0, 2.5, 0],
-      "scale": [0.45, 0.45, 0.45]
-    },
-    "firstperson_lefthand": {
-      "rotation": [0, 45, 0],
-      "translation": [0, 2.5, 0],
-      "scale": [0.45, 0.45, 0.45]
+      "parent": "northeast_china_delight:item/canned_yellow_peach_icon"
     }
   }
 }
