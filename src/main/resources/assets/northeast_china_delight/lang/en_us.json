@@ -204,6 +204,8 @@
   "message.northeast_china_delight.vat.need_bottle_vinegar": "Vinegar needs a glass bottle",
   "message.northeast_china_delight.vat.need_bottle_sour_water": "Sour water needs a glass bottle",
   "message.northeast_china_delight.vat.need_bottle_white_vinegar": "White vinegar needs a glass bottle",
+  "message.northeast_china_delight.mortar.need_container": "Use %s to collect it",
+  "message.northeast_china_delight.mortar.bottle_full": "The bottle can't hold any more",
   "message.northeast_china_delight.vat.need_bottle_fish_sauce": "Fish sauce needs a glass bottle",
   "message.northeast_china_delight.vat.need_bottle_shrimp_paste": "Shrimp paste needs a glass bottle",
   "message.northeast_china_delight.vat.need_bottle_kvass": "Kvass needs a glass bottle",
@@ -343,6 +345,8 @@
   "jei.northeast_china_delight.pound.pool_chance": "Group chance: %s%%",
   "jei.northeast_china_delight.pound.count_range": "Amount: %s~%s",
   "jei.northeast_china_delight.pound.byproduct": "Byproduct",
+  "jei.northeast_china_delight.pound.result_container": "Hold this to take the result out (one is used each time)",
+  "jei.northeast_china_delight.pound.result_mb": "%s mB each time: fill an empty bottle or top up a partly used one",
   "jei.northeast_china_delight.grill.seasoning_amount": "%s mB",
   "jei.northeast_china_delight.time.seconds": "%s s",
   

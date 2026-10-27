@@ -1,0 +1,128 @@
+{
+  "credit": "由 tools/mortar_contents/build.py 生成，只有木臼里的内容物（stage_model_mode: overlay）",
+  "texture_size": [
+    16,
+    16
+  ],
+  "textures": {
+    "oil": "northeast_china_delight:block/vegetable_oil_still",
+    "particle": "northeast_china_delight:block/vegetable_oil_still"
+  },
+  "elements": [
+    {
+      "from": [
+        4,
+        10.0,
+        2
+      ],
+      "to": [
+        12,
+        10.5,
+        3
+      ],
+      "faces": {
+        "up": {
+          "uv": [
+            4,
+            2,
+            12,
+            3
+          ],
+          "texture": "#oil"
+        }
+      }
+    },
+    {
+      "from": [
+        3,
+        10.0,
+        3
+      ],
+      "to": [
+        13,
+        10.5,
+        4
+      ],
+      "faces": {
+        "up": {
+          "uv": [
+            3,
+            3,
+            13,
+            4
+          ],
+          "texture": "#oil"
+        }
+      }
+    },
+    {
+      "from": [
+        2,
+        10.0,
+        4
+      ],
+      "to": [
+        14,
+        10.5,
+        12
+      ],
+      "faces": {
+        "up": {
+          "uv": [
+            2,
+            4,
+            14,
+            12
+          ],
+          "texture": "#oil"
+        }
+      }
+    },
+    {
+      "from": [
+        3,
+        10.0,
+        12
+      ],
+      "to": [
+        13,
+        10.5,
+        13
+      ],
+      "faces": {
+        "up": {
+          "uv": [
+            3,
+            12,
+            13,
+            13
+          ],
+          "texture": "#oil"
+        }
+      }
+    },
+    {
+      "from": [
+        4,
+        10.0,
+        13
+      ],
+      "to": [
+        12,
+        10.5,
+        14
+      ],
+      "faces": {
+        "up": {
+          "uv": [
+            4,
+            13,
+            12,
+            14
+          ],
+          "texture": "#oil"
+        }
+      }
+    }
+  ]
+}

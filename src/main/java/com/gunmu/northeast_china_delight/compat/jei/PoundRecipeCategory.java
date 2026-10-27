@@ -135,6 +135,15 @@ public class PoundRecipeCategory implements IRecipeCategory<PoundJeiRecipe> {
                     .addItemStacks(recipe.tool());
         }
 
+        if (recipe.resultContainer() != null) {
+            // 取成品要拿着的容器放在箭头下面
+            builder.addSlot(RecipeIngredientRole.INPUT, ARROW_X + 4, ARROW_Y + 18)
+                    .setStandardSlotBackground()
+                    .addItemStack(recipe.resultContainer())
+                    .addTooltipCallback((slotView, tooltip) -> tooltip.add(
+                            Component.translatable("jei.northeast_china_delight.pound.result_container")));
+        }
+
         for (int i = 0; i < recipe.outputs().size(); i++) {
             PoundJeiRecipe.Output output = recipe.outputs().get(i);
             builder.addSlot(RecipeIngredientRole.OUTPUT, gridX(RESULTS_X, i), gridY(i, recipe.outputs().size()))
@@ -157,6 +166,10 @@ public class PoundRecipeCategory implements IRecipeCategory<PoundJeiRecipe> {
                         if (output.minCount() != output.maxCount()) {
                             tooltip.add(Component.translatable("jei.northeast_china_delight.pound.count_range",
                                     output.minCount(), output.maxCount()));
+                        }
+                        if (recipe.resultMb() > 0) {
+                            tooltip.add(Component.translatable("jei.northeast_china_delight.pound.result_mb",
+                                    recipe.resultMb()));
                         }
                         if (output.byproduct()) {
                             tooltip.add(Component.translatable("jei.northeast_china_delight.pound.byproduct"));
@@ -305,7 +318,7 @@ public class PoundRecipeCategory implements IRecipeCategory<PoundJeiRecipe> {
             PoundJeiRecipe empty = new PoundJeiRecipe(DdIds.of(NortheastChinaDelight.MODID, "pounding/icon"),
                     java.util.List.of(), java.util.List.of(), 1, 0.9F, java.util.List.of(),
                     java.util.List.of(DdIds.of(NortheastChinaDelight.MODID, "block/wooden_mortar_1")),
-                    PoundingRecipes.StageModelMode.FULL);
+                    PoundingRecipes.StageModelMode.FULL, null, 0);
             drawStation(graphics, empty, xOffset + 8.0F, yOffset + 10.0F, 9.0F);
         }
     }

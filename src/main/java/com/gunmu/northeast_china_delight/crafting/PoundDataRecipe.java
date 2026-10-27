@@ -6,6 +6,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import com.google.gson.JsonParser;
 import com.gunmu.northeast_china_delight.NortheastChinaDelight;
+import com.gunmu.northeast_china_delight.item.SeasoningBottleItem;
 import com.gunmu.northeast_china_delight.util.DdIds;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
@@ -75,7 +76,8 @@ public final class PoundDataRecipe implements Recipe<
                 : new PoundingRecipes.Recipe(effective, this.rule.priority(), this.rule.inputs(),
                         this.rule.tool(), this.rule.poundTimes(), this.rule.chargeThreshold(),
                         this.rule.stageModels(), this.rule.results(), this.rule.transition(),
-                        this.rule.stageModelMode(), this.rule.finishedModel());
+                        this.rule.stageModelMode(), this.rule.finishedModel(), this.rule.resultContainer(),
+                        this.rule.resultMb());
     }
 
     @Nullable
@@ -139,16 +141,35 @@ public final class PoundDataRecipe implements Recipe<
             }
         }
 
+        ItemStack resultContainer = config.has("result_container")
+                ? decodeNestedItem(config, "result_container")
+                : null;
+
         List<PoundingRecipes.Result> results = decodeResults(config);
         if (results.isEmpty()) {
             throw new JsonParseException("舂捣配方的产物不能为空");
+        }
+
+        int resultMb = integer(config, "result_mb", 0);
+        if (resultMb != 0) {
+            // 按毫升装：唯一一项、必出、数量 1 的瓶装调料，还得写明拿什么容器装
+            PoundingRecipes.Result only = results.size() == 1 ? results.get(0) : null;
+            if (resultMb < 0 || resultMb > SeasoningBottleItem.CAPACITY_MB) {
+                throw new JsonParseException("舂捣配方 result_mb 必须在 1.." + SeasoningBottleItem.CAPACITY_MB + " 之间");
+            }
+            if (resultContainer == null || only == null || only.pooled() || only.chance() < 1.0F
+                    || only.minCount() != 1 || only.maxCount() != 1 || !SeasoningBottleItem.isBottle(only.stack())) {
+                throw new JsonParseException("舂捣配方写了 result_mb 时，产物必须是唯一一项、数量 1 的瓶装调料，"
+                        + "并且要写 result_container");
+            }
         }
 
         PoundingRecipes.Transition transition = PoundingRecipes.Transition.parse(
                 config.has("transition") ? config.get("transition").getAsString() : null);
 
         return new PoundingRecipes.Recipe(recipeId, integer(config, "priority", 0), inputs, tool,
-                poundTimes, chargeThreshold, stageModels, results, transition, stageModelMode, finishedModel);
+                poundTimes, chargeThreshold, stageModels, results, transition, stageModelMode, finishedModel,
+                resultContainer, resultMb);
     }
 
     private static List<PoundingRecipes.Input> decodeInputs(JsonObject config) {
