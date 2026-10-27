@@ -8,6 +8,7 @@
     "CookingPotBlockEntityInvoker",
     "CookingPotBlockEntityMixin",
     "PowderSnowBlockMixin",
+    "RepairItemRecipeMixin",
     "SideDishMerchantTradeMixin"
   ],
   "injectors": {

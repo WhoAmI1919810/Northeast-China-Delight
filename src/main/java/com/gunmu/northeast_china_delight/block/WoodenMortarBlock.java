@@ -58,7 +58,9 @@ import java.util.List;
  * </ul>
  *
  * <p>敲击为什么走左键：右键要留给装料 / 放木槌 / 取货，而左键本来就带「挥」的动作。
- * 代价是左键也会推进挖掘进度，所以有料或搁着木槌时 {@link #getDestroyProgress} 直接返回 0，挖不动；
+ * 代价是左键也会推进挖掘进度，所以只有「手里拿着当前配方的工具、臼里正在加工」时 {@link #getDestroyProgress}
+ * 返回 0（这一下是敲击）；其余任何阶段、空手或拿别的工具都能照常挖掉。挖掉只掉木臼本身，臼里的料不掉；
+ * 搁着木槌时连木槌一起掉（原样带着存进去的耐久和附魔），见 {@link #onRemove}；
  * 又因为 {@code Block#attack} 只在客户端跑（1.20.1 / 1.21.1 的 {@code MultiPlayerGameMode#startDestroyBlock}），
  * 真正改方块的敲击挂在服务端左键事件上，见 {@code ModGameplayEvents#onLeftClickBlock}。</p>
  *
@@ -76,6 +78,13 @@ public class WoodenMortarBlock extends BaseEntityBlock {
     /** 0=空臼；1..N=装料/加工中/成品。最多 4 个阶段模型 + 1 个成品阶段。 */
     public static final int MAX_STATE = 5;
     public static final IntegerProperty STATE = IntegerProperty.create("state", 0, MAX_STATE);
+
+    /**
+     * 搁着的木槌把手朝哪：放木槌那一刻按玩家来定，把手朝着玩家（模型里把手朝北，blockstate 按它转）。
+     * 和木臼本体的 {@link #FACING} 分开存，放木槌不会把整只臼转过去。
+     */
+    public static final DirectionProperty MALLET_FACING = DirectionProperty.create("mallet_facing",
+            Direction.Plane.HORIZONTAL);
 
     /** 臼上是否搁着一把木槌：只影响空臼的外观（带锤空木臼），加工中不画木槌 */
     public static final BooleanProperty MALLET = BooleanProperty.create("mallet");
@@ -95,7 +104,8 @@ public class WoodenMortarBlock extends BaseEntityBlock {
         this.registerDefaultState(this.stateDefinition.any()
                 .setValue(FACING, Direction.NORTH)
                 .setValue(STATE, 0)
-                .setValue(MALLET, false));
+                .setValue(MALLET, false)
+                .setValue(MALLET_FACING, Direction.NORTH));
     }
 
     //? if >=1.20.2 {
@@ -203,7 +213,8 @@ public class WoodenMortarBlock extends BaseEntityBlock {
                     return InteractionResult.SUCCESS;
                 }
                 mortar.setMallet(DdStacks.consumeAndReturn(held, 1, player));
-                level.setBlock(pos, state.setValue(MALLET, true), 3);
+                level.setBlock(pos, state.setValue(MALLET, true)
+                        .setValue(MALLET_FACING, player.getDirection().getOpposite()), 3);
                 level.playSound(null, pos, SoundEvents.ITEM_FRAME_ADD_ITEM, SoundSource.BLOCKS, 0.8F, 1.0F);
                 return InteractionResult.SUCCESS;
             }
@@ -432,17 +443,39 @@ public class WoodenMortarBlock extends BaseEntityBlock {
     }
 
     /**
-     * 有料（或搁着木槌）时挖不动：左键那几下是「敲击」，不能顺手把臼拆了。
-     * 空臼照常能挖掉搬走。
+     * 拿着当前配方的工具敲正在加工的木臼时挖不动：这几下左键是「敲击」，不能顺手把臼拆了。
+     * 别的情况（空手、拿别的工具、装料没满、已经出成品、搁着木槌）都能照常挖。
      */
     @Override
     public float getDestroyProgress(BlockState state, Player player, BlockGetter level, BlockPos pos) {
-        if (state.getValue(STATE) > 0 || state.getValue(MALLET)
-                || (level.getBlockEntity(pos) instanceof WoodenMortarBlockEntity mortar
-                && mortar.hasDepositedInputs())) {
+        if (isPoundingHit(state, player, level, pos)) {
             return 0.0F;
         }
         return super.getDestroyProgress(state, player, level, pos);
+    }
+
+    /** 这一下左键会被 {@link #pound} 当成敲击（工具对、正在加工、没搁木槌）；不看蓄力，免得没蓄满时变成在挖 */
+    private static boolean isPoundingHit(BlockState state, Player player, BlockGetter getter, BlockPos pos) {
+        if (!(getter instanceof Level level) || !(level.getBlockEntity(pos) instanceof WoodenMortarBlockEntity mortar)
+                || state.getValue(MALLET) || mortar.hasMallet()) {
+            return false;
+        }
+        PoundingRecipes.Recipe recipe = mortar.resolve(level);
+        int stage = state.getValue(STATE);
+        return recipe != null && stage >= recipe.filledState() && stage < recipe.doneState()
+                && recipe.tool().test(player.getMainHandItem());
+    }
+
+    /**
+     * 木臼没了（被挖、被炸、被命令换掉）时，搁在上面的木槌原样掉出来；臼里的料不掉，掉落表只给木臼本身。
+     */
+    @Override
+    public void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean movedByPiston) {
+        if (!state.is(newState.getBlock()) && !level.isClientSide
+                && level.getBlockEntity(pos) instanceof WoodenMortarBlockEntity mortar && mortar.hasMallet()) {
+            Block.popResource(level, pos, mortar.takeMallet());
+        }
+        super.onRemove(state, level, pos, newState, movedByPiston);
     }
 
     /** 加工中下一次该切到哪个模型状态 */
@@ -476,6 +509,6 @@ public class WoodenMortarBlock extends BaseEntityBlock {
 
     @Override
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
-        builder.add(FACING, STATE, MALLET);
+        builder.add(FACING, STATE, MALLET, MALLET_FACING);
     }
 }

@@ -3,6 +3,7 @@ package com.gunmu.northeast_china_delight.crafting;
 import com.gunmu.northeast_china_delight.NortheastChinaDelight;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.item.crafting.RecipeSerializer;
+import net.minecraft.world.item.crafting.SimpleCraftingRecipeSerializer;
 //? if <1.20.2 {
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.registries.DeferredRegister;
@@ -21,6 +22,9 @@ public final class ModCraftingRecipes {
 
     public static final Supplier<RecipeSerializer<WholeBottleShapelessRecipe>> WHOLE_BOTTLE_SHAPELESS =
             SERIALIZERS.register("whole_bottle_shapeless", WholeBottleShapelessRecipe.Serializer::new);
+    public static final Supplier<RecipeSerializer<SeasoningBottleMergeRecipe>> SEASONING_BOTTLE_MERGE =
+            SERIALIZERS.register("seasoning_bottle_merge",
+                    () -> new SimpleCraftingRecipeSerializer<SeasoningBottleMergeRecipe>(SeasoningBottleMergeRecipe::new));
 
     private ModCraftingRecipes() {
     }

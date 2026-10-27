@@ -1,52 +1,277 @@
 {
-  "variants": {
-    "facing=south,state=0,mallet=false": { "model": "northeast_china_delight:block/wooden_mortar" },
-    "facing=south,state=1,mallet=false": { "model": "northeast_china_delight:block/wooden_mortar_1" },
-    "facing=south,state=2,mallet=false": { "model": "northeast_china_delight:block/wooden_mortar_2" },
-    "facing=south,state=3,mallet=false": { "model": "northeast_china_delight:block/wooden_mortar_3" },
-    "facing=south,state=4,mallet=false": { "model": "northeast_china_delight:block/wooden_mortar_4" },
-    "facing=south,state=5,mallet=false": { "model": "northeast_china_delight:block/wooden_mortar_5" },
-    "facing=south,state=0,mallet=true": { "model": "northeast_china_delight:block/wooden_mortar_mallet" },
-    "facing=south,state=1,mallet=true": { "model": "northeast_china_delight:block/wooden_mortar_1" },
-    "facing=south,state=2,mallet=true": { "model": "northeast_china_delight:block/wooden_mortar_2" },
-    "facing=south,state=3,mallet=true": { "model": "northeast_china_delight:block/wooden_mortar_3" },
-    "facing=south,state=4,mallet=true": { "model": "northeast_china_delight:block/wooden_mortar_4" },
-    "facing=south,state=5,mallet=true": { "model": "northeast_china_delight:block/wooden_mortar_5" },
-    "facing=west,state=0,mallet=false": { "model": "northeast_china_delight:block/wooden_mortar", "y": 90 },
-    "facing=west,state=1,mallet=false": { "model": "northeast_china_delight:block/wooden_mortar_1", "y": 90 },
-    "facing=west,state=2,mallet=false": { "model": "northeast_china_delight:block/wooden_mortar_2", "y": 90 },
-    "facing=west,state=3,mallet=false": { "model": "northeast_china_delight:block/wooden_mortar_3", "y": 90 },
-    "facing=west,state=4,mallet=false": { "model": "northeast_china_delight:block/wooden_mortar_4", "y": 90 },
-    "facing=west,state=5,mallet=false": { "model": "northeast_china_delight:block/wooden_mortar_5", "y": 90 },
-    "facing=west,state=0,mallet=true": { "model": "northeast_china_delight:block/wooden_mortar_mallet", "y": 90 },
-    "facing=west,state=1,mallet=true": { "model": "northeast_china_delight:block/wooden_mortar_1", "y": 90 },
-    "facing=west,state=2,mallet=true": { "model": "northeast_china_delight:block/wooden_mortar_2", "y": 90 },
-    "facing=west,state=3,mallet=true": { "model": "northeast_china_delight:block/wooden_mortar_3", "y": 90 },
-    "facing=west,state=4,mallet=true": { "model": "northeast_china_delight:block/wooden_mortar_4", "y": 90 },
-    "facing=west,state=5,mallet=true": { "model": "northeast_china_delight:block/wooden_mortar_5", "y": 90 },
-    "facing=north,state=0,mallet=false": { "model": "northeast_china_delight:block/wooden_mortar", "y": 180 },
-    "facing=north,state=1,mallet=false": { "model": "northeast_china_delight:block/wooden_mortar_1", "y": 180 },
-    "facing=north,state=2,mallet=false": { "model": "northeast_china_delight:block/wooden_mortar_2", "y": 180 },
-    "facing=north,state=3,mallet=false": { "model": "northeast_china_delight:block/wooden_mortar_3", "y": 180 },
-    "facing=north,state=4,mallet=false": { "model": "northeast_china_delight:block/wooden_mortar_4", "y": 180 },
-    "facing=north,state=5,mallet=false": { "model": "northeast_china_delight:block/wooden_mortar_5", "y": 180 },
-    "facing=north,state=0,mallet=true": { "model": "northeast_china_delight:block/wooden_mortar_mallet", "y": 180 },
-    "facing=north,state=1,mallet=true": { "model": "northeast_china_delight:block/wooden_mortar_1", "y": 180 },
-    "facing=north,state=2,mallet=true": { "model": "northeast_china_delight:block/wooden_mortar_2", "y": 180 },
-    "facing=north,state=3,mallet=true": { "model": "northeast_china_delight:block/wooden_mortar_3", "y": 180 },
-    "facing=north,state=4,mallet=true": { "model": "northeast_china_delight:block/wooden_mortar_4", "y": 180 },
-    "facing=north,state=5,mallet=true": { "model": "northeast_china_delight:block/wooden_mortar_5", "y": 180 },
-    "facing=east,state=0,mallet=false": { "model": "northeast_china_delight:block/wooden_mortar", "y": 270 },
-    "facing=east,state=1,mallet=false": { "model": "northeast_china_delight:block/wooden_mortar_1", "y": 270 },
-    "facing=east,state=2,mallet=false": { "model": "northeast_china_delight:block/wooden_mortar_2", "y": 270 },
-    "facing=east,state=3,mallet=false": { "model": "northeast_china_delight:block/wooden_mortar_3", "y": 270 },
-    "facing=east,state=4,mallet=false": { "model": "northeast_china_delight:block/wooden_mortar_4", "y": 270 },
-    "facing=east,state=5,mallet=false": { "model": "northeast_china_delight:block/wooden_mortar_5", "y": 270 },
-    "facing=east,state=0,mallet=true": { "model": "northeast_china_delight:block/wooden_mortar_mallet", "y": 270 },
-    "facing=east,state=1,mallet=true": { "model": "northeast_china_delight:block/wooden_mortar_1", "y": 270 },
-    "facing=east,state=2,mallet=true": { "model": "northeast_china_delight:block/wooden_mortar_2", "y": 270 },
-    "facing=east,state=3,mallet=true": { "model": "northeast_china_delight:block/wooden_mortar_3", "y": 270 },
-    "facing=east,state=4,mallet=true": { "model": "northeast_china_delight:block/wooden_mortar_4", "y": 270 },
-    "facing=east,state=5,mallet=true": { "model": "northeast_china_delight:block/wooden_mortar_5", "y": 270 }
-  }
+  "multipart": [
+    {
+      "when": {
+        "facing": "south",
+        "state": "0"
+      },
+      "apply": {
+        "model": "northeast_china_delight:block/wooden_mortar"
+      }
+    },
+    {
+      "when": {
+        "facing": "south",
+        "state": "1"
+      },
+      "apply": {
+        "model": "northeast_china_delight:block/wooden_mortar_1"
+      }
+    },
+    {
+      "when": {
+        "facing": "south",
+        "state": "2"
+      },
+      "apply": {
+        "model": "northeast_china_delight:block/wooden_mortar_2"
+      }
+    },
+    {
+      "when": {
+        "facing": "south",
+        "state": "3"
+      },
+      "apply": {
+        "model": "northeast_china_delight:block/wooden_mortar_3"
+      }
+    },
+    {
+      "when": {
+        "facing": "south",
+        "state": "4"
+      },
+      "apply": {
+        "model": "northeast_china_delight:block/wooden_mortar_4"
+      }
+    },
+    {
+      "when": {
+        "facing": "south",
+        "state": "5"
+      },
+      "apply": {
+        "model": "northeast_china_delight:block/wooden_mortar_5"
+      }
+    },
+    {
+      "when": {
+        "facing": "west",
+        "state": "0"
+      },
+      "apply": {
+        "model": "northeast_china_delight:block/wooden_mortar",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "facing": "west",
+        "state": "1"
+      },
+      "apply": {
+        "model": "northeast_china_delight:block/wooden_mortar_1",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "facing": "west",
+        "state": "2"
+      },
+      "apply": {
+        "model": "northeast_china_delight:block/wooden_mortar_2",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "facing": "west",
+        "state": "3"
+      },
+      "apply": {
+        "model": "northeast_china_delight:block/wooden_mortar_3",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "facing": "west",
+        "state": "4"
+      },
+      "apply": {
+        "model": "northeast_china_delight:block/wooden_mortar_4",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "facing": "west",
+        "state": "5"
+      },
+      "apply": {
+        "model": "northeast_china_delight:block/wooden_mortar_5",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "facing": "north",
+        "state": "0"
+      },
+      "apply": {
+        "model": "northeast_china_delight:block/wooden_mortar",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "facing": "north",
+        "state": "1"
+      },
+      "apply": {
+        "model": "northeast_china_delight:block/wooden_mortar_1",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "facing": "north",
+        "state": "2"
+      },
+      "apply": {
+        "model": "northeast_china_delight:block/wooden_mortar_2",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "facing": "north",
+        "state": "3"
+      },
+      "apply": {
+        "model": "northeast_china_delight:block/wooden_mortar_3",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "facing": "north",
+        "state": "4"
+      },
+      "apply": {
+        "model": "northeast_china_delight:block/wooden_mortar_4",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "facing": "north",
+        "state": "5"
+      },
+      "apply": {
+        "model": "northeast_china_delight:block/wooden_mortar_5",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "facing": "east",
+        "state": "0"
+      },
+      "apply": {
+        "model": "northeast_china_delight:block/wooden_mortar",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "facing": "east",
+        "state": "1"
+      },
+      "apply": {
+        "model": "northeast_china_delight:block/wooden_mortar_1",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "facing": "east",
+        "state": "2"
+      },
+      "apply": {
+        "model": "northeast_china_delight:block/wooden_mortar_2",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "facing": "east",
+        "state": "3"
+      },
+      "apply": {
+        "model": "northeast_china_delight:block/wooden_mortar_3",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "facing": "east",
+        "state": "4"
+      },
+      "apply": {
+        "model": "northeast_china_delight:block/wooden_mortar_4",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "facing": "east",
+        "state": "5"
+      },
+      "apply": {
+        "model": "northeast_china_delight:block/wooden_mortar_5",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "mallet": "true",
+        "mallet_facing": "north"
+      },
+      "apply": {
+        "model": "northeast_china_delight:block/wooden_mortar_mallet"
+      }
+    },
+    {
+      "when": {
+        "mallet": "true",
+        "mallet_facing": "east"
+      },
+      "apply": {
+        "model": "northeast_china_delight:block/wooden_mortar_mallet",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "mallet": "true",
+        "mallet_facing": "south"
+      },
+      "apply": {
+        "model": "northeast_china_delight:block/wooden_mortar_mallet",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "mallet": "true",
+        "mallet_facing": "west"
+      },
+      "apply": {
+        "model": "northeast_china_delight:block/wooden_mortar_mallet",
+        "y": 270
+      }
+    }
+  ]
 }
