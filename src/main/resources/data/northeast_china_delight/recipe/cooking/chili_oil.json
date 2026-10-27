@@ -16,5 +16,9 @@
   "result": {
     "count": 1,
     "id": "northeast_china_delight:chili_oil"
+  },
+  "container": {
+    "count": 1,
+    "id": "minecraft:glass_bottle"
   }
 }

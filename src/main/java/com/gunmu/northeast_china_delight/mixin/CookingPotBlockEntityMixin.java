@@ -28,7 +28,12 @@ import vectorwing.farmersdelight.common.crafting.CookingPotRecipe;
  * 都不对 —— 我们想要的是「留在锅里，每次扣 50 mB」。
  * <p>
  * 出菜发生在 {@code shrink} 之前。容量不够时如果等到扣瓶子再拒绝，菜已经进了成品槽。所以不足一剂时在方法开头就停住，进度不涨、瓶子留在锅里。
- * 油炸用油仍是整瓶消耗，不按 50 mB 卡。
+ * 两种情况整瓶消耗、不按 50 mB 扣，锅里退回空玻璃瓶：
+ * <ul>
+ *   <li>油炸：用油（{@code deep_fry_oils}）做油炸菜（{@code deep_fried_dishes}）；</li>
+ *   <li>做的本身就是瓶装调料（比如食用油 + 辣椒熬辣椒油）：出锅是满满一瓶 250 mB，原料瓶也得是满瓶、整瓶倒进去，
+ *       不然 50 mB 油就能熬出 250 mB 辣椒油。这种原料瓶不满时锅不开火。</li>
+ * </ul>
  */
 @Mixin(CookingPotBlockEntity.class)
 public abstract class CookingPotBlockEntityMixin {
@@ -72,6 +77,12 @@ public abstract class CookingPotBlockEntityMixin {
             if (stack.is(ModItems.DEEP_FRY_OILS) && result.is(ModItems.DEEP_FRIED_DISHES)) {
                 continue;
             }
+            if (SeasoningBottleItem.isBottle(result)) {
+                if (!SeasoningBottleItem.isFull(stack)) {
+                    return true;
+                }
+                continue;
+            }
             if (SeasoningBottleItem.remainingMb(stack) < SeasoningBottleItem.DOSE_MB) {
                 return true;
             }
@@ -101,7 +112,8 @@ public abstract class CookingPotBlockEntityMixin {
             original.call(stack, amount);
             return;
         }
-        if (stack.is(ModItems.DEEP_FRY_OILS) && this.northeast$cookingResult.is(ModItems.DEEP_FRIED_DISHES)) {
+        if ((stack.is(ModItems.DEEP_FRY_OILS) && this.northeast$cookingResult.is(ModItems.DEEP_FRIED_DISHES))
+                || SeasoningBottleItem.isBottle(this.northeast$cookingResult)) {
             stack.shrink(amount);
             ((CookingPotBlockEntityInvoker) this)
                     .northeast$ejectIngredientRemainder(new ItemStack(Items.GLASS_BOTTLE));

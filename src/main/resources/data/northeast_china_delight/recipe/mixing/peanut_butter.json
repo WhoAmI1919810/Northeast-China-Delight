@@ -1,5 +1,5 @@
 {
-  "type": "create:milling",
+  "type": "create:mixing",
   "ingredients": [
     {
       "item": "northeast_china_delight:roasted_peanuts"
@@ -7,6 +7,7 @@
   ],
   "results": [
     {
+      "amount": 250,
       "id": "northeast_china_delight:peanut_butter"
     }
   ]
