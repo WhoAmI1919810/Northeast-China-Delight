@@ -1,5 +1,6 @@
 package com.gunmu.northeast_china_delight.compat.jei;
 
+import com.gunmu.northeast_china_delight.crafting.PoundingRecipes;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.Nullable;
@@ -9,7 +10,7 @@ import java.util.List;
 /** JEI 里的一条「舂捣」配方，保留全部输入、产物和阶段模型信息。 */
 public record PoundJeiRecipe(ResourceLocation id, List<Input> inputs, List<ItemStack> tool,
                              int poundTimes, float chargeThreshold, List<Output> outputs,
-                             List<ResourceLocation> stageModels) {
+                             List<ResourceLocation> stageModels, PoundingRecipes.StageModelMode stageModelMode) {
 
     /** {@code items} 中每个候选的 count 已经设置成配方需求数量。 */
     public record Input(List<ItemStack> items, int count) {

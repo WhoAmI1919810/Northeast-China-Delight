@@ -74,7 +74,8 @@ public final class PoundDataRecipe implements Recipe<
                 ? this.rule
                 : new PoundingRecipes.Recipe(effective, this.rule.priority(), this.rule.inputs(),
                         this.rule.tool(), this.rule.poundTimes(), this.rule.chargeThreshold(),
-                        this.rule.stageModels(), this.rule.results(), this.rule.transition());
+                        this.rule.stageModels(), this.rule.results(), this.rule.transition(),
+                        this.rule.stageModelMode(), this.rule.finishedModel());
     }
 
     @Nullable
@@ -125,6 +126,19 @@ public final class PoundDataRecipe implements Recipe<
                     + com.gunmu.northeast_china_delight.block.WoodenMortarBlock.MAX_STATE + " 个加工/成品模型）");
         }
 
+        PoundingRecipes.StageModelMode stageModelMode = PoundingRecipes.StageModelMode.parse(
+                config.has("stage_model_mode") ? GsonHelper.getAsString(config, "stage_model_mode") : null);
+        if (stageModelMode == null) {
+            throw new JsonParseException("舂捣配方 stage_model_mode 只能是 full 或 overlay：" + config.get("stage_model_mode"));
+        }
+        ResourceLocation finishedModel = null;
+        if (config.has("finished_model")) {
+            finishedModel = ResourceLocation.tryParse(GsonHelper.getAsString(config, "finished_model"));
+            if (finishedModel == null) {
+                throw new JsonParseException("舂捣配方 finished_model 无效：" + config.get("finished_model"));
+            }
+        }
+
         List<PoundingRecipes.Result> results = decodeResults(config);
         if (results.isEmpty()) {
             throw new JsonParseException("舂捣配方的产物不能为空");
@@ -134,7 +148,7 @@ public final class PoundDataRecipe implements Recipe<
                 config.has("transition") ? config.get("transition").getAsString() : null);
 
         return new PoundingRecipes.Recipe(recipeId, integer(config, "priority", 0), inputs, tool,
-                poundTimes, chargeThreshold, stageModels, results, transition);
+                poundTimes, chargeThreshold, stageModels, results, transition, stageModelMode, finishedModel);
     }
 
     private static List<PoundingRecipes.Input> decodeInputs(JsonObject config) {

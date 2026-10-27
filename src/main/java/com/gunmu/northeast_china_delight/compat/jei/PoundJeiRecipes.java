@@ -48,7 +48,7 @@ public final class PoundJeiRecipes {
             }
 
             list.add(new PoundJeiRecipe(recipe.id(), List.copyOf(inputs), tool, recipe.poundTimes(),
-                    recipe.chargeThreshold(), List.copyOf(outputs), recipe.stageModels()));
+                    recipe.chargeThreshold(), List.copyOf(outputs), recipe.stageModels(), recipe.stageModelMode()));
         }
         return List.copyOf(list);
     }

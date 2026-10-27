@@ -4,6 +4,7 @@ import com.gunmu.northeast_china_delight.NortheastChinaDelight;
 import com.gunmu.northeast_china_delight.block.ModBlocks;
 import com.gunmu.northeast_china_delight.block.WoodenMortarBlock;
 import com.gunmu.northeast_china_delight.client.WoodenMortarRenderer;
+import com.gunmu.northeast_china_delight.crafting.PoundingRecipes;
 import com.gunmu.northeast_china_delight.util.DdIds;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
@@ -223,6 +224,7 @@ public class PoundRecipeCategory implements IRecipeCategory<PoundJeiRecipe> {
                 .setValue(WoodenMortarBlock.FACING, Direction.SOUTH)
                 .setValue(WoodenMortarBlock.STATE, 1);
 
+        boolean overlay = recipe.stageModelMode() == PoundingRecipes.StageModelMode.OVERLAY;
         BakedModel model = null;
         if (!recipe.stageModels().isEmpty()) {
             model = WoodenMortarRenderer.bakedModel(recipe.stageModels().get(0));
@@ -240,7 +242,16 @@ public class PoundRecipeCategory implements IRecipeCategory<PoundJeiRecipe> {
         pose.mulPose(Axis.YP.rotationDegrees(225.0F));
         pose.translate(-0.5F, -0.5F, -0.5F);
 
-        if (model != null) {
+        if (overlay) {
+            // 内容物模型不带臼身：先画空木臼，再叠内容物（缺内容物时只剩空臼）
+            WoodenMortarRenderer.renderBakedModel(pose, buffers, state,
+                    WoodenMortarRenderer.bakedModel(WoodenMortarRenderer.EMPTY_MORTAR_MODEL),
+                    LightTexture.FULL_BRIGHT, OverlayTexture.NO_OVERLAY);
+            if (model != null) {
+                WoodenMortarRenderer.renderBakedModel(pose, buffers, state, model,
+                        LightTexture.FULL_BRIGHT, OverlayTexture.NO_OVERLAY);
+            }
+        } else if (model != null) {
             WoodenMortarRenderer.renderBakedModel(pose, buffers, state, model,
                     LightTexture.FULL_BRIGHT, OverlayTexture.NO_OVERLAY);
         } else {
@@ -293,7 +304,8 @@ public class PoundRecipeCategory implements IRecipeCategory<PoundJeiRecipe> {
         public void draw(GuiGraphics graphics, int xOffset, int yOffset) {
             PoundJeiRecipe empty = new PoundJeiRecipe(DdIds.of(NortheastChinaDelight.MODID, "pounding/icon"),
                     java.util.List.of(), java.util.List.of(), 1, 0.9F, java.util.List.of(),
-                    java.util.List.of(DdIds.of(NortheastChinaDelight.MODID, "block/wooden_mortar_1")));
+                    java.util.List.of(DdIds.of(NortheastChinaDelight.MODID, "block/wooden_mortar_1")),
+                    PoundingRecipes.StageModelMode.FULL);
             drawStation(graphics, empty, xOffset + 8.0F, yOffset + 10.0F, 9.0F);
         }
     }
