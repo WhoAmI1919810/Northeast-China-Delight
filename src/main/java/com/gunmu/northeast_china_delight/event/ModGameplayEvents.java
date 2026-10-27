@@ -9,6 +9,7 @@ import com.gunmu.northeast_china_delight.compat.displaydelight.DisplayDelightCom
 import com.gunmu.northeast_china_delight.NortheastChinaConfig;
 import com.gunmu.northeast_china_delight.block.WoodenMortarBlock;
 import com.gunmu.northeast_china_delight.item.ModItems;
+import com.gunmu.northeast_china_delight.item.SeasoningBottleItem;
 import com.gunmu.northeast_china_delight.item.SeaWaterBucketItem;
 import com.gunmu.northeast_china_delight.item.SeaWaterBuckets;
 import com.gunmu.northeast_china_delight.util.DdIds;
@@ -33,6 +34,7 @@ import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.monster.EnderMan;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.AnvilMenu;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.ItemUtils;
 import net.minecraft.world.item.Items;
@@ -92,6 +94,13 @@ import net.neoforged.neoforge.event.entity.player.FillBucketEvent;
 import net.minecraft.world.phys.HitResult;
 //?}
 //? if <1.20.2 {
+/*import net.minecraftforge.event.AnvilUpdateEvent;
+import net.minecraftforge.event.GrindstoneEvent;
+*///?} else {
+import net.neoforged.neoforge.event.AnvilUpdateEvent;
+import net.neoforged.neoforge.event.GrindstoneEvent;
+//?}
+//? if <1.20.2 {
 /*import net.minecraftforge.event.entity.living.LivingChangeTargetEvent;
 *///?} else {
 import net.neoforged.neoforge.event.entity.living.LivingChangeTargetEvent;
@@ -148,6 +157,33 @@ public final class ModGameplayEvents
         if (WoodenMortarBlock.pound(player, event.getLevel(), event.getPos())) {
             player.resetAttackStrengthTicker();
             event.setCanceled(true);
+        }
+    }
+
+    /**
+     * 砂轮不处理瓶装调料。瓶装调料的耐久就是剩余毫升，原版砂轮会把两瓶的耐久加在一起再多送一截，
+     * 等于凭空多出调料、还吞掉一个玻璃瓶。并瓶请用工作台，见 {@code SeasoningBottleMergeRecipe}。
+     */
+    @SubscribeEvent
+    public static void onGrindstonePlace(GrindstoneEvent.OnPlaceItem event) {
+        if (SeasoningBottleItem.isBottle(event.getTopItem()) || SeasoningBottleItem.isBottle(event.getBottomItem())) {
+            event.setCanceled(true);
+        }
+    }
+
+    /**
+     * 铁砧同理：左边是瓶装调料、右边放了东西（拿另一瓶「修理」）就不给结果。只改名（右边空着）照常。
+     *
+     * <p>取消后原版直接 return、不会清结果格，所以手动清掉，免得还留着上一次（比如只改名）算出来的结果。</p>
+     */
+    @SubscribeEvent
+    public static void onAnvilUpdate(AnvilUpdateEvent event) {
+        if (!SeasoningBottleItem.isBottle(event.getLeft()) || event.getRight().isEmpty()) {
+            return;
+        }
+        event.setCanceled(true);
+        if (event.getPlayer() != null && event.getPlayer().containerMenu instanceof AnvilMenu menu) {
+            menu.getSlot(AnvilMenu.RESULT_SLOT).set(ItemStack.EMPTY);
         }
     }
 

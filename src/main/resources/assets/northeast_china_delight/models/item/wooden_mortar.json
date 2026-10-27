@@ -1,3 +1,10 @@
 {
-  "parent": "northeast_china_delight:block/wooden_mortar"
+  "parent": "northeast_china_delight:block/wooden_mortar",
+  "display": {
+    "gui": {
+      "rotation": [30, 225, 0],
+      "translation": [0, 0, 0],
+      "scale": [0.625, 0.625, 0.625]
+    }
+  }
 }

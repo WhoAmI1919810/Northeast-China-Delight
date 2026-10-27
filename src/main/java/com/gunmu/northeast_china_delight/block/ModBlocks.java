@@ -231,10 +231,11 @@ public class ModBlocks {
     public static final Supplier<Block> WOODEN_MORTAR = block(
             "wooden_mortar",
             WoodenMortarBlock::new,
+            // 硬度、爆炸抗性照木板；斧子挖得快（data/minecraft/tags/block/mineable/axe.json）
             BlockBehaviour.Properties.of()
                     .mapColor(MapColor.WOOD)
                     .instrument(NoteBlockInstrument.BASS)
-                    .strength(2.0F)
+                    .strength(2.0F, 3.0F)
                     .sound(SoundType.WOOD)
                     .noOcclusion()
     );
