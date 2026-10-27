@@ -182,6 +182,7 @@ public class PoundRecipeCategory implements IRecipeCategory<PoundJeiRecipe> {
     public void createRecipeExtras(IRecipeExtrasBuilder builder, PoundJeiRecipe recipe, IFocusGroup focuses) {
         builder.addWidget(new StationWidget(recipe));
         builder.addWidget(new TimesWidget(this.arrow, recipe.poundTimes(), recipe.chargeThreshold()));
+        builder.addWidget(new ContainerWidget(recipe));
     }
 
     @Override
@@ -193,6 +194,7 @@ public class PoundRecipeCategory implements IRecipeCategory<PoundJeiRecipe> {
                 STATION_Y + STATION_SIZE / 2.0F, STATION_SCALE);
         this.arrow.draw(graphics, ARROW_X, ARROW_Y);
         drawTimes(graphics, recipe.poundTimes(), recipe.chargeThreshold());
+        drawContainerHint(graphics, recipe);
         //?}
     }
 
@@ -226,6 +228,39 @@ public class PoundRecipeCategory implements IRecipeCategory<PoundJeiRecipe> {
             pose.translate(chargeX, TIMES_Y + 9.0F, 0.0F);
             pose.scale(scale, scale, 1.0F);
             graphics.drawString(font, charge, 0, 0, TEXT_COLOR, false);
+            pose.popPose();
+        }
+    }
+
+    /** 有 result_container / result_mb 时，把「容器」和每次装出的毫升数直接画在对应槽位下方。 */
+    private static void drawContainerHint(GuiGraphics graphics, PoundJeiRecipe recipe) {
+        if (recipe.resultContainer() == null && recipe.resultMb() <= 0) {
+            return;
+        }
+
+        Font font = Minecraft.getInstance().font;
+        PoseStack pose = graphics.pose();
+        float scale = 0.65F;
+
+        if (recipe.resultContainer() != null) {
+            Component label = Component.translatable("jei.northeast_china_delight.pound.container");
+            float x = ARROW_X + 4 + SLOT / 2.0F - font.width(label) * scale / 2.0F;
+            pose.pushPose();
+            pose.translate(x, ARROW_Y + 18 + SLOT + 2.0F, 0.0F);
+            pose.scale(scale, scale, 1.0F);
+            graphics.drawString(font, label, 0, 0, TEXT_COLOR, false);
+            pose.popPose();
+        }
+
+        if (recipe.resultMb() > 0) {
+            Component amount = Component.translatable(
+                    "jei.northeast_china_delight.pound.result_mb_value", recipe.resultMb());
+            float x = RESULTS_X + SLOT / 2.0F - font.width(amount) * scale / 2.0F;
+            float y = gridY(0, 1) + SLOT + 2.0F;
+            pose.pushPose();
+            pose.translate(x, y, 0.0F);
+            pose.scale(scale, scale, 1.0F);
+            graphics.drawString(font, amount, 0, 0, TEXT_COLOR, false);
             pose.popPose();
         }
     }
@@ -298,6 +333,18 @@ public class PoundRecipeCategory implements IRecipeCategory<PoundJeiRecipe> {
         public void drawWidget(GuiGraphics graphics, double mouseX, double mouseY) {
             this.arrow.draw(graphics, ARROW_X, ARROW_Y);
             drawTimes(graphics, this.poundTimes, this.chargeThreshold);
+        }
+    }
+
+    private record ContainerWidget(PoundJeiRecipe recipe) implements IRecipeWidget {
+        @Override
+        public ScreenPosition getPosition() {
+            return new ScreenPosition(0, 0);
+        }
+
+        @Override
+        public void drawWidget(GuiGraphics graphics, double mouseX, double mouseY) {
+            drawContainerHint(graphics, this.recipe);
         }
     }
 

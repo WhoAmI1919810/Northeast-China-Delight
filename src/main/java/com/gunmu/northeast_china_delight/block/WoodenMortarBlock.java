@@ -20,9 +20,7 @@ import net.minecraft.world.InteractionResult;
 *///?}
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-//? if >=1.20.5 {
-/*import net.minecraft.world.item.Items;
-*///?}
+import net.minecraft.world.item.Items;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
@@ -353,6 +351,7 @@ public class WoodenMortarBlock extends BaseEntityBlock {
         }
         // 配方写了 result_container（比如舂出来的油）就得拿着那个容器才能取，每取一次扣一个；
         // 再写了 result_mb 就按毫升装：拿空容器装出一瓶 result_mb 的，拿没装满的同种瓶子就往里续，不扣瓶子
+        ItemStack held = player.getMainHandItem();
         ItemStack container = recipe.resultContainer();
         int mb = recipe.resultMb();
         boolean topUp = mb > 0 && held.is(recipe.liquidProduct().getItem());
