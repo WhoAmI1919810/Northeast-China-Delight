@@ -551,7 +551,8 @@ public final class ModGameplayEvents
         }
         else if (stack.is(ModItems.ANIMAL_OIL.get()))
         {
-            event.setBurnTime(800);
+            // 熔炉烧掉的是一剂（50 mB）：剩下的瓶子留在燃料槽接着烧，一满瓶共 5 × 160 = 800，4 瓶 = 一块动物油块
+            event.setBurnTime(160);
         }
         else if (stack.is(ModItems.ANIMAL_OIL_BLOCK_ITEM.get()))
         {

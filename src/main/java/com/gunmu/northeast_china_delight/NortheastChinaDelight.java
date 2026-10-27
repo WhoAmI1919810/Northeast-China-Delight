@@ -13,6 +13,7 @@ import com.gunmu.northeast_china_delight.compat.jei.VatJeiSync;
 import com.gunmu.northeast_china_delight.crafting.ModVatRecipes;
 import com.gunmu.northeast_china_delight.crafting.ModGrillRecipes;
 import com.gunmu.northeast_china_delight.crafting.ModDryingRecipes;
+import com.gunmu.northeast_china_delight.crafting.ModCraftingRecipes;
 import com.gunmu.northeast_china_delight.crafting.ModPoundRecipes;
 import com.gunmu.northeast_china_delight.effect.DishEffectEvents;
 import com.gunmu.northeast_china_delight.effect.ModEffects;
@@ -169,6 +170,7 @@ public class NortheastChinaDelight
         ModGrillRecipes.register(modEventBus);
         ModDryingRecipes.register(modEventBus);
         ModPoundRecipes.register(modEventBus);
+        ModCraftingRecipes.register(modEventBus);
         ModCreativeTabs.register(modEventBus);
         ModLootModifiers.register(modEventBus);
         ModEffects.register(modEventBus);
