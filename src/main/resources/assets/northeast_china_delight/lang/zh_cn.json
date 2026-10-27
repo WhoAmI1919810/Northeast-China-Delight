@@ -362,8 +362,10 @@
   "jei.northeast_china_delight.pound.pool_chance": "该组出现概率：%s%%",
   "jei.northeast_china_delight.pound.count_range": "数量：%s~%s",
   "jei.northeast_china_delight.pound.byproduct": "副产物",
+  "jei.northeast_china_delight.pound.container": "容器",
   "jei.northeast_china_delight.pound.result_container": "取出成品时要拿着它，每取一次用掉一个",
   "jei.northeast_china_delight.pound.result_mb": "每次 %s mB：可以用空瓶装，也可以续进没装满的同种瓶子",
+  "jei.northeast_china_delight.pound.result_mb_value": "%s mB",
   "jei.northeast_china_delight.grill.seasoning_amount": "%s mB",
   "jei.northeast_china_delight.time.seconds": "%s 秒",
   
