@@ -3,11 +3,13 @@ package com.gunmu.northeast_china_delight.block;
 import com.gunmu.northeast_china_delight.advancement.ModAdvancements;
 import com.gunmu.northeast_china_delight.crafting.PoundingRecipes;
 import com.gunmu.northeast_china_delight.item.ModItems;
+import com.gunmu.northeast_china_delight.item.SeasoningBottleItem;
 import com.gunmu.northeast_china_delight.util.DdStacks;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.RandomSource;
@@ -349,17 +351,49 @@ public class WoodenMortarBlock extends BaseEntityBlock {
         if (state.getValue(STATE) < recipe.doneState()) {
             return null;
         }
+        // 配方写了 result_container（比如舂出来的油）就得拿着那个容器才能取，每取一次扣一个；
+        // 再写了 result_mb 就按毫升装：拿空容器装出一瓶 result_mb 的，拿没装满的同种瓶子就往里续，不扣瓶子
+        ItemStack container = recipe.resultContainer();
+        int mb = recipe.resultMb();
+        boolean topUp = mb > 0 && held.is(recipe.liquidProduct().getItem());
+        if (container != null && !held.is(container.getItem()) && !topUp) {
+            if (!level.isClientSide) {
+                player.displayClientMessage(Component.translatable(
+                        "message.northeast_china_delight.mortar.need_container", container.getHoverName()), true);
+            }
+            return InteractionResult.FAIL;
+        }
+        if (topUp && SeasoningBottleItem.usedMb(held) < mb) {
+            if (!level.isClientSide) {
+                player.displayClientMessage(Component.translatable(
+                        "message.northeast_china_delight.mortar.bottle_full"), true);
+            }
+            return InteractionResult.FAIL;
+        }
         if (level.isClientSide) {
             return InteractionResult.SUCCESS;
         }
 
-        List<ItemStack> results = mortar.hasPendingResults()
-                ? mortar.pendingResults()
-                : recipe.rollResults(level.random);
-        giveResults(player, results);
+        if (topUp) {
+            SeasoningBottleItem.refill(held, mb);
+        } else {
+            if (container != null && !player.getAbilities().instabuild) {
+                held.shrink(1);
+            }
+            if (mb > 0) {
+                ItemStack filled = recipe.liquidProduct().copyWithCount(1);
+                filled.setDamageValue(SeasoningBottleItem.CAPACITY_MB - mb);
+                giveOrDrop(player, filled);
+            } else {
+                giveResults(player, mortar.hasPendingResults()
+                        ? mortar.pendingResults()
+                        : recipe.rollResults(level.random));
+            }
+        }
         mortar.clear();
         setStage(level, pos, state, 0);
-        level.playSound(null, pos, SoundEvents.ITEM_FRAME_REMOVE_ITEM, SoundSource.BLOCKS, 0.8F, 1.0F);
+        level.playSound(null, pos, container != null && container.is(Items.GLASS_BOTTLE)
+                ? SoundEvents.BOTTLE_FILL : SoundEvents.ITEM_FRAME_REMOVE_ITEM, SoundSource.BLOCKS, 0.8F, 1.0F);
         return InteractionResult.SUCCESS;
     }
 

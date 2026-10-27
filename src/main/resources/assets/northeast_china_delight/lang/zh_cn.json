@@ -203,6 +203,8 @@
   "message.northeast_china_delight.vat.need_bottle_vinegar": "醋要用玻璃瓶装",
   "message.northeast_china_delight.vat.need_bottle_sour_water": "酸引水要用玻璃瓶装",
   "message.northeast_china_delight.vat.need_bottle_white_vinegar": "白醋要用玻璃瓶装",
+  "message.northeast_china_delight.mortar.need_container": "要用%s来装",
+  "message.northeast_china_delight.mortar.bottle_full": "瓶子装不下了",
   "message.northeast_china_delight.vat.need_bottle_fish_sauce": "鱼露要用玻璃瓶装",
   "message.northeast_china_delight.vat.need_bottle_shrimp_paste": "虾酱要用玻璃瓶装",
   "message.northeast_china_delight.vat.need_bottle_kvass": "格瓦斯要用玻璃瓶装",
@@ -360,6 +362,8 @@
   "jei.northeast_china_delight.pound.pool_chance": "该组出现概率：%s%%",
   "jei.northeast_china_delight.pound.count_range": "数量：%s~%s",
   "jei.northeast_china_delight.pound.byproduct": "副产物",
+  "jei.northeast_china_delight.pound.result_container": "取出成品时要拿着它，每取一次用掉一个",
+  "jei.northeast_china_delight.pound.result_mb": "每次 %s mB：可以用空瓶装，也可以续进没装满的同种瓶子",
   "jei.northeast_china_delight.grill.seasoning_amount": "%s mB",
   "jei.northeast_china_delight.time.seconds": "%s 秒",
   

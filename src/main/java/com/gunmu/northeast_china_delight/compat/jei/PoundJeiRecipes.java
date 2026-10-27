@@ -1,6 +1,7 @@
 package com.gunmu.northeast_china_delight.compat.jei;
 
 import com.gunmu.northeast_china_delight.crafting.PoundingRecipes;
+import com.gunmu.northeast_china_delight.item.SeasoningBottleItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeManager;
 
@@ -41,6 +42,10 @@ public final class PoundJeiRecipes {
             for (PoundingRecipes.Result result : recipe.results()) {
                 ItemStack stack = result.stack().copy();
                 stack.setCount(Math.min(result.maxCount(), Math.max(1, stack.getMaxStackSize())));
+                if (recipe.resultMb() > 0) {
+                    // 按毫升装的显示成只装了这么多的瓶子，耐久条一看就知道
+                    stack.setDamageValue(SeasoningBottleItem.CAPACITY_MB - recipe.resultMb());
+                }
                 outputs.add(new PoundJeiRecipe.Output(stack, result.minCount(), result.maxCount(),
                         result.chance(), result.byproduct(), result.pool(), result.weight(),
                         result.pooled() ? poolWeights.getOrDefault(result.pool(), result.weight()) : 0,
@@ -48,7 +53,8 @@ public final class PoundJeiRecipes {
             }
 
             list.add(new PoundJeiRecipe(recipe.id(), List.copyOf(inputs), tool, recipe.poundTimes(),
-                    recipe.chargeThreshold(), List.copyOf(outputs), recipe.stageModels(), recipe.stageModelMode()));
+                    recipe.chargeThreshold(), List.copyOf(outputs), recipe.stageModels(), recipe.stageModelMode(),
+                    recipe.resultContainer(), recipe.resultMb()));
         }
         return List.copyOf(list);
     }

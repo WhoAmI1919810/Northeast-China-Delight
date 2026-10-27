@@ -5,6 +5,7 @@ import com.google.gson.JsonParser;
 import com.gunmu.northeast_china_delight.NortheastChinaDelight;
 import com.gunmu.northeast_china_delight.crafting.PoundDataRecipe;
 import com.gunmu.northeast_china_delight.crafting.PoundingRecipes;
+import com.gunmu.northeast_china_delight.item.ModItems;
 import com.gunmu.northeast_china_delight.util.DdIds;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
@@ -93,6 +94,45 @@ public final class PoundGameTests {
                 || !recipe.stageModel(1).equals(first) || !recipe.stageModel(2).equals(second)
                 || !recipe.stageModel(3).equals(done)) {
             helper.fail("Overlay mode should keep stage order and use finished_model only for the done state");
+        }
+        helper.succeed();
+    }
+
+    @GameTest(template = "empty")
+    public static void resultContainerDecodes(GameTestHelper helper) {
+        PoundingRecipes.Recipe recipe = decode(
+                "{\"input\":{\"item\":\"northeast_china_delight:roasted_peanuts\"},"
+                        + "\"tool\":{\"item\":\"northeast_china_delight:wooden_mallet\"},"
+                        + "\"pound_times\":3,"
+                        + "\"result\":{\"item\":\"northeast_china_delight:cooking_oil\",\"count\":1},"
+                        + "\"result_mb\":50,"
+                        + "\"result_container\":{\"item\":\"minecraft:glass_bottle\"}}",
+                DdIds.of(NortheastChinaDelight.MODID, "pounding/test_result_container"));
+        if (recipe == null || recipe.resultContainer() == null
+                || !recipe.resultContainer().is(Items.GLASS_BOTTLE) || recipe.resultContainer().getCount() != 1
+                || recipe.resultMb() != 50 || !recipe.liquidProduct().is(ModItems.COOKING_OIL.get())) {
+            helper.fail("result_container / result_mb should decode to 50 mB of cooking oil in a glass bottle");
+            return;
+        }
+        boolean rejected = false;
+        try {
+            decode("{\"input\":{\"item\":\"northeast_china_delight:roasted_peanuts\"},"
+                            + "\"result\":{\"item\":\"northeast_china_delight:cooking_oil\",\"count\":1},"
+                            + "\"result_mb\":50}",
+                    DdIds.of(NortheastChinaDelight.MODID, "pounding/test_mb_without_container"));
+        } catch (RuntimeException expected) {
+            rejected = true;
+        }
+        if (!rejected) {
+            helper.fail("result_mb without result_container must be rejected");
+            return;
+        }
+        PoundingRecipes.Recipe legacy = decode(
+                "{\"input\":{\"item\":\"farmersdelight:cooked_rice\"},"
+                        + "\"result\":{\"item\":\"northeast_china_delight:pounded_rice_cake\",\"count\":2}}",
+                DdIds.of(NortheastChinaDelight.MODID, "pounding/test_no_container"));
+        if (legacy == null || legacy.resultContainer() != null) {
+            helper.fail("Recipes without result_container can be taken out bare-handed");
         }
         helper.succeed();
     }

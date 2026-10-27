@@ -126,11 +126,15 @@ public final class PoundingRecipes {
      * @param results         多项产物，各自独立掷概率
      * @param stageModelMode  阶段模型是整只木臼还是只有内容物
      * @param finishedModel   成品状态单独的模型；不写时沿用最后一个阶段模型
+     * @param resultContainer 取成品时手里必须拿着的容器（比如舂出来的油要拿玻璃瓶装），每取一次扣一个；null 表示空手就能取
+     * @param resultMb        大于 0 时成品按毫升装：唯一的产物是一种瓶装调料，拿空容器装出一瓶这么多毫升的，
+     *                        拿没装满的同种瓶子就往里续；0 表示成品就是整件物品
      */
     public record Recipe(ResourceLocation id, int priority, List<Input> inputs, Ingredient tool,
                          int poundTimes, float chargeThreshold, List<ResourceLocation> stageModels,
                          List<Result> results, Transition transition, StageModelMode stageModelMode,
-                         @Nullable ResourceLocation finishedModel) {
+                         @Nullable ResourceLocation finishedModel, @Nullable ItemStack resultContainer,
+                         int resultMb) {
 
         public Recipe {
             inputs = List.copyOf(inputs);
@@ -143,6 +147,15 @@ public final class PoundingRecipes {
             if (stageModelMode == null) {
                 stageModelMode = StageModelMode.FULL;
             }
+            if (resultContainer != null) {
+                resultContainer = resultContainer.copyWithCount(1);
+            }
+            resultMb = Math.max(0, resultMb);
+        }
+
+        /** 按毫升装时，装的是哪种瓶装调料 */
+        public ItemStack liquidProduct() {
+            return this.results.get(0).stack();
         }
 
         /** 旧写法：阶段模型是整只木臼，成品沿用最后一个阶段模型 */
@@ -150,7 +163,7 @@ public final class PoundingRecipes {
                       int poundTimes, float chargeThreshold, List<ResourceLocation> stageModels,
                       List<Result> results, Transition transition) {
             this(id, priority, inputs, tool, poundTimes, chargeThreshold, stageModels, results, transition,
-                    StageModelMode.FULL, null);
+                    StageModelMode.FULL, null, null, 0);
         }
 
         /** 装料后的第一个状态（stageModels[0]） */
