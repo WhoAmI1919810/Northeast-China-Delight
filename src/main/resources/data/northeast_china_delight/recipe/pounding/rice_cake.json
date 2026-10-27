@@ -15,12 +15,14 @@
       ]
     },
     "pound_times": 4,
+    "stage_model_mode": "overlay",
     "stage_models": [
-      "northeast_china_delight:block/wooden_mortar_1",
-      "northeast_china_delight:block/wooden_mortar_2",
-      "northeast_china_delight:block/wooden_mortar_3",
-      "northeast_china_delight:block/wooden_mortar_4"
+      "northeast_china_delight:block/wooden_mortar_rice_cake_0",
+      "northeast_china_delight:block/wooden_mortar_rice_cake_1",
+      "northeast_china_delight:block/wooden_mortar_rice_cake_2",
+      "northeast_china_delight:block/wooden_mortar_rice_cake_3"
     ],
+    "finished_model": "northeast_china_delight:block/wooden_mortar_rice_cake_done",
     "result": {
       "item": "northeast_china_delight:pounded_rice_cake",
       "count": 2

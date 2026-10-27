@@ -45,6 +45,27 @@ public final class PoundingRecipes {
         }
     }
 
+    /** 阶段模型画成什么样 */
+    public enum StageModelMode {
+        /** 阶段模型就是一整只木臼（旧写法，默认） */
+        FULL,
+        /** 阶段模型只有臼里的内容物，底下由渲染器另画一只空木臼 */
+        OVERLAY;
+
+        /** 认不出的写法返回 null，由解析处报错 */
+        @Nullable
+        public static StageModelMode parse(@Nullable String raw) {
+            if (raw == null || raw.isBlank()) {
+                return FULL;
+            }
+            return switch (raw.trim().toLowerCase(Locale.ROOT)) {
+                case "full" -> FULL;
+                case "overlay" -> OVERLAY;
+                default -> null;
+            };
+        }
+    }
+
     /** 一种投入物需要多少份，以及每消耗一份返还什么容器。 */
     public record Input(Ingredient ingredient, int count, @Nullable ItemStack returnContainer) {
         public Input {
@@ -101,12 +122,15 @@ public final class PoundingRecipes {
     /**
      * @param inputs          多种输入及各自数量
      * @param chargeThreshold 本配方要求的挥击蓄力比例，0..1
-     * @param stageModels     装料/加工中/成品各阶段方块模型；数量决定 STATE 上限
+     * @param stageModels     装料/加工中各阶段方块模型；数量决定 STATE 上限
      * @param results         多项产物，各自独立掷概率
+     * @param stageModelMode  阶段模型是整只木臼还是只有内容物
+     * @param finishedModel   成品状态单独的模型；不写时沿用最后一个阶段模型
      */
     public record Recipe(ResourceLocation id, int priority, List<Input> inputs, Ingredient tool,
                          int poundTimes, float chargeThreshold, List<ResourceLocation> stageModels,
-                         List<Result> results, Transition transition) {
+                         List<Result> results, Transition transition, StageModelMode stageModelMode,
+                         @Nullable ResourceLocation finishedModel) {
 
         public Recipe {
             inputs = List.copyOf(inputs);
@@ -116,6 +140,17 @@ public final class PoundingRecipes {
                 throw new IllegalArgumentException("舂捣配方不能没有输入、阶段模型或产物");
             }
             chargeThreshold = Math.max(0.0F, Math.min(1.0F, chargeThreshold));
+            if (stageModelMode == null) {
+                stageModelMode = StageModelMode.FULL;
+            }
+        }
+
+        /** 旧写法：阶段模型是整只木臼，成品沿用最后一个阶段模型 */
+        public Recipe(ResourceLocation id, int priority, List<Input> inputs, Ingredient tool,
+                      int poundTimes, float chargeThreshold, List<ResourceLocation> stageModels,
+                      List<Result> results, Transition transition) {
+            this(id, priority, inputs, tool, poundTimes, chargeThreshold, stageModels, results, transition,
+                    StageModelMode.FULL, null);
         }
 
         /** 装料后的第一个状态（stageModels[0]） */
@@ -129,6 +164,9 @@ public final class PoundingRecipes {
         }
 
         public ResourceLocation stageModel(int state) {
+            if (state >= this.doneState() && this.finishedModel != null) {
+                return this.finishedModel;
+            }
             int index = Math.max(0, Math.min(this.stageModels.size() - 1, state - this.filledState()));
             return this.stageModels.get(index);
         }

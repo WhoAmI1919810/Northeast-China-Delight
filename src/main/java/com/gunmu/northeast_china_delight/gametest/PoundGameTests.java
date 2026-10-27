@@ -63,6 +63,37 @@ public final class PoundGameTests {
         if (Math.abs(recipe.chargeThreshold() - 0.9F) > 0.0001F) {
             helper.fail("Legacy recipe should keep the default 90% charge threshold");
         }
+        if (recipe.stageModelMode() != PoundingRecipes.StageModelMode.FULL || recipe.finishedModel() != null
+                || !recipe.stageModel(recipe.doneState()).equals(recipe.stageModels().get(0))) {
+            helper.fail("Without stage_model_mode / finished_model the stage models stay whole mortars");
+        }
+        helper.succeed();
+    }
+
+    @GameTest(template = "empty")
+    public static void overlayStageModelsAndFinishedModelDecode(GameTestHelper helper) {
+        PoundingRecipes.Recipe recipe = decode(
+                "{\"input\":{\"item\":\"farmersdelight:cooked_rice\"},"
+                        + "\"tool\":{\"item\":\"northeast_china_delight:wooden_mallet\"},"
+                        + "\"pound_times\":2,\"stage_model_mode\":\"overlay\","
+                        + "\"stage_models\":[\"northeast_china_delight:block/wooden_mortar_rice_cake_0\","
+                        + "\"northeast_china_delight:block/wooden_mortar_rice_cake_1\"],"
+                        + "\"finished_model\":\"northeast_china_delight:block/wooden_mortar_rice_cake_done\","
+                        + "\"result\":{\"item\":\"northeast_china_delight:pounded_rice_cake\",\"count\":2},"
+                        + "\"transition\":\"sequential\"}",
+                DdIds.of(NortheastChinaDelight.MODID, "pounding/test_overlay"));
+        if (recipe == null) {
+            helper.fail("Overlay pounding JSON should decode");
+            return;
+        }
+        ResourceLocation first = DdIds.of(NortheastChinaDelight.MODID, "block/wooden_mortar_rice_cake_0");
+        ResourceLocation second = DdIds.of(NortheastChinaDelight.MODID, "block/wooden_mortar_rice_cake_1");
+        ResourceLocation done = DdIds.of(NortheastChinaDelight.MODID, "block/wooden_mortar_rice_cake_done");
+        if (recipe.stageModelMode() != PoundingRecipes.StageModelMode.OVERLAY || recipe.doneState() != 3
+                || !recipe.stageModel(1).equals(first) || !recipe.stageModel(2).equals(second)
+                || !recipe.stageModel(3).equals(done)) {
+            helper.fail("Overlay mode should keep stage order and use finished_model only for the done state");
+        }
         helper.succeed();
     }
 

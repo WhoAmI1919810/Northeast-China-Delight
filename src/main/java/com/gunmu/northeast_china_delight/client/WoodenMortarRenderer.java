@@ -20,11 +20,19 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.client.resources.model.ModelResourceLocation;
 //?}
 
-/** 按当前配方阶段动态绘制木臼模型。 */
+/**
+ * 按当前配方阶段动态绘制木臼模型。
+ *
+ * <p>配方 {@code stage_model_mode} 为 overlay 时，阶段模型只有臼里的内容物：先画一只空木臼，
+ * 再在同一个朝向上叠画内容物。内容物模型缺失时只画空臼，不退回整只木臼的旧模型（否则会叠出两层臼身）。</p>
+ */
 public class WoodenMortarRenderer implements BlockEntityRenderer<WoodenMortarBlockEntity> {
 
     private static final ResourceLocation FALLBACK_MODEL =
             DdIds.of(NortheastChinaDelight.MODID, "block/wooden_mortar_1");
+    /** overlay 模式下垫在内容物底下的空木臼 */
+    public static final ResourceLocation EMPTY_MORTAR_MODEL =
+            DdIds.of(NortheastChinaDelight.MODID, "block/wooden_mortar");
 
     public WoodenMortarRenderer(BlockEntityRendererProvider.Context context) {
     }
@@ -39,15 +47,21 @@ public class WoodenMortarRenderer implements BlockEntityRenderer<WoodenMortarBlo
         }
 
         PoundingRecipes.Recipe recipe = mortar.resolve(mortar.getLevel());
+        boolean overlay = recipe != null && recipe.stageModelMode() == PoundingRecipes.StageModelMode.OVERLAY;
         ResourceLocation modelId = recipe == null ? FALLBACK_MODEL : recipe.stageModel(stage);
         BakedModel model = bakedModel(modelId);
         if (model == Minecraft.getInstance().getModelManager().getMissingModel()) {
-            model = bakedModel(FALLBACK_MODEL);
+            model = overlay ? null : bakedModel(FALLBACK_MODEL);
         }
 
         pose.pushPose();
         rotateToFacing(pose, state.getValue(WoodenMortarBlock.FACING));
-        renderBakedModel(pose, buffer, state, model, packedLight, packedOverlay);
+        if (overlay) {
+            renderBakedModel(pose, buffer, state, bakedModel(EMPTY_MORTAR_MODEL), packedLight, packedOverlay);
+        }
+        if (model != null) {
+            renderBakedModel(pose, buffer, state, model, packedLight, packedOverlay);
+        }
         pose.popPose();
     }
 
