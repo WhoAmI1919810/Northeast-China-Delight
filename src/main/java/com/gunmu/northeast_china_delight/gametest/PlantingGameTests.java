@@ -236,6 +236,49 @@ public final class PlantingGameTests
         }
     }
 
+    @GameTest(template = "empty")
+    public static void ginsengPlantsWithoutShade(GameTestHelper helper)
+    {
+        ServerLevel level = helper.getLevel();
+        setBiome(helper, "minecraft:snowy_taiga");
+        BlockPos ground = helper.absolutePos(new BlockPos(1, 1, 1));
+        BlockPos plant = ground.above();
+        level.setBlockAndUpdate(ground, Blocks.GRASS_BLOCK.defaultBlockState());
+        level.setBlockAndUpdate(plant, Blocks.SNOW.defaultBlockState());
+        Player player = mockPlayer(helper, GameType.SURVIVAL);
+        placeOn(level, player, ModItems.GINSENG_SEEDS.get(), plant);
+        helper.assertTrue(level.getBlockState(plant).is(ModBlocks.GINSENG_CROP.get()),
+                "头顶没有树叶也应该能种下参籽");
+        helper.runAfterDelay(2, () -> {
+            helper.assertTrue(level.getBlockState(plant).is(ModBlocks.GINSENG_CROP.get()),
+                    "没有树荫的人参在方块更新后应该继续存活");
+            helper.succeed();
+        });
+    }
+
+    @GameTest(template = "empty")
+    public static void ginsengShadeDoublesGrowthStep(GameTestHelper helper)
+    {
+        ServerLevel level = helper.getLevel();
+        setBiome(helper, "minecraft:snowy_taiga");
+        BlockPos ground = helper.absolutePos(new BlockPos(1, 1, 1));
+        BlockPos plant = ground.above();
+        level.setBlockAndUpdate(ground, Blocks.GRASS_BLOCK.defaultBlockState());
+        level.setBlockAndUpdate(plant, ModBlocks.GINSENG_CROP.get().defaultBlockState());
+        helper.assertTrue(GinsengCropBlock.growthStep(level, plant) == 1, "头顶没有树叶时一次长 1 个阶段");
+        BlockPos high = plant.above(GinsengCropBlock.SHADE_HEIGHT);
+        BlockPos tooHigh = high.above();
+        level.setBlockAndUpdate(high, Blocks.OAK_LEAVES.defaultBlockState());
+        boolean shadedAtLimit = GinsengCropBlock.growthStep(level, plant) == 2;
+        level.setBlockAndUpdate(high, Blocks.AIR.defaultBlockState());
+        level.setBlockAndUpdate(tooHigh, Blocks.OAK_LEAVES.defaultBlockState());
+        boolean shadedTooHigh = GinsengCropBlock.growthStep(level, plant) == 2;
+        level.setBlockAndUpdate(tooHigh, Blocks.AIR.defaultBlockState());
+        helper.assertTrue(shadedAtLimit, "头顶第 " + GinsengCropBlock.SHADE_HEIGHT + " 格的树叶也算树荫，一次长 2 个阶段");
+        helper.assertFalse(shadedTooHigh, "超过 " + GinsengCropBlock.SHADE_HEIGHT + " 格的树叶不算树荫");
+        helper.succeed();
+    }
+
     private static void addGinsengShade(ServerLevel level, BlockPos plant)
     {
         for (int y = 2; y <= 6; y++) {

@@ -85,8 +85,9 @@ public class NortheastJeiPlugin implements IModPlugin {
             registration.addRecipes(DRYING_TYPE, registeredDryingRecipes);
             //?}
         }
-        registration.addItemStackInfo(new ItemStack(ModItems.GINSENG.get()),
-                Component.translatable("jei.northeast_china_delight.info.ginseng"));
+        Component ginsengInfo = Component.translatable("jei.northeast_china_delight.info.ginseng");
+        registration.addItemStackInfo(new ItemStack(ModItems.GINSENG.get()), ginsengInfo);
+        registration.addItemStackInfo(new ItemStack(ModItems.GINSENG_SEEDS.get()), ginsengInfo);
         registration.addItemStackInfo(new ItemStack(ModItems.WOOD_EAR.get()),
                 Component.translatable("jei.northeast_china_delight.info.wood_ear"));
         registration.addItemStackInfo(new ItemStack(ModItems.HAZEL_MUSHROOM.get()),
