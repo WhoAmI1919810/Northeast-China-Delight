@@ -3,6 +3,7 @@ package com.gunmu.northeast_china_delight.gametest;
 import com.gunmu.northeast_china_delight.NortheastChinaDelight;
 import com.gunmu.northeast_china_delight.block.HazelnutBushBlock;
 import com.gunmu.northeast_china_delight.block.GinsengCropBlock;
+import com.gunmu.northeast_china_delight.block.ModBlockTags;
 import com.gunmu.northeast_china_delight.block.ModBlocks;
 import com.gunmu.northeast_china_delight.item.ModItems;
 import net.minecraft.core.BlockPos;
@@ -90,6 +91,7 @@ public final class PlantingGameTests
     public static void ginsengOnBareSoilIsNotSnowy(GameTestHelper helper)
     {
         ServerLevel level = helper.getLevel();
+        setBiome(helper, "minecraft:snowy_taiga");
         BlockPos ground = helper.absolutePos(new BlockPos(1, 1, 1));
         BlockPos plant = ground.above();
         level.setBlockAndUpdate(ground, Blocks.GRASS_BLOCK.defaultBlockState());
@@ -107,9 +109,79 @@ public final class PlantingGameTests
         Player player = mockPlayer(helper, GameType.SURVIVAL);
         placeOn(level, player, ModItems.GINSENG_SEEDS.get(), plant);
         helper.assertTrue(level.getBlockState(plant).is(ModBlocks.GINSENG_CROP.get()),
-                "人参应该能种下");
-        helper.assertFalse(level.getBlockState(plant).getValue(GinsengCropBlock.SNOWY),
-                "裸土上的人参不应该覆雪");
+                "人参放下的瞬间就没有留下，当前=" + level.getBlockState(plant)
+                        + "，下方=" + level.getBlockState(plant.below())
+                        + "，下方在可种植标签=" + level.getBlockState(plant.below()).is(ModBlockTags.GINSENG_PLANTABLE_ON)
+                        + "，群系温度=" + level.getBiome(plant).value().getBaseTemperature()
+                        + "，能否存活=" + ModBlocks.GINSENG_CROP.get().defaultBlockState()
+                        .canSurvive(level, plant));
+        helper.runAfterDelay(2, () -> {
+            helper.assertTrue(level.getBlockState(plant).is(ModBlocks.GINSENG_CROP.get()),
+                    "人参应该能种下并在方块更新后继续存活");
+            helper.assertFalse(level.getBlockState(plant).getValue(GinsengCropBlock.SNOWY),
+                    "裸土上的人参不应该覆雪");
+            helper.succeed();
+        });
+    }
+
+    @GameTest(template = "empty")
+    public static void ginsengInSnowLayerSurvives(GameTestHelper helper)
+    {
+        ServerLevel level = helper.getLevel();
+        setBiome(helper, "minecraft:snowy_taiga");
+        BlockPos ground = helper.absolutePos(new BlockPos(1, 1, 1));
+        BlockPos plant = ground.above();
+        level.setBlockAndUpdate(ground, Blocks.GRASS_BLOCK.defaultBlockState());
+        level.setBlockAndUpdate(plant, Blocks.SNOW.defaultBlockState());
+        addGinsengShade(level, plant);
+        Player player = mockPlayer(helper, GameType.SURVIVAL);
+        placeOn(level, player, ModItems.GINSENG_SEEDS.get(), plant);
+        helper.assertTrue(level.getBlockState(plant).is(ModBlocks.GINSENG_CROP.get())
+                        && level.getBlockState(plant).getValue(GinsengCropBlock.SNOWY),
+                "参籽应该能把一层雪替换成覆雪人参");
+        helper.runAfterDelay(2, () -> {
+            helper.assertTrue(level.getBlockState(plant).is(ModBlocks.GINSENG_CROP.get()),
+                    "雪层上的人参在方块更新后应该继续存活");
+            helper.succeed();
+        });
+    }
+
+    @GameTest(template = "empty")
+    public static void ginsengOnSnowBlockSurvives(GameTestHelper helper)
+    {
+        ServerLevel level = helper.getLevel();
+        setBiome(helper, "minecraft:snowy_taiga");
+        BlockPos ground = helper.absolutePos(new BlockPos(1, 1, 1));
+        BlockPos snow = ground.above();
+        BlockPos plant = snow.above();
+        level.setBlockAndUpdate(ground, Blocks.GRASS_BLOCK.defaultBlockState());
+        level.setBlockAndUpdate(snow, Blocks.SNOW_BLOCK.defaultBlockState());
+        addGinsengShade(level, plant);
+        Player player = mockPlayer(helper, GameType.SURVIVAL);
+        placeOn(level, player, ModItems.GINSENG_SEEDS.get(), plant);
+        helper.assertTrue(level.getBlockState(plant).is(ModBlocks.GINSENG_CROP.get())
+                        && level.getBlockState(plant).getValue(GinsengCropBlock.SNOWY),
+                "参籽应该能种在雪块上并显示覆雪形态");
+        helper.runAfterDelay(2, () -> {
+            helper.assertTrue(level.getBlockState(plant).is(ModBlocks.GINSENG_CROP.get()),
+                    "雪块上的人参在方块更新后应该继续存活");
+            helper.succeed();
+        });
+    }
+
+    @GameTest(template = "empty")
+    public static void ginsengWithoutSnowDoesNotPlant(GameTestHelper helper)
+    {
+        ServerLevel level = helper.getLevel();
+        setBiome(helper, "minecraft:snowy_taiga");
+        BlockPos ground = helper.absolutePos(new BlockPos(1, 1, 1));
+        BlockPos plant = ground.above();
+        level.setBlockAndUpdate(ground, Blocks.GRASS_BLOCK.defaultBlockState());
+        addGinsengShade(level, plant);
+        Player player = mockPlayer(helper, GameType.SURVIVAL);
+        placeOn(level, player, ModItems.GINSENG_SEEDS.get(), plant);
+        helper.assertFalse(level.getBlockState(plant).is(ModBlocks.GINSENG_CROP.get()),
+                "附近没有雪时不应种下参籽");
         helper.succeed();
     }
 
@@ -151,5 +223,27 @@ public final class PlantingGameTests
         {
             blockItem.place(context);
         }
+    }
+
+    private static void addGinsengShade(ServerLevel level, BlockPos plant)
+    {
+        for (int y = 2; y <= 6; y++) {
+            level.setBlockAndUpdate(plant.above(y), Blocks.OAK_LEAVES.defaultBlockState());
+        }
+    }
+
+    private static void setBiome(GameTestHelper helper, String biome)
+    {
+        BlockPos center = helper.absolutePos(new BlockPos(1, 1, 1));
+        // fillbiome 会把坐标量化到 4 格；边界必须跨过至少一个 quart，才能覆盖中心。
+        BlockPos min = center.offset(-4, -4, -4);
+        BlockPos max = center.offset(4, 12, 4);
+        String command = "fillbiome %d %d %d %d %d %d %s".formatted(
+                min.getX(), min.getY(), min.getZ(), max.getX(), max.getY(), max.getZ(), biome);
+        helper.getLevel().getServer().getCommands().performPrefixedCommand(
+                helper.getLevel().getServer().createCommandSourceStack().withLevel(helper.getLevel()), command);
+        helper.assertTrue(helper.getLevel().getBiome(center)
+                        .value().getBaseTemperature() < 0.15F,
+                "测试群系应该已经切成寒冷群系");
     }
 }
