@@ -5,6 +5,7 @@ import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.WorldGenRegion;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.item.ItemStack;
@@ -155,7 +156,9 @@ public class GinsengCropBlock extends BushBlock implements BonemealableBlock
         // 它会去算"贴壁"的邻块，触发邻近 chunk 的懒加载，正在生成的 chunk 又会反过来要这块，
         // 最终抛出 Requested chunk unavailable during world generation 把整个服务器打挂。
         // 改用 getUncachedNoiseBiome：这条路径直接问 BiomeSource，不读已生成的方块。
-        var biome = level instanceof net.minecraft.world.level.WorldGenLevel
+        // 注意 ServerLevel 也实现了 WorldGenLevel，不能拿 WorldGenLevel 做分叉；
+        // 否则普通游玩时也会读到噪声群系，和实际群系（包括 /fillbiome、结构改写）不一致。
+        var biome = level instanceof WorldGenRegion
                 ? level.getUncachedNoiseBiome(pos.getX() >> 2, pos.getY() >> 2, pos.getZ() >> 2)
                 : level.getBiome(pos);
         return biome.value().getBaseTemperature() < 0.15F;
