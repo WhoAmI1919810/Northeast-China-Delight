@@ -31,8 +31,9 @@ import net.minecraft.world.phys.shapes.VoxelShape;
  *
  * <p>和普通作物不一样的地方：</p>
  * <ul>
- *   <li>必须长在<b>寒冷生物群系</b>里，头顶要有树叶遮阴，附近要有雪（雪层、雪块、细雪都算）；</li>
- *   <li>长得极慢（随机刻 1/30 的进度）；</li>
+ *   <li>必须长在<b>寒冷生物群系</b>里，种参籽时附近要有雪（雪层、雪块、细雪都算）；</li>
+ *   <li>长得极慢（随机刻 1/30 的进度）；头顶 {@value #SHADE_HEIGHT} 格以内有树叶遮阴时，
+ *       每次长两个阶段，等于快一倍（不遮阴也能长）；</li>
  *   <li>直接破坏植株<b>只掉参籽</b>，想拿到人参得空手刨它脚下的土（见 {@code GinsengHarvestEvents}）；</li>
  *   <li>覆雪状态（{@link BlockStateProperties#SNOWY}）交给游戏自己维护：头顶盖上雪就是覆雪形态，
  *       雪化了自动变回来 —— 和草方块那套一模一样。</li>
@@ -50,7 +51,8 @@ public class GinsengCropBlock extends BushBlock implements BonemealableBlock
 
     private static final int GROWTH_DENOMINATOR = 30;
 
-    private static final int SHADE_HEIGHT = 6;
+    /** 头顶这么多格以内有树叶就算遮阴，长的那一下多长一个阶段 */
+    public static final int SHADE_HEIGHT = 20;
     private static final int SNOW_RANGE = 3;
 
     private static final VoxelShape[] SHAPE_BY_AGE = new VoxelShape[]{
@@ -95,7 +97,7 @@ public class GinsengCropBlock extends BushBlock implements BonemealableBlock
     }
 
     /**
-     * 参籽种下去：必须「寒冷群系 + 头顶有树荫」，另外它和野山参一样可以踩在雪片上长
+     * 参籽种下去：必须「寒冷群系 + 附近有雪」（树荫不强制，只影响长得快慢），另外它和野山参一样可以踩在雪片上长
      * —— 雪地里地表是一层雪片，参苗长在雪面才不会把底下的土露出来。
      */
     @Override
@@ -103,7 +105,6 @@ public class GinsengCropBlock extends BushBlock implements BonemealableBlock
     {
         BlockPos pos = context.getClickedPos();
         if (!this.canSurvive(this.defaultBlockState(), context.getLevel(), pos)
-                || !hasShade(context.getLevel(), pos)
                 || !hasSnowNearby(context.getLevel(), pos))
         {
             return null;
@@ -146,7 +147,7 @@ public class GinsengCropBlock extends BushBlock implements BonemealableBlock
         }
         // 只要求「寒冷群系」：野山参是按「这块地会落雪」长出来的，
         // 那时候地上还没有雪片（落雪那一步排在植被之后），不能拿「附近有雪」卡它。
-        // 「头顶要遮阴 + 附近要有雪」是种参籽的规矩，放在 getStateForPlacement 里。
+        // 「附近要有雪」是种参籽的规矩，放在 getStateForPlacement 里；树荫只影响生长速度。
         return hasColdBiome(level, pos);
     }
 
@@ -164,7 +165,8 @@ public class GinsengCropBlock extends BushBlock implements BonemealableBlock
         return biome.value().getBaseTemperature() < 0.15F;
     }
 
-    private static boolean hasShade(LevelReader level, BlockPos pos)
+    /** 头顶 {@value #SHADE_HEIGHT} 格以内有没有树叶（标签 ginseng_shade） */
+    public static boolean hasShade(LevelReader level, BlockPos pos)
     {
         BlockPos.MutableBlockPos cursor = pos.mutable();
         for (int i = 0; i < SHADE_HEIGHT; i++)
@@ -191,6 +193,12 @@ public class GinsengCropBlock extends BushBlock implements BonemealableBlock
         return false;
     }
 
+    /** 长一次长几个阶段：平时 1 个，有树荫 2 个 */
+    public static int growthStep(LevelReader level, BlockPos pos)
+    {
+        return hasShade(level, pos) ? 2 : 1;
+    }
+
     @Override
     public boolean isRandomlyTicking(BlockState state)
     {
@@ -204,13 +212,14 @@ public class GinsengCropBlock extends BushBlock implements BonemealableBlock
         {
             return;
         }
-        if (!this.canSurvive(state, level, pos) || !hasShade(level, pos))
+        if (!this.canSurvive(state, level, pos))
         {
             return;
         }
         if (cropGrowPre(level, pos, state, random.nextInt(GROWTH_DENOMINATOR) == 0))
         {
-            level.setBlock(pos, state.setValue(AGE, state.getValue(AGE) + 1), 2);
+            int age = Math.min(MAX_AGE, state.getValue(AGE) + growthStep(level, pos));
+            level.setBlock(pos, state.setValue(AGE, age), 2);
             cropGrowPost(level, pos, state);
         }
     }
