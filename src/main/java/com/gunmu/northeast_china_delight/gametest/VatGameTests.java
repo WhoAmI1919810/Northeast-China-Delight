@@ -598,19 +598,24 @@ public final class VatGameTests {
         helper.succeed();
     }
 
-    /** 展示的份数必须满足配方本身：咸腊肉/咸鱼是"盐数 = 肉数"，不是 1 份盐 */
+    /** 展示的份数必须满足配方本身：咸腊肉半份盐，咸鱼与鱼等量 */
     @GameTest(template = "empty")
     public static void vatJeiCountsMatchRecipe(GameTestHelper helper) {
-        checkSaltFollowsMainIngredient(helper, VatRecipes.Kind.MEAT, "咸腊肉");
-        checkSaltFollowsMainIngredient(helper, VatRecipes.Kind.SALTED_FISH, "咸鱼");
+        checkVatJeiCounts(helper, VatRecipes.Kind.MEAT, "咸腊肉", 6, 3);
+        checkVatJeiCounts(helper, VatRecipes.Kind.SALTED_FISH, "咸鱼", 3, 3);
         helper.succeed();
     }
 
-    private static void checkSaltFollowsMainIngredient(GameTestHelper helper, VatRecipes.Kind kind, String name) {
+    private static void checkVatJeiCounts(GameTestHelper helper, VatRecipes.Kind kind, String name,
+                                          int expectedMain, int expectedSalt) {
         VatRecipe recipe = VatRecipes.recipeOf(kind, helper.getLevel());
+        if (recipe == null) {
+            helper.fail("缺少大缸配方：" + kind);
+        }
         int[] counts = recipe.displayedCounts(0);
-        if (counts.length != 2 || counts[0] != counts[1]) {
-            helper.fail(name + "展示的份数不对（主料 " + counts[0] + " / 盐 " + counts[1] + "）");
+        if (counts.length != 2 || counts[0] != expectedMain || counts[1] != expectedSalt) {
+            helper.fail(name + "展示的份数不对（主料 " + counts[0] + " / 盐 " + counts[1]
+                    + "，期望 " + expectedMain + " / " + expectedSalt + "）");
         }
     }
 
@@ -673,18 +678,20 @@ public final class VatGameTests {
         return null;
     }
 
-    /** 抽查"盐数 = 主料数"：JEI 页面上主料格与盐格的份数必须相等 */
+    /** 抽查 JEI 页面：主料格与盐格的份数必须和配方计算出的展示份数一致 */
     private static void checkPageFollowsIngredient(GameTestHelper helper, VatRecipe recipe,
                                                    List<VatJeiRecipe> pages, VatRecipes.Kind kind) {
         if (recipe.kind() != kind) {
             return;
         }
+        int[] expected = recipe.displayedCounts(0);
         for (VatJeiRecipe page : pages) {
             for (VatJeiRecipe.State state : page.states()) {
                 int main = shownCount(state.primary());
                 int salt = shownCount(state.seasoning());
-                if (main < 0 || salt != main) {
-                    helper.fail("配方 " + recipe.id() + " 的 JEI 页面盐数(" + salt + ") 和主料(" + main + ") 不一样");
+                if (main != expected[0] || salt != expected[1]) {
+                    helper.fail("配方 " + recipe.id() + " 的 JEI 页面份数(" + main + " / " + salt
+                            + ") 和配方展示份数(" + expected[0] + " / " + expected[1] + ") 不一样");
                 }
             }
         }
@@ -1076,7 +1083,12 @@ public final class VatGameTests {
         }
         if (player.getInventory().countItem(ModItems.SOUR_CABBAGE.get()) != 2
                 || vat.kind() != VatRecipes.Kind.NONE) {
-            helper.fail("抽空酸引水后应能先取下石头、再取出两颗酸菜，取完缸复位");
+            helper.fail("抽空酸引水后应能先取下石头、再取出两颗酸菜，取完缸复位"
+                    + "（酸菜=" + player.getInventory().countItem(ModItems.SOUR_CABBAGE.get())
+                    + " 大白菜=" + player.getInventory().countItem(ModItems.NAPA_CABBAGE.get())
+                    + " kind=" + vat.kind()
+                    + " press=" + vat.press()
+                    + " contents=" + vat.contentSnapshot() + "）");
         }
         helper.succeed();
     }
@@ -1233,6 +1245,14 @@ public final class VatGameTests {
     }
 
     private static void click(GameTestHelper helper, Player player, ItemStack stack) {
+        // 每次空手点击都换一个空快捷栏槽：拾取物会优先进入当前选中槽，
+        // 连续点击同一个槽会把上一轮捡到的东西覆盖掉，这不是大缸的行为。
+        for (int slot = 8; slot >= 0; slot--) {
+            if (player.getInventory().getItem(slot).isEmpty()) {
+                player.getInventory().selected = slot;
+                break;
+            }
+        }
         player.setItemInHand(InteractionHand.MAIN_HAND, stack);
         helper.useBlock(AT, player);
     }
