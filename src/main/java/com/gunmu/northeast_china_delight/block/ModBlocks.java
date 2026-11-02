@@ -357,23 +357,23 @@ public class ModBlocks {
                     .pushReaction(PushReaction.DESTROY)
     );
 
-    /** 被褥（褥子、花被、荞麦皮枕头），枕头在放的人看过去的那头 */
-    public static final Supplier<Block> BEDDING = block(
-            "bedding",
-            properties -> new FacingDecorBlock(properties, Block.box(0, 0, 0, 16, 4.5, 16), false),
-            BlockBehaviour.Properties.of()
-                    .mapColor(MapColor.COLOR_RED)
-                    .strength(0.5F)
-                    .sound(SoundType.WOOL)
-                    .noOcclusion()
-                    .ignitedByLava()
-                    .pushReaction(PushReaction.DESTROY)
+    /** 被子：叠好放着的一床花被（三折摞起来） */
+    public static final Supplier<Block> FOLDED_QUILT = block(
+            "folded_quilt",
+            properties -> new FacingDecorBlock(properties, Block.box(1, 0, 1, 15, 7, 15), false),
+            beddingProperties(MapColor.COLOR_RED)
+    );
+    /** 枕头：白布枕头，两头绣花的枕头顶 */
+    public static final Supplier<Block> PILLOW = block(
+            "pillow",
+            properties -> new FacingDecorBlock(properties, Block.box(2, 0, 2, 14, 4.5, 14), false),
+            beddingProperties(MapColor.WOOL)
     );
 
-    /** 小板凳 */
+    /** 小板凳：右键坐上去（见 StoolBlock） */
     public static final Supplier<Block> SMALL_STOOL = block(
             "small_stool",
-            properties -> new DishBlock(properties, Block.box(3, 0, 4, 13, 6.5, 12)),
+            StoolBlock::new,
             BlockBehaviour.Properties.of()
                     .mapColor(MapColor.WOOD)
                     .instrument(NoteBlockInstrument.BASS)
@@ -615,6 +615,16 @@ public class ModBlocks {
         *///?} else {
         return block(name, p -> new StairBlock(base.get().defaultBlockState(), p), properties);
         //?}
+    }
+
+    private static BlockBehaviour.Properties beddingProperties(MapColor color) {
+        return BlockBehaviour.Properties.of()
+                .mapColor(color)
+                .strength(0.5F)
+                .sound(SoundType.WOOL)
+                .noOcclusion()
+                .ignitedByLava()
+                .pushReaction(PushReaction.DESTROY);
     }
 
     private static BlockBehaviour.Properties steelRoofProperties(MapColor color) {

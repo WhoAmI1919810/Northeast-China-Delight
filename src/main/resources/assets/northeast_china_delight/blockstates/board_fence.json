@@ -1,13 +1,17 @@
 {
   "multipart": [
     {
+      "when": {
+        "up": "false"
+      },
       "apply": {
         "model": "northeast_china_delight:block/board_fence_post"
       }
     },
     {
       "when": {
-        "north": "true"
+        "north": "true",
+        "up": "false"
       },
       "apply": {
         "model": "northeast_china_delight:block/board_fence_side"
@@ -15,7 +19,8 @@
     },
     {
       "when": {
-        "east": "true"
+        "east": "true",
+        "up": "false"
       },
       "apply": {
         "model": "northeast_china_delight:block/board_fence_side",
@@ -24,7 +29,8 @@
     },
     {
       "when": {
-        "south": "true"
+        "south": "true",
+        "up": "false"
       },
       "apply": {
         "model": "northeast_china_delight:block/board_fence_side",
@@ -33,10 +39,58 @@
     },
     {
       "when": {
-        "west": "true"
+        "west": "true",
+        "up": "false"
       },
       "apply": {
         "model": "northeast_china_delight:block/board_fence_side",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "up": "true"
+      },
+      "apply": {
+        "model": "northeast_china_delight:block/board_fence_post_full"
+      }
+    },
+    {
+      "when": {
+        "north": "true",
+        "up": "true"
+      },
+      "apply": {
+        "model": "northeast_china_delight:block/board_fence_side_full"
+      }
+    },
+    {
+      "when": {
+        "east": "true",
+        "up": "true"
+      },
+      "apply": {
+        "model": "northeast_china_delight:block/board_fence_side_full",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "south": "true",
+        "up": "true"
+      },
+      "apply": {
+        "model": "northeast_china_delight:block/board_fence_side_full",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "west": "true",
+        "up": "true"
+      },
+      "apply": {
+        "model": "northeast_china_delight:block/board_fence_side_full",
         "y": 270
       }
     }

@@ -358,6 +358,8 @@ public class ModItems {
             new Item.Properties()
     );
 
+    /** 青砖（材料，像原版红砖）：4 块合成青砖块 */
+    public static final Supplier<Item> BLUE_BRICK = simple("blue_brick");
     /** 窗花：贴在糊纸木格窗上（见 {@link PaperCutItem}）；一手红纸、一手剪刀右键剪出来（见 {@link RedPaperItem}） */
     public static final Supplier<Item> PAPER_CUT = regItem("paper_cut", PaperCutItem::new, new Item.Properties());
     /** 彩钢瓦（材料，不能放）：染料 + 3 铁锭做，再用它合成平屋顶 / 斜屋顶 */
@@ -369,6 +371,7 @@ public class ModItems {
 
     /** 东北建材，放在「方块」物品栏最后 */
     public static final List<Supplier<? extends Item>> BUILDING_BLOCK_ITEMS = List.of(
+            BLUE_BRICK,
             blockItem("blue_bricks", ModBlocks.BLUE_BRICKS),
             blockItem("blue_brick_stairs", ModBlocks.BLUE_BRICK_STAIRS),
             blockItem("blue_brick_slab", ModBlocks.BLUE_BRICK_SLAB),
@@ -395,7 +398,8 @@ public class ModItems {
             blockItem("blue_tiles", ModBlocks.BLUE_TILES),
             regItem("red_iron_gate", p -> new DoubleHighBlockItem(ModBlocks.RED_IRON_GATE.get(), p), new Item.Properties()),
             regItem("korean_paper_door", p -> new DoubleHighBlockItem(ModBlocks.KOREAN_PAPER_DOOR.get(), p), new Item.Properties()),
-            blockItem("bedding", ModBlocks.BEDDING),
+            blockItem("folded_quilt", ModBlocks.FOLDED_QUILT),
+            blockItem("pillow", ModBlocks.PILLOW),
             blockItem("small_stool", ModBlocks.SMALL_STOOL),
             blockItem("hand_pump", ModBlocks.HAND_PUMP),
             blockItem("red_lantern", ModBlocks.RED_LANTERN)

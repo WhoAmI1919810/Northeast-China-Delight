@@ -1,0 +1,88 @@
+{
+  "parent": "minecraft:block/block",
+  "textures": {
+    "cloth": "northeast_china_delight:block/pillow_cloth",
+    "end": "northeast_china_delight:block/pillow_end",
+    "particle": "northeast_china_delight:block/pillow_cloth"
+  },
+  "elements": [
+    {
+      "from": [
+        2.5,
+        0,
+        5
+      ],
+      "to": [
+        13.5,
+        4.5,
+        11
+      ],
+      "faces": {
+        "up": {
+          "texture": "#cloth"
+        },
+        "down": {
+          "texture": "#cloth"
+        },
+        "north": {
+          "texture": "#cloth"
+        },
+        "south": {
+          "texture": "#cloth"
+        }
+      }
+    },
+    {
+      "from": [
+        2,
+        0.25,
+        5.25
+      ],
+      "to": [
+        2.5,
+        4.25,
+        10.75
+      ],
+      "faces": {
+        "west": {
+          "texture": "#end"
+        },
+        "up": {
+          "texture": "#cloth"
+        },
+        "north": {
+          "texture": "#cloth"
+        },
+        "south": {
+          "texture": "#cloth"
+        }
+      }
+    },
+    {
+      "from": [
+        13.5,
+        0.25,
+        5.25
+      ],
+      "to": [
+        14,
+        4.25,
+        10.75
+      ],
+      "faces": {
+        "east": {
+          "texture": "#end"
+        },
+        "up": {
+          "texture": "#cloth"
+        },
+        "north": {
+          "texture": "#cloth"
+        },
+        "south": {
+          "texture": "#cloth"
+        }
+      }
+    }
+  ]
+}

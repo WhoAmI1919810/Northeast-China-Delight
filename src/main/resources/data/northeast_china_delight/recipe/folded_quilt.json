@@ -3,18 +3,16 @@
   "category": "misc",
   "key": {
     "A": {
-      "item": "northeast_china_delight:buckwheat"
-    },
-    "B": {
       "tag": "minecraft:wool"
     }
   },
   "pattern": [
-    "ABB",
-    "BBB"
+    "AAA",
+    "A A",
+    "AAA"
   ],
   "result": {
     "count": 1,
-    "id": "northeast_china_delight:bedding"
+    "id": "northeast_china_delight:folded_quilt"
   }
 }
