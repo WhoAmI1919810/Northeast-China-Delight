@@ -210,7 +210,6 @@ public class NortheastChinaDelight
         MinecraftForge.EVENT_BUS.register(this);
         MinecraftForge.EVENT_BUS.register(DishEffectEvents.class);
         MinecraftForge.EVENT_BUS.register(ModGameplayEvents.class);
-        MinecraftForge.EVENT_BUS.register(com.gunmu.northeast_china_delight.event.ModDebugEvents.class);
         MinecraftForge.EVENT_BUS.addListener(SideDishMerchantTrades::addTrades);
         MinecraftForge.EVENT_BUS.addListener(ModFarmerTrades::addTrades);
         MinecraftForge.EVENT_BUS.addListener(ModButcherTrades::addTrades);
@@ -222,8 +221,6 @@ public class NortheastChinaDelight
         NeoForge.EVENT_BUS.register(DishEffectEvents.class);
         // 木耳（给原木去皮）与人参（空手刨土）的钩子
         NeoForge.EVENT_BUS.register(ModGameplayEvents.class);
-        // 临时调试：进度授予 / 方块放置 / 大缸状态
-        NeoForge.EVENT_BUS.register(com.gunmu.northeast_china_delight.event.ModDebugEvents.class);
         // 副食商的交易表（每次数据包重载时重新填一遍）
         NeoForge.EVENT_BUS.addListener(SideDishMerchantTrades::addTrades);
         // 原版各职业的交易表：农民 / 屠夫 / 渔夫 / 制图师 / 流浪商人
