@@ -1,0 +1,13 @@
+{
+  "variants": {
+    "type=bottom": {
+      "model": "northeast_china_delight:block/green_steel_roof_slab"
+    },
+    "type=double": {
+      "model": "northeast_china_delight:block/green_steel_roof"
+    },
+    "type=top": {
+      "model": "northeast_china_delight:block/green_steel_roof_slab_top"
+    }
+  }
+}

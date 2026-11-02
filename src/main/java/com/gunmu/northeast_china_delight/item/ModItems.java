@@ -8,6 +8,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.BucketItem;
+import net.minecraft.world.item.DoubleHighBlockItem;
 import net.minecraft.world.item.Item;
 //? if <1.20.5 {
 /*import net.minecraft.world.item.RecordItem;
@@ -357,6 +358,9 @@ public class ModItems {
             new Item.Properties()
     );
 
+    /** 窗花：贴在糊纸木格窗上（见 {@link PaperCutItem}） */
+    public static final Supplier<Item> PAPER_CUT = regItem("paper_cut", PaperCutItem::new, new Item.Properties());
+
     /** 东北建材，放在「方块」物品栏最后 */
     public static final List<Supplier<? extends Item>> BUILDING_BLOCK_ITEMS = List.of(
             blockItem("blue_bricks", ModBlocks.BLUE_BRICKS),
@@ -368,7 +372,25 @@ public class ModItems {
             blockItem("sorghum_stalk_fence", ModBlocks.SORGHUM_STALK_FENCE),
             blockItem("board_fence", ModBlocks.BOARD_FENCE),
             blockItem("cotton_door_curtain", ModBlocks.COTTON_DOOR_CURTAIN),
-            blockItem("floral_door_curtain", ModBlocks.FLORAL_DOOR_CURTAIN)
+            blockItem("floral_door_curtain", ModBlocks.FLORAL_DOOR_CURTAIN),
+            PAPER_CUT,
+            blockItem("red_steel_roof", ModBlocks.RED_STEEL_ROOF),
+            blockItem("red_steel_roof_stairs", ModBlocks.RED_STEEL_ROOF_STAIRS),
+            blockItem("red_steel_roof_slab", ModBlocks.RED_STEEL_ROOF_SLAB),
+            blockItem("blue_steel_roof", ModBlocks.BLUE_STEEL_ROOF),
+            blockItem("blue_steel_roof_stairs", ModBlocks.BLUE_STEEL_ROOF_STAIRS),
+            blockItem("blue_steel_roof_slab", ModBlocks.BLUE_STEEL_ROOF_SLAB),
+            blockItem("green_steel_roof", ModBlocks.GREEN_STEEL_ROOF),
+            blockItem("green_steel_roof_stairs", ModBlocks.GREEN_STEEL_ROOF_STAIRS),
+            blockItem("green_steel_roof_slab", ModBlocks.GREEN_STEEL_ROOF_SLAB),
+            blockItem("white_tiles", ModBlocks.WHITE_TILES),
+            blockItem("blue_tiles", ModBlocks.BLUE_TILES),
+            regItem("red_iron_gate", p -> new DoubleHighBlockItem(ModBlocks.RED_IRON_GATE.get(), p), new Item.Properties()),
+            regItem("korean_paper_door", p -> new DoubleHighBlockItem(ModBlocks.KOREAN_PAPER_DOOR.get(), p), new Item.Properties()),
+            blockItem("bedding", ModBlocks.BEDDING),
+            blockItem("small_stool", ModBlocks.SMALL_STOOL),
+            blockItem("hand_pump", ModBlocks.HAND_PUMP),
+            blockItem("red_lantern", ModBlocks.RED_LANTERN)
     );
 
     public static final List<Supplier<? extends Item>> INGREDIENT_TAB_ITEMS = List.of(

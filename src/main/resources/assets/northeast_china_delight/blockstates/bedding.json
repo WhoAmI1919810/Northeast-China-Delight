@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "facing=north": {
+      "model": "northeast_china_delight:block/bedding"
+    },
+    "facing=east": {
+      "model": "northeast_china_delight:block/bedding",
+      "y": 90
+    },
+    "facing=south": {
+      "model": "northeast_china_delight:block/bedding",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "northeast_china_delight:block/bedding",
+      "y": 270
+    }
+  }
+}

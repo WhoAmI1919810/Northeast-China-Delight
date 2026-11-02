@@ -1,0 +1,57 @@
+{
+  "parent": "minecraft:block/block",
+  "textures": {
+    "cut": "northeast_china_delight:block/paper_cut_corner",
+    "cut_shadow": "northeast_china_delight:block/paper_cut_corner_shadow",
+    "particle": "northeast_china_delight:block/paper_cut_corner"
+  },
+  "elements": [
+    {
+      "from": [
+        0,
+        0,
+        6.42
+      ],
+      "to": [
+        16,
+        16,
+        6.45
+      ],
+      "faces": {
+        "north": {
+          "texture": "#cut",
+          "uv": [
+            16,
+            16,
+            0,
+            0
+          ]
+        }
+      }
+    },
+    {
+      "from": [
+        0,
+        0,
+        7.02
+      ],
+      "to": [
+        16,
+        16,
+        7.05
+      ],
+      "faces": {
+        "south": {
+          "texture": "#cut_shadow",
+          "uv": [
+            0,
+            16,
+            16,
+            0
+          ]
+        }
+      }
+    }
+  ],
+  "render_type": "minecraft:cutout"
+}

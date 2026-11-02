@@ -13,6 +13,7 @@ import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.StairBlock;
 import net.minecraft.world.level.block.WallBlock;
 import net.minecraft.world.level.block.state.BlockBehaviour;
+import net.minecraft.world.level.block.state.properties.BlockSetType;
 import net.minecraft.world.level.block.state.properties.NoteBlockInstrument;
 import net.minecraft.world.level.material.MapColor;
 import net.minecraft.world.level.material.PushReaction;
@@ -274,7 +275,7 @@ public class ModBlocks {
 
     /** 木格窗：糊纸的、镶玻璃的，窗框都是橡木原木 */
     public static final Supplier<Block> PAPER_LATTICE_WINDOW =
-            block("paper_lattice_window", LatticeWindowBlock::new, windowProperties(SoundType.WOOD));
+            block("paper_lattice_window", PaperLatticeWindowBlock::new, windowProperties(SoundType.WOOD));
     public static final Supplier<Block> GLASS_LATTICE_WINDOW =
             block("glass_lattice_window", LatticeWindowBlock::new, windowProperties(SoundType.GLASS));
 
@@ -306,6 +307,106 @@ public class ModBlocks {
             block("cotton_door_curtain", DoorCurtainBlock::new, curtainProperties(MapColor.COLOR_BLUE));
     public static final Supplier<Block> FLORAL_DOOR_CURTAIN =
             block("floral_door_curtain", DoorCurtainBlock::new, curtainProperties(MapColor.COLOR_RED));
+
+    // ===== 东北建材第二批（2026-11-02；同样先不加配方） =====
+
+    /** 彩钢瓦：铁皮房盖，红 / 蓝 / 绿三色，各带台阶、半砖 */
+    public static final Supplier<Block> RED_STEEL_ROOF =
+            block("red_steel_roof", Block::new, steelRoofProperties(MapColor.COLOR_RED));
+    public static final Supplier<StairBlock> RED_STEEL_ROOF_STAIRS =
+            stairs("red_steel_roof_stairs", RED_STEEL_ROOF, steelRoofProperties(MapColor.COLOR_RED));
+    public static final Supplier<SlabBlock> RED_STEEL_ROOF_SLAB =
+            block("red_steel_roof_slab", SlabBlock::new, steelRoofProperties(MapColor.COLOR_RED));
+    public static final Supplier<Block> BLUE_STEEL_ROOF =
+            block("blue_steel_roof", Block::new, steelRoofProperties(MapColor.COLOR_BLUE));
+    public static final Supplier<StairBlock> BLUE_STEEL_ROOF_STAIRS =
+            stairs("blue_steel_roof_stairs", BLUE_STEEL_ROOF, steelRoofProperties(MapColor.COLOR_BLUE));
+    public static final Supplier<SlabBlock> BLUE_STEEL_ROOF_SLAB =
+            block("blue_steel_roof_slab", SlabBlock::new, steelRoofProperties(MapColor.COLOR_BLUE));
+    public static final Supplier<Block> GREEN_STEEL_ROOF =
+            block("green_steel_roof", Block::new, steelRoofProperties(MapColor.COLOR_GREEN));
+    public static final Supplier<StairBlock> GREEN_STEEL_ROOF_STAIRS =
+            stairs("green_steel_roof_stairs", GREEN_STEEL_ROOF, steelRoofProperties(MapColor.COLOR_GREEN));
+    public static final Supplier<SlabBlock> GREEN_STEEL_ROOF_SLAB =
+            block("green_steel_roof_slab", SlabBlock::new, steelRoofProperties(MapColor.COLOR_GREEN));
+
+    /** 瓷砖：白瓷砖贴墙面，蓝瓷砖做墙裙 */
+    public static final Supplier<Block> WHITE_TILES = block("white_tiles", Block::new, tileProperties(MapColor.SNOW));
+    public static final Supplier<Block> BLUE_TILES = block("blue_tiles", Block::new, tileProperties(MapColor.COLOR_BLUE));
+
+    /** 红漆铁大门（铁门的声音，但能用手推开）、糊纸木格门 */
+    public static final Supplier<Block> RED_IRON_GATE = block(
+            "red_iron_gate",
+            properties -> new NeDoorBlock(properties, BlockSetType.IRON, true),
+            BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.COLOR_RED)
+                    .requiresCorrectToolForDrops()
+                    .strength(5.0F)
+                    .noOcclusion()
+                    .pushReaction(PushReaction.DESTROY)
+    );
+    public static final Supplier<Block> KOREAN_PAPER_DOOR = block(
+            "korean_paper_door",
+            properties -> new NeDoorBlock(properties, BlockSetType.BIRCH, false),
+            BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.WOOD)
+                    .instrument(NoteBlockInstrument.BASS)
+                    .strength(3.0F)
+                    .noOcclusion()
+                    .ignitedByLava()
+                    .pushReaction(PushReaction.DESTROY)
+    );
+
+    /** 被褥（褥子、花被、荞麦皮枕头），枕头在放的人看过去的那头 */
+    public static final Supplier<Block> BEDDING = block(
+            "bedding",
+            properties -> new FacingDecorBlock(properties, Block.box(0, 0, 0, 16, 4.5, 16), false),
+            BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.COLOR_RED)
+                    .strength(0.5F)
+                    .sound(SoundType.WOOL)
+                    .noOcclusion()
+                    .ignitedByLava()
+                    .pushReaction(PushReaction.DESTROY)
+    );
+
+    /** 小板凳 */
+    public static final Supplier<Block> SMALL_STOOL = block(
+            "small_stool",
+            properties -> new DishBlock(properties, Block.box(3, 0, 4, 13, 6.5, 12)),
+            BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.WOOD)
+                    .instrument(NoteBlockInstrument.BASS)
+                    .strength(1.0F)
+                    .sound(SoundType.WOOD)
+                    .noOcclusion()
+                    .ignitedByLava()
+    );
+
+    /** 压水井：出水嘴朝着放的人；空桶 / 大脸盆 / 玻璃瓶右键压水（见 HandPumpBlock） */
+    public static final Supplier<Block> HAND_PUMP = block(
+            "hand_pump",
+            HandPumpBlock::new,
+            BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.COLOR_GREEN)
+                    .requiresCorrectToolForDrops()
+                    .strength(3.0F, 6.0F)
+                    .sound(SoundType.METAL)
+                    .noOcclusion()
+    );
+
+    /** 红灯笼：亮度 15 */
+    public static final Supplier<Block> RED_LANTERN = block(
+            "red_lantern",
+            properties -> new DishBlock(properties, Block.box(2, 0, 2, 14, 16, 14)),
+            BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.COLOR_RED)
+                    .strength(0.5F)
+                    .sound(SoundType.WOOL)
+                    .lightLevel(state -> 15)
+                    .noOcclusion()
+                    .pushReaction(PushReaction.DESTROY)
+    );
 
     public static final List<String> DISH_BLOCK_IDS = List.of(
             "new_style_crispy_pork", "orange_crispy_pork", "crispy_pork_strips", "three_fresh_veggies",
@@ -505,6 +606,31 @@ public class ModBlocks {
                                                   Supplier<? extends ItemLike> fruit) {
         return block(name + "_crop",
                 properties -> new DdCropBlock(properties, seed, fruit), cropProperties());
+    }
+
+    /** 台阶：1.20.1 用 Forge 的 Supplier 构造（那时整块还没注册完，取不到 defaultBlockState） */
+    private static Supplier<StairBlock> stairs(String name, Supplier<Block> base, BlockBehaviour.Properties properties) {
+        //? if <1.20.2 {
+        /*return block(name, p -> new StairBlock(() -> base.get().defaultBlockState(), p), properties);
+        *///?} else {
+        return block(name, p -> new StairBlock(base.get().defaultBlockState(), p), properties);
+        //?}
+    }
+
+    private static BlockBehaviour.Properties steelRoofProperties(MapColor color) {
+        return BlockBehaviour.Properties.of()
+                .mapColor(color)
+                .requiresCorrectToolForDrops()
+                .strength(2.0F, 6.0F)
+                .sound(SoundType.METAL);
+    }
+
+    private static BlockBehaviour.Properties tileProperties(MapColor color) {
+        return BlockBehaviour.Properties.of()
+                .mapColor(color)
+                .instrument(NoteBlockInstrument.BASEDRUM)
+                .requiresCorrectToolForDrops()
+                .strength(1.5F, 6.0F);
     }
 
     private static BlockBehaviour.Properties blueBrickProperties() {
