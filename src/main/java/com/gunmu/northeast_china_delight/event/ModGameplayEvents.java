@@ -10,17 +10,12 @@ import com.gunmu.northeast_china_delight.NortheastChinaConfig;
 import com.gunmu.northeast_china_delight.block.WoodenMortarBlock;
 import com.gunmu.northeast_china_delight.item.ModItems;
 import com.gunmu.northeast_china_delight.item.SeasoningBottleItem;
-import com.gunmu.northeast_china_delight.item.SeaWaterBucketItem;
-import com.gunmu.northeast_china_delight.item.SeaWaterBuckets;
 import com.gunmu.northeast_china_delight.util.DdIds;
 import com.gunmu.northeast_china_delight.worldgen.CourtyardPiece;
-import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import com.gunmu.northeast_china_delight.util.DdStacks;
-import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
-import net.minecraft.stats.Stats;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -36,30 +31,20 @@ import net.minecraft.world.entity.monster.EnderMan;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AnvilMenu;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.ItemUtils;
-import net.minecraft.world.item.Items;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.biome.Biomes;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.BucketPickup;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.level.levelgen.structure.Structure;
 import net.minecraft.world.level.levelgen.structure.StructurePiece;
 import net.minecraft.world.level.levelgen.structure.StructureStart;
-import net.minecraft.tags.FluidTags;
-import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.sounds.SoundSource;
-//? if <1.20.2 {
-/*import net.minecraftforge.event.entity.player.ItemTooltipEvent;
-*///?} else {
-import net.neoforged.neoforge.event.entity.player.ItemTooltipEvent;
-//?}
 //? if <1.20.2 {
 /*import net.minecraftforge.eventbus.api.SubscribeEvent;
 *///?} else {
@@ -84,16 +69,6 @@ import net.neoforged.neoforge.event.level.BlockEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 //?}
 //? if <1.20.2 {
-/*import net.minecraftforge.eventbus.api.Event;
-import net.minecraftforge.event.entity.player.FillBucketEvent;
-*///?} else if <1.20.5 {
-/*import net.neoforged.bus.api.Event;
-import net.neoforged.neoforge.event.entity.player.FillBucketEvent;
-*///?}
-//? if >=1.20.5 {
-import net.minecraft.world.phys.HitResult;
-//?}
-//? if <1.20.2 {
 /*import net.minecraftforge.event.AnvilUpdateEvent;
 import net.minecraftforge.event.GrindstoneEvent;
 *///?} else {
@@ -112,13 +87,12 @@ import net.neoforged.neoforge.event.tick.ServerTickEvent;
 //?}
 
 /**
- * 四个和小玩法有关的钩子：
+ * 三个和小玩法有关的钩子：
  *
  * <ul>
  *   <li><b>木耳</b>：给原木去皮的那一刻按树种／生物群系掷骰子（黑森林的深色橡木、白桦林的白桦 7%，
  *       橡木 5%，针叶树不产）。去皮本身就是「第一次」，已经去过的原木不会再触发；</li>
  *   <li><b>人参</b>：空手刨开成熟人参脚下的土，才会掉出人参和参籽；</li>
- *   <li><b>海水桶</b>：空桶在干净的海洋水柱里取水时，把原版给的水桶换成海水桶；</li>
  *   <li><b>挨户串门</b>：每秒看一次玩家脚下的小院是哪一种院子（见 {@link #awardYardVisits}）。</li>
  * </ul>
  */
@@ -275,160 +249,6 @@ public final class ModGameplayEvents
                 ModAdvancements.award(player, ModAdvancements.VISIT_ALL_YARDS,
                         ModAdvancements.yardCriterion(courtyard.templateId()));
             }
-        }
-    }
-
-    /**
-     * 空桶在「干净的海洋水柱」里取水时，把原版给的水桶换成海水桶。
-     *
-     * <p>触发点按版本分成两套：</p>
-     * <ul>
-     *   <li>1.20.1：用 {@code FillBucketEvent}（Forge 47 里还在），
-     *       直接换掉「桶里舀到的战利品」，扣空桶、进背包这些原版流程照旧；</li>
-     *   <li>1.21.1：NeoForge 21.1 删掉了 {@code FillBucketEvent}，而水方块没有准星命中框，
-     *       {@code RightClickBlock} / {@code UseItemOnBlockEvent} 对着水都不会触发 —— 这正是
-     *       之前海水桶怎么舀都出不来的原因。原版空桶取水走的是 {@code useItem} 那条路
-     *       （{@code BucketItem.use} 自己再做一次视线检测），所以这里改挂 {@code RightClickItem}，
-     *       并复刻原版那次检测。</li>
-     * </ul>
-     */
-    //? if <1.20.5 {
-    /*@SubscribeEvent
-    public static void onWaterBucketPickup(FillBucketEvent event)
-    {
-        int mode = NortheastChinaConfig.SEA_WATER_BUCKET_MODE.get();
-        if (mode == SeaWaterBuckets.VANILLA_WATER_BUCKET)
-        {
-            return;
-        }
-        // 取水用的必须是空桶（旧代码判断的是「水桶」，那个条件永远不成立）
-        ItemStack stack = event.getEmptyBucket();
-        if (!stack.is(Items.BUCKET) || !(event.getTarget() instanceof BlockHitResult hit))
-        {
-            return;
-        }
-        Level level = event.getLevel();
-        Player player = event.getEntity();
-        BlockPos pos = hit.getBlockPos();
-        if (!canPickSeaWater(player, level, pos, hit, stack))
-        {
-            return;
-        }
-        ItemStack picked = pickUpOceanWater(player, level, pos);
-        if (picked.isEmpty())
-        {
-            return;
-        }
-        // 「扣掉空桶、把新桶塞回玩家手里」交给原版事件流程
-        event.setFilledBucket(SeaWaterBuckets.fromOceanPickup(picked, mode));
-        event.setResult(Event.Result.ALLOW);
-    }
-    *///?} else {
-    @SubscribeEvent
-    public static void onWaterBucketPickup(PlayerInteractEvent.RightClickItem event)
-    {
-        int mode = NortheastChinaConfig.SEA_WATER_BUCKET_MODE.get();
-        if (mode == SeaWaterBuckets.VANILLA_WATER_BUCKET)
-        {
-            return;
-        }
-        ItemStack stack = event.getItemStack();
-        if (!stack.is(Items.BUCKET))
-        {
-            return;
-        }
-        Player player = event.getEntity();
-        Level level = player.level();
-        BlockHitResult hit = SeaWaterBucketItem.raycastSourceFluid(level, player);
-        if (hit.getType() != HitResult.Type.BLOCK)
-        {
-            return;
-        }
-        BlockPos pos = hit.getBlockPos();
-        if (!canPickSeaWater(player, level, pos, hit, stack))
-        {
-            return;
-        }
-
-        event.setCanceled(true);
-        event.setCancellationResult(InteractionResult.SUCCESS);
-        if (level.isClientSide())
-        {
-            return;
-        }
-        ItemStack picked = pickUpOceanWater(player, level, pos);
-        if (picked.isEmpty())
-        {
-            return;
-        }
-        ItemStack seaBucket = ItemUtils.createFilledResult(
-                stack, player, SeaWaterBuckets.fromOceanPickup(picked, mode));
-        player.setItemInHand(event.getHand(), seaBucket);
-        if (!player.isUsingItem() && player instanceof ServerPlayer serverPlayer)
-        {
-            serverPlayer.inventoryMenu.sendAllDataToRemote();
-        }
-    }
-    //?}
-
-    /** 这一格是不是「干净的海洋水柱」里的水源（空桶一舀就能舀起来的那种）。 */
-    private static boolean canPickSeaWater(Player player, Level level, BlockPos pos,
-            BlockHitResult hit, ItemStack stack)
-    {
-        BlockState state = level.getBlockState(pos);
-        if (!state.getFluidState().is(FluidTags.WATER) || !state.getFluidState().isSource()
-                || !(state.getBlock() instanceof BucketPickup)
-                || !level.mayInteract(player, pos)
-                || !player.mayUseItemAt(pos.relative(hit.getDirection()), hit.getDirection(), stack))
-        {
-            return false;
-        }
-        return SeaWaterBucketItem.isValidOceanColumn(level, pos);
-    }
-
-    private static ItemStack pickUpOceanWater(Player player, Level level, BlockPos pos)
-    {
-        if (level.isClientSide())
-        {
-            return new ItemStack(Items.WATER_BUCKET);
-        }
-        BlockState state = level.getBlockState(pos);
-        if (!(state.getBlock() instanceof BucketPickup pickup))
-        {
-            return ItemStack.EMPTY;
-        }
-        ItemStack picked = pickupFrom(pickup, player, level, pos, state);
-        if (picked.isEmpty())
-        {
-            return ItemStack.EMPTY;
-        }
-        player.awardStat(Stats.ITEM_USED.get(Items.BUCKET));
-        pickup.getPickupSound(state).ifPresent(sound -> player.playSound(sound, 1.0F, 1.0F));
-        level.gameEvent(player, GameEvent.FLUID_PICKUP, pos);
-        if (player instanceof ServerPlayer serverPlayer)
-        {
-            CriteriaTriggers.FILLED_BUCKET.trigger(serverPlayer, picked);
-        }
-        return picked;
-    }
-
-    /** 1.20.1 的 {@code BucketPickup#pickupBlock} 还没有 player 参数，这里抹平差异。 */
-    private static ItemStack pickupFrom(BucketPickup pickup, Player player, Level level, BlockPos pos, BlockState state)
-    {
-        //? if <1.20.2 {
-        /*return pickup.pickupBlock(level, pos, state);
-        *///?} else {
-        return pickup.pickupBlock(player, level, pos, state);
-        //?}
-    }
-
-    @SubscribeEvent
-    public static void onMarkedWaterBucketTooltip(ItemTooltipEvent event)
-    {
-        if (SeaWaterBuckets.isMarkedWaterBucket(event.getItemStack()))
-        {
-            event.getToolTip().add(Component.translatable("tooltip.northeast_china_delight.sea_water_marker")
-                    .withStyle(ChatFormatting.GRAY));
         }
     }
 

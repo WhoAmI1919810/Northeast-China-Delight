@@ -1,6 +1,11 @@
 package com.gunmu.northeast_china_delight.item;
 
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.stats.Stats;
+import net.minecraft.tags.FluidTags;
 import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.player.Player;
@@ -10,8 +15,17 @@ import net.minecraft.world.item.Equipable;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemNameBlockItem;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.ItemUtils;
+import net.minecraft.world.item.context.UseOnContext;
+import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.BucketPickup;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.gameevent.GameEvent;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.HitResult;
+import org.jetbrains.annotations.Nullable;
 //? if <1.20.5 {
 /*import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.Multimap;
@@ -24,7 +38,7 @@ import net.minecraft.world.item.component.ItemAttributeModifiers;
 //?}
 
 /**
- * 大脸盆（空盆）。跟普通方块一样能放地上，也能当帽子戴：右键空气扣头上，走原版头盔槽。
+ * 大脸盆（空盆）。跟普通方块一样能放地上，也能当帽子戴：右键空气扣头上，走原版头盔槽；对着水右键舀一盆水，得到水盆。
  *
  * <p>槽位判定两个版本同一套：本类实现 {@link Equipable} 后，1.20.1 的
  * {@code LivingEntity.getEquipmentSlotForItem}（Forge 补丁会读 Equipable）和 1.21.1 的
@@ -46,13 +60,78 @@ public class LargeBasinItem extends ItemNameBlockItem implements Equipable
     }
 
     /**
-     * 原版 {@code Item#use} 自己不认 Equipable（只有盔甲、鞘翅在里面调了 swap），
-     * 所以这里补上「右键空气 = 扣头上」；对着方块右键还是方块放置。
+     * 对着水右键：舀一盆水，得到水盆（见 {@link #scoopWater}）。
+     * 否则补上「右键空气 = 扣头上」—— 原版 {@code Item#use} 自己不认 Equipable（只有盔甲、鞘翅在里面调了 swap）。
      */
     @Override
     public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand)
     {
-        return this.swapWithEquipmentSlot(this, level, player, hand);
+        InteractionResultHolder<ItemStack> scooped = scoopWater(level, player, hand);
+        return scooped != null ? scooped : this.swapWithEquipmentSlot(this, level, player, hand);
+    }
+
+    /**
+     * 对着方块右键本来是放盆；但准星穿过水面落在水底 / 岸边方块上时（浅水里常见），
+     * 视线上先碰到的是水，就应该舀水而不是把盆放到水底去。
+     */
+    @Override
+    public InteractionResult useOn(UseOnContext context)
+    {
+        Player player = context.getPlayer();
+        if (player != null)
+        {
+            InteractionResultHolder<ItemStack> scooped = scoopWater(context.getLevel(), player, context.getHand());
+            if (scooped != null)
+            {
+                player.setItemInHand(context.getHand(), scooped.getObject());
+                return scooped.getResult();
+            }
+        }
+        return super.useOn(context);
+    }
+
+    /**
+     * 照原版空桶取水：沿视线找最近的水源方块，舀走它（无限水源会自己补回来），一个空盆换一个水盆。
+     * 视线上先碰到的不是水源就返回 null，交给原来的逻辑（扣头上 / 放盆）。
+     */
+    @Nullable
+    private InteractionResultHolder<ItemStack> scoopWater(Level level, Player player, InteractionHand hand)
+    {
+        ItemStack stack = player.getItemInHand(hand);
+        BlockHitResult hit = getPlayerPOVHitResult(level, player, ClipContext.Fluid.SOURCE_ONLY);
+        if (hit.getType() != HitResult.Type.BLOCK)
+        {
+            return null;
+        }
+        BlockPos pos = hit.getBlockPos();
+        BlockState state = level.getBlockState(pos);
+        if (!state.getFluidState().is(FluidTags.WATER) || !state.getFluidState().isSource()
+                || !(state.getBlock() instanceof BucketPickup pickup))
+        {
+            return null;
+        }
+        Direction side = hit.getDirection();
+        if (!level.mayInteract(player, pos) || !player.mayUseItemAt(pos.relative(side), side, stack))
+        {
+            return InteractionResultHolder.fail(stack);
+        }
+        if (!level.isClientSide)
+        {
+            //? if <1.20.2 {
+            /*ItemStack picked = pickup.pickupBlock(level, pos, state);
+            *///?} else {
+            ItemStack picked = pickup.pickupBlock(player, level, pos, state);
+            //?}
+            if (picked.isEmpty())
+            {
+                return InteractionResultHolder.fail(stack);
+            }
+            pickup.getPickupSound(state).ifPresent(sound -> player.playSound(sound, 1.0F, 1.0F));
+            level.gameEvent(player, GameEvent.FLUID_PICKUP, pos);
+            player.awardStat(Stats.ITEM_USED.get(this));
+        }
+        ItemStack filled = ItemUtils.createFilledResult(stack, player, new ItemStack(ModItems.WATER_BASIN.get()));
+        return InteractionResultHolder.sidedSuccess(filled, level.isClientSide());
     }
 
     /**

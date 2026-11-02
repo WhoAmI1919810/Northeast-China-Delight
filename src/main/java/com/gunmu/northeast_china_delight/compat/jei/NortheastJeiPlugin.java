@@ -6,6 +6,7 @@ import com.gunmu.northeast_china_delight.NortheastChinaDelight;
 import com.gunmu.northeast_china_delight.util.DdIds;
 import mezz.jei.api.IModPlugin;
 import mezz.jei.api.JeiPlugin;
+import mezz.jei.api.constants.VanillaTypes;
 import mezz.jei.api.helpers.IGuiHelper;
 import mezz.jei.api.runtime.IJeiRuntime;
 import mezz.jei.api.recipe.RecipeType;
@@ -100,8 +101,8 @@ public class NortheastJeiPlugin implements IModPlugin {
                 Component.translatable("jei.northeast_china_delight.info.sea_cucumber"));
         registration.addItemStackInfo(new ItemStack(ModItems.SALT.get()),
                 Component.translatable("jei.northeast_china_delight.info.salt"));
-        registration.addItemStackInfo(new ItemStack(ModItems.SEA_WATER_BUCKET.get()),
-                Component.translatable("jei.northeast_china_delight.info.sea_water_bucket"));
+        registration.addItemStackInfo(new ItemStack(ModItems.WATER_BASIN.get()),
+                Component.translatable("jei.northeast_china_delight.info.water_basin"));
         registration.addItemStackInfo(new ItemStack(ModItems.FROZEN_PEAR.get()), frozenPearInfo());
         Component bellflowerInfo = Component.translatable("jei.northeast_china_delight.info.bellflower");
         registration.addItemStackInfo(new ItemStack(ModItems.BELLFLOWER_ROOT.get()), bellflowerInfo);
@@ -135,6 +136,9 @@ public class NortheastJeiPlugin implements IModPlugin {
     @Override
     public void onRuntimeAvailable(IJeiRuntime jeiRuntime) {
         runtime = jeiRuntime;
+        // 海水桶只为老存档留着，没有获取方式，不在 JEI 里出现
+        jeiRuntime.getIngredientManager().removeIngredientsAtRuntime(VanillaTypes.ITEM_STACK,
+                java.util.List.of(new ItemStack(ModItems.SEA_WATER_BUCKET.get())));
         LOGGER.info("大缸 JEI 配方：{} 页，源配方 {} 条",
                 registeredVatRecipes.size(), registeredVatRecipes.size());
         if (registeredVatRecipes.isEmpty() || registeredGrillRecipes.isEmpty()) {

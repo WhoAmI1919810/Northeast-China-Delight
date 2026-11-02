@@ -7,6 +7,7 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.BucketItem;
 import net.minecraft.world.item.Item;
 //? if <1.20.5 {
 /*import net.minecraft.world.item.RecordItem;
@@ -20,6 +21,7 @@ import net.minecraft.world.item.ItemNameBlockItem;
 import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.ItemLike;
+import net.minecraft.world.level.material.Fluids;
 //? if <1.20.2 {
 /*import net.minecraftforge.eventbus.api.IEventBus;
 *///?} else {
@@ -99,8 +101,12 @@ public class ModItems {
     public static final Supplier<Item> SOY_RESIDUE = simple("soy_residue");
     public static final Supplier<Item> CORN_STALK = simple("corn_stalk");
     public static final Supplier<Item> SALT = simple("salt");
-    public static final Supplier<Item> SEA_WATER_BUCKET = regItem(
-            "sea_water_bucket", SeaWaterBucketItem::new,
+    /**
+     * 海水桶：3.2.2 起不再使用（制盐改用水盆），没有任何获取方式，只留着让老存档里的海水桶不丢。
+     * 用起来就是一只普通水桶（倒水、倒完剩空桶）；不进创造物品栏，JEI 里也隐藏（见 NortheastJeiPlugin）。
+     */
+    public static final Supplier<Item> SEA_WATER_BUCKET = regItem("sea_water_bucket",
+            properties -> new BucketItem(Fluids.WATER, properties),
             new Item.Properties().stacksTo(1).craftRemainder(Items.BUCKET));
     public static final Supplier<Item> SALTED_PORK = food("salted_pork", 5, 0.5F);
     public static final Supplier<Item> SALTED_FISH = food("salted_fish", 4, 0.4F);
@@ -147,7 +153,14 @@ public class ModItems {
     public static final Supplier<Item> LARGE_BASIN = regItem("large_basin",
             properties -> new LargeBasinItem(ModBlocks.LARGE_BASIN.get(), properties),
             new Item.Properties());
-    public static final Supplier<Item> WATER_BASIN = simple("water_basin");
+    /**
+     * 水盆：装了一盆水（1000 mB）的大脸盆。空盆对着水右键舀，或在机械动力注液器下灌；
+     * 能放在地上（方块见 {@link ModBlocks#WATER_BASIN}）；放进厨锅煮盐后返还空盆。
+     * 返还物要拿 LARGE_BASIN 的实例，所以和 basinFood 一样在注册事件里现做属性。
+     */
+    public static final Supplier<Item> WATER_BASIN = ITEMS.register("water_basin",
+            () -> new ItemNameBlockItem(ModBlocks.WATER_BASIN.get(),
+                    new Item.Properties().stacksTo(1).craftRemainder(LARGE_BASIN.get())));
     public static final Supplier<Item> GRILL_RACK = simple("grill_rack");
     public static final Supplier<Item> BRASS_BOWL = simple("brass_bowl");
 
@@ -373,7 +386,7 @@ public class ModItems {
             SMOKED_PORK_HOCK, SMOKED_PIG_LIVER,
             SOUR_CABBAGE, PICKLED_SNOW_MUSTARD, SPICY_CABBAGE, PICKLED_CUCUMBER, PICKLED_CARROT, PICKLED_GREEN_RADISH,
             SALTED_PORK, SALTED_FISH,
-            SALT, SEA_WATER_BUCKET, SOY_PASTE, CHILI_SAUCE, SOY_SAUCE, VINEGAR, SOUR_WATER, WHITE_VINEGAR,
+            SALT, SOY_PASTE, CHILI_SAUCE, SOY_SAUCE, VINEGAR, SOUR_WATER, WHITE_VINEGAR,
             FISH_SAUCE, SHRIMP_PASTE, CHILI_OIL, PEANUT_BUTTER, COOKING_OIL, ANIMAL_OIL,
             SOY_PASTE_CHUNK, SOY_RESIDUE,
             WATER_DOUGH, BUCKWHEAT_NOODLES, DRIED_TOFU, TOFU, FROZEN_TOFU, SWEET_POTATO_STARCH,

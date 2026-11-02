@@ -421,15 +421,22 @@ public class ModBlocks {
     /**
      * 空的大脸盆：能放在地上的盆体（模型 block/large_basin 由 临时素材/1.json 转写，盆沿 5.5 像素）。
      * 不影响物品图标 —— 物品模型仍旧走 models/item/large_basin.json 里的 2D 贴图。
+     * 拿水桶右键倒满就变成 {@link #WATER_BASIN}（见 {@link BasinBlock}）。
      */
     public static final Supplier<Block> LARGE_BASIN =
-            block("large_basin",
-                    properties -> new DishBlock(properties, DishBlock.BASIN_SHAPE),
-                    BlockBehaviour.Properties.of()
-                            .mapColor(MapColor.WOOD)
-                            .strength(0.5F)
-                            .sound(SoundType.WOOD)
-                            .noOcclusion());
+            block("large_basin", properties -> new BasinBlock(properties, false), basinProperties());
+
+    /** 装满水的大脸盆：模型是空盆加一层水面（水面按群系水色染色），空桶右键舀走变回空盆。 */
+    public static final Supplier<Block> WATER_BASIN =
+            block("water_basin", properties -> new BasinBlock(properties, true), basinProperties());
+
+    private static BlockBehaviour.Properties basinProperties() {
+        return BlockBehaviour.Properties.of()
+                .mapColor(MapColor.WOOD)
+                .strength(0.5F)
+                .sound(SoundType.WOOD)
+                .noOcclusion();
+    }
 
     /** 黄桃罐头放下后的方块形态：玻璃瓶装饰，可回收。 */
     public static final Supplier<Block> CANNED_YELLOW_PEACH =

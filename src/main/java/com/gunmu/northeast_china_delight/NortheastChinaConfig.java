@@ -13,7 +13,7 @@ import net.neoforged.neoforge.common.ModConfigSpec;
 /**
  * 模组配置。
  *
- * <p>控制菜肴摆放、世界生成、箱子战利品和海洋取水模式。</p>
+ * <p>控制菜肴摆放、世界生成和箱子战利品。</p>
  */
 public final class NortheastChinaConfig
 {
@@ -115,7 +115,6 @@ public final class NortheastChinaConfig
     public static final ForgeConfigSpec.BooleanValue YARD_PARTS_ENABLED;
     public static final ForgeConfigSpec.DoubleValue WILD_WOOD_EAR_OAK_CHANCE;
     public static final ForgeConfigSpec.DoubleValue WILD_WOOD_EAR_FOREST_CHANCE;
-    public static final ForgeConfigSpec.IntValue SEA_WATER_BUCKET_MODE;
     public static final ForgeConfigSpec.BooleanValue VILLAGE_FARM_CROPS_ENABLED;
     public static final ForgeConfigSpec.ConfigValue<List<? extends String>> VILLAGE_FARM_ALLOWED_CROPS;
     public static final ForgeConfigSpec.BooleanValue CHEST_LOOT_ENABLED;
@@ -128,7 +127,6 @@ public final class NortheastChinaConfig
     public static final ModConfigSpec.BooleanValue YARD_PARTS_ENABLED;
     public static final ModConfigSpec.DoubleValue WILD_WOOD_EAR_OAK_CHANCE;
     public static final ModConfigSpec.DoubleValue WILD_WOOD_EAR_FOREST_CHANCE;
-    public static final ModConfigSpec.IntValue SEA_WATER_BUCKET_MODE;
     public static final ModConfigSpec.BooleanValue VILLAGE_FARM_CROPS_ENABLED;
     public static final ModConfigSpec.ConfigValue<List<? extends String>> VILLAGE_FARM_ALLOWED_CROPS;
     public static final ModConfigSpec.BooleanValue CHEST_LOOT_ENABLED;
@@ -190,14 +188,6 @@ public final class NortheastChinaConfig
                         () -> "northeast_china_delight:soybean",
                         //?}
                         NortheastChinaConfig::isItemId);
-        builder.pop();
-
-        builder.comment("海洋取水").push("sea_water");
-        SEA_WATER_BUCKET_MODE = builder
-                .comment("1：在海洋中取水获得海水桶。",
-                        "2：在海洋中取水，获得带海水标记的普通水桶，功能同海水桶",
-                        "3：不干预正常取水")
-                .defineInRange("bucket_mode", 1, 1, 3);
         builder.pop();
         SPEC = builder.build();
     }
