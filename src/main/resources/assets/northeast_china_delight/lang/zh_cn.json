@@ -147,7 +147,7 @@
   "item.northeast_china_delight.blue_steel_roofing": "蓝色彩钢瓦",
   "item.northeast_china_delight.green_steel_roofing": "绿色彩钢瓦",
   "item.northeast_china_delight.red_paper": "红纸",
-  "jei.northeast_china_delight.info.paper_cut": "一只手拿红纸、另一只手拿剪刀，右键剪出一张窗花，剪刀掉 1 点耐久。拿着窗花对着糊纸木格窗右键贴上去：点窗户中间贴团花，点四个角贴那个角的角花；用剪刀右键能揭下来，窗花还给你。",
+  "jei.northeast_china_delight.info.paper_cut": "一只手拿红纸、另一只手拿剪刀，右键剪出一张窗花，剪刀掉 1 点耐久。拿着窗花对着糊纸木格窗右键贴上去：点窗户中间贴团花，点四个角贴那个角的角花；空手右键（或用剪刀右键）能揭下来，窗花还给你。",
   "block.northeast_china_delight.red_steel_roof_stairs": "红色彩钢瓦斜屋顶",
   "block.northeast_china_delight.red_steel_roof_slab": "红色彩钢瓦平屋顶",
   "block.northeast_china_delight.blue_steel_roof_stairs": "蓝色彩钢瓦斜屋顶",

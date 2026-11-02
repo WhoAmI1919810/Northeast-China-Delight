@@ -148,7 +148,7 @@
   "item.northeast_china_delight.blue_steel_roofing": "Blue Steel Roofing",
   "item.northeast_china_delight.green_steel_roofing": "Green Steel Roofing",
   "item.northeast_china_delight.red_paper": "Red Paper",
-  "jei.northeast_china_delight.info.paper_cut": "Hold Red Paper in one hand and Shears in the other, then right-click to cut a Window Paper-Cut (the shears lose 1 durability). Right-click a Paper Lattice Window with it to stick it on: the middle gives a round paper-cut, a corner gives a corner piece. Right-click with Shears to peel it off again.",
+  "jei.northeast_china_delight.info.paper_cut": "Hold Red Paper in one hand and Shears in the other, then right-click to cut a Window Paper-Cut (the shears lose 1 durability). Right-click a Paper Lattice Window with it to stick it on: the middle gives a round paper-cut, a corner gives a corner piece. Right-click with an empty hand (or Shears) to take it off again.",
   "block.northeast_china_delight.red_steel_roof_stairs": "Red Steel Sloped Roof",
   "block.northeast_china_delight.red_steel_roof_slab": "Red Steel Flat Roof",
   "block.northeast_china_delight.blue_steel_roof_stairs": "Blue Steel Sloped Roof",
