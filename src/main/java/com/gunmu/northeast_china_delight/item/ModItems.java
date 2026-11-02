@@ -343,6 +343,20 @@ public class ModItems {
             new Item.Properties()
     );
 
+    /** 东北建材，放在「方块」物品栏最后 */
+    public static final List<Supplier<? extends Item>> BUILDING_BLOCK_ITEMS = List.of(
+            blockItem("blue_bricks", ModBlocks.BLUE_BRICKS),
+            blockItem("blue_brick_stairs", ModBlocks.BLUE_BRICK_STAIRS),
+            blockItem("blue_brick_slab", ModBlocks.BLUE_BRICK_SLAB),
+            blockItem("blue_brick_wall", ModBlocks.BLUE_BRICK_WALL),
+            blockItem("paper_lattice_window", ModBlocks.PAPER_LATTICE_WINDOW),
+            blockItem("glass_lattice_window", ModBlocks.GLASS_LATTICE_WINDOW),
+            blockItem("sorghum_stalk_fence", ModBlocks.SORGHUM_STALK_FENCE),
+            blockItem("board_fence", ModBlocks.BOARD_FENCE),
+            blockItem("cotton_door_curtain", ModBlocks.COTTON_DOOR_CURTAIN),
+            blockItem("floral_door_curtain", ModBlocks.FLORAL_DOOR_CURTAIN)
+    );
+
     public static final List<Supplier<? extends Item>> INGREDIENT_TAB_ITEMS = List.of(
             EGGPLANT_SEEDS, GREEN_PEPPER_SEEDS, CORN_SEEDS, GREEN_BEANS_SEEDS,
             NAPA_CABBAGE_SEEDS, SNOW_MUSTARD_SEEDS, CUCUMBER_SEEDS, RED_CHILI_SEEDS, GREEN_ONION_SEEDS, GREEN_RADISH_SEEDS,
@@ -409,6 +423,7 @@ public class ModItems {
         list.add(CORN_SKEWER);
         list.add(CHILI_SKEWER);
         list.addAll(STORAGE_BLOCK_ITEMS.values());
+        list.addAll(BUILDING_BLOCK_ITEMS);
         return List.copyOf(list);
     }
 

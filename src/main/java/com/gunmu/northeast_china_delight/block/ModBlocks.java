@@ -8,7 +8,10 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.CampfireBlock;
 import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.SlabBlock;
 import net.minecraft.world.level.block.SoundType;
+import net.minecraft.world.level.block.StairBlock;
+import net.minecraft.world.level.block.WallBlock;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.properties.NoteBlockInstrument;
 import net.minecraft.world.level.material.MapColor;
@@ -251,6 +254,59 @@ public class ModBlocks {
                     .sound(SoundType.HONEY_BLOCK)
     );
 
+    // ===== 东北建材（小院用；暂时没有配方，只能从创造模式拿） =====
+
+    /** 青砖：数值照原版红砖 */
+    public static final Supplier<Block> BLUE_BRICKS = block("blue_bricks", Block::new, blueBrickProperties());
+    public static final Supplier<StairBlock> BLUE_BRICK_STAIRS = block(
+            "blue_brick_stairs",
+            //? if <1.20.2 {
+            /*properties -> new StairBlock(() -> BLUE_BRICKS.get().defaultBlockState(), properties),
+            *///?} else {
+            properties -> new StairBlock(BLUE_BRICKS.get().defaultBlockState(), properties),
+            //?}
+            blueBrickProperties()
+    );
+    public static final Supplier<SlabBlock> BLUE_BRICK_SLAB =
+            block("blue_brick_slab", SlabBlock::new, blueBrickProperties());
+    public static final Supplier<WallBlock> BLUE_BRICK_WALL =
+            block("blue_brick_wall", WallBlock::new, blueBrickProperties().forceSolidOn());
+
+    /** 木格窗：糊纸的、镶玻璃的，窗框都是橡木原木 */
+    public static final Supplier<Block> PAPER_LATTICE_WINDOW =
+            block("paper_lattice_window", LatticeWindowBlock::new, windowProperties(SoundType.WOOD));
+    public static final Supplier<Block> GLASS_LATTICE_WINDOW =
+            block("glass_lattice_window", LatticeWindowBlock::new, windowProperties(SoundType.GLASS));
+
+    /** 障子：高粱秆用柳条勒成的、木板钉成的 */
+    public static final Supplier<Block> SORGHUM_STALK_FENCE = block(
+            "sorghum_stalk_fence",
+            FenceScreenBlock::new,
+            BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.SAND)
+                    .strength(1.0F)
+                    .sound(SoundType.BAMBOO)
+                    .noOcclusion()
+                    .ignitedByLava()
+    );
+    public static final Supplier<Block> BOARD_FENCE = block(
+            "board_fence",
+            FenceScreenBlock::new,
+            BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.WOOD)
+                    .instrument(NoteBlockInstrument.BASS)
+                    .strength(2.0F, 3.0F)
+                    .sound(SoundType.WOOD)
+                    .noOcclusion()
+                    .ignitedByLava()
+    );
+
+    /** 门帘：藏蓝棉门帘、大花布门帘 */
+    public static final Supplier<Block> COTTON_DOOR_CURTAIN =
+            block("cotton_door_curtain", DoorCurtainBlock::new, curtainProperties(MapColor.COLOR_BLUE));
+    public static final Supplier<Block> FLORAL_DOOR_CURTAIN =
+            block("floral_door_curtain", DoorCurtainBlock::new, curtainProperties(MapColor.COLOR_RED));
+
     public static final List<String> DISH_BLOCK_IDS = List.of(
             "new_style_crispy_pork", "orange_crispy_pork", "crispy_pork_strips", "three_fresh_veggies",
             "braised_pork_ribs", "ground_pot_chicken_bowl", "ground_pot_ribs_bowl", "slaughter_feast_bowl",
@@ -442,6 +498,37 @@ public class ModBlocks {
                                                   Supplier<? extends ItemLike> fruit) {
         return block(name + "_crop",
                 properties -> new DdCropBlock(properties, seed, fruit), cropProperties());
+    }
+
+    private static BlockBehaviour.Properties blueBrickProperties() {
+        return BlockBehaviour.Properties.of()
+                .mapColor(MapColor.COLOR_GRAY)
+                .instrument(NoteBlockInstrument.BASEDRUM)
+                .requiresCorrectToolForDrops()
+                .strength(2.0F, 6.0F);
+    }
+
+    private static BlockBehaviour.Properties windowProperties(SoundType sound) {
+        return BlockBehaviour.Properties.of()
+                .mapColor(MapColor.WOOD)
+                .instrument(NoteBlockInstrument.BASS)
+                .strength(1.0F)
+                .sound(sound)
+                .noOcclusion()
+                .isSuffocating((state, level, pos) -> false)
+                .isViewBlocking((state, level, pos) -> false)
+                .ignitedByLava();
+    }
+
+    private static BlockBehaviour.Properties curtainProperties(MapColor color) {
+        return BlockBehaviour.Properties.of()
+                .mapColor(color)
+                .strength(0.8F)
+                .sound(SoundType.WOOL)
+                .noCollission()
+                .noOcclusion()
+                .ignitedByLava()
+                .pushReaction(PushReaction.DESTROY);
     }
 
     private static BlockBehaviour.Properties cropProperties() {

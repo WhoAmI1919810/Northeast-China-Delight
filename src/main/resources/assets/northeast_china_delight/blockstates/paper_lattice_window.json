@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "facing=north": {
+      "model": "northeast_china_delight:block/paper_lattice_window"
+    },
+    "facing=east": {
+      "model": "northeast_china_delight:block/paper_lattice_window",
+      "y": 90
+    },
+    "facing=south": {
+      "model": "northeast_china_delight:block/paper_lattice_window",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "northeast_china_delight:block/paper_lattice_window",
+      "y": 270
+    }
+  }
+}
