@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "A": {
+      "item": "northeast_china_delight:buckwheat"
+    },
+    "B": {
+      "tag": "minecraft:wool"
+    }
+  },
+  "pattern": [
+    "ABB",
+    "BBB"
+  ],
+  "result": {
+    "count": 1,
+    "id": "northeast_china_delight:bedding"
+  }
+}

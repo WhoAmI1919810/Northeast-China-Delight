@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "A": {
+      "item": "minecraft:iron_ingot"
+    },
+    "B": {
+      "item": "minecraft:stick"
+    },
+    "C": {
+      "item": "minecraft:bucket"
+    }
+  },
+  "pattern": [
+    "ABA",
+    "ACA",
+    " A "
+  ],
+  "result": {
+    "count": 1,
+    "id": "northeast_china_delight:hand_pump"
+  }
+}

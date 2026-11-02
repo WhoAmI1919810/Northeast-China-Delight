@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "A": {
+      "item": "minecraft:stick"
+    },
+    "B": {
+      "tag": "minecraft:wool"
+    }
+  },
+  "pattern": [
+    "AA",
+    "BB",
+    "BB"
+  ],
+  "result": {
+    "count": 1,
+    "id": "northeast_china_delight:plain_door_curtain"
+  }
+}
