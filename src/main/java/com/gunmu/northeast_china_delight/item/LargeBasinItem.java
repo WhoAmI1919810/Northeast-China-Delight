@@ -38,7 +38,8 @@ import net.minecraft.world.item.component.ItemAttributeModifiers;
 //?}
 
 /**
- * 大脸盆（空盆）。跟普通方块一样能放地上，也能当帽子戴：右键空气扣头上，走原版头盔槽；对着水右键舀一盆水，得到水盆。
+ * 大脸盆（空盆）。对着水右键舀一盆水，得到水盆；潜行右键方块放在地上（潜行空手右键收回）；
+ * 也能当帽子戴：右键空气扣头上，走原版头盔槽。
  *
  * <p>槽位判定两个版本同一套：本类实现 {@link Equipable} 后，1.20.1 的
  * {@code LivingEntity.getEquipmentSlotForItem}（Forge 补丁会读 Equipable）和 1.21.1 的
@@ -60,39 +61,42 @@ public class LargeBasinItem extends ItemNameBlockItem implements Equipable
     }
 
     /**
-     * 对着水右键：舀一盆水，得到水盆（见 {@link #scoopWater}）。
-     * 否则补上「右键空气 = 扣头上」—— 原版 {@code Item#use} 自己不认 Equipable（只有盔甲、鞘翅在里面调了 swap）。
+     * 右键：对着水舀一盆水，得到水盆（见 {@link #scoopWater}）；对着别的方块什么也不做（放盆要潜行）；
+     * 对着空气扣头上 —— 原版 {@code Item#use} 自己不认 Equipable（只有盔甲、鞘翅在里面调了 swap），所以这里补上。
      */
     @Override
     public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand)
     {
         InteractionResultHolder<ItemStack> scooped = scoopWater(level, player, hand);
-        return scooped != null ? scooped : this.swapWithEquipmentSlot(this, level, player, hand);
+        if (scooped != null)
+        {
+            return scooped;
+        }
+        if (getPlayerPOVHitResult(level, player, ClipContext.Fluid.NONE).getType() == HitResult.Type.BLOCK)
+        {
+            return InteractionResultHolder.pass(player.getItemInHand(hand));
+        }
+        return this.swapWithEquipmentSlot(this, level, player, hand);
     }
 
     /**
-     * 对着方块右键本来是放盆；但准星穿过水面落在水底 / 岸边方块上时（浅水里常见），
-     * 视线上先碰到的是水，就应该舀水而不是把盆放到水底去。
+     * 和水盆一样：潜行右键方块才放盆（地上的盆潜行空手右键收回，见 {@code BasinBlock}）；
+     * 不潜行返回 PASS，客户端接着调 {@link #use} 去舀水。
      */
     @Override
     public InteractionResult useOn(UseOnContext context)
     {
         Player player = context.getPlayer();
-        if (player != null)
+        if (player == null || player.isSecondaryUseActive())
         {
-            InteractionResultHolder<ItemStack> scooped = scoopWater(context.getLevel(), player, context.getHand());
-            if (scooped != null)
-            {
-                player.setItemInHand(context.getHand(), scooped.getObject());
-                return scooped.getResult();
-            }
+            return super.useOn(context);
         }
-        return super.useOn(context);
+        return InteractionResult.PASS;
     }
 
     /**
      * 照原版空桶取水：沿视线找最近的水源方块，舀走它（无限水源会自己补回来），一个空盆换一个水盆。
-     * 视线上先碰到的不是水源就返回 null，交给原来的逻辑（扣头上 / 放盆）。
+     * 视线上先碰到的不是水源就返回 null，交给原来的逻辑（扣头上 / 什么也不做）。
      */
     @Nullable
     private InteractionResultHolder<ItemStack> scoopWater(Level level, Player player, InteractionHand hand)

@@ -350,6 +350,7 @@ public class NortheastChinaDelight
         }
         //?}
 
+        @SubscribeEvent
         public static void onRegisterBlockColors(RegisterColorHandlersEvent.Block event)
         {
             // 水盆的水面（tintindex 0）跟着群系水色走，和旁边的水一个颜色
@@ -430,7 +431,7 @@ public class NortheastChinaDelight
         }
 
         /**
-         * 大脸盆与 8 道大盆菜的物品栏图标是单独一份 2D 模型（models/item/*_icon.json）。
+         * 大脸盆、水盆与 8 道大盆菜的物品栏图标是单独一份 2D 模型（models/item/*_icon.json）。
          * 它们不挂在任何方块/物品的默认模型路径上，得先在这里登记才会被烘焙，
          * 渲染时再由 LargeBasinItemRenderer / DdFeastItemRenderer 从 ModelManager 取回。
          */
@@ -438,6 +439,7 @@ public class NortheastChinaDelight
         public static void onRegisterAdditionalModels(ModelEvent.RegisterAdditional event)
         {
             registerItemIcon(event, "large_basin_icon");
+            registerItemIcon(event, "water_basin_icon");
             registerItemIcon(event, "wooden_mallet_icon");
             registerItemIcon(event, "wooden_mallet_model");
             registerItemIcon(event, "sauerkraut_bone_stew_icon");
@@ -495,6 +497,7 @@ public class NortheastChinaDelight
         {
             // 大脸盆：物品栏画贴图、手/地面/头上画方块，分流在 LargeBasinItemRenderer 里
             event.registerItem(LargeBasinItemRenderer.CLIENT_EXTENSION, ModItems.LARGE_BASIN.get());
+            event.registerItem(LargeBasinItemRenderer.WATER_BASIN_CLIENT_EXTENSION, ModItems.WATER_BASIN.get());
 
             // 木槌：物品栏画贴图、手/地面/展示框画 3D 模型，分流在 WoodenMalletItemRenderer 里
             event.registerItem(WoodenMalletItemRenderer.CLIENT_EXTENSION, ModItems.WOODEN_MALLET.get());

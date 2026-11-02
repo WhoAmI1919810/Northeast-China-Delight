@@ -1,5 +1,6 @@
 package com.gunmu.northeast_china_delight.block;
 
+import com.gunmu.northeast_china_delight.item.ModItems;
 import net.minecraft.core.BlockPos;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -23,8 +24,9 @@ import net.minecraft.world.phys.BlockHitResult;
 /**
  * 放在地上的大脸盆（空盆 / 水盆）。
  *
- * <p>照原版炼药锅倒水、舀水的写法：拿水桶右键空盆，倒进去变成水盆、手里剩空桶；
- * 拿空桶右键水盆，舀出一桶水、盆变回空盆。一盆水就是一桶水（1000 mB），舀进舀出不多不少。</p>
+ * <p>照原版炼药锅倒水、舀水的写法：拿水桶（或水盆）右键空盆，倒进去变成水盆、手里剩空桶（空盆）；
+ * 拿空桶（或空盆）右键水盆，舀走一盆水、盆变回空盆。一盆水就是一桶水（1000 mB），舀进舀出不多不少。
+ * 地上的盆（空盆、水盆）潜行空手右键，直接收回物品栏。</p>
  */
 public class BasinBlock extends DishBlock
 {
@@ -41,7 +43,8 @@ public class BasinBlock extends DishBlock
     public InteractionResult use(BlockState state, Level level, BlockPos pos, Player player,
                                  InteractionHand hand, BlockHitResult hitResult)
     {
-        return pourOrScoop(player.getItemInHand(hand), level, pos, player, hand);
+        ItemStack held = player.getItemInHand(hand);
+        return held.isEmpty() ? pickUp(level, pos, player) : pourOrScoop(held, level, pos, player, hand);
     }*/
     //?} else {
     @Override
@@ -53,12 +56,42 @@ public class BasinBlock extends DishBlock
                 ? ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION
                 : ItemInteractionResult.sidedSuccess(level.isClientSide());
     }
+
+    @Override
+    protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos,
+                                               Player player, BlockHitResult hitResult)
+    {
+        return pickUp(level, pos, player);
+    }
     //?}
+
+    /** 地上的盆：潜行空手右键收回物品栏（背包满了就掉在脚下） */
+    private InteractionResult pickUp(Level level, BlockPos pos, Player player)
+    {
+        if (!player.isSecondaryUseActive())
+        {
+            return InteractionResult.PASS;
+        }
+        if (!level.isClientSide)
+        {
+            level.removeBlock(pos, false);
+            level.gameEvent(player, GameEvent.BLOCK_DESTROY, pos);
+            level.playSound(null, pos, SoundEvents.ITEM_PICKUP, SoundSource.PLAYERS, 0.2F, 1.0F);
+            ItemStack item = new ItemStack(filled ? ModItems.WATER_BASIN.get() : ModItems.LARGE_BASIN.get());
+            if (!player.getInventory().add(item))
+            {
+                player.drop(item, false);
+            }
+        }
+        return InteractionResult.sidedSuccess(level.isClientSide);
+    }
 
     private InteractionResult pourOrScoop(ItemStack held, Level level, BlockPos pos, Player player, InteractionHand hand)
     {
-        boolean pour = !filled && held.is(Items.WATER_BUCKET);
-        boolean scoop = filled && held.is(Items.BUCKET);
+        // 桶和盆都行：倒进去剩空桶 / 空盆，舀出来得水桶 / 水盆
+        boolean basin = held.is(ModItems.WATER_BASIN.get()) || held.is(ModItems.LARGE_BASIN.get());
+        boolean pour = !filled && (held.is(Items.WATER_BUCKET) || held.is(ModItems.WATER_BASIN.get()));
+        boolean scoop = filled && (held.is(Items.BUCKET) || held.is(ModItems.LARGE_BASIN.get()));
         if (!pour && !scoop)
         {
             return InteractionResult.PASS;
@@ -66,7 +99,9 @@ public class BasinBlock extends DishBlock
         if (!level.isClientSide)
         {
             player.awardStat(Stats.ITEM_USED.get(held.getItem()));
-            ItemStack result = new ItemStack(pour ? Items.BUCKET : Items.WATER_BUCKET);
+            ItemStack result = new ItemStack(basin
+                    ? (pour ? ModItems.LARGE_BASIN.get() : ModItems.WATER_BASIN.get())
+                    : (pour ? Items.BUCKET : Items.WATER_BUCKET));
             player.setItemInHand(hand, ItemUtils.createFilledResult(held, player, result));
             Block next = pour ? ModBlocks.WATER_BASIN.get() : ModBlocks.LARGE_BASIN.get();
             level.setBlock(pos, next.defaultBlockState(), Block.UPDATE_ALL);
