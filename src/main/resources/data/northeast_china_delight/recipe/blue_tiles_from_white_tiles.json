@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "building",
+  "key": {
+    "A": {
+      "item": "northeast_china_delight:white_tiles"
+    },
+    "B": {
+      "item": "minecraft:blue_dye"
+    }
+  },
+  "pattern": [
+    "AAA",
+    "ABA",
+    "AAA"
+  ],
+  "result": {
+    "count": 8,
+    "id": "northeast_china_delight:blue_tiles"
+  }
+}

@@ -4,12 +4,17 @@
   "package": "com.gunmu.northeast_china_delight.mixin",
   "compatibilityLevel": "JAVA_21",
   "mixins": [
+    "LoomBannerSlotMixin",
+    "LoomMenuMixin",
     "CookingPotBlockEntityInvoker",
     "CookingPotBlockEntityMixin",
     "PowderSnowBlockMixin",
     "RepairItemRecipeMixin",
     "SoundEngineMixin",
     "SideDishMerchantTradeMixin"
+  ],
+  "client": [
+    "LoomScreenMixin"
   ],
   "injectors": {
     "defaultRequire": 1

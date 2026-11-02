@@ -302,6 +302,9 @@ public class ModBlocks {
                     .ignitedByLava()
     );
 
+    /** 门帘：普通门帘（本白，合成出来的）；放进织布机用蓝 / 红染料染成棉门帘 / 大花布门帘（见 LoomCurtains） */
+    public static final Supplier<Block> PLAIN_DOOR_CURTAIN =
+            block("plain_door_curtain", DoorCurtainBlock::new, curtainProperties(MapColor.WOOL));
     /** 门帘：藏蓝棉门帘、大花布门帘 */
     public static final Supplier<Block> COTTON_DOOR_CURTAIN =
             block("cotton_door_curtain", DoorCurtainBlock::new, curtainProperties(MapColor.COLOR_BLUE));
@@ -310,25 +313,22 @@ public class ModBlocks {
 
     // ===== 东北建材第二批（2026-11-02；同样先不加配方） =====
 
-    /** 彩钢瓦：铁皮房盖，红 / 蓝 / 绿三色，各带台阶、半砖 */
-    public static final Supplier<Block> RED_STEEL_ROOF =
-            block("red_steel_roof", Block::new, steelRoofProperties(MapColor.COLOR_RED));
-    public static final Supplier<StairBlock> RED_STEEL_ROOF_STAIRS =
-            stairs("red_steel_roof_stairs", RED_STEEL_ROOF, steelRoofProperties(MapColor.COLOR_RED));
+    /**
+     * 彩钢瓦：只做房盖，没有整块 —— 平屋顶（台阶形）、斜屋顶（楼梯形），红 / 蓝 / 绿三色。
+     * 斜屋顶的「底座」用同色的平屋顶（原版楼梯要一个基础方块来借爆炸抗性、踩踏这些行为）。
+     */
     public static final Supplier<SlabBlock> RED_STEEL_ROOF_SLAB =
             block("red_steel_roof_slab", SlabBlock::new, steelRoofProperties(MapColor.COLOR_RED));
-    public static final Supplier<Block> BLUE_STEEL_ROOF =
-            block("blue_steel_roof", Block::new, steelRoofProperties(MapColor.COLOR_BLUE));
-    public static final Supplier<StairBlock> BLUE_STEEL_ROOF_STAIRS =
-            stairs("blue_steel_roof_stairs", BLUE_STEEL_ROOF, steelRoofProperties(MapColor.COLOR_BLUE));
+    public static final Supplier<StairBlock> RED_STEEL_ROOF_STAIRS =
+            stairs("red_steel_roof_stairs", RED_STEEL_ROOF_SLAB, steelRoofProperties(MapColor.COLOR_RED));
     public static final Supplier<SlabBlock> BLUE_STEEL_ROOF_SLAB =
             block("blue_steel_roof_slab", SlabBlock::new, steelRoofProperties(MapColor.COLOR_BLUE));
-    public static final Supplier<Block> GREEN_STEEL_ROOF =
-            block("green_steel_roof", Block::new, steelRoofProperties(MapColor.COLOR_GREEN));
-    public static final Supplier<StairBlock> GREEN_STEEL_ROOF_STAIRS =
-            stairs("green_steel_roof_stairs", GREEN_STEEL_ROOF, steelRoofProperties(MapColor.COLOR_GREEN));
+    public static final Supplier<StairBlock> BLUE_STEEL_ROOF_STAIRS =
+            stairs("blue_steel_roof_stairs", BLUE_STEEL_ROOF_SLAB, steelRoofProperties(MapColor.COLOR_BLUE));
     public static final Supplier<SlabBlock> GREEN_STEEL_ROOF_SLAB =
             block("green_steel_roof_slab", SlabBlock::new, steelRoofProperties(MapColor.COLOR_GREEN));
+    public static final Supplier<StairBlock> GREEN_STEEL_ROOF_STAIRS =
+            stairs("green_steel_roof_stairs", GREEN_STEEL_ROOF_SLAB, steelRoofProperties(MapColor.COLOR_GREEN));
 
     /** 瓷砖：白瓷砖贴墙面，蓝瓷砖做墙裙 */
     public static final Supplier<Block> WHITE_TILES = block("white_tiles", Block::new, tileProperties(MapColor.SNOW));
@@ -609,7 +609,7 @@ public class ModBlocks {
     }
 
     /** 台阶：1.20.1 用 Forge 的 Supplier 构造（那时整块还没注册完，取不到 defaultBlockState） */
-    private static Supplier<StairBlock> stairs(String name, Supplier<Block> base, BlockBehaviour.Properties properties) {
+    private static Supplier<StairBlock> stairs(String name, Supplier<? extends Block> base, BlockBehaviour.Properties properties) {
         //? if <1.20.2 {
         /*return block(name, p -> new StairBlock(() -> base.get().defaultBlockState(), p), properties);
         *///?} else {

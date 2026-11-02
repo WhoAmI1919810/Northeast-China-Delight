@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "A": {
+      "item": "minecraft:blue_dye"
+    },
+    "B": {
+      "item": "minecraft:iron_ingot"
+    }
+  },
+  "pattern": [
+    " A ",
+    "BBB"
+  ],
+  "result": {
+    "count": 8,
+    "id": "northeast_china_delight:blue_steel_roofing"
+  }
+}

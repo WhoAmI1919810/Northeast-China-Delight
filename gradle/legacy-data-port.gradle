@@ -274,6 +274,16 @@ ext.legacyTransformNode = { Object node, Map env ->
                 env.changed = true
             }
         }
+        // 切石机：1.21 的 result 是物品堆叠（上面已经把 id 改成 item），1.20.1 的 SingleItemRecipe
+        // 只认 "result": "<物品 id>" 加顶层的 "count"，对象写法直接解析失败、配方整条丢掉
+        if (map.get('type') == 'minecraft:stonecutting') {
+            def result = out.get('result')
+            if (result instanceof Map && (result as Map).containsKey('item')) {
+                out.put('result', (result as Map).get('item'))
+                out.put('count', (result as Map).get('count') ?: 1)
+                env.changed = true
+            }
+        }
         return out
     }
     if (node instanceof List) {

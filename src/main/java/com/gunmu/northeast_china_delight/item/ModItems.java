@@ -358,8 +358,14 @@ public class ModItems {
             new Item.Properties()
     );
 
-    /** 窗花：贴在糊纸木格窗上（见 {@link PaperCutItem}） */
+    /** 窗花：贴在糊纸木格窗上（见 {@link PaperCutItem}）；一手红纸、一手剪刀右键剪出来（见 {@link RedPaperItem}） */
     public static final Supplier<Item> PAPER_CUT = regItem("paper_cut", PaperCutItem::new, new Item.Properties());
+    /** 彩钢瓦（材料，不能放）：染料 + 3 铁锭做，再用它合成平屋顶 / 斜屋顶 */
+    public static final Supplier<Item> RED_STEEL_ROOFING = simple("red_steel_roofing");
+    public static final Supplier<Item> BLUE_STEEL_ROOFING = simple("blue_steel_roofing");
+    public static final Supplier<Item> GREEN_STEEL_ROOFING = simple("green_steel_roofing");
+    /** 红纸：两张纸 + 一份红染料做，剪窗花、糊红灯笼用（贴图暂时借原版的纸） */
+    public static final Supplier<Item> RED_PAPER = regItem("red_paper", RedPaperItem::new, new Item.Properties());
 
     /** 东北建材，放在「方块」物品栏最后 */
     public static final List<Supplier<? extends Item>> BUILDING_BLOCK_ITEMS = List.of(
@@ -371,18 +377,20 @@ public class ModItems {
             blockItem("glass_lattice_window", ModBlocks.GLASS_LATTICE_WINDOW),
             blockItem("sorghum_stalk_fence", ModBlocks.SORGHUM_STALK_FENCE),
             blockItem("board_fence", ModBlocks.BOARD_FENCE),
+            blockItem("plain_door_curtain", ModBlocks.PLAIN_DOOR_CURTAIN),
             blockItem("cotton_door_curtain", ModBlocks.COTTON_DOOR_CURTAIN),
             blockItem("floral_door_curtain", ModBlocks.FLORAL_DOOR_CURTAIN),
+            RED_PAPER,
             PAPER_CUT,
-            blockItem("red_steel_roof", ModBlocks.RED_STEEL_ROOF),
-            blockItem("red_steel_roof_stairs", ModBlocks.RED_STEEL_ROOF_STAIRS),
+            RED_STEEL_ROOFING,
             blockItem("red_steel_roof_slab", ModBlocks.RED_STEEL_ROOF_SLAB),
-            blockItem("blue_steel_roof", ModBlocks.BLUE_STEEL_ROOF),
-            blockItem("blue_steel_roof_stairs", ModBlocks.BLUE_STEEL_ROOF_STAIRS),
+            blockItem("red_steel_roof_stairs", ModBlocks.RED_STEEL_ROOF_STAIRS),
+            BLUE_STEEL_ROOFING,
             blockItem("blue_steel_roof_slab", ModBlocks.BLUE_STEEL_ROOF_SLAB),
-            blockItem("green_steel_roof", ModBlocks.GREEN_STEEL_ROOF),
-            blockItem("green_steel_roof_stairs", ModBlocks.GREEN_STEEL_ROOF_STAIRS),
+            blockItem("blue_steel_roof_stairs", ModBlocks.BLUE_STEEL_ROOF_STAIRS),
+            GREEN_STEEL_ROOFING,
             blockItem("green_steel_roof_slab", ModBlocks.GREEN_STEEL_ROOF_SLAB),
+            blockItem("green_steel_roof_stairs", ModBlocks.GREEN_STEEL_ROOF_STAIRS),
             blockItem("white_tiles", ModBlocks.WHITE_TILES),
             blockItem("blue_tiles", ModBlocks.BLUE_TILES),
             regItem("red_iron_gate", p -> new DoubleHighBlockItem(ModBlocks.RED_IRON_GATE.get(), p), new Item.Properties()),

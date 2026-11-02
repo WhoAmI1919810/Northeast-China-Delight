@@ -1,6 +1,7 @@
 package com.gunmu.northeast_china_delight.compat.jei;
 
 import com.gunmu.northeast_china_delight.crafting.VatRecipes;
+import com.gunmu.northeast_china_delight.block.ModBlocks;
 import com.gunmu.northeast_china_delight.item.ModItems;
 import com.gunmu.northeast_china_delight.NortheastChinaDelight;
 import com.gunmu.northeast_china_delight.util.DdIds;
@@ -99,6 +100,13 @@ public class NortheastJeiPlugin implements IModPlugin {
                 Component.translatable("jei.northeast_china_delight.info.oyster"));
         registration.addItemStackInfo(new ItemStack(ModItems.SEA_CUCUMBER.get()),
                 Component.translatable("jei.northeast_china_delight.info.sea_cucumber"));
+        // 棉门帘、大花布门帘是普通门帘在织布机里染出来的，不是合成配方
+        registration.addItemStackInfo(java.util.List.of(new ItemStack(ModBlocks.PLAIN_DOOR_CURTAIN.get()),
+                        new ItemStack(ModBlocks.COTTON_DOOR_CURTAIN.get()), new ItemStack(ModBlocks.FLORAL_DOOR_CURTAIN.get())),
+                Component.translatable("jei.northeast_china_delight.info.door_curtains"));
+        // 窗花不是合成出来的：一手红纸一手剪刀右键剪，贴在糊纸窗上
+        registration.addItemStackInfo(new ItemStack(ModItems.PAPER_CUT.get()),
+                Component.translatable("jei.northeast_china_delight.info.paper_cut"));
         registration.addItemStackInfo(new ItemStack(ModItems.SALT.get()),
                 Component.translatable("jei.northeast_china_delight.info.salt"));
         // 手持小刀宰猪掉的副产物（PigOffalLootModifier），连着火时的熏制版一起，共用一页
