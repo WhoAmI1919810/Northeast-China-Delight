@@ -3,19 +3,15 @@
   "category": "building",
   "key": {
     "A": {
-      "item": "minecraft:bricks"
-    },
-    "B": {
-      "item": "minecraft:water_bucket"
+      "item": "northeast_china_delight:blue_brick"
     }
   },
   "pattern": [
-    "AAA",
-    "ABA",
-    "AAA"
+    "AA",
+    "AA"
   ],
   "result": {
-    "count": 8,
+    "count": 1,
     "id": "northeast_china_delight:blue_bricks"
   }
 }

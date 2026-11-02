@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "facing=north": {
+      "model": "northeast_china_delight:block/folded_quilt"
+    },
+    "facing=east": {
+      "model": "northeast_china_delight:block/folded_quilt",
+      "y": 90
+    },
+    "facing=south": {
+      "model": "northeast_china_delight:block/folded_quilt",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "northeast_china_delight:block/folded_quilt",
+      "y": 270
+    }
+  }
+}

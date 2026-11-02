@@ -17,6 +17,7 @@ import com.gunmu.northeast_china_delight.crafting.ModCraftingRecipes;
 import com.gunmu.northeast_china_delight.crafting.ModPoundRecipes;
 import com.gunmu.northeast_china_delight.effect.DishEffectEvents;
 import com.gunmu.northeast_china_delight.effect.ModEffects;
+import com.gunmu.northeast_china_delight.entity.ModEntities;
 import com.gunmu.northeast_china_delight.event.ModGameplayEvents;
 import com.gunmu.northeast_china_delight.item.LegacySeaWater;
 import com.gunmu.northeast_china_delight.fluid.ModFluids;
@@ -165,6 +166,7 @@ public class NortheastChinaDelight
         ModBlocks.register(modEventBus);
         ModFluids.register(modEventBus);
         ModBlockEntities.register(modEventBus);
+        ModEntities.register(modEventBus);
         ModVatRecipes.register(modEventBus);
         ModGrillRecipes.register(modEventBus);
         ModDryingRecipes.register(modEventBus);
@@ -393,6 +395,8 @@ public class NortheastChinaDelight
             event.registerBlockEntityRenderer(ModBlockEntities.VAT.get(), VatRenderer::new);
             event.registerBlockEntityRenderer(ModBlockEntities.GRILL_CAMPFIRE.get(), GrillCampfireRenderer::new);
             event.registerBlockEntityRenderer(ModBlockEntities.WOODEN_MORTAR.get(), WoodenMortarRenderer::new);
+            // 小板凳的座位实体看不见
+            event.registerEntityRenderer(ModEntities.SEAT.get(), net.minecraft.client.renderer.entity.NoopRenderer::new);
         }
 
         /**
