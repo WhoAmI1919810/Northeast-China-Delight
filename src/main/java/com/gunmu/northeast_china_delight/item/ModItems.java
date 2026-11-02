@@ -147,6 +147,7 @@ public class ModItems {
     public static final Supplier<Item> LARGE_BASIN = regItem("large_basin",
             properties -> new LargeBasinItem(ModBlocks.LARGE_BASIN.get(), properties),
             new Item.Properties());
+    public static final Supplier<Item> WATER_BASIN = simple("water_basin");
     public static final Supplier<Item> GRILL_RACK = simple("grill_rack");
     public static final Supplier<Item> BRASS_BOWL = simple("brass_bowl");
 
@@ -376,7 +377,7 @@ public class ModItems {
             WATER_DOUGH, BUCKWHEAT_NOODLES, DRIED_TOFU, TOFU, FROZEN_TOFU, SWEET_POTATO_STARCH,
             VERMICELLI, LA_PI, CORN_FLOUR, CRACKLINGS, COLD_NOODLE_SHEET, BEAN_SPROUTS, SOUR_CORN_KERNELS, ROASTED_PEANUTS,
             CORN_STALK,
-            LARGE_BASIN, BRASS_BOWL, WOODEN_MALLET, ANIMAL_OIL_BLOCK_ITEM,
+            LARGE_BASIN, WATER_BASIN, BRASS_BOWL, WOODEN_MALLET, ANIMAL_OIL_BLOCK_ITEM,
             UNFIRED_VAT_BLANK, MUSIC_DISC_NORTHEAST
     );
 
