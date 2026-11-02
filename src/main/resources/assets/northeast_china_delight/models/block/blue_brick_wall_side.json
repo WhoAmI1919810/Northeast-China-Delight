@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:block/template_wall_side",
+  "textures": {
+    "wall": "northeast_china_delight:block/blue_bricks"
+  }
+}

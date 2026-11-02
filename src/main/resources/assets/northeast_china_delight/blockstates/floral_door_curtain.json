@@ -1,0 +1,34 @@
+{
+  "variants": {
+    "facing=north,half=lower": {
+      "model": "northeast_china_delight:block/floral_door_curtain_lower"
+    },
+    "facing=north,half=upper": {
+      "model": "northeast_china_delight:block/floral_door_curtain_upper"
+    },
+    "facing=east,half=lower": {
+      "model": "northeast_china_delight:block/floral_door_curtain_lower",
+      "y": 90
+    },
+    "facing=east,half=upper": {
+      "model": "northeast_china_delight:block/floral_door_curtain_upper",
+      "y": 90
+    },
+    "facing=south,half=lower": {
+      "model": "northeast_china_delight:block/floral_door_curtain_lower",
+      "y": 180
+    },
+    "facing=south,half=upper": {
+      "model": "northeast_china_delight:block/floral_door_curtain_upper",
+      "y": 180
+    },
+    "facing=west,half=lower": {
+      "model": "northeast_china_delight:block/floral_door_curtain_lower",
+      "y": 270
+    },
+    "facing=west,half=upper": {
+      "model": "northeast_china_delight:block/floral_door_curtain_upper",
+      "y": 270
+    }
+  }
+}
