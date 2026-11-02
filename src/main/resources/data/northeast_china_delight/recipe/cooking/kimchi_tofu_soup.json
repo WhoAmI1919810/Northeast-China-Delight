@@ -20,9 +20,6 @@
     },
     {
       "item": "minecraft:water_bucket"
-    },
-    {
-          "tag": "c:cooked_rice"
     }
   ],
   "recipe_book_tab": "meals",

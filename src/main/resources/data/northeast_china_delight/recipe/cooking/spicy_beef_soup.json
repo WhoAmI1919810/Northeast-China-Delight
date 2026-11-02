@@ -17,9 +17,6 @@
     },
     {
       "tag": "c:foods/bean_sprouts"
-    },
-    {
-          "tag": "c:cooked_rice"
     }
   ],
   "recipe_book_tab": "meals",
