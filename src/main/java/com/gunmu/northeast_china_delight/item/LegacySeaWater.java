@@ -27,7 +27,7 @@ public final class LegacySeaWater {
     //? if >=1.20.5 {
     /*private static final DeferredRegister<DataComponentType<?>> COMPONENTS =
             DeferredRegister.create(Registries.DATA_COMPONENT_TYPE, NortheastChinaDelight.MODID);
-    /** 旧版的海水标记，只为老存档里的水桶能读出来 */
+    /^* 旧版的海水标记，只为老存档里的水桶能读出来 ^/
     public static final Supplier<DataComponentType<Boolean>> SEA_WATER =
             COMPONENTS.register("sea_water", () -> DataComponentType.<Boolean>builder()
                     .persistent(Codec.BOOL).networkSynchronized(ByteBufCodecs.BOOL).build());

@@ -26,7 +26,7 @@ import net.minecraft.world.phys.Vec3;
  * 糊纸木格窗：在 {@link LatticeWindowBlock} 上多一个窗花（{@link #PAPER_CUT}）。
  *
  * <p>拿窗花（{@link com.gunmu.northeast_china_delight.item.PaperCutItem}）右键窗户贴上去：点窗户中间贴团花，
- * 点四个角贴那个角的角花；剪刀右键揭下来（窗花还给你）。拆窗户时贴着的窗花一起掉（掉落表里有）。</p>
+ * 点四个角贴那个角的角花；空手右键取下来（进背包），剪刀右键也能揭（掉在窗前）。拆窗户时贴着的窗花一起掉（掉落表里有）。</p>
  */
 public class PaperLatticeWindowBlock extends LatticeWindowBlock {
 
@@ -87,7 +87,12 @@ public class PaperLatticeWindowBlock extends LatticeWindowBlock {
     @Override
     public InteractionResult use(BlockState state, Level level, BlockPos pos, Player player,
                                  InteractionHand hand, BlockHitResult hitResult) {
-        return peelOff(player.getItemInHand(hand), state, level, pos);
+        ItemStack held = player.getItemInHand(hand);
+        if (held.isEmpty()) {
+            // 和 1.21.1 一样只认主手空着：主手拿着东西没用上时还会再拿副手问一遍，那时不该把窗花取下来
+            return hand == InteractionHand.MAIN_HAND ? takeOff(state, level, pos, player) : InteractionResult.PASS;
+        }
+        return peelOff(held, state, level, pos);
     }
     //?} else {
     /*@Override
@@ -98,7 +103,30 @@ public class PaperLatticeWindowBlock extends LatticeWindowBlock {
                 ? ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION
                 : ItemInteractionResult.sidedSuccess(level.isClientSide());
     }
+
+    /^* 空手右键：把窗花取下来（只认主手空着，手里拿着东西时让给物品自己的用法） ^/
+    @Override
+    protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player,
+                                               BlockHitResult hitResult) {
+        return player.getMainHandItem().isEmpty() ? takeOff(state, level, pos, player) : InteractionResult.PASS;
+    }
     *///?}
+
+    /** 空手取窗花：直接放进背包（背包满了掉在脚下） */
+    private static InteractionResult takeOff(BlockState state, Level level, BlockPos pos, Player player) {
+        if (state.getValue(PAPER_CUT) == PaperCut.NONE) {
+            return InteractionResult.PASS;
+        }
+        if (!level.isClientSide) {
+            level.setBlock(pos, state.setValue(PAPER_CUT, PaperCut.NONE), Block.UPDATE_ALL);
+            level.playSound(null, pos, SoundEvents.PAINTING_BREAK, SoundSource.BLOCKS, 0.8F, 1.2F);
+            ItemStack cut = new ItemStack(ModItems.PAPER_CUT.get());
+            if (!player.getInventory().add(cut)) {
+                player.drop(cut, false);
+            }
+        }
+        return InteractionResult.sidedSuccess(level.isClientSide);
+    }
 
     /** 剪刀揭窗花：窗花还给玩家（掉在窗前） */
     private static InteractionResult peelOff(ItemStack held, BlockState state, Level level, BlockPos pos) {

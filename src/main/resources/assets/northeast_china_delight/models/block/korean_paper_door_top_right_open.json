@@ -4,5 +4,5 @@
     "bottom": "northeast_china_delight:block/korean_door_bottom",
     "top": "northeast_china_delight:block/korean_door_top"
   },
-  "render_type": "minecraft:cutout"
+  "render_type": "minecraft:translucent"
 }
