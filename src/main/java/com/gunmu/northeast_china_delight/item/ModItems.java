@@ -69,8 +69,8 @@ public class ModItems {
     public static final Supplier<Item> NAPA_CABBAGE = food("napa_cabbage", 2, 0.4F);
     public static final Supplier<Item> SNOW_MUSTARD = food("snow_mustard", 2, 0.4F);
     public static final Supplier<Item> CUCUMBER = food("cucumber", 2, 0.4F);
-    public static final Supplier<Item> SWEET_POTATO = selfSeedingFood("sweet_potato", () -> ModBlocks.SWEET_POTATO_CROP.get());
-    public static final Supplier<Item> PEANUT = selfSeedingFood("peanut", () -> ModBlocks.PEANUT_CROP.get());
+    public static final Supplier<Item> SWEET_POTATO = selfSeedingFood("sweet_potato", () -> ModBlocks.SWEET_POTATO_CROP.get(), 2, 0.3F);
+    public static final Supplier<Item> PEANUT = selfSeedingFood("peanut", () -> ModBlocks.PEANUT_CROP.get(), 1, 0.3F);
     public static final Supplier<Item> RED_BEAN = selfSeeding("red_bean", () -> ModBlocks.RED_BEAN_CROP.get());
     public static final Supplier<Item> RED_CHILI = food("red_chili", 1, 0.3F);
     public static final Supplier<Item> GREEN_ONION = food("green_onion", 1, 0.3F);
@@ -177,7 +177,7 @@ public class ModItems {
             malletProperties()
     );
 
-    public static final Supplier<Item> HAZELNUT = selfSeedingFood("hazelnut", () -> ModBlocks.HAZELNUT_BUSH.get());
+    public static final Supplier<Item> HAZELNUT = selfSeedingFood("hazelnut", () -> ModBlocks.HAZELNUT_BUSH.get(), 2, 0.3F);
     public static final Supplier<Item> HAZEL_MUSHROOM = selfSeeding("hazel_mushroom", () -> ModBlocks.HAZEL_MUSHROOM.get());
     public static final Supplier<Item> HAZEL_MUSHROOM_COLONY = regItem(
             "hazel_mushroom_colony",
@@ -443,6 +443,21 @@ public class ModItems {
             UNFIRED_VAT_BLANK, MUSIC_DISC_NORTHEAST
     );
 
+    /** 堆肥桶：纯种子类物品，按原版种子档 0.3。 */
+    public static final List<Supplier<? extends Item>> COMPOSTABLE_SEEDS = List.of(
+            EGGPLANT_SEEDS, GREEN_PEPPER_SEEDS, CORN_SEEDS, GREEN_BEANS_SEEDS,
+            NAPA_CABBAGE_SEEDS, SNOW_MUSTARD_SEEDS, CUCUMBER_SEEDS, RED_CHILI_SEEDS,
+            GREEN_ONION_SEEDS, GREEN_RADISH_SEEDS, GINSENG_SEEDS, BELLFLOWER_SEEDS
+    );
+
+    /** 堆肥桶：作物本体及兼作种子的作物，按原版作物档 0.65。 */
+    public static final List<Supplier<? extends Item>> COMPOSTABLE_CROPS = List.of(
+            SOYBEAN, EGGPLANT, GREEN_PEPPER, CORN, GREEN_BEANS, BUCKWHEAT,
+            NAPA_CABBAGE, SNOW_MUSTARD, CUCUMBER, SWEET_POTATO, PEANUT, RED_BEAN,
+            RED_CHILI, GREEN_ONION, GREEN_RADISH, BELLFLOWER_ROOT, GINSENG,
+            HAZELNUT, HAZEL_MUSHROOM, HAZEL_MUSHROOM_COLONY, WOOD_EAR, CORN_STALK
+    );
+
     public static final Map<String, Supplier<Item>> STORAGE_BLOCK_ITEMS = storageBlockItems();
 
     private static Map<String, Supplier<Item>> storageBlockItems() {
@@ -578,12 +593,6 @@ public class ModItems {
     private static Supplier<Item> seasoningBowl(String id) {
         return regItem(id, Item::new, new Item.Properties()
                 .craftRemainder(Items.BOWL));
-    }
-
-    private static Supplier<Item> selfSeedingFood(String id, Supplier<? extends Block> crop) {
-        return regItem(id,
-                properties -> new ItemNameBlockItem(crop.get(), properties),
-                new Item.Properties().food(steakFood().build()));
     }
 
     private static Supplier<Item> selfSeeding(String id, Supplier<? extends Block> crop) {

@@ -240,8 +240,9 @@ public class NortheastChinaDelight
     private void onCommonSetup(@NotNull FMLCommonSetupEvent event)
     {
         event.enqueueWork(() -> {
-            net.minecraft.world.level.block.ComposterBlock.COMPOSTABLES.put(
-                    ModItems.CORN_STALK.get(), 0.65F);
+            var compostables = net.minecraft.world.level.block.ComposterBlock.COMPOSTABLES;
+            ModItems.COMPOSTABLE_SEEDS.forEach(item -> compostables.put(item.get(), 0.3F));
+            ModItems.COMPOSTABLE_CROPS.forEach(item -> compostables.put(item.get(), 0.65F));
             // 水盆倒进炼药锅、空盆从满水的炼药锅里舀水
             com.gunmu.northeast_china_delight.item.BasinCauldronInteractions.register();
         });
