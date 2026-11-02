@@ -101,8 +101,14 @@ public class NortheastJeiPlugin implements IModPlugin {
                 Component.translatable("jei.northeast_china_delight.info.sea_cucumber"));
         registration.addItemStackInfo(new ItemStack(ModItems.SALT.get()),
                 Component.translatable("jei.northeast_china_delight.info.salt"));
-        registration.addItemStackInfo(new ItemStack(ModItems.WATER_BASIN.get()),
-                Component.translatable("jei.northeast_china_delight.info.water_basin"));
+        // 手持小刀宰猪掉的副产物（PigOffalLootModifier），连着火时的熏制版一起，共用一页
+        registration.addItemStackInfo(java.util.List.of(
+                        new ItemStack(ModItems.PORK_RIBS.get()), new ItemStack(ModItems.PORK_INTESTINE.get()),
+                        new ItemStack(ModItems.PORK_HOCK.get()), new ItemStack(ModItems.PIG_BLOOD.get()),
+                        new ItemStack(ModItems.PIG_LIVER.get()), new ItemStack(ModItems.PORK_FAT.get()),
+                        new ItemStack(ModItems.OIL_EDGE.get()),
+                        new ItemStack(ModItems.SMOKED_PORK_HOCK.get()), new ItemStack(ModItems.SMOKED_PIG_LIVER.get())),
+                Component.translatable("jei.northeast_china_delight.info.pig_offal"));
         registration.addItemStackInfo(new ItemStack(ModItems.FROZEN_PEAR.get()), frozenPearInfo());
         Component bellflowerInfo = Component.translatable("jei.northeast_china_delight.info.bellflower");
         registration.addItemStackInfo(new ItemStack(ModItems.BELLFLOWER_ROOT.get()), bellflowerInfo);

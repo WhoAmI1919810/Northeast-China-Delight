@@ -155,11 +155,11 @@ public class ModItems {
             new Item.Properties());
     /**
      * 水盆：装了一盆水（1000 mB）的大脸盆。空盆对着水右键舀，或在机械动力注液器下灌；
-     * 能放在地上（方块见 {@link ModBlocks#WATER_BASIN}）；放进厨锅煮盐后返还空盆。
+     * 右键倒水、潜行右键放在地上（见 {@link WaterBasinItem}，方块见 {@link ModBlocks#WATER_BASIN}）；放进厨锅煮盐后返还空盆。
      * 返还物要拿 LARGE_BASIN 的实例，所以和 basinFood 一样在注册事件里现做属性。
      */
     public static final Supplier<Item> WATER_BASIN = ITEMS.register("water_basin",
-            () -> new ItemNameBlockItem(ModBlocks.WATER_BASIN.get(),
+            () -> new WaterBasinItem(ModBlocks.WATER_BASIN.get(),
                     new Item.Properties().stacksTo(1).craftRemainder(LARGE_BASIN.get())));
     public static final Supplier<Item> GRILL_RACK = simple("grill_rack");
     public static final Supplier<Item> BRASS_BOWL = simple("brass_bowl");

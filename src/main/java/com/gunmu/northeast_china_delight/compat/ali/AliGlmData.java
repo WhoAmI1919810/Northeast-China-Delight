@@ -42,7 +42,7 @@ final class AliGlmData {
     static final int VILLAGE_PROCESSED_PICKLED_SNOW_MUSTARD = 2;
 
     /**
-     * {@code PigOffalLootModifier.doApply} 里的内联候选表（每种基础概率 10%，每级抢夺 +5%，
+     * {@code PigOffalLootModifier.doApply} 里的内联候选表（每种基础概率 20%，每级抢夺 +5%，
      * 一次最多出 {@code MAX_KINDS} 种）。
      */
     static List<Item> pigOffalItems() {

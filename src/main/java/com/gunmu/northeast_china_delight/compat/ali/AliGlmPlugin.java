@@ -76,7 +76,7 @@ public final class AliGlmPlugin implements IGlobalLootModifierPlugin {
                 level -> new TradeLevelInfo(NumberExpr.constant(level >= 5 ? 3.0 : 2.0)));
     }
 
-    /** 宰猪：每种副产物基础 10%（Java 里再按抢夺等级 +5%/级、一次最多 2 种），着火时换成熏制版 */
+    /** 宰猪：每种副产物基础 20%（Java 里再按抢夺等级 +5%/级、一次最多 2 种），着火时换成熏制版 */
     private static Optional<IPageLootModifier> pigOffal(IServerUtils utils, PigOffalLootModifier modifier) {
         return Optional.of(page(utils, modifier, conditions -> {
             List<IOperation> operations = new ArrayList<>();
