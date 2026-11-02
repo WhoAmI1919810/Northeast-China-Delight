@@ -1,6 +1,9 @@
 {
   "replace": false,
   "values": [
-    "northeast_china_delight:blue_brick_stairs"
+    "northeast_china_delight:blue_brick_stairs",
+    "northeast_china_delight:red_steel_roof_stairs",
+    "northeast_china_delight:blue_steel_roof_stairs",
+    "northeast_china_delight:green_steel_roof_stairs"
   ]
 }

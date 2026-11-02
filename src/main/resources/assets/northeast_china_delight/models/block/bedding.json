@@ -1,0 +1,139 @@
+{
+  "parent": "minecraft:block/block",
+  "textures": {
+    "mattress": "northeast_china_delight:block/quilt_pink",
+    "quilt": "northeast_china_delight:block/quilt_red",
+    "pillow": "northeast_china_delight:block/pillow",
+    "particle": "northeast_china_delight:block/quilt_red"
+  },
+  "elements": [
+    {
+      "from": [
+        0,
+        0,
+        0
+      ],
+      "to": [
+        16,
+        1.5,
+        16
+      ],
+      "faces": {
+        "north": {
+          "texture": "#mattress"
+        },
+        "east": {
+          "texture": "#mattress"
+        },
+        "south": {
+          "texture": "#mattress"
+        },
+        "west": {
+          "texture": "#mattress"
+        },
+        "up": {
+          "texture": "#mattress"
+        },
+        "down": {
+          "texture": "#mattress"
+        }
+      }
+    },
+    {
+      "from": [
+        0.5,
+        1.5,
+        5
+      ],
+      "to": [
+        15.5,
+        3,
+        16
+      ],
+      "faces": {
+        "north": {
+          "texture": "#quilt"
+        },
+        "east": {
+          "texture": "#quilt"
+        },
+        "south": {
+          "texture": "#quilt"
+        },
+        "west": {
+          "texture": "#quilt"
+        },
+        "up": {
+          "texture": "#quilt"
+        },
+        "down": {
+          "texture": "#quilt"
+        }
+      }
+    },
+    {
+      "from": [
+        0.5,
+        1.5,
+        5
+      ],
+      "to": [
+        15.5,
+        4,
+        6.5
+      ],
+      "faces": {
+        "north": {
+          "texture": "#quilt"
+        },
+        "east": {
+          "texture": "#quilt"
+        },
+        "south": {
+          "texture": "#quilt"
+        },
+        "west": {
+          "texture": "#quilt"
+        },
+        "up": {
+          "texture": "#quilt"
+        },
+        "down": {
+          "texture": "#quilt"
+        }
+      }
+    },
+    {
+      "from": [
+        3,
+        1.5,
+        1
+      ],
+      "to": [
+        13,
+        4.5,
+        4.5
+      ],
+      "faces": {
+        "north": {
+          "texture": "#pillow"
+        },
+        "east": {
+          "texture": "#pillow"
+        },
+        "south": {
+          "texture": "#pillow"
+        },
+        "west": {
+          "texture": "#pillow"
+        },
+        "up": {
+          "texture": "#pillow"
+        },
+        "down": {
+          "texture": "#pillow"
+        }
+      }
+    }
+  ]
+}

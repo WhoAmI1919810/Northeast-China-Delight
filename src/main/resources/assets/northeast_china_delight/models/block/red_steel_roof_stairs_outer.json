@@ -1,0 +1,8 @@
+{
+  "parent": "minecraft:block/outer_stairs",
+  "textures": {
+    "bottom": "northeast_china_delight:block/steel_red",
+    "side": "northeast_china_delight:block/steel_red",
+    "top": "northeast_china_delight:block/steel_red"
+  }
+}

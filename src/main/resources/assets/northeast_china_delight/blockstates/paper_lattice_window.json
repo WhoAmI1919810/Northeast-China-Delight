@@ -1,19 +1,234 @@
 {
-  "variants": {
-    "facing=north": {
-      "model": "northeast_china_delight:block/paper_lattice_window"
+  "multipart": [
+    {
+      "when": {
+        "facing": "north"
+      },
+      "apply": {
+        "model": "northeast_china_delight:block/paper_lattice_window"
+      }
     },
-    "facing=east": {
-      "model": "northeast_china_delight:block/paper_lattice_window",
-      "y": 90
+    {
+      "when": {
+        "facing": "east"
+      },
+      "apply": {
+        "model": "northeast_china_delight:block/paper_lattice_window",
+        "y": 90
+      }
     },
-    "facing=south": {
-      "model": "northeast_china_delight:block/paper_lattice_window",
-      "y": 180
+    {
+      "when": {
+        "facing": "south"
+      },
+      "apply": {
+        "model": "northeast_china_delight:block/paper_lattice_window",
+        "y": 180
+      }
     },
-    "facing=west": {
-      "model": "northeast_china_delight:block/paper_lattice_window",
-      "y": 270
+    {
+      "when": {
+        "facing": "west"
+      },
+      "apply": {
+        "model": "northeast_china_delight:block/paper_lattice_window",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "facing": "north",
+        "paper_cut": "round"
+      },
+      "apply": {
+        "model": "northeast_china_delight:block/paper_lattice_window_cut_round"
+      }
+    },
+    {
+      "when": {
+        "facing": "east",
+        "paper_cut": "round"
+      },
+      "apply": {
+        "model": "northeast_china_delight:block/paper_lattice_window_cut_round",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "facing": "south",
+        "paper_cut": "round"
+      },
+      "apply": {
+        "model": "northeast_china_delight:block/paper_lattice_window_cut_round",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "facing": "west",
+        "paper_cut": "round"
+      },
+      "apply": {
+        "model": "northeast_china_delight:block/paper_lattice_window_cut_round",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "facing": "north",
+        "paper_cut": "corner_tl"
+      },
+      "apply": {
+        "model": "northeast_china_delight:block/paper_lattice_window_cut_corner_tl"
+      }
+    },
+    {
+      "when": {
+        "facing": "east",
+        "paper_cut": "corner_tl"
+      },
+      "apply": {
+        "model": "northeast_china_delight:block/paper_lattice_window_cut_corner_tl",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "facing": "south",
+        "paper_cut": "corner_tl"
+      },
+      "apply": {
+        "model": "northeast_china_delight:block/paper_lattice_window_cut_corner_tl",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "facing": "west",
+        "paper_cut": "corner_tl"
+      },
+      "apply": {
+        "model": "northeast_china_delight:block/paper_lattice_window_cut_corner_tl",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "facing": "north",
+        "paper_cut": "corner_tr"
+      },
+      "apply": {
+        "model": "northeast_china_delight:block/paper_lattice_window_cut_corner_tr"
+      }
+    },
+    {
+      "when": {
+        "facing": "east",
+        "paper_cut": "corner_tr"
+      },
+      "apply": {
+        "model": "northeast_china_delight:block/paper_lattice_window_cut_corner_tr",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "facing": "south",
+        "paper_cut": "corner_tr"
+      },
+      "apply": {
+        "model": "northeast_china_delight:block/paper_lattice_window_cut_corner_tr",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "facing": "west",
+        "paper_cut": "corner_tr"
+      },
+      "apply": {
+        "model": "northeast_china_delight:block/paper_lattice_window_cut_corner_tr",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "facing": "north",
+        "paper_cut": "corner_bl"
+      },
+      "apply": {
+        "model": "northeast_china_delight:block/paper_lattice_window_cut_corner_bl"
+      }
+    },
+    {
+      "when": {
+        "facing": "east",
+        "paper_cut": "corner_bl"
+      },
+      "apply": {
+        "model": "northeast_china_delight:block/paper_lattice_window_cut_corner_bl",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "facing": "south",
+        "paper_cut": "corner_bl"
+      },
+      "apply": {
+        "model": "northeast_china_delight:block/paper_lattice_window_cut_corner_bl",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "facing": "west",
+        "paper_cut": "corner_bl"
+      },
+      "apply": {
+        "model": "northeast_china_delight:block/paper_lattice_window_cut_corner_bl",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "facing": "north",
+        "paper_cut": "corner_br"
+      },
+      "apply": {
+        "model": "northeast_china_delight:block/paper_lattice_window_cut_corner_br"
+      }
+    },
+    {
+      "when": {
+        "facing": "east",
+        "paper_cut": "corner_br"
+      },
+      "apply": {
+        "model": "northeast_china_delight:block/paper_lattice_window_cut_corner_br",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "facing": "south",
+        "paper_cut": "corner_br"
+      },
+      "apply": {
+        "model": "northeast_china_delight:block/paper_lattice_window_cut_corner_br",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "facing": "west",
+        "paper_cut": "corner_br"
+      },
+      "apply": {
+        "model": "northeast_china_delight:block/paper_lattice_window_cut_corner_br",
+        "y": 270
+      }
     }
-  }
+  ]
 }
