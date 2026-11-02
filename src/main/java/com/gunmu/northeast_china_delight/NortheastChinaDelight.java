@@ -18,10 +18,10 @@ import com.gunmu.northeast_china_delight.crafting.ModPoundRecipes;
 import com.gunmu.northeast_china_delight.effect.DishEffectEvents;
 import com.gunmu.northeast_china_delight.effect.ModEffects;
 import com.gunmu.northeast_china_delight.event.ModGameplayEvents;
+import com.gunmu.northeast_china_delight.item.LegacySeaWater;
 import com.gunmu.northeast_china_delight.fluid.ModFluids;
 import com.gunmu.northeast_china_delight.item.ModItems;
 import com.gunmu.northeast_china_delight.item.ModSounds;
-import com.gunmu.northeast_china_delight.item.SeaWaterBuckets;
 import com.gunmu.northeast_china_delight.loot.ModLootModifiers;
 import com.gunmu.northeast_china_delight.util.DdIds;
 import com.gunmu.northeast_china_delight.villager.ModButcherTrades;
@@ -162,7 +162,6 @@ public class NortheastChinaDelight
     *///?}
         ModItems.register(modEventBus);
         ModSounds.register(modEventBus);
-        SeaWaterBuckets.register(modEventBus);
         ModBlocks.register(modEventBus);
         ModFluids.register(modEventBus);
         ModBlockEntities.register(modEventBus);
@@ -178,6 +177,8 @@ public class NortheastChinaDelight
         ModVillagerProfessions.register(modEventBus);
         ModMapDecorations.register(modEventBus);
         ModWorldGen.register(modEventBus);
+        // 老存档兼容：1.21.1 带海水标记的水桶要能读出来
+        LegacySeaWater.register(modEventBus);
         //? if <1.20.2 {
         if (net.minecraftforge.fml.loading.FMLEnvironment.dist.isClient()
                 && net.minecraftforge.fml.ModList.get().isLoaded("jei")) {
@@ -320,6 +321,12 @@ public class NortheastChinaDelight
         @SubscribeEvent
         public static void onRegisterBlockColors(RegisterColorHandlersEvent.Block event)
         {
+            // 水盆的水面（tintindex 0）跟着群系水色走，和旁边的水一个颜色
+            event.register(
+                    (state, level, pos, tintIndex) -> level != null && pos != null
+                            ? BiomeColors.getAverageWaterColor(level, pos)
+                            : 0x3F76E4,
+                    ModBlocks.WATER_BASIN.get());
             event.register(
                     (state, level, pos, tintIndex) -> {
                         if (level != null && pos != null

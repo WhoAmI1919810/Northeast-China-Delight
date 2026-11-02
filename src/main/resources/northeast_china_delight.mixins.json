@@ -4,7 +4,6 @@
   "package": "com.gunmu.northeast_china_delight.mixin",
   "compatibilityLevel": "JAVA_21",
   "mixins": [
-    "AbstractFurnaceBlockEntityMixin",
     "CookingPotBlockEntityInvoker",
     "CookingPotBlockEntityMixin",
     "PowderSnowBlockMixin",
