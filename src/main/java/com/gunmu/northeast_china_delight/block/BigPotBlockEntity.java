@@ -36,7 +36,7 @@ import java.util.List;
  * </ul>
  *
  * <p>锅里有什么会同步给客户端（右键时客户端要先知道锅里煮好了没、该不该让给手里的东西，锅里的东西也要画出来，
- * 见 {@code client/BigPotRenderer}），只有每刻的烹饪进度不发。</p>
+ * 见 {@code client/BigPotRenderer}）；烹饪进度不每刻发，每秒发一次（Jade 显示进度条用）。</p>
  */
 public class BigPotBlockEntity extends BlockEntity {
 
@@ -50,6 +50,8 @@ public class BigPotBlockEntity extends BlockEntity {
     @Nullable
     private ResourceLocation cooking;
     private int cookTicks;
+    /** 这一锅一共要煮多少刻（盖着锅盖时是缩短后的），给 Jade 算进度 */
+    private int cookTotal;
     private ItemStack result = ItemStack.EMPTY;
     private int servings;
     private ItemStack container = ItemStack.EMPTY;
@@ -105,6 +107,18 @@ public class BigPotBlockEntity extends BlockEntity {
 
     public int cookTicks() {
         return cookTicks;
+    }
+
+    public int cookTotal() {
+        return cookTotal;
+    }
+
+    /** 盖上 / 揭开锅盖时总时间会变 */
+    public void setCookTotal(int total) {
+        if (total != cookTotal) {
+            cookTotal = total;
+            sync();
+        }
     }
 
     public boolean hasResult() {
@@ -208,13 +222,20 @@ public class BigPotBlockEntity extends BlockEntity {
         if (recipe == null ? cooking != null : !recipe.equals(cooking)) {
             cooking = recipe;
             cookTicks = 0;
+            if (recipe == null) {
+                cookTotal = 0;
+            }
             sync();
         }
     }
 
     public void tickCooking() {
         cookTicks++;
-        setChanged();     // 每刻的进度不往客户端发
+        if (cookTicks % 20 == 0) {
+            sync();       // 每秒发一次进度（Jade）
+        } else {
+            setChanged();
+        }
     }
 
     /** 煮好了：料清空、液体扣掉配方用的那么多，锅里换成一锅菜 */
@@ -230,6 +251,7 @@ public class BigPotBlockEntity extends BlockEntity {
         experience = xpPerServing;
         cooking = null;
         cookTicks = 0;
+        cookTotal = 0;
         sync();
     }
 
@@ -311,6 +333,7 @@ public class BigPotBlockEntity extends BlockEntity {
             tag.putString("Cooking", cooking.toString());
         }
         tag.putInt("CookTicks", cookTicks);
+        tag.putInt("CookTotal", cookTotal);
         if (!result.isEmpty()) {
             ItemStack.CODEC.encodeStart(NbtOps.INSTANCE, result).result().ifPresent(saved -> tag.put("Result", saved));
             tag.putInt("Servings", servings);
@@ -348,6 +371,7 @@ public class BigPotBlockEntity extends BlockEntity {
         }
         cooking = tag.contains("Cooking") ? ResourceLocation.tryParse(tag.getString("Cooking")) : null;
         cookTicks = tag.getInt("CookTicks");
+        cookTotal = tag.getInt("CookTotal");
         result = tag.contains("Result")
                 ? ItemStack.CODEC.parse(NbtOps.INSTANCE, tag.get("Result")).result().orElse(ItemStack.EMPTY)
                 : ItemStack.EMPTY;

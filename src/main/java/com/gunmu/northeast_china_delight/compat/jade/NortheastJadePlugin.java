@@ -1,5 +1,6 @@
 package com.gunmu.northeast_china_delight.compat.jade;
 
+import com.gunmu.northeast_china_delight.block.BigStoveBlock;
 import com.gunmu.northeast_china_delight.block.Vat;
 import com.gunmu.northeast_china_delight.block.WoodEarCropBlock;
 import com.gunmu.northeast_china_delight.NortheastChinaDelight;
@@ -19,10 +20,13 @@ public class NortheastJadePlugin implements IWailaPlugin {
             DdIds.of(NortheastChinaDelight.MODID, "vat");
     public static final ResourceLocation WOOD_EAR_UID =
             DdIds.of(NortheastChinaDelight.MODID, "wood_ear");
+    public static final ResourceLocation BIG_STOVE_UID =
+            DdIds.of(NortheastChinaDelight.MODID, "big_stove");
 
     @Override
     public void registerClient(IWailaClientRegistration registration) {
         registration.registerBlockComponent(VatComponentProvider.INSTANCE, Vat.class);
         registration.registerBlockComponent(WoodEarComponentProvider.INSTANCE, WoodEarCropBlock.class);
+        registration.registerBlockComponent(BigStoveComponentProvider.INSTANCE, BigStoveBlock.class);
     }
 }

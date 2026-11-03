@@ -171,10 +171,13 @@ public final class BigPotCooking {
         if (recipe == null) {
             return;
         }
+        // 盖着锅盖按 lid_speedup 缩短；总时间记在锅里，Jade 算进度用
+        boolean lid = state.getValue(BigStoveBlock.POT) == BigStoveBlock.Pot.LID;
+        int total = lid ? recipe.lidCookingTime() : recipe.cookingTime();
+        pot.setCookTotal(total);
         pot.tickCooking();
         // 煮着时的冒泡、白雾在客户端画（clientTick，看锅里同步过去的 cooking）
-        boolean lid = state.getValue(BigStoveBlock.POT) == BigStoveBlock.Pot.LID;
-        if (pot.cookTicks() < (lid ? recipe.lidCookingTime() : recipe.cookingTime())) {
+        if (pot.cookTicks() < total) {
             return;
         }
         float surface = BigPotBlockEntity.liquidSurfaceY(Math.max(pot.liquidMb(), BUCKET_MB));

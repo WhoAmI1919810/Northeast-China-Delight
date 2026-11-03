@@ -35,20 +35,23 @@ import java.util.function.Predicate;
  *       成品：{@code block/big_pot/dish/<成品物品名>}，坐标已经是锅里的，最高不过锅盖底面。</li>
  *   <li>七个格子：锅底正中一份，外面一圈六份。圈上相邻两份、圈和正中都隔开两个圆柱半径，锅壁也刚好够宽，谁都碰不到谁
  *       （2026-11-03 用户说食材穿模后这样排；查法见 work/tools/big_pot_contents/fitcheck.py）。
- *       同一样放了好几个，每份占一格（{@link #pieces}）。外圈的顶比 1000 mB 的水面高 1.3 像素（用户：放满稍微越过水面）。</li>
+ *       同一样放了好几个，每份占一格（{@link #pieces}）。外圈的顶比 1000 mB 的水面高 1.7 像素、正中那份刚露出水面
+ *       （第一版泡得太深，用户说放进去看不见）。</li>
  * </ul>
  */
 public final class BigPotVisuals {
 
     public static final float CENTER = 16.0F;
     public static final int MAX_COPIES = 3;
-    public static final float LIQUID_ALPHA = 0.78F;
+    /** 液面不透明度：清水 0.6，每倒一份调料 +0.02，最多 0.75（再浑就看不见锅里的料了） */
+    public static final float LIQUID_ALPHA = 0.6F;
+    private static final float LIQUID_ALPHA_MAX = 0.75F;
 
     /** 七个格子：离锅心、方位角（度，从 +x 往 +z 转）、底面高度 */
     private static final float[][] SLOT_PLACES = {
-            {0.0F, 0, 10.0F},
-            {6.0F, 30, 12.0F}, {6.0F, 90, 12.0F}, {6.0F, 150, 12.0F},
-            {6.0F, 210, 12.0F}, {6.0F, 270, 12.0F}, {6.0F, 330, 12.0F}};
+            {0.0F, 0, 10.8F},
+            {6.0F, 30, 12.4F}, {6.0F, 90, 12.4F}, {6.0F, 150, 12.4F},
+            {6.0F, 210, 12.4F}, {6.0F, 270, 12.4F}, {6.0F, 330, 12.4F}};
     public static final int SLOTS = SLOT_PLACES.length;
 
     /** 锅身每一圈 (y0, y1, 内半径)，和大灶生成器 big_stove/build.py 的 POT 一样 */
@@ -189,7 +192,7 @@ public final class BigPotVisuals {
                 r += (((seasoning.color() >> 16) & 0xFF) - r) * w;
                 g += (((seasoning.color() >> 8) & 0xFF) - g) * w;
                 b += ((seasoning.color() & 0xFF) - b) * w;
-                alpha = Math.min(0.9F, alpha + 0.02F);
+                alpha = Math.min(LIQUID_ALPHA_MAX, alpha + 0.02F);
             }
         }
         return (Math.round(alpha * 255) << 24) | (Math.round(r) << 16) | (Math.round(g) << 8) | Math.round(b);
@@ -218,8 +221,18 @@ public final class BigPotVisuals {
     @Nullable
     private static BakedModel baked(ResourceLocation id) {
         BakedModel model = WoodenMortarRenderer.bakedModel(id);
-        return model == null || model == Minecraft.getInstance().getModelManager().getMissingModel() ? null : model;
+        if (model == null || model == Minecraft.getInstance().getModelManager().getMissingModel()) {
+            // 本模组自己的模型找不到多半是没登记上烘焙，记一行（每个只记一次），别的模组的物品本来就没有
+            if (NortheastChinaDelight.MODID.equals(id.getNamespace()) && MISSING_LOGGED.add(id)) {
+                LOGGER.warn("[大锅] 找不到锅里的模型 {}，画成平放的物品", id);
+            }
+            return null;
+        }
+        return model;
     }
+
+    private static final org.slf4j.Logger LOGGER = com.mojang.logging.LogUtils.getLogger();
+    private static final java.util.Set<ResourceLocation> MISSING_LOGGED = new java.util.HashSet<>();
 
     private static List<IngredientModel> ingredientModels() {
         if (ingredientModels == null) {
