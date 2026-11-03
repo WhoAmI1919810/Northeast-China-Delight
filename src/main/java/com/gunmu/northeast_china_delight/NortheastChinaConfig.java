@@ -109,8 +109,7 @@ public final class NortheastChinaConfig
     //? if <1.20.2 {
     public static final ForgeConfigSpec SPEC;
 
-    public static final ForgeConfigSpec.BooleanValue DISH_PLACEMENT_ENABLED;
-
+    // 东北小院里的小零件（灶棚、鸡架、水井、菜窖等）是否生成
     public static final ForgeConfigSpec.BooleanValue YARD_PARTS_ENABLED;
     public static final ForgeConfigSpec.DoubleValue WILD_WOOD_EAR_OAK_CHANCE;
     public static final ForgeConfigSpec.DoubleValue WILD_WOOD_EAR_FOREST_CHANCE;
@@ -120,9 +119,6 @@ public final class NortheastChinaConfig
     public static final ForgeConfigSpec.ConfigValue<List<? extends String>> CHEST_LOOT_ALLOWED_ITEMS;
     //?} else {
     /*public static final ModConfigSpec SPEC;
-
-    /^* 菜肴方块形态总开关 ^/
-    public static final ModConfigSpec.BooleanValue DISH_PLACEMENT_ENABLED;
 
     /^* 东北小院里的小零件（灶棚、鸡架、水井、菜窖等）是否生成 ^/
     public static final ModConfigSpec.BooleanValue YARD_PARTS_ENABLED;
@@ -142,13 +138,6 @@ public final class NortheastChinaConfig
         /*ModConfigSpec.Builder
         *///?}
         builder = configBuilder();
-        builder.comment("菜肴方块形态").push("dishes");
-        DISH_PLACEMENT_ENABLED = builder
-                .comment("测试功能，尚未完善。",
-                        "设为 true 时，允许玩家潜行右键放置菜肴的方块形态。")
-                .define("dish_placement_enabled", true);
-        builder.pop();
-
         builder.comment("世界生成").push("worldgen");
         YARD_PARTS_ENABLED = builder
                 .comment("东北小院里的小建筑（灶棚、鸡架、水井、菜窖、柴垛等）是否生成。",
@@ -183,7 +172,7 @@ public final class NortheastChinaConfig
                 .define("enabled", true);
         CHEST_LOOT_ALLOWED_ITEMS = builder
                 .comment("箱子战利品允许生成的本模组物品，填写完整注册 ID。",
-                        "默认包含全部 69 种现有候选，空列表表示不生成任何本模组箱子物品。")
+                        "默认包含全部 70 种现有候选，空列表表示不生成任何本模组箱子物品。")
                 .defineListAllowEmpty("allowed_items", DEFAULT_CHEST_LOOT_ITEMS,
                         //? if >=1.20.5 {
                         /*() -> "northeast_china_delight:soybean",*/
