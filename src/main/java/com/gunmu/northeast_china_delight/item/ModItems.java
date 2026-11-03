@@ -380,6 +380,8 @@ public class ModItems {
             blockItem("glass_lattice_window", ModBlocks.GLASS_LATTICE_WINDOW),
             blockItem("sorghum_stalk_fence", ModBlocks.SORGHUM_STALK_FENCE),
             blockItem("board_fence", ModBlocks.BOARD_FENCE),
+            blockItem("sorghum_stalk_gate", ModBlocks.SORGHUM_STALK_GATE),
+            blockItem("board_fence_gate", ModBlocks.BOARD_FENCE_GATE),
             blockItem("plain_door_curtain", ModBlocks.PLAIN_DOOR_CURTAIN),
             blockItem("cotton_door_curtain", ModBlocks.COTTON_DOOR_CURTAIN),
             blockItem("floral_door_curtain", ModBlocks.FLORAL_DOOR_CURTAIN),
@@ -402,7 +404,12 @@ public class ModItems {
             blockItem("pillow", ModBlocks.PILLOW),
             blockItem("small_stool", ModBlocks.SMALL_STOOL),
             blockItem("hand_pump", ModBlocks.HAND_PUMP),
-            blockItem("red_lantern", ModBlocks.RED_LANTERN)
+            blockItem("red_lantern", ModBlocks.RED_LANTERN),
+            blockItem("kang_wall_flower", ModBlocks.KANG_WALL_FLOWER),
+            blockItem("kang_wall_landscape", ModBlocks.KANG_WALL_LANDSCAPE),
+            blockItem("kang_wall_fret", ModBlocks.KANG_WALL_FRET),
+            blockItem("radiator", ModBlocks.RADIATOR),
+            blockItem("basin_stand", ModBlocks.BASIN_STAND)
     );
 
     public static final List<Supplier<? extends Item>> INGREDIENT_TAB_ITEMS = List.of(

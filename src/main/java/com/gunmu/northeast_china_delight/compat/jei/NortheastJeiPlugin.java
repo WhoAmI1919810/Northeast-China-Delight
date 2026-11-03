@@ -107,6 +107,9 @@ public class NortheastJeiPlugin implements IModPlugin {
         // 窗花不是合成出来的：一手红纸一手剪刀右键剪，贴在糊纸窗上
         registration.addItemStackInfo(new ItemStack(ModItems.PAPER_CUT.get()),
                 Component.translatable("jei.northeast_china_delight.info.paper_cut"));
+        // 脸盆架怎么放盆、拿盆
+        registration.addItemStackInfo(new ItemStack(ModBlocks.BASIN_STAND.get()),
+                Component.translatable("jei.northeast_china_delight.info.basin_stand"));
         registration.addItemStackInfo(new ItemStack(ModItems.SALT.get()),
                 Component.translatable("jei.northeast_china_delight.info.salt"));
         // 手持小刀宰猪掉的副产物（PigOffalLootModifier），连着火时的熏制版一起，共用一页

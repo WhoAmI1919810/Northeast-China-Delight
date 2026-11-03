@@ -352,12 +352,12 @@ public class NortheastChinaDelight
         @SubscribeEvent
         public static void onRegisterBlockColors(RegisterColorHandlersEvent.Block event)
         {
-            // 水盆的水面（tintindex 0）跟着群系水色走，和旁边的水一个颜色
+            // 水盆的水面（tintindex 0）跟着群系水色走，和旁边的水一个颜色；脸盆架上放着的水盆也一样
             event.register(
                     (state, level, pos, tintIndex) -> level != null && pos != null
                             ? BiomeColors.getAverageWaterColor(level, pos)
                             : 0x3F76E4,
-                    ModBlocks.WATER_BASIN.get());
+                    ModBlocks.WATER_BASIN.get(), ModBlocks.BASIN_STAND.get());
             event.register(
                     (state, level, pos, tintIndex) -> {
                         if (level != null && pos != null
