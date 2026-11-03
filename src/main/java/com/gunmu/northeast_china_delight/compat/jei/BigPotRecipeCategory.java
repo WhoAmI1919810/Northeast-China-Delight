@@ -11,7 +11,6 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
 import mezz.jei.api.gui.builder.IRecipeSlotBuilder;
-import mezz.jei.api.gui.builder.ITooltipBuilder;
 import mezz.jei.api.gui.drawable.IDrawable;
 import mezz.jei.api.gui.drawable.IDrawableAnimated;
 import mezz.jei.api.gui.ingredient.IRecipeSlotsView;
@@ -23,6 +22,7 @@ import mezz.jei.api.recipe.RecipeIngredientRole;
 import mezz.jei.api.recipe.RecipeType;
 import mezz.jei.api.recipe.category.IRecipeCategory;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.navigation.ScreenPosition;
 import net.minecraft.client.renderer.LightTexture;
@@ -35,22 +35,21 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Fluid;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 /**
- * JEI 里的「大锅烹饪」分类，照用户给的示意图（main 目录下的 铁锅JEI示意.png）排：
+ * JEI 里的「大锅烹饪」分类，照用户给的示意图（main 目录下的 铁锅JEI示意.png，2026-11-03 用户改过一版）排：
  *
  * <ul>
  *   <li>左边是生着火、放着锅的大灶（游戏里的方块模型），配方要液体就在锅里画一层液面，和锅里实际的画法一样
- *       （{@code client/BigPotRenderer#renderLiquid}：流体贴图按流体染色、水不画成白的，配方里的调料往调料的颜色染）；
- *       灶下面一个火的小图标，和农夫乐事厨锅那页一个样子（自己重画的，见 textures/gui/jei/big_pot_heat.png）；</li>
- *   <li>上面一排 3 格调料，下面 2×3 格食材，调料那排往左错开半格（照示意图）；火的小图标在灶门正下方；</li>
- *   <li>排成三列（锅灶 + 火 / 调料 + 食材 / 箭头 + 容器 + 成品），三列上下都对齐、上下边距一样（2026-11-03 用户让我自己看着排）；</li>
- *   <li>箭头指向右边的大成品格（数量 = 一锅盛几份），箭头下面是盛菜用的容器；箭头按烹饪时间一遍遍走满（烹饪进度），
- *       烹饪时间和经验只在鼠标移到箭头上时在气泡里写（2026-11-03 用户要的）；</li>
+ *       （{@code client/BigPotRenderer#renderLiquid}），只是不按调料染：JEI 里是刚倒进去的清水，水就是普通的蓝；
+ *       灶的右下角压着一个篝火小图标（textures/gui/jei/big_pot_heat.png）；</li>
+ *   <li>上面一排 3 格调料，比下面 2×3 格食材往左错开一格半；</li>
+ *   <li>右上角两行：秒表「10秒」、经验球「0.35点经验」（直接写出来，图标见 work/tools/big_stove/jei_icons.py）；</li>
+ *   <li>箭头指向右边的大成品格（数量 = 一锅盛几份），按烹饪时间一遍遍走满（烹饪进度）；箭头下面是盛菜用的容器，
+ *       右边一把勺子勾向成品；</li>
  *   <li>锅盖缩短时间（{@code lid_speedup}）在 JEI 里不显示；</li>
  *   <li>3 格调料、6 格食材、容器格不管配方用没用都画出来，没用的空着（用户嫌格子忽多忽少难看）。</li>
  * </ul>
@@ -58,33 +57,50 @@ import java.util.Map;
 public class BigPotRecipeCategory implements IRecipeCategory<BigPotJeiRecipe> {
 
     private static final int WIDTH = 176;
-    private static final int HEIGHT = 66;
+    private static final int HEIGHT = 70;
     private static final int SLOT = 16;
     private static final int STRIDE = 18;
 
-    private static final float STOVE_X = 28.0F;
-    private static final float STOVE_Y = 24.0F;
+    private static final float STOVE_X = 29.0F;
+    private static final float STOVE_Y = 41.0F;
     private static final float STOVE_SCALE = 17.0F;
-    private static final int HEAT_X = 30;
-    private static final int HEAT_Y = 46;
-    private static final int SEASONING_X = 53;
-    private static final int SEASONING_Y = 4;
-    private static final int GRID_X = 62;
+    private static final int HEAT_X = 46;
+    private static final int HEAT_Y = 52;
+    private static final int SEASONING_X = 40;
+    private static final int SEASONING_Y = 5;
+    private static final int GRID_X = 65;
     private static final int GRID_Y = 25;
     private static final int GRID_COLUMNS = 3;
     /** 调料、食材格数（配方格式的上限）；配方用不满也把格子都画出来，空着 */
     private static final int SEASONING_SLOTS = 3;
     private static final int INGREDIENT_SLOTS = 6;
-    private static final int ARROW_X = 121;
-    private static final int ARROW_Y = 27;
-    private static final int CONTAINER_X = 125;
-    private static final int CONTAINER_Y = 46;
-    private static final int OUTPUT_FRAME_X = 148;
+    private static final int ARROW_X = 120;
+    private static final int ARROW_Y = 34;
+    private static final int CONTAINER_X = 124;
+    private static final int CONTAINER_Y = 51;
+    private static final int OUTPUT_FRAME_X = 146;
     private static final int OUTPUT_FRAME_Y = 29;
     private static final int OUTPUT_FRAME = 26;
+    /** 右上角：秒表 + 时间、经验球 + 经验（图标左边对齐，字跟在图标右边） */
+    private static final int INFO_ICON_X = 119;
+    private static final int TIME_Y = 5;
+    private static final int XP_Y = 18;
+    private static final int INFO_TEXT_X = 132;
+    private static final int TEXT_COLOR = 0xFF808080;
+    /** 字缩小一点：「0.35点经验」原大 47 像素，从 131 写过去会出右边界 */
+    private static final float TEXT_SCALE = 0.85F;
+    /** 容器格右边一把勺子，勾向成品 */
+    private static final int LADLE_X = 142;
+    private static final int LADLE_Y = 53;
 
     private static final ResourceLocation HEAT = DdIds.of(NortheastChinaDelight.MODID,
             "textures/gui/jei/big_pot_heat.png");
+    private static final ResourceLocation TIME_ICON = DdIds.of(NortheastChinaDelight.MODID,
+            "textures/gui/jei/big_pot_time.png");
+    private static final ResourceLocation XP_ICON = DdIds.of(NortheastChinaDelight.MODID,
+            "textures/gui/jei/big_pot_xp.png");
+    private static final ResourceLocation LADLE = DdIds.of(NortheastChinaDelight.MODID,
+            "textures/gui/jei/big_pot_ladle.png");
 
     private final IDrawable icon;
     private final IDrawable background;
@@ -205,25 +221,6 @@ public class BigPotRecipeCategory implements IRecipeCategory<BigPotJeiRecipe> {
         //?}
     }
 
-    /** 鼠标在箭头上：气泡里写烹饪时间（不盖锅盖时）和每盛一份给的经验 */
-    @Override
-    public void getTooltip(ITooltipBuilder tooltip, BigPotJeiRecipe recipe, IRecipeSlotsView view,
-                           double mouseX, double mouseY) {
-        IDrawable arrow = arrow(recipe);
-        if (mouseX < ARROW_X || mouseX >= ARROW_X + arrow.getWidth()
-                || mouseY < ARROW_Y || mouseY >= ARROW_Y + arrow.getHeight()) {
-            return;
-        }
-        int ticks = recipe.cookingTime();
-        String seconds = ticks % 20 == 0 ? String.valueOf(ticks / 20) : String.format("%.1f", ticks / 20.0F);
-        tooltip.add(Component.translatable("jei.northeast_china_delight.big_pot.time", seconds));
-        if (recipe.experience() > 0.0F) {
-            float xp = recipe.experience();
-            String text = xp == Math.floor(xp) ? String.valueOf((int) xp) : String.format("%.1f", xp);
-            tooltip.add(Component.translatable("jei.northeast_china_delight.big_pot.experience", text));
-        }
-    }
-
     private IDrawableAnimated arrow(BigPotJeiRecipe recipe) {
         return this.arrows.computeIfAbsent(Math.max(1, recipe.cookingTime()), this.guiHelper::createAnimatedRecipeArrow);
     }
@@ -233,6 +230,39 @@ public class BigPotRecipeCategory implements IRecipeCategory<BigPotJeiRecipe> {
         graphics.blit(HEAT, HEAT_X, HEAT_Y, 0.0F, 0.0F, 16, 16, 16, 16);
         arrow.draw(graphics, ARROW_X, ARROW_Y);
         drawFrame(graphics, OUTPUT_FRAME_X, OUTPUT_FRAME_Y, OUTPUT_FRAME, OUTPUT_FRAME);
+        graphics.blit(LADLE, LADLE_X, LADLE_Y, 0.0F, 0.0F, 8, 10, 8, 10);
+        drawInfo(graphics, recipe);
+    }
+
+    /** 右上角两行：秒表「10秒」，经验球「0.35点经验」（没经验就不写那行） */
+    private static void drawInfo(GuiGraphics graphics, BigPotJeiRecipe recipe) {
+        Font font = Minecraft.getInstance().font;
+        int ticks = recipe.cookingTime();
+        String seconds = ticks % 20 == 0 ? String.valueOf(ticks / 20) : trim(ticks / 20.0F);
+        graphics.blit(TIME_ICON, INFO_ICON_X, TIME_Y, 0.0F, 0.0F, 11, 11, 11, 11);
+        drawSmall(graphics, font, Component.translatable("jei.northeast_china_delight.big_pot.time", seconds),
+                TIME_Y + 2);
+        if (recipe.experience() > 0.0F) {
+            graphics.blit(XP_ICON, INFO_ICON_X, XP_Y + 1, 0.0F, 0.0F, 11, 9, 11, 9);
+            drawSmall(graphics, font, Component.translatable("jei.northeast_china_delight.big_pot.experience",
+                    trim(recipe.experience())), XP_Y + 2);
+        }
+    }
+
+    private static void drawSmall(GuiGraphics graphics, Font font, Component text, int y) {
+        PoseStack pose = graphics.pose();
+        pose.pushPose();
+        pose.translate(INFO_TEXT_X, y, 0.0F);
+        pose.scale(TEXT_SCALE, TEXT_SCALE, 1.0F);
+        graphics.drawString(font, text, 0, 0, TEXT_COLOR, false);
+        pose.popPose();
+    }
+
+    /** 小数去掉末尾的 0：1.0 → 1，0.35 → 0.35 */
+    private static String trim(float value) {
+        String text = String.format(java.util.Locale.ROOT, "%.2f", value);
+        text = text.replaceAll("0+$", "");
+        return text.endsWith(".") ? text.substring(0, text.length() - 1) : text;
     }
 
     /** 生着火、放着锅的大灶（朝北，四格照 facing=north 的位置摆），配方要液体就叠一层液面 */
@@ -262,15 +292,9 @@ public class BigPotRecipeCategory implements IRecipeCategory<BigPotJeiRecipe> {
             pose.popPose();
         }
         if (liquid != null) {
-            // 调料每格取第一样，各算一份
-            List<ItemStack> seasonings = new ArrayList<>();
-            for (List<ItemStack> slot : recipe.seasonings()) {
-                if (!slot.isEmpty()) {
-                    seasonings.add(slot.get(0).copyWithCount(1));
-                }
-            }
+            // JEI 里画的是刚倒进去的清水（流体本来的颜色，水是普通的蓝），不按调料染（2026-11-03 用户）
             BigPotRenderer.renderLiquid(pose, buffers, liquid, BigPotVisuals.liquidY(recipe.liquidMb()),
-                    BigPotVisuals.liquidColor(liquid, seasonings), LightTexture.FULL_BRIGHT, OverlayTexture.NO_OVERLAY);
+                    BigPotVisuals.liquidColor(liquid, List.of()), LightTexture.FULL_BRIGHT, OverlayTexture.NO_OVERLAY);
         }
         buffers.endBatch();
         pose.popPose();
