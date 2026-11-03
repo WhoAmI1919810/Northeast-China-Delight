@@ -27,6 +27,10 @@ public final class ModBlockTags
             TagKey.create(Registries.BLOCK,
                     DdIds.of(NortheastChinaDelight.MODID, "wood_ear_logs"));
 
+    /** 哪些方块摆成 2×2 会拼成大灶（默认只有农夫乐事的炉灶）；拆开时一律变回农夫乐事的炉灶 */
+    public static final TagKey<Block> BIG_STOVE_PARTS =
+            TagKey.create(Registries.BLOCK, DdIds.of(NortheastChinaDelight.MODID, "big_stove_parts"));
+
     public static final TagKey<Block> GINSENG_PLANTABLE_ON =
             TagKey.create(Registries.BLOCK,
                     DdIds.of(NortheastChinaDelight.MODID, "ginseng_plantable_on"));

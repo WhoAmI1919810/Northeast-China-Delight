@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "A": {
+      "tag": "c:ingots/iron"
+    },
+    "B": {
+      "tag": "c:storage_blocks/iron"
+    }
+  },
+  "pattern": [
+    "A A",
+    " B "
+  ],
+  "result": {
+    "count": 1,
+    "id": "northeast_china_delight:big_iron_pot"
+  }
+}
