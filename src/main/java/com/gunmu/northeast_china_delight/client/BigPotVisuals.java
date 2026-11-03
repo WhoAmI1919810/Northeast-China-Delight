@@ -30,27 +30,26 @@ import java.util.function.Predicate;
  * 原点在灶的西北角（朝北摆的时候），锅心 (16, 16)。</p>
  *
  * <ul>
- *   <li>食材模型：{@code northeast_china_delight:block/big_pot/<名字>}，底面中心 (8, 0, 8)，按 {@link #SCALE} 倍画；
- *       没有模型的东西（别的模组的食材）画成平躺的物品。成品：{@code block/big_pot/dish/<成品物品名>}，坐标已经是锅里的。</li>
- *   <li>六个格子：先放下面一圈（贴锅底），再放上面一圈；同一样放了好几个就往上叠，最多画 {@link #MAX_COPIES} 份。
- *       六格放满时上面那圈的顶刚好越过水面一点（2026-11-03 用户定的）。</li>
+ *   <li>食材模型：{@code northeast_china_delight:block/big_pot/<名字>}，底面中心 (8, 0, 8)，生成时已经等比缩放到
+ *       正好装进半径 3、高 2.8 像素的圆柱，原样画；没有模型的东西（别的模组的食材）画成平躺的物品。
+ *       成品：{@code block/big_pot/dish/<成品物品名>}，坐标已经是锅里的，最高不过锅盖底面。</li>
+ *   <li>七个格子：锅底正中一份，外面一圈六份。圈上相邻两份、圈和正中都隔开两个圆柱半径，锅壁也刚好够宽，谁都碰不到谁
+ *       （2026-11-03 用户说食材穿模后这样排；查法见 work/tools/big_pot_contents/fitcheck.py）。
+ *       同一样放了好几个，每份占一格（{@link #pieces}）。外圈的顶比 1000 mB 的水面高 1.3 像素（用户：放满稍微越过水面）。</li>
  * </ul>
  */
 public final class BigPotVisuals {
 
     public static final float CENTER = 16.0F;
-    public static final float SCALE = 1.5F;
-    public static final int SLOTS = 6;
     public static final int MAX_COPIES = 3;
     public static final float LIQUID_ALPHA = 0.78F;
 
-    /** 六个格子：离锅心、方位角（度，从 +x 往 +z 转）、底面高度 */
+    /** 七个格子：离锅心、方位角（度，从 +x 往 +z 转）、底面高度 */
     private static final float[][] SLOT_PLACES = {
-            {3.2F, 90, 10.0F}, {3.2F, 210, 10.0F}, {3.2F, 330, 10.0F},
-            {6.0F, 30, 10.6F}, {6.0F, 150, 10.6F}, {6.0F, 270, 10.6F}};
-    private static final float COPY_RISE = 0.8F;
-    private static final float COPY_TURN = 40.0F;
-    private static final float COPY_IN = 0.6F;
+            {0.0F, 0, 10.0F},
+            {6.0F, 30, 12.0F}, {6.0F, 90, 12.0F}, {6.0F, 150, 12.0F},
+            {6.0F, 210, 12.0F}, {6.0F, 270, 12.0F}, {6.0F, 330, 12.0F}};
+    public static final int SLOTS = SLOT_PLACES.length;
 
     /** 锅身每一圈 (y0, y1, 内半径)，和大灶生成器 big_stove/build.py 的 POT 一样 */
     private static final float[][] POT = {
@@ -125,13 +124,33 @@ public final class BigPotVisuals {
         });
     }
 
-    /** 第 slot 格的第 copy 份：模型底面中心摆到哪 {x, y, z}、绕竖轴转多少度 */
-    public static float[] slot(int slot, int copy) {
+    /** 第 slot 格：模型底面中心摆到哪 {x, y, z}、绕竖轴转多少度 */
+    public static float[] slot(int slot) {
         float[] place = SLOT_PLACES[slot];
-        float r = place[0] - COPY_IN * copy;
         double a = Math.toRadians(place[1]);
-        return new float[]{CENTER + r * (float) Math.cos(a), place[2] + COPY_RISE * copy,
-                CENTER + r * (float) Math.sin(a), place[1] + 90 + COPY_TURN * copy};
+        return new float[]{CENTER + place[0] * (float) Math.cos(a), place[2],
+                CENTER + place[0] * (float) Math.sin(a), place[1] + 90};
+    }
+
+    /**
+     * 锅里的食材（按放进去的顺序、同样的摞成一堆）摊成一份一份占格子：每样先占一格，格子还有富余再给放了好几个的多占
+     * （每样最多 {@link #MAX_COPIES} 份），一共最多 {@link #SLOTS} 份。和 layout.py 的 pieces 一样
+     */
+    public static List<ItemStack> pieces(List<ItemStack> stacks) {
+        List<ItemStack> out = new ArrayList<>();
+        for (ItemStack stack : stacks) {
+            if (out.size() < SLOTS) {
+                out.add(stack);
+            }
+        }
+        for (int extra = 1; extra < MAX_COPIES && out.size() < SLOTS; extra++) {
+            for (ItemStack stack : stacks) {
+                if (stack.getCount() > extra && out.size() < SLOTS) {
+                    out.add(stack);
+                }
+            }
+        }
+        return out;
     }
 
     // ---------------------------------------------------------------- 调料、颜色

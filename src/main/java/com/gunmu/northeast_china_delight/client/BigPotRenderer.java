@@ -25,7 +25,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * 画大铁锅里的东西（锅盖揭着的时候）：
+ * 画大铁锅里的东西。盖着锅盖也照画（被锅盖挡着看不见）：不然一盖一揭锅里的东西就一闪没了又冒出来
+ * （2026-11-03 用户说的）；锅里的东西最高都不过锅盖底面。
  *
  * <ul>
  *   <li>没煮好：液面（流体颜色，倒进去的调料按份数往调料的颜色染）+ 放进去的食材，按 {@link BigPotVisuals} 的六个格子摆；</li>
@@ -46,7 +47,7 @@ public class BigPotRenderer implements BlockEntityRenderer<BigPotBlockEntity> {
         Level level = pot.getLevel();
         BlockState state = pot.getBlockState();
         if (level == null || !(state.getBlock() instanceof BigStoveBlock)
-                || state.getValue(BigStoveBlock.POT) != BigStoveBlock.Pot.POT || pot.isEmpty()) {
+                || state.getValue(BigStoveBlock.POT) == BigStoveBlock.Pot.NONE || pot.isEmpty()) {
             return;
         }
         BlockPos pos = pot.getBlockPos();
@@ -106,29 +107,26 @@ public class BigPotRenderer implements BlockEntityRenderer<BigPotBlockEntity> {
 
     private static void renderIngredients(PoseStack pose, MultiBufferSource buffer, BlockState state,
                                           List<ItemStack> ingredients, int light, int overlay, Level level) {
-        for (int i = 0; i < ingredients.size() && i < BigPotVisuals.SLOTS; i++) {
-            ItemStack stack = ingredients.get(i);
+        List<ItemStack> pieces = BigPotVisuals.pieces(ingredients);
+        for (int i = 0; i < pieces.size(); i++) {
+            ItemStack stack = pieces.get(i);
             BakedModel model = BigPotVisuals.ingredientModel(stack);
-            int copies = Math.min(stack.getCount(), BigPotVisuals.MAX_COPIES);
-            for (int k = 0; k < copies; k++) {
-                float[] at = BigPotVisuals.slot(i, k);
-                pose.pushPose();
-                pose.translate(at[0] / 16.0F, at[1] / 16.0F, at[2] / 16.0F);
-                pose.mulPose(Axis.YP.rotationDegrees(at[3]));
-                if (model != null) {
-                    pose.scale(BigPotVisuals.SCALE, BigPotVisuals.SCALE, BigPotVisuals.SCALE);
-                    pose.translate(-0.5F, 0.0F, -0.5F);
-                    renderModel(pose, buffer, state, model, light, overlay);
-                } else {
-                    // 没有专门模型的食材（别的模组的）：平躺的物品
-                    pose.translate(0.0F, 0.03F, 0.0F);
-                    pose.mulPose(Axis.XP.rotationDegrees(90.0F));
-                    pose.scale(0.4F, 0.4F, 0.4F);
-                    Minecraft.getInstance().getItemRenderer().renderStatic(stack, ItemDisplayContext.FIXED, light,
-                            overlay, pose, buffer, level, i * 3 + k);
-                }
-                pose.popPose();
+            float[] at = BigPotVisuals.slot(i);
+            pose.pushPose();
+            pose.translate(at[0] / 16.0F, at[1] / 16.0F, at[2] / 16.0F);
+            pose.mulPose(Axis.YP.rotationDegrees(at[3]));
+            if (model != null) {
+                pose.translate(-0.5F, 0.0F, -0.5F);
+                renderModel(pose, buffer, state, model, light, overlay);
+            } else {
+                // 没有专门模型的食材（别的模组的）：平躺的物品，0.375 格宽，和圆柱差不多大
+                pose.translate(0.0F, 0.03F, 0.0F);
+                pose.mulPose(Axis.XP.rotationDegrees(90.0F));
+                pose.scale(0.375F, 0.375F, 0.375F);
+                Minecraft.getInstance().getItemRenderer().renderStatic(stack, ItemDisplayContext.FIXED, light,
+                        overlay, pose, buffer, level, i);
             }
+            pose.popPose();
         }
     }
 

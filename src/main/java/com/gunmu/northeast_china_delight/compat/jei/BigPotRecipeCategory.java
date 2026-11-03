@@ -47,7 +47,8 @@ import java.util.Map;
  *   <li>左边是生着火、放着锅的大灶（游戏里的方块模型），配方要液体就在锅里画一层液面，和锅里实际的画法一样
  *       （{@code client/BigPotRenderer#renderLiquid}：流体贴图按流体染色、水不画成白的，配方里的调料往调料的颜色染）；
  *       灶下面一个火的小图标，和农夫乐事厨锅那页一个样子（自己重画的，见 textures/gui/jei/big_pot_heat.png）；</li>
- *   <li>上面一排 3 格调料，下面 2×3 格食材，调料那排往左错开半格（照示意图，2026-11-03 用户说的）；锅灶靠左偏下，火的小图标在灶门正下方；</li>
+ *   <li>上面一排 3 格调料，下面 2×3 格食材，调料那排往左错开半格（照示意图）；火的小图标在灶门正下方；</li>
+ *   <li>排成三列（锅灶 + 火 / 调料 + 食材 / 箭头 + 容器 + 成品），三列上下都对齐、上下边距一样（2026-11-03 用户让我自己看着排）；</li>
  *   <li>箭头指向右边的大成品格（数量 = 一锅盛几份），箭头下面是盛菜用的容器；箭头按烹饪时间一遍遍走满（烹饪进度），
  *       烹饪时间和经验只在鼠标移到箭头上时在气泡里写（2026-11-03 用户要的）；</li>
  *   <li>锅盖缩短时间（{@code lid_speedup}）在 JEI 里不显示；</li>
@@ -57,29 +58,29 @@ import java.util.Map;
 public class BigPotRecipeCategory implements IRecipeCategory<BigPotJeiRecipe> {
 
     private static final int WIDTH = 176;
-    private static final int HEIGHT = 80;
+    private static final int HEIGHT = 66;
     private static final int SLOT = 16;
     private static final int STRIDE = 18;
 
-    private static final float STOVE_X = 27.0F;
-    private static final float STOVE_Y = 43.0F;
+    private static final float STOVE_X = 28.0F;
+    private static final float STOVE_Y = 24.0F;
     private static final float STOVE_SCALE = 17.0F;
-    private static final int HEAT_X = 29;
-    private static final int HEAT_Y = 62;
-    private static final int SEASONING_X = 48;
-    private static final int SEASONING_Y = 3;
-    private static final int GRID_X = 57;
-    private static final int GRID_Y = 24;
+    private static final int HEAT_X = 30;
+    private static final int HEAT_Y = 46;
+    private static final int SEASONING_X = 53;
+    private static final int SEASONING_Y = 4;
+    private static final int GRID_X = 62;
+    private static final int GRID_Y = 25;
     private static final int GRID_COLUMNS = 3;
     /** 调料、食材格数（配方格式的上限）；配方用不满也把格子都画出来，空着 */
     private static final int SEASONING_SLOTS = 3;
     private static final int INGREDIENT_SLOTS = 6;
-    private static final int ARROW_X = 115;
-    private static final int ARROW_Y = 33;
-    private static final int CONTAINER_X = 119;
-    private static final int CONTAINER_Y = 55;
-    private static final int OUTPUT_FRAME_X = 145;
-    private static final int OUTPUT_FRAME_Y = 28;
+    private static final int ARROW_X = 121;
+    private static final int ARROW_Y = 27;
+    private static final int CONTAINER_X = 125;
+    private static final int CONTAINER_Y = 46;
+    private static final int OUTPUT_FRAME_X = 148;
+    private static final int OUTPUT_FRAME_Y = 29;
     private static final int OUTPUT_FRAME = 26;
 
     private static final ResourceLocation HEAT = DdIds.of(NortheastChinaDelight.MODID,
