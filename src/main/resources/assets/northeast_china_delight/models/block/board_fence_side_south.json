@@ -1,0 +1,286 @@
+{
+  "parent": "minecraft:block/block",
+  "textures": {
+    "panel": "northeast_china_delight:block/board_fence",
+    "band": "northeast_china_delight:block/board_fence",
+    "particle": "northeast_china_delight:block/board_fence"
+  },
+  "elements": [
+    {
+      "from": [
+        7,
+        0,
+        9
+      ],
+      "to": [
+        9,
+        15,
+        16
+      ],
+      "faces": {
+        "west": {
+          "texture": "#panel",
+          "uv": [
+            9,
+            1,
+            16,
+            16
+          ]
+        },
+        "east": {
+          "texture": "#panel",
+          "uv": [
+            16,
+            1,
+            9,
+            16
+          ]
+        },
+        "south": {
+          "texture": "#panel",
+          "uv": [
+            7,
+            1,
+            9,
+            16
+          ]
+        },
+        "up": {
+          "texture": "#panel",
+          "uv": [
+            9,
+            1,
+            16,
+            2
+          ],
+          "rotation": 90
+        }
+      }
+    },
+    {
+      "from": [
+        7,
+        15,
+        9
+      ],
+      "to": [
+        9,
+        16,
+        10
+      ],
+      "faces": {
+        "west": {
+          "texture": "#panel",
+          "uv": [
+            9,
+            0,
+            10,
+            1
+          ]
+        },
+        "east": {
+          "texture": "#panel",
+          "uv": [
+            10,
+            0,
+            9,
+            1
+          ]
+        },
+        "up": {
+          "texture": "#panel",
+          "uv": [
+            9,
+            0,
+            10,
+            1
+          ],
+          "rotation": 90
+        },
+        "north": {
+          "texture": "#panel",
+          "uv": [
+            9,
+            0,
+            10,
+            1
+          ]
+        },
+        "south": {
+          "texture": "#panel",
+          "uv": [
+            9,
+            0,
+            10,
+            1
+          ]
+        }
+      }
+    },
+    {
+      "from": [
+        7,
+        15,
+        13
+      ],
+      "to": [
+        9,
+        16,
+        14
+      ],
+      "faces": {
+        "west": {
+          "texture": "#panel",
+          "uv": [
+            13,
+            0,
+            14,
+            1
+          ]
+        },
+        "east": {
+          "texture": "#panel",
+          "uv": [
+            14,
+            0,
+            13,
+            1
+          ]
+        },
+        "up": {
+          "texture": "#panel",
+          "uv": [
+            13,
+            0,
+            14,
+            1
+          ],
+          "rotation": 90
+        },
+        "north": {
+          "texture": "#panel",
+          "uv": [
+            13,
+            0,
+            14,
+            1
+          ]
+        },
+        "south": {
+          "texture": "#panel",
+          "uv": [
+            13,
+            0,
+            14,
+            1
+          ]
+        }
+      }
+    },
+    {
+      "from": [
+        6.5,
+        3,
+        9.5
+      ],
+      "to": [
+        9.5,
+        5,
+        16
+      ],
+      "faces": {
+        "west": {
+          "texture": "#band",
+          "uv": [
+            9.5,
+            11,
+            16,
+            13
+          ]
+        },
+        "east": {
+          "texture": "#band",
+          "uv": [
+            0,
+            11,
+            6.5,
+            13
+          ]
+        },
+        "up": {
+          "texture": "#band",
+          "uv": [
+            6.5,
+            0,
+            9.5,
+            6.5
+          ],
+          "rotation": 180
+        },
+        "down": {
+          "texture": "#band",
+          "uv": [
+            6.5,
+            9.5,
+            9.5,
+            16
+          ],
+          "rotation": 180
+        }
+      }
+    },
+    {
+      "from": [
+        6.5,
+        11,
+        9.5
+      ],
+      "to": [
+        9.5,
+        13,
+        16
+      ],
+      "faces": {
+        "west": {
+          "texture": "#band",
+          "uv": [
+            9.5,
+            3,
+            16,
+            5
+          ]
+        },
+        "east": {
+          "texture": "#band",
+          "uv": [
+            0,
+            3,
+            6.5,
+            5
+          ]
+        },
+        "up": {
+          "texture": "#band",
+          "uv": [
+            6.5,
+            0,
+            9.5,
+            6.5
+          ],
+          "rotation": 180
+        },
+        "down": {
+          "texture": "#band",
+          "uv": [
+            6.5,
+            9.5,
+            9.5,
+            16
+          ],
+          "rotation": 180
+        }
+      }
+    }
+  ],
+  "render_type": "minecraft:cutout"
+}

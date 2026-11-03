@@ -2,10 +2,48 @@
   "multipart": [
     {
       "when": {
-        "up": "false"
+        "OR": [
+          {
+            "north": "true",
+            "up": "false"
+          },
+          {
+            "south": "true",
+            "up": "false"
+          },
+          {
+            "north": "false",
+            "east": "false",
+            "south": "false",
+            "west": "false",
+            "up": "false"
+          }
+        ]
       },
       "apply": {
         "model": "northeast_china_delight:block/sorghum_stalk_fence_post"
+      }
+    },
+    {
+      "when": {
+        "OR": [
+          {
+            "east": "true",
+            "north": "false",
+            "south": "false",
+            "up": "false"
+          },
+          {
+            "west": "true",
+            "north": "false",
+            "south": "false",
+            "up": "false"
+          }
+        ]
+      },
+      "apply": {
+        "model": "northeast_china_delight:block/sorghum_stalk_fence_post",
+        "y": 90
       }
     },
     {
@@ -19,6 +57,15 @@
     },
     {
       "when": {
+        "south": "true",
+        "up": "false"
+      },
+      "apply": {
+        "model": "northeast_china_delight:block/sorghum_stalk_fence_side_south"
+      }
+    },
+    {
+      "when": {
         "east": "true",
         "up": "false"
       },
@@ -29,30 +76,58 @@
     },
     {
       "when": {
-        "south": "true",
-        "up": "false"
-      },
-      "apply": {
-        "model": "northeast_china_delight:block/sorghum_stalk_fence_side",
-        "y": 180
-      }
-    },
-    {
-      "when": {
         "west": "true",
         "up": "false"
       },
       "apply": {
-        "model": "northeast_china_delight:block/sorghum_stalk_fence_side",
-        "y": 270
+        "model": "northeast_china_delight:block/sorghum_stalk_fence_side_south",
+        "y": 90
       }
     },
     {
       "when": {
-        "up": "true"
+        "OR": [
+          {
+            "north": "true",
+            "up": "true"
+          },
+          {
+            "south": "true",
+            "up": "true"
+          },
+          {
+            "north": "false",
+            "east": "false",
+            "south": "false",
+            "west": "false",
+            "up": "true"
+          }
+        ]
       },
       "apply": {
         "model": "northeast_china_delight:block/sorghum_stalk_fence_post_full"
+      }
+    },
+    {
+      "when": {
+        "OR": [
+          {
+            "east": "true",
+            "north": "false",
+            "south": "false",
+            "up": "true"
+          },
+          {
+            "west": "true",
+            "north": "false",
+            "south": "false",
+            "up": "true"
+          }
+        ]
+      },
+      "apply": {
+        "model": "northeast_china_delight:block/sorghum_stalk_fence_post_full",
+        "y": 90
       }
     },
     {
@@ -66,6 +141,15 @@
     },
     {
       "when": {
+        "south": "true",
+        "up": "true"
+      },
+      "apply": {
+        "model": "northeast_china_delight:block/sorghum_stalk_fence_side_south_full"
+      }
+    },
+    {
+      "when": {
         "east": "true",
         "up": "true"
       },
@@ -76,22 +160,12 @@
     },
     {
       "when": {
-        "south": "true",
-        "up": "true"
-      },
-      "apply": {
-        "model": "northeast_china_delight:block/sorghum_stalk_fence_side_full",
-        "y": 180
-      }
-    },
-    {
-      "when": {
         "west": "true",
         "up": "true"
       },
       "apply": {
-        "model": "northeast_china_delight:block/sorghum_stalk_fence_side_full",
-        "y": 270
+        "model": "northeast_china_delight:block/sorghum_stalk_fence_side_south_full",
+        "y": 90
       }
     }
   ]
