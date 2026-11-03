@@ -1,5 +1,5 @@
 {
-  "type": "minecraft:crafting_shaped",
+  "type": "northeast_china_delight:no_remainder_shaped",
   "category": "misc",
   "key": {
     "A": {
@@ -9,7 +9,7 @@
       "item": "minecraft:stick"
     },
     "C": {
-      "item": "minecraft:bucket"
+      "item": "minecraft:water_bucket"
     }
   },
   "pattern": [
