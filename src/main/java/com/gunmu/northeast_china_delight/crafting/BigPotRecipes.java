@@ -50,6 +50,44 @@ public final class BigPotRecipes {
         return false;
     }
 
+    /** 这样东西下锅算不算调料：有哪条配方把它写在调料里（盐、酱油、豆油……）。调料倒进去拿不出来，水舀干就跟着没，拆灶也不掉 */
+    public static boolean isSeasoning(RecipeManager manager, ItemStack stack) {
+        for (BigPotRecipe recipe : all(manager)) {
+            for (BigPotRecipe.Entry entry : recipe.seasonings()) {
+                if (entry.ingredient().test(stack)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    /** 锅里最多放几个食材：用食材最多的那条配方用几个（现在是 7）。再多放也凑不成哪道菜 */
+    public static int maxIngredients(RecipeManager manager) {
+        int max = 1;
+        for (BigPotRecipe recipe : all(manager)) {
+            max = Math.max(max, total(recipe.ingredients()));
+        }
+        return max;
+    }
+
+    /** 锅里最多倒几份调料：用调料最多的那条配方用几份（现在是 3） */
+    public static int maxSeasonings(RecipeManager manager) {
+        int max = 1;
+        for (BigPotRecipe recipe : all(manager)) {
+            max = Math.max(max, total(recipe.seasonings()));
+        }
+        return max;
+    }
+
+    private static int total(List<BigPotRecipe.Entry> entries) {
+        int n = 0;
+        for (BigPotRecipe.Entry entry : entries) {
+            n += entry.count();
+        }
+        return n;
+    }
+
     /** 锅里的液体和料正好凑成哪条配方（料要一样不多一样不少、个数对上；液体够量就行）；凑不上返回 null */
     @Nullable
     public static BigPotRecipe match(RecipeManager manager, Fluid liquid, int liquidMb, List<ItemStack> contents) {

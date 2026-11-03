@@ -29,10 +29,12 @@ import java.util.List;
  *
  * <ul>
  *   <li>液体：一种流体 + 毫升数（水桶 / 水盆一次倒 1000 mB，最多 {@link #LIQUID_CAPACITY}）；</li>
- *   <li>料：放进去的食材、调料，同样的东西摞成一堆，最多 {@link #MAX_STACKS} 堆。倒进去的调料（瓶装、碗装，
- *       放的时候退回了瓶子 / 碗）拿不回来，拆灶时也不掉；</li>
+ *   <li>食材：一个栈，按放进去的顺序摞（和栈顶那堆一样就摞上去），只能从栈顶拿出来（最后放进去的先出来）；
+ *       拆灶时掉出来；</li>
+ *   <li>调料（有哪条配方把它写在调料里，盐也算）：同样的摞成一堆，倒进去就拿不出来；锅里的液体全舀走时跟着没了，
+ *       拆灶时也不掉（2026-11-03 用户：调料随水消失、锅被破坏不返还调料，盐也不掉）；</li>
  *   <li>正在煮哪条配方、煮了多久；</li>
- *   <li>煮好的菜、还剩几份、得用什么盛、每盛一份给多少经验。</li>
+ *   <li>煮好的菜、还剩几份、得用什么盛、每盛一份给多少经验（拆灶时没盛完的就没了）。</li>
  * </ul>
  *
  * <p>锅里有什么会同步给客户端（右键时客户端要先知道锅里煮好了没、该不该让给手里的东西，锅里的东西也要画出来，
@@ -41,12 +43,16 @@ import java.util.List;
 public class BigPotBlockEntity extends BlockEntity {
 
     public static final int LIQUID_CAPACITY = 4000;
-    /** 食材 6 格 + 调料 3 格 */
-    public static final int MAX_STACKS = 9;
 
     private Fluid liquid = Fluids.EMPTY;
     private int liquidMb;
-    private final List<ItemStack> contents = new ArrayList<>();
+    /** 食材栈：最后一堆是栈顶。最多放几个由配方定（{@code BigPotRecipes.maxIngredients}），见 {@link BigPotCooking} */
+    private final List<ItemStack> ingredients = new ArrayList<>();
+    /** 倒进去的调料，同一种摞成一堆。最多几份同样由配方定（{@code BigPotRecipes.maxSeasonings}） */
+    private final List<ItemStack> seasonings = new ArrayList<>();
+    /** {@link #contents()} 合起来的样子，锅里的东西一变就作废 */
+    @Nullable
+    private List<ItemStack> merged;
     @Nullable
     private ResourceLocation cooking;
     private int cookTicks;
@@ -96,8 +102,58 @@ public class BigPotBlockEntity extends BlockEntity {
         return liquidMb;
     }
 
+    /**
+     * 锅里的料合在一起看：食材按放进去的先后、同样的并成一堆，后面跟着调料。凑配方（一样一堆、个数对上）、
+     * 画锅里的东西、Jade 都用这个；不能改
+     */
     public List<ItemStack> contents() {
-        return Collections.unmodifiableList(contents);
+        if (merged == null) {
+            List<ItemStack> out = new ArrayList<>();
+            for (ItemStack stack : ingredients) {
+                mergeInto(out, stack);
+            }
+            for (ItemStack stack : seasonings) {
+                mergeInto(out, stack);
+            }
+            merged = Collections.unmodifiableList(out);
+        }
+        return merged;
+    }
+
+    private static void mergeInto(List<ItemStack> out, ItemStack stack) {
+        for (ItemStack existing : out) {
+            if (same(existing, stack)) {
+                existing.grow(stack.getCount());
+                return;
+            }
+        }
+        out.add(stack.copy());
+    }
+
+    private static boolean same(ItemStack a, ItemStack b) {
+        //? if <1.20.5 {
+        return ItemStack.isSameItemSameTags(a, b);
+        //?} else {
+        /*return ItemStack.isSameItemSameComponents(a, b);
+        *///?}
+    }
+
+    /** 锅里一共几个食材 */
+    public int ingredientCount() {
+        int n = 0;
+        for (ItemStack stack : ingredients) {
+            n += stack.getCount();
+        }
+        return n;
+    }
+
+    /** 锅里一共倒了几份调料 */
+    public int seasoningCount() {
+        int n = 0;
+        for (ItemStack stack : seasonings) {
+            n += stack.getCount();
+        }
+        return n;
     }
 
     @Nullable
@@ -139,7 +195,7 @@ public class BigPotBlockEntity extends BlockEntity {
 
     /** 锅里什么都没有（没液体、没料、没有煮好的菜） */
     public boolean isEmpty() {
-        return liquidMb <= 0 && contents.isEmpty() && !hasResult();
+        return liquidMb <= 0 && ingredients.isEmpty() && seasonings.isEmpty() && !hasResult();
     }
 
     // ---------------------------------------------------------------- 改
@@ -155,7 +211,10 @@ public class BigPotBlockEntity extends BlockEntity {
         return true;
     }
 
-    /** 舀走液体：够量才舀 */
+    /**
+     * 舀走液体：够量才舀。舀干了，倒进去的调料跟着水一起没了（舀出来的是清水，调料不还）：
+     * 调料放错了就把水舀走再倒回来，等于换一锅清水（2026-11-03 用户）
+     */
     public boolean removeLiquid(int mb) {
         if (liquidMb < mb) {
             return false;
@@ -164,56 +223,53 @@ public class BigPotBlockEntity extends BlockEntity {
         if (liquidMb <= 0) {
             liquidMb = 0;
             liquid = Fluids.EMPTY;
+            seasonings.clear();
         }
-        sync();
+        changed();
         return true;
+    }
+
+    /** 放一个食材：压在栈顶（和栈顶那堆一样、还摞得下就摞上去，不然另起一堆） */
+    public void pushIngredient(ItemStack one) {
+        if (!ingredients.isEmpty()) {
+            ItemStack top = ingredients.get(ingredients.size() - 1);
+            if (same(top, one) && top.getCount() < top.getMaxStackSize()) {
+                top.grow(1);
+                changed();
+                return;
+            }
+        }
+        ingredients.add(one.copyWithCount(1));
+        changed();
     }
 
     /**
-     * 放一个料进锅：和已有的同样东西摞在一起，摞不下或者堆数满了返回 false。
-     * 倒进去的调料（瓶装的每倒一剂瓶子的耐久都不一样）只认物品种类，不然同一瓶倒两剂会分成两堆、凑不成「调料 ×2」。
+     * 倒一份调料：同一种摞成一堆。只认物品种类：瓶装的每倒一剂瓶子的耐久都不一样，
+     * 不然同一瓶倒两剂会分成两堆、凑不成「调料 ×2」
      */
-    public boolean addItem(ItemStack one) {
-        boolean poured = one.hasCraftingRemainingItem();
-        for (ItemStack stack : contents) {
-            boolean same = poured
-                    ? stack.is(one.getItem()) && stack.hasCraftingRemainingItem()
-                    //? if <1.20.5 {
-                    : ItemStack.isSameItemSameTags(stack, one);
-                    //?} else {
-                    /*: ItemStack.isSameItemSameComponents(stack, one);
-                    *///?}
-            if (same) {
-                if (stack.getCount() >= stack.getMaxStackSize()) {
-                    return false;
-                }
+    public void addSeasoning(ItemStack one) {
+        for (ItemStack stack : seasonings) {
+            if (stack.is(one.getItem())) {
                 stack.grow(1);
-                sync();
-                return true;
+                changed();
+                return;
             }
         }
-        if (contents.size() >= MAX_STACKS) {
-            return false;
-        }
-        contents.add(one.copyWithCount(1));
-        sync();
-        return true;
+        seasonings.add(one.copyWithCount(1));
+        changed();
     }
 
-    /** 拿出最后放进去的那堆里的一个；倒进去的调料（有剩余物的）拿不出来，返回空 */
-    public ItemStack takeLastItem() {
-        if (contents.isEmpty()) {
+    /** 从栈顶拿出一个食材（最后放进去的那个）；没有食材了返回空。调料拿不出来 */
+    public ItemStack popIngredient() {
+        if (ingredients.isEmpty()) {
             return ItemStack.EMPTY;
         }
-        ItemStack last = contents.get(contents.size() - 1);
-        if (last.hasCraftingRemainingItem()) {
-            return ItemStack.EMPTY;
+        ItemStack top = ingredients.get(ingredients.size() - 1);
+        ItemStack taken = top.split(1);
+        if (top.isEmpty()) {
+            ingredients.remove(ingredients.size() - 1);
         }
-        ItemStack taken = last.split(1);
-        if (last.isEmpty()) {
-            contents.remove(contents.size() - 1);
-        }
-        sync();
+        changed();
         return taken;
     }
 
@@ -240,7 +296,8 @@ public class BigPotBlockEntity extends BlockEntity {
 
     /** 煮好了：料清空、液体扣掉配方用的那么多，锅里换成一锅菜 */
     public void finish(ItemStack dish, ItemStack serveWith, int liquidUsed, float xpPerServing) {
-        contents.clear();
+        ingredients.clear();
+        seasonings.clear();
         liquidMb = Math.max(0, liquidMb - liquidUsed);
         if (liquidMb == 0) {
             liquid = Fluids.EMPTY;
@@ -252,7 +309,7 @@ public class BigPotBlockEntity extends BlockEntity {
         cooking = null;
         cookTicks = 0;
         cookTotal = 0;
-        sync();
+        changed();
     }
 
     /** 盛走一份，返回这一份的菜（经验另算） */
@@ -275,24 +332,29 @@ public class BigPotBlockEntity extends BlockEntity {
         return experience;
     }
 
-    /** 灶被拆时：没倒进去的料、没盛完的菜掉在 pos（液体就没了） */
+    /**
+     * 灶被拆时：只有还没煮的食材掉在 pos；液体没了，调料跟着没（盐也不掉）；煮好没盛完的菜也没了，
+     * 不会掉出盆装菜（2026-11-03 用户：煮好以后打掉锅应该只掉锅）
+     */
     public void dropContents(Level level, BlockPos pos) {
-        for (ItemStack stack : contents) {
-            if (!stack.hasCraftingRemainingItem()) {
-                Containers.dropItemStack(level, pos.getX() + 0.5, pos.getY() + 1.0, pos.getZ() + 0.5, stack.copy());
-            }
-        }
-        for (int i = 0; i < servings && !result.isEmpty(); i++) {
-            Containers.dropItemStack(level, pos.getX() + 0.5, pos.getY() + 1.0, pos.getZ() + 0.5, result.copyWithCount(1));
+        for (ItemStack stack : ingredients) {
+            Containers.dropItemStack(level, pos.getX() + 0.5, pos.getY() + 1.0, pos.getZ() + 0.5, stack.copy());
         }
         liquid = Fluids.EMPTY;
         liquidMb = 0;
-        contents.clear();
+        ingredients.clear();
+        seasonings.clear();
         cooking = null;
         cookTicks = 0;
         result = ItemStack.EMPTY;
         container = ItemStack.EMPTY;
         servings = 0;
+        changed();
+    }
+
+    /** 料变了：合起来的样子作废，存档 + 发给客户端 */
+    private void changed() {
+        merged = null;
         sync();
     }
 
@@ -328,11 +390,8 @@ public class BigPotBlockEntity extends BlockEntity {
             tag.putString("Liquid", BuiltInRegistries.FLUID.getKey(liquid).toString());
             tag.putInt("LiquidMb", liquidMb);
         }
-        ListTag list = new ListTag();
-        for (ItemStack stack : contents) {
-            ItemStack.CODEC.encodeStart(ops, stack).result().ifPresent(list::add);
-        }
-        tag.put("Contents", list);
+        tag.put("Ingredients", encode(ingredients, ops));
+        tag.put("Seasonings", encode(seasonings, ops));
         if (cooking != null) {
             tag.putString("Cooking", cooking.toString());
         }
@@ -345,6 +404,20 @@ public class BigPotBlockEntity extends BlockEntity {
         }
         if (!container.isEmpty()) {
             ItemStack.CODEC.encodeStart(ops, container).result().ifPresent(saved -> tag.put("Container", saved));
+        }
+    }
+
+    private static ListTag encode(List<ItemStack> stacks, com.mojang.serialization.DynamicOps<Tag> ops) {
+        ListTag list = new ListTag();
+        for (ItemStack stack : stacks) {
+            ItemStack.CODEC.encodeStart(ops, stack).result().ifPresent(list::add);
+        }
+        return list;
+    }
+
+    private static void decode(ListTag list, List<ItemStack> into, com.mojang.serialization.DynamicOps<Tag> ops) {
+        for (int i = 0; i < list.size(); i++) {
+            ItemStack.CODEC.parse(ops, list.get(i)).result().ifPresent(into::add);
         }
     }
 
@@ -368,10 +441,19 @@ public class BigPotBlockEntity extends BlockEntity {
         if (liquid == Fluids.EMPTY) {
             liquidMb = 0;
         }
-        contents.clear();
-        ListTag list = tag.getList("Contents", Tag.TAG_COMPOUND);
-        for (int i = 0; i < list.size(); i++) {
-            ItemStack.CODEC.parse(ops, list.get(i)).result().ifPresent(contents::add);
+        ingredients.clear();
+        seasonings.clear();
+        merged = null;
+        if (tag.contains("Contents")) {
+            // 这一版以前的存档食材、调料混在一个 Contents 里：倒进去时退回了瓶子 / 碗的算调料，其余当食材
+            List<ItemStack> old = new ArrayList<>();
+            decode(tag.getList("Contents", Tag.TAG_COMPOUND), old, ops);
+            for (ItemStack stack : old) {
+                (stack.hasCraftingRemainingItem() ? seasonings : ingredients).add(stack);
+            }
+        } else {
+            decode(tag.getList("Ingredients", Tag.TAG_COMPOUND), ingredients, ops);
+            decode(tag.getList("Seasonings", Tag.TAG_COMPOUND), seasonings, ops);
         }
         cooking = tag.contains("Cooking") ? ResourceLocation.tryParse(tag.getString("Cooking")) : null;
         cookTicks = tag.getInt("CookTicks");
