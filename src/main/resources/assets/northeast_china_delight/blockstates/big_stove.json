@@ -1,0 +1,692 @@
+{
+  "multipart": [
+    {
+      "when": {
+        "facing": "north",
+        "part": "nw",
+        "lit": "false"
+      },
+      "apply": {
+        "model": "northeast_china_delight:block/big_stove_nw"
+      }
+    },
+    {
+      "when": {
+        "facing": "north",
+        "part": "nw",
+        "lit": "true"
+      },
+      "apply": {
+        "model": "northeast_china_delight:block/big_stove_nw_lit"
+      }
+    },
+    {
+      "when": {
+        "facing": "north",
+        "part": "nw",
+        "pot": "pot|lid"
+      },
+      "apply": {
+        "model": "northeast_china_delight:block/big_iron_pot_nw"
+      }
+    },
+    {
+      "when": {
+        "facing": "north",
+        "part": "nw",
+        "pot": "lid"
+      },
+      "apply": {
+        "model": "northeast_china_delight:block/big_pot_lid_nw"
+      }
+    },
+    {
+      "when": {
+        "facing": "north",
+        "part": "ne",
+        "lit": "false"
+      },
+      "apply": {
+        "model": "northeast_china_delight:block/big_stove_ne"
+      }
+    },
+    {
+      "when": {
+        "facing": "north",
+        "part": "ne",
+        "lit": "true"
+      },
+      "apply": {
+        "model": "northeast_china_delight:block/big_stove_ne_lit"
+      }
+    },
+    {
+      "when": {
+        "facing": "north",
+        "part": "ne",
+        "pot": "pot|lid"
+      },
+      "apply": {
+        "model": "northeast_china_delight:block/big_iron_pot_ne"
+      }
+    },
+    {
+      "when": {
+        "facing": "north",
+        "part": "ne",
+        "pot": "lid"
+      },
+      "apply": {
+        "model": "northeast_china_delight:block/big_pot_lid_ne"
+      }
+    },
+    {
+      "when": {
+        "facing": "north",
+        "part": "sw",
+        "lit": "false"
+      },
+      "apply": {
+        "model": "northeast_china_delight:block/big_stove_sw"
+      }
+    },
+    {
+      "when": {
+        "facing": "north",
+        "part": "sw",
+        "lit": "true"
+      },
+      "apply": {
+        "model": "northeast_china_delight:block/big_stove_sw_lit"
+      }
+    },
+    {
+      "when": {
+        "facing": "north",
+        "part": "sw",
+        "pot": "pot|lid"
+      },
+      "apply": {
+        "model": "northeast_china_delight:block/big_iron_pot_sw"
+      }
+    },
+    {
+      "when": {
+        "facing": "north",
+        "part": "sw",
+        "pot": "lid"
+      },
+      "apply": {
+        "model": "northeast_china_delight:block/big_pot_lid_sw"
+      }
+    },
+    {
+      "when": {
+        "facing": "north",
+        "part": "se",
+        "lit": "false"
+      },
+      "apply": {
+        "model": "northeast_china_delight:block/big_stove_se"
+      }
+    },
+    {
+      "when": {
+        "facing": "north",
+        "part": "se",
+        "lit": "true"
+      },
+      "apply": {
+        "model": "northeast_china_delight:block/big_stove_se_lit"
+      }
+    },
+    {
+      "when": {
+        "facing": "north",
+        "part": "se",
+        "pot": "pot|lid"
+      },
+      "apply": {
+        "model": "northeast_china_delight:block/big_iron_pot_se"
+      }
+    },
+    {
+      "when": {
+        "facing": "north",
+        "part": "se",
+        "pot": "lid"
+      },
+      "apply": {
+        "model": "northeast_china_delight:block/big_pot_lid_se"
+      }
+    },
+    {
+      "when": {
+        "facing": "east",
+        "part": "nw",
+        "lit": "false"
+      },
+      "apply": {
+        "model": "northeast_china_delight:block/big_stove_nw",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "facing": "east",
+        "part": "nw",
+        "lit": "true"
+      },
+      "apply": {
+        "model": "northeast_china_delight:block/big_stove_nw_lit",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "facing": "east",
+        "part": "nw",
+        "pot": "pot|lid"
+      },
+      "apply": {
+        "model": "northeast_china_delight:block/big_iron_pot_nw",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "facing": "east",
+        "part": "nw",
+        "pot": "lid"
+      },
+      "apply": {
+        "model": "northeast_china_delight:block/big_pot_lid_nw",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "facing": "east",
+        "part": "ne",
+        "lit": "false"
+      },
+      "apply": {
+        "model": "northeast_china_delight:block/big_stove_ne",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "facing": "east",
+        "part": "ne",
+        "lit": "true"
+      },
+      "apply": {
+        "model": "northeast_china_delight:block/big_stove_ne_lit",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "facing": "east",
+        "part": "ne",
+        "pot": "pot|lid"
+      },
+      "apply": {
+        "model": "northeast_china_delight:block/big_iron_pot_ne",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "facing": "east",
+        "part": "ne",
+        "pot": "lid"
+      },
+      "apply": {
+        "model": "northeast_china_delight:block/big_pot_lid_ne",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "facing": "east",
+        "part": "sw",
+        "lit": "false"
+      },
+      "apply": {
+        "model": "northeast_china_delight:block/big_stove_sw",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "facing": "east",
+        "part": "sw",
+        "lit": "true"
+      },
+      "apply": {
+        "model": "northeast_china_delight:block/big_stove_sw_lit",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "facing": "east",
+        "part": "sw",
+        "pot": "pot|lid"
+      },
+      "apply": {
+        "model": "northeast_china_delight:block/big_iron_pot_sw",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "facing": "east",
+        "part": "sw",
+        "pot": "lid"
+      },
+      "apply": {
+        "model": "northeast_china_delight:block/big_pot_lid_sw",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "facing": "east",
+        "part": "se",
+        "lit": "false"
+      },
+      "apply": {
+        "model": "northeast_china_delight:block/big_stove_se",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "facing": "east",
+        "part": "se",
+        "lit": "true"
+      },
+      "apply": {
+        "model": "northeast_china_delight:block/big_stove_se_lit",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "facing": "east",
+        "part": "se",
+        "pot": "pot|lid"
+      },
+      "apply": {
+        "model": "northeast_china_delight:block/big_iron_pot_se",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "facing": "east",
+        "part": "se",
+        "pot": "lid"
+      },
+      "apply": {
+        "model": "northeast_china_delight:block/big_pot_lid_se",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "facing": "south",
+        "part": "nw",
+        "lit": "false"
+      },
+      "apply": {
+        "model": "northeast_china_delight:block/big_stove_nw",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "facing": "south",
+        "part": "nw",
+        "lit": "true"
+      },
+      "apply": {
+        "model": "northeast_china_delight:block/big_stove_nw_lit",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "facing": "south",
+        "part": "nw",
+        "pot": "pot|lid"
+      },
+      "apply": {
+        "model": "northeast_china_delight:block/big_iron_pot_nw",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "facing": "south",
+        "part": "nw",
+        "pot": "lid"
+      },
+      "apply": {
+        "model": "northeast_china_delight:block/big_pot_lid_nw",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "facing": "south",
+        "part": "ne",
+        "lit": "false"
+      },
+      "apply": {
+        "model": "northeast_china_delight:block/big_stove_ne",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "facing": "south",
+        "part": "ne",
+        "lit": "true"
+      },
+      "apply": {
+        "model": "northeast_china_delight:block/big_stove_ne_lit",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "facing": "south",
+        "part": "ne",
+        "pot": "pot|lid"
+      },
+      "apply": {
+        "model": "northeast_china_delight:block/big_iron_pot_ne",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "facing": "south",
+        "part": "ne",
+        "pot": "lid"
+      },
+      "apply": {
+        "model": "northeast_china_delight:block/big_pot_lid_ne",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "facing": "south",
+        "part": "sw",
+        "lit": "false"
+      },
+      "apply": {
+        "model": "northeast_china_delight:block/big_stove_sw",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "facing": "south",
+        "part": "sw",
+        "lit": "true"
+      },
+      "apply": {
+        "model": "northeast_china_delight:block/big_stove_sw_lit",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "facing": "south",
+        "part": "sw",
+        "pot": "pot|lid"
+      },
+      "apply": {
+        "model": "northeast_china_delight:block/big_iron_pot_sw",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "facing": "south",
+        "part": "sw",
+        "pot": "lid"
+      },
+      "apply": {
+        "model": "northeast_china_delight:block/big_pot_lid_sw",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "facing": "south",
+        "part": "se",
+        "lit": "false"
+      },
+      "apply": {
+        "model": "northeast_china_delight:block/big_stove_se",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "facing": "south",
+        "part": "se",
+        "lit": "true"
+      },
+      "apply": {
+        "model": "northeast_china_delight:block/big_stove_se_lit",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "facing": "south",
+        "part": "se",
+        "pot": "pot|lid"
+      },
+      "apply": {
+        "model": "northeast_china_delight:block/big_iron_pot_se",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "facing": "south",
+        "part": "se",
+        "pot": "lid"
+      },
+      "apply": {
+        "model": "northeast_china_delight:block/big_pot_lid_se",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "facing": "west",
+        "part": "nw",
+        "lit": "false"
+      },
+      "apply": {
+        "model": "northeast_china_delight:block/big_stove_nw",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "facing": "west",
+        "part": "nw",
+        "lit": "true"
+      },
+      "apply": {
+        "model": "northeast_china_delight:block/big_stove_nw_lit",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "facing": "west",
+        "part": "nw",
+        "pot": "pot|lid"
+      },
+      "apply": {
+        "model": "northeast_china_delight:block/big_iron_pot_nw",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "facing": "west",
+        "part": "nw",
+        "pot": "lid"
+      },
+      "apply": {
+        "model": "northeast_china_delight:block/big_pot_lid_nw",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "facing": "west",
+        "part": "ne",
+        "lit": "false"
+      },
+      "apply": {
+        "model": "northeast_china_delight:block/big_stove_ne",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "facing": "west",
+        "part": "ne",
+        "lit": "true"
+      },
+      "apply": {
+        "model": "northeast_china_delight:block/big_stove_ne_lit",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "facing": "west",
+        "part": "ne",
+        "pot": "pot|lid"
+      },
+      "apply": {
+        "model": "northeast_china_delight:block/big_iron_pot_ne",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "facing": "west",
+        "part": "ne",
+        "pot": "lid"
+      },
+      "apply": {
+        "model": "northeast_china_delight:block/big_pot_lid_ne",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "facing": "west",
+        "part": "sw",
+        "lit": "false"
+      },
+      "apply": {
+        "model": "northeast_china_delight:block/big_stove_sw",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "facing": "west",
+        "part": "sw",
+        "lit": "true"
+      },
+      "apply": {
+        "model": "northeast_china_delight:block/big_stove_sw_lit",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "facing": "west",
+        "part": "sw",
+        "pot": "pot|lid"
+      },
+      "apply": {
+        "model": "northeast_china_delight:block/big_iron_pot_sw",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "facing": "west",
+        "part": "sw",
+        "pot": "lid"
+      },
+      "apply": {
+        "model": "northeast_china_delight:block/big_pot_lid_sw",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "facing": "west",
+        "part": "se",
+        "lit": "false"
+      },
+      "apply": {
+        "model": "northeast_china_delight:block/big_stove_se",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "facing": "west",
+        "part": "se",
+        "lit": "true"
+      },
+      "apply": {
+        "model": "northeast_china_delight:block/big_stove_se_lit",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "facing": "west",
+        "part": "se",
+        "pot": "pot|lid"
+      },
+      "apply": {
+        "model": "northeast_china_delight:block/big_iron_pot_se",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "facing": "west",
+        "part": "se",
+        "pot": "lid"
+      },
+      "apply": {
+        "model": "northeast_china_delight:block/big_pot_lid_se",
+        "y": 270
+      }
+    }
+  ]
+}

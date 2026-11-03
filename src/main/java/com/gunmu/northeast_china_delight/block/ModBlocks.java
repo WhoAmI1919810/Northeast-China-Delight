@@ -440,6 +440,23 @@ public class ModBlocks {
                     .ignitedByLava()
     );
 
+    /**
+     * 大灶：四个农夫乐事炉灶在同一层摆成 2×2 自动拼成（见 BigStoveBlock#tryForm），没有自己的物品，拆了还是炉灶。
+     * 数值照原版砖块（农夫乐事的炉灶也是照砖块），点着亮度 13 同炉灶；推不动（推开一格就拼不回去了）。
+     */
+    public static final Supplier<Block> BIG_STOVE = block(
+            "big_stove",
+            BigStoveBlock::new,
+            BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.COLOR_RED)
+                    .instrument(NoteBlockInstrument.BASEDRUM)
+                    .requiresCorrectToolForDrops()
+                    .strength(2.0F, 6.0F)
+                    .lightLevel(state -> state.getValue(BigStoveBlock.LIT) ? 13 : 0)
+                    .noOcclusion()
+                    .pushReaction(PushReaction.BLOCK)
+    );
+
     /** 炕围画：牡丹枝、小山水、回纹，贴在墙面上的一层薄板（见 WallDecorBlock） */
     public static final Supplier<Block> KANG_WALL_FLOWER = kangWall("kang_wall_flower", MapColor.COLOR_CYAN);
     public static final Supplier<Block> KANG_WALL_LANDSCAPE = kangWall("kang_wall_landscape", MapColor.SAND);

@@ -34,6 +34,11 @@ public class ModBlockEntities {
             "wooden_mortar",
             () -> BlockEntityType.Builder.of(WoodenMortarBlockEntity::new, ModBlocks.WOODEN_MORTAR.get()).build(null));
 
+    /** 大铁锅里装的东西：只挂在大灶 nw 那一格上（见 BigStoveBlock#newBlockEntity） */
+    public static final Supplier<BlockEntityType<BigPotBlockEntity>> BIG_POT = BLOCK_ENTITIES.register(
+            "big_pot",
+            () -> BlockEntityType.Builder.of(BigPotBlockEntity::new, ModBlocks.BIG_STOVE.get()).build(null));
+
     public static void register(IEventBus eventBus) {
         BLOCK_ENTITIES.register(eventBus);
     }

@@ -2,7 +2,9 @@ package com.gunmu.northeast_china_delight.event;
 
 import com.gunmu.northeast_china_delight.NortheastChinaDelight;
 import com.gunmu.northeast_china_delight.advancement.ModAdvancements;
+import com.gunmu.northeast_china_delight.block.BigStoveBlock;
 import com.gunmu.northeast_china_delight.block.GinsengCropBlock;
+import com.gunmu.northeast_china_delight.block.ModBlockTags;
 import com.gunmu.northeast_china_delight.block.ModBlocks;
 import com.gunmu.northeast_china_delight.block.PlatedDishBlock;
 import com.gunmu.northeast_china_delight.compat.displaydelight.DisplayDelightCompat;
@@ -384,6 +386,21 @@ public final class ModGameplayEvents
             DdStacks.consume(stack, 1, player);
         }
         return InteractionResult.sidedSuccess(context.getLevel().isClientSide);
+    }
+
+    /**
+     * 放下农夫乐事的炉灶：凑齐 2×2 就拼成大灶（见 {@link BigStoveBlock#tryForm}）。
+     * 放方块的这一套（快照、邻居更新）还没走完，所以挪到这一 tick 的任务队列里再拼。
+     */
+    @SubscribeEvent
+    public static void onEntityPlaceBlock(BlockEvent.EntityPlaceEvent event)
+    {
+        if (!(event.getLevel() instanceof ServerLevel level) || !event.getPlacedBlock().is(ModBlockTags.BIG_STOVE_PARTS))
+        {
+            return;
+        }
+        BlockPos pos = event.getPos().immutable();
+        level.getServer().execute(() -> BigStoveBlock.tryForm(level, pos, level.getBlockState(pos)));
     }
 
     @SubscribeEvent

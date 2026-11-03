@@ -368,6 +368,10 @@ public class ModItems {
     public static final Supplier<Item> RED_STEEL_ROOFING = simple("red_steel_roofing");
     public static final Supplier<Item> BLUE_STEEL_ROOFING = simple("blue_steel_roofing");
     public static final Supplier<Item> GREEN_STEEL_ROOFING = simple("green_steel_roofing");
+    /** 大铁锅：放在大灶上（见 BigStoveBlock）；以后能直接往里放水、调料、食材做菜（入口在 BigPotCooking） */
+    public static final Supplier<Item> BIG_IRON_POT = regItem("big_iron_pot", Item::new, new Item.Properties().stacksTo(1));
+    /** 木锅盖：盖在大灶上的大铁锅上 */
+    public static final Supplier<Item> BIG_POT_LID = regItem("big_pot_lid", Item::new, new Item.Properties().stacksTo(1));
     /** 红纸：两张纸 + 一份红染料做，剪窗花、糊红灯笼用（贴图暂时借原版的纸） */
     public static final Supplier<Item> RED_PAPER = regItem("red_paper", RedPaperItem::new, new Item.Properties());
 
@@ -435,7 +439,7 @@ public class ModItems {
             WATER_DOUGH, BUCKWHEAT_NOODLES, DRIED_TOFU, TOFU, FROZEN_TOFU, SWEET_POTATO_STARCH,
             VERMICELLI, LA_PI, CORN_FLOUR, CRACKLINGS, COLD_NOODLE_SHEET, BEAN_SPROUTS, SOUR_CORN_KERNELS, ROASTED_PEANUTS, RED_BEAN_PASTE,
             CORN_STALK,
-            LARGE_BASIN, WATER_BASIN, BRASS_BOWL, WOODEN_MALLET, ANIMAL_OIL_BLOCK_ITEM,
+            LARGE_BASIN, WATER_BASIN, BRASS_BOWL, WOODEN_MALLET, BIG_IRON_POT, BIG_POT_LID, ANIMAL_OIL_BLOCK_ITEM,
             UNFIRED_VAT_BLANK, MUSIC_DISC_NORTHEAST
     );
 
