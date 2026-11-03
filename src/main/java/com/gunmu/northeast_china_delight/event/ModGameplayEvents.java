@@ -253,7 +253,8 @@ public final class ModGameplayEvents
         }
         for (ServerPlayer player : server.getPlayerList().getPlayers()) {
             if (hasVisibleRadiator(player)) {
-                MobEffectInstance warmth = DdEffects.instance(
+                // 环境效果：粒子半透明（同信标）
+                MobEffectInstance warmth = DdEffects.ambientInstance(
                         DdEffects.hold(ModEffects.WARMTH), RADIATOR_DURATION_TICKS, 0);
                 player.addEffect(warmth);
             }
