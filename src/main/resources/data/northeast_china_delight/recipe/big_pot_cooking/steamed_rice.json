@@ -1,0 +1,25 @@
+{
+  "type": "northeast_china_delight:big_pot_cooking",
+  "config": {
+    "liquid": {
+      "fluid": "minecraft:water",
+      "amount": 1000
+    },
+    "ingredients": [
+      {
+        "tag": "c:crops/rice",
+        "count": 4
+      }
+    ],
+    "container": {
+      "item": "northeast_china_delight:large_basin"
+    },
+    "result": {
+      "item": "northeast_china_delight:steamed_rice",
+      "count": 1
+    },
+    "cooking_time": 200,
+    "lid_speedup": 40,
+    "experience": 0.5
+  }
+}

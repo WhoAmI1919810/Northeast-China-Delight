@@ -308,6 +308,8 @@ public class ModItems {
     public static final Supplier<Item> SHEN_JI_TANG = brassBowlFood("ginseng_chicken_soup", 10, 0.7F);
     public static final Supplier<Item> XIAO_JI_DUN_MO_GU = feastItem("chicken_mushroom_stew", () -> ModBlocks.XIAO_JI_DUN_MO_GU_POT.get());
     public static final Supplier<Item> XIAO_JI_DUN_MO_GU_BOWL = bowlFood("chicken_mushroom_stew_bowl", 10, 0.7F);
+    /** 盆装米饭：大锅里 4 份大米煮好用大脸盆盛，拿碗盛出来是农夫乐事的米饭 */
+    public static final Supplier<Item> PEN_MI_FAN = feastItem("steamed_rice", () -> ModBlocks.PEN_MI_FAN_POT.get());
     public static final Supplier<Item> BIBIMBAP = brassBowlFood("bibimbap", 10, 0.7F);
     public static final Supplier<Item> KIMCHI_PANCAKE = bowlFood("kimchi_pancake", 8, 0.6F);
     public static final Supplier<Item> GRILLED_CHICKEN_FRAME = food("grilled_chicken_frame", 6, 0.6F);
@@ -534,7 +536,7 @@ public class ModItems {
             DA_JIANG_TANG, SHEN_JI_TANG, BUCKWHEAT_COLD_NOODLES, DOG_BAO_PICKLES, BIBIMBAP,
             DI_GUO_JI, DI_GUO_PAI_GU, SHA_ZHU_CAI, DA_FENG_SHOU,
             SUAN_CAI_DUN_GU_TOU, ZHU_ROU_DUN_FEN_TIAO,
-            XIAO_JI_DUN_MO_GU, SUAN_CAI_HAI_XIAN_GUO
+            XIAO_JI_DUN_MO_GU, SUAN_CAI_HAI_XIAN_GUO, PEN_MI_FAN
     );
 
     private static <I extends Item> Supplier<I> regItem(String id,

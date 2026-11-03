@@ -646,6 +646,10 @@ public class ModBlocks {
             feastBlock("chicken_mushroom_stew", () -> ModItems.XIAO_JI_DUN_MO_GU_BOWL.get());
     public static final Supplier<Block> SUAN_CAI_HAI_XIAN_GUO_POT =
             feastBlock("sauerkraut_seafood_stew", () -> ModItems.SUAN_CAI_HAI_XIAN_GUO_BOWL.get());
+    /** 盆装米饭：一盆盛 4 碗农夫乐事的米饭（2026-11-03） */
+    public static final Supplier<Block> PEN_MI_FAN_POT =
+            feastBlock("steamed_rice", () -> net.minecraft.core.registries.BuiltInRegistries.ITEM.get(
+                    com.gunmu.northeast_china_delight.util.DdIds.of("farmersdelight", "cooked_rice")));
 
     /**
      * 注册一口大盆菜。
