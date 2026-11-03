@@ -33,8 +33,10 @@ import net.minecraft.world.phys.Vec3;
  *       调料放错了就把水舀走再倒回来（舀出来的是清水，调料不还）；</li>
  *   <li>拿着某条配方用得上的食材、调料右键：放一个进锅（瓶装、碗装的调料退回瓶子 / 碗）。锅里得先有水；
  *       食材最多放用得最多的那条配方那么多个、调料同理（{@link BigPotRecipes#maxIngredients} / {@link BigPotRecipes#maxSeasonings}）；</li>
- *   <li>锅里的食材是个栈：潜行空手右键从栈顶拿出一个（最后放进去的先出来）；调料倒进去就拿不出来；</li>
- *   <li>灶点着、锅里正好凑成一条配方就开始煮（每刻 {@link #serverTick}）；盖上锅盖按配方的 {@code lid_speedup} 缩短时间。
+ *   <li>锅里的料是个栈（调料也压在里面）：潜行空手右键从栈顶拿出一个食材（最后放进去的先出来）；
+ *       栈顶是调料就拿不了，调料之前放进去的食材都拿不回来，右键没反应、不出提示（2026-11-03 用户）；</li>
+ *   <li>灶点着、锅里正好凑成一条配方就开始煮（每刻 {@link #serverTick}）；盖着锅盖按配方的 {@code lid_speedup} 走得快，
+ *       中途盖上只让剩下的变快。
  *       开始煮以后锅里的东西就不能动了：不能放、不能拿、不能舀水（右键没反应、不出提示），只能等煮好（2026-11-03 用户）；</li>
  *   <li>煮好了：料和液体都没了，锅里是一锅菜（配方 result 的 count 就是份数），
  *       拿配方写的容器右键盛一份（没写容器就空手盛），每份给配方的经验。拆灶时没盛完的菜不掉，只掉锅。</li>
@@ -133,11 +135,7 @@ public final class BigPotCooking {
         }
         if (!level.isClientSide) {
             ItemStack one = held.copyWithCount(1);
-            if (seasoning) {
-                pot.addSeasoning(one);
-            } else {
-                pot.pushIngredient(one);
-            }
+            pot.push(one, seasoning);
             ItemStack remainder = held.hasCraftingRemainingItem() ? held.getCraftingRemainingItem() : ItemStack.EMPTY;
             if (!player.getAbilities().instabuild) {
                 held.shrink(1);
@@ -173,10 +171,9 @@ public final class BigPotCooking {
                 if (pot.cooking() != null) {
                     return InteractionResult.SUCCESS;       // 煮着不让拿，不出提示
                 }
+                // 栈顶是调料就拿不了（调料之前放的都拿不回来），不出提示
                 ItemStack taken = pot.popIngredient();
-                if (taken.isEmpty()) {
-                    tell(player, Component.translatable("message.northeast_china_delight.big_pot.poured"));
-                } else {
+                if (!taken.isEmpty()) {
                     give(player, taken);
                     level.playSound(null, pos, SoundEvents.ITEM_PICKUP, SoundSource.PLAYERS, 0.2F, 1.0F);
                 }
@@ -199,13 +196,14 @@ public final class BigPotCooking {
         if (recipe == null) {
             return;
         }
-        // 盖着锅盖按 lid_speedup 缩短；总时间记在锅里，Jade 算进度用
+        // 进度按不盖锅盖的时长算；盖着锅盖每刻多走「不盖盖时长 / 盖盖时长」，中途盖上只让剩下的变快
+        // （以前盖上就换成缩短后的总时长、煮过的刻数不变，进度一下放大 1.67 倍，2026-11-03 用户报）
         boolean lid = state.getValue(BigStoveBlock.POT) == BigStoveBlock.Pot.LID;
-        int total = lid ? recipe.lidCookingTime() : recipe.cookingTime();
+        int total = recipe.cookingTime();
         pot.setCookTotal(total);
-        pot.tickCooking();
+        pot.tickCooking(lid ? total / (float) recipe.lidCookingTime() : 1.0F);
         // 煮着时的冒泡、白雾在客户端画（clientTick，看锅里同步过去的 cooking）
-        if (pot.cookTicks() < total) {
+        if (pot.cookProgress() < total - 0.001F) {
             return;
         }
         float surface = BigPotBlockEntity.liquidSurfaceY(Math.max(pot.liquidMb(), BUCKET_MB));

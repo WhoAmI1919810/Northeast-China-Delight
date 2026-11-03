@@ -183,7 +183,6 @@
   "message.northeast_china_delight.big_pot.liquid_full": "锅里装不下了，或者锅里是别的液体",
   "message.northeast_china_delight.big_pot.full": "锅里放不下了",
   "message.northeast_china_delight.big_pot.added": "放进锅里：%s",
-  "message.northeast_china_delight.big_pot.poured": "调料拿不出来，把锅里的水舀干就跟着没了",
   "message.northeast_china_delight.big_pot.not_empty": "锅里还有东西，先盛完或者拿出来",
   "message.northeast_china_delight.big_pot.need_water": "需加水烹饪",
   "message.northeast_china_delight.big_pot.seasoning_full": "调料放够了；放错了就用大脸盆把水舀走再倒回来",
