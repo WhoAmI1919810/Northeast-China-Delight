@@ -10,6 +10,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.ExperienceOrb;
@@ -36,7 +37,10 @@ import net.minecraft.world.phys.Vec3;
  *       拿配方写的容器右键盛一份（没写容器就空手盛），每份给配方的经验。</li>
  * </ul>
  *
- * <p>往锅里放东西、盛菜都得先揭锅盖（盖着盖时右键只会揭盖，见 {@link BigStoveBlock}）。锅里的东西现在还不画出来。</p>
+ * <p>往锅里放东西、盛菜都得先揭锅盖（盖着盖时右键只会揭盖，见 {@link BigStoveBlock}）。</p>
+ *
+ * <p>粒子：放料、倒水溅水花；煮着时冒泡和白雾（客户端每刻，{@link #clientTick}）；煮好时冒一阵绿色粒子
+ * （像骨粉催熟）；煮着或煮好时揭锅盖冒一股白雾（{@link #lidLifted}）。</p>
  */
 public final class BigPotCooking {
 
@@ -80,6 +84,7 @@ public final class BigPotCooking {
                 player.setItemInHand(hand, ItemUtils.createFilledResult(held, player,
                         new ItemStack(waterBucket ? Items.BUCKET : ModItems.LARGE_BASIN.get())));
                 level.playSound(null, pos, SoundEvents.BUCKET_EMPTY, SoundSource.BLOCKS, 1.0F, 1.0F);
+                splash(level, pos, state, pot, 20);
                 level.gameEvent(player, GameEvent.FLUID_PLACE, pos);
             }
             return InteractionResult.sidedSuccess(level.isClientSide);
@@ -120,6 +125,7 @@ public final class BigPotCooking {
             }
             level.playSound(null, pos, pot.liquidMb() > 0 ? SoundEvents.GENERIC_SPLASH : SoundEvents.ITEM_FRAME_ADD_ITEM,
                     SoundSource.BLOCKS, 0.5F, 1.0F);
+            splash(level, pos, state, pot, 12);
             tell(player, Component.translatable("message.northeast_china_delight.big_pot.added", one.getHoverName()));
         }
         return InteractionResult.sidedSuccess(level.isClientSide);
@@ -166,19 +172,92 @@ public final class BigPotCooking {
             return;
         }
         pot.tickCooking();
+        // 煮着时的冒泡、白雾在客户端画（clientTick，看锅里同步过去的 cooking）
         boolean lid = state.getValue(BigStoveBlock.POT) == BigStoveBlock.Pot.LID;
-        Vec3 center = center(pos, state);
-        if (level instanceof ServerLevel server && level.getGameTime() % 20 == 0) {
-            // 煮着的时候冒热气：揭着盖从锅里冒，盖着盖从锅盖边上冒得少一点
-            server.sendParticles(ParticleTypes.CLOUD, center.x, center.y + (lid ? 0.35 : 0.1), center.z,
-                    lid ? 1 : 3, 0.35, 0.02, 0.35, 0.01);
-        }
         if (pot.cookTicks() < (lid ? recipe.lidCookingTime() : recipe.cookingTime())) {
             return;
         }
+        float surface = BigPotBlockEntity.liquidSurfaceY(Math.max(pot.liquidMb(), BUCKET_MB));
         pot.finish(recipe.result(), recipe.container(), recipe.liquid() == null ? 0 : recipe.liquid().amount(),
                 recipe.experience());
         level.playSound(null, pos, SoundEvents.BREWING_STAND_BREW, SoundSource.BLOCKS, 1.0F, 0.8F);
+        // 煮好了：像骨粉催熟那样冒一阵绿色粒子
+        if (level instanceof ServerLevel server) {
+            Vec3 center = center(pos, state);
+            server.sendParticles(ParticleTypes.HAPPY_VILLAGER, center.x, originY(pos, state) + surface / 16.0 + 0.2,
+                    center.z, 24, 0.45, 0.2, 0.45, 0.0);
+        }
+    }
+
+    /**
+     * 客户端每刻（灶点着、灶上有锅时）：锅里凑成配方开始煮了（cooking 会同步过来），揭着盖就在液面上冒泡、往上飘白雾，
+     * 盖着盖只从锅盖边上偶尔漏一点白雾。煮好以后不冒。
+     */
+    public static void clientTick(Level level, BlockPos pos, BlockState state, BigPotBlockEntity pot) {
+        if (pot.cooking() == null || pot.hasResult()) {
+            return;
+        }
+        RandomSource random = level.getRandom();
+        Vec3 center = center(pos, state);
+        double base = originY(pos, state);
+        if (state.getValue(BigStoveBlock.POT) == BigStoveBlock.Pot.LID) {
+            if (random.nextFloat() < 0.08F) {
+                double a = random.nextDouble() * Math.PI * 2;
+                level.addParticle(ParticleTypes.CLOUD, center.x + Math.cos(a) * 0.82, base + 1.1,
+                        center.z + Math.sin(a) * 0.82, 0.0, 0.03, 0.0);
+            }
+            return;
+        }
+        double surface = base + (pot.liquidMb() > 0 ? BigPotBlockEntity.liquidSurfaceY(pot.liquidMb()) : 11.0F) / 16.0;
+        if (pot.liquidMb() > 0 && random.nextFloat() < 0.6F) {
+            // 液面上咕嘟咕嘟冒泡（锅里水面那一圈半径 10 像素，往里收一点）
+            double a = random.nextDouble() * Math.PI * 2;
+            double r = Math.sqrt(random.nextDouble()) * 0.55;
+            level.addParticle(ParticleTypes.BUBBLE_POP, center.x + Math.cos(a) * r, surface + 0.02,
+                    center.z + Math.sin(a) * r, 0.0, 0.02, 0.0);
+        }
+        if (random.nextFloat() < 0.15F) {
+            double a = random.nextDouble() * Math.PI * 2;
+            double r = random.nextDouble() * 0.5;
+            level.addParticle(ParticleTypes.CLOUD, center.x + Math.cos(a) * r, surface + 0.1,
+                    center.z + Math.sin(a) * r, 0.0, 0.03 + random.nextDouble() * 0.02, 0.0);
+        }
+    }
+
+    /**
+     * 揭锅盖时（BigStoveBlock 里，盖子拿下来之前调）：正在煮或者已经煮好，就从锅里冒起一股白雾。
+     */
+    public static void lidLifted(Level level, BlockPos pos, BlockState state, BigPotBlockEntity pot) {
+        if (!(level instanceof ServerLevel server) || pot.cooking() == null && !pot.hasResult()) {
+            return;
+        }
+        Vec3 center = center(pos, state);
+        double y = originY(pos, state) + 1.1;
+        RandomSource random = level.getRandom();
+        for (int i = 0; i < 28; i++) {
+            double a = random.nextDouble() * Math.PI * 2;
+            double r = random.nextDouble() * 0.55;
+            // count 0：后面三个数就是这一粒的速度，一股往上冲
+            server.sendParticles(ParticleTypes.CLOUD, center.x + Math.cos(a) * r, y + random.nextDouble() * 0.2,
+                    center.z + Math.sin(a) * r, 0, (random.nextDouble() - 0.5) * 0.04,
+                    0.12 + random.nextDouble() * 0.1, (random.nextDouble() - 0.5) * 0.04, 1.0);
+        }
+        level.playSound(null, pos, SoundEvents.FIRE_EXTINGUISH, SoundSource.BLOCKS, 0.4F, 1.6F);
+    }
+
+    /** 往锅里放东西 / 倒水：液面上溅一圈水花（锅里没液体就不溅） */
+    private static void splash(Level level, BlockPos pos, BlockState state, BigPotBlockEntity pot, int count) {
+        if (!(level instanceof ServerLevel server) || pot.liquidMb() <= 0) {
+            return;
+        }
+        Vec3 center = center(pos, state);
+        server.sendParticles(ParticleTypes.SPLASH, center.x, originY(pos, state)
+                        + BigPotBlockEntity.liquidSurfaceY(pot.liquidMb()) / 16.0 + 0.02, center.z,
+                count, 0.3, 0.02, 0.3, 0.1);
+    }
+
+    private static double originY(BlockPos pos, BlockState state) {
+        return BigStoveBlock.origin(pos, state).getY();
     }
 
     /** 空手把锅从灶上拿下来之前问一声：锅里还有东西（液体、料、没盛完的菜）就不让拿 */

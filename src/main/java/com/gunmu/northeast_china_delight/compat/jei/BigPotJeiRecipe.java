@@ -12,5 +12,5 @@ import java.util.List;
  */
 public record BigPotJeiRecipe(ResourceLocation id, List<Fluid> liquids, int liquidMb,
                               List<List<ItemStack>> ingredients, List<List<ItemStack>> seasonings,
-                              ItemStack container, ItemStack result, int cookingTime) {
+                              ItemStack container, ItemStack result, int cookingTime, float experience) {
 }

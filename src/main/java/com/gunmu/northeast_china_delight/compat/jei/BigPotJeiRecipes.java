@@ -23,7 +23,7 @@ public final class BigPotJeiRecipes {
                 recipe.liquid() == null ? List.of() : recipe.liquid().fluids(),
                 recipe.liquid() == null ? 0 : recipe.liquid().amount(),
                 slots(recipe.ingredients()), slots(recipe.seasonings()),
-                recipe.container().copy(), recipe.result().copy(), recipe.cookingTime());
+                recipe.container().copy(), recipe.result().copy(), recipe.cookingTime(), recipe.experience());
     }
 
     private static List<List<ItemStack>> slots(List<BigPotRecipe.Entry> entries) {

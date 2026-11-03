@@ -1,0 +1,10 @@
+{
+  "credit": "Northeast China Delight big pot ingredient model",
+  "parent": "block/block",
+  "render_type": "minecraft:cutout",
+  "textures": {"particle": "northeast_china_delight:block/big_pot/corn", "0": "northeast_china_delight:block/big_pot/corn"},
+  "elements": [
+    {"from": [6, 0, 6.6], "to": [8.4, 2.4, 9.4], "rotation": {"angle": 22.5, "axis": "y", "origin": [7.2, 0, 8]}, "faces": {"north": {"uv": [3, 0, 4, 1], "texture": "#0"}, "east": {"uv": [1, 0.5, 2.5, 1.5], "texture": "#0"}, "south": {"uv": [3, 0, 4, 1], "texture": "#0"}, "west": {"uv": [0, 1, 1.5, 2], "texture": "#0"}, "up": {"uv": [2, 1, 3, 2.5], "texture": "#0"}, "down": {"uv": [0, 1.5, 1, 3], "texture": "#0"}}},
+    {"from": [8.2, 0, 7], "to": [10.6, 2.4, 9.8], "rotation": {"angle": -22.5, "axis": "y", "origin": [9.4, 0, 8.4]}, "faces": {"north": {"uv": [3, 0, 4, 1], "texture": "#0"}, "east": {"uv": [1, 1, 2.5, 2], "texture": "#0"}, "south": {"uv": [3, 0, 4, 1], "texture": "#0"}, "west": {"uv": [1, 0, 2.5, 1], "texture": "#0"}, "up": {"uv": [2, 1, 3, 2.5], "texture": "#0"}, "down": {"uv": [1, 0, 2, 1.5], "texture": "#0"}}}
+  ]
+}
