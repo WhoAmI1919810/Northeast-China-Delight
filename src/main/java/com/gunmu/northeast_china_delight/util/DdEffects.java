@@ -61,6 +61,17 @@ public final class DdEffects {
         *///?}
     }
 
+    /**
+     * 「环境」效果：粒子是半透明的（同信标给的效果），图标框也是信标那种。暖气片给的温暖用这个（2026-11-03 用户要半透明粒子）
+     */
+    public static MobEffectInstance ambientInstance(Holder<MobEffect> effect, int durationTicks, int amplifier) {
+        //? if <1.20.5 {
+        return new MobEffectInstance(effect.value(), durationTicks, amplifier, true, true, true);
+        //?} else {
+        /*return new MobEffectInstance(effect, durationTicks, amplifier, true, true, true);
+        *///?}
+    }
+
     public static MobEffectCategory category(MobEffectInstance instance) {
         //? if <1.20.5 {
         return instance.getEffect().getCategory();
