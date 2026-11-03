@@ -25,7 +25,7 @@ import java.util.List;
 
 /**
  * 准星指大灶（四格哪一格都行，锅的数据在西北那格上，见 {@link BigStoveBlock#potAt}）：只显示两样——放进锅里的料（图标）
- * 和烹饪进度条（百分比；煮好了就是 100%）。别的（火、锅盖、水、怎么盛）不写，2026-11-03 用户嫌多。
+ * 和烹饪进度条（百分比；走满了写「烹饪完成」）。别的（火、锅盖、水、怎么盛）不写，2026-11-03 用户嫌多。
  * 进度每秒从服务端同步一次（{@link BigPotBlockEntity#tickCooking}）。
  */
 public enum BigStoveComponentProvider implements IBlockComponentProvider {
@@ -74,7 +74,10 @@ public enum BigStoveComponentProvider implements IBlockComponentProvider {
         } else {
             return;
         }
-        Component text = Component.translatable("jade.northeast_china_delight.big_pot.cooking", Math.round(ratio * 100.0F));
+        // 走满了写「烹饪完成」，不写「烹饪中 100%」
+        Component text = ratio >= 1.0F
+                ? Component.translatable("jade.northeast_china_delight.big_pot.done")
+                : Component.translatable("jade.northeast_china_delight.big_pot.cooking", Math.round(ratio * 100.0F));
         // 进度条上的文字用白色，同大缸
         //? if <1.20.2 {
         IProgressStyle style = helper.progressStyle().textColor(0xFFFFFF);
