@@ -27,15 +27,21 @@ import java.util.Optional;
  */
 public class NoRemainderShapedRecipe extends ShapedRecipe {
 
+    //? if >=1.20.5 {
+    // 读进来的原版配方：写回 JSON 时交出它（自己重建的 pattern 缺写回要用的 data）
+    private final ShapedRecipe base;
+    //?}
+
     public NoRemainderShapedRecipe(ShapedRecipe base) {
         //? if <1.20.5 {
         /*super(base.getId(), base.getGroup(), base.category(), base.getWidth(), base.getHeight(),
                 base.getIngredients(), base.getResultItem(null), base.showNotification());
         *///?} else {
-        // 原版的 pattern 字段不公开，用宽、高、原料重建一份（data 只在写回 JSON 时用，和客户端收到的配方一样留空）
+        // 原版的 pattern 字段不公开，用宽、高、原料重建一份（data 只在写回 JSON 时用，写回交给 base）
         super(base.getGroup(), base.category(),
                 new ShapedRecipePattern(base.getWidth(), base.getHeight(), base.getIngredients(), Optional.empty()),
                 base.getResultItem(null), base.showNotification());
+        this.base = base;
         //?}
     }
 
@@ -57,7 +63,7 @@ public class NoRemainderShapedRecipe extends ShapedRecipe {
         return ModCraftingRecipes.NO_REMAINDER_SHAPED.get();
     }
 
-    /** 读写都交给原版有序合成，只是读出来以后包一层。 */
+    /** 读写都交给原版有序合成，只是读出来以后包一层；写回 JSON 时交出读进来的那份原版配方。 */
     public static final class Serializer implements RecipeSerializer<NoRemainderShapedRecipe> {
         //? if <1.20.5 {
         /*@Override
@@ -76,7 +82,7 @@ public class NoRemainderShapedRecipe extends ShapedRecipe {
         }
         *///?} else {
         private static final MapCodec<NoRemainderShapedRecipe> CODEC = RecipeSerializer.SHAPED_RECIPE.codec()
-                .xmap(NoRemainderShapedRecipe::new, recipe -> recipe);
+                .xmap(NoRemainderShapedRecipe::new, recipe -> recipe.base);
         private static final StreamCodec<RegistryFriendlyByteBuf, NoRemainderShapedRecipe> STREAM_CODEC =
                 RecipeSerializer.SHAPED_RECIPE.streamCodec().map(NoRemainderShapedRecipe::new, recipe -> recipe);
 
