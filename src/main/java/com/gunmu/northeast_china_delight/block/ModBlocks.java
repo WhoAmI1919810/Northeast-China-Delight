@@ -15,6 +15,7 @@ import net.minecraft.world.level.block.WallBlock;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.properties.BlockSetType;
 import net.minecraft.world.level.block.state.properties.NoteBlockInstrument;
+import net.minecraft.world.level.block.state.properties.WoodType;
 import net.minecraft.world.level.material.MapColor;
 import net.minecraft.world.level.material.PushReaction;
 import net.minecraft.world.phys.shapes.VoxelShape;
@@ -408,6 +409,67 @@ public class ModBlocks {
                     .pushReaction(PushReaction.DESTROY)
     );
 
+    // ===== 东北建材第三批（2026-11-03；同样先不加配方） =====
+
+    /**
+     * 障子柴门：和障子一样高的一扇门，旁边的障子自己接上来（见 ScreenGateBlock）。
+     * 开关门的声音：秫秸的照原版竹栅栏门，木板的照原版橡木栅栏门；forceSolidOn 同原版栅栏门。
+     */
+    public static final Supplier<Block> SORGHUM_STALK_GATE = block(
+            "sorghum_stalk_gate",
+            properties -> new ScreenGateBlock(properties, WoodType.BAMBOO),
+            BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.SAND)
+                    .forceSolidOn()
+                    .strength(1.0F)
+                    .sound(SoundType.BAMBOO)
+                    .noOcclusion()
+                    .ignitedByLava()
+    );
+    public static final Supplier<Block> BOARD_FENCE_GATE = block(
+            "board_fence_gate",
+            properties -> new ScreenGateBlock(properties, WoodType.OAK),
+            BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.WOOD)
+                    .forceSolidOn()
+                    .instrument(NoteBlockInstrument.BASS)
+                    .strength(2.0F, 3.0F)
+                    .sound(SoundType.WOOD)
+                    .noOcclusion()
+                    .ignitedByLava()
+    );
+
+    /** 炕围画：牡丹枝、小山水、回纹，贴在墙面上的一层薄板（见 WallDecorBlock） */
+    public static final Supplier<Block> KANG_WALL_FLOWER = kangWall("kang_wall_flower", MapColor.COLOR_CYAN);
+    public static final Supplier<Block> KANG_WALL_LANDSCAPE = kangWall("kang_wall_landscape", MapColor.SAND);
+    public static final Supplier<Block> KANG_WALL_FRET = kangWall("kang_wall_fret", MapColor.SAND);
+
+    /** 暖气片：铸铁刷银粉漆，背面贴墙（见 WallDecorBlock）；forceSolidOn 同大脸盆，流水冲不掉 */
+    public static final Supplier<Block> RADIATOR = block(
+            "radiator",
+            properties -> new WallDecorBlock(properties, 1, 0, 11, 16, 14, 15),
+            BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.METAL)
+                    .requiresCorrectToolForDrops()
+                    .strength(2.0F, 6.0F)
+                    .sound(SoundType.METAL)
+                    .noOcclusion()
+                    .forceSolidOn()
+    );
+
+    /** 脸盆架：能放大脸盆 / 水盆（见 BasinStandBlock） */
+    public static final Supplier<Block> BASIN_STAND = block(
+            "basin_stand",
+            BasinStandBlock::new,
+            BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.COLOR_BROWN)
+                    .instrument(NoteBlockInstrument.BASS)
+                    .strength(1.0F)
+                    .sound(SoundType.WOOD)
+                    .noOcclusion()
+                    .ignitedByLava()
+    );
+
     public static final List<String> DISH_BLOCK_IDS = List.of(
             "new_style_crispy_pork", "orange_crispy_pork", "crispy_pork_strips", "three_fresh_veggies",
             "braised_pork_ribs", "ground_pot_chicken_bowl", "ground_pot_ribs_bowl", "slaughter_feast_bowl",
@@ -619,6 +681,21 @@ public class ModBlocks {
         //?} else {
         /*return block(name, p -> new StairBlock(base.get().defaultBlockState(), p), properties);
         *///?}
+    }
+
+    /** 炕围画：没有碰撞箱；forceSolidOn 同大脸盆，流水冲不掉（画在墙上的东西不该被水冲走） */
+    private static Supplier<Block> kangWall(String name, MapColor color) {
+        return block(name,
+                properties -> new WallDecorBlock(properties, 0, 0, 15.5, 16, 16, 16),
+                BlockBehaviour.Properties.of()
+                        .mapColor(color)
+                        .strength(0.5F)
+                        .sound(SoundType.WOOL)
+                        .noCollission()
+                        .noOcclusion()
+                        .forceSolidOn()
+                        .ignitedByLava()
+                        .pushReaction(PushReaction.DESTROY));
     }
 
     private static BlockBehaviour.Properties beddingProperties(MapColor color) {

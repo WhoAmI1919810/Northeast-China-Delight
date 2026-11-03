@@ -6,6 +6,7 @@ import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.FenceGateBlock;
 import net.minecraft.world.level.block.IronBarsBlock;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
@@ -24,6 +25,9 @@ import net.minecraft.world.phys.shapes.VoxelShape;
  * 两格摞起来看着是一整片。</p>
  *
  * <p>碰撞箱和原版栅栏一样高（1.5 格，跳不过去）；样子和选框还是铁栏杆那套。</p>
+ *
+ * <p>还会接到旁边顺着同一条线的栅栏门上（障子柴门 {@link ScreenGateBlock}，原版栅栏门也算）——
+ * 原版铁栏杆不认栅栏门，门边上会空一截。</p>
  *
  * <p>继承 {@link IronBarsBlock} 是为了它的连法（1.20.1 的构造器不公开，得有个子类）。不重写 codec()，理由同 {@link AnimalOilBlock}。</p>
  */
@@ -64,7 +68,14 @@ public class FenceScreenBlock extends IronBarsBlock {
         if (state == null) {
             return null;
         }
-        return state.setValue(UP, context.getLevel().getBlockState(context.getClickedPos().above()).is(this));
+        BlockGetter level = context.getLevel();
+        BlockPos pos = context.getClickedPos();
+        for (Direction direction : Direction.Plane.HORIZONTAL) {
+            if (isGateAlong(level.getBlockState(pos.relative(direction)), direction)) {
+                state = state.setValue(PROPERTY_BY_DIRECTION.get(direction), true);
+            }
+        }
+        return state.setValue(UP, level.getBlockState(pos.above()).is(this));
     }
 
     @Override
@@ -74,7 +85,15 @@ public class FenceScreenBlock extends IronBarsBlock {
         if (direction == Direction.UP && updated.is(this)) {
             updated = updated.setValue(UP, neighborState.is(this));
         }
+        if (direction.getAxis().isHorizontal() && updated.is(this) && isGateAlong(neighborState, direction)) {
+            updated = updated.setValue(PROPERTY_BY_DIRECTION.get(direction), true);
+        }
         return updated;
+    }
+
+    /** 那边是栅栏门、而且门是顺着这条线放的（门扇横在 direction 的垂直方向上） */
+    private static boolean isGateAlong(BlockState neighbor, Direction direction) {
+        return neighbor.getBlock() instanceof FenceGateBlock && FenceGateBlock.connectsToDirection(neighbor, direction);
     }
 
     @Override
