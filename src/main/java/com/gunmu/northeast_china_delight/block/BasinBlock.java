@@ -38,6 +38,18 @@ public class BasinBlock extends DishBlock
         this.filled = filled;
     }
 
+    @Override
+    protected void spawnDestroyParticles(Level level, Player player, BlockPos pos, BlockState state)
+    {
+        if (this.filled)
+        {
+            level.levelEvent(player, 2001, pos,
+                    Block.getId(ModBlocks.LARGE_BASIN.get().defaultBlockState()));
+            return;
+        }
+        super.spawnDestroyParticles(level, player, pos, state);
+    }
+
     //? if <1.20.5 {
     @Override
     public InteractionResult use(BlockState state, Level level, BlockPos pos, Player player,

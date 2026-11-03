@@ -3,6 +3,7 @@ package com.gunmu.northeast_china_delight.event;
 import com.gunmu.northeast_china_delight.NortheastChinaDelight;
 import com.gunmu.northeast_china_delight.advancement.ModAdvancements;
 import com.gunmu.northeast_china_delight.block.BigStoveBlock;
+import com.gunmu.northeast_china_delight.block.FacingDecorBlock;
 import com.gunmu.northeast_china_delight.block.GinsengCropBlock;
 import com.gunmu.northeast_china_delight.block.ModBlockTags;
 import com.gunmu.northeast_china_delight.block.ModBlocks;
@@ -10,13 +11,16 @@ import com.gunmu.northeast_china_delight.block.PlatedDishBlock;
 import com.gunmu.northeast_china_delight.compat.displaydelight.DisplayDelightCompat;
 import com.gunmu.northeast_china_delight.NortheastChinaConfig;
 import com.gunmu.northeast_china_delight.block.WoodenMortarBlock;
+import com.gunmu.northeast_china_delight.effect.ModEffects;
 import com.gunmu.northeast_china_delight.item.ModItems;
 import com.gunmu.northeast_china_delight.item.SeasoningBottleItem;
+import com.gunmu.northeast_china_delight.util.DdEffects;
 import com.gunmu.northeast_china_delight.util.DdIds;
 import com.gunmu.northeast_china_delight.worldgen.CourtyardPiece;
 import net.minecraft.network.chat.Component;
 import com.gunmu.northeast_china_delight.util.DdStacks;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.core.Holder;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -27,6 +31,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.monster.EnderMan;
@@ -34,6 +39,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AnvilMenu;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
+import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.biome.Biomes;
@@ -45,6 +51,8 @@ import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.level.levelgen.structure.Structure;
 import net.minecraft.world.level.levelgen.structure.StructurePiece;
 import net.minecraft.world.level.levelgen.structure.StructureStart;
+import net.minecraft.world.phys.HitResult;
+import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.sounds.SoundSource;
 //? if <1.20.2 {
@@ -87,6 +95,10 @@ public final class ModGameplayEvents
 {
     /** 「挨户串门」每隔多少 tick 查一次玩家脚下的小院（20 tick = 1 秒） */
     public static final int YARD_CHECK_INTERVAL = 20;
+
+    public static final int RADIATOR_CHECK_INTERVAL = 80;
+    public static final int RADIATOR_DURATION_TICKS = 220;
+    public static final double RADIATOR_RANGE = 5.0D;
 
     /** 小院群落的注册名，见 data/northeast_china_delight/worldgen/structure/northeast_yard.json */
     private static final ResourceLocation YARD_STRUCTURE =
@@ -194,12 +206,14 @@ public final class ModGameplayEvents
             return;
         }
         awardYardVisits(event.getServer());
+        applyRadiatorWarmth(event.getServer());
     }
     //?} else {
     /*@SubscribeEvent
     public static void onServerTick(ServerTickEvent.Post event)
     {
         awardYardVisits(event.getServer());
+        applyRadiatorWarmth(event.getServer());
     }
     *///?}
 
@@ -211,6 +225,49 @@ public final class ModGameplayEvents
         for (ServerPlayer player : server.getPlayerList().getPlayers()) {
             awardYardVisit(player);
         }
+    }
+
+    private static void applyRadiatorWarmth(MinecraftServer server)
+    {
+        if (server.getTickCount() % RADIATOR_CHECK_INTERVAL != 0) {
+            return;
+        }
+        for (ServerPlayer player : server.getPlayerList().getPlayers()) {
+            if (hasVisibleRadiator(player)) {
+                MobEffectInstance warmth = DdEffects.instance(
+                        DdEffects.hold(ModEffects.WARMTH), RADIATOR_DURATION_TICKS, 0);
+                player.addEffect(warmth);
+            }
+        }
+    }
+
+    private static boolean hasVisibleRadiator(ServerPlayer player)
+    {
+        ServerLevel level = player.serverLevel();
+        BlockPos center = player.blockPosition();
+        Vec3 eye = player.getEyePosition();
+        Vec3 target = player.getBoundingBox().getCenter();
+        double maxDistanceSqr = RADIATOR_RANGE * RADIATOR_RANGE;
+        for (BlockPos pos : BlockPos.betweenClosed(center.offset(-5, -5, -5), center.offset(5, 5, 5))) {
+            BlockState state = level.getBlockState(pos);
+            if (!state.is(ModBlocks.RADIATOR.get())) {
+                continue;
+            }
+            Vec3 sourceCenter = Vec3.atCenterOf(pos);
+            if (sourceCenter.distanceToSqr(target) > maxDistanceSqr) {
+                continue;
+            }
+            Direction facing = state.getValue(FacingDecorBlock.FACING);
+            Vec3 source = sourceCenter.add(
+                    facing.getStepX() * 0.51D, 0.0D, facing.getStepZ() * 0.51D);
+            ClipContext context = new ClipContext(source, eye,
+                    ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, player);
+            var hit = level.clip(context);
+            if (hit.getType() == HitResult.Type.MISS) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private static void awardYardVisit(ServerPlayer player)
