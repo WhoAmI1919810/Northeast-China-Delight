@@ -15,7 +15,6 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.ItemUtils;
 import net.minecraft.world.item.Items;
-import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockBehaviour;
@@ -24,8 +23,6 @@ import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.EnumProperty;
 import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.phys.BlockHitResult;
-import net.minecraft.world.phys.shapes.CollisionContext;
-import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
 /**
@@ -58,18 +55,12 @@ public class BasinStandBlock extends FacingDecorBlock {
 
     public static final EnumProperty<Basin> BASIN = EnumProperty.create("basin", Basin.class);
 
-    /** 架子本身（立柱、镜子高出一格的部分不算进选框）；放了盆再加上盆（盆底在 9.5，盆沿 5.5 高，见 DishBlock.BASIN_SHAPE） */
-    private static final VoxelShape STAND_SHAPE = Block.box(2.5, 0, 2.5, 13.5, 16, 13.5);
-    private static final VoxelShape WITH_BASIN_SHAPE = Shapes.or(STAND_SHAPE, Block.box(1, 9.5, 1, 15, 15, 15));
+    /** 架子四角在 1..15（立柱、镜子高出一格的部分不算进选框）；架子上的盆缩到 0.8 倍、整个落在架子里面，放不放盆一个形状 */
+    private static final VoxelShape STAND_SHAPE = Block.box(1, 0, 1, 15, 16, 15);
 
     public BasinStandBlock(BlockBehaviour.Properties properties) {
         super(properties, STAND_SHAPE, true);
         registerDefaultState(defaultBlockState().setValue(BASIN, Basin.NONE));
-    }
-
-    @Override
-    public VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
-        return state.getValue(BASIN) == Basin.NONE ? STAND_SHAPE : WITH_BASIN_SHAPE;
     }
 
     //? if <1.20.5 {
