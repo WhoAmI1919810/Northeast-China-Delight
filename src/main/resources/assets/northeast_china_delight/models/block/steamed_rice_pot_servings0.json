@@ -564,13 +564,13 @@
     {
       "from": [
         12,
-        2.05,
-        5.05
+        2,
+        5
       ],
       "to": [
         13,
         3,
-        10.95
+        11
       ],
       "rotation": {
         "angle": 0,
@@ -2516,137 +2516,9 @@
         5
       ],
       "to": [
-        12.95,
-        2.6,
+        5.5,
+        2.4,
         11
-      ],
-      "faces": {
-        "north": {
-          "texture": "#rice"
-        },
-        "south": {
-          "texture": "#rice"
-        },
-        "east": {
-          "texture": "#rice"
-        },
-        "west": {
-          "texture": "#rice"
-        },
-        "up": {
-          "texture": "#rice"
-        },
-        "down": {
-          "texture": "#rice"
-        }
-      }
-    },
-    {
-      "from": [
-        4,
-        2,
-        4
-      ],
-      "to": [
-        12,
-        2.6,
-        5
-      ],
-      "faces": {
-        "north": {
-          "texture": "#rice"
-        },
-        "south": {
-          "texture": "#rice"
-        },
-        "east": {
-          "texture": "#rice"
-        },
-        "west": {
-          "texture": "#rice"
-        },
-        "up": {
-          "texture": "#rice"
-        },
-        "down": {
-          "texture": "#rice"
-        }
-      }
-    },
-    {
-      "from": [
-        4,
-        2,
-        11
-      ],
-      "to": [
-        12,
-        2.6,
-        12
-      ],
-      "faces": {
-        "north": {
-          "texture": "#rice"
-        },
-        "south": {
-          "texture": "#rice"
-        },
-        "east": {
-          "texture": "#rice"
-        },
-        "west": {
-          "texture": "#rice"
-        },
-        "up": {
-          "texture": "#rice"
-        },
-        "down": {
-          "texture": "#rice"
-        }
-      }
-    },
-    {
-      "from": [
-        4.95,
-        2.05,
-        2.95
-      ],
-      "to": [
-        10.95,
-        2.6,
-        3.95
-      ],
-      "faces": {
-        "north": {
-          "texture": "#rice"
-        },
-        "south": {
-          "texture": "#rice"
-        },
-        "east": {
-          "texture": "#rice"
-        },
-        "west": {
-          "texture": "#rice"
-        },
-        "up": {
-          "texture": "#rice"
-        },
-        "down": {
-          "texture": "#rice"
-        }
-      }
-    },
-    {
-      "from": [
-        4.95,
-        2.05,
-        12.05
-      ],
-      "to": [
-        10.95,
-        2.6,
-        13.05
       ],
       "faces": {
         "north": {
