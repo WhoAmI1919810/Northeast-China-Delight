@@ -530,12 +530,14 @@ public class ModBlocks {
     public static final Supplier<Block> WATER_BASIN =
             block("water_basin", properties -> new BasinBlock(properties, true), basinProperties());
 
+    /** 盆矮，原版会把它算成「不挡路」的方块、流水一冲就掉；forceSolidOn 让水绕着走（和原版栅栏门一样） */
     private static BlockBehaviour.Properties basinProperties() {
         return BlockBehaviour.Properties.of()
                 .mapColor(MapColor.WOOD)
                 .strength(0.5F)
                 .sound(SoundType.WOOD)
-                .noOcclusion();
+                .noOcclusion()
+                .forceSolidOn();
     }
 
     /** 黄桃罐头放下后的方块形态：玻璃瓶装饰，可回收。 */
