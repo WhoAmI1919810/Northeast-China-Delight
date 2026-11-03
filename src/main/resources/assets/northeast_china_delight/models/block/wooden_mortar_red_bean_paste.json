@@ -1,0 +1,305 @@
+{
+  "credit": "由 tools/mortar_contents/build.py 生成，只有木臼里的内容物（stage_model_mode: overlay）",
+  "texture_size": [
+    16,
+    16
+  ],
+  "textures": {
+    "paste": "northeast_china_delight:block/wooden_mortar_red_bean_paste",
+    "particle": "northeast_china_delight:block/wooden_mortar_red_bean_paste"
+  },
+  "elements": [
+    {
+      "from": [
+        4,
+        10.0,
+        2
+      ],
+      "to": [
+        12,
+        10.75,
+        3
+      ],
+      "faces": {
+        "up": {
+          "uv": [
+            4,
+            2,
+            12,
+            3
+          ],
+          "texture": "#paste"
+        }
+      }
+    },
+    {
+      "from": [
+        3,
+        10.0,
+        3
+      ],
+      "to": [
+        13,
+        10.75,
+        4
+      ],
+      "faces": {
+        "up": {
+          "uv": [
+            3,
+            3,
+            13,
+            4
+          ],
+          "texture": "#paste"
+        }
+      }
+    },
+    {
+      "from": [
+        2,
+        10.0,
+        4
+      ],
+      "to": [
+        14,
+        10.75,
+        12
+      ],
+      "faces": {
+        "up": {
+          "uv": [
+            2,
+            4,
+            14,
+            12
+          ],
+          "texture": "#paste"
+        }
+      }
+    },
+    {
+      "from": [
+        3,
+        10.0,
+        12
+      ],
+      "to": [
+        13,
+        10.75,
+        13
+      ],
+      "faces": {
+        "up": {
+          "uv": [
+            3,
+            12,
+            13,
+            13
+          ],
+          "texture": "#paste"
+        }
+      }
+    },
+    {
+      "from": [
+        4,
+        10.0,
+        13
+      ],
+      "to": [
+        12,
+        10.75,
+        14
+      ],
+      "faces": {
+        "up": {
+          "uv": [
+            4,
+            13,
+            12,
+            14
+          ],
+          "texture": "#paste"
+        }
+      }
+    },
+    {
+      "from": [
+        4.5,
+        10.75,
+        4.5
+      ],
+      "to": [
+        11.5,
+        11.25,
+        11.5
+      ],
+      "faces": {
+        "up": {
+          "uv": [
+            1,
+            5,
+            8.0,
+            12.0
+          ],
+          "texture": "#paste"
+        },
+        "north": {
+          "uv": [
+            5,
+            7,
+            12.0,
+            7.5
+          ],
+          "texture": "#paste"
+        },
+        "south": {
+          "uv": [
+            0,
+            13,
+            7.0,
+            13.5
+          ],
+          "texture": "#paste"
+        },
+        "east": {
+          "uv": [
+            8,
+            13,
+            15.0,
+            13.5
+          ],
+          "texture": "#paste"
+        },
+        "west": {
+          "uv": [
+            7,
+            7,
+            14.0,
+            7.5
+          ],
+          "texture": "#paste"
+        }
+      }
+    },
+    {
+      "from": [
+        5.5,
+        11.25,
+        5.5
+      ],
+      "to": [
+        10.5,
+        11.75,
+        10.5
+      ],
+      "faces": {
+        "up": {
+          "uv": [
+            11,
+            5,
+            16.0,
+            10.0
+          ],
+          "texture": "#paste"
+        },
+        "north": {
+          "uv": [
+            9,
+            0,
+            14.0,
+            0.5
+          ],
+          "texture": "#paste"
+        },
+        "south": {
+          "uv": [
+            8,
+            6,
+            13.0,
+            6.5
+          ],
+          "texture": "#paste"
+        },
+        "east": {
+          "uv": [
+            4,
+            12,
+            9.0,
+            12.5
+          ],
+          "texture": "#paste"
+        },
+        "west": {
+          "uv": [
+            3,
+            5,
+            8.0,
+            5.5
+          ],
+          "texture": "#paste"
+        }
+      }
+    },
+    {
+      "from": [
+        6.75,
+        11.75,
+        6.75
+      ],
+      "to": [
+        9.25,
+        12.0,
+        9.25
+      ],
+      "faces": {
+        "up": {
+          "uv": [
+            8,
+            9,
+            10.5,
+            11.5
+          ],
+          "texture": "#paste"
+        },
+        "north": {
+          "uv": [
+            7,
+            0,
+            9.5,
+            0.25
+          ],
+          "texture": "#paste"
+        },
+        "south": {
+          "uv": [
+            5,
+            2,
+            7.5,
+            2.25
+          ],
+          "texture": "#paste"
+        },
+        "east": {
+          "uv": [
+            3,
+            13,
+            5.5,
+            13.25
+          ],
+          "texture": "#paste"
+        },
+        "west": {
+          "uv": [
+            6,
+            2,
+            8.5,
+            2.25
+          ],
+          "texture": "#paste"
+        }
+      }
+    }
+  ]
+}

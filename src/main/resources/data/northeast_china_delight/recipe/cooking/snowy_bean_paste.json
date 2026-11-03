@@ -3,7 +3,7 @@
   "experience": 0.35,
   "ingredients": [
     {
-      "tag": "c:crops/red_bean"
+      "tag": "c:foods/red_bean_paste"
     },
     {
       "tag": "c:sugar"

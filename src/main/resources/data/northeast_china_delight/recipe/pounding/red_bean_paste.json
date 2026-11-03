@@ -1,0 +1,44 @@
+{
+  "type": "northeast_china_delight:pounding",
+  "config": {
+    "inputs": [
+      {
+        "ingredient": {
+          "tag": "c:crops/red_bean"
+        },
+        "count": 1
+      },
+      {
+        "ingredient": {
+          "tag": "c:sugar"
+        },
+        "count": 1
+      }
+    ],
+    "tool": {
+      "type": "neoforge:compound",
+      "children": [
+        {
+          "item": "northeast_china_delight:wooden_mallet"
+        },
+        {
+          "item": "minecraft:mace"
+        }
+      ]
+    },
+    "pound_times": 4,
+    "stage_model_mode": "overlay",
+    "stage_models": [
+      "northeast_china_delight:block/wooden_mortar_red_bean_0",
+      "northeast_china_delight:block/wooden_mortar_red_bean_1",
+      "northeast_china_delight:block/wooden_mortar_red_bean_2",
+      "northeast_china_delight:block/wooden_mortar_red_bean_3"
+    ],
+    "finished_model": "northeast_china_delight:block/wooden_mortar_red_bean_paste",
+    "result": {
+      "item": "northeast_china_delight:red_bean_paste",
+      "count": 2
+    },
+    "transition": "sequential"
+  }
+}
