@@ -1,305 +1,314 @@
 {
-  "credit": "由 tools/mortar_contents/build.py 生成，只有木臼里的内容物（stage_model_mode: overlay）",
+  "format_version": "1.9.0",
+  "credit": "照 wooden_mortar_rice_cake_done（Blockbench）换贴图，由 tools/mortar_contents/build.py 生成",
   "texture_size": [
-    16,
-    16
+    32,
+    32
   ],
   "textures": {
-    "paste": "northeast_china_delight:block/wooden_mortar_red_bean_paste",
-    "particle": "northeast_china_delight:block/wooden_mortar_red_bean_paste"
+    "1": "northeast_china_delight:block/wooden_mortar_red_bean_paste_done",
+    "particle": "northeast_china_delight:block/wooden_mortar_red_bean_paste_done"
   },
   "elements": [
     {
       "from": [
-        4,
-        10.0,
-        2
-      ],
-      "to": [
-        12,
-        10.75,
-        3
-      ],
-      "faces": {
-        "up": {
-          "uv": [
-            4,
-            2,
-            12,
-            3
-          ],
-          "texture": "#paste"
-        }
-      }
-    },
-    {
-      "from": [
         3,
-        10.0,
-        3
+        10,
+        4
       ],
       "to": [
         13,
-        10.75,
-        4
+        12,
+        12
       ],
+      "rotation": {
+        "angle": 0,
+        "axis": "y",
+        "origin": [
+          8,
+          9,
+          6
+        ]
+      },
       "faces": {
+        "north": {
+          "uv": [
+            0,
+            8,
+            5,
+            9
+          ],
+          "texture": "#1"
+        },
+        "east": {
+          "uv": [
+            0,
+            9,
+            4,
+            10
+          ],
+          "texture": "#1"
+        },
+        "south": {
+          "uv": [
+            5,
+            8,
+            10,
+            9
+          ],
+          "texture": "#1"
+        },
+        "west": {
+          "uv": [
+            9,
+            0,
+            13,
+            1
+          ],
+          "texture": "#1"
+        },
         "up": {
           "uv": [
-            3,
-            3,
-            13,
+            0,
+            0,
+            5,
             4
           ],
-          "texture": "#paste"
-        }
-      }
-    },
-    {
-      "from": [
-        2,
-        10.0,
-        4
-      ],
-      "to": [
-        14,
-        10.75,
-        12
-      ],
-      "faces": {
-        "up": {
+          "texture": "#1"
+        },
+        "down": {
           "uv": [
-            2,
+            0,
             4,
-            14,
-            12
+            5,
+            8
           ],
-          "texture": "#paste"
-        }
-      }
-    },
-    {
-      "from": [
-        3,
-        10.0,
-        12
-      ],
-      "to": [
-        13,
-        10.75,
-        13
-      ],
-      "faces": {
-        "up": {
-          "uv": [
-            3,
-            12,
-            13,
-            13
-          ],
-          "texture": "#paste"
+          "texture": "#1"
         }
       }
     },
     {
       "from": [
         4,
-        10.0,
-        13
+        12,
+        4
       ],
       "to": [
         12,
-        10.75,
-        14
+        13,
+        12
       ],
+      "rotation": {
+        "angle": 0,
+        "axis": "y",
+        "origin": [
+          8,
+          12,
+          6
+        ]
+      },
       "faces": {
-        "up": {
+        "north": {
           "uv": [
-            4,
-            13,
-            12,
-            14
-          ],
-          "texture": "#paste"
-        }
-      }
-    },
-    {
-      "from": [
-        4.5,
-        10.75,
-        4.5
-      ],
-      "to": [
-        11.5,
-        11.25,
-        11.5
-      ],
-      "faces": {
-        "up": {
-          "uv": [
+            9,
             1,
-            5,
-            8.0,
-            12.0
-          ],
-          "texture": "#paste"
-        },
-        "north": {
-          "uv": [
-            5,
-            7,
-            12.0,
-            7.5
-          ],
-          "texture": "#paste"
-        },
-        "south": {
-          "uv": [
-            0,
             13,
-            7.0,
-            13.5
+            1.5
           ],
-          "texture": "#paste"
+          "texture": "#1"
         },
         "east": {
           "uv": [
-            8,
+            9,
+            1.5,
             13,
-            15.0,
-            13.5
+            2
           ],
-          "texture": "#paste"
+          "texture": "#1"
+        },
+        "south": {
+          "uv": [
+            9,
+            2,
+            13,
+            2.5
+          ],
+          "texture": "#1"
         },
         "west": {
           "uv": [
-            7,
-            7,
-            14.0,
-            7.5
+            9,
+            2.5,
+            13,
+            3
           ],
-          "texture": "#paste"
-        }
-      }
-    },
-    {
-      "from": [
-        5.5,
-        11.25,
-        5.5
-      ],
-      "to": [
-        10.5,
-        11.75,
-        10.5
-      ],
-      "faces": {
+          "texture": "#1"
+        },
         "up": {
           "uv": [
-            11,
             5,
-            16.0,
-            10.0
-          ],
-          "texture": "#paste"
-        },
-        "north": {
-          "uv": [
-            9,
             0,
-            14.0,
-            0.5
+            9,
+            4
           ],
-          "texture": "#paste"
+          "texture": "#1"
         },
-        "south": {
+        "down": {
           "uv": [
-            8,
-            6,
-            13.0,
-            6.5
-          ],
-          "texture": "#paste"
-        },
-        "east": {
-          "uv": [
+            5,
             4,
-            12,
-            9.0,
-            12.5
-          ],
-          "texture": "#paste"
-        },
-        "west": {
-          "uv": [
-            3,
-            5,
-            8.0,
-            5.5
-          ],
-          "texture": "#paste"
-        }
-      }
-    },
-    {
-      "from": [
-        6.75,
-        11.75,
-        6.75
-      ],
-      "to": [
-        9.25,
-        12.0,
-        9.25
-      ],
-      "faces": {
-        "up": {
-          "uv": [
-            8,
             9,
-            10.5,
-            11.5
+            8
           ],
-          "texture": "#paste"
-        },
-        "north": {
-          "uv": [
-            7,
-            0,
-            9.5,
-            0.25
-          ],
-          "texture": "#paste"
-        },
-        "south": {
-          "uv": [
-            5,
-            2,
-            7.5,
-            2.25
-          ],
-          "texture": "#paste"
-        },
-        "east": {
-          "uv": [
-            3,
-            13,
-            5.5,
-            13.25
-          ],
-          "texture": "#paste"
-        },
-        "west": {
-          "uv": [
-            6,
-            2,
-            8.5,
-            2.25
-          ],
-          "texture": "#paste"
+          "texture": "#1"
         }
       }
+    }
+  ],
+  "display": {
+    "thirdperson_righthand": {
+      "rotation": [
+        -0.52,
+        4.94,
+        11.96
+      ],
+      "translation": [
+        -1,
+        0.5,
+        1
+      ],
+      "scale": [
+        0.3,
+        0.3,
+        0.3
+      ]
+    },
+    "thirdperson_lefthand": {
+      "rotation": [
+        -0.52,
+        4.94,
+        11.96
+      ],
+      "translation": [
+        -1,
+        0.5,
+        1
+      ],
+      "scale": [
+        0.3,
+        0.3,
+        0.3
+      ]
+    },
+    "firstperson_righthand": {
+      "rotation": [
+        0,
+        0,
+        10.25
+      ],
+      "translation": [
+        -0.5,
+        0,
+        0
+      ]
+    },
+    "firstperson_lefthand": {
+      "rotation": [
+        0,
+        0,
+        10.25
+      ],
+      "translation": [
+        -0.5,
+        0,
+        0
+      ]
+    },
+    "ground": {
+      "translation": [
+        0,
+        2.5,
+        0
+      ],
+      "scale": [
+        0.6,
+        0.6,
+        0.6
+      ]
+    },
+    "gui": {
+      "rotation": [
+        37.03,
+        -14.96,
+        16.78
+      ],
+      "translation": [
+        0,
+        0.5,
+        0
+      ],
+      "scale": [
+        0.6,
+        0.6,
+        0.6
+      ]
+    },
+    "head": {
+      "rotation": [
+        -180,
+        0,
+        0
+      ],
+      "translation": [
+        0,
+        8.5,
+        0
+      ],
+      "scale": [
+        1.2,
+        1.2,
+        1.2
+      ]
+    }
+  },
+  "groups": [
+    {
+      "name": "group",
+      "origin": [
+        8,
+        8,
+        8
+      ],
+      "scope": 0,
+      "color": 0,
+      "children": [
+        {
+          "name": "打糕",
+          "origin": [
+            8,
+            8,
+            8
+          ],
+          "scope": 0,
+          "color": 0,
+          "children": [
+            {
+              "name": "group",
+              "origin": [
+                8,
+                10,
+                6
+              ],
+              "scope": 0,
+              "color": 0,
+              "children": [
+                0,
+                1
+              ]
+            }
+          ]
+        }
+      ]
     }
   ]
 }
