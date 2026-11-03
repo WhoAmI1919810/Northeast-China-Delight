@@ -32,7 +32,8 @@ public final class NortheastChinaConfig
             "northeast_china_delight:peanut",
             "northeast_china_delight:sweet_potato",
             "northeast_china_delight:green_pepper_seeds",
-            "northeast_china_delight:red_chili_seeds");
+            "northeast_china_delight:red_chili_seeds",
+            "northeast_china_delight:bellflower_seeds");
 
     public static final List<String> DEFAULT_CHEST_LOOT_ITEMS = List.of(
             "northeast_china_delight:animal_oil",
@@ -156,7 +157,7 @@ public final class NortheastChinaConfig
                 .define("village_farm_crops_enabled", true);
         VILLAGE_FARM_ALLOWED_CROPS = builder
                 .comment("村庄农田允许生成的作物，填写播种物品的完整注册 ID。",
-                        "默认包含全部 15 种农田作物，空列表表示不生成任何本模组农田作物。")
+                        "默认包含全部 16 种农田作物，空列表表示不生成任何本模组农田作物。")
                 .defineListAllowEmpty("village_farm_allowed_crops", DEFAULT_VILLAGE_FARM_CROPS,
                         //? if >=1.20.5 {
                         () -> "northeast_china_delight:soybean",
