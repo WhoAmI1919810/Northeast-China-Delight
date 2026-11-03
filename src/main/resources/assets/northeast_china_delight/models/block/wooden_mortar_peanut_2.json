@@ -29,6 +29,51 @@
             3
           ],
           "texture": "#paste"
+        },
+        "north": {
+          "texture": "#paste",
+          "uv": [
+            4,
+            2,
+            12,
+            3
+          ]
+        },
+        "south": {
+          "texture": "#paste",
+          "uv": [
+            4,
+            2,
+            12,
+            3
+          ]
+        },
+        "east": {
+          "texture": "#paste",
+          "uv": [
+            4,
+            2,
+            12,
+            3
+          ]
+        },
+        "west": {
+          "texture": "#paste",
+          "uv": [
+            4,
+            2,
+            12,
+            3
+          ]
+        },
+        "down": {
+          "texture": "#paste",
+          "uv": [
+            4,
+            2,
+            12,
+            3
+          ]
         }
       }
     },
@@ -52,6 +97,51 @@
             4
           ],
           "texture": "#paste"
+        },
+        "north": {
+          "texture": "#paste",
+          "uv": [
+            3,
+            3,
+            13,
+            4
+          ]
+        },
+        "south": {
+          "texture": "#paste",
+          "uv": [
+            3,
+            3,
+            13,
+            4
+          ]
+        },
+        "east": {
+          "texture": "#paste",
+          "uv": [
+            3,
+            3,
+            13,
+            4
+          ]
+        },
+        "west": {
+          "texture": "#paste",
+          "uv": [
+            3,
+            3,
+            13,
+            4
+          ]
+        },
+        "down": {
+          "texture": "#paste",
+          "uv": [
+            3,
+            3,
+            13,
+            4
+          ]
         }
       }
     },
@@ -75,6 +165,51 @@
             12
           ],
           "texture": "#paste"
+        },
+        "north": {
+          "texture": "#paste",
+          "uv": [
+            2,
+            4,
+            14,
+            12
+          ]
+        },
+        "south": {
+          "texture": "#paste",
+          "uv": [
+            2,
+            4,
+            14,
+            12
+          ]
+        },
+        "east": {
+          "texture": "#paste",
+          "uv": [
+            2,
+            4,
+            14,
+            12
+          ]
+        },
+        "west": {
+          "texture": "#paste",
+          "uv": [
+            2,
+            4,
+            14,
+            12
+          ]
+        },
+        "down": {
+          "texture": "#paste",
+          "uv": [
+            2,
+            4,
+            14,
+            12
+          ]
         }
       }
     },
@@ -98,6 +233,51 @@
             13
           ],
           "texture": "#paste"
+        },
+        "north": {
+          "texture": "#paste",
+          "uv": [
+            3,
+            12,
+            13,
+            13
+          ]
+        },
+        "south": {
+          "texture": "#paste",
+          "uv": [
+            3,
+            12,
+            13,
+            13
+          ]
+        },
+        "east": {
+          "texture": "#paste",
+          "uv": [
+            3,
+            12,
+            13,
+            13
+          ]
+        },
+        "west": {
+          "texture": "#paste",
+          "uv": [
+            3,
+            12,
+            13,
+            13
+          ]
+        },
+        "down": {
+          "texture": "#paste",
+          "uv": [
+            3,
+            12,
+            13,
+            13
+          ]
         }
       }
     },
@@ -121,6 +301,51 @@
             14
           ],
           "texture": "#paste"
+        },
+        "north": {
+          "texture": "#paste",
+          "uv": [
+            4,
+            13,
+            12,
+            14
+          ]
+        },
+        "south": {
+          "texture": "#paste",
+          "uv": [
+            4,
+            13,
+            12,
+            14
+          ]
+        },
+        "east": {
+          "texture": "#paste",
+          "uv": [
+            4,
+            13,
+            12,
+            14
+          ]
+        },
+        "west": {
+          "texture": "#paste",
+          "uv": [
+            4,
+            13,
+            12,
+            14
+          ]
+        },
+        "down": {
+          "texture": "#paste",
+          "uv": [
+            4,
+            13,
+            12,
+            14
+          ]
         }
       }
     },
@@ -180,6 +405,15 @@
             15.5
           ],
           "texture": "#paste"
+        },
+        "down": {
+          "texture": "#paste",
+          "uv": [
+            13,
+            13,
+            14.25,
+            13.5
+          ]
         }
       },
       "rotation": {
@@ -248,6 +482,15 @@
             5.5
           ],
           "texture": "#paste"
+        },
+        "down": {
+          "texture": "#paste",
+          "uv": [
+            6,
+            4,
+            7.25,
+            4.5
+          ]
         }
       },
       "rotation": {
@@ -316,6 +559,15 @@
             9.5
           ],
           "texture": "#paste"
+        },
+        "down": {
+          "texture": "#paste",
+          "uv": [
+            6,
+            0,
+            6.5,
+            1.25
+          ]
         }
       }
     },
@@ -375,6 +627,15 @@
             1.5
           ],
           "texture": "#paste"
+        },
+        "down": {
+          "texture": "#paste",
+          "uv": [
+            5,
+            14,
+            6.25,
+            14.5
+          ]
         }
       },
       "rotation": {
@@ -443,6 +704,15 @@
             11.5
           ],
           "texture": "#paste"
+        },
+        "down": {
+          "texture": "#paste",
+          "uv": [
+            0,
+            12,
+            0.5,
+            13.25
+          ]
         }
       },
       "rotation": {
@@ -511,6 +781,15 @@
             7.5
           ],
           "texture": "#paste"
+        },
+        "down": {
+          "texture": "#paste",
+          "uv": [
+            8,
+            14,
+            8.5,
+            15.25
+          ]
         }
       }
     }

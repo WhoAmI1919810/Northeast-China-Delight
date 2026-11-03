@@ -65,6 +65,15 @@
             3.5
           ],
           "texture": "#skin"
+        },
+        "down": {
+          "texture": "#skin",
+          "uv": [
+            12,
+            1,
+            14.0,
+            2.5
+          ]
         }
       },
       "rotation": {
@@ -133,6 +142,15 @@
             4.5
           ],
           "texture": "#skin"
+        },
+        "down": {
+          "texture": "#skin",
+          "uv": [
+            6,
+            7,
+            8.0,
+            8.5
+          ]
         }
       },
       "rotation": {
@@ -201,6 +219,15 @@
             5.5
           ],
           "texture": "#skin"
+        },
+        "down": {
+          "texture": "#skin",
+          "uv": [
+            1,
+            10,
+            3.0,
+            11.5
+          ]
         }
       },
       "rotation": {
@@ -269,6 +296,15 @@
             14.5
           ],
           "texture": "#skin"
+        },
+        "down": {
+          "texture": "#skin",
+          "uv": [
+            12,
+            9,
+            14.0,
+            10.5
+          ]
         }
       }
     },
@@ -328,6 +364,15 @@
             4.5
           ],
           "texture": "#skin"
+        },
+        "down": {
+          "texture": "#skin",
+          "uv": [
+            13,
+            11,
+            14.5,
+            13.0
+          ]
         }
       },
       "rotation": {
@@ -396,6 +441,15 @@
             3.5
           ],
           "texture": "#skin"
+        },
+        "down": {
+          "texture": "#skin",
+          "uv": [
+            11,
+            5,
+            12.5,
+            7.0
+          ]
         }
       }
     },
@@ -455,6 +509,15 @@
             13.5
           ],
           "texture": "#skin"
+        },
+        "down": {
+          "texture": "#skin",
+          "uv": [
+            11,
+            11,
+            12.5,
+            13.0
+          ]
         }
       }
     },
@@ -514,6 +577,15 @@
             13.5
           ],
           "texture": "#skin"
+        },
+        "down": {
+          "texture": "#skin",
+          "uv": [
+            6,
+            13,
+            8.0,
+            14.5
+          ]
         }
       },
       "rotation": {
@@ -582,6 +654,15 @@
             15.5
           ],
           "texture": "#skin"
+        },
+        "down": {
+          "texture": "#skin",
+          "uv": [
+            11,
+            10,
+            12.5,
+            12.0
+          ]
         }
       },
       "rotation": {
@@ -650,6 +731,15 @@
             4.5
           ],
           "texture": "#skin"
+        },
+        "down": {
+          "texture": "#skin",
+          "uv": [
+            9,
+            14,
+            10.5,
+            16.0
+          ]
         }
       },
       "rotation": {
@@ -718,6 +808,15 @@
             3.5
           ],
           "texture": "#skin"
+        },
+        "down": {
+          "texture": "#skin",
+          "uv": [
+            1,
+            8,
+            3.0,
+            9.5
+          ]
         }
       },
       "rotation": {
@@ -786,6 +885,15 @@
             13.5
           ],
           "texture": "#skin"
+        },
+        "down": {
+          "texture": "#skin",
+          "uv": [
+            6,
+            11,
+            7.5,
+            13.0
+          ]
         }
       }
     },
@@ -845,6 +953,15 @@
             15.5
           ],
           "texture": "#skin"
+        },
+        "down": {
+          "texture": "#skin",
+          "uv": [
+            9,
+            12,
+            11.0,
+            13.5
+          ]
         }
       },
       "rotation": {
@@ -913,6 +1030,15 @@
             15.5
           ],
           "texture": "#skin"
+        },
+        "down": {
+          "texture": "#skin",
+          "uv": [
+            1,
+            11,
+            2.5,
+            13.0
+          ]
         }
       }
     },
@@ -972,6 +1098,15 @@
             5.5
           ],
           "texture": "#skin"
+        },
+        "down": {
+          "texture": "#skin",
+          "uv": [
+            11,
+            11,
+            13.0,
+            12.5
+          ]
         }
       },
       "rotation": {
@@ -1040,6 +1175,15 @@
             12.5
           ],
           "texture": "#skin"
+        },
+        "down": {
+          "texture": "#skin",
+          "uv": [
+            2,
+            12,
+            3.5,
+            14.0
+          ]
         }
       },
       "rotation": {
@@ -1108,6 +1252,15 @@
             13.5
           ],
           "texture": "#skin"
+        },
+        "down": {
+          "texture": "#skin",
+          "uv": [
+            14,
+            7,
+            16.0,
+            8.5
+          ]
         }
       }
     },
@@ -1167,6 +1320,15 @@
             13.5
           ],
           "texture": "#skin"
+        },
+        "down": {
+          "texture": "#skin",
+          "uv": [
+            11,
+            4,
+            12.5,
+            6.0
+          ]
         }
       },
       "rotation": {
@@ -1235,6 +1397,15 @@
             5.5
           ],
           "texture": "#skin"
+        },
+        "down": {
+          "texture": "#skin",
+          "uv": [
+            5,
+            7,
+            7.0,
+            8.5
+          ]
         }
       },
       "rotation": {
@@ -1303,6 +1474,15 @@
             7.5
           ],
           "texture": "#skin"
+        },
+        "down": {
+          "texture": "#skin",
+          "uv": [
+            3,
+            10,
+            5.0,
+            11.5
+          ]
         }
       },
       "rotation": {
@@ -1371,6 +1551,15 @@
             3.5
           ],
           "texture": "#skin"
+        },
+        "down": {
+          "texture": "#skin",
+          "uv": [
+            3,
+            6,
+            5.0,
+            7.5
+          ]
         }
       }
     },
@@ -1430,6 +1619,15 @@
             4.5
           ],
           "texture": "#skin"
+        },
+        "down": {
+          "texture": "#skin",
+          "uv": [
+            11,
+            12,
+            13.0,
+            13.5
+          ]
         }
       },
       "rotation": {

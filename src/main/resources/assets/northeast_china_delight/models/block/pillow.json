@@ -29,6 +29,12 @@
         },
         "south": {
           "texture": "#cloth"
+        },
+        "east": {
+          "texture": "#cloth"
+        },
+        "west": {
+          "texture": "#cloth"
         }
       }
     },
@@ -55,6 +61,12 @@
         },
         "south": {
           "texture": "#cloth"
+        },
+        "east": {
+          "texture": "#end"
+        },
+        "down": {
+          "texture": "#cloth"
         }
       }
     },
@@ -80,6 +92,12 @@
           "texture": "#cloth"
         },
         "south": {
+          "texture": "#cloth"
+        },
+        "west": {
+          "texture": "#end"
+        },
+        "down": {
           "texture": "#cloth"
         }
       }
