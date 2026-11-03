@@ -20,11 +20,20 @@
       },
       {
         "tag": "c:foods/raw_pork"
+      },
+      {
+        "item": "northeast_china_delight:pork_intestine"
       }
     ],
     "seasonings": [
       {
         "tag": "c:foods/seasonings/salt"
+      },
+      {
+        "tag": "c:foods/seasonings/soy_sauce"
+      },
+      {
+        "tag": "c:foods/seasonings/cooking_oil"
       }
     ],
     "container": {

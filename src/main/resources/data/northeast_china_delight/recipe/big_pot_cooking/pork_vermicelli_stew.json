@@ -17,6 +17,23 @@
       },
       {
         "tag": "c:foods/tofu"
+      },
+      {
+        "tag": "c:crops/potato"
+      },
+      {
+        "tag": "c:crops/green_onion"
+      }
+    ],
+    "seasonings": [
+      {
+        "tag": "c:foods/seasonings/soy_sauce"
+      },
+      {
+        "tag": "c:foods/seasonings/salt"
+      },
+      {
+        "tag": "c:foods/seasonings/cooking_oil"
       }
     ],
     "container": {

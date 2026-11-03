@@ -38,7 +38,8 @@ public final class DishEffects {
                 if (info.slowing()) {
                     list.add(new Applied(DdEffects.hold(MobEffects.MOVEMENT_SLOWDOWN), duration, 0));
                 }
-                list.add(new Applied(DdEffects.hold(MobEffects.HEALTH_BOOST), duration, 1));
+                // 生命提升：大盆菜碗装那一份 II，别的油腻菜 I
+                list.add(new Applied(DdEffects.hold(MobEffects.HEALTH_BOOST), duration, info.feast() ? 1 : 0));
                 list.add(new Applied(DdEffects.hold(MobEffects.DIG_SPEED), duration, 0));
                 list.add(new Applied(DdEffects.hold(ModEffects.GREASY), duration, 1));
             }
@@ -46,8 +47,15 @@ public final class DishEffects {
                 list.add(new Applied(DdEffects.hold(MobEffects.MOVEMENT_SPEED), duration, 0));
                 list.add(new Applied(DdEffects.hold(ModEffects.REFRESHING), duration, 0));
             }
-            case BALANCED -> DdEffects.holder(NOURISHMENT)
-                    .ifPresent(effect -> list.add(new Applied(effect, duration, 0)));
+            case BALANCED -> {
+                // 均衡口味的大盆菜（酸菜海鲜锅、酸菜炖大骨）：生命提升 II + 急迫 I + 滋养 I
+                if (info.feast()) {
+                    list.add(new Applied(DdEffects.hold(MobEffects.HEALTH_BOOST), duration, 1));
+                    list.add(new Applied(DdEffects.hold(MobEffects.DIG_SPEED), duration, 0));
+                }
+                DdEffects.holder(NOURISHMENT)
+                        .ifPresent(effect -> list.add(new Applied(effect, duration, 0)));
+            }
             case WARM -> {
             }
         }

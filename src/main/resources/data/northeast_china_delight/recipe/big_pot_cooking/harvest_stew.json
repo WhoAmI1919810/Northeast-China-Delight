@@ -25,6 +25,17 @@
         "tag": "c:crops/green_pepper"
       }
     ],
+    "seasonings": [
+      {
+        "tag": "c:foods/seasonings/salt"
+      },
+      {
+        "tag": "c:foods/seasonings/soy_sauce"
+      },
+      {
+        "tag": "c:foods/seasonings/cooking_oil"
+      }
+    ],
     "container": {
       "item": "northeast_china_delight:large_basin"
     },
