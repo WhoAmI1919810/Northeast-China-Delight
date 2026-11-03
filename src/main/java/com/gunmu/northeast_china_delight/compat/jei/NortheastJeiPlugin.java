@@ -4,6 +4,7 @@ import com.gunmu.northeast_china_delight.crafting.VatRecipes;
 import com.gunmu.northeast_china_delight.block.ModBlocks;
 import com.gunmu.northeast_china_delight.item.ModItems;
 import com.gunmu.northeast_china_delight.NortheastChinaDelight;
+import com.gunmu.northeast_china_delight.compat.OptionalMods;
 import com.gunmu.northeast_china_delight.util.DdIds;
 import mezz.jei.api.IModPlugin;
 import mezz.jei.api.JeiPlugin;
@@ -74,7 +75,10 @@ public class NortheastJeiPlugin implements IModPlugin {
         registration.addRecipeCategories(new PoundRecipeCategory(guiHelper));
         registration.addRecipeCategories(new BigPotRecipeCategory(guiHelper));
         //? if >=1.20.5 {
-        registration.addRecipeCategories(new DryingRecipeCategory(guiHelper));
+        // 批量风干页画的是 Create 的鼓风机：机械动力是可选前置，没装就不注册这一页
+        if (OptionalMods.create()) {
+            registration.addRecipeCategories(new DryingRecipeCategory(guiHelper));
+        }
         //?}
     }
 
@@ -91,8 +95,10 @@ public class NortheastJeiPlugin implements IModPlugin {
             registeredBigPotRecipes = BigPotJeiRecipes.all(connection.getRecipeManager());
             registration.addRecipes(BIG_POT_TYPE, registeredBigPotRecipes);
             //? if >=1.20.5 {
-            registeredDryingRecipes = DryingJeiRecipes.all(connection.getRecipeManager());
-            registration.addRecipes(DRYING_TYPE, registeredDryingRecipes);
+            if (OptionalMods.create()) {
+                registeredDryingRecipes = DryingJeiRecipes.all(connection.getRecipeManager());
+                registration.addRecipes(DRYING_TYPE, registeredDryingRecipes);
+            }
             //?}
         }
         Component ginsengInfo = Component.translatable("jei.northeast_china_delight.info.ginseng");
@@ -211,10 +217,12 @@ public class NortheastJeiPlugin implements IModPlugin {
         runtime.getRecipeManager().addRecipes(BIG_POT_TYPE, updatedBigPot);
         registeredBigPotRecipes = updatedBigPot;
         //? if >=1.20.5 {
-        java.util.List<DryingJeiRecipe> updatedDrying = DryingJeiRecipes.all(manager);
-        runtime.getRecipeManager().hideRecipes(DRYING_TYPE, registeredDryingRecipes);
-        runtime.getRecipeManager().addRecipes(DRYING_TYPE, updatedDrying);
-        registeredDryingRecipes = updatedDrying;
+        if (OptionalMods.create()) {
+            java.util.List<DryingJeiRecipe> updatedDrying = DryingJeiRecipes.all(manager);
+            runtime.getRecipeManager().hideRecipes(DRYING_TYPE, registeredDryingRecipes);
+            runtime.getRecipeManager().addRecipes(DRYING_TYPE, updatedDrying);
+            registeredDryingRecipes = updatedDrying;
+        }
         //?}
     }
 
@@ -228,9 +236,11 @@ public class NortheastJeiPlugin implements IModPlugin {
         registration.addRecipeCatalyst(new ItemStack(BuiltInRegistries.ITEM.get(DdIds.of("farmersdelight", "stove"))),
                 BIG_POT_TYPE);
         //? if >=1.20.5 {
-        registration.addRecipeCatalyst(new ItemStack(
-                net.minecraft.core.registries.BuiltInRegistries.BLOCK.get(
-                        DdIds.of("create", "encased_fan"))), DRYING_TYPE);
+        if (OptionalMods.create()) {
+            registration.addRecipeCatalyst(new ItemStack(
+                    net.minecraft.core.registries.BuiltInRegistries.BLOCK.get(
+                            DdIds.of("create", "encased_fan"))), DRYING_TYPE);
+        }
         //?}
     }
 }

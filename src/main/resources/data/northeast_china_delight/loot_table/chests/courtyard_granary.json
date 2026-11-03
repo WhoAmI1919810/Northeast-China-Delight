@@ -83,6 +83,7 @@
           ]
         },
         { "type": "minecraft:item", "name": "northeast_china_delight:peanut_butter", "weight": 2 },
+        { "type": "minecraft:item", "name": "northeast_china_delight:sweet_potato_starch", "weight": 1 },
         { "type": "minecraft:empty", "weight": 7 }
       ]
     }

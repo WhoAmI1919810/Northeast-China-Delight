@@ -1,6 +1,9 @@
 {
   "values": [
-    "create:iron_sheet",
+    {
+      "id": "create:iron_sheet",
+      "required": false
+    },
     {
       "id": "foodcraft:iron_plate",
       "required": false

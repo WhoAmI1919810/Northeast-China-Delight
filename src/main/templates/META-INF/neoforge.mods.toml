@@ -93,10 +93,10 @@ config="${mod_id}.mixins.json"
     ordering="AFTER"
     side="BOTH"
 
-# 机械动力：本模组把它作为前置（大缸成品经流体管道进出储罐）
+# 机械动力：可选前置（2026-11-04 起）。装了才有它那套加工配方、鼓风机批量风干、管道抽大缸成品；不装照样能玩
 [[dependencies.${mod_id}]]
     modId="create"
-    type="required"
+    type="optional"
     versionRange="${create_version_range}"
     ordering="AFTER"
     side="BOTH"

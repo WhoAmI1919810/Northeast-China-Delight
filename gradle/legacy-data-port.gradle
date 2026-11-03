@@ -185,7 +185,9 @@ ext.legacyTransformNode = { Object node, Map env ->
             }
             if (key == 'neoforge:conditions') {
                 env.changed = true
-                out.put('forge:conditions', legacyTransformNode(v, env))
+                // 1.20.1 Forge 读进度的条件认顶层 "conditions"（ConditionalAdvancement），写成 forge:conditions 会被忽略；
+                // 配方仍写 forge:conditions，下面再整条包进 forge:conditional（2026-11-04：抽调料进度只在装了机械动力时加载）
+                out.put(env.advancement ? 'conditions' : 'forge:conditions', legacyTransformNode(v, env))
                 return
             }
             if (env.recipe && key == 'transitional_item') {

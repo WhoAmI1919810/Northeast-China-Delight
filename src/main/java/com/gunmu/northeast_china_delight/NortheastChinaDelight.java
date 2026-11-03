@@ -9,6 +9,7 @@ import com.gunmu.northeast_china_delight.client.GrillCampfireRenderer;
 import com.gunmu.northeast_china_delight.client.VatRenderer;
 import com.gunmu.northeast_china_delight.client.WoodenMortarRenderer;
 import com.gunmu.northeast_china_delight.client.BigPotRenderer;
+import com.gunmu.northeast_china_delight.compat.OptionalMods;
 import com.gunmu.northeast_china_delight.compat.create.ModFanProcessingTypes;
 import com.gunmu.northeast_china_delight.compat.jei.VatJeiSync;
 import com.gunmu.northeast_china_delight.crafting.ModVatRecipes;
@@ -31,6 +32,7 @@ import com.gunmu.northeast_china_delight.villager.ModButcherTrades;
 import com.gunmu.northeast_china_delight.villager.ModCartographerTrades;
 import com.gunmu.northeast_china_delight.villager.ModFarmerTrades;
 import com.gunmu.northeast_china_delight.villager.ModFishermanTrades;
+import com.gunmu.northeast_china_delight.villager.ModToolsmithTrades;
 import com.gunmu.northeast_china_delight.villager.ModVillagerProfessions;
 import com.gunmu.northeast_china_delight.villager.ModWandererTrades;
 import com.gunmu.northeast_china_delight.villager.SideDishMerchantTrades;
@@ -179,7 +181,10 @@ public class NortheastChinaDelight
         ModCreativeTabs.register(modEventBus);
         ModLootModifiers.register(modEventBus);
         ModEffects.register(modEventBus);
-        ModFanProcessingTypes.register(modEventBus);
+        // 鼓风机批量风干：机械动力是可选前置，没装就不注册（ModFanProcessingTypes 里全是 Create 的类）
+        if (OptionalMods.create()) {
+            ModFanProcessingTypes.register(modEventBus);
+        }
         ModVillagerProfessions.register(modEventBus);
         ModMapDecorations.register(modEventBus);
         ModWorldGen.register(modEventBus);
@@ -219,10 +224,11 @@ public class NortheastChinaDelight
         MinecraftForge.EVENT_BUS.register(ModGameplayEvents.class);
         // 副食商的交易表（每次数据包重载时重新填一遍）
         MinecraftForge.EVENT_BUS.addListener(SideDishMerchantTrades::addTrades);
-        // 原版各职业的交易表：农民 / 屠夫 / 渔夫 / 制图师 / 流浪商人
+        // 原版各职业的交易表：农民 / 屠夫 / 渔夫 / 工具匠 / 制图师 / 流浪商人
         MinecraftForge.EVENT_BUS.addListener(ModFarmerTrades::addTrades);
         MinecraftForge.EVENT_BUS.addListener(ModButcherTrades::addTrades);
         MinecraftForge.EVENT_BUS.addListener(ModFishermanTrades::addTrades);
+        MinecraftForge.EVENT_BUS.addListener(ModToolsmithTrades::addTrades);
         MinecraftForge.EVENT_BUS.addListener(ModCartographerTrades::addTrades);
         MinecraftForge.EVENT_BUS.addListener(ModWandererTrades::addTrades);
         *///?} else {
@@ -233,6 +239,7 @@ public class NortheastChinaDelight
         NeoForge.EVENT_BUS.addListener(ModFarmerTrades::addTrades);
         NeoForge.EVENT_BUS.addListener(ModButcherTrades::addTrades);
         NeoForge.EVENT_BUS.addListener(ModFishermanTrades::addTrades);
+        NeoForge.EVENT_BUS.addListener(ModToolsmithTrades::addTrades);
         NeoForge.EVENT_BUS.addListener(ModCartographerTrades::addTrades);
         NeoForge.EVENT_BUS.addListener(ModWandererTrades::addTrades);
         //?}
