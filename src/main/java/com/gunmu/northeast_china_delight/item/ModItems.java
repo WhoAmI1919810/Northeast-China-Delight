@@ -135,6 +135,8 @@ public class ModItems {
                     .food(foodReturning(statsWithSaturationPoints(7, 3.0F), Items.GLASS_BOTTLE)));
     public static final Supplier<Item> PEANUT_BUTTER = bottled("peanut_butter");
     public static final Supplier<Item> ROASTED_PEANUTS = food("roasted_peanuts", 4, 0.5F);
+    /** 豆沙：红豆 + 糖在木臼里舂 4 下出 2 份；能直接吃，比用它做的菜（红豆松饼 3 / 0.3 起）都低 */
+    public static final Supplier<Item> RED_BEAN_PASTE = food("red_bean_paste", 2, 0.2F);
     public static final Supplier<Item> CHILI_SAUCE = seasoningBowl("chili_sauce");
     public static final Supplier<Item> BEAN_SPROUTS = food("bean_sprouts", 2, 0.3F);
     public static final Supplier<Item> SOUR_CORN_KERNELS = food("sour_corn_kernels", 3, 0.4F);
@@ -429,7 +431,7 @@ public class ModItems {
             FISH_SAUCE, SHRIMP_PASTE, CHILI_OIL, PEANUT_BUTTER, COOKING_OIL, ANIMAL_OIL,
             SOY_PASTE_CHUNK, SOY_RESIDUE,
             WATER_DOUGH, BUCKWHEAT_NOODLES, DRIED_TOFU, TOFU, FROZEN_TOFU, SWEET_POTATO_STARCH,
-            VERMICELLI, LA_PI, CORN_FLOUR, CRACKLINGS, COLD_NOODLE_SHEET, BEAN_SPROUTS, SOUR_CORN_KERNELS, ROASTED_PEANUTS,
+            VERMICELLI, LA_PI, CORN_FLOUR, CRACKLINGS, COLD_NOODLE_SHEET, BEAN_SPROUTS, SOUR_CORN_KERNELS, ROASTED_PEANUTS, RED_BEAN_PASTE,
             CORN_STALK,
             LARGE_BASIN, WATER_BASIN, BRASS_BOWL, WOODEN_MALLET, ANIMAL_OIL_BLOCK_ITEM,
             UNFIRED_VAT_BLANK, MUSIC_DISC_NORTHEAST

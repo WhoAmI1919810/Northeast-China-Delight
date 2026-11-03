@@ -6,10 +6,7 @@
       "tag": "c:crops/rice"
     },
     {
-      "tag": "c:crops/red_bean"
-    },
-    {
-      "tag": "c:sugar"
+      "tag": "c:foods/red_bean_paste"
     }
   ],
   "recipe_book_tab": "misc",
