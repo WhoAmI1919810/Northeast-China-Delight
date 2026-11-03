@@ -1,0 +1,39 @@
+{
+  "type": "northeast_china_delight:big_pot_cooking",
+  "config": {
+    "liquid": {
+      "fluid": "minecraft:water",
+      "amount": 1000
+    },
+    "ingredients": [
+      {
+        "tag": "c:foods/sauerkraut"
+      },
+      {
+        "tag": "c:foods/oyster"
+      },
+      {
+        "tag": "c:foods/shrimp"
+      },
+      {
+        "item": "northeast_china_delight:frozen_tofu"
+      },
+      {
+        "tag": "c:foods/raw_mutton"
+      },
+      {
+        "tag": "c:foods/raw_beef"
+      }
+    ],
+    "container": {
+      "item": "northeast_china_delight:large_basin"
+    },
+    "result": {
+      "item": "northeast_china_delight:sauerkraut_seafood_stew",
+      "count": 1
+    },
+    "cooking_time": 200,
+    "lid_speedup": 40,
+    "experience": 1.0
+  }
+}

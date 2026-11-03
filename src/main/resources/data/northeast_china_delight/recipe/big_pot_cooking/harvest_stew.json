@@ -1,0 +1,39 @@
+{
+  "type": "northeast_china_delight:big_pot_cooking",
+  "config": {
+    "liquid": {
+      "fluid": "minecraft:water",
+      "amount": 1000
+    },
+    "ingredients": [
+      {
+        "item": "northeast_china_delight:pork_ribs"
+      },
+      {
+        "tag": "c:crops/green_bean"
+      },
+      {
+        "tag": "c:crops/corn"
+      },
+      {
+        "tag": "c:crops/potato"
+      },
+      {
+        "tag": "c:crops/eggplant"
+      },
+      {
+        "tag": "c:crops/green_pepper"
+      }
+    ],
+    "container": {
+      "item": "northeast_china_delight:large_basin"
+    },
+    "result": {
+      "item": "northeast_china_delight:harvest_stew",
+      "count": 1
+    },
+    "cooking_time": 200,
+    "lid_speedup": 40,
+    "experience": 1.0
+  }
+}

@@ -15,6 +15,7 @@ import com.gunmu.northeast_china_delight.crafting.ModGrillRecipes;
 import com.gunmu.northeast_china_delight.crafting.ModDryingRecipes;
 import com.gunmu.northeast_china_delight.crafting.ModCraftingRecipes;
 import com.gunmu.northeast_china_delight.crafting.ModPoundRecipes;
+import com.gunmu.northeast_china_delight.crafting.ModBigPotRecipes;
 import com.gunmu.northeast_china_delight.effect.DishEffectEvents;
 import com.gunmu.northeast_china_delight.effect.ModEffects;
 import com.gunmu.northeast_china_delight.entity.ModEntities;
@@ -172,6 +173,7 @@ public class NortheastChinaDelight
         ModGrillRecipes.register(modEventBus);
         ModDryingRecipes.register(modEventBus);
         ModPoundRecipes.register(modEventBus);
+        ModBigPotRecipes.register(modEventBus);
         ModCraftingRecipes.register(modEventBus);
         ModCreativeTabs.register(modEventBus);
         ModLootModifiers.register(modEventBus);

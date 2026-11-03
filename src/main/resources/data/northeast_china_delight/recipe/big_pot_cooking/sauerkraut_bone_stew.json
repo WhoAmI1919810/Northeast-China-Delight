@@ -1,0 +1,31 @@
+{
+  "type": "northeast_china_delight:big_pot_cooking",
+  "config": {
+    "liquid": {
+      "fluid": "minecraft:water",
+      "amount": 1000
+    },
+    "ingredients": [
+      {
+        "tag": "c:foods/sauerkraut"
+      },
+      {
+        "tag": "c:foods/vermicelli"
+      },
+      {
+        "item": "northeast_china_delight:pork_ribs",
+        "count": 2
+      }
+    ],
+    "container": {
+      "item": "northeast_china_delight:large_basin"
+    },
+    "result": {
+      "item": "northeast_china_delight:sauerkraut_bone_stew",
+      "count": 1
+    },
+    "cooking_time": 200,
+    "lid_speedup": 40,
+    "experience": 1.0
+  }
+}

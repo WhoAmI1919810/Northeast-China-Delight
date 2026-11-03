@@ -7,6 +7,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.ItemTags;
@@ -164,7 +165,8 @@ public class BigStoveBlock extends Block implements EntityBlock {
         }
     }
 
-    private static BlockPos origin(BlockPos pos, BlockState state) {
+    /** 这口灶 2×2 的西北角 */
+    static BlockPos origin(BlockPos pos, BlockState state) {
         int[] o = state.getValue(PART).offset(state.getValue(FACING));
         return pos.offset(-o[0], 0, -o[1]);
     }
@@ -326,8 +328,19 @@ public class BigStoveBlock extends Block implements EntityBlock {
             return InteractionResult.PASS;
         }
         BigPotBlockEntity contents = potAt(level, pos, state);
-        if (pot == Pot.POT && contents != null && !BigPotCooking.canTakePot(contents)) {
-            return InteractionResult.PASS;
+        if (pot == Pot.POT && contents != null) {
+            // 先问做菜那边：空手盛菜、潜行把料拿出来
+            InteractionResult cooking = BigPotCooking.onEmptyHand(contents, state, level, pos, player);
+            if (cooking != InteractionResult.PASS) {
+                return cooking;
+            }
+            if (!BigPotCooking.canTakePot(contents)) {
+                if (!level.isClientSide) {
+                    player.displayClientMessage(
+                            Component.translatable("message.northeast_china_delight.big_pot.not_empty"), true);
+                }
+                return InteractionResult.sidedSuccess(level.isClientSide);
+            }
         }
         if (!level.isClientSide) {
             Pot next = pot == Pot.LID ? Pot.POT : Pot.NONE;

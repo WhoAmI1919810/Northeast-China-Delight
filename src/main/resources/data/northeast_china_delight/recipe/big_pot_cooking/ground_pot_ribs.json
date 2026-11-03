@@ -1,0 +1,33 @@
+{
+  "type": "northeast_china_delight:big_pot_cooking",
+  "config": {
+    "liquid": {
+      "fluid": "minecraft:water",
+      "amount": 1000
+    },
+    "ingredients": [
+      {
+        "item": "northeast_china_delight:pork_ribs"
+      },
+      {
+        "tag": "c:crops/green_bean"
+      },
+      {
+        "tag": "c:crops/potato"
+      },
+      {
+        "tag": "c:foods/dough/wheat"
+      }
+    ],
+    "container": {
+      "item": "northeast_china_delight:large_basin"
+    },
+    "result": {
+      "item": "northeast_china_delight:ground_pot_ribs",
+      "count": 1
+    },
+    "cooking_time": 200,
+    "lid_speedup": 40,
+    "experience": 1.0
+  }
+}
