@@ -4,6 +4,7 @@
   "render_type": "minecraft:cutout",
   "textures": {
     "particle": "northeast_china_delight:block/large_basin",
+    "basin": "northeast_china_delight:block/large_basin",
     "pot": "northeast_china_delight:block/harvest_stew_pot"
   },
   "elements": [
@@ -21,57 +22,57 @@
       "faces": {
         "north": {
           "uv": [
-            3.25,
-            9.5,
-            3.5,
-            9.75
+            7.5,
+            4.25,
+            7.75,
+            4.5
           ],
-          "texture": "#pot"
+          "texture": "#basin"
         },
         "east": {
           "uv": [
-            3.5,
+            2.5,
             6,
-            5,
+            4,
             6.25
           ],
-          "texture": "#pot"
+          "texture": "#basin"
         },
         "south": {
           "uv": [
-            5.75,
-            9.5,
             6,
-            9.75
-          ],
-          "texture": "#pot"
-        },
-        "west": {
-          "uv": [
-            6.75,
-            5.25,
-            8.25,
-            5.5
-          ],
-          "texture": "#pot"
-        },
-        "up": {
-          "uv": [
-            2,
-            6.75,
-            2.25,
-            8.25
-          ],
-          "texture": "#pot"
-        },
-        "down": {
-          "uv": [
-            6,
-            6.75,
+            8,
             6.25,
             8.25
           ],
-          "texture": "#pot"
+          "texture": "#basin"
+        },
+        "west": {
+          "uv": [
+            4,
+            6,
+            5.5,
+            6.25
+          ],
+          "texture": "#basin"
+        },
+        "up": {
+          "uv": [
+            6,
+            5,
+            6.25,
+            6.5
+          ],
+          "texture": "#basin"
+        },
+        "down": {
+          "uv": [
+            5.5,
+            6,
+            5.75,
+            7.5
+          ],
+          "texture": "#basin"
         }
       }
     },
@@ -89,57 +90,57 @@
       "faces": {
         "north": {
           "uv": [
-            6.75,
-            6.5,
-            8.25,
-            6.75
+            6,
+            4.25,
+            7.5,
+            4.5
           ],
-          "texture": "#pot"
+          "texture": "#basin"
         },
         "east": {
           "uv": [
-            5.5,
-            6.25,
-            7.5,
-            6.5
+            0,
+            5,
+            2,
+            5.25
           ],
-          "texture": "#pot"
+          "texture": "#basin"
         },
         "south": {
           "uv": [
-            6.75,
-            6.75,
-            8.25,
-            7
+            0,
+            6.25,
+            1.5,
+            6.5
           ],
-          "texture": "#pot"
+          "texture": "#basin"
         },
         "west": {
           "uv": [
-            6.25,
-            5.5,
-            8.25,
-            5.75
+            2,
+            5,
+            4,
+            5.25
           ],
-          "texture": "#pot"
+          "texture": "#basin"
         },
         "up": {
           "uv": [
+            2.5,
             0,
             4,
-            1.5,
-            6
+            2
           ],
-          "texture": "#pot"
+          "texture": "#basin"
         },
         "down": {
           "uv": [
-            1.5,
+            2.5,
+            2,
             4,
-            3,
-            6
+            4
           ],
-          "texture": "#pot"
+          "texture": "#basin"
         }
       }
     },
@@ -157,57 +158,57 @@
       "faces": {
         "north": {
           "uv": [
-            4.25,
-            9.75,
-            4.5,
-            10
+            8,
+            6.25,
+            8.25,
+            6.5
           ],
-          "texture": "#pot"
+          "texture": "#basin"
         },
         "east": {
           "uv": [
-            7,
-            3.75,
-            8.5,
-            4
+            6.25,
+            0.25,
+            7.75,
+            0.5
           ],
-          "texture": "#pot"
+          "texture": "#basin"
         },
         "south": {
           "uv": [
-            9.75,
             8,
-            10,
-            8.25
+            6.5,
+            8.25,
+            6.75
           ],
-          "texture": "#pot"
+          "texture": "#basin"
         },
         "west": {
           "uv": [
-            7,
-            4,
-            8.5,
-            4.25
+            6.25,
+            0.5,
+            7.75,
+            0.75
           ],
-          "texture": "#pot"
+          "texture": "#basin"
         },
         "up": {
           "uv": [
-            4.25,
-            7,
-            4.5,
-            8.5
+            5.75,
+            6,
+            6,
+            7.5
           ],
-          "texture": "#pot"
+          "texture": "#basin"
         },
         "down": {
           "uv": [
-            4.5,
-            7,
-            4.75,
-            8.5
+            6.25,
+            0.75,
+            6.5,
+            2.25
           ],
-          "texture": "#pot"
+          "texture": "#basin"
         }
       }
     },
@@ -225,57 +226,57 @@
       "faces": {
         "north": {
           "uv": [
-            6.25,
-            5.75,
-            8.25,
-            6
+            4,
+            5,
+            6,
+            5.25
           ],
-          "texture": "#pot"
+          "texture": "#basin"
         },
         "east": {
           "uv": [
-            10,
-            5,
-            10.25,
-            5.25
+            8,
+            6.75,
+            8.25,
+            7
           ],
-          "texture": "#pot"
+          "texture": "#basin"
         },
         "south": {
           "uv": [
-            6.25,
-            6,
-            8.25,
-            6.25
+            0,
+            5.25,
+            2,
+            5.5
           ],
-          "texture": "#pot"
+          "texture": "#basin"
         },
         "west": {
           "uv": [
-            10,
-            6.25,
-            10.25,
-            6.5
+            8,
+            7,
+            8.25,
+            7.25
           ],
-          "texture": "#pot"
+          "texture": "#basin"
         },
         "up": {
           "uv": [
-            6.5,
-            0,
-            8.5,
-            0.25
+            2,
+            5.25,
+            4,
+            5.5
           ],
-          "texture": "#pot"
+          "texture": "#basin"
         },
         "down": {
           "uv": [
-            6.5,
-            0.25,
-            8.5,
-            0.5
+            4,
+            5.25,
+            6,
+            5.5
           ],
-          "texture": "#pot"
+          "texture": "#basin"
         }
       }
     },
@@ -293,39 +294,39 @@
       "faces": {
         "north": {
           "uv": [
-            5.5,
+            4,
             4.5,
-            8,
+            6.5,
             4.75
           ],
-          "texture": "#pot"
+          "texture": "#basin"
         },
         "east": {
           "uv": [
-            6.5,
-            0.5,
-            8.5,
-            0.75
+            0,
+            5.5,
+            2,
+            5.75
           ],
-          "texture": "#pot"
+          "texture": "#basin"
         },
         "south": {
           "uv": [
-            5.5,
+            0,
             4.75,
-            8,
+            2.5,
             5
           ],
-          "texture": "#pot"
+          "texture": "#basin"
         },
         "west": {
           "uv": [
-            6.5,
-            0.75,
-            8.5,
-            1
+            2,
+            5.5,
+            4,
+            5.75
           ],
-          "texture": "#pot"
+          "texture": "#basin"
         },
         "up": {
           "uv": [
@@ -334,7 +335,7 @@
             2.5,
             2
           ],
-          "texture": "#pot"
+          "texture": "#basin"
         },
         "down": {
           "uv": [
@@ -343,7 +344,7 @@
             2.5,
             4
           ],
-          "texture": "#pot"
+          "texture": "#basin"
         }
       }
     },
@@ -361,57 +362,57 @@
       "faces": {
         "north": {
           "uv": [
-            6.5,
-            1,
-            8.5,
-            1.25
+            4,
+            5.5,
+            6,
+            5.75
           ],
-          "texture": "#pot"
+          "texture": "#basin"
         },
         "east": {
           "uv": [
-            0.5,
-            10.75,
-            0.75,
-            11
+            7.25,
+            8,
+            7.5,
+            8.25
           ],
-          "texture": "#pot"
+          "texture": "#basin"
         },
         "south": {
           "uv": [
-            6.5,
-            1.25,
-            8.5,
-            1.5
+            0,
+            5.75,
+            2,
+            6
           ],
-          "texture": "#pot"
+          "texture": "#basin"
         },
         "west": {
           "uv": [
-            2.75,
-            10.75,
-            3,
-            11
+            8,
+            7.25,
+            8.25,
+            7.5
           ],
-          "texture": "#pot"
+          "texture": "#basin"
         },
         "up": {
           "uv": [
-            6.5,
-            1.5,
-            8.5,
-            1.75
+            2,
+            5.75,
+            4,
+            6
           ],
-          "texture": "#pot"
+          "texture": "#basin"
         },
         "down": {
           "uv": [
-            6.5,
-            1.75,
-            8.5,
-            2
+            4,
+            5.75,
+            6,
+            6
           ],
-          "texture": "#pot"
+          "texture": "#basin"
         }
       }
     },
@@ -429,57 +430,57 @@
       "faces": {
         "north": {
           "uv": [
-            7,
-            4.25,
-            8.5,
-            4.5
+            6.25,
+            2.25,
+            7.75,
+            2.5
           ],
-          "texture": "#pot"
+          "texture": "#basin"
         },
         "east": {
           "uv": [
-            11.25,
-            8.25,
-            11.5,
-            8.5
+            7.5,
+            8,
+            7.75,
+            8.25
           ],
-          "texture": "#pot"
+          "texture": "#basin"
         },
         "south": {
           "uv": [
-            6.75,
-            7,
-            8.25,
-            7.25
+            2.5,
+            6.25,
+            4,
+            6.5
           ],
-          "texture": "#pot"
+          "texture": "#basin"
         },
         "west": {
           "uv": [
-            11.25,
-            9.25,
-            11.5,
-            9.5
+            7.75,
+            8,
+            8,
+            8.25
           ],
-          "texture": "#pot"
+          "texture": "#basin"
         },
         "up": {
           "uv": [
-            0,
-            7.25,
-            1.5,
-            7.5
+            6.25,
+            2.5,
+            7.75,
+            2.75
           ],
-          "texture": "#pot"
+          "texture": "#basin"
         },
         "down": {
           "uv": [
-            6.75,
-            7.25,
-            8.25,
-            7.5
+            6.25,
+            2.75,
+            7.75,
+            3
           ],
-          "texture": "#pot"
+          "texture": "#basin"
         }
       }
     },
@@ -506,57 +507,57 @@
       "faces": {
         "north": {
           "uv": [
-            0,
-            7.5,
-            1.5,
-            7.75
+            6.25,
+            3,
+            7.75,
+            3.25
           ],
-          "texture": "#pot"
+          "texture": "#basin"
         },
         "east": {
           "uv": [
-            11.25,
-            9.75,
-            11.5,
-            10
+            8,
+            8,
+            8.25,
+            8.25
           ],
-          "texture": "#pot"
+          "texture": "#basin"
         },
         "south": {
           "uv": [
-            7.5,
             6.25,
-            9,
-            6.5
+            3.25,
+            7.75,
+            3.5
           ],
-          "texture": "#pot"
+          "texture": "#basin"
         },
         "west": {
           "uv": [
-            11.25,
-            10,
-            11.5,
-            10.25
+            0,
+            8.25,
+            0.25,
+            8.5
           ],
-          "texture": "#pot"
+          "texture": "#basin"
         },
         "up": {
           "uv": [
-            6.75,
-            7.5,
-            8.25,
-            7.75
+            6.25,
+            3.5,
+            7.75,
+            3.75
           ],
-          "texture": "#pot"
+          "texture": "#basin"
         },
         "down": {
           "uv": [
-            0,
+            6.25,
+            3.75,
             7.75,
-            1.5,
-            8
+            4
           ],
-          "texture": "#pot"
+          "texture": "#basin"
         }
       }
     },
@@ -583,57 +584,57 @@
       "faces": {
         "north": {
           "uv": [
-            11.25,
-            10.5,
-            11.5,
-            10.75
+            0.25,
+            8.25,
+            0.5,
+            8.5
           ],
-          "texture": "#pot"
+          "texture": "#basin"
         },
         "east": {
           "uv": [
-            6.75,
-            7.75,
-            8.25,
-            8
+            4,
+            6.25,
+            5.5,
+            6.5
           ],
-          "texture": "#pot"
+          "texture": "#basin"
         },
         "south": {
           "uv": [
-            11.25,
-            10.75,
-            11.5,
-            11
+            0.5,
+            8.25,
+            0.75,
+            8.5
           ],
-          "texture": "#pot"
+          "texture": "#basin"
         },
         "west": {
           "uv": [
-            0,
-            8,
-            1.5,
-            8.25
+            6.25,
+            4,
+            7.75,
+            4.25
           ],
-          "texture": "#pot"
+          "texture": "#basin"
         },
         "up": {
           "uv": [
-            4.75,
-            7,
-            5,
-            8.5
+            1.5,
+            6.25,
+            1.75,
+            7.75
           ],
-          "texture": "#pot"
+          "texture": "#basin"
         },
         "down": {
           "uv": [
-            5,
-            7,
-            5.25,
-            8.5
+            1.75,
+            6.25,
+            2,
+            7.75
           ],
-          "texture": "#pot"
+          "texture": "#basin"
         }
       }
     },
@@ -660,57 +661,57 @@
       "faces": {
         "north": {
           "uv": [
-            11,
-            11.25,
-            11.25,
-            11.5
+            0.75,
+            8.25,
+            1,
+            8.5
           ],
-          "texture": "#pot"
+          "texture": "#basin"
         },
         "east": {
           "uv": [
-            8,
-            4.5,
-            9.5,
-            4.75
+            6.25,
+            5,
+            7.75,
+            5.25
           ],
-          "texture": "#pot"
+          "texture": "#basin"
         },
         "south": {
           "uv": [
-            11.25,
-            11.25,
-            11.5,
-            11.5
+            1,
+            8.25,
+            1.25,
+            8.5
           ],
-          "texture": "#pot"
+          "texture": "#basin"
         },
         "west": {
           "uv": [
-            8,
-            4.75,
-            9.5,
-            5
+            6.25,
+            5.25,
+            7.75,
+            5.5
           ],
-          "texture": "#pot"
+          "texture": "#basin"
         },
         "up": {
           "uv": [
-            5.25,
-            7,
+            6.25,
             5.5,
-            8.5
+            6.5,
+            7
           ],
-          "texture": "#pot"
+          "texture": "#basin"
         },
         "down": {
           "uv": [
-            5.5,
-            7,
-            5.75,
-            8.5
+            0,
+            6.5,
+            0.25,
+            8
           ],
-          "texture": "#pot"
+          "texture": "#basin"
         }
       }
     },
@@ -728,57 +729,57 @@
       "faces": {
         "north": {
           "uv": [
-            3,
+            0,
             4,
-            5,
+            2,
             4.75
           ],
-          "texture": "#pot"
+          "texture": "#basin"
         },
         "east": {
           "uv": [
-            5,
-            9.75,
             5.25,
-            10.5
+            6.5,
+            5.5,
+            7.25
           ],
-          "texture": "#pot"
+          "texture": "#basin"
         },
         "south": {
           "uv": [
-            4.5,
+            4,
             0,
-            6.5,
+            6,
             0.75
           ],
-          "texture": "#pot"
+          "texture": "#basin"
         },
         "west": {
           "uv": [
-            0.5,
-            10,
-            0.75,
-            10.75
+            6,
+            6.5,
+            6.25,
+            7.25
           ],
-          "texture": "#pot"
+          "texture": "#basin"
         },
         "up": {
           "uv": [
-            6.5,
-            2,
-            8.5,
-            2.25
+            2.5,
+            4.75,
+            4.5,
+            5
           ],
-          "texture": "#pot"
+          "texture": "#basin"
         },
         "down": {
           "uv": [
+            4.5,
+            4.75,
             6.5,
-            2.25,
-            8.5,
-            2.5
+            5
           ],
-          "texture": "#pot"
+          "texture": "#basin"
         }
       }
     },
@@ -805,57 +806,57 @@
       "faces": {
         "north": {
           "uv": [
-            4.5,
+            4,
             0.75,
-            6.5,
+            6,
             1.5
           ],
-          "texture": "#pot"
+          "texture": "#basin"
         },
         "east": {
           "uv": [
-            10,
-            4.25,
-            10.25,
-            5
+            6.25,
+            7,
+            6.5,
+            7.75
           ],
-          "texture": "#pot"
+          "texture": "#basin"
         },
         "south": {
           "uv": [
-            4.5,
+            4,
             1.5,
-            6.5,
+            6,
             2.25
           ],
-          "texture": "#pot"
+          "texture": "#basin"
         },
         "west": {
           "uv": [
-            4.75,
-            10,
-            5,
-            10.75
+            6.5,
+            7,
+            6.75,
+            7.75
           ],
-          "texture": "#pot"
+          "texture": "#basin"
         },
         "up": {
           "uv": [
-            6.5,
-            2.5,
-            8.5,
-            2.75
+            0,
+            6,
+            2,
+            6.25
           ],
-          "texture": "#pot"
+          "texture": "#basin"
         },
         "down": {
           "uv": [
-            6.5,
-            2.75,
-            8.5,
-            3
+            6,
+            0,
+            8,
+            0.25
           ],
-          "texture": "#pot"
+          "texture": "#basin"
         }
       }
     },
@@ -882,57 +883,57 @@
       "faces": {
         "north": {
           "uv": [
-            5.25,
-            10,
-            5.5,
-            10.75
+            6.75,
+            7,
+            7,
+            7.75
           ],
-          "texture": "#pot"
+          "texture": "#basin"
         },
         "east": {
           "uv": [
-            4.5,
-            2.25,
-            6.5,
-            3
+            2,
+            4,
+            4,
+            4.75
           ],
-          "texture": "#pot"
+          "texture": "#basin"
         },
         "south": {
           "uv": [
-            5.5,
-            10,
-            5.75,
-            10.75
+            7,
+            7,
+            7.25,
+            7.75
           ],
-          "texture": "#pot"
+          "texture": "#basin"
         },
         "west": {
           "uv": [
-            4.5,
-            3,
-            6.5,
-            3.75
+            4,
+            2.25,
+            6,
+            3
           ],
-          "texture": "#pot"
+          "texture": "#basin"
         },
         "up": {
           "uv": [
-            2.25,
             6,
-            2.5,
-            8
+            0.25,
+            6.25,
+            2.25
           ],
-          "texture": "#pot"
+          "texture": "#basin"
         },
         "down": {
           "uv": [
-            2.5,
+            2,
             6,
-            2.75,
+            2.25,
             8
           ],
-          "texture": "#pot"
+          "texture": "#basin"
         }
       }
     },
@@ -959,655 +960,655 @@
       "faces": {
         "north": {
           "uv": [
-            10,
-            8,
-            10.25,
-            8.75
+            0.25,
+            7.25,
+            0.5,
+            8
           ],
-          "texture": "#pot"
+          "texture": "#basin"
         },
         "east": {
           "uv": [
+            4,
             3,
-            4.75,
-            5,
-            5.5
+            6,
+            3.75
           ],
-          "texture": "#pot"
+          "texture": "#basin"
         },
         "south": {
           "uv": [
-            9.25,
-            10,
-            9.5,
-            10.75
+            0.5,
+            7.25,
+            0.75,
+            8
           ],
-          "texture": "#pot"
+          "texture": "#basin"
         },
         "west": {
           "uv": [
-            5,
+            4,
             3.75,
-            7,
+            6,
             4.5
           ],
-          "texture": "#pot"
+          "texture": "#basin"
         },
         "up": {
-          "uv": [
-            2.75,
-            6,
-            3,
-            8
-          ],
-          "texture": "#pot"
-        },
-        "down": {
-          "uv": [
-            3.5,
-            6.5,
-            3.75,
-            8.5
-          ],
-          "texture": "#pot"
-        }
-      }
-    },
-    {
-      "from": [
-        3,
-        2,
-        3
-      ],
-      "to": [
-        4,
-        5,
-        5
-      ],
-      "faces": {
-        "north": {
-          "uv": [
-            9.5,
-            10,
-            9.75,
-            10.75
-          ],
-          "texture": "#pot"
-        },
-        "east": {
-          "uv": [
-            1.5,
-            7.25,
-            2,
-            8
-          ],
-          "texture": "#pot"
-        },
-        "south": {
-          "uv": [
-            9.75,
-            10,
-            10,
-            10.75
-          ],
-          "texture": "#pot"
-        },
-        "west": {
-          "uv": [
-            3,
-            7.25,
-            3.5,
-            8
-          ],
-          "texture": "#pot"
-        },
-        "up": {
-          "uv": [
-            4.75,
-            5.5,
-            5,
-            6
-          ],
-          "texture": "#pot"
-        },
-        "down": {
-          "uv": [
-            0,
-            10.5,
-            0.25,
-            11
-          ],
-          "texture": "#pot"
-        }
-      }
-    },
-    {
-      "from": [
-        4,
-        2,
-        3
-      ],
-      "to": [
-        5,
-        5,
-        4
-      ],
-      "faces": {
-        "north": {
-          "uv": [
-            10,
-            10,
-            10.25,
-            10.75
-          ],
-          "texture": "#pot"
-        },
-        "east": {
-          "uv": [
-            10.25,
-            0,
-            10.5,
-            0.75
-          ],
-          "texture": "#pot"
-        },
-        "south": {
-          "uv": [
-            0.75,
-            10.25,
-            1,
-            11
-          ],
-          "texture": "#pot"
-        },
-        "west": {
-          "uv": [
-            10.25,
-            0.75,
-            10.5,
-            1.5
-          ],
-          "texture": "#pot"
-        },
-        "up": {
-          "uv": [
-            0,
-            11.5,
-            0.25,
-            11.75
-          ],
-          "texture": "#pot"
-        },
-        "down": {
-          "uv": [
-            0.25,
-            11.5,
-            0.5,
-            11.75
-          ],
-          "texture": "#pot"
-        }
-      }
-    },
-    {
-      "from": [
-        3,
-        2,
-        11
-      ],
-      "to": [
-        4,
-        5,
-        13
-      ],
-      "rotation": {
-        "angle": 0,
-        "axis": "y",
-        "origin": [
-          0,
-          0,
-          16
-        ]
-      },
-      "faces": {
-        "north": {
-          "uv": [
-            1,
-            10.25,
-            1.25,
-            11
-          ],
-          "texture": "#pot"
-        },
-        "east": {
-          "uv": [
-            1.5,
-            8,
-            2,
-            8.75
-          ],
-          "texture": "#pot"
-        },
-        "south": {
-          "uv": [
-            1.25,
-            10.25,
-            1.5,
-            11
-          ],
-          "texture": "#pot"
-        },
-        "west": {
           "uv": [
             2.25,
-            8,
-            2.75,
-            8.75
-          ],
-          "texture": "#pot"
-        },
-        "up": {
-          "uv": [
-            0.25,
-            10.5,
-            0.5,
-            11
-          ],
-          "texture": "#pot"
-        },
-        "down": {
-          "uv": [
-            10.5,
+            6,
             2.5,
-            10.75,
-            3
+            8
           ],
-          "texture": "#pot"
-        }
-      }
-    },
-    {
-      "from": [
-        4,
-        2,
-        12
-      ],
-      "to": [
-        5,
-        5,
-        13
-      ],
-      "rotation": {
-        "angle": 0,
-        "axis": "y",
-        "origin": [
-          0,
-          0,
-          16
-        ]
-      },
-      "faces": {
-        "north": {
-          "uv": [
-            1.5,
-            10.25,
-            1.75,
-            11
-          ],
-          "texture": "#pot"
-        },
-        "east": {
-          "uv": [
-            10.25,
-            1.5,
-            10.5,
-            2.25
-          ],
-          "texture": "#pot"
-        },
-        "south": {
-          "uv": [
-            1.75,
-            10.25,
-            2,
-            11
-          ],
-          "texture": "#pot"
-        },
-        "west": {
-          "uv": [
-            2,
-            10.25,
-            2.25,
-            11
-          ],
-          "texture": "#pot"
-        },
-        "up": {
-          "uv": [
-            11.5,
-            0.25,
-            11.75,
-            0.5
-          ],
-          "texture": "#pot"
+          "texture": "#basin"
         },
         "down": {
           "uv": [
-            11.5,
-            0.5,
-            11.75,
-            0.75
+            6,
+            2.25,
+            6.25,
+            4.25
           ],
-          "texture": "#pot"
+          "texture": "#basin"
         }
       }
     },
     {
       "from": [
-        12,
+        3,
         2,
         3
       ],
       "to": [
-        13,
+        4,
         5,
         5
       ],
-      "rotation": {
-        "angle": 0,
-        "axis": "y",
-        "origin": [
-          16,
-          0,
-          0
-        ]
-      },
       "faces": {
         "north": {
           "uv": [
-            3.25,
-            10.25,
-            3.5,
-            11
-          ],
-          "texture": "#pot"
-        },
-        "east": {
-          "uv": [
-            2.75,
-            8,
-            3.25,
-            8.75
-          ],
-          "texture": "#pot"
-        },
-        "south": {
-          "uv": [
-            3.5,
-            10.25,
-            3.75,
-            11
-          ],
-          "texture": "#pot"
-        },
-        "west": {
-          "uv": [
-            6.75,
-            8,
-            7.25,
-            8.75
-          ],
-          "texture": "#pot"
-        },
-        "up": {
-          "uv": [
-            3,
-            10.5,
-            3.25,
-            11
-          ],
-          "texture": "#pot"
-        },
-        "down": {
-          "uv": [
-            10.5,
-            3,
-            10.75,
-            3.5
-          ],
-          "texture": "#pot"
-        }
-      }
-    },
-    {
-      "from": [
-        11,
-        2,
-        3
-      ],
-      "to": [
-        12,
-        5,
-        4
-      ],
-      "rotation": {
-        "angle": 0,
-        "axis": "y",
-        "origin": [
-          16,
-          0,
-          0
-        ]
-      },
-      "faces": {
-        "north": {
-          "uv": [
-            3.75,
-            10.25,
-            4,
-            11
-          ],
-          "texture": "#pot"
-        },
-        "east": {
-          "uv": [
-            4,
-            10.25,
-            4.25,
-            11
-          ],
-          "texture": "#pot"
-        },
-        "south": {
-          "uv": [
-            10.25,
-            4.25,
-            10.5,
-            5
-          ],
-          "texture": "#pot"
-        },
-        "west": {
-          "uv": [
-            10.25,
-            5,
-            10.5,
-            5.75
-          ],
-          "texture": "#pot"
-        },
-        "up": {
-          "uv": [
-            11.5,
             0.75,
-            11.75,
-            1
-          ],
-          "texture": "#pot"
-        },
-        "down": {
-          "uv": [
-            11.5,
-            1,
-            11.75,
-            1.25
-          ],
-          "texture": "#pot"
-        }
-      }
-    },
-    {
-      "from": [
-        11,
-        2,
-        12
-      ],
-      "to": [
-        12,
-        5,
-        13
-      ],
-      "rotation": {
-        "angle": 0,
-        "axis": "y",
-        "origin": [
-          16,
-          0,
-          16
-        ]
-      },
-      "faces": {
-        "north": {
-          "uv": [
-            5.75,
-            10.25,
-            6,
-            11
-          ],
-          "texture": "#pot"
-        },
-        "east": {
-          "uv": [
-            10.25,
-            5.75,
-            10.5,
-            6.5
-          ],
-          "texture": "#pot"
-        },
-        "south": {
-          "uv": [
-            6,
-            10.25,
-            6.25,
-            11
-          ],
-          "texture": "#pot"
-        },
-        "west": {
-          "uv": [
-            6.25,
-            10.25,
-            6.5,
-            11
-          ],
-          "texture": "#pot"
-        },
-        "up": {
-          "uv": [
-            1.5,
-            11.5,
-            1.75,
-            11.75
-          ],
-          "texture": "#pot"
-        },
-        "down": {
-          "uv": [
-            11.5,
-            1.5,
-            11.75,
-            1.75
-          ],
-          "texture": "#pot"
-        }
-      }
-    },
-    {
-      "from": [
-        12,
-        2,
-        11
-      ],
-      "to": [
-        13,
-        5,
-        13
-      ],
-      "rotation": {
-        "angle": 0,
-        "axis": "y",
-        "origin": [
-          16,
-          0,
-          16
-        ]
-      },
-      "faces": {
-        "north": {
-          "uv": [
-            6.5,
-            10.25,
-            6.75,
-            11
-          ],
-          "texture": "#pot"
-        },
-        "east": {
-          "uv": [
             7.25,
-            8,
-            7.75,
-            8.75
+            1,
+            8
           ],
-          "texture": "#pot"
+          "texture": "#basin"
         },
-        "south": {
+        "east": {
           "uv": [
-            10.25,
+            0.25,
             6.5,
-            10.5,
+            0.75,
             7.25
           ],
-          "texture": "#pot"
+          "texture": "#basin"
+        },
+        "south": {
+          "uv": [
+            1,
+            7.25,
+            1.25,
+            8
+          ],
+          "texture": "#basin"
         },
         "west": {
           "uv": [
-            7.75,
-            8,
-            8.25,
-            8.75
+            0.75,
+            6.5,
+            1.25,
+            7.25
           ],
-          "texture": "#pot"
+          "texture": "#basin"
         },
         "up": {
           "uv": [
-            10.5,
-            3.5,
-            10.75,
-            4
+            7,
+            1.75,
+            7.25,
+            2.25
           ],
-          "texture": "#pot"
+          "texture": "#basin"
         },
         "down": {
           "uv": [
-            10.5,
+            7.25,
+            1.75,
+            7.5,
+            2.25
+          ],
+          "texture": "#basin"
+        }
+      }
+    },
+    {
+      "from": [
+        4,
+        2,
+        3
+      ],
+      "to": [
+        5,
+        5,
+        4
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            2.5,
+            7.25,
+            2.75,
+            8
+          ],
+          "texture": "#basin"
+        },
+        "east": {
+          "uv": [
+            2.75,
+            7.25,
+            3,
+            8
+          ],
+          "texture": "#basin"
+        },
+        "south": {
+          "uv": [
+            3,
+            7.25,
+            3.25,
+            8
+          ],
+          "texture": "#basin"
+        },
+        "west": {
+          "uv": [
+            3.25,
+            7.25,
+            3.5,
+            8
+          ],
+          "texture": "#basin"
+        },
+        "up": {
+          "uv": [
+            1.25,
+            8.25,
+            1.5,
+            8.5
+          ],
+          "texture": "#basin"
+        },
+        "down": {
+          "uv": [
+            8.25,
+            2,
+            8.5,
+            2.25
+          ],
+          "texture": "#basin"
+        }
+      }
+    },
+    {
+      "from": [
+        3,
+        2,
+        11
+      ],
+      "to": [
+        4,
+        5,
+        13
+      ],
+      "rotation": {
+        "angle": 0,
+        "axis": "y",
+        "origin": [
+          0,
+          0,
+          16
+        ]
+      },
+      "faces": {
+        "north": {
+          "uv": [
+            3.5,
+            7.25,
+            3.75,
+            8
+          ],
+          "texture": "#basin"
+        },
+        "east": {
+          "uv": [
+            6.5,
+            0.75,
+            7,
+            1.5
+          ],
+          "texture": "#basin"
+        },
+        "south": {
+          "uv": [
+            3.75,
+            7.25,
             4,
-            10.75,
+            8
+          ],
+          "texture": "#basin"
+        },
+        "west": {
+          "uv": [
+            6.5,
+            1.5,
+            7,
+            2.25
+          ],
+          "texture": "#basin"
+        },
+        "up": {
+          "uv": [
+            7.5,
+            1.75,
+            7.75,
+            2.25
+          ],
+          "texture": "#basin"
+        },
+        "down": {
+          "uv": [
+            7.75,
+            0.25,
+            8,
+            0.75
+          ],
+          "texture": "#basin"
+        }
+      }
+    },
+    {
+      "from": [
+        4,
+        2,
+        12
+      ],
+      "to": [
+        5,
+        5,
+        13
+      ],
+      "rotation": {
+        "angle": 0,
+        "axis": "y",
+        "origin": [
+          0,
+          0,
+          16
+        ]
+      },
+      "faces": {
+        "north": {
+          "uv": [
+            4,
+            7.25,
+            4.25,
+            8
+          ],
+          "texture": "#basin"
+        },
+        "east": {
+          "uv": [
+            4.25,
+            7.25,
+            4.5,
+            8
+          ],
+          "texture": "#basin"
+        },
+        "south": {
+          "uv": [
+            5.25,
+            7.25,
+            5.5,
+            8
+          ],
+          "texture": "#basin"
+        },
+        "west": {
+          "uv": [
+            6,
+            7.25,
+            6.25,
+            8
+          ],
+          "texture": "#basin"
+        },
+        "up": {
+          "uv": [
+            2.25,
+            8.25,
+            2.5,
+            8.5
+          ],
+          "texture": "#basin"
+        },
+        "down": {
+          "uv": [
+            8.25,
+            2.25,
+            8.5,
+            2.5
+          ],
+          "texture": "#basin"
+        }
+      }
+    },
+    {
+      "from": [
+        12,
+        2,
+        3
+      ],
+      "to": [
+        13,
+        5,
+        5
+      ],
+      "rotation": {
+        "angle": 0,
+        "axis": "y",
+        "origin": [
+          16,
+          0,
+          0
+        ]
+      },
+      "faces": {
+        "north": {
+          "uv": [
+            7.25,
+            7,
+            7.5,
+            7.75
+          ],
+          "texture": "#basin"
+        },
+        "east": {
+          "uv": [
+            2.5,
+            6.5,
+            3,
+            7.25
+          ],
+          "texture": "#basin"
+        },
+        "south": {
+          "uv": [
+            5.5,
+            7.5,
+            5.75,
+            8.25
+          ],
+          "texture": "#basin"
+        },
+        "west": {
+          "uv": [
+            3,
+            6.5,
+            3.5,
+            7.25
+          ],
+          "texture": "#basin"
+        },
+        "up": {
+          "uv": [
+            7.75,
+            4,
+            8,
             4.5
           ],
-          "texture": "#pot"
+          "texture": "#basin"
+        },
+        "down": {
+          "uv": [
+            7.75,
+            5,
+            8,
+            5.5
+          ],
+          "texture": "#basin"
+        }
+      }
+    },
+    {
+      "from": [
+        11,
+        2,
+        3
+      ],
+      "to": [
+        12,
+        5,
+        4
+      ],
+      "rotation": {
+        "angle": 0,
+        "axis": "y",
+        "origin": [
+          16,
+          0,
+          0
+        ]
+      },
+      "faces": {
+        "north": {
+          "uv": [
+            5.75,
+            7.5,
+            6,
+            8.25
+          ],
+          "texture": "#basin"
+        },
+        "east": {
+          "uv": [
+            7.5,
+            7,
+            7.75,
+            7.75
+          ],
+          "texture": "#basin"
+        },
+        "south": {
+          "uv": [
+            1.5,
+            7.75,
+            1.75,
+            8.5
+          ],
+          "texture": "#basin"
+        },
+        "west": {
+          "uv": [
+            1.75,
+            7.75,
+            2,
+            8.5
+          ],
+          "texture": "#basin"
+        },
+        "up": {
+          "uv": [
+            2.5,
+            8.25,
+            2.75,
+            8.5
+          ],
+          "texture": "#basin"
+        },
+        "down": {
+          "uv": [
+            8.25,
+            2.75,
+            8.5,
+            3
+          ],
+          "texture": "#basin"
+        }
+      }
+    },
+    {
+      "from": [
+        11,
+        2,
+        12
+      ],
+      "to": [
+        12,
+        5,
+        13
+      ],
+      "rotation": {
+        "angle": 0,
+        "axis": "y",
+        "origin": [
+          16,
+          0,
+          16
+        ]
+      },
+      "faces": {
+        "north": {
+          "uv": [
+            7.75,
+            1.75,
+            8,
+            2.5
+          ],
+          "texture": "#basin"
+        },
+        "east": {
+          "uv": [
+            7.75,
+            2.5,
+            8,
+            3.25
+          ],
+          "texture": "#basin"
+        },
+        "south": {
+          "uv": [
+            7.75,
+            3.25,
+            8,
+            4
+          ],
+          "texture": "#basin"
+        },
+        "west": {
+          "uv": [
+            6.25,
+            7.75,
+            6.5,
+            8.5
+          ],
+          "texture": "#basin"
+        },
+        "up": {
+          "uv": [
+            3,
+            8.25,
+            3.25,
+            8.5
+          ],
+          "texture": "#basin"
+        },
+        "down": {
+          "uv": [
+            8.25,
+            3,
+            8.5,
+            3.25
+          ],
+          "texture": "#basin"
+        }
+      }
+    },
+    {
+      "from": [
+        12,
+        2,
+        11
+      ],
+      "to": [
+        13,
+        5,
+        13
+      ],
+      "rotation": {
+        "angle": 0,
+        "axis": "y",
+        "origin": [
+          16,
+          0,
+          16
+        ]
+      },
+      "faces": {
+        "north": {
+          "uv": [
+            6.5,
+            7.75,
+            6.75,
+            8.5
+          ],
+          "texture": "#basin"
+        },
+        "east": {
+          "uv": [
+            3.5,
+            6.5,
+            4,
+            7.25
+          ],
+          "texture": "#basin"
+        },
+        "south": {
+          "uv": [
+            6.75,
+            7.75,
+            7,
+            8.5
+          ],
+          "texture": "#basin"
+        },
+        "west": {
+          "uv": [
+            4,
+            6.5,
+            4.5,
+            7.25
+          ],
+          "texture": "#basin"
+        },
+        "up": {
+          "uv": [
+            7,
+            7.75,
+            7.25,
+            8.25
+          ],
+          "texture": "#basin"
+        },
+        "down": {
+          "uv": [
+            7.75,
+            7,
+            8,
+            7.5
+          ],
+          "texture": "#basin"
         }
       }
     },
@@ -1625,57 +1626,57 @@
       "faces": {
         "north": {
           "uv": [
-            0,
-            8.25,
-            1.5,
-            8.5
+            6.5,
+            4.5,
+            8,
+            4.75
           ],
-          "texture": "#pot"
+          "texture": "#basin"
         },
         "east": {
           "uv": [
-            1.75,
-            11.5,
-            2,
-            11.75
+            3.25,
+            8.25,
+            3.5,
+            8.5
           ],
-          "texture": "#pot"
+          "texture": "#basin"
         },
         "south": {
           "uv": [
-            8.25,
-            5.25,
-            9.75,
-            5.5
+            6.5,
+            4.75,
+            8,
+            5
           ],
-          "texture": "#pot"
+          "texture": "#basin"
         },
         "west": {
           "uv": [
-            11.5,
-            1.75,
-            11.75,
-            2
+            8.25,
+            3.5,
+            8.5,
+            3.75
           ],
-          "texture": "#pot"
+          "texture": "#basin"
         },
         "up": {
           "uv": [
-            8.25,
+            6.5,
             5.5,
-            9.75,
+            8,
             5.75
           ],
-          "texture": "#pot"
+          "texture": "#basin"
         },
         "down": {
           "uv": [
-            8.25,
+            6.5,
             5.75,
-            9.75,
+            8,
             6
           ],
-          "texture": "#pot"
+          "texture": "#basin"
         }
       }
     },
@@ -1693,57 +1694,57 @@
       "faces": {
         "north": {
           "uv": [
-            8.25,
+            6.5,
             6,
-            9.75,
+            8,
             6.25
           ],
-          "texture": "#pot"
+          "texture": "#basin"
         },
         "east": {
           "uv": [
-            11.5,
-            2,
-            11.75,
-            2.25
+            3.75,
+            8.25,
+            4,
+            8.5
           ],
-          "texture": "#pot"
+          "texture": "#basin"
         },
         "south": {
           "uv": [
-            8.25,
             6.5,
-            9.75,
-            6.75
+            6.25,
+            8,
+            6.5
           ],
-          "texture": "#pot"
+          "texture": "#basin"
         },
         "west": {
           "uv": [
-            11.5,
-            2.25,
-            11.75,
-            2.5
+            8.25,
+            3.75,
+            8.5,
+            4
           ],
-          "texture": "#pot"
+          "texture": "#basin"
         },
         "up": {
           "uv": [
-            8.25,
-            6.75,
-            9.75,
-            7
+            6.5,
+            6.5,
+            8,
+            6.75
           ],
-          "texture": "#pot"
+          "texture": "#basin"
         },
         "down": {
           "uv": [
-            8.25,
-            7,
-            9.75,
-            7.25
+            6.5,
+            6.75,
+            8,
+            7
           ],
-          "texture": "#pot"
+          "texture": "#basin"
         }
       }
     },
@@ -1770,57 +1771,57 @@
       "faces": {
         "north": {
           "uv": [
-            11.5,
-            2.5,
-            11.75,
-            2.75
+            4,
+            8.25,
+            4.25,
+            8.5
           ],
-          "texture": "#pot"
+          "texture": "#basin"
         },
         "east": {
           "uv": [
-            8.25,
-            7.25,
-            9.75,
-            7.5
+            7,
+            0.75,
+            8.5,
+            1
           ],
-          "texture": "#pot"
+          "texture": "#basin"
         },
         "south": {
           "uv": [
-            11.5,
-            2.75,
-            11.75,
-            3
+            8.25,
+            4.25,
+            8.5,
+            4.5
           ],
-          "texture": "#pot"
+          "texture": "#basin"
         },
         "west": {
           "uv": [
-            8.25,
-            7.5,
-            9.75,
-            7.75
+            7,
+            1,
+            8.5,
+            1.25
           ],
-          "texture": "#pot"
+          "texture": "#basin"
         },
         "up": {
           "uv": [
-            5.75,
-            7,
-            6,
-            8.5
+            1.25,
+            6.5,
+            1.5,
+            8
           ],
-          "texture": "#pot"
+          "texture": "#basin"
         },
         "down": {
           "uv": [
-            3.25,
-            8,
-            3.5,
-            9.5
+            4.5,
+            6.5,
+            4.75,
+            8
           ],
-          "texture": "#pot"
+          "texture": "#basin"
         }
       }
     },
@@ -1847,57 +1848,57 @@
       "faces": {
         "north": {
           "uv": [
-            11.5,
-            3,
-            11.75,
-            3.25
+            4.5,
+            8.25,
+            4.75,
+            8.5
           ],
-          "texture": "#pot"
+          "texture": "#basin"
         },
         "east": {
           "uv": [
-            8.25,
-            7.75,
-            9.75,
-            8
+            7,
+            1.25,
+            8.5,
+            1.5
           ],
-          "texture": "#pot"
+          "texture": "#basin"
         },
         "south": {
           "uv": [
-            11.5,
-            3.25,
-            11.75,
-            3.5
+            8.25,
+            4.5,
+            8.5,
+            4.75
           ],
-          "texture": "#pot"
+          "texture": "#basin"
         },
         "west": {
           "uv": [
-            8.25,
-            8,
-            9.75,
-            8.25
+            7,
+            1.5,
+            8.5,
+            1.75
           ],
-          "texture": "#pot"
+          "texture": "#basin"
         },
         "up": {
           "uv": [
-            2,
-            8.25,
-            2.25,
-            9.75
+            4.75,
+            6.5,
+            5,
+            8
           ],
-          "texture": "#pot"
+          "texture": "#basin"
         },
         "down": {
           "uv": [
-            6,
-            8.25,
-            6.25,
-            9.75
+            5,
+            6.5,
+            5.25,
+            8
           ],
-          "texture": "#pot"
+          "texture": "#basin"
         }
       }
     },
@@ -1915,57 +1916,57 @@
       "faces": {
         "north": {
           "uv": [
-            4.5,
-            3.75,
-            5,
-            4
+            7.25,
+            7.75,
+            7.75,
+            8
           ],
-          "texture": "#pot"
+          "texture": "#basin"
         },
         "east": {
           "uv": [
-            3.5,
-            11.5,
-            3.75,
-            11.75
+            4.75,
+            8.25,
+            5,
+            8.5
           ],
-          "texture": "#pot"
+          "texture": "#basin"
         },
         "south": {
           "uv": [
-            6.25,
-            8.5,
-            6.75,
-            8.75
+            7.75,
+            7.5,
+            8.25,
+            7.75
           ],
-          "texture": "#pot"
+          "texture": "#basin"
         },
         "west": {
           "uv": [
-            3.75,
-            11.5,
-            4,
-            11.75
+            5,
+            8.25,
+            5.25,
+            8.5
           ],
-          "texture": "#pot"
+          "texture": "#basin"
         },
         "up": {
           "uv": [
-            4.25,
-            10.5,
-            4.75,
-            10.75
+            7.75,
+            7.75,
+            8.25,
+            8
           ],
-          "texture": "#pot"
+          "texture": "#basin"
         },
         "down": {
           "uv": [
-            10.5,
-            4.5,
-            11,
-            4.75
+            0,
+            8,
+            0.5,
+            8.25
           ],
-          "texture": "#pot"
+          "texture": "#basin"
         }
       }
     },
@@ -1992,57 +1993,57 @@
       "faces": {
         "north": {
           "uv": [
-            10.5,
-            4.75,
-            11,
-            5
+            8,
+            0,
+            8.5,
+            0.25
           ],
-          "texture": "#pot"
+          "texture": "#basin"
         },
         "east": {
           "uv": [
-            11.5,
-            3.75,
-            11.75,
-            4
+            5.25,
+            8.25,
+            5.5,
+            8.5
           ],
-          "texture": "#pot"
+          "texture": "#basin"
         },
         "south": {
           "uv": [
-            10.5,
-            5,
-            11,
-            5.25
+            8,
+            0.25,
+            8.5,
+            0.5
           ],
-          "texture": "#pot"
+          "texture": "#basin"
         },
         "west": {
           "uv": [
-            11.5,
-            4,
-            11.75,
-            4.25
+            5.5,
+            8.25,
+            5.75,
+            8.5
           ],
-          "texture": "#pot"
+          "texture": "#basin"
         },
         "up": {
           "uv": [
-            10.5,
-            5.25,
-            11,
-            5.5
+            0.5,
+            8,
+            1,
+            8.25
           ],
-          "texture": "#pot"
+          "texture": "#basin"
         },
         "down": {
           "uv": [
-            10.5,
-            5.5,
-            11,
-            5.75
+            8,
+            0.5,
+            8.5,
+            0.75
           ],
-          "texture": "#pot"
+          "texture": "#basin"
         }
       }
     },
@@ -2069,134 +2070,134 @@
       "faces": {
         "north": {
           "uv": [
-            11.5,
-            4.25,
-            11.75,
-            4.5
+            5.75,
+            8.25,
+            6,
+            8.5
           ],
-          "texture": "#pot"
+          "texture": "#basin"
         },
         "east": {
           "uv": [
-            10.5,
-            5.75,
-            11,
-            6
+            1,
+            8,
+            1.5,
+            8.25
           ],
-          "texture": "#pot"
+          "texture": "#basin"
         },
         "south": {
           "uv": [
-            4.5,
-            11.5,
-            4.75,
-            11.75
+            6,
+            8.25,
+            6.25,
+            8.5
           ],
-          "texture": "#pot"
+          "texture": "#basin"
         },
         "west": {
           "uv": [
-            10.5,
-            6,
-            11,
-            6.25
+            8,
+            1.75,
+            8.5,
+            2
           ],
-          "texture": "#pot"
+          "texture": "#basin"
         },
         "up": {
           "uv": [
-            5,
-            10.5,
-            5.25,
-            11
+            2,
+            8,
+            2.25,
+            8.5
           ],
-          "texture": "#pot"
+          "texture": "#basin"
         },
         "down": {
           "uv": [
-            10.5,
+            8,
+            2,
+            8.25,
+            2.5
+          ],
+          "texture": "#basin"
+        }
+      }
+    },
+    {
+      "from": [
+        13,
+        5,
+        3
+      ],
+      "to": [
+        14,
+        5.5,
+        5
+      ],
+      "rotation": {
+        "angle": 0,
+        "axis": "y",
+        "origin": [
+          12.5,
+          7.5,
+          4
+        ]
+      },
+      "faces": {
+        "north": {
+          "uv": [
+            8.25,
             6.25,
-            10.75,
+            8.5,
+            6.5
+          ],
+          "texture": "#basin"
+        },
+        "east": {
+          "uv": [
+            2.25,
+            8,
+            2.75,
+            8.25
+          ],
+          "texture": "#basin"
+        },
+        "south": {
+          "uv": [
+            8.25,
+            6.5,
+            8.5,
             6.75
           ],
-          "texture": "#pot"
-        }
-      }
-    },
-    {
-      "from": [
-        13,
-        5,
-        3
-      ],
-      "to": [
-        14,
-        5.5,
-        5
-      ],
-      "rotation": {
-        "angle": 0,
-        "axis": "y",
-        "origin": [
-          12.5,
-          7.5,
-          4
-        ]
-      },
-      "faces": {
-        "north": {
-          "uv": [
-            11.5,
-            4.5,
-            11.75,
-            4.75
-          ],
-          "texture": "#pot"
-        },
-        "east": {
-          "uv": [
-            6.75,
-            10.5,
-            7.25,
-            10.75
-          ],
-          "texture": "#pot"
-        },
-        "south": {
-          "uv": [
-            5,
-            11.5,
-            5.25,
-            11.75
-          ],
-          "texture": "#pot"
+          "texture": "#basin"
         },
         "west": {
           "uv": [
-            10.5,
-            6.75,
-            11,
-            7
+            8,
+            2.5,
+            8.5,
+            2.75
           ],
-          "texture": "#pot"
+          "texture": "#basin"
         },
         "up": {
           "uv": [
-            10.5,
-            7,
-            10.75,
-            7.5
+            2.75,
+            8,
+            3,
+            8.5
           ],
-          "texture": "#pot"
+          "texture": "#basin"
         },
         "down": {
           "uv": [
-            7.25,
-            10.5,
-            7.5,
-            11
+            8,
+            2.75,
+            8.25,
+            3.25
           ],
-          "texture": "#pot"
+          "texture": "#basin"
         }
       }
     },
@@ -2223,57 +2224,57 @@
       "faces": {
         "north": {
           "uv": [
-            11.5,
-            5,
-            11.75,
-            5.25
+            8.25,
+            6.75,
+            8.5,
+            7
           ],
-          "texture": "#pot"
+          "texture": "#basin"
         },
         "east": {
           "uv": [
-            10.5,
-            7.5,
-            11,
-            7.75
+            3,
+            8,
+            3.5,
+            8.25
           ],
-          "texture": "#pot"
+          "texture": "#basin"
         },
         "south": {
           "uv": [
-            11.5,
-            5.25,
-            11.75,
-            5.5
+            7,
+            8.25,
+            7.25,
+            8.5
           ],
-          "texture": "#pot"
+          "texture": "#basin"
         },
         "west": {
           "uv": [
-            7.75,
-            10.5,
-            8.25,
-            10.75
+            8,
+            3.25,
+            8.5,
+            3.5
           ],
-          "texture": "#pot"
+          "texture": "#basin"
         },
         "up": {
           "uv": [
-            8.25,
-            10.5,
-            8.5,
-            11
+            3.5,
+            8,
+            3.75,
+            8.5
           ],
-          "texture": "#pot"
+          "texture": "#basin"
         },
         "down": {
           "uv": [
-            8.5,
-            10.5,
-            8.75,
-            11
+            8,
+            3.5,
+            8.25,
+            4
           ],
-          "texture": "#pot"
+          "texture": "#basin"
         }
       }
     },
@@ -2300,57 +2301,57 @@
       "faces": {
         "north": {
           "uv": [
-            11.5,
-            5.5,
-            11.75,
-            5.75
+            8.25,
+            7,
+            8.5,
+            7.25
           ],
-          "texture": "#pot"
+          "texture": "#basin"
         },
         "east": {
           "uv": [
-            10.5,
-            7.75,
-            11,
-            8
+            3.75,
+            8,
+            4.25,
+            8.25
           ],
-          "texture": "#pot"
+          "texture": "#basin"
         },
         "south": {
           "uv": [
-            5.75,
-            11.5,
-            6,
-            11.75
+            7.25,
+            8.25,
+            7.5,
+            8.5
           ],
-          "texture": "#pot"
+          "texture": "#basin"
         },
         "west": {
           "uv": [
-            8.75,
-            10.5,
-            9.25,
-            10.75
+            8,
+            4,
+            8.5,
+            4.25
           ],
-          "texture": "#pot"
+          "texture": "#basin"
         },
         "up": {
           "uv": [
-            10.25,
-            10.5,
-            10.5,
-            11
+            4.25,
+            8,
+            4.5,
+            8.5
           ],
-          "texture": "#pot"
+          "texture": "#basin"
         },
         "down": {
           "uv": [
-            10.5,
-            10.5,
-            10.75,
-            11
+            8,
+            4.25,
+            8.25,
+            4.75
           ],
-          "texture": "#pot"
+          "texture": "#basin"
         }
       }
     },
@@ -2377,57 +2378,57 @@
       "faces": {
         "north": {
           "uv": [
-            2.25,
-            10.75,
-            2.75,
-            11
+            4.5,
+            8,
+            5,
+            8.25
           ],
-          "texture": "#pot"
+          "texture": "#basin"
         },
         "east": {
           "uv": [
-            11.5,
-            5.75,
-            11.75,
-            6
+            8.25,
+            7.25,
+            8.5,
+            7.5
           ],
-          "texture": "#pot"
+          "texture": "#basin"
         },
         "south": {
           "uv": [
-            10.75,
-            2.5,
-            11.25,
-            2.75
+            8,
+            4.75,
+            8.5,
+            5
           ],
-          "texture": "#pot"
+          "texture": "#basin"
         },
         "west": {
           "uv": [
-            6,
-            11.5,
-            6.25,
-            11.75
+            7.5,
+            8.25,
+            7.75,
+            8.5
           ],
-          "texture": "#pot"
+          "texture": "#basin"
         },
         "up": {
           "uv": [
-            10.75,
-            2.75,
-            11.25,
-            3
+            5,
+            8,
+            5.5,
+            8.25
           ],
-          "texture": "#pot"
+          "texture": "#basin"
         },
         "down": {
           "uv": [
-            10.75,
-            3,
-            11.25,
-            3.25
+            8,
+            5,
+            8.5,
+            5.25
           ],
-          "texture": "#pot"
+          "texture": "#basin"
         }
       }
     },
@@ -2454,57 +2455,57 @@
       "faces": {
         "north": {
           "uv": [
-            10.75,
-            3.25,
-            11.25,
-            3.5
+            8,
+            5.25,
+            8.5,
+            5.5
           ],
-          "texture": "#pot"
+          "texture": "#basin"
         },
         "east": {
           "uv": [
-            11.5,
-            6,
-            11.75,
-            6.25
+            8.25,
+            7.5,
+            8.5,
+            7.75
           ],
-          "texture": "#pot"
+          "texture": "#basin"
         },
         "south": {
           "uv": [
-            10.75,
-            3.5,
-            11.25,
-            3.75
+            8,
+            5.5,
+            8.5,
+            5.75
           ],
-          "texture": "#pot"
+          "texture": "#basin"
         },
         "west": {
           "uv": [
-            6.25,
-            11.5,
-            6.5,
-            11.75
+            7.75,
+            8.25,
+            8,
+            8.5
           ],
-          "texture": "#pot"
+          "texture": "#basin"
         },
         "up": {
           "uv": [
-            10.75,
-            3.75,
-            11.25,
-            4
+            8,
+            5.75,
+            8.5,
+            6
           ],
-          "texture": "#pot"
+          "texture": "#basin"
         },
         "down": {
           "uv": [
-            10.75,
-            4,
-            11.25,
-            4.25
+            8,
+            6,
+            8.5,
+            6.25
           ],
-          "texture": "#pot"
+          "texture": "#basin"
         }
       }
     },
@@ -2516,7 +2517,7 @@
       ],
       "to": [
         12,
-        2.25,
+        2,
         12
       ],
       "rotation": {
@@ -2531,54 +2532,54 @@
       "faces": {
         "north": {
           "uv": [
-            3.5,
-            6.25,
-            5.5,
-            6.5
+            0,
+            0,
+            2,
+            0
           ],
           "texture": "#pot"
         },
         "east": {
           "uv": [
-            3.5,
-            6.25,
-            5.5,
-            6.5
+            0,
+            0,
+            2,
+            0
           ],
           "texture": "#pot"
         },
         "south": {
           "uv": [
-            3.5,
-            6.25,
-            5.5,
-            6.5
+            0,
+            0,
+            2,
+            0
           ],
           "texture": "#pot"
         },
         "west": {
           "uv": [
-            3.5,
-            6.25,
-            5.5,
-            6.5
+            0,
+            0,
+            2,
+            0
           ],
           "texture": "#pot"
         },
         "up": {
           "uv": [
-            2.5,
             0,
-            4.5,
+            0,
+            2,
             2
           ],
           "texture": "#pot"
         },
         "down": {
           "uv": [
-            2.5,
+            0,
             2,
-            4.5,
+            2,
             4
           ],
           "texture": "#pot"
@@ -2608,55 +2609,55 @@
       "faces": {
         "north": {
           "uv": [
-            11.5,
-            6.25,
-            11.75,
-            6.5
+            5.75,
+            4,
+            6,
+            4.25
           ],
           "texture": "#pot"
         },
         "east": {
           "uv": [
-            10,
-            8.75,
-            10.75,
-            9
+            6.5,
+            1.5,
+            7.25,
+            1.75
           ],
           "texture": "#pot"
         },
         "south": {
           "uv": [
-            6.5,
-            11.5,
-            6.75,
-            11.75
+            6,
+            4.5,
+            6.25,
+            4.75
           ],
           "texture": "#pot"
         },
         "west": {
           "uv": [
-            6.75,
-            10.25,
-            7.5,
-            10.5
+            6.5,
+            3.25,
+            7.25,
+            3.5
           ],
           "texture": "#pot"
         },
         "up": {
           "uv": [
-            10.25,
-            7.25,
-            10.5,
-            8
+            4,
+            5.5,
+            4.25,
+            6.25
           ],
           "texture": "#pot"
         },
         "down": {
           "uv": [
-            7.5,
-            10.25,
-            7.75,
-            11
+            1.5,
+            6.5,
+            1.75,
+            7.25
           ],
           "texture": "#pot"
         }
@@ -2685,55 +2686,55 @@
       "faces": {
         "north": {
           "uv": [
-            7.75,
-            10.25,
-            8.5,
-            10.5
+            5,
+            6.5,
+            5.75,
+            6.75
           ],
           "texture": "#pot"
         },
         "east": {
           "uv": [
-            4.25,
-            10.75,
-            4.75,
-            11
+            1.5,
+            4.5,
+            2,
+            4.75
           ],
           "texture": "#pot"
         },
         "south": {
           "uv": [
-            10.25,
-            8,
-            11,
-            8.25
+            6.25,
+            6.5,
+            7,
+            6.75
           ],
           "texture": "#pot"
         },
         "west": {
           "uv": [
-            10.75,
-            4.25,
-            11.25,
-            4.5
+            5.5,
+            2.5,
+            6,
+            2.75
           ],
           "texture": "#pot"
         },
         "up": {
           "uv": [
-            8.25,
-            8.25,
-            9,
-            8.75
+            3.75,
+            0.5,
+            4.5,
+            1
           ],
           "texture": "#pot"
         },
         "down": {
           "uv": [
-            0,
-            8.5,
-            0.75,
-            9
+            3.5,
+            3.75,
+            4.25,
+            4.25
           ],
           "texture": "#pot"
         }
@@ -2762,55 +2763,55 @@
       "faces": {
         "north": {
           "uv": [
-            5.25,
-            10.75,
-            5.75,
-            11
+            1,
+            7,
+            1.5,
+            7.25
           ],
           "texture": "#pot"
         },
         "east": {
           "uv": [
-            10.75,
-            6.25,
-            11.25,
-            6.5
+            7,
+            1,
+            7.5,
+            1.25
           ],
           "texture": "#pot"
         },
         "south": {
           "uv": [
-            10.75,
-            6.5,
-            11.25,
-            6.75
+            7,
+            1.25,
+            7.5,
+            1.5
           ],
           "texture": "#pot"
         },
         "west": {
           "uv": [
-            6.75,
-            10.75,
-            7.25,
-            11
+            2.25,
+            7,
+            2.75,
+            7.25
           ],
           "texture": "#pot"
         },
         "up": {
           "uv": [
+            1.75,
             5.25,
-            8.5,
-            5.75,
-            9
+            2.25,
+            5.75
           ],
           "texture": "#pot"
         },
         "down": {
           "uv": [
-            1.5,
-            8.75,
-            2,
-            9.25
+            5.25,
+            1.75,
+            5.75,
+            2.25
           ],
           "texture": "#pot"
         }
@@ -2839,55 +2840,55 @@
       "faces": {
         "north": {
           "uv": [
-            11.5,
-            6.5,
-            11.75,
-            6.75
+            4.5,
+            6.25,
+            4.75,
+            6.5
           ],
           "texture": "#pot"
         },
         "east": {
           "uv": [
             2.25,
-            8.75,
+            5.25,
             3.25,
-            9
+            5.5
           ],
           "texture": "#pot"
         },
         "south": {
           "uv": [
-            6.75,
-            11.5,
-            7,
-            11.75
+            3.75,
+            6.5,
+            4,
+            6.75
           ],
           "texture": "#pot"
         },
         "west": {
           "uv": [
-            2.25,
-            9,
             3.25,
-            9.25
+            5.25,
+            4.25,
+            5.5
           ],
           "texture": "#pot"
         },
         "up": {
           "uv": [
-            5.75,
-            8.5,
-            6,
-            9.5
+            4.25,
+            5.25,
+            4.5,
+            6.25
           ],
           "texture": "#pot"
         },
         "down": {
           "uv": [
-            0,
-            9,
-            0.25,
-            10
+            4.5,
+            5.25,
+            4.75,
+            6.25
           ],
           "texture": "#pot"
         }
@@ -2916,55 +2917,55 @@
       "faces": {
         "north": {
           "uv": [
-            10.25,
-            8.25,
-            11,
-            8.5
+            0,
+            6.75,
+            0.75,
+            7
           ],
           "texture": "#pot"
         },
         "east": {
           "uv": [
-            8.5,
-            10.25,
-            9.25,
-            10.5
+            6.75,
+            1.75,
+            7.5,
+            2
           ],
           "texture": "#pot"
         },
         "south": {
           "uv": [
-            10.25,
-            8.5,
-            11,
-            8.75
+            6.75,
+            2,
+            7.5,
+            2.25
           ],
           "texture": "#pot"
         },
         "west": {
           "uv": [
-            10.25,
-            9,
-            11,
-            9.25
+            6.75,
+            3.5,
+            7.5,
+            3.75
           ],
           "texture": "#pot"
         },
         "up": {
           "uv": [
-            5.5,
-            5.5,
-            6.25,
-            6.25
+            2.5,
+            1,
+            3.25,
+            1.75
           ],
           "texture": "#pot"
         },
         "down": {
           "uv": [
-            0,
-            6,
-            0.75,
-            6.75
+            2.5,
+            1.75,
+            3.25,
+            2.5
           ],
           "texture": "#pot"
         }
@@ -2993,55 +2994,55 @@
       "faces": {
         "north": {
           "uv": [
-            10.75,
             7,
-            11.25,
-            7.25
+            2.25,
+            7.5,
+            2.5
           ],
           "texture": "#pot"
         },
         "east": {
           "uv": [
-            10.25,
-            9.25,
-            11,
-            9.5
+            3.75,
+            6.75,
+            4.5,
+            7
           ],
           "texture": "#pot"
         },
         "south": {
           "uv": [
-            10.75,
-            7.25,
-            11.25,
-            7.5
+            7,
+            2.5,
+            7.5,
+            2.75
           ],
           "texture": "#pot"
         },
         "west": {
           "uv": [
-            10.25,
-            9.5,
-            11,
-            9.75
+            6.75,
+            3.75,
+            7.5,
+            4
           ],
           "texture": "#pot"
         },
         "up": {
           "uv": [
-            8.5,
-            0,
-            9,
-            0.75
+            2,
+            3.5,
+            2.5,
+            4.25
           ],
           "texture": "#pot"
         },
         "down": {
           "uv": [
-            0.75,
-            8.5,
-            1.25,
-            9.25
+            0,
+            4,
+            0.5,
+            4.75
           ],
           "texture": "#pot"
         }
@@ -3070,55 +3071,55 @@
       "faces": {
         "north": {
           "uv": [
-            11.5,
-            6.75,
-            11.75,
-            7
+            7.75,
+            4.25,
+            8,
+            4.5
           ],
           "texture": "#pot"
         },
         "east": {
           "uv": [
-            3.5,
-            9,
-            4.5,
-            9.25
+            4.75,
+            5.25,
+            5.75,
+            5.5
           ],
           "texture": "#pot"
         },
         "south": {
           "uv": [
-            7,
-            11.5,
-            7.25,
-            11.75
+            4.5,
+            7.75,
+            4.75,
+            8
           ],
           "texture": "#pot"
         },
         "west": {
           "uv": [
-            6.25,
-            9,
-            7.25,
-            9.25
+            0,
+            5.5,
+            1,
+            5.75
           ],
           "texture": "#pot"
         },
         "up": {
           "uv": [
-            0.25,
-            9,
-            0.5,
-            10
+            1,
+            5.5,
+            1.25,
+            6.5
           ],
           "texture": "#pot"
         },
         "down": {
           "uv": [
-            0.5,
-            9,
-            0.75,
-            10
+            2.25,
+            5.5,
+            2.5,
+            6.5
           ],
           "texture": "#pot"
         }
@@ -3147,55 +3148,55 @@
       "faces": {
         "north": {
           "uv": [
-            10.25,
-            9.75,
-            11,
-            10
+            6.75,
+            4.5,
+            7.5,
+            4.75
           ],
           "texture": "#pot"
         },
         "east": {
           "uv": [
-            10.25,
-            10,
-            11,
-            10.25
+            6.75,
+            4.75,
+            7.5,
+            5
           ],
           "texture": "#pot"
         },
         "south": {
           "uv": [
-            10.25,
-            10.25,
-            11,
-            10.5
+            5,
+            6.75,
+            5.75,
+            7
           ],
           "texture": "#pot"
         },
         "west": {
           "uv": [
-            10.5,
-            0,
-            11.25,
-            0.25
+            6.75,
+            5,
+            7.5,
+            5.25
           ],
           "texture": "#pot"
         },
         "up": {
           "uv": [
-            0.75,
-            6,
-            1.5,
-            6.75
+            2.5,
+            2.5,
+            3.25,
+            3.25
           ],
           "texture": "#pot"
         },
         "down": {
           "uv": [
-            1.5,
-            6,
-            2.25,
-            6.75
+            3.25,
+            1,
+            4,
+            1.75
           ],
           "texture": "#pot"
         }
@@ -3224,55 +3225,55 @@
       "faces": {
         "north": {
           "uv": [
-            7.75,
-            10.75,
-            8.25,
-            11
+            2.75,
+            7,
+            3.25,
+            7.25
           ],
           "texture": "#pot"
         },
         "east": {
           "uv": [
-            10.5,
-            0.25,
-            11.25,
-            0.5
+            6.75,
+            5.25,
+            7.5,
+            5.5
           ],
           "texture": "#pot"
         },
         "south": {
           "uv": [
-            8.75,
-            10.75,
-            9.25,
-            11
+            7,
+            2.75,
+            7.5,
+            3
           ],
           "texture": "#pot"
         },
         "west": {
           "uv": [
-            10.5,
-            0.5,
-            11.25,
-            0.75
+            6.75,
+            5.5,
+            7.5,
+            5.75
           ],
           "texture": "#pot"
         },
         "up": {
           "uv": [
-            8.5,
-            0.75,
-            9,
-            1.5
+            0.5,
+            4,
+            1,
+            4.75
           ],
           "texture": "#pot"
         },
         "down": {
           "uv": [
-            8.5,
+            1,
+            4,
             1.5,
-            9,
-            2.25
+            4.75
           ],
           "texture": "#pot"
         }
@@ -3301,55 +3302,55 @@
       "faces": {
         "north": {
           "uv": [
-            11.5,
-            6.75,
-            11.75,
-            7
+            7.75,
+            4.25,
+            8,
+            4.5
           ],
           "texture": "#pot"
         },
         "east": {
           "uv": [
-            3.5,
-            9,
-            4.5,
-            9.25
+            4.75,
+            5.25,
+            5.75,
+            5.5
           ],
           "texture": "#pot"
         },
         "south": {
           "uv": [
-            7,
-            11.5,
-            7.25,
-            11.75
+            4.5,
+            7.75,
+            4.75,
+            8
           ],
           "texture": "#pot"
         },
         "west": {
           "uv": [
-            6.25,
-            9,
-            7.25,
-            9.25
+            0,
+            5.5,
+            1,
+            5.75
           ],
           "texture": "#pot"
         },
         "up": {
           "uv": [
-            0.25,
-            9,
-            0.5,
-            10
+            1,
+            5.5,
+            1.25,
+            6.5
           ],
           "texture": "#pot"
         },
         "down": {
           "uv": [
-            0.5,
-            9,
-            0.75,
-            10
+            2.25,
+            5.5,
+            2.5,
+            6.5
           ],
           "texture": "#pot"
         }
@@ -3378,55 +3379,55 @@
       "faces": {
         "north": {
           "uv": [
-            10.25,
-            9.75,
-            11,
-            10
+            6.75,
+            4.5,
+            7.5,
+            4.75
           ],
           "texture": "#pot"
         },
         "east": {
           "uv": [
-            10.25,
-            10,
-            11,
-            10.25
+            6.75,
+            4.75,
+            7.5,
+            5
           ],
           "texture": "#pot"
         },
         "south": {
           "uv": [
-            10.25,
-            10.25,
-            11,
-            10.5
+            5,
+            6.75,
+            5.75,
+            7
           ],
           "texture": "#pot"
         },
         "west": {
           "uv": [
-            10.5,
-            0,
-            11.25,
-            0.25
+            6.75,
+            5,
+            7.5,
+            5.25
           ],
           "texture": "#pot"
         },
         "up": {
           "uv": [
-            0.75,
-            6,
-            1.5,
-            6.75
+            2.5,
+            2.5,
+            3.25,
+            3.25
           ],
           "texture": "#pot"
         },
         "down": {
           "uv": [
-            1.5,
-            6,
-            2.25,
-            6.75
+            3.25,
+            1,
+            4,
+            1.75
           ],
           "texture": "#pot"
         }
@@ -3455,55 +3456,55 @@
       "faces": {
         "north": {
           "uv": [
-            7.75,
-            10.75,
-            8.25,
-            11
+            2.75,
+            7,
+            3.25,
+            7.25
           ],
           "texture": "#pot"
         },
         "east": {
           "uv": [
-            10.5,
-            0.25,
-            11.25,
-            0.5
+            6.75,
+            5.25,
+            7.5,
+            5.5
           ],
           "texture": "#pot"
         },
         "south": {
           "uv": [
-            8.75,
-            10.75,
-            9.25,
-            11
+            7,
+            2.75,
+            7.5,
+            3
           ],
           "texture": "#pot"
         },
         "west": {
           "uv": [
-            10.5,
-            0.5,
-            11.25,
-            0.75
+            6.75,
+            5.5,
+            7.5,
+            5.75
           ],
           "texture": "#pot"
         },
         "up": {
           "uv": [
-            8.5,
-            0.75,
-            9,
-            1.5
+            0.5,
+            4,
+            1,
+            4.75
           ],
           "texture": "#pot"
         },
         "down": {
           "uv": [
-            8.5,
+            1,
+            4,
             1.5,
-            9,
-            2.25
+            4.75
           ],
           "texture": "#pot"
         }
@@ -3532,60 +3533,60 @@
       "faces": {
         "north": {
           "uv": [
-            11.5,
-            6.75,
-            11.75,
-            7
+            7.75,
+            4.25,
+            8,
+            4.5
           ],
           "rotation": 270,
           "texture": "#pot"
         },
         "east": {
           "uv": [
-            0.25,
-            9,
-            0.5,
-            10
+            1,
+            5.5,
+            1.25,
+            6.5
           ],
           "rotation": 90,
           "texture": "#pot"
         },
         "south": {
           "uv": [
-            7,
-            11.5,
-            7.25,
-            11.75
+            4.5,
+            7.75,
+            4.75,
+            8
           ],
           "rotation": 90,
           "texture": "#pot"
         },
         "west": {
           "uv": [
-            0.5,
-            9,
-            0.75,
-            10
+            2.25,
+            5.5,
+            2.5,
+            6.5
           ],
           "rotation": 90,
           "texture": "#pot"
         },
         "up": {
           "uv": [
-            6.25,
-            9,
-            7.25,
-            9.25
+            0,
+            5.5,
+            1,
+            5.75
           ],
           "rotation": 90,
           "texture": "#pot"
         },
         "down": {
           "uv": [
-            3.5,
-            9,
-            4.5,
-            9.25
+            4.75,
+            5.25,
+            5.75,
+            5.5
           ],
           "rotation": 90,
           "texture": "#pot"
@@ -3615,60 +3616,60 @@
       "faces": {
         "north": {
           "uv": [
-            10.25,
-            9.75,
-            11,
-            10
+            6.75,
+            4.5,
+            7.5,
+            4.75
           ],
           "rotation": 270,
           "texture": "#pot"
         },
         "east": {
           "uv": [
-            0.75,
-            6,
-            1.5,
-            6.75
+            2.5,
+            2.5,
+            3.25,
+            3.25
           ],
           "rotation": 90,
           "texture": "#pot"
         },
         "south": {
           "uv": [
-            10.25,
-            10.25,
-            11,
-            10.5
+            5,
+            6.75,
+            5.75,
+            7
           ],
           "rotation": 90,
           "texture": "#pot"
         },
         "west": {
           "uv": [
-            1.5,
-            6,
-            2.25,
-            6.75
+            3.25,
+            1,
+            4,
+            1.75
           ],
           "rotation": 90,
           "texture": "#pot"
         },
         "up": {
           "uv": [
-            10.5,
-            0,
-            11.25,
-            0.25
+            6.75,
+            5,
+            7.5,
+            5.25
           ],
           "rotation": 90,
           "texture": "#pot"
         },
         "down": {
           "uv": [
-            10.25,
-            10,
-            11,
-            10.25
+            6.75,
+            4.75,
+            7.5,
+            5
           ],
           "rotation": 90,
           "texture": "#pot"
@@ -3698,60 +3699,60 @@
       "faces": {
         "north": {
           "uv": [
-            7.75,
-            10.75,
-            8.25,
-            11
+            2.75,
+            7,
+            3.25,
+            7.25
           ],
           "rotation": 270,
           "texture": "#pot"
         },
         "east": {
           "uv": [
-            8.5,
-            0.75,
-            9,
-            1.5
+            0.5,
+            4,
+            1,
+            4.75
           ],
           "rotation": 90,
           "texture": "#pot"
         },
         "south": {
           "uv": [
-            8.75,
-            10.75,
-            9.25,
-            11
+            7,
+            2.75,
+            7.5,
+            3
           ],
           "rotation": 90,
           "texture": "#pot"
         },
         "west": {
           "uv": [
-            8.5,
+            1,
+            4,
             1.5,
-            9,
-            2.25
+            4.75
           ],
           "rotation": 90,
           "texture": "#pot"
         },
         "up": {
           "uv": [
-            10.5,
-            0.5,
-            11.25,
-            0.75
+            6.75,
+            5.5,
+            7.5,
+            5.75
           ],
           "rotation": 90,
           "texture": "#pot"
         },
         "down": {
           "uv": [
-            10.5,
-            0.25,
-            11.25,
-            0.5
+            6.75,
+            5.25,
+            7.5,
+            5.5
           ],
           "rotation": 90,
           "texture": "#pot"
@@ -3781,55 +3782,55 @@
       "faces": {
         "north": {
           "uv": [
-            6.25,
-            8.75,
-            7.5,
-            9
+            4.5,
+            3.5,
+            5.75,
+            3.75
           ],
           "texture": "#pot"
         },
         "east": {
           "uv": [
-            10.75,
-            8.75,
-            11.25,
-            9
+            7,
+            3,
+            7.5,
+            3.25
           ],
           "texture": "#pot"
         },
         "south": {
           "uv": [
-            7.5,
-            8.75,
-            8.75,
-            9
+            0,
+            4.75,
+            1.25,
+            5
           ],
           "texture": "#pot"
         },
         "west": {
           "uv": [
-            9.25,
-            10.75,
-            9.75,
-            11
+            3.25,
+            7,
+            3.75,
+            7.25
           ],
           "texture": "#pot"
         },
         "up": {
           "uv": [
-            3.5,
-            5.5,
-            4.75,
-            6
+            2.5,
+            0,
+            3.75,
+            0.5
           ],
           "texture": "#pot"
         },
         "down": {
           "uv": [
-            5.5,
-            5,
-            6.75,
-            5.5
+            2.5,
+            0.5,
+            3.75,
+            1
           ],
           "texture": "#pot"
         }
@@ -3858,55 +3859,55 @@
       "faces": {
         "north": {
           "uv": [
-            8.5,
-            2.25,
-            10,
-            2.5
+            4,
+            1,
+            5.5,
+            1.25
           ],
           "texture": "#pot"
         },
         "east": {
           "uv": [
-            11.5,
-            7,
-            11.75,
-            7.25
+            7.75,
+            4.5,
+            8,
+            4.75
           ],
           "texture": "#pot"
         },
         "south": {
           "uv": [
-            8.5,
-            2.5,
-            10,
-            2.75
+            4,
+            1.25,
+            5.5,
+            1.5
           ],
           "texture": "#pot"
         },
         "west": {
           "uv": [
-            7.25,
-            11.5,
-            7.5,
-            11.75
+            4.75,
+            7.75,
+            5,
+            8
           ],
           "texture": "#pot"
         },
         "up": {
           "uv": [
-            8.5,
-            2.75,
-            10,
-            3
+            4,
+            1.5,
+            5.5,
+            1.75
           ],
           "texture": "#pot"
         },
         "down": {
           "uv": [
-            8.5,
-            3,
-            10,
-            3.25
+            3.25,
+            4.25,
+            4.75,
+            4.5
           ],
           "texture": "#pot"
         }
@@ -3935,55 +3936,55 @@
       "faces": {
         "north": {
           "uv": [
-            8.5,
-            3.25,
-            10,
-            3.5
+            4.25,
+            3.75,
+            5.75,
+            4
           ],
           "texture": "#pot"
         },
         "east": {
           "uv": [
-            11.5,
-            7.25,
-            11.75,
-            7.5
+            7.75,
+            4.75,
+            8,
+            5
           ],
           "texture": "#pot"
         },
         "south": {
           "uv": [
-            3.5,
-            8.5,
-            5,
-            8.75
+            4.25,
+            4,
+            5.75,
+            4.25
           ],
           "texture": "#pot"
         },
         "west": {
           "uv": [
-            7.5,
-            11.5,
+            5,
             7.75,
-            11.75
+            5.25,
+            8
           ],
           "texture": "#pot"
         },
         "up": {
           "uv": [
-            8.5,
-            3.5,
-            10,
-            3.75
+            4.5,
+            0.5,
+            6,
+            0.75
           ],
           "texture": "#pot"
         },
         "down": {
           "uv": [
-            8.5,
-            3.75,
-            10,
-            4
+            4.5,
+            0.75,
+            6,
+            1
           ],
           "texture": "#pot"
         }
@@ -4012,55 +4013,55 @@
       "faces": {
         "north": {
           "uv": [
-            9.75,
-            10.75,
-            10.25,
-            11
+            3.75,
+            7,
+            4.25,
+            7.25
           ],
           "texture": "#pot"
         },
         "east": {
           "uv": [
-            4.25,
-            6.75,
-            6,
-            7
+            3.75,
+            0,
+            5.5,
+            0.25
           ],
           "texture": "#pot"
         },
         "south": {
           "uv": [
-            10.75,
-            10.5,
-            11.25,
-            10.75
+            7,
+            4,
+            7.5,
+            4.25
           ],
           "texture": "#pot"
         },
         "west": {
           "uv": [
-            6.75,
-            5,
-            8.5,
-            5.25
+            3.75,
+            0.25,
+            5.5,
+            0.5
           ],
           "texture": "#pot"
         },
         "up": {
           "uv": [
-            5,
-            4.5,
-            5.5,
-            6.25
+            2,
+            0,
+            2.5,
+            1.75
           ],
           "texture": "#pot"
         },
         "down": {
           "uv": [
-            3,
-            5.5,
-            3.5,
-            7.25
+            2,
+            1.75,
+            2.5,
+            3.5
           ],
           "texture": "#pot"
         }
@@ -4090,54 +4091,54 @@
         "north": {
           "uv": [
             7.75,
-            11.5,
+            5,
             8,
-            11.75
+            5.25
           ],
           "texture": "#pot"
         },
         "east": {
           "uv": [
-            6.5,
-            3,
-            8.5,
-            3.25
+            3.25,
+            1.75,
+            5.25,
+            2
           ],
           "texture": "#pot"
         },
         "south": {
           "uv": [
-            11.5,
+            5.25,
             7.75,
-            11.75,
+            5.5,
             8
           ],
           "texture": "#pot"
         },
         "west": {
           "uv": [
-            6.5,
             3.25,
-            8.5,
-            3.5
+            2,
+            5.25,
+            2.25
           ],
           "texture": "#pot"
         },
         "up": {
           "uv": [
-            3.75,
-            6.5,
-            4,
-            8.5
+            3.25,
+            2.25,
+            3.5,
+            4.25
           ],
           "texture": "#pot"
         },
         "down": {
           "uv": [
-            4,
-            6.5,
-            4.25,
-            8.5
+            2.5,
+            3.25,
+            2.75,
+            5.25
           ],
           "texture": "#pot"
         }
@@ -4166,55 +4167,55 @@
       "faces": {
         "north": {
           "uv": [
+            7.75,
+            5.25,
             8,
-            11.5,
-            8.25,
-            11.75
+            5.5
           ],
           "texture": "#pot"
         },
         "east": {
           "uv": [
-            6.5,
             3.5,
-            8.5,
-            3.75
+            2.25,
+            5.5,
+            2.5
           ],
           "texture": "#pot"
         },
         "south": {
           "uv": [
-            11.5,
-            8,
-            11.75,
-            8.25
+            5.5,
+            7.75,
+            5.75,
+            8
           ],
           "texture": "#pot"
         },
         "west": {
           "uv": [
-            4.25,
-            6.5,
-            6.25,
-            6.75
+            3.5,
+            2.5,
+            5.5,
+            2.75
           ],
           "texture": "#pot"
         },
         "up": {
           "uv": [
-            6.25,
-            6.5,
-            6.5,
-            8.5
+            2.75,
+            3.25,
+            3,
+            5.25
           ],
           "texture": "#pot"
         },
         "down": {
           "uv": [
-            6.5,
-            6.5,
-            6.75,
-            8.5
+            3,
+            3.25,
+            3.25,
+            5.25
           ],
           "texture": "#pot"
         }
@@ -4243,55 +4244,55 @@
       "faces": {
         "north": {
           "uv": [
-            9,
-            6.25,
-            10,
-            6.5
+            5.5,
+            0,
+            6.5,
+            0.25
           ],
           "texture": "#pot"
         },
         "east": {
           "uv": [
-            10.75,
-            10.75,
-            11.25,
-            11
+            4.25,
+            7,
+            4.75,
+            7.25
           ],
           "texture": "#pot"
         },
         "south": {
           "uv": [
-            7.25,
-            9,
-            8.25,
-            9.25
+            5.5,
+            0.25,
+            6.5,
+            0.5
           ],
           "texture": "#pot"
         },
         "west": {
           "uv": [
-            0,
-            11,
-            0.5,
-            11.25
+            7,
+            4.25,
+            7.5,
+            4.5
           ],
           "texture": "#pot"
         },
         "up": {
           "uv": [
-            0,
-            6.75,
-            1,
-            7.25
+            3.5,
+            2.75,
+            4.5,
+            3.25
           ],
           "texture": "#pot"
         },
         "down": {
           "uv": [
-            1,
-            6.75,
-            2,
-            7.25
+            3.5,
+            3.25,
+            4.5,
+            3.75
           ],
           "texture": "#pot"
         }
@@ -4320,55 +4321,55 @@
       "faces": {
         "north": {
           "uv": [
-            8.75,
-            8.75,
-            10,
-            9
+            1.25,
+            4.75,
+            2.5,
+            5
           ],
           "texture": "#pot"
         },
         "east": {
           "uv": [
-            8.25,
-            11.5,
-            8.5,
-            11.75
+            7.75,
+            5.5,
+            8,
+            5.75
           ],
           "texture": "#pot"
         },
         "south": {
           "uv": [
-            9,
-            0,
-            10.25,
-            0.25
+            3.25,
+            4.75,
+            4.5,
+            5
           ],
           "texture": "#pot"
         },
         "west": {
           "uv": [
-            11.5,
-            8.25,
-            11.75,
-            8.5
+            5.75,
+            7.75,
+            6,
+            8
           ],
           "texture": "#pot"
         },
         "up": {
           "uv": [
-            9,
-            0.25,
-            10.25,
-            0.5
+            4.75,
+            4.25,
+            6,
+            4.5
           ],
           "texture": "#pot"
         },
         "down": {
           "uv": [
-            9,
-            0.5,
-            10.25,
-            0.75
+            4.5,
+            4.75,
+            5.75,
+            5
           ],
           "texture": "#pot"
         }
@@ -4397,55 +4398,55 @@
       "faces": {
         "north": {
           "uv": [
-            9,
-            0.75,
-            10.25,
-            1
+            4.75,
+            4.5,
+            6,
+            4.75
           ],
           "texture": "#pot"
         },
         "east": {
           "uv": [
-            11.5,
-            8.5,
-            11.75,
-            8.75
+            7.75,
+            5.75,
+            8,
+            6
           ],
           "texture": "#pot"
         },
         "south": {
           "uv": [
-            9,
-            1,
-            10.25,
-            1.25
+            0,
+            5,
+            1.25,
+            5.25
           ],
           "texture": "#pot"
         },
         "west": {
           "uv": [
-            11.5,
-            8.75,
-            11.75,
-            9
+            6,
+            7.75,
+            6.25,
+            8
           ],
           "texture": "#pot"
         },
         "up": {
           "uv": [
-            9,
             1.25,
-            10.25,
-            1.5
+            5,
+            2.5,
+            5.25
           ],
           "texture": "#pot"
         },
         "down": {
           "uv": [
-            9,
-            1.5,
-            10.25,
-            1.75
+            3.25,
+            5,
+            4.5,
+            5.25
           ],
           "texture": "#pot"
         }
@@ -4474,56 +4475,56 @@
       "faces": {
         "north": {
           "uv": [
-            0,
-            11,
-            0.5,
-            11.25
+            7,
+            4.25,
+            7.5,
+            4.5
           ],
           "texture": "#pot"
         },
         "east": {
           "uv": [
-            9,
-            6.25,
-            10,
-            6.5
+            5.5,
+            0,
+            6.5,
+            0.25
           ],
           "texture": "#pot"
         },
         "south": {
           "uv": [
-            10.75,
-            10.75,
-            11.25,
-            11
+            4.25,
+            7,
+            4.75,
+            7.25
           ],
           "texture": "#pot"
         },
         "west": {
           "uv": [
-            7.25,
-            9,
-            8.25,
-            9.25
+            5.5,
+            0.25,
+            6.5,
+            0.5
           ],
           "texture": "#pot"
         },
         "up": {
           "uv": [
-            0,
-            6.75,
-            1,
-            7.25
+            3.5,
+            2.75,
+            4.5,
+            3.25
           ],
           "rotation": 90,
           "texture": "#pot"
         },
         "down": {
           "uv": [
-            1,
-            6.75,
-            2,
-            7.25
+            3.5,
+            3.25,
+            4.5,
+            3.75
           ],
           "rotation": 270,
           "texture": "#pot"
@@ -4553,56 +4554,56 @@
       "faces": {
         "north": {
           "uv": [
-            11.5,
-            8.25,
-            11.75,
-            8.5
+            5.75,
+            7.75,
+            6,
+            8
           ],
           "texture": "#pot"
         },
         "east": {
           "uv": [
-            8.75,
-            8.75,
-            10,
-            9
+            1.25,
+            4.75,
+            2.5,
+            5
           ],
           "texture": "#pot"
         },
         "south": {
           "uv": [
-            8.25,
-            11.5,
-            8.5,
-            11.75
+            7.75,
+            5.5,
+            8,
+            5.75
           ],
           "texture": "#pot"
         },
         "west": {
           "uv": [
-            9,
-            0,
-            10.25,
-            0.25
+            3.25,
+            4.75,
+            4.5,
+            5
           ],
           "texture": "#pot"
         },
         "up": {
           "uv": [
-            9,
-            0.25,
-            10.25,
-            0.5
+            4.75,
+            4.25,
+            6,
+            4.5
           ],
           "rotation": 90,
           "texture": "#pot"
         },
         "down": {
           "uv": [
-            9,
-            0.5,
-            10.25,
-            0.75
+            4.5,
+            4.75,
+            5.75,
+            5
           ],
           "rotation": 270,
           "texture": "#pot"
@@ -4632,56 +4633,56 @@
       "faces": {
         "north": {
           "uv": [
-            11.5,
-            8.75,
-            11.75,
-            9
+            6,
+            7.75,
+            6.25,
+            8
           ],
           "texture": "#pot"
         },
         "east": {
           "uv": [
-            9,
-            0.75,
-            10.25,
-            1
+            4.75,
+            4.5,
+            6,
+            4.75
           ],
           "texture": "#pot"
         },
         "south": {
           "uv": [
-            11.5,
-            8.5,
-            11.75,
-            8.75
+            7.75,
+            5.75,
+            8,
+            6
           ],
           "texture": "#pot"
         },
         "west": {
           "uv": [
-            9,
-            1,
-            10.25,
-            1.25
+            0,
+            5,
+            1.25,
+            5.25
           ],
           "texture": "#pot"
         },
         "up": {
           "uv": [
-            9,
             1.25,
-            10.25,
-            1.5
+            5,
+            2.5,
+            5.25
           ],
           "rotation": 90,
           "texture": "#pot"
         },
         "down": {
           "uv": [
-            9,
-            1.5,
-            10.25,
-            1.75
+            3.25,
+            5,
+            4.5,
+            5.25
           ],
           "rotation": 270,
           "texture": "#pot"
@@ -4711,56 +4712,56 @@
       "faces": {
         "north": {
           "uv": [
-            7.25,
-            9,
-            8.25,
-            9.25
+            5.5,
+            0.25,
+            6.5,
+            0.5
           ],
           "texture": "#pot"
         },
         "east": {
           "uv": [
-            0,
-            11,
-            0.5,
-            11.25
+            7,
+            4.25,
+            7.5,
+            4.5
           ],
           "texture": "#pot"
         },
         "south": {
           "uv": [
-            9,
-            6.25,
-            10,
-            6.5
+            5.5,
+            0,
+            6.5,
+            0.25
           ],
           "texture": "#pot"
         },
         "west": {
           "uv": [
-            10.75,
-            10.75,
-            11.25,
-            11
+            4.25,
+            7,
+            4.75,
+            7.25
           ],
           "texture": "#pot"
         },
         "up": {
           "uv": [
-            0,
-            6.75,
-            1,
-            7.25
+            3.5,
+            2.75,
+            4.5,
+            3.25
           ],
           "rotation": 180,
           "texture": "#pot"
         },
         "down": {
           "uv": [
-            1,
-            6.75,
-            2,
-            7.25
+            3.5,
+            3.25,
+            4.5,
+            3.75
           ],
           "rotation": 180,
           "texture": "#pot"
@@ -4790,56 +4791,56 @@
       "faces": {
         "north": {
           "uv": [
-            9,
-            0,
-            10.25,
-            0.25
+            3.25,
+            4.75,
+            4.5,
+            5
           ],
           "texture": "#pot"
         },
         "east": {
           "uv": [
-            11.5,
-            8.25,
-            11.75,
-            8.5
+            5.75,
+            7.75,
+            6,
+            8
           ],
           "texture": "#pot"
         },
         "south": {
           "uv": [
-            8.75,
-            8.75,
-            10,
-            9
+            1.25,
+            4.75,
+            2.5,
+            5
           ],
           "texture": "#pot"
         },
         "west": {
           "uv": [
-            8.25,
-            11.5,
-            8.5,
-            11.75
+            7.75,
+            5.5,
+            8,
+            5.75
           ],
           "texture": "#pot"
         },
         "up": {
           "uv": [
-            9,
-            0.25,
-            10.25,
-            0.5
+            4.75,
+            4.25,
+            6,
+            4.5
           ],
           "rotation": 180,
           "texture": "#pot"
         },
         "down": {
           "uv": [
-            9,
-            0.5,
-            10.25,
-            0.75
+            4.5,
+            4.75,
+            5.75,
+            5
           ],
           "rotation": 180,
           "texture": "#pot"
@@ -4869,56 +4870,56 @@
       "faces": {
         "north": {
           "uv": [
-            9,
-            1,
-            10.25,
-            1.25
+            0,
+            5,
+            1.25,
+            5.25
           ],
           "texture": "#pot"
         },
         "east": {
           "uv": [
-            11.5,
-            8.75,
-            11.75,
-            9
+            6,
+            7.75,
+            6.25,
+            8
           ],
           "texture": "#pot"
         },
         "south": {
           "uv": [
-            9,
-            0.75,
-            10.25,
-            1
+            4.75,
+            4.5,
+            6,
+            4.75
           ],
           "texture": "#pot"
         },
         "west": {
           "uv": [
-            11.5,
-            8.5,
-            11.75,
-            8.75
+            7.75,
+            5.75,
+            8,
+            6
           ],
           "texture": "#pot"
         },
         "up": {
           "uv": [
-            9,
             1.25,
-            10.25,
-            1.5
+            5,
+            2.5,
+            5.25
           ],
           "rotation": 180,
           "texture": "#pot"
         },
         "down": {
           "uv": [
-            9,
-            1.5,
-            10.25,
-            1.75
+            3.25,
+            5,
+            4.5,
+            5.25
           ],
           "rotation": 180,
           "texture": "#pot"
@@ -4948,55 +4949,55 @@
       "faces": {
         "north": {
           "uv": [
-            0.5,
-            11,
-            1,
-            11.25
+            4.75,
+            7,
+            5.25,
+            7.25
           ],
           "texture": "#pot"
         },
         "east": {
           "uv": [
-            9,
-            11.5,
-            9.25,
-            11.75
+            6.25,
+            7.75,
+            6.5,
+            8
           ],
           "texture": "#pot"
         },
         "south": {
           "uv": [
-            1,
-            11,
-            1.5,
-            11.25
+            5.25,
+            7,
+            5.75,
+            7.25
           ],
           "texture": "#pot"
         },
         "west": {
           "uv": [
-            11.5,
-            9,
-            11.75,
-            9.25
+            6.5,
+            7.75,
+            6.75,
+            8
           ],
           "texture": "#pot"
         },
         "up": {
           "uv": [
-            1.5,
-            11,
-            2,
-            11.25
+            5.75,
+            7,
+            6.25,
+            7.25
           ],
           "texture": "#pot"
         },
         "down": {
           "uv": [
-            2,
-            11,
-            2.5,
-            11.25
+            6.25,
+            7,
+            6.75,
+            7.25
           ],
           "texture": "#pot"
         }
@@ -5025,55 +5026,55 @@
       "faces": {
         "north": {
           "uv": [
-            10.5,
-            0.75,
-            11.25,
-            1
+            5.75,
+            6.75,
+            6.5,
+            7
           ],
           "texture": "#pot"
         },
         "east": {
           "uv": [
-            9.25,
-            11.5,
-            9.5,
-            11.75
+            7.75,
+            6.5,
+            8,
+            6.75
           ],
           "texture": "#pot"
         },
         "south": {
           "uv": [
-            10.5,
-            1,
-            11.25,
-            1.25
+            6.75,
+            5.75,
+            7.5,
+            6
           ],
           "texture": "#pot"
         },
         "west": {
           "uv": [
-            11.5,
-            9.25,
-            11.75,
-            9.5
+            7.75,
+            6.75,
+            8,
+            7
           ],
           "texture": "#pot"
         },
         "up": {
           "uv": [
-            10.5,
-            1.25,
-            11.25,
-            1.5
+            6.75,
+            6,
+            7.5,
+            6.25
           ],
           "texture": "#pot"
         },
         "down": {
           "uv": [
-            10.5,
-            1.5,
-            11.25,
-            1.75
+            6.75,
+            6.25,
+            7.5,
+            6.5
           ],
           "texture": "#pot"
         }
@@ -5102,55 +5103,55 @@
       "faces": {
         "north": {
           "uv": [
-            8.25,
-            9,
-            9.25,
-            9.25
+            5.5,
+            1,
+            6.5,
+            1.25
           ],
           "texture": "#pot"
         },
         "east": {
           "uv": [
-            9.5,
-            11.5,
-            9.75,
-            11.75
+            7.75,
+            7,
+            8,
+            7.25
           ],
           "texture": "#pot"
         },
         "south": {
           "uv": [
-            9,
-            8.25,
-            10,
-            8.5
+            5.5,
+            1.25,
+            6.5,
+            1.5
           ],
           "texture": "#pot"
         },
         "west": {
           "uv": [
-            11.5,
-            9.5,
-            11.75,
-            9.75
+            7.25,
+            7.75,
+            7.5,
+            8
           ],
           "texture": "#pot"
         },
         "up": {
           "uv": [
-            9,
-            8.5,
-            10,
-            8.75
+            5.5,
+            1.5,
+            6.5,
+            1.75
           ],
           "texture": "#pot"
         },
         "down": {
           "uv": [
+            5.5,
             2.25,
-            9.25,
-            3.25,
-            9.5
+            6.5,
+            2.5
           ],
           "texture": "#pot"
         }
@@ -5179,55 +5180,55 @@
       "faces": {
         "north": {
           "uv": [
-            8.5,
-            4,
-            10,
-            4.25
+            4.5,
+            2.75,
+            6,
+            3
           ],
           "texture": "#pot"
         },
         "east": {
           "uv": [
-            9.75,
-            11.5,
-            10,
-            11.75
+            7.75,
+            7.25,
+            8,
+            7.5
           ],
           "texture": "#pot"
         },
         "south": {
           "uv": [
-            8.5,
-            4.25,
-            10,
-            4.5
+            4.5,
+            3,
+            6,
+            3.25
           ],
           "texture": "#pot"
         },
         "west": {
           "uv": [
-            11.5,
-            9.75,
-            11.75,
-            10
+            7.75,
+            7.5,
+            8,
+            7.75
           ],
           "texture": "#pot"
         },
         "up": {
           "uv": [
-            8.5,
-            5,
-            10,
-            5.25
+            3.25,
+            4.5,
+            4.75,
+            4.75
           ],
           "texture": "#pot"
         },
         "down": {
           "uv": [
-            3.5,
-            8.75,
-            5,
-            9
+            4.5,
+            3.25,
+            6,
+            3.5
           ],
           "texture": "#pot"
         }
@@ -5256,55 +5257,55 @@
       "faces": {
         "north": {
           "uv": [
-            10.5,
-            1.75,
-            11.25,
-            2
+            6.5,
+            6.75,
+            7.25,
+            7
           ],
           "texture": "#pot"
         },
         "east": {
           "uv": [
-            10,
-            11.5,
-            10.25,
-            11.75
+            7.75,
+            7.75,
+            8,
+            8
           ],
           "texture": "#pot"
         },
         "south": {
           "uv": [
-            10.5,
-            2,
-            11.25,
-            2.25
+            0,
+            7,
+            0.75,
+            7.25
           ],
           "texture": "#pot"
         },
         "west": {
           "uv": [
-            11.5,
-            10,
-            11.75,
-            10.25
+            0,
+            8,
+            0.25,
+            8.25
           ],
           "texture": "#pot"
         },
         "up": {
           "uv": [
-            2.25,
-            10.5,
-            3,
-            10.75
+            7,
+            0,
+            7.75,
+            0.25
           ],
           "texture": "#pot"
         },
         "down": {
           "uv": [
-            10.5,
-            2.25,
-            11.25,
-            2.5
+            7,
+            0.25,
+            7.75,
+            0.5
           ],
           "texture": "#pot"
         }
@@ -5333,55 +5334,55 @@
       "faces": {
         "north": {
           "uv": [
-            2.5,
-            11,
-            3,
-            11.25
+            7,
+            6.5,
+            7.5,
+            6.75
           ],
           "texture": "#pot"
         },
         "east": {
           "uv": [
-            10.25,
-            11.5,
-            10.5,
-            11.75
+            8,
+            0,
+            8.25,
+            0.25
           ],
           "texture": "#pot"
         },
         "south": {
           "uv": [
-            3,
-            11,
-            3.5,
-            11.25
+            6.75,
+            7,
+            7.25,
+            7.25
           ],
           "texture": "#pot"
         },
         "west": {
           "uv": [
-            11.5,
-            10.25,
-            11.75,
-            10.5
+            0.25,
+            8,
+            0.5,
+            8.25
           ],
           "texture": "#pot"
         },
         "up": {
           "uv": [
-            3.5,
-            11,
-            4,
-            11.25
+            0,
+            7.25,
+            0.5,
+            7.5
           ],
           "texture": "#pot"
         },
         "down": {
           "uv": [
-            4,
-            11,
-            4.5,
-            11.25
+            0.5,
+            7.25,
+            1,
+            7.5
           ],
           "texture": "#pot"
         }
@@ -5410,55 +5411,55 @@
       "faces": {
         "north": {
           "uv": [
-            10.5,
-            11.5,
-            10.75,
-            11.75
+            8,
+            0.25,
+            8.25,
+            0.5
           ],
           "texture": "#pot"
         },
         "east": {
           "uv": [
-            11.5,
-            10.5,
-            11.75,
-            10.75
+            0.5,
+            8,
+            0.75,
+            8.25
           ],
           "texture": "#pot"
         },
         "south": {
           "uv": [
-            10.75,
-            11.5,
-            11,
-            11.75
+            8,
+            0.5,
+            8.25,
+            0.75
           ],
           "texture": "#pot"
         },
         "west": {
           "uv": [
-            11.5,
-            10.75,
-            11.75,
-            11
+            0.75,
+            8,
+            1,
+            8.25
           ],
           "texture": "#pot"
         },
         "up": {
           "uv": [
-            11,
-            11.5,
-            11.25,
-            11.75
+            8,
+            1.25,
+            8.25,
+            1.5
           ],
           "texture": "#pot"
         },
         "down": {
           "uv": [
-            11.5,
-            11,
-            11.75,
-            11.25
+            8,
+            1.5,
+            8.25,
+            1.75
           ],
           "texture": "#pot"
         }
@@ -5487,55 +5488,55 @@
       "faces": {
         "north": {
           "uv": [
-            4.75,
-            10.75,
-            5,
-            11.25
+            7.25,
+            0.5,
+            7.5,
+            1
           ],
           "texture": "#pot"
         },
         "east": {
           "uv": [
-            4.5,
-            11,
-            4.75,
-            11.5
+            1,
+            7.25,
+            1.25,
+            7.75
           ],
           "texture": "#pot"
         },
         "south": {
           "uv": [
-            11,
-            4.5,
-            11.25,
-            5
+            1.25,
+            7.25,
+            1.5,
+            7.75
           ],
           "texture": "#pot"
         },
         "west": {
           "uv": [
-            5,
-            11,
-            5.25,
-            11.5
+            1.5,
+            7.25,
+            1.75,
+            7.75
           ],
           "texture": "#pot"
         },
         "up": {
           "uv": [
-            11.25,
-            11.5,
-            11.5,
-            11.75
+            1.75,
+            8,
+            2,
+            8.25
           ],
           "texture": "#pot"
         },
         "down": {
           "uv": [
-            11.5,
-            11.25,
-            11.75,
-            11.5
+            8,
+            1.75,
+            8.25,
+            2
           ],
           "texture": "#pot"
         }
@@ -5564,55 +5565,55 @@
       "faces": {
         "north": {
           "uv": [
-            11.5,
-            11.5,
-            11.75,
-            11.75
+            2,
+            8,
+            2.25,
+            8.25
           ],
           "texture": "#pot"
         },
         "east": {
           "uv": [
-            0,
-            11.75,
-            0.25,
-            12
+            8,
+            2,
+            8.25,
+            2.25
           ],
           "texture": "#pot"
         },
         "south": {
           "uv": [
-            11.75,
-            0,
-            12,
-            0.25
+            2.25,
+            8,
+            2.5,
+            8.25
           ],
           "texture": "#pot"
         },
         "west": {
           "uv": [
-            0.25,
-            11.75,
-            0.5,
-            12
+            8,
+            2.25,
+            8.25,
+            2.5
           ],
           "texture": "#pot"
         },
         "up": {
           "uv": [
-            11.75,
-            0.25,
-            12,
-            0.5
+            8,
+            2.75,
+            8.25,
+            3
           ],
           "texture": "#pot"
         },
         "down": {
           "uv": [
-            0.5,
-            11.75,
-            0.75,
-            12
+            3,
+            8,
+            3.25,
+            8.25
           ],
           "texture": "#pot"
         }
@@ -5641,55 +5642,55 @@
       "faces": {
         "north": {
           "uv": [
-            4.75,
-            10.75,
-            5,
-            11.25
+            7.25,
+            0.5,
+            7.5,
+            1
           ],
           "texture": "#pot"
         },
         "east": {
           "uv": [
-            4.5,
-            11,
-            4.75,
-            11.5
+            1,
+            7.25,
+            1.25,
+            7.75
           ],
           "texture": "#pot"
         },
         "south": {
           "uv": [
-            11,
-            4.5,
-            11.25,
-            5
+            1.25,
+            7.25,
+            1.5,
+            7.75
           ],
           "texture": "#pot"
         },
         "west": {
           "uv": [
-            5,
-            11,
-            5.25,
-            11.5
+            1.5,
+            7.25,
+            1.75,
+            7.75
           ],
           "texture": "#pot"
         },
         "up": {
           "uv": [
-            11.25,
-            11.5,
-            11.5,
-            11.75
+            1.75,
+            8,
+            2,
+            8.25
           ],
           "texture": "#pot"
         },
         "down": {
           "uv": [
-            11.5,
-            11.25,
-            11.75,
-            11.5
+            8,
+            1.75,
+            8.25,
+            2
           ],
           "texture": "#pot"
         }
@@ -5718,55 +5719,55 @@
       "faces": {
         "north": {
           "uv": [
-            11.5,
-            11.5,
-            11.75,
-            11.75
+            2,
+            8,
+            2.25,
+            8.25
           ],
           "texture": "#pot"
         },
         "east": {
           "uv": [
-            0,
-            11.75,
-            0.25,
-            12
+            8,
+            2,
+            8.25,
+            2.25
           ],
           "texture": "#pot"
         },
         "south": {
           "uv": [
-            11.75,
-            0,
-            12,
-            0.25
+            2.25,
+            8,
+            2.5,
+            8.25
           ],
           "texture": "#pot"
         },
         "west": {
           "uv": [
-            0.25,
-            11.75,
-            0.5,
-            12
+            8,
+            2.25,
+            8.25,
+            2.5
           ],
           "texture": "#pot"
         },
         "up": {
           "uv": [
-            11.75,
-            0.25,
-            12,
-            0.5
+            8,
+            2.75,
+            8.25,
+            3
           ],
           "texture": "#pot"
         },
         "down": {
           "uv": [
-            0.5,
-            11.75,
-            0.75,
-            12
+            3,
+            8,
+            3.25,
+            8.25
           ],
           "texture": "#pot"
         }
@@ -5775,12 +5776,12 @@
     {
       "from": [
         7.9603,
-        1.225,
+        2.225,
         5.43475
       ],
       "to": [
         8.4603,
-        1.725,
+        2.725,
         6.43475
       ],
       "rotation": {
@@ -5788,62 +5789,62 @@
         "axis": "y",
         "origin": [
           8.41631,
-          1.4875,
+          2.4875,
           6.48121
         ]
       },
       "faces": {
         "north": {
           "uv": [
-            11.75,
-            0.5,
-            12,
-            0.75
+            8,
+            3,
+            8.25,
+            3.25
           ],
           "texture": "#pot"
         },
         "east": {
           "uv": [
-            0.75,
-            11.75,
-            1,
-            12
+            8,
+            3.25,
+            8.25,
+            3.5
           ],
           "texture": "#pot"
         },
         "south": {
           "uv": [
-            11.75,
-            0.75,
-            12,
-            1
+            8,
+            3.5,
+            8.25,
+            3.75
           ],
           "texture": "#pot"
         },
         "west": {
           "uv": [
-            1,
-            11.75,
-            1.25,
-            12
+            8,
+            3.75,
+            8.25,
+            4
           ],
           "texture": "#pot"
         },
         "up": {
           "uv": [
-            11.75,
-            1,
-            12,
-            1.25
+            8,
+            4,
+            8.25,
+            4.25
           ],
           "texture": "#pot"
         },
         "down": {
           "uv": [
-            1.25,
-            11.75,
-            1.5,
-            12
+            8,
+            4.25,
+            8.25,
+            4.5
           ],
           "texture": "#pot"
         }
@@ -5852,12 +5853,12 @@
     {
       "from": [
         8,
-        1,
+        2,
         6
       ],
       "to": [
         10,
-        2,
+        3,
         7
       ],
       "rotation": {
@@ -5865,62 +5866,62 @@
         "axis": "y",
         "origin": [
           8.41631,
-          1.4875,
+          2.4875,
           6.48121
         ]
       },
       "faces": {
         "north": {
           "uv": [
-            11,
-            5,
-            11.5,
-            5.25
+            7.25,
+            1.5,
+            7.75,
+            1.75
           ],
           "texture": "#pot"
         },
         "east": {
           "uv": [
-            11.75,
-            1.25,
-            12,
-            1.5
+            4.5,
+            8,
+            4.75,
+            8.25
           ],
           "texture": "#pot"
         },
         "south": {
           "uv": [
-            5.25,
-            11,
-            5.75,
-            11.25
+            1.75,
+            7.25,
+            2.25,
+            7.5
           ],
           "texture": "#pot"
         },
         "west": {
           "uv": [
-            1.5,
-            11.75,
-            1.75,
-            12
+            8,
+            4.5,
+            8.25,
+            4.75
           ],
           "texture": "#pot"
         },
         "up": {
           "uv": [
-            11,
-            5.25,
-            11.5,
-            5.5
+            2.25,
+            7.25,
+            2.75,
+            7.5
           ],
           "texture": "#pot"
         },
         "down": {
           "uv": [
-            11,
-            5.5,
-            11.5,
-            5.75
+            2.75,
+            7.25,
+            3.25,
+            7.5
           ],
           "texture": "#pot"
         }
@@ -5929,12 +5930,12 @@
     {
       "from": [
         10.59731,
-        3.225,
+        4.225,
         9.50266
       ],
       "to": [
         11.09731,
-        3.725,
+        4.725,
         10.50266
       ],
       "rotation": {
@@ -5942,62 +5943,62 @@
         "axis": "y",
         "origin": [
           10.04131,
-          3.4875,
+          4.4875,
           7.45621
         ]
       },
       "faces": {
         "north": {
           "uv": [
-            11.75,
-            1.5,
-            12,
-            1.75
+            4.75,
+            8,
+            5,
+            8.25
           ],
           "texture": "#pot"
         },
         "east": {
           "uv": [
-            1.75,
-            11.75,
-            2,
-            12
+            8,
+            4.75,
+            8.25,
+            5
           ],
           "texture": "#pot"
         },
         "south": {
           "uv": [
-            11.75,
-            1.75,
-            12,
-            2
+            5,
+            8,
+            5.25,
+            8.25
           ],
           "texture": "#pot"
         },
         "west": {
           "uv": [
-            2,
-            11.75,
-            2.25,
-            12
+            8,
+            5,
+            8.25,
+            5.25
           ],
           "texture": "#pot"
         },
         "up": {
           "uv": [
-            11.75,
-            2,
-            12,
-            2.25
+            5.25,
+            8,
+            5.5,
+            8.25
           ],
           "texture": "#pot"
         },
         "down": {
           "uv": [
-            2.25,
-            11.75,
-            2.5,
-            12
+            8,
+            5.25,
+            8.25,
+            5.5
           ],
           "texture": "#pot"
         }
@@ -6006,12 +6007,12 @@
     {
       "from": [
         9.5601,
-        3,
+        4,
         5.14751
       ],
       "to": [
         10.5601,
-        4,
+        5,
         9.87251
       ],
       "rotation": {
@@ -6019,62 +6020,62 @@
         "axis": "y",
         "origin": [
           10.04131,
-          3.4875,
+          4.4875,
           7.45621
         ]
       },
       "faces": {
         "north": {
           "uv": [
-            11.75,
-            2.25,
-            12,
-            2.5
+            5.5,
+            8,
+            5.75,
+            8.25
           ],
           "texture": "#pot"
         },
         "east": {
           "uv": [
-            9,
-            1.75,
-            10.25,
-            2
+            4.5,
+            5,
+            5.75,
+            5.25
           ],
           "texture": "#pot"
         },
         "south": {
           "uv": [
-            2.5,
-            11.75,
-            2.75,
-            12
+            8,
+            5.5,
+            8.25,
+            5.75
           ],
           "texture": "#pot"
         },
         "west": {
           "uv": [
-            9,
-            2,
-            10.25,
-            2.25
+            0,
+            5.25,
+            1.25,
+            5.5
           ],
           "texture": "#pot"
         },
         "up": {
           "uv": [
             1.25,
-            8.5,
+            5.25,
             1.5,
-            9.75
+            6.5
           ],
           "texture": "#pot"
         },
         "down": {
           "uv": [
-            5,
-            8.5,
+            1.5,
             5.25,
-            9.75
+            1.75,
+            6.5
           ],
           "texture": "#pot"
         }
@@ -6083,12 +6084,12 @@
     {
       "from": [
         6.46185,
-        4.51818,
+        5.51818,
         3.61871
       ],
       "to": [
         7.46185,
-        5.01818,
+        6.01818,
         4.11871
       ],
       "rotation": {
@@ -6096,62 +6097,62 @@
         "axis": "z",
         "origin": [
           7.68685,
-          3.41818,
+          4.41818,
           3.86871
         ]
       },
       "faces": {
         "north": {
           "uv": [
-            11.75,
-            2.5,
-            12,
-            2.75
+            5.75,
+            8,
+            6,
+            8.25
           ],
           "texture": "#pot"
         },
         "east": {
           "uv": [
-            2.75,
-            11.75,
-            3,
-            12
+            8,
+            5.75,
+            8.25,
+            6
           ],
           "texture": "#pot"
         },
         "south": {
           "uv": [
-            11.75,
-            2.75,
-            12,
-            3
+            6,
+            8,
+            6.25,
+            8.25
           ],
           "texture": "#pot"
         },
         "west": {
           "uv": [
-            3,
-            11.75,
-            3.25,
-            12
+            8,
+            6,
+            8.25,
+            6.25
           ],
           "texture": "#pot"
         },
         "up": {
           "uv": [
-            11.75,
-            3,
-            12,
-            3.25
+            6.25,
+            8,
+            6.5,
+            8.25
           ],
           "texture": "#pot"
         },
         "down": {
           "uv": [
-            3.25,
-            11.75,
-            3.5,
-            12
+            8,
+            6.25,
+            8.25,
+            6.5
           ],
           "texture": "#pot"
         }
@@ -6160,12 +6161,12 @@
     {
       "from": [
         4.8351,
-        2.37881,
+        3.37881,
         3.34371
       ],
       "to": [
         5.8351,
-        4.60381,
+        5.60381,
         4.34371
       ],
       "rotation": {
@@ -6173,62 +6174,62 @@
         "axis": "z",
         "origin": [
           5.31631,
-          2.1875,
+          3.1875,
           3.85621
         ]
       },
       "faces": {
         "north": {
           "uv": [
-            5.75,
-            11,
-            6,
-            11.5
+            3.25,
+            7.25,
+            3.5,
+            7.75
           ],
           "texture": "#pot"
         },
         "east": {
           "uv": [
-            11,
-            5.75,
-            11.25,
-            6.25
+            3.5,
+            7.25,
+            3.75,
+            7.75
           ],
           "texture": "#pot"
         },
         "south": {
           "uv": [
-            6,
-            11,
-            6.25,
-            11.5
+            3.75,
+            7.25,
+            4,
+            7.75
           ],
           "texture": "#pot"
         },
         "west": {
           "uv": [
-            6.25,
-            11,
-            6.5,
-            11.5
+            4,
+            7.25,
+            4.25,
+            7.75
           ],
           "texture": "#pot"
         },
         "up": {
           "uv": [
-            11.75,
-            3.25,
-            12,
-            3.5
+            6.5,
+            8,
+            6.75,
+            8.25
           ],
           "texture": "#pot"
         },
         "down": {
           "uv": [
-            3.5,
-            11.75,
-            3.75,
-            12
+            8,
+            6.5,
+            8.25,
+            6.75
           ],
           "texture": "#pot"
         }
@@ -6237,12 +6238,12 @@
     {
       "from": [
         8.03685,
-        5.96818,
+        6.96818,
         7.54371
       ],
       "to": [
         9.03685,
-        6.46818,
+        7.46818,
         8.04371
       ],
       "rotation": {
@@ -6250,62 +6251,62 @@
         "axis": "y",
         "origin": [
           8.08685,
-          7.26818,
+          8.26818,
           7.79371
         ]
       },
       "faces": {
         "north": {
           "uv": [
-            11.75,
-            2.5,
-            12,
-            2.75
+            5.75,
+            8,
+            6,
+            8.25
           ],
           "texture": "#pot"
         },
         "east": {
           "uv": [
-            2.75,
-            11.75,
-            3,
-            12
+            8,
+            5.75,
+            8.25,
+            6
           ],
           "texture": "#pot"
         },
         "south": {
           "uv": [
-            11.75,
-            2.75,
-            12,
-            3
+            6,
+            8,
+            6.25,
+            8.25
           ],
           "texture": "#pot"
         },
         "west": {
           "uv": [
-            3,
-            11.75,
-            3.25,
-            12
+            8,
+            6,
+            8.25,
+            6.25
           ],
           "texture": "#pot"
         },
         "up": {
           "uv": [
-            11.75,
-            3,
-            12,
-            3.25
+            6.25,
+            8,
+            6.5,
+            8.25
           ],
           "texture": "#pot"
         },
         "down": {
           "uv": [
-            3.25,
-            11.75,
-            3.5,
-            12
+            8,
+            6.25,
+            8.25,
+            6.5
           ],
           "texture": "#pot"
         }
@@ -6314,12 +6315,12 @@
     {
       "from": [
         5.9601,
-        4.87881,
+        5.87881,
         7.26871
       ],
       "to": [
         6.9601,
-        7.10381,
+        8.10381,
         8.26871
       ],
       "rotation": {
@@ -6327,62 +6328,62 @@
         "axis": "z",
         "origin": [
           6.44131,
-          4.6875,
+          5.6875,
           7.78121
         ]
       },
       "faces": {
         "north": {
           "uv": [
-            5.75,
-            11,
-            6,
-            11.5
+            3.25,
+            7.25,
+            3.5,
+            7.75
           ],
           "texture": "#pot"
         },
         "east": {
           "uv": [
-            11,
-            5.75,
-            11.25,
-            6.25
+            3.5,
+            7.25,
+            3.75,
+            7.75
           ],
           "texture": "#pot"
         },
         "south": {
           "uv": [
-            6,
-            11,
-            6.25,
-            11.5
+            3.75,
+            7.25,
+            4,
+            7.75
           ],
           "texture": "#pot"
         },
         "west": {
           "uv": [
-            6.25,
-            11,
-            6.5,
-            11.5
+            4,
+            7.25,
+            4.25,
+            7.75
           ],
           "texture": "#pot"
         },
         "up": {
           "uv": [
-            11.75,
-            3.25,
-            12,
-            3.5
+            6.5,
+            8,
+            6.75,
+            8.25
           ],
           "texture": "#pot"
         },
         "down": {
           "uv": [
-            3.5,
-            11.75,
-            3.75,
-            12
+            8,
+            6.5,
+            8.25,
+            6.75
           ],
           "texture": "#pot"
         }
@@ -6411,55 +6412,55 @@
       "faces": {
         "north": {
           "uv": [
-            4.5,
-            9,
-            5,
-            9.5
+            2.5,
+            5.5,
+            3,
+            6
           ],
           "texture": "#pot"
         },
         "east": {
           "uv": [
-            5.25,
-            9,
-            5.75,
-            9.5
+            3,
+            5.5,
+            3.5,
+            6
           ],
           "texture": "#pot"
         },
         "south": {
           "uv": [
-            0.75,
-            9.25,
-            1.25,
-            9.75
+            3.5,
+            5.5,
+            4,
+            6
           ],
           "texture": "#pot"
         },
         "west": {
           "uv": [
-            1.5,
-            9.25,
-            2,
-            9.75
+            4.75,
+            5.5,
+            5.25,
+            6
           ],
           "texture": "#pot"
         },
         "up": {
           "uv": [
-            3.5,
-            9.25,
-            4,
-            9.75
+            5.25,
+            5.5,
+            5.75,
+            6
           ],
           "texture": "#pot"
         },
         "down": {
           "uv": [
-            4,
-            9.25,
-            4.5,
-            9.75
+            0,
+            5.75,
+            0.5,
+            6.25
           ],
           "texture": "#pot"
         }
@@ -6488,55 +6489,55 @@
       "faces": {
         "north": {
           "uv": [
-            6.25,
-            9.25,
-            6.75,
-            9.75
+            0.5,
+            5.75,
+            1,
+            6.25
           ],
           "texture": "#pot"
         },
         "east": {
           "uv": [
-            6.75,
-            9.25,
-            7.25,
-            9.75
+            1.75,
+            5.75,
+            2.25,
+            6.25
           ],
           "texture": "#pot"
         },
         "south": {
           "uv": [
-            7.25,
-            9.25,
-            7.75,
-            9.75
+            5.75,
+            1.75,
+            6.25,
+            2.25
           ],
           "texture": "#pot"
         },
         "west": {
           "uv": [
-            7.75,
-            9.25,
-            8.25,
-            9.75
+            5.75,
+            3.5,
+            6.25,
+            4
           ],
           "texture": "#pot"
         },
         "up": {
           "uv": [
-            8.25,
-            9.25,
-            8.75,
-            9.75
+            5.75,
+            4.75,
+            6.25,
+            5.25
           ],
           "texture": "#pot"
         },
         "down": {
           "uv": [
-            8.75,
-            9.25,
-            9.25,
-            9.75
+            5.75,
+            5.25,
+            6.25,
+            5.75
           ],
           "texture": "#pot"
         }
@@ -6565,55 +6566,55 @@
       "faces": {
         "north": {
           "uv": [
-            9.25,
-            9,
-            9.75,
-            9.5
+            5.75,
+            5.75,
+            6.25,
+            6.25
           ],
           "texture": "#pot"
         },
         "east": {
           "uv": [
-            2.25,
-            9.5,
-            2.75,
-            10
+            6,
+            0.5,
+            6.5,
+            1
           ],
           "texture": "#pot"
         },
         "south": {
           "uv": [
-            2.75,
-            9.5,
-            3.25,
-            10
+            2.5,
+            6,
+            3,
+            6.5
           ],
           "texture": "#pot"
         },
         "west": {
           "uv": [
-            4.5,
-            9.5,
-            5,
-            10
+            6,
+            2.5,
+            6.5,
+            3
           ],
           "texture": "#pot"
         },
         "up": {
           "uv": [
-            9.5,
-            4.5,
-            10,
-            5
+            3,
+            6,
+            3.5,
+            6.5
           ],
           "texture": "#pot"
         },
         "down": {
           "uv": [
-            5.25,
-            9.5,
-            5.75,
-            10
+            6,
+            3,
+            6.5,
+            3.5
           ],
           "texture": "#pot"
         }
@@ -6642,55 +6643,55 @@
       "faces": {
         "north": {
           "uv": [
-            9.25,
-            9.5,
-            9.75,
-            10
+            3.5,
+            6,
+            4,
+            6.5
           ],
           "texture": "#pot"
         },
         "east": {
           "uv": [
-            0.75,
-            9.75,
-            1.25,
-            10.25
+            6,
+            4,
+            6.5,
+            4.5
           ],
           "texture": "#pot"
         },
         "south": {
           "uv": [
-            1.25,
-            9.75,
-            1.75,
-            10.25
+            4.75,
+            6,
+            5.25,
+            6.5
           ],
           "texture": "#pot"
         },
         "west": {
           "uv": [
-            1.75,
-            9.75,
-            2.25,
-            10.25
+            5.25,
+            6,
+            5.75,
+            6.5
           ],
           "texture": "#pot"
         },
         "up": {
           "uv": [
-            3.25,
-            9.75,
-            3.75,
-            10.25
+            0,
+            6.25,
+            0.5,
+            6.75
           ],
           "texture": "#pot"
         },
         "down": {
           "uv": [
-            3.75,
-            9.75,
-            4.25,
-            10.25
+            0.5,
+            6.25,
+            1,
+            6.75
           ],
           "texture": "#pot"
         }
@@ -6719,55 +6720,55 @@
       "faces": {
         "north": {
           "uv": [
-            9.75,
-            5.25,
-            10.25,
-            5.75
+            1.75,
+            6.25,
+            2.25,
+            6.75
           ],
           "texture": "#pot"
         },
         "east": {
           "uv": [
-            5.75,
-            9.75,
             6.25,
-            10.25
+            1.75,
+            6.75,
+            2.25
           ],
           "texture": "#pot"
         },
         "south": {
           "uv": [
-            9.75,
-            5.75,
-            10.25,
-            6.25
+            6.25,
+            3.5,
+            6.75,
+            4
           ],
           "texture": "#pot"
         },
         "west": {
           "uv": [
+            4,
             6.25,
-            9.75,
-            6.75,
-            10.25
+            4.5,
+            6.75
           ],
           "texture": "#pot"
         },
         "up": {
           "uv": [
-            9.75,
-            6.5,
-            10.25,
-            7
+            6.25,
+            4.5,
+            6.75,
+            5
           ],
           "texture": "#pot"
         },
         "down": {
           "uv": [
+            6.25,
+            5,
             6.75,
-            9.75,
-            7.25,
-            10.25
+            5.5
           ],
           "texture": "#pot"
         }
@@ -6796,56 +6797,56 @@
       "faces": {
         "north": {
           "uv": [
-            5.75,
-            9.75,
             6.25,
-            10.25
+            1.75,
+            6.75,
+            2.25
           ],
           "texture": "#pot"
         },
         "east": {
           "uv": [
-            9.75,
-            5.75,
-            10.25,
-            6.25
+            6.25,
+            3.5,
+            6.75,
+            4
           ],
           "texture": "#pot"
         },
         "south": {
           "uv": [
+            4,
             6.25,
-            9.75,
-            6.75,
-            10.25
+            4.5,
+            6.75
           ],
           "texture": "#pot"
         },
         "west": {
           "uv": [
-            9.75,
-            5.25,
-            10.25,
-            5.75
+            1.75,
+            6.25,
+            2.25,
+            6.75
           ],
           "texture": "#pot"
         },
         "up": {
           "uv": [
-            9.75,
-            6.5,
-            10.25,
-            7
+            6.25,
+            4.5,
+            6.75,
+            5
           ],
           "rotation": 270,
           "texture": "#pot"
         },
         "down": {
           "uv": [
+            6.25,
+            5,
             6.75,
-            9.75,
-            7.25,
-            10.25
+            5.5
           ],
           "rotation": 90,
           "texture": "#pot"
@@ -6875,55 +6876,55 @@
       "faces": {
         "north": {
           "uv": [
-            11.75,
-            3.5,
-            12,
-            3.75
+            6.75,
+            8,
+            7,
+            8.25
           ],
           "texture": "#pot"
         },
         "east": {
           "uv": [
-            3.75,
-            11.75,
-            4,
-            12
+            8,
+            6.75,
+            8.25,
+            7
           ],
           "texture": "#pot"
         },
         "south": {
           "uv": [
-            11.75,
-            3.75,
-            12,
-            4
+            7,
+            8,
+            7.25,
+            8.25
           ],
           "texture": "#pot"
         },
         "west": {
           "uv": [
-            4,
-            11.75,
-            4.25,
-            12
+            8,
+            7,
+            8.25,
+            7.25
           ],
           "texture": "#pot"
         },
         "up": {
           "uv": [
-            11.75,
-            4,
-            12,
-            4.25
+            7.25,
+            8,
+            7.5,
+            8.25
           ],
           "texture": "#pot"
         },
         "down": {
           "uv": [
-            4.25,
-            11.75,
-            4.5,
-            12
+            8,
+            7.25,
+            8.25,
+            7.5
           ],
           "texture": "#pot"
         }
@@ -6952,55 +6953,55 @@
       "faces": {
         "north": {
           "uv": [
-            6.5,
-            11,
-            6.75,
-            11.5
+            4.25,
+            7.25,
+            4.5,
+            7.75
           ],
           "texture": "#pot"
         },
         "east": {
           "uv": [
-            6.75,
-            11,
-            7,
-            11.5
+            4.5,
+            7.25,
+            4.75,
+            7.75
           ],
           "texture": "#pot"
         },
         "south": {
           "uv": [
-            7,
-            11,
+            4.75,
             7.25,
-            11.5
+            5,
+            7.75
           ],
           "texture": "#pot"
         },
         "west": {
           "uv": [
+            5,
             7.25,
-            11,
-            7.5,
-            11.5
+            5.25,
+            7.75
           ],
           "texture": "#pot"
         },
         "up": {
           "uv": [
-            11.75,
-            4.25,
-            12,
-            4.5
+            7.5,
+            8,
+            7.75,
+            8.25
           ],
           "texture": "#pot"
         },
         "down": {
           "uv": [
-            4.5,
-            11.75,
-            4.75,
-            12
+            8,
+            7.5,
+            8.25,
+            7.75
           ],
           "texture": "#pot"
         }
@@ -7029,55 +7030,55 @@
       "faces": {
         "north": {
           "uv": [
-            7.5,
-            11,
-            7.75,
-            11.5
+            5.25,
+            7.25,
+            5.5,
+            7.75
           ],
           "texture": "#pot"
         },
         "east": {
           "uv": [
-            9.75,
-            7,
-            10.25,
-            7.5
+            6.25,
+            5.5,
+            6.75,
+            6
           ],
           "texture": "#pot"
         },
         "south": {
           "uv": [
-            11,
-            7.5,
-            11.25,
-            8
+            5.5,
+            7.25,
+            5.75,
+            7.75
           ],
           "texture": "#pot"
         },
         "west": {
           "uv": [
-            7.25,
-            9.75,
-            7.75,
-            10.25
+            5.75,
+            6.25,
+            6.25,
+            6.75
           ],
           "texture": "#pot"
         },
         "up": {
           "uv": [
-            7.75,
-            11,
-            8,
-            11.5
+            5.75,
+            7.25,
+            6,
+            7.75
           ],
           "texture": "#pot"
         },
         "down": {
           "uv": [
-            8,
-            11,
-            8.25,
-            11.5
+            6,
+            7.25,
+            6.25,
+            7.75
           ],
           "texture": "#pot"
         }
@@ -7106,55 +7107,55 @@
       "faces": {
         "north": {
           "uv": [
-            9.75,
-            7.5,
-            10.25,
-            8
+            6.25,
+            6,
+            6.75,
+            6.5
           ],
           "texture": "#pot"
         },
         "east": {
           "uv": [
-            11,
-            8,
-            11.25,
-            8.5
+            6.25,
+            7.25,
+            6.5,
+            7.75
           ],
           "texture": "#pot"
         },
         "south": {
           "uv": [
-            7.75,
-            9.75,
-            8.25,
-            10.25
+            6.5,
+            0,
+            7,
+            0.5
           ],
           "texture": "#pot"
         },
         "west": {
           "uv": [
-            8.25,
-            11,
-            8.5,
-            11.5
+            6.5,
+            7.25,
+            6.75,
+            7.75
           ],
           "texture": "#pot"
         },
         "up": {
           "uv": [
-            11,
-            6.75,
-            11.5,
-            7
+            7.25,
+            3.25,
+            7.75,
+            3.5
           ],
           "texture": "#pot"
         },
         "down": {
           "uv": [
-            8.5,
-            11,
-            9,
-            11.25
+            6.75,
+            7.25,
+            7.25,
+            7.5
           ],
           "texture": "#pot"
         }
@@ -7183,55 +7184,55 @@
       "faces": {
         "north": {
           "uv": [
-            9,
-            11,
-            9.25,
-            11.5
+            7.25,
+            6.75,
+            7.5,
+            7.25
           ],
           "texture": "#pot"
         },
         "east": {
           "uv": [
-            11,
-            9,
-            11.25,
-            9.5
+            7.25,
+            7.25,
+            7.5,
+            7.75
           ],
           "texture": "#pot"
         },
         "south": {
           "uv": [
-            9.25,
-            11,
-            9.5,
-            11.5
+            0,
+            7.5,
+            0.25,
+            8
           ],
           "texture": "#pot"
         },
         "west": {
           "uv": [
-            9.5,
-            11,
-            9.75,
-            11.5
+            0.25,
+            7.5,
+            0.5,
+            8
           ],
           "texture": "#pot"
         },
         "up": {
           "uv": [
-            11.75,
-            4.5,
-            12,
-            4.75
+            7.75,
+            8,
+            8,
+            8.25
           ],
           "texture": "#pot"
         },
         "down": {
           "uv": [
-            4.75,
-            11.75,
-            5,
-            12
+            8,
+            7.75,
+            8.25,
+            8
           ],
           "texture": "#pot"
         }
@@ -7260,55 +7261,55 @@
       "faces": {
         "north": {
           "uv": [
-            11.75,
-            4.75,
-            12,
-            5
+            8,
+            8,
+            8.25,
+            8.25
           ],
           "texture": "#pot"
         },
         "east": {
           "uv": [
-            11,
-            8.5,
-            11.5,
-            8.75
+            0.5,
+            7.5,
+            1,
+            7.75
           ],
           "texture": "#pot"
         },
         "south": {
           "uv": [
-            5,
-            11.75,
-            5.25,
-            12
+            0,
+            8.25,
+            0.25,
+            8.5
           ],
           "texture": "#pot"
         },
         "west": {
           "uv": [
-            11,
-            9.5,
-            11.5,
-            9.75
+            7.5,
+            0.5,
+            8,
+            0.75
           ],
           "texture": "#pot"
         },
         "up": {
           "uv": [
-            9.75,
-            11,
-            10,
-            11.5
+            7.5,
+            0.75,
+            7.75,
+            1.25
           ],
           "texture": "#pot"
         },
         "down": {
           "uv": [
-            11,
-            9.75,
-            11.25,
-            10.25
+            1.75,
+            7.5,
+            2,
+            8
           ],
           "texture": "#pot"
         }
@@ -7337,55 +7338,55 @@
       "faces": {
         "north": {
           "uv": [
-            11.75,
-            5,
-            12,
-            5.25
+            8.25,
+            0,
+            8.5,
+            0.25
           ],
           "texture": "#pot"
         },
         "east": {
           "uv": [
-            5.25,
-            11.75,
-            5.5,
-            12
+            0.25,
+            8.25,
+            0.5,
+            8.5
           ],
           "texture": "#pot"
         },
         "south": {
           "uv": [
-            11.75,
-            5.25,
-            12,
-            5.5
+            8.25,
+            0.25,
+            8.5,
+            0.5
           ],
           "texture": "#pot"
         },
         "west": {
           "uv": [
-            5.5,
-            11.75,
-            5.75,
-            12
+            0.5,
+            8.25,
+            0.75,
+            8.5
           ],
           "texture": "#pot"
         },
         "up": {
           "uv": [
-            11.75,
-            5.5,
-            12,
-            5.75
+            8.25,
+            0.5,
+            8.5,
+            0.75
           ],
           "texture": "#pot"
         },
         "down": {
           "uv": [
-            5.75,
-            11.75,
-            6,
-            12
+            0.75,
+            8.25,
+            1,
+            8.5
           ],
           "texture": "#pot"
         }
@@ -7414,55 +7415,55 @@
       "faces": {
         "north": {
           "uv": [
-            10,
-            11,
-            10.25,
-            11.5
+            7.5,
+            1.75,
+            7.75,
+            2.25
           ],
           "texture": "#pot"
         },
         "east": {
           "uv": [
-            10.25,
-            11,
-            10.5,
-            11.5
+            2,
+            7.5,
+            2.25,
+            8
           ],
           "texture": "#pot"
         },
         "south": {
           "uv": [
-            10.5,
-            11,
-            10.75,
-            11.5
+            2.25,
+            7.5,
+            2.5,
+            8
           ],
           "texture": "#pot"
         },
         "west": {
           "uv": [
-            10.75,
-            11,
-            11,
-            11.5
+            7.5,
+            2.25,
+            7.75,
+            2.75
           ],
           "texture": "#pot"
         },
         "up": {
           "uv": [
-            11.75,
-            5.75,
-            12,
-            6
+            8.25,
+            0.75,
+            8.5,
+            1
           ],
           "texture": "#pot"
         },
         "down": {
           "uv": [
-            6,
-            11.75,
-            6.25,
-            12
+            1,
+            8.25,
+            1.25,
+            8.5
           ],
           "texture": "#pot"
         }
@@ -7491,55 +7492,55 @@
       "faces": {
         "north": {
           "uv": [
-            11,
-            10.25,
-            11.5,
-            10.5
+            7.5,
+            1.25,
+            8,
+            1.5
           ],
           "texture": "#pot"
         },
         "east": {
           "uv": [
-            11.75,
-            6,
-            12,
-            6.25
+            8.25,
+            1,
+            8.5,
+            1.25
           ],
           "texture": "#pot"
         },
         "south": {
           "uv": [
-            11,
-            11,
-            11.5,
-            11.25
+            2.5,
+            7.5,
+            3,
+            7.75
           ],
           "texture": "#pot"
         },
         "west": {
           "uv": [
-            6.25,
-            11.75,
-            6.5,
-            12
+            1.25,
+            8.25,
+            1.5,
+            8.5
           ],
           "texture": "#pot"
         },
         "up": {
           "uv": [
-            0,
-            11.25,
-            0.5,
-            11.5
+            7.5,
+            2.75,
+            8,
+            3
           ],
           "texture": "#pot"
         },
         "down": {
           "uv": [
-            11.25,
-            0,
-            11.75,
-            0.25
+            7.5,
+            3,
+            8,
+            3.25
           ],
           "texture": "#pot"
         }
@@ -7568,55 +7569,55 @@
       "faces": {
         "north": {
           "uv": [
-            11.75,
-            6.25,
-            12,
-            6.5
+            8.25,
+            1.25,
+            8.5,
+            1.5
           ],
           "texture": "#pot"
         },
         "east": {
           "uv": [
-            6.5,
-            11.75,
-            6.75,
-            12
+            1.5,
+            8.25,
+            1.75,
+            8.5
           ],
           "texture": "#pot"
         },
         "south": {
           "uv": [
-            11.75,
-            6.5,
-            12,
-            6.75
+            8.25,
+            1.5,
+            8.5,
+            1.75
           ],
           "texture": "#pot"
         },
         "west": {
           "uv": [
-            6.75,
-            11.75,
-            7,
-            12
+            1.75,
+            8.25,
+            2,
+            8.5
           ],
           "texture": "#pot"
         },
         "up": {
           "uv": [
-            11.75,
-            6.75,
-            12,
-            7
+            8.25,
+            1.75,
+            8.5,
+            2
           ],
           "texture": "#pot"
         },
         "down": {
           "uv": [
-            7,
-            11.75,
-            7.25,
-            12
+            2,
+            8.25,
+            2.25,
+            8.5
           ],
           "texture": "#pot"
         }
@@ -7645,55 +7646,55 @@
       "faces": {
         "north": {
           "uv": [
-            11.25,
-            0.25,
-            11.5,
-            0.75
+            3,
+            7.5,
+            3.25,
+            8
           ],
           "texture": "#pot"
         },
         "east": {
           "uv": [
-            8.25,
-            9.75,
-            8.75,
-            10.25
+            6.5,
+            0.5,
+            7,
+            1
           ],
           "texture": "#pot"
         },
         "south": {
           "uv": [
-            0.5,
-            11.25,
-            0.75,
-            11.75
+            7.5,
+            3.5,
+            7.75,
+            4
           ],
           "texture": "#pot"
         },
         "west": {
           "uv": [
-            8.75,
-            9.75,
-            9.25,
-            10.25
+            1,
+            6.5,
+            1.5,
+            7
           ],
           "texture": "#pot"
         },
         "up": {
           "uv": [
-            0.75,
-            11.25,
-            1,
-            11.75
+            7.5,
+            4,
+            7.75,
+            4.5
           ],
           "texture": "#pot"
         },
         "down": {
           "uv": [
-            11.25,
-            0.75,
-            11.5,
-            1.25
+            7.5,
+            4.5,
+            7.75,
+            5
           ],
           "texture": "#pot"
         }
@@ -7722,55 +7723,55 @@
       "faces": {
         "north": {
           "uv": [
-            9.75,
-            9,
-            10.25,
-            9.5
+            6.5,
+            1,
+            7,
+            1.5
           ],
           "texture": "#pot"
         },
         "east": {
           "uv": [
-            1,
-            11.25,
-            1.25,
-            11.75
+            7.5,
+            5,
+            7.75,
+            5.5
           ],
           "texture": "#pot"
         },
         "south": {
           "uv": [
-            9.75,
-            9.5,
-            10.25,
-            10
+            2.25,
+            6.5,
+            2.75,
+            7
           ],
           "texture": "#pot"
         },
         "west": {
           "uv": [
-            1.25,
-            11.25,
-            1.5,
-            11.75
+            7.5,
+            5.5,
+            7.75,
+            6
           ],
           "texture": "#pot"
         },
         "up": {
           "uv": [
-            11.25,
-            1.25,
-            11.75,
-            1.5
+            7.5,
+            6,
+            8,
+            6.25
           ],
           "texture": "#pot"
         },
         "down": {
           "uv": [
-            1.5,
-            11.25,
-            2,
-            11.5
+            7.5,
+            6.25,
+            8,
+            6.5
           ],
           "texture": "#pot"
         }
@@ -7799,55 +7800,55 @@
       "faces": {
         "north": {
           "uv": [
-            11.25,
-            1.5,
-            11.5,
-            2
+            7.5,
+            6.5,
+            7.75,
+            7
           ],
           "texture": "#pot"
         },
         "east": {
           "uv": [
-            2,
-            11.25,
-            2.25,
-            11.75
+            6.75,
+            7.5,
+            7,
+            8
           ],
           "texture": "#pot"
         },
         "south": {
           "uv": [
-            11.25,
-            2,
-            11.5,
-            2.5
+            7,
+            7.5,
+            7.25,
+            8
           ],
           "texture": "#pot"
         },
         "west": {
           "uv": [
-            2.25,
-            11.25,
-            2.5,
-            11.75
+            7.5,
+            7,
+            7.75,
+            7.5
           ],
           "texture": "#pot"
         },
         "up": {
           "uv": [
-            11.75,
-            7,
-            12,
-            7.25
+            8.25,
+            2,
+            8.5,
+            2.25
           ],
           "texture": "#pot"
         },
         "down": {
           "uv": [
-            7.25,
-            11.75,
-            7.5,
-            12
+            2.25,
+            8.25,
+            2.5,
+            8.5
           ],
           "texture": "#pot"
         }
@@ -7876,55 +7877,55 @@
       "faces": {
         "north": {
           "uv": [
-            11.75,
-            7.25,
-            12,
-            7.5
+            8.25,
+            2.25,
+            8.5,
+            2.5
           ],
           "texture": "#pot"
         },
         "east": {
           "uv": [
-            7.5,
-            11.75,
-            7.75,
-            12
+            2.5,
+            8.25,
+            2.75,
+            8.5
           ],
           "texture": "#pot"
         },
         "south": {
           "uv": [
-            11.75,
-            7.5,
-            12,
-            7.75
+            8.25,
+            2.5,
+            8.5,
+            2.75
           ],
           "texture": "#pot"
         },
         "west": {
           "uv": [
-            7.75,
-            11.75,
-            8,
-            12
+            2.75,
+            8.25,
+            3,
+            8.5
           ],
           "texture": "#pot"
         },
         "up": {
           "uv": [
-            11.75,
-            7.75,
-            12,
-            8
+            8.25,
+            2.75,
+            8.5,
+            3
           ],
           "texture": "#pot"
         },
         "down": {
           "uv": [
-            8,
-            11.75,
+            3,
             8.25,
-            12
+            3.25,
+            8.5
           ],
           "texture": "#pot"
         }
@@ -7953,55 +7954,55 @@
       "faces": {
         "north": {
           "uv": [
-            11.25,
-            0.25,
-            11.5,
-            0.75
+            3,
+            7.5,
+            3.25,
+            8
           ],
           "texture": "#pot"
         },
         "east": {
           "uv": [
-            8.25,
-            9.75,
-            8.75,
-            10.25
+            6.5,
+            0.5,
+            7,
+            1
           ],
           "texture": "#pot"
         },
         "south": {
           "uv": [
-            0.5,
-            11.25,
-            0.75,
-            11.75
+            7.5,
+            3.5,
+            7.75,
+            4
           ],
           "texture": "#pot"
         },
         "west": {
           "uv": [
-            8.75,
-            9.75,
-            9.25,
-            10.25
+            1,
+            6.5,
+            1.5,
+            7
           ],
           "texture": "#pot"
         },
         "up": {
           "uv": [
-            0.75,
-            11.25,
-            1,
-            11.75
+            7.5,
+            4,
+            7.75,
+            4.5
           ],
           "texture": "#pot"
         },
         "down": {
           "uv": [
-            11.25,
-            0.75,
-            11.5,
-            1.25
+            7.5,
+            4.5,
+            7.75,
+            5
           ],
           "texture": "#pot"
         }
@@ -8030,55 +8031,55 @@
       "faces": {
         "north": {
           "uv": [
-            9.75,
-            9,
-            10.25,
-            9.5
+            6.5,
+            1,
+            7,
+            1.5
           ],
           "texture": "#pot"
         },
         "east": {
           "uv": [
-            1,
-            11.25,
-            1.25,
-            11.75
+            7.5,
+            5,
+            7.75,
+            5.5
           ],
           "texture": "#pot"
         },
         "south": {
           "uv": [
-            9.75,
-            9.5,
-            10.25,
-            10
+            2.25,
+            6.5,
+            2.75,
+            7
           ],
           "texture": "#pot"
         },
         "west": {
           "uv": [
-            1.25,
-            11.25,
-            1.5,
-            11.75
+            7.5,
+            5.5,
+            7.75,
+            6
           ],
           "texture": "#pot"
         },
         "up": {
           "uv": [
-            11.25,
-            1.25,
-            11.75,
-            1.5
+            7.5,
+            6,
+            8,
+            6.25
           ],
           "texture": "#pot"
         },
         "down": {
           "uv": [
-            1.5,
-            11.25,
-            2,
-            11.5
+            7.5,
+            6.25,
+            8,
+            6.5
           ],
           "texture": "#pot"
         }
@@ -8107,55 +8108,55 @@
       "faces": {
         "north": {
           "uv": [
-            11.25,
-            1.5,
-            11.5,
-            2
+            7.5,
+            6.5,
+            7.75,
+            7
           ],
           "texture": "#pot"
         },
         "east": {
           "uv": [
-            2,
-            11.25,
-            2.25,
-            11.75
+            6.75,
+            7.5,
+            7,
+            8
           ],
           "texture": "#pot"
         },
         "south": {
           "uv": [
-            11.25,
-            2,
-            11.5,
-            2.5
+            7,
+            7.5,
+            7.25,
+            8
           ],
           "texture": "#pot"
         },
         "west": {
           "uv": [
-            2.25,
-            11.25,
-            2.5,
-            11.75
+            7.5,
+            7,
+            7.75,
+            7.5
           ],
           "texture": "#pot"
         },
         "up": {
           "uv": [
-            11.75,
-            7,
-            12,
-            7.25
+            8.25,
+            2,
+            8.5,
+            2.25
           ],
           "texture": "#pot"
         },
         "down": {
           "uv": [
-            7.25,
-            11.75,
-            7.5,
-            12
+            2.25,
+            8.25,
+            2.5,
+            8.5
           ],
           "texture": "#pot"
         }
@@ -8184,55 +8185,55 @@
       "faces": {
         "north": {
           "uv": [
-            11.75,
-            7.25,
-            12,
-            7.5
+            8.25,
+            2.25,
+            8.5,
+            2.5
           ],
           "texture": "#pot"
         },
         "east": {
           "uv": [
-            7.5,
-            11.75,
-            7.75,
-            12
+            2.5,
+            8.25,
+            2.75,
+            8.5
           ],
           "texture": "#pot"
         },
         "south": {
           "uv": [
-            11.75,
-            7.5,
-            12,
-            7.75
+            8.25,
+            2.5,
+            8.5,
+            2.75
           ],
           "texture": "#pot"
         },
         "west": {
           "uv": [
-            7.75,
-            11.75,
-            8,
-            12
+            2.75,
+            8.25,
+            3,
+            8.5
           ],
           "texture": "#pot"
         },
         "up": {
           "uv": [
-            11.75,
-            7.75,
-            12,
-            8
+            8.25,
+            2.75,
+            8.5,
+            3
           ],
           "texture": "#pot"
         },
         "down": {
           "uv": [
-            8,
-            11.75,
+            3,
             8.25,
-            12
+            3.25,
+            8.5
           ],
           "texture": "#pot"
         }
@@ -8261,55 +8262,55 @@
       "faces": {
         "north": {
           "uv": [
-            2.5,
-            11.25,
-            2.75,
-            11.75
+            0.75,
+            6.75,
+            1,
+            7.25
           ],
           "texture": "#pot"
         },
         "east": {
           "uv": [
-            0,
-            10,
-            0.5,
-            10.5
+            1.5,
+            4,
+            2,
+            4.5
           ],
           "texture": "#pot"
         },
         "south": {
           "uv": [
-            11.25,
-            2.5,
-            11.5,
-            3
+            1.75,
+            6.75,
+            2,
+            7.25
           ],
           "texture": "#pot"
         },
         "west": {
           "uv": [
-            2.25,
-            10,
-            2.75,
-            10.5
+            2,
+            4.25,
+            2.5,
+            4.75
           ],
           "texture": "#pot"
         },
         "up": {
           "uv": [
-            2.75,
-            11.25,
-            3,
-            11.75
+            2,
+            6.75,
+            2.25,
+            7.25
           ],
           "texture": "#pot"
         },
         "down": {
           "uv": [
-            3,
-            11.25,
-            3.25,
-            11.75
+            7,
+            0.5,
+            7.25,
+            1
           ],
           "texture": "#pot"
         }
@@ -8338,55 +8339,55 @@
       "faces": {
         "north": {
           "uv": [
-            10,
+            6.5,
             2.25,
-            10.5,
+            7,
             2.75
           ],
           "texture": "#pot"
         },
         "east": {
           "uv": [
-            11.25,
-            3,
-            11.5,
-            3.5
+            7.5,
+            7.5,
+            7.75,
+            8
           ],
           "texture": "#pot"
         },
         "south": {
           "uv": [
             2.75,
-            10,
+            6.5,
             3.25,
-            10.5
+            7
           ],
           "texture": "#pot"
         },
         "west": {
           "uv": [
-            3.25,
-            11.25,
-            3.5,
-            11.75
+            7.75,
+            0,
+            8,
+            0.5
           ],
           "texture": "#pot"
         },
         "up": {
           "uv": [
-            3.5,
-            11.25,
-            4,
-            11.5
+            0.5,
+            7.75,
+            1,
+            8
           ],
           "texture": "#pot"
         },
         "down": {
           "uv": [
-            11.25,
-            3.5,
-            11.75,
-            3.75
+            7.75,
+            0.75,
+            8.25,
+            1
           ],
           "texture": "#pot"
         }
@@ -8415,55 +8416,55 @@
       "faces": {
         "north": {
           "uv": [
-            11.25,
-            3.75,
-            11.5,
-            4.25
+            1,
+            7.75,
+            1.25,
+            8.25
           ],
           "texture": "#pot"
         },
         "east": {
           "uv": [
-            4,
-            11.25,
-            4.25,
-            11.75
+            1.25,
+            7.75,
+            1.5,
+            8.25
           ],
           "texture": "#pot"
         },
         "south": {
           "uv": [
-            4.25,
-            11.25,
-            4.5,
-            11.75
+            1.5,
+            7.75,
+            1.75,
+            8.25
           ],
           "texture": "#pot"
         },
         "west": {
           "uv": [
-            11.25,
-            4.25,
-            11.5,
-            4.75
+            7.75,
+            1.5,
+            8,
+            2
           ],
           "texture": "#pot"
         },
         "up": {
           "uv": [
-            11.75,
-            8,
-            12,
-            8.25
+            8.25,
+            3,
+            8.5,
+            3.25
           ],
           "texture": "#pot"
         },
         "down": {
           "uv": [
+            3.25,
             8.25,
-            11.75,
-            8.5,
-            12
+            3.5,
+            8.5
           ],
           "texture": "#pot"
         }
@@ -8492,55 +8493,55 @@
       "faces": {
         "north": {
           "uv": [
-            11.75,
             8.25,
-            12,
-            8.5
+            3.25,
+            8.5,
+            3.5
           ],
           "texture": "#pot"
         },
         "east": {
           "uv": [
-            8.5,
-            11.75,
-            8.75,
-            12
+            3.5,
+            8.25,
+            3.75,
+            8.5
           ],
           "texture": "#pot"
         },
         "south": {
           "uv": [
-            11.75,
+            8.25,
+            3.5,
             8.5,
-            12,
-            8.75
+            3.75
           ],
           "texture": "#pot"
         },
         "west": {
           "uv": [
-            8.75,
-            11.75,
-            9,
-            12
+            3.75,
+            8.25,
+            4,
+            8.5
           ],
           "texture": "#pot"
         },
         "up": {
           "uv": [
-            11.75,
-            8.75,
-            12,
-            9
+            8.25,
+            3.75,
+            8.5,
+            4
           ],
           "texture": "#pot"
         },
         "down": {
           "uv": [
-            9,
-            11.75,
-            9.25,
-            12
+            4,
+            8.25,
+            4.25,
+            8.5
           ],
           "texture": "#pot"
         }
@@ -8569,55 +8570,55 @@
       "faces": {
         "north": {
           "uv": [
-            4.75,
-            11.25,
-            5,
-            11.75
+            7.75,
+            2,
+            8,
+            2.5
           ],
           "texture": "#pot"
         },
         "east": {
           "uv": [
-            10,
+            6.5,
             2.75,
-            10.5,
+            7,
             3.25
           ],
           "texture": "#pot"
         },
         "south": {
           "uv": [
-            5.25,
-            11.25,
-            5.5,
-            11.75
+            2.5,
+            7.75,
+            2.75,
+            8.25
           ],
           "texture": "#pot"
         },
         "west": {
           "uv": [
-            10,
             3.25,
-            10.5,
-            3.75
+            6.5,
+            3.75,
+            7
           ],
           "texture": "#pot"
         },
         "up": {
           "uv": [
-            5.5,
-            11.25,
-            5.75,
-            11.75
+            2.75,
+            7.75,
+            3,
+            8.25
           ],
           "texture": "#pot"
         },
         "down": {
           "uv": [
-            11.25,
-            5.75,
-            11.5,
-            6.25
+            3.25,
+            7.75,
+            3.5,
+            8.25
           ],
           "texture": "#pot"
         }
@@ -8646,55 +8647,55 @@
       "faces": {
         "north": {
           "uv": [
-            10,
-            3.75,
-            10.5,
-            4.25
+            6.5,
+            4,
+            7,
+            4.5
           ],
           "texture": "#pot"
         },
         "east": {
           "uv": [
-            11.25,
-            6.25,
-            11.5,
-            6.75
+            7.75,
+            3.25,
+            8,
+            3.75
           ],
           "texture": "#pot"
         },
         "south": {
           "uv": [
-            4.25,
-            10,
-            4.75,
-            10.5
+            4.5,
+            6.5,
+            5,
+            7
           ],
           "texture": "#pot"
         },
         "west": {
           "uv": [
-            11.25,
-            7,
-            11.5,
-            7.5
+            3.5,
+            7.75,
+            3.75,
+            8.25
           ],
           "texture": "#pot"
         },
         "up": {
           "uv": [
-            11.25,
-            4.75,
-            11.75,
-            5
+            7.75,
+            1,
+            8.25,
+            1.25
           ],
           "texture": "#pot"
         },
         "down": {
           "uv": [
-            11.25,
-            7.5,
-            11.75,
-            7.75
+            7.75,
+            2.5,
+            8.25,
+            2.75
           ],
           "texture": "#pot"
         }
@@ -8723,55 +8724,55 @@
       "faces": {
         "north": {
           "uv": [
-            11.25,
+            3.75,
             7.75,
-            11.5,
+            4,
             8.25
           ],
           "texture": "#pot"
         },
         "east": {
           "uv": [
-            8.5,
-            11.25,
-            8.75,
-            11.75
+            7.75,
+            3.75,
+            8,
+            4.25
           ],
           "texture": "#pot"
         },
         "south": {
           "uv": [
-            8.75,
-            11.25,
-            9,
-            11.75
+            4,
+            7.75,
+            4.25,
+            8.25
           ],
           "texture": "#pot"
         },
         "west": {
           "uv": [
-            11.25,
-            8.75,
-            11.5,
-            9.25
+            4.25,
+            7.75,
+            4.5,
+            8.25
           ],
           "texture": "#pot"
         },
         "up": {
           "uv": [
-            11.75,
-            9,
-            12,
-            9.25
+            8.25,
+            4,
+            8.5,
+            4.25
           ],
           "texture": "#pot"
         },
         "down": {
           "uv": [
-            9.25,
-            11.75,
-            9.5,
-            12
+            4.25,
+            8.25,
+            4.5,
+            8.5
           ],
           "texture": "#pot"
         }
@@ -8800,55 +8801,55 @@
       "faces": {
         "north": {
           "uv": [
-            11.75,
-            9.25,
-            12,
-            9.5
+            8.25,
+            4.25,
+            8.5,
+            4.5
           ],
           "texture": "#pot"
         },
         "east": {
           "uv": [
-            9.5,
-            11.75,
-            9.75,
-            12
+            4.5,
+            8.25,
+            4.75,
+            8.5
           ],
           "texture": "#pot"
         },
         "south": {
           "uv": [
-            11.75,
-            9.5,
-            12,
-            9.75
+            8.25,
+            4.5,
+            8.5,
+            4.75
           ],
           "texture": "#pot"
         },
         "west": {
           "uv": [
-            9.75,
-            11.75,
-            10,
-            12
+            4.75,
+            8.25,
+            5,
+            8.5
           ],
           "texture": "#pot"
         },
         "up": {
           "uv": [
-            11.75,
-            9.75,
-            12,
-            10
+            8.25,
+            4.75,
+            8.5,
+            5
           ],
           "texture": "#pot"
         },
         "down": {
           "uv": [
-            10,
-            11.75,
-            10.25,
-            12
+            5,
+            8.25,
+            5.25,
+            8.5
           ],
           "texture": "#pot"
         }
@@ -8877,55 +8878,55 @@
       "faces": {
         "north": {
           "uv": [
-            4.75,
-            11.25,
-            5,
-            11.75
+            7.75,
+            2,
+            8,
+            2.5
           ],
           "texture": "#pot"
         },
         "east": {
           "uv": [
-            10,
+            6.5,
             2.75,
-            10.5,
+            7,
             3.25
           ],
           "texture": "#pot"
         },
         "south": {
           "uv": [
-            5.25,
-            11.25,
-            5.5,
-            11.75
+            2.5,
+            7.75,
+            2.75,
+            8.25
           ],
           "texture": "#pot"
         },
         "west": {
           "uv": [
-            10,
             3.25,
-            10.5,
-            3.75
+            6.5,
+            3.75,
+            7
           ],
           "texture": "#pot"
         },
         "up": {
           "uv": [
-            5.5,
-            11.25,
-            5.75,
-            11.75
+            2.75,
+            7.75,
+            3,
+            8.25
           ],
           "texture": "#pot"
         },
         "down": {
           "uv": [
-            11.25,
-            5.75,
-            11.5,
-            6.25
+            3.25,
+            7.75,
+            3.5,
+            8.25
           ],
           "texture": "#pot"
         }
@@ -8954,55 +8955,55 @@
       "faces": {
         "north": {
           "uv": [
-            10,
-            3.75,
-            10.5,
-            4.25
+            6.5,
+            4,
+            7,
+            4.5
           ],
           "texture": "#pot"
         },
         "east": {
           "uv": [
-            11.25,
-            6.25,
-            11.5,
-            6.75
+            7.75,
+            3.25,
+            8,
+            3.75
           ],
           "texture": "#pot"
         },
         "south": {
           "uv": [
-            4.25,
-            10,
-            4.75,
-            10.5
+            4.5,
+            6.5,
+            5,
+            7
           ],
           "texture": "#pot"
         },
         "west": {
           "uv": [
-            11.25,
-            7,
-            11.5,
-            7.5
+            3.5,
+            7.75,
+            3.75,
+            8.25
           ],
           "texture": "#pot"
         },
         "up": {
           "uv": [
-            11.25,
-            4.75,
-            11.75,
-            5
+            7.75,
+            1,
+            8.25,
+            1.25
           ],
           "texture": "#pot"
         },
         "down": {
           "uv": [
-            11.25,
-            7.5,
-            11.75,
-            7.75
+            7.75,
+            2.5,
+            8.25,
+            2.75
           ],
           "texture": "#pot"
         }
@@ -9031,55 +9032,55 @@
       "faces": {
         "north": {
           "uv": [
-            11.25,
+            3.75,
             7.75,
-            11.5,
+            4,
             8.25
           ],
           "texture": "#pot"
         },
         "east": {
           "uv": [
-            8.5,
-            11.25,
-            8.75,
-            11.75
+            7.75,
+            3.75,
+            8,
+            4.25
           ],
           "texture": "#pot"
         },
         "south": {
           "uv": [
-            8.75,
-            11.25,
-            9,
-            11.75
+            4,
+            7.75,
+            4.25,
+            8.25
           ],
           "texture": "#pot"
         },
         "west": {
           "uv": [
-            11.25,
-            8.75,
-            11.5,
-            9.25
+            4.25,
+            7.75,
+            4.5,
+            8.25
           ],
           "texture": "#pot"
         },
         "up": {
           "uv": [
-            11.75,
-            9,
-            12,
-            9.25
+            8.25,
+            4,
+            8.5,
+            4.25
           ],
           "texture": "#pot"
         },
         "down": {
           "uv": [
-            9.25,
-            11.75,
-            9.5,
-            12
+            4.25,
+            8.25,
+            4.5,
+            8.5
           ],
           "texture": "#pot"
         }
@@ -9108,55 +9109,55 @@
       "faces": {
         "north": {
           "uv": [
-            11.75,
-            9.25,
-            12,
-            9.5
+            8.25,
+            4.25,
+            8.5,
+            4.5
           ],
           "texture": "#pot"
         },
         "east": {
           "uv": [
-            9.5,
-            11.75,
-            9.75,
-            12
+            4.5,
+            8.25,
+            4.75,
+            8.5
           ],
           "texture": "#pot"
         },
         "south": {
           "uv": [
-            11.75,
-            9.5,
-            12,
-            9.75
+            8.25,
+            4.5,
+            8.5,
+            4.75
           ],
           "texture": "#pot"
         },
         "west": {
           "uv": [
-            9.75,
-            11.75,
-            10,
-            12
+            4.75,
+            8.25,
+            5,
+            8.5
           ],
           "texture": "#pot"
         },
         "up": {
           "uv": [
-            11.75,
-            9.75,
-            12,
-            10
+            8.25,
+            4.75,
+            8.5,
+            5
           ],
           "texture": "#pot"
         },
         "down": {
           "uv": [
-            10,
-            11.75,
-            10.25,
-            12
+            5,
+            8.25,
+            5.25,
+            8.5
           ],
           "texture": "#pot"
         }
