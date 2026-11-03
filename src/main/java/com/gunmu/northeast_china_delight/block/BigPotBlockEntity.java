@@ -29,11 +29,10 @@ import java.util.List;
  *
  * <ul>
  *   <li>液体：一种流体 + 毫升数（水桶 / 水盆一次倒 1000 mB，最多 {@link #LIQUID_CAPACITY}）；</li>
- *   <li>食材：一个栈，按放进去的顺序摞（和栈顶那堆一样就摞上去），只能从栈顶拿出来（最后放进去的先出来）；
- *       拆灶时掉出来；</li>
- *   <li>调料（有哪条配方把它写在调料里，盐也算）：同样的摞成一堆，倒进去就拿不出来；锅里的液体全舀走时跟着没了，
- *       拆灶时也不掉（2026-11-03 用户：调料随水消失、锅被破坏不返还调料，盐也不掉）；</li>
- *   <li>正在煮哪条配方、煮了多久；</li>
+ *   <li>料：食材、调料（有哪条配方把它写在调料里的，盐也算）按放进去的顺序摞成一个栈，和栈顶那层一样就摞上去。
+ *       只能从栈顶拿食材；栈顶是调料就拿不了，调料之前放进去的都拿不回来（2026-11-03 用户）。调料倒进去就拿不出来，
+ *       锅里的液体全舀走时跟着没了（压在下面的食材又露到栈顶）；拆灶时只掉食材，调料不掉（盐也不掉）；</li>
+ *   <li>正在煮哪条配方、煮了多少（按不盖锅盖的时长算，盖着盖走得快）；</li>
  *   <li>煮好的菜、还剩几份、得用什么盛、每盛一份给多少经验（拆灶时没盛完的就没了）。</li>
  * </ul>
  *
@@ -46,18 +45,19 @@ public class BigPotBlockEntity extends BlockEntity {
 
     private Fluid liquid = Fluids.EMPTY;
     private int liquidMb;
-    /** 食材栈：最后一堆是栈顶。最多放几个由配方定（{@code BigPotRecipes.maxIngredients}），见 {@link BigPotCooking} */
-    private final List<ItemStack> ingredients = new ArrayList<>();
-    /** 倒进去的调料，同一种摞成一堆。最多几份同样由配方定（{@code BigPotRecipes.maxSeasonings}） */
-    private final List<ItemStack> seasonings = new ArrayList<>();
+    /** 锅里的料（见类注释），最后一层是栈顶。最多放几个食材、几份调料由配方定（{@code BigPotRecipes}），见 {@link BigPotCooking} */
+    private final List<Layer> layers = new ArrayList<>();
     /** {@link #contents()} 合起来的样子，锅里的东西一变就作废 */
     @Nullable
     private List<ItemStack> merged;
     @Nullable
     private ResourceLocation cooking;
-    private int cookTicks;
-    /** 这一锅一共要煮多少刻（盖着锅盖时是缩短后的），给 Jade 算进度 */
+    /** 煮了多少：按不盖锅盖的时长算的刻数（盖着锅盖每刻多走一些，见 {@link #tickCooking}） */
+    private float cookProgress;
+    /** 这一锅不盖锅盖要煮多少刻，给 Jade 算进度 */
     private int cookTotal;
+    /** 再过几刻把进度发给客户端（不存档） */
+    private int syncCountdown;
     private ItemStack result = ItemStack.EMPTY;
     private int servings;
     private ItemStack container = ItemStack.EMPTY;
@@ -65,6 +65,17 @@ public class BigPotBlockEntity extends BlockEntity {
 
     /** 水面高度（像素，整口灶 32×32 的坐标里）：1000 / 2000 / 3000 / 4000 mB，都避开锅里台阶的整数高度免得闪 */
     private static final float[] LIQUID_SURFACE_Y = {13.5F, 14.5F, 15.5F, 16.25F};
+
+    /** 栈里的一层：一堆同样的东西，是不是调料 */
+    private static final class Layer {
+        final ItemStack stack;
+        final boolean seasoning;
+
+        Layer(ItemStack stack, boolean seasoning) {
+            this.stack = stack;
+            this.seasoning = seasoning;
+        }
+    }
 
     public BigPotBlockEntity(BlockPos pos, BlockState state) {
         super(ModBlockEntities.BIG_POT.get(), pos, state);
@@ -103,26 +114,25 @@ public class BigPotBlockEntity extends BlockEntity {
     }
 
     /**
-     * 锅里的料合在一起看：食材按放进去的先后、同样的并成一堆，后面跟着调料。凑配方（一样一堆、个数对上）、
-     * 画锅里的东西、Jade 都用这个；不能改
+     * 锅里的料合在一起看：食材按放进去的先后、同样的并成一堆，后面跟着调料（同一种调料只认物品种类）。
+     * 凑配方（一样一堆、个数对上）、画锅里的东西、Jade 都用这个；不能改
      */
     public List<ItemStack> contents() {
         if (merged == null) {
-            List<ItemStack> out = new ArrayList<>();
-            for (ItemStack stack : ingredients) {
-                mergeInto(out, stack);
+            List<ItemStack> food = new ArrayList<>();
+            List<ItemStack> spice = new ArrayList<>();
+            for (Layer layer : layers) {
+                mergeInto(layer.seasoning ? spice : food, layer.stack, layer.seasoning);
             }
-            for (ItemStack stack : seasonings) {
-                mergeInto(out, stack);
-            }
-            merged = Collections.unmodifiableList(out);
+            food.addAll(spice);
+            merged = Collections.unmodifiableList(food);
         }
         return merged;
     }
 
-    private static void mergeInto(List<ItemStack> out, ItemStack stack) {
+    private static void mergeInto(List<ItemStack> out, ItemStack stack, boolean byItem) {
         for (ItemStack existing : out) {
-            if (same(existing, stack)) {
+            if (byItem ? existing.is(stack.getItem()) : same(existing, stack)) {
                 existing.grow(stack.getCount());
                 return;
             }
@@ -140,18 +150,20 @@ public class BigPotBlockEntity extends BlockEntity {
 
     /** 锅里一共几个食材 */
     public int ingredientCount() {
-        int n = 0;
-        for (ItemStack stack : ingredients) {
-            n += stack.getCount();
-        }
-        return n;
+        return count(false);
     }
 
     /** 锅里一共倒了几份调料 */
     public int seasoningCount() {
+        return count(true);
+    }
+
+    private int count(boolean seasoning) {
         int n = 0;
-        for (ItemStack stack : seasonings) {
-            n += stack.getCount();
+        for (Layer layer : layers) {
+            if (layer.seasoning == seasoning) {
+                n += layer.stack.getCount();
+            }
         }
         return n;
     }
@@ -161,15 +173,15 @@ public class BigPotBlockEntity extends BlockEntity {
         return cooking;
     }
 
-    public int cookTicks() {
-        return cookTicks;
+    /** 煮了多少（按不盖锅盖的时长算的刻数，满 {@link #cookTotal()} 就好了） */
+    public float cookProgress() {
+        return cookProgress;
     }
 
     public int cookTotal() {
         return cookTotal;
     }
 
-    /** 盖上 / 揭开锅盖时总时间会变 */
     public void setCookTotal(int total) {
         if (total != cookTotal) {
             cookTotal = total;
@@ -195,7 +207,7 @@ public class BigPotBlockEntity extends BlockEntity {
 
     /** 锅里什么都没有（没液体、没料、没有煮好的菜） */
     public boolean isEmpty() {
-        return liquidMb <= 0 && ingredients.isEmpty() && seasonings.isEmpty() && !hasResult();
+        return liquidMb <= 0 && layers.isEmpty() && !hasResult();
     }
 
     // ---------------------------------------------------------------- 改
@@ -223,51 +235,53 @@ public class BigPotBlockEntity extends BlockEntity {
         if (liquidMb <= 0) {
             liquidMb = 0;
             liquid = Fluids.EMPTY;
-            seasonings.clear();
+            dropSeasonings();
         }
         changed();
         return true;
     }
 
-    /** 放一个食材：压在栈顶（和栈顶那堆一样、还摞得下就摞上去，不然另起一堆） */
-    public void pushIngredient(ItemStack one) {
-        if (!ingredients.isEmpty()) {
-            ItemStack top = ingredients.get(ingredients.size() - 1);
-            if (same(top, one) && top.getCount() < top.getMaxStackSize()) {
-                top.grow(1);
-                changed();
-                return;
+    /** 调料跟着水没了：栈里的调料层去掉，上下挨着的同样食材并回一层 */
+    private void dropSeasonings() {
+        layers.removeIf(layer -> layer.seasoning);
+        for (int i = layers.size() - 1; i > 0; i--) {
+            ItemStack below = layers.get(i - 1).stack;
+            ItemStack above = layers.get(i).stack;
+            if (same(below, above) && below.getCount() + above.getCount() <= below.getMaxStackSize()) {
+                below.grow(above.getCount());
+                layers.remove(i);
             }
         }
-        ingredients.add(one.copyWithCount(1));
-        changed();
     }
 
     /**
-     * 倒一份调料：同一种摞成一堆。只认物品种类：瓶装的每倒一剂瓶子的耐久都不一样，
-     * 不然同一瓶倒两剂会分成两堆、凑不成「调料 ×2」
+     * 放一个料：压在栈顶，和栈顶那层一样就摞上去。调料只认物品种类：瓶装的每倒一剂瓶子的耐久都不一样，
+     * 不然同一瓶倒两剂会分成两层、凑不成「调料 ×2」
      */
-    public void addSeasoning(ItemStack one) {
-        for (ItemStack stack : seasonings) {
-            if (stack.is(one.getItem())) {
-                stack.grow(1);
+    public void push(ItemStack one, boolean seasoning) {
+        if (!layers.isEmpty()) {
+            Layer top = layers.get(layers.size() - 1);
+            boolean fits = top.seasoning == seasoning && (seasoning ? top.stack.is(one.getItem())
+                    : same(top.stack, one) && top.stack.getCount() < top.stack.getMaxStackSize());
+            if (fits) {
+                top.stack.grow(1);
                 changed();
                 return;
             }
         }
-        seasonings.add(one.copyWithCount(1));
+        layers.add(new Layer(one.copyWithCount(1), seasoning));
         changed();
     }
 
-    /** 从栈顶拿出一个食材（最后放进去的那个）；没有食材了返回空。调料拿不出来 */
+    /** 从栈顶拿出一个食材；栈顶是调料（调料之前放进去的都拿不回来）或者锅里没东西，返回空 */
     public ItemStack popIngredient() {
-        if (ingredients.isEmpty()) {
+        if (layers.isEmpty() || layers.get(layers.size() - 1).seasoning) {
             return ItemStack.EMPTY;
         }
-        ItemStack top = ingredients.get(ingredients.size() - 1);
+        ItemStack top = layers.get(layers.size() - 1).stack;
         ItemStack taken = top.split(1);
         if (top.isEmpty()) {
-            ingredients.remove(ingredients.size() - 1);
+            layers.remove(layers.size() - 1);
         }
         changed();
         return taken;
@@ -277,7 +291,7 @@ public class BigPotBlockEntity extends BlockEntity {
     public void setCooking(@Nullable ResourceLocation recipe) {
         if (recipe == null ? cooking != null : !recipe.equals(cooking)) {
             cooking = recipe;
-            cookTicks = 0;
+            cookProgress = 0;
             if (recipe == null) {
                 cookTotal = 0;
             }
@@ -285,9 +299,14 @@ public class BigPotBlockEntity extends BlockEntity {
         }
     }
 
-    public void tickCooking() {
-        cookTicks++;
-        if (cookTicks % 20 == 0) {
+    /**
+     * 煮一刻，进度走 rate（不盖锅盖 1；盖着锅盖 = 不盖盖时长 / 盖盖时长）。中途盖上只是剩下的走得快，
+     * 已经煮过的不跟着放大（2026-11-03 用户：以前一半多盖上锅盖就直接好了）
+     */
+    public void tickCooking(float rate) {
+        cookProgress += rate;
+        if (--syncCountdown <= 0) {
+            syncCountdown = 20;
             sync();       // 每秒发一次进度（Jade）
         } else {
             setChanged();
@@ -298,8 +317,7 @@ public class BigPotBlockEntity extends BlockEntity {
      * 煮好了：料清空、液体全没了（水都煮进菜里，2026-11-03 用户：煮完锅里不该再有水位），锅里换成一锅菜
      */
     public void finish(ItemStack dish, ItemStack serveWith, float xpPerServing) {
-        ingredients.clear();
-        seasonings.clear();
+        layers.clear();
         liquidMb = 0;
         liquid = Fluids.EMPTY;
         result = dish.copyWithCount(1);
@@ -307,7 +325,7 @@ public class BigPotBlockEntity extends BlockEntity {
         container = serveWith.isEmpty() ? ItemStack.EMPTY : serveWith.copyWithCount(1);
         experience = xpPerServing;
         cooking = null;
-        cookTicks = 0;
+        cookProgress = 0;
         cookTotal = 0;
         changed();
     }
@@ -337,15 +355,16 @@ public class BigPotBlockEntity extends BlockEntity {
      * 不会掉出盆装菜（2026-11-03 用户：煮好以后打掉锅应该只掉锅）
      */
     public void dropContents(Level level, BlockPos pos) {
-        for (ItemStack stack : ingredients) {
-            Containers.dropItemStack(level, pos.getX() + 0.5, pos.getY() + 1.0, pos.getZ() + 0.5, stack.copy());
+        for (Layer layer : layers) {
+            if (!layer.seasoning) {
+                Containers.dropItemStack(level, pos.getX() + 0.5, pos.getY() + 1.0, pos.getZ() + 0.5, layer.stack.copy());
+            }
         }
         liquid = Fluids.EMPTY;
         liquidMb = 0;
-        ingredients.clear();
-        seasonings.clear();
+        layers.clear();
         cooking = null;
-        cookTicks = 0;
+        cookProgress = 0;
         result = ItemStack.EMPTY;
         container = ItemStack.EMPTY;
         servings = 0;
@@ -390,12 +409,22 @@ public class BigPotBlockEntity extends BlockEntity {
             tag.putString("Liquid", BuiltInRegistries.FLUID.getKey(liquid).toString());
             tag.putInt("LiquidMb", liquidMb);
         }
-        tag.put("Ingredients", encode(ingredients, ops));
-        tag.put("Seasonings", encode(seasonings, ops));
+        ListTag list = new ListTag();
+        for (Layer layer : layers) {
+            ItemStack.CODEC.encodeStart(ops, layer.stack).result().ifPresent(item -> {
+                CompoundTag entry = new CompoundTag();
+                entry.put("Item", item);
+                if (layer.seasoning) {
+                    entry.putBoolean("Seasoning", true);
+                }
+                list.add(entry);
+            });
+        }
+        tag.put("Layers", list);
         if (cooking != null) {
             tag.putString("Cooking", cooking.toString());
         }
-        tag.putInt("CookTicks", cookTicks);
+        tag.putFloat("CookProgress", cookProgress);
         tag.putInt("CookTotal", cookTotal);
         if (!result.isEmpty()) {
             ItemStack.CODEC.encodeStart(ops, result).result().ifPresent(saved -> tag.put("Result", saved));
@@ -405,14 +434,6 @@ public class BigPotBlockEntity extends BlockEntity {
         if (!container.isEmpty()) {
             ItemStack.CODEC.encodeStart(ops, container).result().ifPresent(saved -> tag.put("Container", saved));
         }
-    }
-
-    private static ListTag encode(List<ItemStack> stacks, com.mojang.serialization.DynamicOps<Tag> ops) {
-        ListTag list = new ListTag();
-        for (ItemStack stack : stacks) {
-            ItemStack.CODEC.encodeStart(ops, stack).result().ifPresent(list::add);
-        }
-        return list;
     }
 
     private static void decode(ListTag list, List<ItemStack> into, com.mojang.serialization.DynamicOps<Tag> ops) {
@@ -441,22 +462,37 @@ public class BigPotBlockEntity extends BlockEntity {
         if (liquid == Fluids.EMPTY) {
             liquidMb = 0;
         }
-        ingredients.clear();
-        seasonings.clear();
+        layers.clear();
         merged = null;
-        if (tag.contains("Contents")) {
-            // 这一版以前的存档食材、调料混在一个 Contents 里：倒进去时退回了瓶子 / 碗的算调料，其余当食材
-            List<ItemStack> old = new ArrayList<>();
-            decode(tag.getList("Contents", Tag.TAG_COMPOUND), old, ops);
-            for (ItemStack stack : old) {
-                (stack.hasCraftingRemainingItem() ? seasonings : ingredients).add(stack);
+        if (tag.contains("Layers")) {
+            ListTag list = tag.getList("Layers", Tag.TAG_COMPOUND);
+            for (int i = 0; i < list.size(); i++) {
+                CompoundTag entry = list.getCompound(i);
+                if (entry.contains("Item")) {
+                    ItemStack.CODEC.parse(ops, entry.get("Item")).result()
+                            .ifPresent(stack -> layers.add(new Layer(stack, entry.getBoolean("Seasoning"))));
+                }
             }
         } else {
-            decode(tag.getList("Ingredients", Tag.TAG_COMPOUND), ingredients, ops);
-            decode(tag.getList("Seasonings", Tag.TAG_COMPOUND), seasonings, ops);
+            // 以前的存档：先是食材、调料分开两个列表（Ingredients / Seasonings），再早混在一个 Contents 里
+            // （倒进去时退回了瓶子 / 碗的算调料）。读进来食材在下、调料压在上面
+            List<ItemStack> food = new ArrayList<>();
+            List<ItemStack> spice = new ArrayList<>();
+            if (tag.contains("Contents")) {
+                List<ItemStack> old = new ArrayList<>();
+                decode(tag.getList("Contents", Tag.TAG_COMPOUND), old, ops);
+                for (ItemStack stack : old) {
+                    (stack.hasCraftingRemainingItem() ? spice : food).add(stack);
+                }
+            } else {
+                decode(tag.getList("Ingredients", Tag.TAG_COMPOUND), food, ops);
+                decode(tag.getList("Seasonings", Tag.TAG_COMPOUND), spice, ops);
+            }
+            food.forEach(stack -> layers.add(new Layer(stack, false)));
+            spice.forEach(stack -> layers.add(new Layer(stack, true)));
         }
         cooking = tag.contains("Cooking") ? ResourceLocation.tryParse(tag.getString("Cooking")) : null;
-        cookTicks = tag.getInt("CookTicks");
+        cookProgress = tag.contains("CookProgress") ? tag.getFloat("CookProgress") : tag.getInt("CookTicks");
         cookTotal = tag.getInt("CookTotal");
         result = tag.contains("Result")
                 ? ItemStack.CODEC.parse(ops, tag.get("Result")).result().orElse(ItemStack.EMPTY)

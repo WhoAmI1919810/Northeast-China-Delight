@@ -70,7 +70,7 @@ public enum BigStoveComponentProvider implements IBlockComponentProvider {
         if (pot.hasResult()) {
             ratio = 1.0F;
         } else if (pot.cooking() != null && pot.cookTotal() > 0) {
-            ratio = Math.min(1.0F, pot.cookTicks() / (float) pot.cookTotal());
+            ratio = Math.min(1.0F, pot.cookProgress() / pot.cookTotal());
         } else {
             return;
         }
