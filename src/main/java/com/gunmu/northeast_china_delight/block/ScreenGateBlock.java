@@ -39,21 +39,26 @@ import java.util.Map;
  * 开关门的声音照原版同木材的栅栏门（原版的 type 字段是私有的，这里自己存一份）。</p>
  *
  * <p>合页在哪边（{@link #HINGE}，和门一样左 / 右，按放的人看过去）：默认右边。旁边已经有一扇顺着同一条线、
- * 合页在远离这边的柴门时，这扇放在另一边，两扇凑成一对从中间往两边开。模型只有合页在左的一套（朝北放时门轴在西边），
- * 合页在右就是这套转 180°。</p>
+ * 合页在远离这边的柴门时，这扇放在另一边，两扇凑成一对从中间往两边开。模型是合页在左的一套（朝北放时门轴在西边）：
+ * 关着的合页在右就是这套转 180°；开着的门轴原地不动、门扇绕门轴往朝向那一侧推开（2026-11-03 用户：固定一根轴、
+ * 开关方向不变），合页在右用左右镜像的那份（{@code _open_right}），所以一对门往同一侧开。</p>
  *
  * <p>朝向顺着障子：放的时候旁边只在一条线上有障子（或顺着这条线的柴门），门扇就顺着那条线，
  * 不管人是从哪个方向看过来的；正面朝人站的那一侧。</p>
  *
- * <p>选框：关着时照原版（不随 in_wall 变矮，模型也不变矮）；开着时贴着合页那边。
+ * <p>选框：关着时照原版（不随 in_wall 变矮，模型也不变矮）；开着时只剩门轴和门扇根上那截（伸到隔壁那格的门扇没有选框）。
  * 不重写 codec()，理由同 {@link AnimalOilBlock}。</p>
  */
 public class ScreenGateBlock extends FenceGateBlock {
 
     private static final VoxelShape CLOSED_Z = Block.box(0, 0, 6, 16, 16, 10);
     private static final VoxelShape CLOSED_X = Block.box(6, 0, 0, 10, 16, 16);
-    /** 开着时门扇在合页那边 x 0..3.5（朝北放时）；其余朝向照模型的 y 旋转转过去 */
-    private static final Map<Direction, VoxelShape> OPEN_SHAPES = FacingDecorBlock.rotatedShapes(0, 0, 0, 3.5, 16, 16);
+    /**
+     * 开着时（朝北放、合页在左）：门轴原地不动，门扇绕门轴往北推开，一半伸到北边那格；这一格里只剩门轴和门扇根上那截
+     * x 0..1.75、z 0..9.75。合页在右是左右镜像。其余朝向照模型的 y 旋转转过去
+     */
+    private static final Map<Direction, VoxelShape> OPEN_LEFT = FacingDecorBlock.rotatedShapes(0, 0, 0, 1.75, 16, 9.75);
+    private static final Map<Direction, VoxelShape> OPEN_RIGHT = FacingDecorBlock.rotatedShapes(14.25, 0, 0, 16, 16, 9.75);
 
     public static final EnumProperty<DoorHingeSide> HINGE = BlockStateProperties.DOOR_HINGE;
 
@@ -73,8 +78,7 @@ public class ScreenGateBlock extends FenceGateBlock {
     public VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
         Direction facing = state.getValue(FACING);
         if (state.getValue(OPEN)) {
-            // 合页在右 = 合页在左那套转 180°
-            return OPEN_SHAPES.get(state.getValue(HINGE) == DoorHingeSide.RIGHT ? facing.getOpposite() : facing);
+            return (state.getValue(HINGE) == DoorHingeSide.RIGHT ? OPEN_RIGHT : OPEN_LEFT).get(facing);
         }
         return facing.getAxis() == Direction.Axis.Z ? CLOSED_Z : CLOSED_X;
     }
