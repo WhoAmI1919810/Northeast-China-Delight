@@ -67,6 +67,14 @@
             { "function": "minecraft:set_count", "count": { "min": 1, "max": 2 } }
           ]
         },
+        {
+          "type": "minecraft:item",
+          "name": "northeast_china_delight:sweet_potato_starch",
+          "weight": 1,
+          "functions": [
+            { "function": "minecraft:set_count", "count": { "min": 1, "max": 2 } }
+          ]
+        },
         { "type": "minecraft:empty", "weight": 6 }
       ]
     }

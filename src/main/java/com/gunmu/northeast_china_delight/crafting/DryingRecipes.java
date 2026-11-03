@@ -1,6 +1,5 @@
 package com.gunmu.northeast_china_delight.crafting;
 
-import com.simibubi.create.foundation.item.ItemHelper;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
@@ -29,11 +28,27 @@ public final class DryingRecipes {
             List<ItemStack> outputs = new ArrayList<>();
             if (!stack.isEmpty() && this.input.test(stack)) {
                 for (ItemStack result : this.results) {
-                    outputs.addAll(ItemHelper.multipliedOutput(stack, result));
+                    outputs.addAll(multipliedOutput(stack, result));
                 }
             }
             return outputs;
         }
+    }
+
+    /**
+     * 一堆进去出多少：每个输入出一份 result，按最大堆叠数分成几堆（和 Create 的 ItemHelper.multipliedOutput 一样；
+     * 自己写一份，这个类不再引用 Create 的类，机械动力是可选前置）
+     */
+    static List<ItemStack> multipliedOutput(ItemStack in, ItemStack out) {
+        List<ItemStack> stacks = new ArrayList<>();
+        int total = in.getCount() * out.getCount();
+        int max = Math.max(1, out.getMaxStackSize());
+        while (total > 0) {
+            int n = Math.min(max, total);
+            stacks.add(out.copyWithCount(n));
+            total -= n;
+        }
+        return stacks;
     }
 
     private DryingRecipes() {

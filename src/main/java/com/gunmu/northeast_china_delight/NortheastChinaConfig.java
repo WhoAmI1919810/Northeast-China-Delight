@@ -101,6 +101,7 @@ public final class NortheastChinaConfig
             "northeast_china_delight:soybean",
             "northeast_china_delight:soybean_sack",
             "northeast_china_delight:sweet_potato",
+            "northeast_china_delight:sweet_potato_starch",
             "northeast_china_delight:vermicelli",
             "northeast_china_delight:vinegar",
             "northeast_china_delight:white_vinegar");

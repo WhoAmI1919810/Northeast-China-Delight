@@ -1,6 +1,21 @@
 {
+  "neoforge:conditions": [
+    {
+      "type": "neoforge:mod_loaded",
+      "modid": "create"
+    }
+  ],
   "type": "create:emptying",
-  "ingredients": [ { "type": "neoforge:components", "items": "northeast_china_delight:fish_sauce", "components": { "minecraft:damage": 0 }, "strict": true } ],
+  "ingredients": [
+    {
+      "type": "neoforge:components",
+      "items": "northeast_china_delight:fish_sauce",
+      "components": {
+        "minecraft:damage": 0
+      },
+      "strict": true
+    }
+  ],
   "results": [
     {
       "id": "minecraft:glass_bottle"
