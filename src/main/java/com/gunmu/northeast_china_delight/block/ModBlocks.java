@@ -382,7 +382,7 @@ public class ModBlocks {
                     .ignitedByLava()
     );
 
-    /** 压水井：出水嘴朝着放的人；空桶 / 大脸盆 / 玻璃瓶右键压水（见 HandPumpBlock） */
+    /** 压水井：出水嘴朝着放的人；空桶 / 大脸盆 / 玻璃瓶右键压水（见 HandPumpBlock）；forceSolidOn 同大脸盆，流水冲不掉 */
     public static final Supplier<Block> HAND_PUMP = block(
             "hand_pump",
             HandPumpBlock::new,
@@ -392,6 +392,7 @@ public class ModBlocks {
                     .strength(3.0F, 6.0F)
                     .sound(SoundType.METAL)
                     .noOcclusion()
+                    .forceSolidOn()
     );
 
     /** 红灯笼：亮度 15 */
@@ -571,6 +572,7 @@ public class ModBlocks {
      *
      * 注意第二个参数必须传「取一份给什么」—— 之前漏了它，方块里的 servingItem 一直是 null，
      * 结果拿着碗右键毫无反应。
+     * forceSolidOn 同大脸盆：盆矮，不加的话流水一冲就掉。
      */
     private static Supplier<Block> feastBlock(String name, Supplier<? extends net.minecraft.world.item.Item> serving) {
         return block(name + "_pot",
@@ -579,7 +581,8 @@ public class ModBlocks {
                         .mapColor(MapColor.WOOD)
                         .strength(0.5F)
                         .sound(SoundType.WOOD)
-                        .noOcclusion());
+                        .noOcclusion()
+                        .forceSolidOn());
     }
 
     /**
