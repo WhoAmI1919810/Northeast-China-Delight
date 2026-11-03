@@ -247,8 +247,9 @@ public class VatRenderer implements BlockEntityRenderer<VatBlockEntity> {
                 0, 1, 0);
     }
 
+    /** 流体静止贴图（JEI 的大锅烹饪页也用） */
     @org.jetbrains.annotations.Nullable
-    private static net.minecraft.client.renderer.texture.TextureAtlasSprite fluidSprite(
+    public static net.minecraft.client.renderer.texture.TextureAtlasSprite fluidSprite(
             net.minecraft.world.level.material.Fluid fluid) {
         net.minecraft.resources.ResourceLocation texture = fluidExtensions(fluid).getStillTexture();
         if (texture == null) {
@@ -270,7 +271,8 @@ public class VatRenderer implements BlockEntityRenderer<VatBlockEntity> {
     }
     *///?}
 
-    private static int fluidTint(net.minecraft.world.level.material.Fluid fluid) {
+    /** 流体染色；水单独给群系默认水色，别画成白的（JEI 的大锅烹饪页也用） */
+    public static int fluidTint(net.minecraft.world.level.material.Fluid fluid) {
         if (fluid.isSame(net.minecraft.world.level.material.Fluids.WATER)) {
             return 0xFF3F76E4;
         }
@@ -383,7 +385,7 @@ public class VatRenderer implements BlockEntityRenderer<VatBlockEntity> {
     }
 
     @SuppressWarnings("checkstyle:ParameterNumber")
-    private static void quad(com.mojang.blaze3d.vertex.VertexConsumer vc, PoseStack.Pose pose, int light, int overlay,
+    public static void quad(com.mojang.blaze3d.vertex.VertexConsumer vc, PoseStack.Pose pose, int light, int overlay,
                              float r, float g, float b, float alpha,
                              float ax, float ay, float az, float au, float av,
                              float bx, float by, float bz, float bu, float bv,

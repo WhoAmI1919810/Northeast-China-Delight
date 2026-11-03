@@ -35,6 +35,7 @@ public class NortheastJeiPlugin implements IModPlugin {
     private static java.util.List<VatJeiRecipe> registeredVatRecipes = java.util.List.of();
     private static java.util.List<GrillJeiRecipe> registeredGrillRecipes = java.util.List.of();
     private static java.util.List<PoundJeiRecipe> registeredPoundRecipes = java.util.List.of();
+    private static java.util.List<BigPotJeiRecipe> registeredBigPotRecipes = java.util.List.of();
     //? if >=1.20.5 {
     /*private static java.util.List<DryingJeiRecipe> registeredDryingRecipes = java.util.List.of();
     *///?}
@@ -47,6 +48,10 @@ public class NortheastJeiPlugin implements IModPlugin {
 
     public static final RecipeType<PoundJeiRecipe> POUND_TYPE =
             RecipeType.create(NortheastChinaDelight.MODID, "pounding", PoundJeiRecipe.class);
+
+    /** 大锅烹饪：大灶上的大铁锅 */
+    public static final RecipeType<BigPotJeiRecipe> BIG_POT_TYPE =
+            RecipeType.create(NortheastChinaDelight.MODID, "big_pot_cooking", BigPotJeiRecipe.class);
     //? if >=1.20.5 {
     /*/^* 批量风干是机械动力的鼓风机行为，1.20.4 节点没有机械动力，这个分类整块不注册 ^/
     public static final RecipeType<DryingJeiRecipe> DRYING_TYPE =
@@ -67,6 +72,7 @@ public class NortheastJeiPlugin implements IModPlugin {
         registration.addRecipeCategories(new VatRecipeCategory(guiHelper));
         registration.addRecipeCategories(new GrillRecipeCategory(guiHelper));
         registration.addRecipeCategories(new PoundRecipeCategory(guiHelper));
+        registration.addRecipeCategories(new BigPotRecipeCategory(guiHelper));
         //? if >=1.20.5 {
         /*registration.addRecipeCategories(new DryingRecipeCategory(guiHelper));
         *///?}
@@ -82,6 +88,8 @@ public class NortheastJeiPlugin implements IModPlugin {
             registeredPoundRecipes = PoundJeiRecipes.all(connection.getRecipeManager());
             registration.addRecipes(POUND_TYPE, registeredPoundRecipes);
             registration.addRecipes(GRILL_TYPE, registeredGrillRecipes);
+            registeredBigPotRecipes = BigPotJeiRecipes.all(connection.getRecipeManager());
+            registration.addRecipes(BIG_POT_TYPE, registeredBigPotRecipes);
             //? if >=1.20.5 {
             /*registeredDryingRecipes = DryingJeiRecipes.all(connection.getRecipeManager());
             registration.addRecipes(DRYING_TYPE, registeredDryingRecipes);
@@ -176,6 +184,7 @@ public class NortheastJeiPlugin implements IModPlugin {
         registeredVatRecipes = java.util.List.of();
         registeredGrillRecipes = java.util.List.of();
         registeredPoundRecipes = java.util.List.of();
+        registeredBigPotRecipes = java.util.List.of();
         //? if >=1.20.5 {
         /*registeredDryingRecipes = java.util.List.of();
         *///?}
@@ -197,6 +206,10 @@ public class NortheastJeiPlugin implements IModPlugin {
         runtime.getRecipeManager().hideRecipes(POUND_TYPE, registeredPoundRecipes);
         runtime.getRecipeManager().addRecipes(POUND_TYPE, updatedPound);
         registeredPoundRecipes = updatedPound;
+        java.util.List<BigPotJeiRecipe> updatedBigPot = BigPotJeiRecipes.all(manager);
+        runtime.getRecipeManager().hideRecipes(BIG_POT_TYPE, registeredBigPotRecipes);
+        runtime.getRecipeManager().addRecipes(BIG_POT_TYPE, updatedBigPot);
+        registeredBigPotRecipes = updatedBigPot;
         //? if >=1.20.5 {
         /*java.util.List<DryingJeiRecipe> updatedDrying = DryingJeiRecipes.all(manager);
         runtime.getRecipeManager().hideRecipes(DRYING_TYPE, registeredDryingRecipes);
@@ -210,6 +223,10 @@ public class NortheastJeiPlugin implements IModPlugin {
         registration.addRecipeCatalyst(new ItemStack(ModItems.VAT.get()), VAT_TYPE);
         registration.addRecipeCatalyst(new ItemStack(ModItems.GRILL_RACK.get()), GRILL_TYPE);
         registration.addRecipeCatalyst(new ItemStack(ModItems.WOODEN_MORTAR.get()), POUND_TYPE);
+        // 大锅烹饪：大铁锅，加上拼大灶用的农夫乐事炉灶
+        registration.addRecipeCatalyst(new ItemStack(ModItems.BIG_IRON_POT.get()), BIG_POT_TYPE);
+        registration.addRecipeCatalyst(new ItemStack(BuiltInRegistries.ITEM.get(DdIds.of("farmersdelight", "stove"))),
+                BIG_POT_TYPE);
         //? if >=1.20.5 {
         /*registration.addRecipeCatalyst(new ItemStack(
                 net.minecraft.core.registries.BuiltInRegistries.BLOCK.get(
