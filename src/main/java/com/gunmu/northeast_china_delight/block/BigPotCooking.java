@@ -35,8 +35,8 @@ import net.minecraft.world.phys.Vec3;
  *       食材最多放用得最多的那条配方那么多个、调料同理（{@link BigPotRecipes#maxIngredients} / {@link BigPotRecipes#maxSeasonings}）；</li>
  *   <li>锅里的食材是个栈：潜行空手右键从栈顶拿出一个（最后放进去的先出来）；调料倒进去就拿不出来；</li>
  *   <li>灶点着、锅里正好凑成一条配方就开始煮（每刻 {@link #serverTick}）；盖上锅盖按配方的 {@code lid_speedup} 缩短时间。
- *       开始煮以后锅里的东西就不能动了：不能放、不能拿、不能舀水，只能等煮好（2026-11-03 用户）；</li>
- *   <li>煮好了：料没了、液体扣掉配方用的量，锅里是一锅菜（配方 result 的 count 就是份数），
+ *       开始煮以后锅里的东西就不能动了：不能放、不能拿、不能舀水（右键没反应、不出提示），只能等煮好（2026-11-03 用户）；</li>
+ *   <li>煮好了：料和液体都没了，锅里是一锅菜（配方 result 的 count 就是份数），
  *       拿配方写的容器右键盛一份（没写容器就空手盛），每份给配方的经验。拆灶时没盛完的菜不掉，只掉锅。</li>
  * </ul>
  *
@@ -96,7 +96,7 @@ public final class BigPotCooking {
         if ((bucket || held.is(ModItems.LARGE_BASIN.get()))
                 && pot.liquid().isSame(Fluids.WATER) && pot.liquidMb() >= BUCKET_MB) {
             if (pot.cooking() != null) {
-                tell(player, Component.translatable("message.northeast_china_delight.big_pot.cooking"));
+                // 煮着不让舀，也不出提示（2026-11-03 用户：开始烹饪后不给任何文案）
                 return InteractionResult.sidedSuccess(level.isClientSide);
             }
             if (!level.isClientSide) {
@@ -116,7 +116,7 @@ public final class BigPotCooking {
             return InteractionResult.PASS;
         }
         if (pot.cooking() != null) {
-            tell(player, Component.translatable("message.northeast_china_delight.big_pot.cooking"));
+            // 煮着不让放，不出提示；仍算用掉这次右键，免得手里的食物被吃掉
             return InteractionResult.sidedSuccess(level.isClientSide);
         }
         if (pot.liquidMb() <= 0) {
@@ -171,8 +171,7 @@ public final class BigPotCooking {
         if (player.isSecondaryUseActive() && !pot.hasResult() && !pot.contents().isEmpty()) {
             if (!level.isClientSide) {
                 if (pot.cooking() != null) {
-                    tell(player, Component.translatable("message.northeast_china_delight.big_pot.cooking"));
-                    return InteractionResult.SUCCESS;
+                    return InteractionResult.SUCCESS;       // 煮着不让拿，不出提示
                 }
                 ItemStack taken = pot.popIngredient();
                 if (taken.isEmpty()) {
@@ -210,8 +209,7 @@ public final class BigPotCooking {
             return;
         }
         float surface = BigPotBlockEntity.liquidSurfaceY(Math.max(pot.liquidMb(), BUCKET_MB));
-        pot.finish(recipe.result(), recipe.container(), recipe.liquid() == null ? 0 : recipe.liquid().amount(),
-                recipe.experience());
+        pot.finish(recipe.result(), recipe.container(), recipe.experience());
         level.playSound(null, pos, SoundEvents.BREWING_STAND_BREW, SoundSource.BLOCKS, 1.0F, 0.8F);
         // 煮好了：像骨粉催熟那样冒一阵绿色粒子
         if (level instanceof ServerLevel server) {
