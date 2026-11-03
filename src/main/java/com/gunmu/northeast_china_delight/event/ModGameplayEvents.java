@@ -9,7 +9,6 @@ import com.gunmu.northeast_china_delight.block.ModBlockTags;
 import com.gunmu.northeast_china_delight.block.ModBlocks;
 import com.gunmu.northeast_china_delight.block.PlatedDishBlock;
 import com.gunmu.northeast_china_delight.compat.displaydelight.DisplayDelightCompat;
-import com.gunmu.northeast_china_delight.NortheastChinaConfig;
 import com.gunmu.northeast_china_delight.block.WoodenMortarBlock;
 import com.gunmu.northeast_china_delight.effect.ModEffects;
 import com.gunmu.northeast_china_delight.item.ModItems;
@@ -334,8 +333,8 @@ public final class ModGameplayEvents
         }
 
         Player player = event.getEntity();
-        if (NortheastChinaConfig.DISH_PLACEMENT_ENABLED.get()
-                && dishBlock.get() instanceof PlatedDishBlock plated)
+        // 菜肴一定能摆成方块（2026-11-04 用户：去掉「菜肴方块形态」那条配置）
+        if (dishBlock.get() instanceof PlatedDishBlock plated)
         {
             InteractionResult onPlate = placeOnPlate(plated, event, stack, player);
             if (onPlate != InteractionResult.PASS)
@@ -345,8 +344,7 @@ public final class ModGameplayEvents
                 return;
             }
         }
-        if (player.isSecondaryUseActive() && NortheastChinaConfig.DISH_PLACEMENT_ENABLED.get()
-                && ModBlocks.canPlaceDish(id))
+        if (player.isSecondaryUseActive() && ModBlocks.canPlaceDish(id))
         {
             BlockPlaceContext placement = new BlockPlaceContext(
                     event.getLevel(), player, event.getHand(), stack, event.getHitVec());

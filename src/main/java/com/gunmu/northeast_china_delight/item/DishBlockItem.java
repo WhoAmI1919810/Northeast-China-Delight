@@ -1,6 +1,5 @@
 package com.gunmu.northeast_china_delight.item;
 
-import com.gunmu.northeast_china_delight.NortheastChinaConfig;
 import com.gunmu.northeast_china_delight.block.ModBlocks;
 import com.gunmu.northeast_china_delight.util.DdStacks;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -26,7 +25,6 @@ public class DishBlockItem extends ItemNameBlockItem
     {
         Player player = context.getPlayer();
         boolean wantPlace = player != null && player.isSecondaryUseActive()
-                && NortheastChinaConfig.DISH_PLACEMENT_ENABLED.get()
                 && ModBlocks.canPlaceDish(BuiltInRegistries.BLOCK.getKey(this.getBlock()).getPath());
 
         if (wantPlace)

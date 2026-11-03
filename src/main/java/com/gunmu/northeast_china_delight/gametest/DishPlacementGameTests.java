@@ -3,7 +3,6 @@ package com.gunmu.northeast_china_delight.gametest;
 import com.gunmu.northeast_china_delight.block.ModBlocks;
 import com.gunmu.northeast_china_delight.event.ModGameplayEvents;
 import com.gunmu.northeast_china_delight.item.ModItems;
-import com.gunmu.northeast_china_delight.NortheastChinaConfig;
 import com.gunmu.northeast_china_delight.NortheastChinaDelight;
 import com.gunmu.northeast_china_delight.util.DdIds;
 import net.minecraft.core.BlockPos;
@@ -33,8 +32,8 @@ import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
 //?}
 
 /**
- * 菜肴方块形态的三条规矩：
- * 不潜行右键 = 吃（不摆）、潜行右键 = 摆成方块、开关关掉时潜行右键也不摆（而且没有任何提示）。
+ * 菜肴方块形态的规矩：不潜行右键 = 吃（不摆）、潜行右键 = 摆成方块
+ * （2026-11-04 起菜肴一定能摆成方块，配置里那个开关去掉了）。
  */
 @GameTestHolder(NortheastChinaDelight.MODID)
 @PrefixGameTestTemplate(false)
@@ -72,18 +71,6 @@ public final class DishPlacementGameTests
         helper.assertTrue(level.getBlockState(target).is(ModBlocks.OLD_STYLE_GUO_BAO_ROU.get()),
                 "潜行右键应该把菜摆成方块");
 
-        level.setBlockAndUpdate(target, Blocks.AIR.defaultBlockState());
-        boolean old = NortheastChinaConfig.DISH_PLACEMENT_ENABLED.get();
-        NortheastChinaConfig.DISH_PLACEMENT_ENABLED.set(false);
-        try
-        {
-            useOn(level, player, target);
-            helper.assertTrue(level.getBlockState(target).isAir(), "开关关掉后潜行右键也不应该放置");
-        }
-        finally
-        {
-            NortheastChinaConfig.DISH_PLACEMENT_ENABLED.set(old);
-        }
         helper.succeed();
     }
 
@@ -97,48 +84,39 @@ public final class DishPlacementGameTests
 
         Player player = mockPlayer(helper, GameType.SURVIVAL);
         player.setShiftKeyDown(true);
-        boolean oldPlacement = NortheastChinaConfig.DISH_PLACEMENT_ENABLED.get();
-        NortheastChinaConfig.DISH_PLACEMENT_ENABLED.set(true);
-        try
+        for (String id : ModBlocks.DISH_BLOCK_IDS)
         {
-            for (String id : ModBlocks.DISH_BLOCK_IDS)
+            level.setBlockAndUpdate(target, Blocks.AIR.defaultBlockState());
+            var dishBlock = ModBlocks.DISH_BLOCKS.get(id);
+            helper.assertTrue(dishBlock != null, "料理方块未注册: " + id);
+
+            var item = BuiltInRegistries.ITEM.get(
+                    DdIds.of(NortheastChinaDelight.MODID, id));
+            helper.assertTrue(item != net.minecraft.world.item.Items.AIR,
+                    "料理物品未注册: " + id);
+            player.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(item));
+            BlockHitResult hit = new BlockHitResult(
+                    Vec3.atCenterOf(ground).add(0.0, 0.5, 0.0), Direction.UP, ground, false);
+
+            ModGameplayEvents.onDishRightClick(
+                    new
+                            //? if <1.20.2 {
+                            /*net.minecraftforge.event.entity.player.PlayerInteractEvent
+                            *///?} else {
+                            net.neoforged.neoforge.event.entity.player.PlayerInteractEvent
+                            //?}
+                            .RightClickBlock(
+                            player, InteractionHand.MAIN_HAND, ground, hit));
+            if (ModBlocks.canPlaceDish(id))
             {
-                level.setBlockAndUpdate(target, Blocks.AIR.defaultBlockState());
-                var dishBlock = ModBlocks.DISH_BLOCKS.get(id);
-                helper.assertTrue(dishBlock != null, "料理方块未注册: " + id);
-
-                var item = BuiltInRegistries.ITEM.get(
-                        DdIds.of(NortheastChinaDelight.MODID, id));
-                helper.assertTrue(item != net.minecraft.world.item.Items.AIR,
-                        "料理物品未注册: " + id);
-                player.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(item));
-                BlockHitResult hit = new BlockHitResult(
-                        Vec3.atCenterOf(ground).add(0.0, 0.5, 0.0), Direction.UP, ground, false);
-
-                ModGameplayEvents.onDishRightClick(
-                        new
-                                //? if <1.20.2 {
-                                /*net.minecraftforge.event.entity.player.PlayerInteractEvent
-                                *///?} else {
-                                net.neoforged.neoforge.event.entity.player.PlayerInteractEvent
-                                //?}
-                                .RightClickBlock(
-                                player, InteractionHand.MAIN_HAND, ground, hit));
-                if (ModBlocks.canPlaceDish(id))
-                {
-                    helper.assertTrue(level.getBlockState(target).is(dishBlock.get()),
-                            "料理未沿用统一的潜行右键放置路径: " + id);
-                }
-                else
-                {
-                    helper.assertTrue(level.getBlockState(target).isAir(),
-                            "无器具料理不能潜行放下，只能摆到展示乐事的餐盘上: " + id);
-                }
+                helper.assertTrue(level.getBlockState(target).is(dishBlock.get()),
+                        "料理未沿用统一的潜行右键放置路径: " + id);
             }
-        }
-        finally
-        {
-            NortheastChinaConfig.DISH_PLACEMENT_ENABLED.set(oldPlacement);
+            else
+            {
+                helper.assertTrue(level.getBlockState(target).isAir(),
+                        "无器具料理不能潜行放下，只能摆到展示乐事的餐盘上: " + id);
+            }
         }
         helper.succeed();
     }
