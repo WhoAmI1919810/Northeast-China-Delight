@@ -3,6 +3,7 @@ package com.gunmu.northeast_china_delight.block;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.item.context.BlockPlaceContext;
+import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.IronBarsBlock;
@@ -11,6 +12,9 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
+import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.phys.shapes.Shapes;
+import net.minecraft.world.phys.shapes.VoxelShape;
 
 /**
  * 障子（秫秸障子 / 板障子）：东北院子的篱笆。连法、碰撞箱都和铁栏杆 / 玻璃板一样，
@@ -19,11 +23,35 @@ import net.minecraft.world.level.block.state.properties.BooleanProperty;
  * <p>多一个 {@link #UP}：上面还摞着同一种障子时为 true，模型换成一通到顶的那套贴图（秆子不留梢、木板不削尖），
  * 两格摞起来看着是一整片。</p>
  *
+ * <p>碰撞箱和原版栅栏一样高（1.5 格，跳不过去）；样子和选框还是铁栏杆那套。</p>
+ *
  * <p>继承 {@link IronBarsBlock} 是为了它的连法（1.20.1 的构造器不公开，得有个子类）。不重写 codec()，理由同 {@link AnimalOilBlock}。</p>
  */
 public class FenceScreenBlock extends IronBarsBlock {
 
     public static final BooleanProperty UP = BlockStateProperties.UP;
+
+    /** 按 北 1 / 东 2 / 南 4 / 西 8 连着哪几边取碰撞箱：中间一根桩加连过去的那几截，都是 24 像素高 */
+    private static final VoxelShape[] COLLISION_SHAPES = makeCollisionShapes();
+
+    private static VoxelShape[] makeCollisionShapes() {
+        VoxelShape post = Block.box(7, 0, 7, 9, 24, 9);
+        VoxelShape[] arms = {
+                Block.box(7, 0, 0, 9, 24, 9), Block.box(7, 0, 7, 16, 24, 9),
+                Block.box(7, 0, 7, 9, 24, 16), Block.box(0, 0, 7, 9, 24, 9)
+        };
+        VoxelShape[] shapes = new VoxelShape[16];
+        for (int i = 0; i < shapes.length; i++) {
+            VoxelShape shape = post;
+            for (int side = 0; side < arms.length; side++) {
+                if ((i & (1 << side)) != 0) {
+                    shape = Shapes.or(shape, arms[side]);
+                }
+            }
+            shapes[i] = shape;
+        }
+        return shapes;
+    }
 
     public FenceScreenBlock(BlockBehaviour.Properties properties) {
         super(properties);
@@ -47,6 +75,13 @@ public class FenceScreenBlock extends IronBarsBlock {
             updated = updated.setValue(UP, neighborState.is(this));
         }
         return updated;
+    }
+
+    @Override
+    public VoxelShape getCollisionShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
+        int index = (state.getValue(NORTH) ? 1 : 0) | (state.getValue(EAST) ? 2 : 0)
+                | (state.getValue(SOUTH) ? 4 : 0) | (state.getValue(WEST) ? 8 : 0);
+        return COLLISION_SHAPES[index];
     }
 
     @Override
