@@ -54,6 +54,15 @@ public final class BigPotVisuals {
             {6.0F, 210, 12.4F}, {6.0F, 270, 12.4F}, {6.0F, 330, 12.4F}};
     public static final int SLOTS = SLOT_PLACES.length;
 
+    /**
+     * 摊开在锅底的（生大米）：不占格子，在锅底均匀铺一层，每份厚 {@link #SPREAD_STEP} 像素，最多算 {@link #SPREAD_MAX} 份
+     * （2026-11-03 用户：生米放进锅里应该是摊开的，先水后米，米均匀铺在锅底）。和 layout.py 的 SPREAD 一样
+     */
+    private static final float FLOOR = 10.0F;
+    private static final float SPREAD_STEP = 0.4F;
+    private static final int SPREAD_MAX = 4;
+    public static final ResourceLocation RAW_RICE = DdIds.of(NortheastChinaDelight.MODID, "block/big_pot/raw_rice");
+
     /** 锅身每一圈 (y0, y1, 内半径)，和大灶生成器 big_stove/build.py 的 POT 一样 */
     private static final float[][] POT = {
             {16, 16.75F, 11.5F}, {15, 16, 11.5F}, {14, 15, 11}, {13, 14, 10}, {12, 13, 9}, {11, 12, 7.5F}, {10, 11, 5.5F}};
@@ -157,6 +166,16 @@ public final class BigPotVisuals {
     }
 
     // ---------------------------------------------------------------- 调料、颜色
+
+    /** 生大米：摊开在锅底，不占格子 */
+    public static boolean isSpread(ItemStack stack) {
+        return stack.is(ModTags.CROPS_RICE);
+    }
+
+    /** 锅底摊开那一层的顶面高度（像素） */
+    public static float spreadY(int count) {
+        return FLOOR + SPREAD_STEP * Math.min(count, SPREAD_MAX);
+    }
 
     public static boolean isSeasoning(ItemStack stack) {
         return seasoningOf(stack) != null;

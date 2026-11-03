@@ -1,0 +1,7 @@
+{
+  "credit": "大盆菜的 2D 图标：只给物品栏/配方书/JEI 这类 GUI 用；手、地面由 DdFeastItemRenderer 画方块模型",
+  "parent": "item/generated",
+  "textures": {
+    "layer0": "northeast_china_delight:item/steamed_rice"
+  }
+}

@@ -54,6 +54,7 @@ public final class ModTags {
     public static final TagKey<Item> FOODS_RAW_MUTTON = item("foods/raw_mutton");
     public static final TagKey<Item> FOODS_DOUGH_WHEAT = item("foods/dough/wheat");
     public static final TagKey<Item> CROPS_POTATO = item("crops/potato");
+    public static final TagKey<Item> CROPS_RICE = item("crops/rice");
     public static final TagKey<Item> FOODS_BREAD = item("foods/bread");
     public static final TagKey<Item> FOODS_SOY_PASTE = item("foods/soy_paste");
     public static final TagKey<Item> EGGS = item("eggs");
