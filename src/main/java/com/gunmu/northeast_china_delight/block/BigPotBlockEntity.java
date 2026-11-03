@@ -294,14 +294,14 @@ public class BigPotBlockEntity extends BlockEntity {
         }
     }
 
-    /** 煮好了：料清空、液体扣掉配方用的那么多，锅里换成一锅菜 */
-    public void finish(ItemStack dish, ItemStack serveWith, int liquidUsed, float xpPerServing) {
+    /**
+     * 煮好了：料清空、液体全没了（水都煮进菜里，2026-11-03 用户：煮完锅里不该再有水位），锅里换成一锅菜
+     */
+    public void finish(ItemStack dish, ItemStack serveWith, float xpPerServing) {
         ingredients.clear();
         seasonings.clear();
-        liquidMb = Math.max(0, liquidMb - liquidUsed);
-        if (liquidMb == 0) {
-            liquid = Fluids.EMPTY;
-        }
+        liquidMb = 0;
+        liquid = Fluids.EMPTY;
         result = dish.copyWithCount(1);
         servings = dish.getCount();
         container = serveWith.isEmpty() ? ItemStack.EMPTY : serveWith.copyWithCount(1);
