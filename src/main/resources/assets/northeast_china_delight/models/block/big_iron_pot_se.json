@@ -2,7 +2,10 @@
   "parent": "minecraft:block/block",
   "textures": {
     "iron": "northeast_china_delight:block/big_pot_iron",
+    "rim": "northeast_china_delight:block/big_pot_rim",
     "inside": "northeast_china_delight:block/big_pot_inside",
+    "inside_low": "northeast_china_delight:block/big_pot_inside_low",
+    "bottom": "northeast_china_delight:block/big_pot_bottom",
     "particle": "northeast_china_delight:block/big_pot_iron"
   },
   "elements": [
@@ -49,7 +52,7 @@
           "texture": "#iron"
         },
         "up": {
-          "texture": "#iron"
+          "texture": "#rim"
         }
       }
     },
@@ -105,7 +108,7 @@
           "texture": "#iron"
         },
         "up": {
-          "texture": "#iron"
+          "texture": "#rim"
         }
       }
     },
@@ -161,7 +164,7 @@
           "texture": "#iron"
         },
         "up": {
-          "texture": "#iron"
+          "texture": "#rim"
         }
       }
     },
@@ -217,7 +220,7 @@
           "texture": "#iron"
         },
         "up": {
-          "texture": "#iron"
+          "texture": "#rim"
         }
       }
     },
@@ -273,7 +276,7 @@
           "texture": "#iron"
         },
         "up": {
-          "texture": "#iron"
+          "texture": "#rim"
         }
       }
     },
@@ -329,7 +332,7 @@
           "texture": "#iron"
         },
         "up": {
-          "texture": "#iron"
+          "texture": "#rim"
         }
       }
     },
@@ -385,7 +388,7 @@
           "texture": "#iron"
         },
         "up": {
-          "texture": "#iron"
+          "texture": "#rim"
         }
       }
     },
@@ -441,7 +444,7 @@
           "texture": "#iron"
         },
         "up": {
-          "texture": "#iron"
+          "texture": "#rim"
         }
       }
     },
@@ -497,7 +500,7 @@
           "texture": "#iron"
         },
         "up": {
-          "texture": "#iron"
+          "texture": "#rim"
         }
       }
     },
@@ -553,7 +556,7 @@
           "texture": "#iron"
         },
         "up": {
-          "texture": "#iron"
+          "texture": "#rim"
         }
       }
     },
@@ -600,7 +603,7 @@
           "texture": "#iron"
         },
         "up": {
-          "texture": "#iron"
+          "texture": "#rim"
         }
       }
     },
@@ -647,7 +650,7 @@
           "texture": "#iron"
         },
         "up": {
-          "texture": "#iron"
+          "texture": "#rim"
         }
       }
     },
@@ -1580,13 +1583,13 @@
           "texture": "#iron"
         },
         "west": {
-          "texture": "#inside"
+          "texture": "#inside_low"
         },
         "down": {
           "texture": "#iron"
         },
         "up": {
-          "texture": "#inside"
+          "texture": "#inside_low"
         }
       }
     },
@@ -1603,7 +1606,7 @@
       ],
       "faces": {
         "north": {
-          "texture": "#inside"
+          "texture": "#inside_low"
         },
         "south": {
           "texture": "#iron"
@@ -1612,13 +1615,13 @@
           "texture": "#iron"
         },
         "west": {
-          "texture": "#inside"
+          "texture": "#inside_low"
         },
         "down": {
           "texture": "#iron"
         },
         "up": {
-          "texture": "#inside"
+          "texture": "#inside_low"
         }
       }
     },
@@ -1635,7 +1638,7 @@
       ],
       "faces": {
         "north": {
-          "texture": "#inside"
+          "texture": "#inside_low"
         },
         "south": {
           "texture": "#iron"
@@ -1644,13 +1647,13 @@
           "texture": "#iron"
         },
         "west": {
-          "texture": "#inside"
+          "texture": "#inside_low"
         },
         "down": {
           "texture": "#iron"
         },
         "up": {
-          "texture": "#inside"
+          "texture": "#inside_low"
         }
       }
     },
@@ -1667,7 +1670,7 @@
       ],
       "faces": {
         "north": {
-          "texture": "#inside"
+          "texture": "#inside_low"
         },
         "south": {
           "texture": "#iron"
@@ -1676,13 +1679,13 @@
           "texture": "#iron"
         },
         "west": {
-          "texture": "#inside"
+          "texture": "#inside_low"
         },
         "down": {
           "texture": "#iron"
         },
         "up": {
-          "texture": "#inside"
+          "texture": "#inside_low"
         }
       }
     },
@@ -1699,7 +1702,7 @@
       ],
       "faces": {
         "north": {
-          "texture": "#inside"
+          "texture": "#inside_low"
         },
         "south": {
           "texture": "#iron"
@@ -1708,13 +1711,13 @@
           "texture": "#iron"
         },
         "west": {
-          "texture": "#inside"
+          "texture": "#inside_low"
         },
         "down": {
           "texture": "#iron"
         },
         "up": {
-          "texture": "#inside"
+          "texture": "#inside_low"
         }
       }
     },
@@ -1731,7 +1734,7 @@
       ],
       "faces": {
         "north": {
-          "texture": "#inside"
+          "texture": "#inside_low"
         },
         "south": {
           "texture": "#iron"
@@ -1740,13 +1743,13 @@
           "texture": "#iron"
         },
         "west": {
-          "texture": "#inside"
+          "texture": "#inside_low"
         },
         "down": {
           "texture": "#iron"
         },
         "up": {
-          "texture": "#inside"
+          "texture": "#inside_low"
         }
       }
     },
@@ -1763,7 +1766,7 @@
       ],
       "faces": {
         "north": {
-          "texture": "#inside"
+          "texture": "#inside_low"
         },
         "south": {
           "texture": "#iron"
@@ -1772,13 +1775,13 @@
           "texture": "#iron"
         },
         "west": {
-          "texture": "#inside"
+          "texture": "#inside_low"
         },
         "down": {
           "texture": "#iron"
         },
         "up": {
-          "texture": "#inside"
+          "texture": "#inside_low"
         }
       }
     },
@@ -1795,7 +1798,7 @@
       ],
       "faces": {
         "north": {
-          "texture": "#inside"
+          "texture": "#inside_low"
         },
         "south": {
           "texture": "#iron"
@@ -1807,7 +1810,7 @@
           "texture": "#iron"
         },
         "up": {
-          "texture": "#inside"
+          "texture": "#inside_low"
         }
       }
     },
@@ -1830,13 +1833,13 @@
           "texture": "#iron"
         },
         "west": {
-          "texture": "#inside"
+          "texture": "#inside_low"
         },
         "down": {
           "texture": "#iron"
         },
         "up": {
-          "texture": "#inside"
+          "texture": "#inside_low"
         }
       }
     },
@@ -1853,7 +1856,7 @@
       ],
       "faces": {
         "north": {
-          "texture": "#inside"
+          "texture": "#inside_low"
         },
         "south": {
           "texture": "#iron"
@@ -1862,13 +1865,13 @@
           "texture": "#iron"
         },
         "west": {
-          "texture": "#inside"
+          "texture": "#inside_low"
         },
         "down": {
           "texture": "#iron"
         },
         "up": {
-          "texture": "#inside"
+          "texture": "#inside_low"
         }
       }
     },
@@ -1885,7 +1888,7 @@
       ],
       "faces": {
         "north": {
-          "texture": "#inside"
+          "texture": "#inside_low"
         },
         "south": {
           "texture": "#iron"
@@ -1894,13 +1897,13 @@
           "texture": "#iron"
         },
         "west": {
-          "texture": "#inside"
+          "texture": "#inside_low"
         },
         "down": {
           "texture": "#iron"
         },
         "up": {
-          "texture": "#inside"
+          "texture": "#inside_low"
         }
       }
     },
@@ -1917,7 +1920,7 @@
       ],
       "faces": {
         "north": {
-          "texture": "#inside"
+          "texture": "#inside_low"
         },
         "south": {
           "texture": "#iron"
@@ -1926,13 +1929,13 @@
           "texture": "#iron"
         },
         "west": {
-          "texture": "#inside"
+          "texture": "#inside_low"
         },
         "down": {
           "texture": "#iron"
         },
         "up": {
-          "texture": "#inside"
+          "texture": "#inside_low"
         }
       }
     },
@@ -1949,7 +1952,7 @@
       ],
       "faces": {
         "north": {
-          "texture": "#inside"
+          "texture": "#inside_low"
         },
         "south": {
           "texture": "#iron"
@@ -1958,13 +1961,13 @@
           "texture": "#iron"
         },
         "west": {
-          "texture": "#inside"
+          "texture": "#inside_low"
         },
         "down": {
           "texture": "#iron"
         },
         "up": {
-          "texture": "#inside"
+          "texture": "#inside_low"
         }
       }
     },
@@ -1981,7 +1984,7 @@
       ],
       "faces": {
         "north": {
-          "texture": "#inside"
+          "texture": "#inside_low"
         },
         "south": {
           "texture": "#iron"
@@ -1990,13 +1993,13 @@
           "texture": "#iron"
         },
         "west": {
-          "texture": "#inside"
+          "texture": "#inside_low"
         },
         "down": {
           "texture": "#iron"
         },
         "up": {
-          "texture": "#inside"
+          "texture": "#inside_low"
         }
       }
     },
@@ -2013,7 +2016,7 @@
       ],
       "faces": {
         "north": {
-          "texture": "#inside"
+          "texture": "#inside_low"
         },
         "south": {
           "texture": "#iron"
@@ -2025,7 +2028,7 @@
           "texture": "#iron"
         },
         "up": {
-          "texture": "#inside"
+          "texture": "#inside_low"
         }
       }
     },
@@ -2042,7 +2045,7 @@
       ],
       "faces": {
         "north": {
-          "texture": "#inside"
+          "texture": "#inside_low"
         },
         "south": {
           "texture": "#iron"
@@ -2054,7 +2057,7 @@
           "texture": "#iron"
         },
         "up": {
-          "texture": "#inside"
+          "texture": "#inside_low"
         }
       }
     },
@@ -2077,13 +2080,13 @@
           "texture": "#iron"
         },
         "west": {
-          "texture": "#inside"
+          "texture": "#inside_low"
         },
         "down": {
           "texture": "#iron"
         },
         "up": {
-          "texture": "#inside"
+          "texture": "#inside_low"
         }
       }
     },
@@ -2100,7 +2103,7 @@
       ],
       "faces": {
         "north": {
-          "texture": "#inside"
+          "texture": "#inside_low"
         },
         "south": {
           "texture": "#iron"
@@ -2109,13 +2112,13 @@
           "texture": "#iron"
         },
         "west": {
-          "texture": "#inside"
+          "texture": "#inside_low"
         },
         "down": {
           "texture": "#iron"
         },
         "up": {
-          "texture": "#inside"
+          "texture": "#inside_low"
         }
       }
     },
@@ -2132,7 +2135,7 @@
       ],
       "faces": {
         "north": {
-          "texture": "#inside"
+          "texture": "#inside_low"
         },
         "south": {
           "texture": "#iron"
@@ -2141,13 +2144,13 @@
           "texture": "#iron"
         },
         "west": {
-          "texture": "#inside"
+          "texture": "#inside_low"
         },
         "down": {
           "texture": "#iron"
         },
         "up": {
-          "texture": "#inside"
+          "texture": "#inside_low"
         }
       }
     },
@@ -2164,7 +2167,7 @@
       ],
       "faces": {
         "north": {
-          "texture": "#inside"
+          "texture": "#inside_low"
         },
         "south": {
           "texture": "#iron"
@@ -2173,13 +2176,13 @@
           "texture": "#iron"
         },
         "west": {
-          "texture": "#inside"
+          "texture": "#inside_low"
         },
         "down": {
           "texture": "#iron"
         },
         "up": {
-          "texture": "#inside"
+          "texture": "#inside_low"
         }
       }
     },
@@ -2196,7 +2199,7 @@
       ],
       "faces": {
         "north": {
-          "texture": "#inside"
+          "texture": "#inside_low"
         },
         "south": {
           "texture": "#iron"
@@ -2208,7 +2211,7 @@
           "texture": "#iron"
         },
         "up": {
-          "texture": "#inside"
+          "texture": "#inside_low"
         }
       }
     },
@@ -2225,7 +2228,7 @@
       ],
       "faces": {
         "north": {
-          "texture": "#inside"
+          "texture": "#inside_low"
         },
         "south": {
           "texture": "#iron"
@@ -2237,7 +2240,7 @@
           "texture": "#iron"
         },
         "up": {
-          "texture": "#inside"
+          "texture": "#inside_low"
         }
       }
     },
@@ -2254,7 +2257,7 @@
       ],
       "faces": {
         "north": {
-          "texture": "#inside"
+          "texture": "#inside_low"
         },
         "south": {
           "texture": "#iron"
@@ -2266,7 +2269,7 @@
           "texture": "#iron"
         },
         "up": {
-          "texture": "#inside"
+          "texture": "#inside_low"
         }
       }
     },
@@ -2283,7 +2286,7 @@
       ],
       "faces": {
         "up": {
-          "texture": "#inside"
+          "texture": "#bottom"
         },
         "down": {
           "texture": "#iron"
@@ -2309,7 +2312,7 @@
       ],
       "faces": {
         "up": {
-          "texture": "#inside"
+          "texture": "#bottom"
         },
         "down": {
           "texture": "#iron"
@@ -2338,7 +2341,7 @@
       ],
       "faces": {
         "up": {
-          "texture": "#inside"
+          "texture": "#bottom"
         },
         "down": {
           "texture": "#iron"
@@ -2367,7 +2370,7 @@
       ],
       "faces": {
         "up": {
-          "texture": "#inside"
+          "texture": "#bottom"
         },
         "down": {
           "texture": "#iron"
@@ -2396,7 +2399,7 @@
       ],
       "faces": {
         "up": {
-          "texture": "#inside"
+          "texture": "#bottom"
         },
         "down": {
           "texture": "#iron"
@@ -2451,11 +2454,11 @@
             1.0
           ]
         },
-        "up": {
-          "texture": "#iron"
-        },
         "down": {
           "texture": "#iron"
+        },
+        "up": {
+          "texture": "#rim"
         }
       }
     }

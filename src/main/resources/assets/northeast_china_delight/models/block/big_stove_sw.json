@@ -7,7 +7,6 @@
     "iron": "northeast_china_delight:block/big_stove_iron",
     "ash": "northeast_china_delight:block/big_stove_ash",
     "embers": "northeast_china_delight:block/big_stove_embers",
-    "fire": "minecraft:block/fire_0",
     "particle": "farmersdelight:block/stove_side"
   },
   "elements": [
