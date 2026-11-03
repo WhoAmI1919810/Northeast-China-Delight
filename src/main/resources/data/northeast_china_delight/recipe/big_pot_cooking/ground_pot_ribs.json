@@ -16,7 +16,25 @@
         "tag": "c:crops/potato"
       },
       {
-        "tag": "c:foods/dough/wheat"
+        "tag": "c:foods/dough/wheat",
+        "count": 2
+      },
+      {
+        "tag": "c:crops/green_onion"
+      },
+      {
+        "tag": "c:crops/corn"
+      }
+    ],
+    "seasonings": [
+      {
+        "tag": "c:foods/seasonings/soy_sauce"
+      },
+      {
+        "tag": "c:foods/seasonings/salt"
+      },
+      {
+        "tag": "c:foods/seasonings/cooking_oil"
       }
     ],
     "container": {

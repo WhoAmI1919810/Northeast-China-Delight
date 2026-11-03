@@ -41,6 +41,7 @@ import net.neoforged.neoforge.client.model.data.ModelData;
 /**
  * JEI 里的「舂捣」分类。左边逐项列出输入（数量直接写在物品角标上），中间是配方第一阶段模型，
  * 右上工具、次数与蓄力阈值，右边列出全部产物。概率、随机数量范围和副产物标记走槽位 tooltip。
+ * 输入、产物两边至少画 2×2 格，多了按整行往下加；工具格、容器格也总是画出来。用不上的格子空着（用户嫌格子忽多忽少难看）。
  */
 public class PoundRecipeCategory implements IRecipeCategory<PoundJeiRecipe> {
 
@@ -52,6 +53,8 @@ public class PoundRecipeCategory implements IRecipeCategory<PoundJeiRecipe> {
     private static final int RESULTS_X = 134;
     private static final int GRID_COLUMNS = 2;
     private static final int GRID_STRIDE = 18;
+    /** 输入 / 产物两边至少画几格（2×2） */
+    private static final int MIN_GRID_SLOTS = 4;
 
     private static final int STATION_X = 46;
     private static final int STATION_Y = 46;
@@ -122,20 +125,32 @@ public class PoundRecipeCategory implements IRecipeCategory<PoundJeiRecipe> {
 
     @Override
     public void setRecipe(IRecipeLayoutBuilder builder, PoundJeiRecipe recipe, IFocusGroup focuses) {
-        for (int i = 0; i < recipe.inputs().size(); i++) {
+        int inputSlots = gridSlots(recipe.inputs().size());
+        for (int i = 0; i < inputSlots; i++) {
+            if (i >= recipe.inputs().size()) {
+                builder.addSlot(RecipeIngredientRole.RENDER_ONLY, gridX(INPUT_X, i), gridY(i, inputSlots))
+                        .setStandardSlotBackground();
+                continue;
+            }
             PoundJeiRecipe.Input input = recipe.inputs().get(i);
-            builder.addSlot(RecipeIngredientRole.INPUT, gridX(INPUT_X, i), gridY(i, recipe.inputs().size()))
+            builder.addSlot(RecipeIngredientRole.INPUT, gridX(INPUT_X, i), gridY(i, inputSlots))
                     .setStandardSlotBackground()
                     .addItemStacks(input.items());
         }
 
-        if (!recipe.tool().isEmpty()) {
+        if (recipe.tool().isEmpty()) {
+            builder.addSlot(RecipeIngredientRole.RENDER_ONLY, TOOL_X, TOOL_Y)
+                    .setStandardSlotBackground();
+        } else {
             builder.addSlot(RecipeIngredientRole.CATALYST, TOOL_X, TOOL_Y)
                     .setStandardSlotBackground()
                     .addItemStacks(recipe.tool());
         }
 
-        if (recipe.resultContainer() != null) {
+        if (recipe.resultContainer() == null) {
+            builder.addSlot(RecipeIngredientRole.RENDER_ONLY, ARROW_X + 4, ARROW_Y + 18)
+                    .setStandardSlotBackground();
+        } else {
             // 取成品要拿着的容器放在箭头下面
             builder.addSlot(RecipeIngredientRole.INPUT, ARROW_X + 4, ARROW_Y + 18)
                     .setStandardSlotBackground()
@@ -144,9 +159,14 @@ public class PoundRecipeCategory implements IRecipeCategory<PoundJeiRecipe> {
                             Component.translatable("jei.northeast_china_delight.pound.result_container")));
         }
 
+        int outputSlots = gridSlots(recipe.outputs().size());
+        for (int i = recipe.outputs().size(); i < outputSlots; i++) {
+            builder.addSlot(RecipeIngredientRole.RENDER_ONLY, gridX(RESULTS_X, i), gridY(i, outputSlots))
+                    .setStandardSlotBackground();
+        }
         for (int i = 0; i < recipe.outputs().size(); i++) {
             PoundJeiRecipe.Output output = recipe.outputs().get(i);
-            builder.addSlot(RecipeIngredientRole.OUTPUT, gridX(RESULTS_X, i), gridY(i, recipe.outputs().size()))
+            builder.addSlot(RecipeIngredientRole.OUTPUT, gridX(RESULTS_X, i), gridY(i, outputSlots))
                     .setStandardSlotBackground()
                     .addItemStack(output.stack())
                     .addTooltipCallback((slotView, tooltip) -> {
@@ -198,6 +218,12 @@ public class PoundRecipeCategory implements IRecipeCategory<PoundJeiRecipe> {
         //?}
     }
 
+    /** 一边要画几格：至少 2×2，多了补成整行 */
+    private static int gridSlots(int count) {
+        int rows = (Math.max(count, MIN_GRID_SLOTS) + GRID_COLUMNS - 1) / GRID_COLUMNS;
+        return rows * GRID_COLUMNS;
+    }
+
     private static int gridX(int start, int index) {
         return start + (index % GRID_COLUMNS) * GRID_STRIDE;
     }
@@ -232,7 +258,7 @@ public class PoundRecipeCategory implements IRecipeCategory<PoundJeiRecipe> {
         }
     }
 
-    /** 有 result_container / result_mb 时，把「容器」和每次装出的毫升数直接画在对应槽位下方。 */
+    /** 有 result_container / result_mb 时，把「容器」写在容器格下面，每次装出的毫升数写在产物格下面。 */
     private static void drawContainerHint(GuiGraphics graphics, PoundJeiRecipe recipe) {
         if (recipe.resultContainer() == null && recipe.resultMb() <= 0) {
             return;
@@ -256,7 +282,9 @@ public class PoundRecipeCategory implements IRecipeCategory<PoundJeiRecipe> {
             Component amount = Component.translatable(
                     "jei.northeast_china_delight.pound.result_mb_value", recipe.resultMb());
             float x = RESULTS_X + SLOT / 2.0F - font.width(amount) * scale / 2.0F;
-            float y = gridY(0, 1) + SLOT + 2.0F;
+            // 产物格至少两排：写在最下面一排的下面
+            int slots = gridSlots(recipe.outputs().size());
+            float y = gridY(slots - 1, slots) + SLOT + 2.0F;
             pose.pushPose();
             pose.translate(x, y, 0.0F);
             pose.scale(scale, scale, 1.0F);

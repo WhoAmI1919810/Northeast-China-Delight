@@ -25,6 +25,11 @@
         "tag": "c:foods/raw_beef"
       }
     ],
+    "seasonings": [
+      {
+        "tag": "c:foods/seasonings/salt"
+      }
+    ],
     "container": {
       "item": "northeast_china_delight:large_basin"
     },

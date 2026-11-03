@@ -26,8 +26,11 @@ public final class DishFlavors {
         WARM
     }
 
-    /** {@code slowing}：油腻菜里吃完会不会缓慢（见 {@link #SLOWING_GREASY}） */
-    public record Info(Flavor flavor, int ingredientCount, int overrideTicks, boolean slowing) {
+    /**
+     * {@code slowing}：油腻菜里吃完会不会缓慢（见 {@link #SLOWING_GREASY}）；
+     * {@code feast}：是不是大盆菜盛出来的碗装那一份（见 {@link #FEAST_BOWLS}）
+     */
+    public record Info(Flavor flavor, int ingredientCount, int overrideTicks, boolean slowing, boolean feast) {
         public int durationTicks() {
             if (this.overrideTicks >= 0) {
                 return this.overrideTicks;
@@ -41,9 +44,20 @@ public final class DishFlavors {
     /**
      * 油腻菜里只有这几道给缓慢：配方里的食材多于 3 种（同一种算一种；盐、酱油、大酱、糖、醋、油、辣酱、番茄酱这类调料不算）。
      * 其余油腻菜照常给生命提升、急迫和油腻，只是不拖慢脚步。
+     * 大盆菜的碗装那一份不在这里：2026-11-03 用户给的效果表里没有缓慢（见 {@link #FEAST_BOWLS}）。
      */
-    private static final Set<String> SLOWING_GREASY = Set.of(
-            "smoked_meat_platter", "slaughter_feast_bowl", "ground_pot_chicken_bowl", "ground_pot_ribs_bowl");
+    private static final Set<String> SLOWING_GREASY = Set.of("smoked_meat_platter");
+
+    /**
+     * 大盆菜（大锅烹饪、大脸盆盛）盛出来的碗装那一份：都是 90 秒，生命提升 II + 急迫 I，再加油腻 II（油腻口味）
+     * 或滋养 I（均衡口味），见 {@link DishEffects#of}。别的菜的生命提升只给 I（2026-11-03 用户定的）。
+     */
+    private static final Set<String> FEAST_BOWLS = Set.of(
+            "harvest_stew_bowl", "slaughter_feast_bowl", "sauerkraut_seafood_stew_bowl", "sauerkraut_bone_stew_bowl",
+            "ground_pot_chicken_bowl", "ground_pot_ribs_bowl", "pork_vermicelli_stew_bowl", "chicken_mushroom_stew_bowl");
+
+    /** 大盆菜碗装那一份的效果时长：90 秒 */
+    private static final int FEAST_TICKS = 1800;
 
     private static final Map<String, Integer> WARMTH_PATHS = Map.ofEntries(
             Map.entry("soy_paste_soup", 0),
@@ -123,10 +137,16 @@ public final class DishFlavors {
         put(map, Flavor.GREASY, 1, 1000, "potato_pancake");
         put(map, Flavor.GREASY, 3, "three_fresh_veggies");
         put(map, Flavor.GREASY, 2, 600, "sticky_bean_bun");
-        // 大盆菜：效果挂在碗装的那一份上（盆本身是方块物品，不能吃、没有效果）
-        put(map, Flavor.GREASY, 5, 1200, "slaughter_feast_bowl");
-        put(map, Flavor.GREASY, 4, "ground_pot_chicken_bowl");
-        put(map, Flavor.GREASY, 4, "ground_pot_ribs_bowl");
+        // 大盆菜：效果挂在碗装的那一份上（盆本身是方块物品，不能吃、没有效果）。2026-11-03 配方扩到 6 种食材，
+        // 效果照用户的表统一 90 秒；大丰收、猪肉炖粉条、小鸡炖蘑菇从均衡改成油腻
+        put(map, Flavor.GREASY, 6, FEAST_TICKS, "harvest_stew_bowl");
+        put(map, Flavor.GREASY, 6, FEAST_TICKS, "slaughter_feast_bowl");
+        put(map, Flavor.GREASY, 6, FEAST_TICKS, "ground_pot_chicken_bowl");
+        put(map, Flavor.GREASY, 6, FEAST_TICKS, "ground_pot_ribs_bowl");
+        put(map, Flavor.GREASY, 6, FEAST_TICKS, "pork_vermicelli_stew_bowl");
+        put(map, Flavor.GREASY, 6, FEAST_TICKS, "chicken_mushroom_stew_bowl");
+        put(map, Flavor.BALANCED, 6, FEAST_TICKS, "sauerkraut_seafood_stew_bowl");
+        put(map, Flavor.BALANCED, 6, FEAST_TICKS, "sauerkraut_bone_stew_bowl");
         put(map, Flavor.GREASY, 2, "salted_fish_flatbread");
         put(map, Flavor.GREASY, 2, 800, "kimchi_pancake");
         put(map, Flavor.GREASY, 2, 1000, "snowy_bean_paste");
@@ -159,9 +179,6 @@ public final class DishFlavors {
 
         put(map, Flavor.BALANCED, 2, 600, "steamed_egg_soy_paste");
         put(map, Flavor.BALANCED, 4, "northeast_rice_wrap");
-        put(map, Flavor.BALANCED, 3, 800, "sauerkraut_bone_stew_bowl");
-        put(map, Flavor.BALANCED, 4, "pork_vermicelli_stew_bowl");
-        put(map, Flavor.BALANCED, 6, "harvest_stew_bowl");
         put(map, Flavor.BALANCED, 4, 1000, "spicy_beef_soup");
         put(map, Flavor.BALANCED, 4, "kimchi_fried_rice");
         put(map, Flavor.BALANCED, 4, "shrimp_pork_dumpling");
@@ -177,9 +194,7 @@ public final class DishFlavors {
         put(map, Flavor.BALANCED, 2, "sea_cucumber_tofu_soup");
         put(map, Flavor.BALANCED, 6, "demoli_fish_stew");
         put(map, Flavor.BALANCED, 5, 1200, "borscht");
-        put(map, Flavor.BALANCED, 6, "sauerkraut_seafood_stew_bowl");
         put(map, Flavor.BALANCED, 3, 1000, "ginseng_chicken_soup");
-        put(map, Flavor.BALANCED, 3, 800, "chicken_mushroom_stew_bowl");
         put(map, Flavor.BALANCED, 5, 1200, "bibimbap");
         put(map, Flavor.BALANCED, 2, 1000, "grilled_cold_noodles");
         put(map, Flavor.BALANCED, 2, "red_bean_songpyeon");
@@ -195,6 +210,6 @@ public final class DishFlavors {
     private static void put(Map<Item, Info> map, Flavor flavor, int ingredientCount, int overrideTicks, String path) {
         Item item = BuiltInRegistries.ITEM.get(DdIds.of(NortheastChinaDelight.MODID, path));
         map.put(item, new Info(flavor, ingredientCount, overrideTicks,
-                flavor == Flavor.GREASY && SLOWING_GREASY.contains(path)));
+                flavor == Flavor.GREASY && SLOWING_GREASY.contains(path), FEAST_BOWLS.contains(path)));
     }
 }

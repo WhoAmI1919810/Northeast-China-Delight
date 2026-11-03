@@ -15,6 +15,26 @@
       {
         "item": "northeast_china_delight:pork_ribs",
         "count": 2
+      },
+      {
+        "item": "northeast_china_delight:frozen_tofu"
+      },
+      {
+        "tag": "c:crops/napa_cabbage"
+      },
+      {
+        "tag": "c:crops/potato"
+      }
+    ],
+    "seasonings": [
+      {
+        "tag": "c:foods/seasonings/salt"
+      },
+      {
+        "tag": "c:foods/seasonings/soy_sauce"
+      },
+      {
+        "tag": "c:foods/seasonings/cooking_oil"
       }
     ],
     "container": {

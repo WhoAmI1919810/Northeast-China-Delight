@@ -44,7 +44,8 @@ import net.minecraft.world.level.material.Fluid;
  *       灶下面一个火的小图标，和农夫乐事厨锅那页一个样子（自己重画的，见 textures/gui/jei/big_pot_heat.png）；</li>
  *   <li>上面一排 3 格调料，下面 2×3 格食材，调料那排往右错开半格；</li>
  *   <li>箭头指向右边的大成品格（数量 = 一锅盛几份），箭头下面是盛菜用的容器，最下面写烹饪时间；</li>
- *   <li>锅盖缩短时间（{@code lid_speedup}）在 JEI 里不显示。</li>
+ *   <li>锅盖缩短时间（{@code lid_speedup}）在 JEI 里不显示；</li>
+ *   <li>3 格调料、6 格食材、容器格不管配方用没用都画出来，没用的空着（用户嫌格子忽多忽少难看）。</li>
  * </ul>
  */
 public class BigPotRecipeCategory implements IRecipeCategory<BigPotJeiRecipe> {
@@ -64,6 +65,9 @@ public class BigPotRecipeCategory implements IRecipeCategory<BigPotJeiRecipe> {
     private static final int GRID_X = 57;
     private static final int GRID_Y = 24;
     private static final int GRID_COLUMNS = 3;
+    /** 调料、食材格数（配方格式的上限）；配方用不满也把格子都画出来，空着 */
+    private static final int SEASONING_SLOTS = 3;
+    private static final int INGREDIENT_SLOTS = 6;
     private static final int ARROW_X = 115;
     private static final int ARROW_Y = 33;
     private static final int CONTAINER_X = 119;
@@ -148,18 +152,30 @@ public class BigPotRecipeCategory implements IRecipeCategory<BigPotJeiRecipe> {
 
     @Override
     public void setRecipe(IRecipeLayoutBuilder builder, BigPotJeiRecipe recipe, IFocusGroup focuses) {
-        for (int i = 0; i < recipe.seasonings().size(); i++) {
-            withSlotBackground(builder.addSlot(RecipeIngredientRole.INPUT, SEASONING_X + i * STRIDE, SEASONING_Y)
+        for (int i = 0; i < SEASONING_SLOTS; i++) {
+            int x = SEASONING_X + i * STRIDE;
+            if (i >= recipe.seasonings().size()) {
+                withSlotBackground(builder.addSlot(RecipeIngredientRole.RENDER_ONLY, x, SEASONING_Y));
+                continue;
+            }
+            withSlotBackground(builder.addSlot(RecipeIngredientRole.INPUT, x, SEASONING_Y)
                     .addItemStacks(recipe.seasonings().get(i))
                     .addTooltipCallback((slotView, tooltip) -> tooltip.add(
                             Component.translatable("jei.northeast_china_delight.big_pot.seasoning"))));
         }
-        for (int i = 0; i < recipe.ingredients().size(); i++) {
-            withSlotBackground(builder.addSlot(RecipeIngredientRole.INPUT,
-                            GRID_X + (i % GRID_COLUMNS) * STRIDE, GRID_Y + (i / GRID_COLUMNS) * STRIDE)
+        for (int i = 0; i < Math.max(INGREDIENT_SLOTS, recipe.ingredients().size()); i++) {
+            int x = GRID_X + (i % GRID_COLUMNS) * STRIDE;
+            int y = GRID_Y + (i / GRID_COLUMNS) * STRIDE;
+            if (i >= recipe.ingredients().size()) {
+                withSlotBackground(builder.addSlot(RecipeIngredientRole.RENDER_ONLY, x, y));
+                continue;
+            }
+            withSlotBackground(builder.addSlot(RecipeIngredientRole.INPUT, x, y)
                     .addItemStacks(recipe.ingredients().get(i)));
         }
-        if (!recipe.container().isEmpty()) {
+        if (recipe.container().isEmpty()) {
+            withSlotBackground(builder.addSlot(RecipeIngredientRole.RENDER_ONLY, CONTAINER_X, CONTAINER_Y));
+        } else {
             withSlotBackground(builder.addSlot(RecipeIngredientRole.INPUT, CONTAINER_X, CONTAINER_Y)
                     .addItemStack(recipe.container())
                     .addTooltipCallback((slotView, tooltip) -> tooltip.add(
