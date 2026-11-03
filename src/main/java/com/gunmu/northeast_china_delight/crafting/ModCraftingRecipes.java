@@ -25,6 +25,8 @@ public final class ModCraftingRecipes {
     public static final Supplier<RecipeSerializer<SeasoningBottleMergeRecipe>> SEASONING_BOTTLE_MERGE =
             SERIALIZERS.register("seasoning_bottle_merge",
                     () -> new SimpleCraftingRecipeSerializer<SeasoningBottleMergeRecipe>(SeasoningBottleMergeRecipe::new));
+    public static final Supplier<RecipeSerializer<NoRemainderShapedRecipe>> NO_REMAINDER_SHAPED =
+            SERIALIZERS.register("no_remainder_shaped", NoRemainderShapedRecipe.Serializer::new);
 
     private ModCraftingRecipes() {
     }
