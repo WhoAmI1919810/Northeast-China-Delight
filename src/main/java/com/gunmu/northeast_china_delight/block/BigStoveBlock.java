@@ -57,7 +57,8 @@ import java.util.function.UnaryOperator;
  *   <li>拆掉任意一格：这一格掉一个农夫乐事炉灶，剩下三格变回炉灶（朝向、点没点着照旧），锅和锅盖掉出来。</li>
  * </ul>
  *
- * <p>锅里装的东西存在 nw 那一格的 {@link BigPotBlockEntity} 上；以后在锅里做菜的入口都在 {@link BigPotCooking}（现在还是空的）。</p>
+ * <p>锅里装的东西存在 nw 那一格的 {@link BigPotBlockEntity} 上；在锅里做菜的入口都在 {@link BigPotCooking}，
+ * 锅里的东西由 {@code client/BigPotRenderer} 画。</p>
  *
  * <p>不重写 codec()，理由同 {@link AnimalOilBlock}。</p>
  */
@@ -166,7 +167,7 @@ public class BigStoveBlock extends Block implements EntityBlock {
     }
 
     /** 这口灶 2×2 的西北角 */
-    static BlockPos origin(BlockPos pos, BlockState state) {
+    public static BlockPos origin(BlockPos pos, BlockState state) {
         int[] o = state.getValue(PART).offset(state.getValue(FACING));
         return pos.offset(-o[0], 0, -o[1]);
     }
@@ -343,6 +344,10 @@ public class BigStoveBlock extends Block implements EntityBlock {
             }
         }
         if (!level.isClientSide) {
+            if (pot == Pot.LID && contents != null) {
+                // 煮着或煮好了揭盖：冒一股白雾
+                BigPotCooking.lidLifted(level, pos, state, contents);
+            }
             Pot next = pot == Pot.LID ? Pot.POT : Pot.NONE;
             updateAll(level, pos, state, s -> s.setValue(POT, next));
             ItemStack item = new ItemStack(pot == Pot.LID ? ModItems.BIG_POT_LID.get() : ModItems.BIG_IRON_POT.get());
@@ -396,13 +401,23 @@ public class BigStoveBlock extends Block implements EntityBlock {
         return state.getValue(PART) == Part.NW ? new BigPotBlockEntity(pos, state) : null;
     }
 
-    /** 只有点着、而且灶上有锅时才 tick（交给 BigPotCooking.serverTick，现在还是空的） */
+    /**
+     * 只有点着、而且灶上有锅时才 tick：服务端煮菜（BigPotCooking.serverTick），客户端冒泡、冒白雾（BigPotCooking.clientTick；
+     * 不放在 animateTick 里，那个是随机抽周围的方块调，一格两三秒才轮到一次，冒泡会一阵一阵的）
+     */
     @Nullable
     @Override
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> type) {
-        if (level.isClientSide || state.getValue(PART) != Part.NW || !state.getValue(LIT)
+        if (state.getValue(PART) != Part.NW || !state.getValue(LIT)
                 || state.getValue(POT) == Pot.NONE || type != ModBlockEntities.BIG_POT.get()) {
             return null;
+        }
+        if (level.isClientSide) {
+            return (tickLevel, tickPos, tickState, be) -> {
+                if (be instanceof BigPotBlockEntity pot) {
+                    BigPotCooking.clientTick(tickLevel, tickPos, tickState, pot);
+                }
+            };
         }
         return (tickLevel, tickPos, tickState, be) -> {
             if (be instanceof BigPotBlockEntity pot) {

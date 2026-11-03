@@ -174,6 +174,7 @@
   "jei.northeast_china_delight.info.big_stove": "四个农夫乐事炉灶同层摆成2×2自动拼成大灶。大铁锅右键放锅，木锅盖右键盖上；空手右键依次揭盖、取锅（锅内有料时不可取）。打火石或火焰弹点燃，锹灭火。揭盖后加水、食材和调料；点燃且配方凑齐即开始烹饪，盖盖加速，用对应容器盛出。破坏任意一格会拆回炉灶，并掉出锅、锅盖及未放入配方的物品。",
   "jei.northeast_china_delight.big_pot_cooking": "大锅烹饪",
   "jei.northeast_china_delight.big_pot.time": "时间：%s 秒",
+  "jei.northeast_china_delight.big_pot.experience": "经验：%s",
   "jei.northeast_china_delight.big_pot.seasoning": "调料",
   "jei.northeast_china_delight.big_pot.container": "盛菜用的容器，每盛一份用一个",
   "jei.northeast_china_delight.big_pot.servings": "一锅能盛 %s 份",

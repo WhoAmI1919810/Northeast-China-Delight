@@ -8,6 +8,7 @@ import com.gunmu.northeast_china_delight.block.VatBlockEntity;
 import com.gunmu.northeast_china_delight.client.GrillCampfireRenderer;
 import com.gunmu.northeast_china_delight.client.VatRenderer;
 import com.gunmu.northeast_china_delight.client.WoodenMortarRenderer;
+import com.gunmu.northeast_china_delight.client.BigPotRenderer;
 import com.gunmu.northeast_china_delight.compat.create.ModFanProcessingTypes;
 import com.gunmu.northeast_china_delight.compat.jei.VatJeiSync;
 import com.gunmu.northeast_china_delight.crafting.ModVatRecipes;
@@ -432,6 +433,7 @@ public class NortheastChinaDelight
             event.registerBlockEntityRenderer(ModBlockEntities.VAT.get(), VatRenderer::new);
             event.registerBlockEntityRenderer(ModBlockEntities.GRILL_CAMPFIRE.get(), GrillCampfireRenderer::new);
             event.registerBlockEntityRenderer(ModBlockEntities.WOODEN_MORTAR.get(), WoodenMortarRenderer::new);
+            event.registerBlockEntityRenderer(ModBlockEntities.BIG_POT.get(), BigPotRenderer::new);
             // 小板凳的座位实体看不见
             event.registerEntityRenderer(ModEntities.SEAT.get(), net.minecraft.client.renderer.entity.NoopRenderer::new);
         }

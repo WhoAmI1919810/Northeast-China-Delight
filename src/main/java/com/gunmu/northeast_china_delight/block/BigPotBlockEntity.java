@@ -35,8 +35,8 @@ import java.util.List;
  *   <li>煮好的菜、还剩几份、得用什么盛、每盛一份给多少经验。</li>
  * </ul>
  *
- * <p>锅里有什么会同步给客户端（右键时客户端要先知道锅里煮好了没、该不该让给手里的东西），
- * 只有每刻的烹饪进度不发。锅里的东西现在还不画出来。</p>
+ * <p>锅里有什么会同步给客户端（右键时客户端要先知道锅里煮好了没、该不该让给手里的东西，锅里的东西也要画出来，
+ * 见 {@code client/BigPotRenderer}），只有每刻的烹饪进度不发。</p>
  */
 public class BigPotBlockEntity extends BlockEntity {
 
@@ -55,9 +55,34 @@ public class BigPotBlockEntity extends BlockEntity {
     private ItemStack container = ItemStack.EMPTY;
     private float experience;
 
+    /** 水面高度（像素，整口灶 32×32 的坐标里）：1000 / 2000 / 3000 / 4000 mB，都避开锅里台阶的整数高度免得闪 */
+    private static final float[] LIQUID_SURFACE_Y = {13.5F, 14.5F, 15.5F, 16.25F};
+
     public BigPotBlockEntity(BlockPos pos, BlockState state) {
         super(ModBlockEntities.BIG_POT.get(), pos, state);
     }
+
+    /** 锅里装 mb 毫升液体时液面多高（像素）；画液面、放料溅水花都用这个 */
+    public static float liquidSurfaceY(int mb) {
+        int n = Math.max(1, Math.min(LIQUID_SURFACE_Y.length, (mb + 999) / 1000));
+        return LIQUID_SURFACE_Y[n - 1];
+    }
+
+    /** 渲染范围：整口灶 2×2、往上一格（锅里的东西会画到别的格子上） */
+    public net.minecraft.world.phys.AABB renderBounds() {
+        BlockState state = getBlockState();
+        BlockPos origin = state.getBlock() instanceof BigStoveBlock ? BigStoveBlock.origin(worldPosition, state)
+                : worldPosition;
+        return new net.minecraft.world.phys.AABB(origin.getX(), origin.getY(), origin.getZ(),
+                origin.getX() + 2, origin.getY() + 2, origin.getZ() + 2);
+    }
+
+    //? if <1.20.2 {
+    /*@Override
+    public net.minecraft.world.phys.AABB getRenderBoundingBox() {
+        return renderBounds();
+    }*/
+    //?}
 
     // ---------------------------------------------------------------- 读
 

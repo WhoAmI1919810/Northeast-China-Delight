@@ -50,6 +50,10 @@ public final class ModTags {
     public static final TagKey<Item> CROPS_CARROT = item("crops/carrot");
     public static final TagKey<Item> FOODS_FRUITS_PEAR = item("foods/fruits/pear");
     public static final TagKey<Item> FOODS_RAW_PORK = item("foods/raw_pork");
+    public static final TagKey<Item> FOODS_RAW_BEEF = item("foods/raw_beef");
+    public static final TagKey<Item> FOODS_RAW_MUTTON = item("foods/raw_mutton");
+    public static final TagKey<Item> FOODS_DOUGH_WHEAT = item("foods/dough/wheat");
+    public static final TagKey<Item> CROPS_POTATO = item("crops/potato");
     public static final TagKey<Item> FOODS_BREAD = item("foods/bread");
     public static final TagKey<Item> FOODS_SOY_PASTE = item("foods/soy_paste");
     public static final TagKey<Item> EGGS = item("eggs");
