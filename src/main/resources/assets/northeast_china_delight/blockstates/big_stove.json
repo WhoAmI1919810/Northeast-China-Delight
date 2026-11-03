@@ -24,6 +24,28 @@
       "when": {
         "facing": "north",
         "part": "nw",
+        "lit": "true",
+        "pot": "none"
+      },
+      "apply": {
+        "model": "northeast_china_delight:block/big_stove_fire_tall_nw"
+      }
+    },
+    {
+      "when": {
+        "facing": "north",
+        "part": "nw",
+        "lit": "true",
+        "pot": "pot|lid"
+      },
+      "apply": {
+        "model": "northeast_china_delight:block/big_stove_fire_nw"
+      }
+    },
+    {
+      "when": {
+        "facing": "north",
+        "part": "nw",
         "pot": "pot|lid"
       },
       "apply": {
@@ -58,6 +80,28 @@
       },
       "apply": {
         "model": "northeast_china_delight:block/big_stove_ne_lit"
+      }
+    },
+    {
+      "when": {
+        "facing": "north",
+        "part": "ne",
+        "lit": "true",
+        "pot": "none"
+      },
+      "apply": {
+        "model": "northeast_china_delight:block/big_stove_fire_tall_ne"
+      }
+    },
+    {
+      "when": {
+        "facing": "north",
+        "part": "ne",
+        "lit": "true",
+        "pot": "pot|lid"
+      },
+      "apply": {
+        "model": "northeast_china_delight:block/big_stove_fire_ne"
       }
     },
     {
@@ -104,6 +148,28 @@
       "when": {
         "facing": "north",
         "part": "sw",
+        "lit": "true",
+        "pot": "none"
+      },
+      "apply": {
+        "model": "northeast_china_delight:block/big_stove_fire_tall_sw"
+      }
+    },
+    {
+      "when": {
+        "facing": "north",
+        "part": "sw",
+        "lit": "true",
+        "pot": "pot|lid"
+      },
+      "apply": {
+        "model": "northeast_china_delight:block/big_stove_fire_sw"
+      }
+    },
+    {
+      "when": {
+        "facing": "north",
+        "part": "sw",
         "pot": "pot|lid"
       },
       "apply": {
@@ -138,6 +204,28 @@
       },
       "apply": {
         "model": "northeast_china_delight:block/big_stove_se_lit"
+      }
+    },
+    {
+      "when": {
+        "facing": "north",
+        "part": "se",
+        "lit": "true",
+        "pot": "none"
+      },
+      "apply": {
+        "model": "northeast_china_delight:block/big_stove_fire_tall_se"
+      }
+    },
+    {
+      "when": {
+        "facing": "north",
+        "part": "se",
+        "lit": "true",
+        "pot": "pot|lid"
+      },
+      "apply": {
+        "model": "northeast_china_delight:block/big_stove_fire_se"
       }
     },
     {
@@ -186,6 +274,30 @@
       "when": {
         "facing": "east",
         "part": "nw",
+        "lit": "true",
+        "pot": "none"
+      },
+      "apply": {
+        "model": "northeast_china_delight:block/big_stove_fire_tall_nw",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "facing": "east",
+        "part": "nw",
+        "lit": "true",
+        "pot": "pot|lid"
+      },
+      "apply": {
+        "model": "northeast_china_delight:block/big_stove_fire_nw",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "facing": "east",
+        "part": "nw",
         "pot": "pot|lid"
       },
       "apply": {
@@ -223,6 +335,30 @@
       },
       "apply": {
         "model": "northeast_china_delight:block/big_stove_ne_lit",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "facing": "east",
+        "part": "ne",
+        "lit": "true",
+        "pot": "none"
+      },
+      "apply": {
+        "model": "northeast_china_delight:block/big_stove_fire_tall_ne",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "facing": "east",
+        "part": "ne",
+        "lit": "true",
+        "pot": "pot|lid"
+      },
+      "apply": {
+        "model": "northeast_china_delight:block/big_stove_fire_ne",
         "y": 90
       }
     },
@@ -274,6 +410,30 @@
       "when": {
         "facing": "east",
         "part": "sw",
+        "lit": "true",
+        "pot": "none"
+      },
+      "apply": {
+        "model": "northeast_china_delight:block/big_stove_fire_tall_sw",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "facing": "east",
+        "part": "sw",
+        "lit": "true",
+        "pot": "pot|lid"
+      },
+      "apply": {
+        "model": "northeast_china_delight:block/big_stove_fire_sw",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "facing": "east",
+        "part": "sw",
         "pot": "pot|lid"
       },
       "apply": {
@@ -311,6 +471,30 @@
       },
       "apply": {
         "model": "northeast_china_delight:block/big_stove_se_lit",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "facing": "east",
+        "part": "se",
+        "lit": "true",
+        "pot": "none"
+      },
+      "apply": {
+        "model": "northeast_china_delight:block/big_stove_fire_tall_se",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "facing": "east",
+        "part": "se",
+        "lit": "true",
+        "pot": "pot|lid"
+      },
+      "apply": {
+        "model": "northeast_china_delight:block/big_stove_fire_se",
         "y": 90
       }
     },
@@ -362,6 +546,30 @@
       "when": {
         "facing": "south",
         "part": "nw",
+        "lit": "true",
+        "pot": "none"
+      },
+      "apply": {
+        "model": "northeast_china_delight:block/big_stove_fire_tall_nw",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "facing": "south",
+        "part": "nw",
+        "lit": "true",
+        "pot": "pot|lid"
+      },
+      "apply": {
+        "model": "northeast_china_delight:block/big_stove_fire_nw",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "facing": "south",
+        "part": "nw",
         "pot": "pot|lid"
       },
       "apply": {
@@ -399,6 +607,30 @@
       },
       "apply": {
         "model": "northeast_china_delight:block/big_stove_ne_lit",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "facing": "south",
+        "part": "ne",
+        "lit": "true",
+        "pot": "none"
+      },
+      "apply": {
+        "model": "northeast_china_delight:block/big_stove_fire_tall_ne",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "facing": "south",
+        "part": "ne",
+        "lit": "true",
+        "pot": "pot|lid"
+      },
+      "apply": {
+        "model": "northeast_china_delight:block/big_stove_fire_ne",
         "y": 180
       }
     },
@@ -450,6 +682,30 @@
       "when": {
         "facing": "south",
         "part": "sw",
+        "lit": "true",
+        "pot": "none"
+      },
+      "apply": {
+        "model": "northeast_china_delight:block/big_stove_fire_tall_sw",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "facing": "south",
+        "part": "sw",
+        "lit": "true",
+        "pot": "pot|lid"
+      },
+      "apply": {
+        "model": "northeast_china_delight:block/big_stove_fire_sw",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "facing": "south",
+        "part": "sw",
         "pot": "pot|lid"
       },
       "apply": {
@@ -487,6 +743,30 @@
       },
       "apply": {
         "model": "northeast_china_delight:block/big_stove_se_lit",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "facing": "south",
+        "part": "se",
+        "lit": "true",
+        "pot": "none"
+      },
+      "apply": {
+        "model": "northeast_china_delight:block/big_stove_fire_tall_se",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "facing": "south",
+        "part": "se",
+        "lit": "true",
+        "pot": "pot|lid"
+      },
+      "apply": {
+        "model": "northeast_china_delight:block/big_stove_fire_se",
         "y": 180
       }
     },
@@ -538,6 +818,30 @@
       "when": {
         "facing": "west",
         "part": "nw",
+        "lit": "true",
+        "pot": "none"
+      },
+      "apply": {
+        "model": "northeast_china_delight:block/big_stove_fire_tall_nw",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "facing": "west",
+        "part": "nw",
+        "lit": "true",
+        "pot": "pot|lid"
+      },
+      "apply": {
+        "model": "northeast_china_delight:block/big_stove_fire_nw",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "facing": "west",
+        "part": "nw",
         "pot": "pot|lid"
       },
       "apply": {
@@ -575,6 +879,30 @@
       },
       "apply": {
         "model": "northeast_china_delight:block/big_stove_ne_lit",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "facing": "west",
+        "part": "ne",
+        "lit": "true",
+        "pot": "none"
+      },
+      "apply": {
+        "model": "northeast_china_delight:block/big_stove_fire_tall_ne",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "facing": "west",
+        "part": "ne",
+        "lit": "true",
+        "pot": "pot|lid"
+      },
+      "apply": {
+        "model": "northeast_china_delight:block/big_stove_fire_ne",
         "y": 270
       }
     },
@@ -626,6 +954,30 @@
       "when": {
         "facing": "west",
         "part": "sw",
+        "lit": "true",
+        "pot": "none"
+      },
+      "apply": {
+        "model": "northeast_china_delight:block/big_stove_fire_tall_sw",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "facing": "west",
+        "part": "sw",
+        "lit": "true",
+        "pot": "pot|lid"
+      },
+      "apply": {
+        "model": "northeast_china_delight:block/big_stove_fire_sw",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "facing": "west",
+        "part": "sw",
         "pot": "pot|lid"
       },
       "apply": {
@@ -663,6 +1015,30 @@
       },
       "apply": {
         "model": "northeast_china_delight:block/big_stove_se_lit",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "facing": "west",
+        "part": "se",
+        "lit": "true",
+        "pot": "none"
+      },
+      "apply": {
+        "model": "northeast_china_delight:block/big_stove_fire_tall_se",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "facing": "west",
+        "part": "se",
+        "lit": "true",
+        "pot": "pot|lid"
+      },
+      "apply": {
+        "model": "northeast_china_delight:block/big_stove_fire_se",
         "y": 270
       }
     },

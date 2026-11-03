@@ -7,7 +7,6 @@
     "iron": "northeast_china_delight:block/big_stove_iron",
     "ash": "northeast_china_delight:block/big_stove_ash",
     "embers": "northeast_china_delight:block/big_stove_embers",
-    "fire": "minecraft:block/fire_0",
     "particle": "farmersdelight:block/stove_side"
   },
   "elements": [
@@ -1840,72 +1839,6 @@
           ]
         }
       }
-    },
-    {
-      "from": [
-        1.5,
-        3.0,
-        11.5
-      ],
-      "to": [
-        7.5,
-        9.0,
-        11.5
-      ],
-      "faces": {
-        "north": {
-          "texture": "#fire",
-          "uv": [
-            0,
-            0,
-            16,
-            16
-          ]
-        },
-        "south": {
-          "texture": "#fire",
-          "uv": [
-            0,
-            0,
-            16,
-            16
-          ]
-        }
-      },
-      "shade": false
-    },
-    {
-      "from": [
-        4.5,
-        3.0,
-        8.5
-      ],
-      "to": [
-        4.5,
-        9.0,
-        14.5
-      ],
-      "faces": {
-        "east": {
-          "texture": "#fire",
-          "uv": [
-            0,
-            0,
-            16,
-            16
-          ]
-        },
-        "west": {
-          "texture": "#fire",
-          "uv": [
-            0,
-            0,
-            16,
-            16
-          ]
-        }
-      },
-      "shade": false
     }
   ],
   "render_type": "minecraft:cutout"
