@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "A": {
+      "item": "northeast_china_delight:sorghum_stalk_fence"
+    },
+    "B": {
+      "item": "northeast_china_delight:corn_stalk"
+    }
+  },
+  "pattern": [
+    "ABA",
+    "ABA"
+  ],
+  "result": {
+    "count": 1,
+    "id": "northeast_china_delight:sorghum_stalk_gate"
+  }
+}
