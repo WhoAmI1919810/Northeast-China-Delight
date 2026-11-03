@@ -1,5 +1,6 @@
 {
   "parent": "minecraft:block/block",
+  "render_type": "minecraft:translucent",
   "textures": {
     "wood": "minecraft:block/oak_log",
     "particle": "minecraft:block/oak_log"
