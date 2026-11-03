@@ -158,6 +158,12 @@
         },
         "west": {
           "texture": "#wood"
+        },
+        "up": {
+          "texture": "#wood"
+        },
+        "down": {
+          "texture": "#wood"
         }
       }
     },
@@ -184,6 +190,12 @@
         },
         "west": {
           "texture": "#wood"
+        },
+        "up": {
+          "texture": "#wood"
+        },
+        "down": {
+          "texture": "#wood"
         }
       }
     },
@@ -210,6 +222,12 @@
         },
         "down": {
           "texture": "#wood"
+        },
+        "east": {
+          "texture": "#wood"
+        },
+        "west": {
+          "texture": "#wood"
         }
       }
     },
@@ -235,6 +253,12 @@
           "texture": "#wood"
         },
         "down": {
+          "texture": "#wood"
+        },
+        "east": {
+          "texture": "#wood"
+        },
+        "west": {
           "texture": "#wood"
         }
       }
@@ -262,6 +286,12 @@
         },
         "down": {
           "texture": "#wood"
+        },
+        "east": {
+          "texture": "#wood"
+        },
+        "west": {
+          "texture": "#wood"
         }
       }
     },
@@ -287,6 +317,12 @@
           "texture": "#wood"
         },
         "down": {
+          "texture": "#wood"
+        },
+        "east": {
+          "texture": "#wood"
+        },
+        "west": {
           "texture": "#wood"
         }
       }
@@ -314,6 +350,12 @@
         },
         "down": {
           "texture": "#wood"
+        },
+        "east": {
+          "texture": "#wood"
+        },
+        "west": {
+          "texture": "#wood"
         }
       }
     },
@@ -339,6 +381,12 @@
           "texture": "#wood"
         },
         "down": {
+          "texture": "#wood"
+        },
+        "east": {
+          "texture": "#wood"
+        },
+        "west": {
           "texture": "#wood"
         }
       }
@@ -360,6 +408,18 @@
         },
         "south": {
           "texture": "#paper_inner"
+        },
+        "east": {
+          "texture": "#paper"
+        },
+        "west": {
+          "texture": "#paper"
+        },
+        "up": {
+          "texture": "#paper"
+        },
+        "down": {
+          "texture": "#paper"
         }
       }
     }

@@ -29,6 +29,12 @@
         },
         "west": {
           "texture": "#cloth"
+        },
+        "up": {
+          "texture": "#cloth"
+        },
+        "down": {
+          "texture": "#cloth"
         }
       }
     },
