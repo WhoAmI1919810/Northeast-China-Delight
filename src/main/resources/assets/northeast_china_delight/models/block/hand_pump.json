@@ -277,19 +277,43 @@
           "texture": "#iron"
         },
         "east": {
-          "texture": "#iron"
+          "texture": "#iron",
+          "uv": [
+            0,
+            1,
+            14,
+            2
+          ]
         },
         "south": {
           "texture": "#iron"
         },
         "west": {
-          "texture": "#iron"
+          "texture": "#iron",
+          "uv": [
+            2,
+            1,
+            16,
+            2
+          ]
         },
         "up": {
-          "texture": "#iron"
+          "texture": "#iron",
+          "uv": [
+            7.5,
+            2,
+            8.5,
+            16
+          ]
         },
         "down": {
-          "texture": "#iron"
+          "texture": "#iron",
+          "uv": [
+            7.5,
+            0,
+            8.5,
+            14
+          ]
         }
       },
       "rotation": {
