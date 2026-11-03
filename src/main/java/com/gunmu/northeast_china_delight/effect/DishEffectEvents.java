@@ -111,6 +111,11 @@ public class DishEffectEvents {
             event.getToolTip().add(Component.translatable("tooltip.northeast_china_delight.grill_rack")
                     .withStyle(ChatFormatting.GRAY));
         }
+        // 海水桶：只为旧存档留着，还能拿去厨锅煮盐（2026-11-04 用户）
+        if (stack.is(ModItems.SEA_WATER_BUCKET.get())) {
+            event.getToolTip().add(Component.translatable("tooltip.northeast_china_delight.sea_water_bucket")
+                    .withStyle(ChatFormatting.GRAY));
+        }
         if (SeasoningBottleItem.isBottle(stack)) {
             event.getToolTip().add(Component.translatable("tooltip.northeast_china_delight.bottle_amount",
                             SeasoningBottleItem.remainingMb(stack),
