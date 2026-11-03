@@ -172,9 +172,9 @@ public class BigStoveBlock extends Block implements EntityBlock {
         return pos.offset(-o[0], 0, -o[1]);
     }
 
-    /** 这口灶的锅（nw 那一格上的方块实体）；那一格不在了返回 null */
+    /** 这口灶的锅（nw 那一格上的方块实体）；那一格不在了返回 null。准星指着哪一格都能找到（Jade 用） */
     @Nullable
-    private static BigPotBlockEntity potAt(Level level, BlockPos pos, BlockState state) {
+    public static BigPotBlockEntity potAt(net.minecraft.world.level.BlockGetter level, BlockPos pos, BlockState state) {
         int[] o = Part.NW.offset(state.getValue(FACING));
         BlockPos at = origin(pos, state).offset(o[0], 0, o[1]);
         return level.getBlockEntity(at) instanceof BigPotBlockEntity pot ? pot : null;
