@@ -238,9 +238,12 @@ public class VatRenderer implements BlockEntityRenderer<VatBlockEntity> {
         // 缸内壁大约在 2/16 到 14/16，液面贴着内壁画
         float min = 0.125F;
         float max = 0.875F;
-        var consumer = buffer.getBuffer(RenderType.translucent());
+        // 实体半透明的固定缓冲：在缸里的展示模型（cutoutBlockSheet）之后才画，液面下的东西隔着液面看得见
+        // （以前用 RenderType.translucent()，方块实体里会被提前画掉、写进深度，液面下的展示模型被挡没了，同大锅）
+        var consumer = buffer.getBuffer(net.minecraft.client.renderer.Sheets.translucentCullBlockSheet());
         // 液面略微抬高，避免和缸壁内侧重叠时闪烁
-        quad(consumer, pose.last(), light, 0xF000F0, red, green, blue, alpha,
+        quad(consumer, pose.last(), light, net.minecraft.client.renderer.texture.OverlayTexture.NO_OVERLAY,
+                red, green, blue, alpha,
                 min, y, min, sprite.getU0(), sprite.getV0(),
                 min, y, max, sprite.getU0(), sprite.getV1(),
                 max, y, max, sprite.getU1(), sprite.getV1(),
