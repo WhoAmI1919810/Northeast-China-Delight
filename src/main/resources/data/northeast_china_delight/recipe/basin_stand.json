@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "A": {
+      "item": "minecraft:stick"
+    },
+    "B": {
+      "item": "minecraft:white_wool"
+    },
+    "C": {
+      "item": "minecraft:glass_pane"
+    }
+  },
+  "pattern": [
+    " C ",
+    "ABA",
+    "A A"
+  ],
+  "result": {
+    "count": 1,
+    "id": "northeast_china_delight:basin_stand"
+  }
+}
