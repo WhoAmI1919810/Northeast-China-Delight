@@ -18,14 +18,32 @@
         7
       ],
       "faces": {
-        "east": {
-          "texture": "#panel"
-        },
         "west": {
-          "texture": "#panel"
+          "texture": "#panel",
+          "uv": [
+            0,
+            0,
+            7,
+            16
+          ]
+        },
+        "east": {
+          "texture": "#panel",
+          "uv": [
+            7,
+            0,
+            0,
+            16
+          ]
         },
         "north": {
-          "texture": "#panel"
+          "texture": "#panel",
+          "uv": [
+            7,
+            0,
+            9,
+            16
+          ]
         }
       }
     },

@@ -14,18 +14,166 @@
       ],
       "to": [
         9,
-        16,
+        15,
         7
       ],
       "faces": {
-        "east": {
-          "texture": "#panel"
-        },
         "west": {
-          "texture": "#panel"
+          "texture": "#panel",
+          "uv": [
+            0,
+            1,
+            7,
+            16
+          ]
+        },
+        "east": {
+          "texture": "#panel",
+          "uv": [
+            7,
+            1,
+            0,
+            16
+          ]
         },
         "north": {
-          "texture": "#panel"
+          "texture": "#panel",
+          "uv": [
+            7,
+            1,
+            9,
+            16
+          ]
+        },
+        "up": {
+          "texture": "#panel",
+          "uv": [
+            0,
+            1,
+            7,
+            2
+          ],
+          "rotation": 90
+        }
+      }
+    },
+    {
+      "from": [
+        7,
+        15,
+        1
+      ],
+      "to": [
+        9,
+        16,
+        2
+      ],
+      "faces": {
+        "west": {
+          "texture": "#panel",
+          "uv": [
+            1,
+            0,
+            2,
+            1
+          ]
+        },
+        "east": {
+          "texture": "#panel",
+          "uv": [
+            2,
+            0,
+            1,
+            1
+          ]
+        },
+        "up": {
+          "texture": "#panel",
+          "uv": [
+            1,
+            0,
+            2,
+            1
+          ],
+          "rotation": 90
+        },
+        "north": {
+          "texture": "#panel",
+          "uv": [
+            1,
+            0,
+            2,
+            1
+          ]
+        },
+        "south": {
+          "texture": "#panel",
+          "uv": [
+            1,
+            0,
+            2,
+            1
+          ]
+        }
+      }
+    },
+    {
+      "from": [
+        7,
+        15,
+        5
+      ],
+      "to": [
+        9,
+        16,
+        6
+      ],
+      "faces": {
+        "west": {
+          "texture": "#panel",
+          "uv": [
+            5,
+            0,
+            6,
+            1
+          ]
+        },
+        "east": {
+          "texture": "#panel",
+          "uv": [
+            6,
+            0,
+            5,
+            1
+          ]
+        },
+        "up": {
+          "texture": "#panel",
+          "uv": [
+            5,
+            0,
+            6,
+            1
+          ],
+          "rotation": 90
+        },
+        "north": {
+          "texture": "#panel",
+          "uv": [
+            5,
+            0,
+            6,
+            1
+          ]
+        },
+        "south": {
+          "texture": "#panel",
+          "uv": [
+            5,
+            0,
+            6,
+            1
+          ]
         }
       }
     },

@@ -1,0 +1,156 @@
+{
+  "parent": "minecraft:block/block",
+  "textures": {
+    "panel": "northeast_china_delight:block/sorghum_stalk_fence_full",
+    "band": "northeast_china_delight:block/willow_band",
+    "particle": "northeast_china_delight:block/sorghum_stalk_fence"
+  },
+  "elements": [
+    {
+      "from": [
+        7,
+        0,
+        9
+      ],
+      "to": [
+        9,
+        16,
+        16
+      ],
+      "faces": {
+        "west": {
+          "texture": "#panel",
+          "uv": [
+            9,
+            0,
+            16,
+            16
+          ]
+        },
+        "east": {
+          "texture": "#panel",
+          "uv": [
+            16,
+            0,
+            9,
+            16
+          ]
+        },
+        "south": {
+          "texture": "#panel",
+          "uv": [
+            7,
+            0,
+            9,
+            16
+          ]
+        }
+      }
+    },
+    {
+      "from": [
+        6.75,
+        4,
+        9.25
+      ],
+      "to": [
+        9.25,
+        5,
+        16
+      ],
+      "faces": {
+        "west": {
+          "texture": "#band",
+          "uv": [
+            9.25,
+            11,
+            16,
+            12
+          ]
+        },
+        "east": {
+          "texture": "#band",
+          "uv": [
+            0,
+            11,
+            6.75,
+            12
+          ]
+        },
+        "up": {
+          "texture": "#band",
+          "uv": [
+            6.75,
+            0,
+            9.25,
+            6.75
+          ],
+          "rotation": 180
+        },
+        "down": {
+          "texture": "#band",
+          "uv": [
+            6.75,
+            9.25,
+            9.25,
+            16
+          ],
+          "rotation": 180
+        }
+      }
+    },
+    {
+      "from": [
+        6.75,
+        11,
+        9.25
+      ],
+      "to": [
+        9.25,
+        12,
+        16
+      ],
+      "faces": {
+        "west": {
+          "texture": "#band",
+          "uv": [
+            9.25,
+            4,
+            16,
+            5
+          ]
+        },
+        "east": {
+          "texture": "#band",
+          "uv": [
+            0,
+            4,
+            6.75,
+            5
+          ]
+        },
+        "up": {
+          "texture": "#band",
+          "uv": [
+            6.75,
+            0,
+            9.25,
+            6.75
+          ],
+          "rotation": 180
+        },
+        "down": {
+          "texture": "#band",
+          "uv": [
+            6.75,
+            9.25,
+            9.25,
+            16
+          ],
+          "rotation": 180
+        }
+      }
+    }
+  ],
+  "render_type": "minecraft:cutout"
+}
