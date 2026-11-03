@@ -103,7 +103,16 @@
           ]
         }
       },
-      "shade": false
+      "shade": false,
+      "rotation": {
+        "angle": 45,
+        "axis": "y",
+        "origin": [
+          10.5,
+          8.0,
+          10.5
+        ]
+      }
     },
     {
       "from": [
