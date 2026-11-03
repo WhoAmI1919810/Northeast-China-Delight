@@ -45,7 +45,7 @@ import java.util.Map;
  * <ul>
  *   <li>左边是生着火、放着锅的大灶（游戏里的方块模型），配方要液体就在锅里画一层液面，和锅里实际的画法一样
  *       （{@code client/BigPotRenderer#renderLiquid}），只是不按调料染：JEI 里是刚倒进去的清水，水就是普通的蓝；
- *       灶的右下角压着一个篝火小图标（textures/gui/jei/big_pot_heat.png）；</li>
+ *       灶的右下角挨着农夫乐事的篝火小图标；</li>
  *   <li>上面一排 3 格调料，比下面 2×3 格食材往左错开一格半；</li>
  *   <li>右上角两行：秒表「10秒」、经验球「0.35点经验」（直接写出来，图标见 work/tools/big_stove/jei_icons.py）；</li>
  *   <li>箭头指向右边的大成品格（数量 = 一锅盛几份），按烹饪时间一遍遍走满（烹饪进度）；箭头下面是盛菜用的容器，
@@ -65,7 +65,7 @@ public class BigPotRecipeCategory implements IRecipeCategory<BigPotJeiRecipe> {
     private static final float STOVE_Y = 41.0F;
     private static final float STOVE_SCALE = 17.0F;
     private static final int HEAT_X = 46;
-    private static final int HEAT_Y = 52;
+    private static final int HEAT_Y = 53;
     private static final int SEASONING_X = 40;
     private static final int SEASONING_Y = 5;
     private static final int GRID_X = 65;
@@ -82,30 +82,34 @@ public class BigPotRecipeCategory implements IRecipeCategory<BigPotJeiRecipe> {
     private static final int OUTPUT_FRAME_Y = 29;
     private static final int OUTPUT_FRAME = 26;
     /** 右上角：秒表 + 时间、经验球 + 经验（图标左边对齐，字跟在图标右边） */
-    private static final int INFO_ICON_X = 119;
+    private static final int INFO_ICON_X = 120;
     private static final int TIME_Y = 5;
     private static final int XP_Y = 18;
-    private static final int INFO_TEXT_X = 132;
+    private static final int INFO_TEXT_X = 131;
     private static final int TEXT_COLOR = 0xFF808080;
     /** 字缩小一点：「0.35点经验」原大 47 像素，从 131 写过去会出右边界 */
     private static final float TEXT_SCALE = 0.85F;
-    /** 容器格右边一把勺子，勾向成品 */
-    private static final int LADLE_X = 142;
-    private static final int LADLE_Y = 53;
+    /** 容器格右边一把勺子，勾向成品（勺子那块图连着一圈 JEI 底色，放在成品框下面，不压框） */
+    private static final int LADLE_X = 141;
+    private static final int LADLE_Y = 55;
 
-    private static final ResourceLocation HEAT = DdIds.of(NortheastChinaDelight.MODID,
-            "textures/gui/jei/big_pot_heat.png");
-    private static final ResourceLocation TIME_ICON = DdIds.of(NortheastChinaDelight.MODID,
-            "textures/gui/jei/big_pot_time.png");
-    private static final ResourceLocation XP_ICON = DdIds.of(NortheastChinaDelight.MODID,
-            "textures/gui/jei/big_pot_xp.png");
-    private static final ResourceLocation LADLE = DdIds.of(NortheastChinaDelight.MODID,
-            "textures/gui/jei/big_pot_ladle.png");
+    /**
+     * 篝火、箭头（灰底 + 白色走满）、秒表、经验球、勺子都直接用农夫乐事厨锅那页的图（2026-11-03 用户：照参考图用农夫乐事的图案）。
+     * 位置照农夫乐事 CookingRecipeCategory：界面贴图 176,0 篝火 17×15、176,15 白箭头 24×17、176,32 秒表 8×11、176,43 经验球 9×9；
+     * JEI 背景图 60,9 灰箭头 24×17、82,40 勺子 9×14。这些图块自带一圈和 JEI 底色一样的灰（#C6C6C6），所以篝火先画、锅灶压在上面。
+     */
+    private static final ResourceLocation FD_GUI = DdIds.of("farmersdelight", "textures/gui/cooking_pot.png");
+    private static final ResourceLocation FD_JEI = DdIds.of("farmersdelight", "textures/gui/jei/cooking_pot.png");
 
     private final IDrawable icon;
     private final IDrawable background;
     private final IGuiHelper guiHelper;
-    /** 按烹饪时间走满的进度箭头，同一个时间的配方共用一个 */
+    private final IDrawable heat;
+    private final IDrawable timeIcon;
+    private final IDrawable expIcon;
+    private final IDrawable ladle;
+    private final IDrawable arrowBackground;
+    /** 按烹饪时间走满的白箭头，同一个时间的配方共用一个 */
     private final Map<Integer, IDrawableAnimated> arrows = new HashMap<>();
 
     public BigPotRecipeCategory(IGuiHelper guiHelper) {
@@ -116,6 +120,11 @@ public class BigPotRecipeCategory implements IRecipeCategory<BigPotJeiRecipe> {
         /*this.icon = guiHelper.createDrawableItemLike(ModItems.BIG_IRON_POT.get());
         *///?}
         this.background = guiHelper.createBlankDrawable(WIDTH, HEIGHT);
+        this.heat = guiHelper.createDrawable(FD_GUI, 176, 0, 17, 15);
+        this.timeIcon = guiHelper.createDrawable(FD_GUI, 176, 32, 8, 11);
+        this.expIcon = guiHelper.createDrawable(FD_GUI, 176, 43, 9, 9);
+        this.ladle = guiHelper.createDrawable(FD_JEI, 82, 40, 9, 14);
+        this.arrowBackground = guiHelper.createDrawable(FD_JEI, 60, 9, 24, 17);
     }
 
     @Override
@@ -209,7 +218,7 @@ public class BigPotRecipeCategory implements IRecipeCategory<BigPotJeiRecipe> {
 
     @Override
     public void createRecipeExtras(IRecipeExtrasBuilder builder, BigPotJeiRecipe recipe, IFocusGroup focuses) {
-        builder.addWidget(new SceneWidget(recipe, arrow(recipe)));
+        builder.addWidget(new SceneWidget(this, recipe));
     }
 
     @Override
@@ -217,33 +226,38 @@ public class BigPotRecipeCategory implements IRecipeCategory<BigPotJeiRecipe> {
                      double mouseX, double mouseY) {
         //? if <1.20.5 {
         // 1.20.1 走老 draw：灶、火、箭头、大框都在这里画
-        drawScene(graphics, recipe, arrow(recipe));
+        drawScene(graphics, recipe);
         //?}
     }
 
+    /** 农夫乐事厨锅那页的白箭头，按这条配方的烹饪时间走满一遍 */
     private IDrawableAnimated arrow(BigPotJeiRecipe recipe) {
-        return this.arrows.computeIfAbsent(Math.max(1, recipe.cookingTime()), this.guiHelper::createAnimatedRecipeArrow);
+        return this.arrows.computeIfAbsent(Math.max(1, recipe.cookingTime()), ticks -> this.guiHelper
+                .drawableBuilder(FD_GUI, 176, 15, 24, 17)
+                .buildAnimated(ticks, IDrawableAnimated.StartDirection.LEFT, false));
     }
 
-    private static void drawScene(GuiGraphics graphics, BigPotJeiRecipe recipe, IDrawable arrow) {
+    private void drawScene(GuiGraphics graphics, BigPotJeiRecipe recipe) {
+        // 篝火先画：它那块图带一圈 JEI 底色，锅灶画在上面把那圈灰盖住
+        this.heat.draw(graphics, HEAT_X, HEAT_Y);
         drawStove(graphics, recipe);
-        graphics.blit(HEAT, HEAT_X, HEAT_Y, 0.0F, 0.0F, 16, 16, 16, 16);
-        arrow.draw(graphics, ARROW_X, ARROW_Y);
+        this.arrowBackground.draw(graphics, ARROW_X, ARROW_Y);
+        arrow(recipe).draw(graphics, ARROW_X, ARROW_Y);
         drawFrame(graphics, OUTPUT_FRAME_X, OUTPUT_FRAME_Y, OUTPUT_FRAME, OUTPUT_FRAME);
-        graphics.blit(LADLE, LADLE_X, LADLE_Y, 0.0F, 0.0F, 8, 10, 8, 10);
+        this.ladle.draw(graphics, LADLE_X, LADLE_Y);
         drawInfo(graphics, recipe);
     }
 
     /** 右上角两行：秒表「10秒」，经验球「0.35点经验」（没经验就不写那行） */
-    private static void drawInfo(GuiGraphics graphics, BigPotJeiRecipe recipe) {
+    private void drawInfo(GuiGraphics graphics, BigPotJeiRecipe recipe) {
         Font font = Minecraft.getInstance().font;
         int ticks = recipe.cookingTime();
         String seconds = ticks % 20 == 0 ? String.valueOf(ticks / 20) : trim(ticks / 20.0F);
-        graphics.blit(TIME_ICON, INFO_ICON_X, TIME_Y, 0.0F, 0.0F, 11, 11, 11, 11);
+        this.timeIcon.draw(graphics, INFO_ICON_X, TIME_Y);
         drawSmall(graphics, font, Component.translatable("jei.northeast_china_delight.big_pot.time", seconds),
                 TIME_Y + 2);
         if (recipe.experience() > 0.0F) {
-            graphics.blit(XP_ICON, INFO_ICON_X, XP_Y + 1, 0.0F, 0.0F, 11, 9, 11, 9);
+            this.expIcon.draw(graphics, INFO_ICON_X, XP_Y + 1);
             drawSmall(graphics, font, Component.translatable("jei.northeast_china_delight.big_pot.experience",
                     trim(recipe.experience())), XP_Y + 2);
         }
@@ -309,7 +323,7 @@ public class BigPotRecipeCategory implements IRecipeCategory<BigPotJeiRecipe> {
         graphics.fill(x + w - 1, y + 1, x + w, y + h, 0xFFFFFFFF);
     }
 
-    private record SceneWidget(BigPotJeiRecipe recipe, IDrawable arrow) implements IRecipeWidget {
+    private record SceneWidget(BigPotRecipeCategory category, BigPotJeiRecipe recipe) implements IRecipeWidget {
         @Override
         public ScreenPosition getPosition() {
             return new ScreenPosition(0, 0);
@@ -317,7 +331,7 @@ public class BigPotRecipeCategory implements IRecipeCategory<BigPotJeiRecipe> {
 
         @Override
         public void drawWidget(GuiGraphics graphics, double mouseX, double mouseY) {
-            drawScene(graphics, this.recipe, this.arrow);
+            this.category.drawScene(graphics, this.recipe);
         }
     }
 }

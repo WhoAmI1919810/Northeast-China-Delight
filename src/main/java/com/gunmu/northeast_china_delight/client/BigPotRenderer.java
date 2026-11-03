@@ -8,7 +8,6 @@ import com.mojang.math.Axis;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.LevelRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.Sheets;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
@@ -186,7 +185,10 @@ public class BigPotRenderer implements BlockEntityRenderer<BigPotBlockEntity> {
         float green = ((argb >> 8) & 0xFF) / 255.0F;
         float blue = (argb & 0xFF) / 255.0F;
         float alpha = ((argb >>> 24) & 0xFF) / 255.0F;
-        VertexConsumer consumer = buffer.getBuffer(RenderType.translucent());
+        // 用实体半透明的固定缓冲：原版在方块实体之后、半透明地形之后才画它，锅里的食材（cutoutBlockSheet）先画好了，
+        // 隔着水能看见。以前用 RenderType.translucent()（方块实体里不是固定缓冲，会被提前画掉、写进深度），
+        // 水面下的食材在深度测试里全输给水面，一点都看不见（2026-11-03 用户：水面下的食材显示不出来）
+        VertexConsumer consumer = buffer.getBuffer(Sheets.translucentCullBlockSheet());
         float y = yPx / 16.0F;
         for (int[] row : BigPotVisuals.surfaceRows(yPx)) {
             float z0 = row[0] / 16.0F;

@@ -310,23 +310,27 @@ public class BigPotBlockEntity extends BlockEntity {
     //? if <1.20.5 {
     protected void saveAdditional(CompoundTag tag) {
         super.saveAdditional(tag);
-        this.writeToTag(tag);
+        this.writeToTag(tag, NbtOps.INSTANCE);
     }
     //?} else {
     /*protected void saveAdditional(CompoundTag tag, net.minecraft.core.HolderLookup.Provider registries) {
         super.saveAdditional(tag, registries);
-        this.writeToTag(tag);
+        this.writeToTag(tag, registries.createSerializationContext(NbtOps.INSTANCE));
     }
     *///?}
 
-    private void writeToTag(CompoundTag tag) {
+    /**
+     * 物品用带注册表的 ops 编码（1.21.1 上物品组件里有附魔这类引用注册表的东西时，光 NbtOps 编不出来，
+     * 会被 result() 悄悄丢掉——锅里的东西存档、同步时就少了）
+     */
+    private void writeToTag(CompoundTag tag, com.mojang.serialization.DynamicOps<Tag> ops) {
         if (liquidMb > 0) {
             tag.putString("Liquid", BuiltInRegistries.FLUID.getKey(liquid).toString());
             tag.putInt("LiquidMb", liquidMb);
         }
         ListTag list = new ListTag();
         for (ItemStack stack : contents) {
-            ItemStack.CODEC.encodeStart(NbtOps.INSTANCE, stack).result().ifPresent(list::add);
+            ItemStack.CODEC.encodeStart(ops, stack).result().ifPresent(list::add);
         }
         tag.put("Contents", list);
         if (cooking != null) {
@@ -335,12 +339,12 @@ public class BigPotBlockEntity extends BlockEntity {
         tag.putInt("CookTicks", cookTicks);
         tag.putInt("CookTotal", cookTotal);
         if (!result.isEmpty()) {
-            ItemStack.CODEC.encodeStart(NbtOps.INSTANCE, result).result().ifPresent(saved -> tag.put("Result", saved));
+            ItemStack.CODEC.encodeStart(ops, result).result().ifPresent(saved -> tag.put("Result", saved));
             tag.putInt("Servings", servings);
             tag.putFloat("Experience", experience);
         }
         if (!container.isEmpty()) {
-            ItemStack.CODEC.encodeStart(NbtOps.INSTANCE, container).result().ifPresent(saved -> tag.put("Container", saved));
+            ItemStack.CODEC.encodeStart(ops, container).result().ifPresent(saved -> tag.put("Container", saved));
         }
     }
 
@@ -348,16 +352,16 @@ public class BigPotBlockEntity extends BlockEntity {
     //? if <1.20.5 {
     public void load(CompoundTag tag) {
         super.load(tag);
-        this.readFromTag(tag);
+        this.readFromTag(tag, NbtOps.INSTANCE);
     }
     //?} else {
     /*protected void loadAdditional(CompoundTag tag, net.minecraft.core.HolderLookup.Provider registries) {
         super.loadAdditional(tag, registries);
-        this.readFromTag(tag);
+        this.readFromTag(tag, registries.createSerializationContext(NbtOps.INSTANCE));
     }
     *///?}
 
-    private void readFromTag(CompoundTag tag) {
+    private void readFromTag(CompoundTag tag, com.mojang.serialization.DynamicOps<Tag> ops) {
         liquidMb = tag.getInt("LiquidMb");
         ResourceLocation fluidId = tag.contains("Liquid") ? ResourceLocation.tryParse(tag.getString("Liquid")) : null;
         liquid = fluidId != null && BuiltInRegistries.FLUID.containsKey(fluidId) ? BuiltInRegistries.FLUID.get(fluidId) : Fluids.EMPTY;
@@ -367,18 +371,18 @@ public class BigPotBlockEntity extends BlockEntity {
         contents.clear();
         ListTag list = tag.getList("Contents", Tag.TAG_COMPOUND);
         for (int i = 0; i < list.size(); i++) {
-            ItemStack.CODEC.parse(NbtOps.INSTANCE, list.get(i)).result().ifPresent(contents::add);
+            ItemStack.CODEC.parse(ops, list.get(i)).result().ifPresent(contents::add);
         }
         cooking = tag.contains("Cooking") ? ResourceLocation.tryParse(tag.getString("Cooking")) : null;
         cookTicks = tag.getInt("CookTicks");
         cookTotal = tag.getInt("CookTotal");
         result = tag.contains("Result")
-                ? ItemStack.CODEC.parse(NbtOps.INSTANCE, tag.get("Result")).result().orElse(ItemStack.EMPTY)
+                ? ItemStack.CODEC.parse(ops, tag.get("Result")).result().orElse(ItemStack.EMPTY)
                 : ItemStack.EMPTY;
         servings = result.isEmpty() ? 0 : tag.getInt("Servings");
         experience = tag.getFloat("Experience");
         container = tag.contains("Container")
-                ? ItemStack.CODEC.parse(NbtOps.INSTANCE, tag.get("Container")).result().orElse(ItemStack.EMPTY)
+                ? ItemStack.CODEC.parse(ops, tag.get("Container")).result().orElse(ItemStack.EMPTY)
                 : ItemStack.EMPTY;
     }
 
@@ -392,13 +396,13 @@ public class BigPotBlockEntity extends BlockEntity {
     //? if <1.20.5 {
     public CompoundTag getUpdateTag() {
         CompoundTag tag = new CompoundTag();
-        this.writeToTag(tag);
+        this.writeToTag(tag, NbtOps.INSTANCE);
         return tag;
     }
     //?} else {
     /*public CompoundTag getUpdateTag(net.minecraft.core.HolderLookup.Provider registries) {
         CompoundTag tag = new CompoundTag();
-        this.writeToTag(tag);
+        this.writeToTag(tag, registries.createSerializationContext(NbtOps.INSTANCE));
         return tag;
     }
     *///?}
