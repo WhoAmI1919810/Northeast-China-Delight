@@ -29,9 +29,9 @@ import java.util.List;
  *
  * <ul>
  *   <li>液体：一种流体 + 毫升数（水桶 / 水盆一次倒 1000 mB，最多 {@link #LIQUID_CAPACITY}）；</li>
- *   <li>料：食材、调料（有哪条配方把它写在调料里的，盐也算）按放进去的顺序摞成一个栈，和栈顶那层一样就摞上去。
- *       只能从栈顶拿食材；栈顶是调料就拿不了，调料之前放进去的都拿不回来（2026-11-03 用户）。调料倒进去就拿不出来，
- *       锅里的液体全舀走时跟着没了（压在下面的食材又露到栈顶）；拆灶时只掉食材，调料不掉（盐也不掉）；</li>
+ *   <li>料：食材、调料（有哪条配方把它写在调料里的，盐也算）按放进去的顺序摞成一层层，和最上面那层一样就摞上去。
+ *       食材和调料互不相干（2026-11-03 用户）：食材随时能拿出来补救，最后放进去的先出来（中间隔着调料也照拿）；
+ *       调料倒进去就拿不出来，只有把锅里的液体全舀走时跟着没了；拆灶时只掉食材，调料不掉（盐也不掉）；</li>
  *   <li>正在煮哪条配方、煮了多少（按不盖锅盖的时长算，盖着盖走得快）；</li>
  *   <li>煮好的菜、还剩几份、得用什么盛、每盛一份给多少经验（拆灶时没盛完的就没了）。</li>
  * </ul>
@@ -273,18 +273,21 @@ public class BigPotBlockEntity extends BlockEntity {
         changed();
     }
 
-    /** 从栈顶拿出一个食材；栈顶是调料（调料之前放进去的都拿不回来）或者锅里没东西，返回空 */
+    /** 拿出最后放进去的那个食材（上面压着调料也照拿，调料留在锅里）；锅里没有食材返回空 */
     public ItemStack popIngredient() {
-        if (layers.isEmpty() || layers.get(layers.size() - 1).seasoning) {
-            return ItemStack.EMPTY;
+        for (int i = layers.size() - 1; i >= 0; i--) {
+            Layer layer = layers.get(i);
+            if (layer.seasoning) {
+                continue;
+            }
+            ItemStack taken = layer.stack.split(1);
+            if (layer.stack.isEmpty()) {
+                layers.remove(i);
+            }
+            changed();
+            return taken;
         }
-        ItemStack top = layers.get(layers.size() - 1).stack;
-        ItemStack taken = top.split(1);
-        if (top.isEmpty()) {
-            layers.remove(layers.size() - 1);
-        }
-        changed();
-        return taken;
+        return ItemStack.EMPTY;
     }
 
     /** 正在煮的配方换了（或者凑不上任何配方）就从头算 */

@@ -33,8 +33,8 @@ import net.minecraft.world.phys.Vec3;
  *       调料放错了就把水舀走再倒回来（舀出来的是清水，调料不还）；</li>
  *   <li>拿着某条配方用得上的食材、调料右键：放一个进锅（瓶装、碗装的调料退回瓶子 / 碗）。锅里得先有水；
  *       食材最多放用得最多的那条配方那么多个、调料同理（{@link BigPotRecipes#maxIngredients} / {@link BigPotRecipes#maxSeasonings}）；</li>
- *   <li>锅里的料是个栈（调料也压在里面）：潜行空手右键从栈顶拿出一个食材（最后放进去的先出来）；
- *       栈顶是调料就拿不了，调料之前放进去的食材都拿不回来，右键没反应、不出提示（2026-11-03 用户）；</li>
+ *   <li>食材和调料互不相干（2026-11-03 用户）：潜行空手右键随时拿出一个食材补救（最后放进去的先出来，隔着调料也照拿）；
+ *       调料倒进去就拿不出来，放错了只能把水舀干重来；锅里只剩调料时右键没反应、不出提示；</li>
  *   <li>灶点着、锅里正好凑成一条配方就开始煮（每刻 {@link #serverTick}）；盖着锅盖按配方的 {@code lid_speedup} 走得快，
  *       中途盖上只让剩下的变快。
  *       开始煮以后锅里的东西就不能动了：不能放、不能拿、不能舀水（右键没反应、不出提示），只能等煮好（2026-11-03 用户）；</li>
@@ -171,7 +171,7 @@ public final class BigPotCooking {
                 if (pot.cooking() != null) {
                     return InteractionResult.SUCCESS;       // 煮着不让拿，不出提示
                 }
-                // 栈顶是调料就拿不了（调料之前放的都拿不回来），不出提示
+                // 拿最后放进去的那个食材；锅里只剩调料就什么都不拿，不出提示
                 ItemStack taken = pot.popIngredient();
                 if (!taken.isEmpty()) {
                     give(player, taken);
