@@ -10,7 +10,8 @@
     "CookingPotBlockEntityMixin",
     "PowderSnowBlockMixin",
     "RepairItemRecipeMixin",
-    "SideDishMerchantTradeMixin"
+    "SideDishMerchantTradeMixin",
+    "VillagerOutfitDiscountMixin"
   ],
   "client": [
     "LoomScreenMixin"

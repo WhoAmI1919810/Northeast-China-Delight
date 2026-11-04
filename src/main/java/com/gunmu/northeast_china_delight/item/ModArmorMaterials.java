@@ -21,7 +21,7 @@ import java.util.List;
 
 /**
  * 本模组的盔甲材料。现在只有大花袄一件（胸甲槽，2026-11-04 用户：花袄可以作为盔甲栏的装备穿在玩家身上）：
- * 护甲值、耐久、附魔能力都照皮革胸甲（3 点护甲、耐久 80、附魔能力 15），用羊毛在铁砧上修。
+ * 护甲值 1（用户定）；耐久、附魔能力照皮革胸甲（耐久 80、附魔能力 15），用羊毛在铁砧上修。
  * 穿在身上的样子是 textures/models/armor/floral_jacket_layer_1.png（用户画的）。
  *
  * <p>1.21.1 的盔甲材料是注册表里的东西（{@code Registries.ARMOR_MATERIAL}），ArmorItem 拿的是它的 Holder，
@@ -32,8 +32,8 @@ public final class ModArmorMaterials {
 
     /** 材料名，也是穿在身上那张贴图的名字（floral_jacket_layer_1.png） */
     private static final String FLORAL_JACKET_NAME = "floral_jacket";
-    /** 胸甲的护甲值（皮革胸甲也是 3） */
-    private static final int CHEST_DEFENSE = 3;
+    /** 胸甲的护甲值（用户定 1；皮革胸甲是 3） */
+    private static final int CHEST_DEFENSE = 1;
     /** 胸甲的耐久：皮革的倍数 5 × 胸甲的 16 */
     public static final int CHEST_DURABILITY = 16 * 5;
     private static final int ENCHANTMENT_VALUE = 15;

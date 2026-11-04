@@ -34,7 +34,7 @@ import net.neoforged.neoforge.event.entity.living.LivingShieldBlockEvent;
  */
 public class PotLidItem extends Item implements Equipable {
 
-    /** 挡下的伤害比例：只挡一成 */
+    /** 挡下的伤害比例：只挡一成（穿齐「东北行头」四件套时五成，见 {@link NortheastOutfit}） */
     public static final float BLOCKED_FRACTION = 0.1F;
     /** 举着不放就一直举着（同原版盾牌） */
     private static final int USE_DURATION = 72000;
@@ -86,15 +86,15 @@ public class PotLidItem extends Item implements Equipable {
     *///?}
 
     /**
-     * 举着锅盖挡住了一下：挡下的伤害改成原本的一成，锅盖也不扣耐久（本来就没有）。
-     * 没挡满，原版就当这一下没挡住（照样受伤、红一下、出受伤的声音），只是伤害少了一成。
+     * 举着锅盖挡住了一下：挡下的伤害改成原本的一成（穿齐四件套时五成，还「铛」一声），锅盖也不扣耐久（本来就没有）。
+     * 没挡满，原版就当这一下没挡住（照样受伤、红一下、出受伤的声音），只是伤害少了一些。
      */
     //? if <1.20.2 {
     public static void onShieldBlock(ShieldBlockEvent event) {
         if (!event.getEntity().getUseItem().is(ModItems.BIG_POT_LID.get())) {
             return;
         }
-        event.setBlockedDamage(event.getOriginalBlockedDamage() * BLOCKED_FRACTION);
+        event.setBlockedDamage(event.getOriginalBlockedDamage() * blockedFraction(event.getEntity()));
         event.setShieldTakesDamage(false);
     }
     //?} else {
@@ -102,8 +102,19 @@ public class PotLidItem extends Item implements Equipable {
         if (!event.getBlocked() || !event.getEntity().getUseItem().is(ModItems.BIG_POT_LID.get())) {
             return;
         }
-        event.setBlockedDamage(event.getOriginalBlockedDamage() * BLOCKED_FRACTION);
+        event.setBlockedDamage(event.getOriginalBlockedDamage() * blockedFraction(event.getEntity()));
         event.setShieldDamage(0.0F);
     }
     *///?}
+
+    /** 穿齐四件套挡五成、「铛」一声；不然只挡一成 */
+    private static float blockedFraction(net.minecraft.world.entity.LivingEntity blocker) {
+        if (!NortheastOutfit.isComplete(blocker)) {
+            return BLOCKED_FRACTION;
+        }
+        if (!blocker.level().isClientSide()) {
+            NortheastOutfit.playLidClang(blocker);
+        }
+        return NortheastOutfit.LID_BLOCKED_FRACTION;
+    }
 }
