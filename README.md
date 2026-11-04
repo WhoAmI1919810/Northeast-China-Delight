@@ -4,12 +4,12 @@ main 分支为 1.21.1（NeoForge）开发主线；1.20.1（Forge）版本线见 
 
 ## 当前最新版本
 
-**4.0.0**
+**DEV-4.0.0**
 
 - Minecraft 1.21.1：NeoForge 21.1
 - Minecraft 1.20.1：Forge 47.1
 
-需要[农夫乐事](https://github.com/vectorwing/FarmersDelight)与[机械动力](https://github.com/Creators-of-Create/Create)作为前置。
+需要[农夫乐事](https://github.com/vectorwing/FarmersDelight)作为前置。
 
 ## 更新记录
 
