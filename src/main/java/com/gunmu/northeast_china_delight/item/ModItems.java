@@ -374,8 +374,9 @@ public class ModItems {
     public static final Supplier<Item> GREEN_STEEL_ROOFING = simple("green_steel_roofing");
     /** 大铁锅：放在大灶上（见 BigStoveBlock）；以后能直接往里放水、调料、食材做菜（入口在 BigPotCooking） */
     public static final Supplier<Item> BIG_IRON_POT = regItem("big_iron_pot", Item::new, new Item.Properties().stacksTo(1));
-    /** 木锅盖：盖在大灶上的大铁锅上；拿在手里也能当盾牌，只挡一成伤害、没有耐久（见 {@link PotLidItem}） */
-    public static final Supplier<Item> BIG_POT_LID = regItem("big_pot_lid", PotLidItem::new, new Item.Properties().stacksTo(1));
+    /** 木锅盖：盖在大灶上的大铁锅上；拿在手里也能当盾牌，只挡一成伤害，耐久是盾牌的一半（见 {@link PotLidItem}） */
+    public static final Supplier<Item> BIG_POT_LID = regItem("big_pot_lid", PotLidItem::new,
+            new Item.Properties().durability(PotLidItem.DURABILITY));
     /** 大花袄：穿在胸甲槽，护甲 1、耐久照皮革胸甲（材料见 {@link ModArmorMaterials}）；四件套效果见 {@link NortheastOutfit} */
     public static final Supplier<Item> FLORAL_JACKET = regItem("floral_jacket",
             properties -> new ArmorItem(ModArmorMaterials.FLORAL_JACKET, ArmorItem.Type.CHESTPLATE, properties),
