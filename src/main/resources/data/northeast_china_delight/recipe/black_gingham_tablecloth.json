@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "building",
+  "group": "gingham_tablecloth",
+  "ingredients": [
+    {
+      "item": "minecraft:white_carpet"
+    },
+    {
+      "item": "minecraft:black_carpet"
+    }
+  ],
+  "result": {
+    "count": 2,
+    "id": "northeast_china_delight:black_gingham_tablecloth"
+  }
+}

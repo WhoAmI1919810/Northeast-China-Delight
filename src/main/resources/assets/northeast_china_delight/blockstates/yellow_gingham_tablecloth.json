@@ -1,0 +1,77 @@
+{
+  "multipart": [
+    {
+      "apply": {
+        "model": "northeast_china_delight:block/gingham_tablecloth/yellow_top"
+      }
+    },
+    {
+      "when": {
+        "north": "false"
+      },
+      "apply": {
+        "model": "northeast_china_delight:block/gingham_tablecloth/yellow_skirt_north"
+      }
+    },
+    {
+      "when": {
+        "east": "false"
+      },
+      "apply": {
+        "model": "northeast_china_delight:block/gingham_tablecloth/yellow_skirt_east"
+      }
+    },
+    {
+      "when": {
+        "south": "false"
+      },
+      "apply": {
+        "model": "northeast_china_delight:block/gingham_tablecloth/yellow_skirt_south"
+      }
+    },
+    {
+      "when": {
+        "west": "false"
+      },
+      "apply": {
+        "model": "northeast_china_delight:block/gingham_tablecloth/yellow_skirt_west"
+      }
+    },
+    {
+      "when": {
+        "north": "false",
+        "east": "false"
+      },
+      "apply": {
+        "model": "northeast_china_delight:block/gingham_tablecloth/yellow_corner_ne"
+      }
+    },
+    {
+      "when": {
+        "north": "false",
+        "west": "false"
+      },
+      "apply": {
+        "model": "northeast_china_delight:block/gingham_tablecloth/yellow_corner_nw"
+      }
+    },
+    {
+      "when": {
+        "south": "false",
+        "east": "false"
+      },
+      "apply": {
+        "model": "northeast_china_delight:block/gingham_tablecloth/yellow_corner_se"
+      }
+    },
+    {
+      "when": {
+        "south": "false",
+        "west": "false"
+      },
+      "apply": {
+        "model": "northeast_china_delight:block/gingham_tablecloth/yellow_corner_sw"
+      }
+    }
+  ]
+}

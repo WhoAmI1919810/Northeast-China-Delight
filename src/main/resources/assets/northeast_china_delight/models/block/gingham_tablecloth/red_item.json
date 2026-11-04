@@ -1,0 +1,6 @@
+{
+  "parent": "northeast_china_delight:block/gingham_tablecloth/item",
+  "textures": {
+    "cloth": "northeast_china_delight:block/red_gingham_tablecloth"
+  }
+}
