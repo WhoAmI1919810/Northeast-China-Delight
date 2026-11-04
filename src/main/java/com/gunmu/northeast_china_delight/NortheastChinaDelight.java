@@ -241,6 +241,9 @@ public class NortheastChinaDelight
         MinecraftForge.EVENT_BUS.addListener(ModWandererTrades::addTrades);
         // 木锅盖当盾牌：只挡一成伤害
         MinecraftForge.EVENT_BUS.addListener(PotLidItem::onShieldBlock);
+        // 「东北行头」四件套：木槌一棒子敲懵（缓慢 + 多击退）
+        MinecraftForge.EVENT_BUS.addListener(com.gunmu.northeast_china_delight.item.NortheastOutfit::onLivingDamage);
+        MinecraftForge.EVENT_BUS.addListener(com.gunmu.northeast_china_delight.item.NortheastOutfit::onKnockBack);
         *///?} else {
         NeoForge.EVENT_BUS.register(this);
         NeoForge.EVENT_BUS.register(DishEffectEvents.class);
@@ -253,6 +256,8 @@ public class NortheastChinaDelight
         NeoForge.EVENT_BUS.addListener(ModCartographerTrades::addTrades);
         NeoForge.EVENT_BUS.addListener(ModWandererTrades::addTrades);
         NeoForge.EVENT_BUS.addListener(PotLidItem::onShieldBlock);
+        NeoForge.EVENT_BUS.addListener(com.gunmu.northeast_china_delight.item.NortheastOutfit::onLivingDamage);
+        NeoForge.EVENT_BUS.addListener(com.gunmu.northeast_china_delight.item.NortheastOutfit::onKnockBack);
         //?}
     }
 

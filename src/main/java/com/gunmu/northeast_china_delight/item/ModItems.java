@@ -376,7 +376,7 @@ public class ModItems {
     public static final Supplier<Item> BIG_IRON_POT = regItem("big_iron_pot", Item::new, new Item.Properties().stacksTo(1));
     /** 木锅盖：盖在大灶上的大铁锅上；拿在手里也能当盾牌，只挡一成伤害、没有耐久（见 {@link PotLidItem}） */
     public static final Supplier<Item> BIG_POT_LID = regItem("big_pot_lid", PotLidItem::new, new Item.Properties().stacksTo(1));
-    /** 大花袄：穿在胸甲槽，数值照皮革胸甲（材料见 {@link ModArmorMaterials}） */
+    /** 大花袄：穿在胸甲槽，护甲 1、耐久照皮革胸甲（材料见 {@link ModArmorMaterials}）；四件套效果见 {@link NortheastOutfit} */
     public static final Supplier<Item> FLORAL_JACKET = regItem("floral_jacket",
             properties -> new ArmorItem(ModArmorMaterials.FLORAL_JACKET, ArmorItem.Type.CHESTPLATE, properties),
             jacketProperties());

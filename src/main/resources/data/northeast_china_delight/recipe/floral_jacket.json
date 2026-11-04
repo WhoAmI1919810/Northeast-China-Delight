@@ -4,14 +4,11 @@
   "key": {
     "A": {
       "item": "minecraft:red_wool"
-    },
-    "B": {
-      "item": "northeast_china_delight:floral_door_curtain"
     }
   },
   "pattern": [
     "A A",
-    "ABA",
+    "AAA",
     "AAA"
   ],
   "result": {

@@ -11,7 +11,8 @@
     "PowderSnowBlockMixin",
     "RepairItemRecipeMixin",
     "SoundEngineMixin",
-    "SideDishMerchantTradeMixin"
+    "SideDishMerchantTradeMixin",
+    "VillagerOutfitDiscountMixin"
   ],
   "client": [
     "LoomScreenMixin"
