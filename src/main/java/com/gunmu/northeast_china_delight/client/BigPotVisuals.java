@@ -52,6 +52,13 @@ public final class BigPotVisuals {
             {0.0F, 0, 10.8F},
             {6.0F, 30, 12.4F}, {6.0F, 90, 12.4F}, {6.0F, 150, 12.4F},
             {6.0F, 210, 12.4F}, {6.0F, 270, 12.4F}, {6.0F, 330, 12.4F}};
+    /**
+     * 锅里没水时的底面高度（2026-11-04 用户：放了水和食材、再用盆把水舀走，食材就浮空了）：上面那几个高度是有水时浮在水里的
+     * （第一版贴着锅底，泡在水里看不见），水舀走了就沉下去——正中那份落在锅底顶面 10，外圈落在 y 12 那一级台阶上
+     * （按每种食材的实际形状算过，几乎都正好搭在这一级上；再低就插进锅壁）。和 layout.py 的 SLOTS_DRY 一样
+     */
+    private static final float DRY_CENTER_Y = 10.0F;
+    private static final float DRY_RING_Y = 12.0F;
     public static final int SLOTS = SLOT_PLACES.length;
 
     /**
@@ -136,11 +143,12 @@ public final class BigPotVisuals {
         });
     }
 
-    /** 第 slot 格：模型底面中心摆到哪 {x, y, z}、绕竖轴转多少度 */
-    public static float[] slot(int slot) {
+    /** 第 slot 格：模型底面中心摆到哪 {x, y, z}、绕竖轴转多少度；dry = 锅里没水（沉到锅底） */
+    public static float[] slot(int slot, boolean dry) {
         float[] place = SLOT_PLACES[slot];
         double a = Math.toRadians(place[1]);
-        return new float[]{CENTER + place[0] * (float) Math.cos(a), place[2],
+        float y = !dry ? place[2] : place[0] == 0.0F ? DRY_CENTER_Y : DRY_RING_Y;
+        return new float[]{CENTER + place[0] * (float) Math.cos(a), y,
                 CENTER + place[0] * (float) Math.sin(a), place[1] + 90};
     }
 
