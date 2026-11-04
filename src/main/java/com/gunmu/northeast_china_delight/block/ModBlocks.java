@@ -17,6 +17,7 @@ import net.minecraft.world.level.block.state.properties.BlockSetType;
 import net.minecraft.world.level.block.state.properties.NoteBlockInstrument;
 import net.minecraft.world.level.block.state.properties.WoodType;
 import net.minecraft.world.level.material.MapColor;
+import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.level.material.PushReaction;
 import net.minecraft.world.phys.shapes.VoxelShape;
 //? if <1.20.2 {
@@ -310,6 +311,22 @@ public class ModBlocks {
             block("cotton_door_curtain", DoorCurtainBlock::new, curtainProperties(MapColor.COLOR_BLUE));
     public static final Supplier<Block> FLORAL_DOOR_CURTAIN =
             block("floral_door_curtain", DoorCurtainBlock::new, curtainProperties(MapColor.COLOR_RED));
+
+    /** 格子桌布：16 种染料色，id 是「<颜色>_gingham_tablecloth」（2026-11-04，村庄副食店的柜台上铺的；见 GinghamTableclothBlock） */
+    public static final Map<DyeColor, Supplier<Block>> GINGHAM_TABLECLOTHS = ginghamTablecloths();
+
+    private static Map<DyeColor, Supplier<Block>> ginghamTablecloths() {
+        Map<DyeColor, Supplier<Block>> map = new LinkedHashMap<>();
+        for (DyeColor color : DyeColor.values()) {
+            map.put(color, block(color.getName() + "_gingham_tablecloth", GinghamTableclothBlock::new,
+                    BlockBehaviour.Properties.of()
+                            .mapColor(color)
+                            .strength(0.1F)
+                            .sound(SoundType.WOOL)
+                            .ignitedByLava()));
+        }
+        return Collections.unmodifiableMap(map);
+    }
 
     // ===== 东北建材第二批（2026-11-02；同样先不加配方） =====
 

@@ -6,6 +6,7 @@ import com.gunmu.northeast_china_delight.util.DdIds;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
+import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.BucketItem;
 import net.minecraft.world.item.DoubleHighBlockItem;
@@ -489,6 +490,17 @@ public class ModItems {
         *///?}
     }
 
+    /** 格子桌布的物品，和 ModBlocks.GINGHAM_TABLECLOTHS 一一对应 */
+    public static final Map<DyeColor, Supplier<Item>> GINGHAM_TABLECLOTH_ITEMS = ginghamTableclothItems();
+
+    private static Map<DyeColor, Supplier<Item>> ginghamTableclothItems() {
+        Map<DyeColor, Supplier<Item>> map = new LinkedHashMap<>();
+        for (var entry : ModBlocks.GINGHAM_TABLECLOTHS.entrySet()) {
+            map.put(entry.getKey(), blockItem(entry.getKey().getName() + "_gingham_tablecloth", entry.getValue()));
+        }
+        return Collections.unmodifiableMap(map);
+    }
+
     public static final List<Supplier<? extends Item>> BLOCK_TAB_ITEMS = blockTabItems();
 
     private static List<Supplier<? extends Item>> blockTabItems() {
@@ -500,6 +512,7 @@ public class ModItems {
         list.add(CHILI_SKEWER);
         list.addAll(STORAGE_BLOCK_ITEMS.values());
         list.addAll(BUILDING_BLOCK_ITEMS);
+        list.addAll(GINGHAM_TABLECLOTH_ITEMS.values());
         return List.copyOf(list);
     }
 
