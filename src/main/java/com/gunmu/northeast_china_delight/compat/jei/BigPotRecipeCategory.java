@@ -75,7 +75,11 @@ public class BigPotRecipeCategory implements IRecipeCategory<BigPotJeiRecipe> {
     private static final int SEASONING_SLOTS = 3;
     private static final int INGREDIENT_SLOTS = 6;
     private static final int ARROW_X = 120;
-    private static final int ARROW_Y = 34;
+    /**
+     * 箭头那块图 17 行高，最下面一行是 JEI 底色；画在容器格之后，原来放 34 时最下面那行（y 50）正好压掉容器格边框的上沿
+     * （2026-11-04 用户截图：左下角盆的格子缺上边框），往上挪一格
+     */
+    private static final int ARROW_Y = 33;
     private static final int CONTAINER_X = 124;
     private static final int CONTAINER_Y = 51;
     private static final int OUTPUT_FRAME_X = 146;
