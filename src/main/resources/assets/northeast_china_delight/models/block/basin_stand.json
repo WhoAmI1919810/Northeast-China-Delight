@@ -1,5 +1,6 @@
 {
   "parent": "minecraft:block/block",
+  "ambientocclusion": false,
   "textures": {
     "w": "northeast_china_delight:block/stand_wood",
     "t": "northeast_china_delight:block/hand_towel",
