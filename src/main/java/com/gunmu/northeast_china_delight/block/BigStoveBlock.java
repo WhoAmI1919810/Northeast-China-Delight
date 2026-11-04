@@ -208,7 +208,7 @@ public class BigStoveBlock extends Block implements EntityBlock {
                     Block.popResource(level, pos, new ItemStack(ModItems.BIG_IRON_POT.get()));
                 }
                 if (pot == Pot.LID) {
-                    Block.popResource(level, pos, new ItemStack(ModItems.BIG_POT_LID.get()));
+                    Block.popResource(level, pos, takeLid(contents));
                 }
                 Block stove = stoveBlock();
                 Direction facing = state.getValue(FACING);
@@ -283,7 +283,12 @@ public class BigStoveBlock extends Block implements EntityBlock {
         if (held.is(ModItems.BIG_POT_LID.get()) && pot == Pot.POT) {
             if (!level.isClientSide) {
                 updateAll(level, pos, state, s -> s.setValue(POT, Pot.LID));
-                DdStacks.consume(held, 1, player);
+                // 锅盖原样存进灶里（耐久、附魔），揭下来还的是同一个
+                ItemStack lid = DdStacks.consumeAndReturn(held, 1, player);
+                BigPotBlockEntity contents = potAt(level, pos, state);
+                if (contents != null) {
+                    contents.putLid(lid);
+                }
                 level.playSound(null, pos, SoundEvents.WOOD_PLACE, SoundSource.BLOCKS, 1.0F, 1.0F);
                 level.gameEvent(player, GameEvent.BLOCK_CHANGE, pos);
             }
@@ -323,6 +328,12 @@ public class BigStoveBlock extends Block implements EntityBlock {
         return InteractionResult.PASS;
     }
 
+    /** 灶里存着的那个锅盖；以前的存档没存（或者灶上的方块实体没了）就给个新的 */
+    private static ItemStack takeLid(@Nullable BigPotBlockEntity contents) {
+        ItemStack lid = contents != null ? contents.takeLid() : ItemStack.EMPTY;
+        return lid.isEmpty() ? new ItemStack(ModItems.BIG_POT_LID.get()) : lid;
+    }
+
     private InteractionResult takeOff(BlockState state, Level level, BlockPos pos, Player player) {
         Pot pot = state.getValue(POT);
         if (pot == Pot.NONE) {
@@ -350,7 +361,7 @@ public class BigStoveBlock extends Block implements EntityBlock {
             }
             Pot next = pot == Pot.LID ? Pot.POT : Pot.NONE;
             updateAll(level, pos, state, s -> s.setValue(POT, next));
-            ItemStack item = new ItemStack(pot == Pot.LID ? ModItems.BIG_POT_LID.get() : ModItems.BIG_IRON_POT.get());
+            ItemStack item = pot == Pot.LID ? takeLid(contents) : new ItemStack(ModItems.BIG_IRON_POT.get());
             if (!player.getInventory().add(item)) {
                 player.drop(item, false);
             }

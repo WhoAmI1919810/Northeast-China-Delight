@@ -62,6 +62,11 @@ public class BigPotBlockEntity extends BlockEntity {
     private int servings;
     private ItemStack container = ItemStack.EMPTY;
     private float experience;
+    /**
+     * 盖在锅上的那个木锅盖，原样存着（耐久、附魔、改的名字都在；2026-11-04 锅盖有了耐久，用户问大锅能不能保存锅盖的耐久）。
+     * 揭下来、拆灶时还回去的就是它；以前的存档里没有（空），由 BigStoveBlock 给个新的
+     */
+    private ItemStack lid = ItemStack.EMPTY;
 
     /** 水面高度（像素，整口灶 32×32 的坐标里）：1000 / 2000 / 3000 / 4000 mB，都避开锅里台阶的整数高度免得闪 */
     private static final float[] LIQUID_SURFACE_Y = {13.5F, 14.5F, 15.5F, 16.25F};
@@ -79,6 +84,20 @@ public class BigPotBlockEntity extends BlockEntity {
 
     public BigPotBlockEntity(BlockPos pos, BlockState state) {
         super(ModBlockEntities.BIG_POT.get(), pos, state);
+    }
+
+    /** 盖上锅盖时存下这一个（只存一个） */
+    public void putLid(ItemStack stack) {
+        lid = stack.copyWithCount(1);
+        setChanged();
+    }
+
+    /** 揭盖、拆灶时拿走存着的锅盖；没存过（以前的存档）就是空的 */
+    public ItemStack takeLid() {
+        ItemStack out = lid;
+        lid = ItemStack.EMPTY;
+        setChanged();
+        return out;
     }
 
     /** 锅里装 mb 毫升液体时液面多高（像素）；画液面、放料溅水花都用这个 */
@@ -437,6 +456,9 @@ public class BigPotBlockEntity extends BlockEntity {
         if (!container.isEmpty()) {
             ItemStack.CODEC.encodeStart(ops, container).result().ifPresent(saved -> tag.put("Container", saved));
         }
+        if (!lid.isEmpty()) {
+            ItemStack.CODEC.encodeStart(ops, lid).result().ifPresent(saved -> tag.put("Lid", saved));
+        }
     }
 
     private static void decode(ListTag list, List<ItemStack> into, com.mojang.serialization.DynamicOps<Tag> ops) {
@@ -504,6 +526,9 @@ public class BigPotBlockEntity extends BlockEntity {
         experience = tag.getFloat("Experience");
         container = tag.contains("Container")
                 ? ItemStack.CODEC.parse(ops, tag.get("Container")).result().orElse(ItemStack.EMPTY)
+                : ItemStack.EMPTY;
+        lid = tag.contains("Lid")
+                ? ItemStack.CODEC.parse(ops, tag.get("Lid")).result().orElse(ItemStack.EMPTY)
                 : ItemStack.EMPTY;
     }
 
