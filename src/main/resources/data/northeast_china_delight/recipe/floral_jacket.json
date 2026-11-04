@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "A": {
+      "item": "minecraft:red_wool"
+    },
+    "B": {
+      "item": "northeast_china_delight:floral_door_curtain"
+    }
+  },
+  "pattern": [
+    "A A",
+    "ABA",
+    "AAA"
+  ],
+  "result": {
+    "count": 1,
+    "id": "northeast_china_delight:floral_jacket"
+  }
+}

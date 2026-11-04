@@ -2087,5 +2087,13 @@
         0.3
       ]
     }
-  }
+  },
+  "overrides": [
+    {
+      "predicate": {
+        "blocking": 1
+      },
+      "model": "northeast_china_delight:item/big_pot_lid_blocking"
+    }
+  ]
 }

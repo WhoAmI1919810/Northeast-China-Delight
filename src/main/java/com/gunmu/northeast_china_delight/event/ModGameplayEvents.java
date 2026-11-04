@@ -175,7 +175,8 @@ public final class ModGameplayEvents
     }
 
     /**
-     * 「你瞅啥？」：头戴大脸盆、手持木槌的玩家被末影人锁定（盯着它看把它惹毛）时发进度。
+     * 「你瞅啥？」：穿着全套「东北行头」——头戴大脸盆、身穿大花袄、主手木槌、副手木锅盖——的玩家被末影人锁定
+     * （盯着它看把它惹毛）时发进度（2026-11-04 用户：四件套不另给套装效果，改成这个进度的条件）。
      *
      * <p>末影人被激怒走的是 {@code EnderMan#setTarget}，而 {@code Mob#setTarget} 上挂着平台事件，
      * 不用 mixin 就能拿到「目标要变成谁」。NeoForge 1.21.1 把这两个访问器改了名
@@ -194,10 +195,10 @@ public final class ModGameplayEvents
         if (!(target instanceof ServerPlayer player)) {
             return;
         }
-        if (!player.getItemBySlot(EquipmentSlot.HEAD).is(ModItems.LARGE_BASIN.get())) {
-            return;
-        }
-        if (!player.getMainHandItem().is(ModItems.WOODEN_MALLET.get())) {
+        if (!player.getItemBySlot(EquipmentSlot.HEAD).is(ModItems.LARGE_BASIN.get())
+                || !player.getItemBySlot(EquipmentSlot.CHEST).is(ModItems.FLORAL_JACKET.get())
+                || !player.getMainHandItem().is(ModItems.WOODEN_MALLET.get())
+                || !player.getOffhandItem().is(ModItems.BIG_POT_LID.get())) {
             return;
         }
         ModAdvancements.award(player, ModAdvancements.STARE, "stare");

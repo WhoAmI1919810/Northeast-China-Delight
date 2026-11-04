@@ -27,6 +27,7 @@ import com.gunmu.northeast_china_delight.item.LegacySeaWater;
 import com.gunmu.northeast_china_delight.fluid.ModFluids;
 import com.gunmu.northeast_china_delight.item.ModItems;
 import com.gunmu.northeast_china_delight.item.ModSounds;
+import com.gunmu.northeast_china_delight.item.PotLidItem;
 import com.gunmu.northeast_china_delight.loot.ModLootModifiers;
 import com.gunmu.northeast_china_delight.util.DdIds;
 import com.gunmu.northeast_china_delight.villager.ModButcherTrades;
@@ -167,6 +168,10 @@ public class NortheastChinaDelight
     public NortheastChinaDelight(IEventBus modEventBus, ModContainer modContainer)
     {
     //?}
+        //? if >=1.20.2 {
+        // 盔甲材料（大花袄）：1.21.1 是注册表里的东西，1.20.1 直接是个对象，不用注册
+        com.gunmu.northeast_china_delight.item.ModArmorMaterials.register(modEventBus);
+        //?}
         ModItems.register(modEventBus);
         ModSounds.register(modEventBus);
         ModBlocks.register(modEventBus);
@@ -234,6 +239,8 @@ public class NortheastChinaDelight
         MinecraftForge.EVENT_BUS.addListener(ModToolsmithTrades::addTrades);
         MinecraftForge.EVENT_BUS.addListener(ModCartographerTrades::addTrades);
         MinecraftForge.EVENT_BUS.addListener(ModWandererTrades::addTrades);
+        // 木锅盖当盾牌：只挡一成伤害
+        MinecraftForge.EVENT_BUS.addListener(PotLidItem::onShieldBlock);
         *///?} else {
         NeoForge.EVENT_BUS.register(this);
         NeoForge.EVENT_BUS.register(DishEffectEvents.class);
@@ -245,6 +252,7 @@ public class NortheastChinaDelight
         NeoForge.EVENT_BUS.addListener(ModToolsmithTrades::addTrades);
         NeoForge.EVENT_BUS.addListener(ModCartographerTrades::addTrades);
         NeoForge.EVENT_BUS.addListener(ModWandererTrades::addTrades);
+        NeoForge.EVENT_BUS.addListener(PotLidItem::onShieldBlock);
         //?}
     }
 
@@ -346,6 +354,11 @@ public class NortheastChinaDelight
         {
             LOGGER.info("da dong bei shi wo di jia xiang ~");
             LOGGER.info("MINECRAFT NAME >> {}", Minecraft.getInstance().getUser().getName());
+            // 木锅盖举起来挡的时候换一个手里的模型（同原版盾牌的 blocking 属性，见 models/item/big_pot_lid.json 的 overrides）
+            event.enqueueWork(() -> net.minecraft.client.renderer.item.ItemProperties.register(
+                    ModItems.BIG_POT_LID.get(), DdIds.of("minecraft", "blocking"),
+                    (stack, level, entity, seed) ->
+                            entity != null && entity.isUsingItem() && entity.getUseItem() == stack ? 1.0F : 0.0F));
         }
 
         /**

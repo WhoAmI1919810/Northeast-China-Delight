@@ -6,6 +6,7 @@ import com.gunmu.northeast_china_delight.util.DdIds;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
+import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.BucketItem;
@@ -373,8 +374,12 @@ public class ModItems {
     public static final Supplier<Item> GREEN_STEEL_ROOFING = simple("green_steel_roofing");
     /** 大铁锅：放在大灶上（见 BigStoveBlock）；以后能直接往里放水、调料、食材做菜（入口在 BigPotCooking） */
     public static final Supplier<Item> BIG_IRON_POT = regItem("big_iron_pot", Item::new, new Item.Properties().stacksTo(1));
-    /** 木锅盖：盖在大灶上的大铁锅上 */
-    public static final Supplier<Item> BIG_POT_LID = regItem("big_pot_lid", Item::new, new Item.Properties().stacksTo(1));
+    /** 木锅盖：盖在大灶上的大铁锅上；拿在手里也能当盾牌，只挡一成伤害、没有耐久（见 {@link PotLidItem}） */
+    public static final Supplier<Item> BIG_POT_LID = regItem("big_pot_lid", PotLidItem::new, new Item.Properties().stacksTo(1));
+    /** 大花袄：穿在胸甲槽，数值照皮革胸甲（材料见 {@link ModArmorMaterials}） */
+    public static final Supplier<Item> FLORAL_JACKET = regItem("floral_jacket",
+            properties -> new ArmorItem(ModArmorMaterials.FLORAL_JACKET, ArmorItem.Type.CHESTPLATE, properties),
+            jacketProperties());
     /** 红纸：两张纸 + 一份红染料做，剪窗花、糊红灯笼用（贴图暂时借原版的纸） */
     public static final Supplier<Item> RED_PAPER = regItem("red_paper", RedPaperItem::new, new Item.Properties());
 
@@ -442,7 +447,7 @@ public class ModItems {
             WATER_DOUGH, BUCKWHEAT_NOODLES, DRIED_TOFU, TOFU, FROZEN_TOFU, SWEET_POTATO_STARCH,
             VERMICELLI, LA_PI, CORN_FLOUR, CRACKLINGS, COLD_NOODLE_SHEET, BEAN_SPROUTS, SOUR_CORN_KERNELS, ROASTED_PEANUTS, RED_BEAN_PASTE,
             CORN_STALK,
-            LARGE_BASIN, WATER_BASIN, BRASS_BOWL, WOODEN_MALLET, BIG_IRON_POT, BIG_POT_LID, ANIMAL_OIL_BLOCK_ITEM,
+            LARGE_BASIN, WATER_BASIN, BRASS_BOWL, WOODEN_MALLET, BIG_IRON_POT, BIG_POT_LID, FLORAL_JACKET, ANIMAL_OIL_BLOCK_ITEM,
             UNFIRED_VAT_BLANK, MUSIC_DISC_NORTHEAST
     );
 
@@ -483,6 +488,15 @@ public class ModItems {
      * 1.21 的数据组件还能顺手把武器属性（攻击 5 / 攻速 1.0）也写进去，
      * 1.20.1 没有数据组件，那部分由 {@link WoodenMalletItem#getDefaultAttributeModifiers} 给。
      */
+    /** 1.20.1 的耐久由盔甲材料给（ArmorItem 构造时自己填）；1.21.1 要写在物品属性里 */
+    private static Item.Properties jacketProperties() {
+        //? if <1.20.5 {
+        /*return new Item.Properties();
+        *///?} else {
+        return new Item.Properties().durability(ModArmorMaterials.CHEST_DURABILITY);
+        //?}
+    }
+
     private static Item.Properties malletProperties() {
         //? if <1.20.5 {
         /*return new Item.Properties().stacksTo(1).durability(WoodenMalletItem.DURABILITY);
