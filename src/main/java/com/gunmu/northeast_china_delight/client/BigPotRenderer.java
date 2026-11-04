@@ -75,7 +75,7 @@ public class BigPotRenderer implements BlockEntityRenderer<BigPotBlockEntity> {
             if (spread > 0) {
                 renderSpread(pose, buffer, BigPotVisuals.spreadY(spread), light, packedOverlay);
             }
-            renderIngredients(pose, buffer, state, ingredients, light, packedOverlay, level);
+            renderIngredients(pose, buffer, state, ingredients, pot.liquidMb() <= 0, light, packedOverlay, level);
             if (pot.liquidMb() > 0) {
                 renderLiquid(pose, buffer, pot.liquid(), BigPotVisuals.liquidY(pot.liquidMb()),
                         BigPotVisuals.liquidColor(pot.liquid(), pot.contents()), light, packedOverlay);
@@ -110,13 +110,14 @@ public class BigPotRenderer implements BlockEntityRenderer<BigPotBlockEntity> {
         pose.popPose();
     }
 
+    /** dry = 锅里没水：食材沉到锅底（{@link BigPotVisuals#slot}），有水时浮在水里 */
     private static void renderIngredients(PoseStack pose, MultiBufferSource buffer, BlockState state,
-                                          List<ItemStack> ingredients, int light, int overlay, Level level) {
+                                          List<ItemStack> ingredients, boolean dry, int light, int overlay, Level level) {
         List<ItemStack> pieces = BigPotVisuals.pieces(ingredients);
         for (int i = 0; i < pieces.size(); i++) {
             ItemStack stack = pieces.get(i);
             BakedModel model = BigPotVisuals.ingredientModel(stack);
-            float[] at = BigPotVisuals.slot(i);
+            float[] at = BigPotVisuals.slot(i, dry);
             pose.pushPose();
             pose.translate(at[0] / 16.0F, at[1] / 16.0F, at[2] / 16.0F);
             pose.mulPose(Axis.YP.rotationDegrees(at[3]));
