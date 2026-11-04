@@ -9,6 +9,7 @@ import com.gunmu.northeast_china_delight.client.GrillCampfireRenderer;
 import com.gunmu.northeast_china_delight.client.VatRenderer;
 import com.gunmu.northeast_china_delight.client.WoodenMortarRenderer;
 import com.gunmu.northeast_china_delight.client.BigPotRenderer;
+import com.gunmu.northeast_china_delight.compat.CreateVillageShops;
 import com.gunmu.northeast_china_delight.compat.OptionalMods;
 import com.gunmu.northeast_china_delight.compat.create.ModFanProcessingTypes;
 import com.gunmu.northeast_china_delight.compat.jei.VatJeiSync;
@@ -184,6 +185,8 @@ public class NortheastChinaDelight
         // 鼓风机批量风干：机械动力是可选前置，没装就不注册（ModFanProcessingTypes 里全是 Create 的类）
         if (OptionalMods.create()) {
             ModFanProcessingTypes.register(modEventBus);
+            // 村庄副食店换成带机械动力方块的那一套（模组自带的数据包，见 CreateVillageShops）
+            modEventBus.addListener(CreateVillageShops::onAddPackFinders);
         }
         ModVillagerProfessions.register(modEventBus);
         ModMapDecorations.register(modEventBus);
