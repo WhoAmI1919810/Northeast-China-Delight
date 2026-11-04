@@ -13,6 +13,8 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
+import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.phys.shapes.VoxelShape;
 
 /**
  * 格子桌布（2026-11-04；村庄副食店柜台上铺的，替掉机械动力的桌布，16 种染料色）。
@@ -30,6 +32,8 @@ public class GinghamTableclothBlock extends CarpetBlock {
     public static final BooleanProperty EAST = BlockStateProperties.EAST;
     public static final BooleanProperty SOUTH = BlockStateProperties.SOUTH;
     public static final BooleanProperty WEST = BlockStateProperties.WEST;
+    /** 和模型一样 0.5 像素厚（2026-11-04 用户：桌布太厚，调到和炕画一样）；原版地毯是 1 像素 */
+    private static final VoxelShape SHAPE = Block.box(0.0, 0.0, 0.0, 16.0, 0.5, 16.0);
 
     public GinghamTableclothBlock(Properties properties) {
         super(properties);
@@ -60,6 +64,11 @@ public class GinghamTableclothBlock extends CarpetBlock {
     @Override
     public BlockState getStateForPlacement(BlockPlaceContext context) {
         return connect(defaultBlockState(), context.getLevel(), context.getClickedPos());
+    }
+
+    @Override
+    public VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
+        return SHAPE;
     }
 
     /** 下面的方块没了就掉（地毯的规矩）；旁边换了方块就重新看那一边挨不挨着桌布 */
