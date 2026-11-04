@@ -124,7 +124,10 @@ public class ModItems {
     public static final Supplier<Item> COOKING_OIL = bottled("cooking_oil");
     public static final Supplier<Item> CHILI_OIL = bottled("chili_oil");
     public static final Supplier<Item> ANIMAL_OIL = bottled("animal_oil");
-    public static final Supplier<Item> KVASS = bottledDrink("kvass", 2, 0.25F);
+    /** 格瓦斯：不饿也能喝，随时能喝（2026-11-04 用户：像药水一样） */
+    public static final Supplier<Item> KVASS = regItem("kvass", DdDrinkItem::new, new Item.Properties()
+            .craftRemainder(Items.GLASS_BOTTLE)
+            .food(foodReturning(alwaysEdible(stats(2, 0.25F)), Items.GLASS_BOTTLE)));
     /**
      * 黄桃罐头：7 点饥饿值、实际 3 点饱和度（原版公式为 nutrition × modifier × 2，
      * 因此这里换算成 3/14 的饱和度系数）；吃完返还玻璃瓶。
@@ -740,6 +743,15 @@ public class ModItems {
         return builder.saturationMod(value);
         //?} else {
         /*return builder.saturationModifier(value);
+        *///?}
+    }
+
+    /** 不饿也能吃 / 喝（1.20.1 叫 alwaysEat） */
+    private static FoodProperties.Builder alwaysEdible(FoodProperties.Builder builder) {
+        //? if <1.20.5 {
+        return builder.alwaysEat();
+        //?} else {
+        /*return builder.alwaysEdible();
         *///?}
     }
 
