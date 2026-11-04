@@ -322,10 +322,39 @@ ext.portLegacyModelLoaders = { File resourcesDir ->
     return changed
 }
 
+ext.portLegacyResourcePackNbt = { File resourcesDir, int targetDataVersion ->
+    File packsDir = new File(resourcesDir, 'resourcepacks')
+    if (!packsDir.isDirectory()) {
+        return 0
+    }
+    List<File> files = []
+    packsDir.eachDir { File packDir ->
+        File packDataDir = new File(packDir, 'data')
+        if (packDataDir.isDirectory()) {
+            packDataDir.eachFileRecurse { File f ->
+                if (f.isFile() && f.name.endsWith('.nbt')) {
+                    files << f
+                }
+            }
+        }
+    }
+    int changed = 0
+    files.each { File f ->
+        if (legacyPortStructureNbt(f, targetDataVersion)) {
+            changed++
+        }
+    }
+    return changed
+}
+
 ext.portLegacyDataTree = { File resourcesDir ->
     int loaders = portLegacyModelLoaders(resourcesDir)
     if (loaders > 0) {
         println "[legacy-data] 1.20.1 模型加载器改名 neoforge: → forge:：${loaders} 个模型"
+    }
+    int packNbt = portLegacyResourcePackNbt(resourcesDir, 3465)
+    if (packNbt > 0) {
+        println "[legacy-data] 1.20.1 内置资源包结构 NBT 已回退：${packNbt} 个"
     }
     File dataDir = new File(resourcesDir, 'data')
     if (!dataDir.isDirectory()) {
@@ -440,6 +469,7 @@ ext.portLegacyDataTree = { File resourcesDir ->
 //      不改的话伪装方块（create:copycat_step / copycat_panel）会「缺材质」：
 //      它们的 Item 在 1.20.x 上读出来是空堆 → Create 6.0 读取时材质校验通不过 → Material 被重置成空。
 //      顺带把 DataVersion 改成 1.20.1 的 3465。
+//      内置资源包 resourcepacks/*/data/** 里的结构 NBT 也要走同一套回退。
 
 ext.legacyPortStructureNbt = { File file, int targetDataVersion ->
     byte[] raw = file.bytes
