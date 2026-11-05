@@ -24,6 +24,9 @@ import net.neoforged.neoforge.event.AddPackFindersEvent;
  * 只在装了机械动力时由这里挂上，摆在最上面、始终启用，于是同名的结构文件盖住 data 里的那一套；村庄的模板池、结构都不用改。
  * 包里 structure/（1.21.1）和 structures/（1.20.1）各放一份：打 1.20.1 包时那套 data 转换只管主 data 目录、不碰这个包。</p>
  *
+ * <p>东北小院（northeast_yard_compound / garden / livestock）也照这个办法两套（2026-11-05 用户）：data 里是用户做的无机械动力版
+ * （work/tools/yard_no_create 补完最后几块），带机械动力方块的原版放在这个包的 structure/、structures/ 下同名文件。</p>
+ *
  * <p>没装机械动力时根本不注册这个监听（见 NortheastChinaDelight），这个类也不引用机械动力的任何类。</p>
  */
 public final class CreateVillageShops
