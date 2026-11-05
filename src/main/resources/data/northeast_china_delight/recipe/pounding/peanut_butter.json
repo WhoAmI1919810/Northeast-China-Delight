@@ -1,14 +1,9 @@
 {
   "type": "northeast_china_delight:pounding",
   "config": {
-    "input": [
-      {
-        "item": "northeast_china_delight:peanut"
-      },
-      {
-        "item": "northeast_china_delight:roasted_peanuts"
-      }
-    ],
+    "input": {
+      "item": "northeast_china_delight:roasted_peanuts"
+    },
     "tool": {
       "type": "neoforge:compound",
       "children": [
