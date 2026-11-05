@@ -4,6 +4,7 @@ import com.gunmu.northeast_china_delight.util.DdStacks;
 import net.minecraft.core.particles.ItemParticleOption;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.world.InteractionHand;
@@ -70,6 +71,13 @@ public class PotLidItem extends Item implements Equipable {
     private static final float BLOCK_SOUND_PITCH = 0.5F;
     /** 碎掉、被斧子打掉时的声音：同原版拆掉木头方块（木头 SoundType 音量 (1 + 1) / 2、音调 1 × 0.8） */
     private static final float BREAK_SOUND_PITCH = 0.8F;
+    /**
+     * 声音叠几遍（2026-11-05 用户：音量很小，提升一下响度）：原版一个声音最响就是录音本身的音量（音量参数超过 1 只是传得远，
+     * SoundEngine 把增益夹在 1 以内），挖木头那声用的是脚步录音、本来就轻，所以同时放几遍叠起来，见 {@link #playLayered}。
+     * 挡住那声叠 3 遍（约响 3 倍）；碎掉那声录音本来响一些，叠 2 遍
+     */
+    private static final int BLOCK_SOUND_LAYERS = 3;
+    private static final int BREAK_SOUND_LAYERS = 2;
 
     public PotLidItem(Properties properties) {
         super(properties);
@@ -191,8 +199,8 @@ public class PotLidItem extends Item implements Equipable {
         if (blocker.level().isClientSide()) {
             return;
         }
-        blocker.level().playSound(null, blocker.getX(), blocker.getY(), blocker.getZ(), SoundEvents.WOOD_HIT,
-                blocker.getSoundSource(), 1.0F, BLOCK_SOUND_PITCH * (0.9F + blocker.getRandom().nextFloat() * 0.2F));
+        playLayered(blocker, SoundEvents.WOOD_HIT, BLOCK_SOUND_PITCH * (0.9F + blocker.getRandom().nextFloat() * 0.2F),
+                BLOCK_SOUND_LAYERS);
     }
 
     /**
@@ -200,8 +208,20 @@ public class PotLidItem extends Item implements Equipable {
      * Player#playSound 在服务端不发给自己（原版留给客户端自己放），这里是服务端算的，得发给所有人
      */
     private static void playBreakSound(LivingEntity entity) {
-        entity.level().playSound(null, entity.getX(), entity.getY(), entity.getZ(), SoundEvents.WOOD_BREAK,
-                entity.getSoundSource(), 1.0F, BREAK_SOUND_PITCH);
+        playLayered(entity, SoundEvents.WOOD_BREAK, BREAK_SOUND_PITCH, BREAK_SOUND_LAYERS);
+    }
+
+    /**
+     * 同一个声音在原地同时放 layers 遍，叠起来更响：都用同一个种子（客户端按种子挑同一段录音，木头声每种都有好几段）、
+     * 同一个音调，同一刻发出去、客户端同一帧开始放，波形对得上，叠 n 遍大约是 n 倍响。服务端放，附近的人都听得见
+     */
+    private static void playLayered(LivingEntity entity, SoundEvent sound, float pitch, int layers) {
+        Level level = entity.level();
+        long seed = entity.getRandom().nextLong();
+        for (int i = 0; i < layers; i++) {
+            level.playSeededSound(null, entity.getX(), entity.getY(), entity.getZ(), sound, entity.getSoundSource(),
+                    1.0F, pitch, seed);
+        }
     }
 
     /**
