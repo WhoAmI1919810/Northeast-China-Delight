@@ -34,7 +34,7 @@ import java.util.function.Supplier;
 
 /**
  * 「一大盆菜」的方块形式 —— 做法照农夫乐事的 {@code FeastBlock}（牧羊人派、填馅南瓜那套）。
- * 放法同碗装菜、盘装菜（{@link PlacedDishBlock}）：潜行右键放下（{@code item/DdFeastItem}），放在哪都行，朝向放的人，
+ * 放法同碗装菜、盘装菜（{@link PlacedDishBlock}）：直接右键放下（{@code item/DdFeastItem}），放在哪都行，朝向放的人，
  * 潜行空手右键收回（2026-11-05 用户）。
  */
 public class DdFeastBlock extends Block {
