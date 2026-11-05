@@ -14,6 +14,9 @@
     },
     {
       "tag": "c:foods/dried_tofu"
+    },
+    {
+      "tag": "c:foods/starch"
     }
   ],
   "recipe_book_tab": "meals",
