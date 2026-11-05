@@ -1,1 +1,19 @@
-{"variants": {"": {"model": "northeast_china_delight:block/sticky_bean_bun"}}}
+{
+  "variants": {
+    "facing=north": {
+      "model": "northeast_china_delight:block/sticky_bean_bun"
+    },
+    "facing=east": {
+      "model": "northeast_china_delight:block/sticky_bean_bun",
+      "y": 90
+    },
+    "facing=south": {
+      "model": "northeast_china_delight:block/sticky_bean_bun",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "northeast_china_delight:block/sticky_bean_bun",
+      "y": 270
+    }
+  }
+}

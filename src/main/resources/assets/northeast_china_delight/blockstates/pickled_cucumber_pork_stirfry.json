@@ -1,1 +1,19 @@
-{"variants": {"": {"model": "northeast_china_delight:block/pickled_cucumber_pork_stirfry"}}}
+{
+  "variants": {
+    "facing=north": {
+      "model": "northeast_china_delight:block/pickled_cucumber_pork_stirfry"
+    },
+    "facing=east": {
+      "model": "northeast_china_delight:block/pickled_cucumber_pork_stirfry",
+      "y": 90
+    },
+    "facing=south": {
+      "model": "northeast_china_delight:block/pickled_cucumber_pork_stirfry",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "northeast_china_delight:block/pickled_cucumber_pork_stirfry",
+      "y": 270
+    }
+  }
+}

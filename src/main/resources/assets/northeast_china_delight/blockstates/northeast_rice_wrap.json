@@ -1,1 +1,19 @@
-{"variants": {"": {"model": "northeast_china_delight:block/northeast_rice_wrap"}}}
+{
+  "variants": {
+    "facing=north": {
+      "model": "northeast_china_delight:block/northeast_rice_wrap"
+    },
+    "facing=east": {
+      "model": "northeast_china_delight:block/northeast_rice_wrap",
+      "y": 90
+    },
+    "facing=south": {
+      "model": "northeast_china_delight:block/northeast_rice_wrap",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "northeast_china_delight:block/northeast_rice_wrap",
+      "y": 270
+    }
+  }
+}

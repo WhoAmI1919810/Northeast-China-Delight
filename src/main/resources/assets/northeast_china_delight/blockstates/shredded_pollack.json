@@ -1,1 +1,19 @@
-{"variants": {"": {"model": "northeast_china_delight:block/shredded_pollack"}}}
+{
+  "variants": {
+    "facing=north": {
+      "model": "northeast_china_delight:block/shredded_pollack"
+    },
+    "facing=east": {
+      "model": "northeast_china_delight:block/shredded_pollack",
+      "y": 90
+    },
+    "facing=south": {
+      "model": "northeast_china_delight:block/shredded_pollack",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "northeast_china_delight:block/shredded_pollack",
+      "y": 270
+    }
+  }
+}

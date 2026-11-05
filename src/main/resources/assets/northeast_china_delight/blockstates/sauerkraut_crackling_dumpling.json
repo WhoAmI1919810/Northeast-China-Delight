@@ -1,1 +1,19 @@
-{"variants": {"": {"model": "northeast_china_delight:block/sauerkraut_crackling_dumpling"}}}
+{
+  "variants": {
+    "facing=north": {
+      "model": "northeast_china_delight:block/sauerkraut_crackling_dumpling"
+    },
+    "facing=east": {
+      "model": "northeast_china_delight:block/sauerkraut_crackling_dumpling",
+      "y": 90
+    },
+    "facing=south": {
+      "model": "northeast_china_delight:block/sauerkraut_crackling_dumpling",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "northeast_china_delight:block/sauerkraut_crackling_dumpling",
+      "y": 270
+    }
+  }
+}

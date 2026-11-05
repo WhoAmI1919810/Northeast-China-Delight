@@ -1,1 +1,19 @@
-{"variants": {"": {"model": "northeast_china_delight:block/grilled_chicken_frame"}}}
+{
+  "variants": {
+    "facing=north": {
+      "model": "northeast_china_delight:block/grilled_chicken_frame"
+    },
+    "facing=east": {
+      "model": "northeast_china_delight:block/grilled_chicken_frame",
+      "y": 90
+    },
+    "facing=south": {
+      "model": "northeast_china_delight:block/grilled_chicken_frame",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "northeast_china_delight:block/grilled_chicken_frame",
+      "y": 270
+    }
+  }
+}

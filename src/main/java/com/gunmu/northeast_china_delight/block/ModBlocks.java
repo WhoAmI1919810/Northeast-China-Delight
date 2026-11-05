@@ -590,7 +590,7 @@ public class ModBlocks {
             }
             else
             {
-                map.put(id, dishBlock(id, properties -> new DishBlock(properties, shape)));
+                map.put(id, dishBlock(id, properties -> new PlacedDishBlock(properties, shape)));
             }
         }
         return Collections.unmodifiableMap(map);

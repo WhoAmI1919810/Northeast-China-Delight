@@ -1,1 +1,19 @@
-{"variants": {"": {"model": "northeast_china_delight:block/shrimp_pork_dumpling"}}}
+{
+  "variants": {
+    "facing=north": {
+      "model": "northeast_china_delight:block/shrimp_pork_dumpling"
+    },
+    "facing=east": {
+      "model": "northeast_china_delight:block/shrimp_pork_dumpling",
+      "y": 90
+    },
+    "facing=south": {
+      "model": "northeast_china_delight:block/shrimp_pork_dumpling",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "northeast_china_delight:block/shrimp_pork_dumpling",
+      "y": 270
+    }
+  }
+}

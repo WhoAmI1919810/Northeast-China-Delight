@@ -1,1 +1,19 @@
-{"variants": {"": {"model": "northeast_china_delight:block/tiger_salad"}}}
+{
+  "variants": {
+    "facing=north": {
+      "model": "northeast_china_delight:block/tiger_salad"
+    },
+    "facing=east": {
+      "model": "northeast_china_delight:block/tiger_salad",
+      "y": 90
+    },
+    "facing=south": {
+      "model": "northeast_china_delight:block/tiger_salad",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "northeast_china_delight:block/tiger_salad",
+      "y": 270
+    }
+  }
+}

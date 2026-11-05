@@ -1,1 +1,19 @@
-{"variants": {"": {"model": "northeast_china_delight:block/snowy_bean_paste"}}}
+{
+  "variants": {
+    "facing=north": {
+      "model": "northeast_china_delight:block/snowy_bean_paste"
+    },
+    "facing=east": {
+      "model": "northeast_china_delight:block/snowy_bean_paste",
+      "y": 90
+    },
+    "facing=south": {
+      "model": "northeast_china_delight:block/snowy_bean_paste",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "northeast_china_delight:block/snowy_bean_paste",
+      "y": 270
+    }
+  }
+}

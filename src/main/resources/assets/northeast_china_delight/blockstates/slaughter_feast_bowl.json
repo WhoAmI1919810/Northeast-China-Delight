@@ -1,1 +1,19 @@
-{"variants": {"": {"model": "northeast_china_delight:block/slaughter_feast_bowl"}}}
+{
+  "variants": {
+    "facing=north": {
+      "model": "northeast_china_delight:block/slaughter_feast_bowl"
+    },
+    "facing=east": {
+      "model": "northeast_china_delight:block/slaughter_feast_bowl",
+      "y": 90
+    },
+    "facing=south": {
+      "model": "northeast_china_delight:block/slaughter_feast_bowl",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "northeast_china_delight:block/slaughter_feast_bowl",
+      "y": 270
+    }
+  }
+}

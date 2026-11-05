@@ -1,1 +1,19 @@
-{"variants": {"": {"model": "northeast_china_delight:block/borscht"}}}
+{
+  "variants": {
+    "facing=north": {
+      "model": "northeast_china_delight:block/borscht"
+    },
+    "facing=east": {
+      "model": "northeast_china_delight:block/borscht",
+      "y": 90
+    },
+    "facing=south": {
+      "model": "northeast_china_delight:block/borscht",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "northeast_china_delight:block/borscht",
+      "y": 270
+    }
+  }
+}

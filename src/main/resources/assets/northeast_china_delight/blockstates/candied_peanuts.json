@@ -1,1 +1,19 @@
-{"variants": {"": {"model": "northeast_china_delight:block/candied_peanuts"}}}
+{
+  "variants": {
+    "facing=north": {
+      "model": "northeast_china_delight:block/candied_peanuts"
+    },
+    "facing=east": {
+      "model": "northeast_china_delight:block/candied_peanuts",
+      "y": 90
+    },
+    "facing=south": {
+      "model": "northeast_china_delight:block/candied_peanuts",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "northeast_china_delight:block/candied_peanuts",
+      "y": 270
+    }
+  }
+}

@@ -1,1 +1,19 @@
-{"variants": {"": {"model": "northeast_china_delight:block/shrimp_paste_scrambled_egg"}}}
+{
+  "variants": {
+    "facing=north": {
+      "model": "northeast_china_delight:block/shrimp_paste_scrambled_egg"
+    },
+    "facing=east": {
+      "model": "northeast_china_delight:block/shrimp_paste_scrambled_egg",
+      "y": 90
+    },
+    "facing=south": {
+      "model": "northeast_china_delight:block/shrimp_paste_scrambled_egg",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "northeast_china_delight:block/shrimp_paste_scrambled_egg",
+      "y": 270
+    }
+  }
+}
