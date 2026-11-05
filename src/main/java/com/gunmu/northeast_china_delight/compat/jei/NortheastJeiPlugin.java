@@ -128,9 +128,9 @@ public class NortheastJeiPlugin implements IModPlugin {
                 Component.translatable("jei.northeast_china_delight.info.big_stove"));
         registration.addItemStackInfo(new ItemStack(ModItems.BIG_POT_LID.get()),
                 Component.translatable("jei.northeast_china_delight.info.big_pot_lid"));
-        // 脸盆架怎么放盆、拿盆
-        registration.addItemStackInfo(new ItemStack(ModBlocks.BASIN_STAND.get()),
-                Component.translatable("jei.northeast_china_delight.info.basin_stand"));
+        // 压水井能给容器装水（2026-11-05 用户：脸盆架那页意义不明，换成压水井）
+        registration.addItemStackInfo(new ItemStack(ModBlocks.HAND_PUMP.get()),
+                Component.translatable("jei.northeast_china_delight.info.hand_pump"));
         // 谜之炖菜不是配方煮的：大锅里凑不上配方时盖上锅盖煮出来
         registration.addItemStackInfo(new ItemStack(ModItems.MYSTERY_STEW.get()),
                 Component.translatable("jei.northeast_china_delight.info.mystery_stew"));
@@ -144,33 +144,32 @@ public class NortheastJeiPlugin implements IModPlugin {
                         new ItemStack(ModItems.OIL_EDGE.get()),
                         new ItemStack(ModItems.SMOKED_PORK_HOCK.get()), new ItemStack(ModItems.SMOKED_PIG_LIVER.get())),
                 Component.translatable("jei.northeast_china_delight.info.pig_offal"));
-        registration.addItemStackInfo(new ItemStack(ModItems.FROZEN_PEAR.get()), frozenPearInfo());
+        // 冻梨、黄桃罐头共用一页（2026-11-05 用户）
+        registration.addItemStackInfo(java.util.List.of(new ItemStack(ModItems.FROZEN_PEAR.get()),
+                new ItemStack(ModItems.CANNED_YELLOW_PEACH.get())), fruitPreserveInfo());
         Component bellflowerInfo = Component.translatable("jei.northeast_china_delight.info.bellflower");
         registration.addItemStackInfo(new ItemStack(ModItems.BELLFLOWER_ROOT.get()), bellflowerInfo);
         registration.addItemStackInfo(new ItemStack(ModItems.BELLFLOWER_SEEDS.get()), bellflowerInfo);
     }
 
     /**
-     * 冻梨在 JEI 里的说明。它不像别的食材那样有一条稳定的自产途径：
-     *
-     * <ul>
-     *   <li>主流来源是农民村民的职业交易（学徒级，4 个绿宝石换 1 个）；</li>
-     *   <li>装了「果园乐事」（Fruits Delight）时，它的梨子会进通用标签
-     *       {@code c:foods/fruits/pear}，而大缸的冻梨配方正好认这个标签，于是还能自己冻。</li>
-     * </ul>
+     * 冻梨、黄桃罐头那一页。平时只能买：冻梨农民卖，黄桃罐头副食商卖；
+     * 装了「果园乐事」（Fruits Delight）时还能自己做（它的梨在大缸里冻成冻梨，桃子加糖在厨锅里做成黄桃罐头），
+     * 这时多一句。
      *
      * <p>判断「装了没」直接查物品注册表，不走可选的编译期依赖、也不用 {@code ModList}：
      * 两版 Minecraft 上注册表的写法一样，1.20.1 那边不用加版本分支。</p>
      */
-    private static Component[] frozenPearInfo()
+    private static Component[] fruitPreserveInfo()
     {
-        Component sold = Component.translatable("jei.northeast_china_delight.info.frozen_pear");
-        if (!BuiltInRegistries.ITEM.containsKey(DdIds.of("fruitsdelight", "pear"))) {
+        Component sold = Component.translatable("jei.northeast_china_delight.info.frozen_pear_canned_peach");
+        if (!BuiltInRegistries.ITEM.containsKey(DdIds.of("fruitsdelight", "pear"))
+                && !BuiltInRegistries.ITEM.containsKey(DdIds.of("fruitsdelight", "peach"))) {
             return new Component[] { sold };
         }
         return new Component[] {
                 sold,
-                Component.translatable("jei.northeast_china_delight.info.frozen_pear.pear")
+                Component.translatable("jei.northeast_china_delight.info.frozen_pear_canned_peach.fruitsdelight")
         };
     }
 
