@@ -1,0 +1,34 @@
+{
+  "values": [
+    "northeast_china_delight:soybean",
+    "northeast_china_delight:red_bean",
+    "northeast_china_delight:tofu",
+    "northeast_china_delight:dried_tofu",
+    "northeast_china_delight:frozen_tofu",
+    "northeast_china_delight:red_bean_paste",
+    {
+      "id": "#c:crops/soybean",
+      "required": false
+    },
+    {
+      "id": "#c:crops/red_bean",
+      "required": false
+    },
+    {
+      "id": "#c:crops/mung_bean",
+      "required": false
+    },
+    {
+      "id": "#c:foods/tofu",
+      "required": false
+    },
+    {
+      "id": "#c:foods/dried_tofu",
+      "required": false
+    },
+    {
+      "id": "#c:foods/red_bean_paste",
+      "required": false
+    }
+  ]
+}

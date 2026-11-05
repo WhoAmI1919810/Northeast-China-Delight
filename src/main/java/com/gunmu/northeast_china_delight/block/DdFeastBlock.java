@@ -84,6 +84,14 @@ public class DdFeastBlock extends Block {
         return state.getValue(SERVINGS);
     }
 
+    /**
+     * 拿碗盛走的那一份。一般就是「碗装XX」；盆装谜之炖菜按盆里存的效果给一碗原版谜之炖菜（{@link MysteryStewPotBlock}）。
+     * 在最后一份把方块换回大脸盆之前调，方块实体还在
+     */
+    protected ItemStack servingStack(Level level, BlockPos pos) {
+        return new ItemStack(this.servingItem.get());
+    }
+
     @Override
     public BlockState getStateForPlacement(BlockPlaceContext context) {
         return this.defaultBlockState()
@@ -117,7 +125,7 @@ public class DdFeastBlock extends Block {
         }
         if (!level.isClientSide) {
             stack.shrink(1);
-            popResource(level, pos, new ItemStack(this.servingItem.get()));
+            popResource(level, pos, this.servingStack(level, pos));
             if (servings == 1) {
                 // 最后一份：盆不倒空也不掉出来 —— 原地变成普通的大脸盆方块（想收走就把它敲下来）
                 level.setBlock(pos, ModBlocks.LARGE_BASIN.get().defaultBlockState(), Block.UPDATE_ALL);
@@ -153,7 +161,7 @@ public class DdFeastBlock extends Block {
         }
         if (!level.isClientSide) {
             stack.shrink(1);
-            popResource(level, pos, new ItemStack(this.servingItem.get()));
+            popResource(level, pos, this.servingStack(level, pos));
             if (servings == 1) {
                 // 最后一份：盆不倒空也不掉出来 —— 原地变成普通的大脸盆方块（想收走就把它敲下来）
                 level.setBlock(pos, ModBlocks.LARGE_BASIN.get().defaultBlockState(), Block.UPDATE_ALL);

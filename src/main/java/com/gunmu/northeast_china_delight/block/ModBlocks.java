@@ -668,6 +668,19 @@ public class ModBlocks {
                     com.gunmu.northeast_china_delight.util.DdIds.of("farmersdelight", "cooked_rice")));
 
     /**
+     * 盆装谜之炖菜：大锅里凑不上配方时煮出来的一盆（2026-11-05 用户）。拿碗盛出来是一碗原版谜之炖菜，
+     * 效果存在方块实体里（MysteryStewPotBlockEntity）；方块属性同别的盆装菜
+     */
+    public static final Supplier<MysteryStewPotBlock> MYSTERY_STEW_POT =
+            block("mystery_stew_pot", MysteryStewPotBlock::new,
+                    BlockBehaviour.Properties.of()
+                            .mapColor(MapColor.WOOD)
+                            .strength(0.5F)
+                            .sound(SoundType.WOOD)
+                            .noOcclusion()
+                            .forceSolidOn());
+
+    /**
      * 注册一口大盆菜。
      *
      * 注意第二个参数必须传「取一份给什么」—— 之前漏了它，方块里的 servingItem 一直是 null，

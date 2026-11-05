@@ -1,0 +1,14 @@
+{
+  "values": [
+    "northeast_china_delight:red_chili",
+    "northeast_china_delight:spicy_cabbage",
+    {
+      "id": "#c:crops/chile_pepper",
+      "required": false
+    },
+    {
+      "id": "#c:foods/kimchi",
+      "required": false
+    }
+  ]
+}

@@ -1,0 +1,11 @@
+{
+  "values": [
+    "northeast_china_delight:pork_fat",
+    "northeast_china_delight:oil_edge",
+    "northeast_china_delight:cracklings",
+    {
+      "id": "#c:foods/cracklings",
+      "required": false
+    }
+  ]
+}

@@ -167,6 +167,28 @@ public class BigPotBlockEntity extends BlockEntity {
         *///?}
     }
 
+    /** 锅里的食材（不含调料）：先放的在前、同样的并成一堆。谜之炖菜按这个数每一类有几个（crafting/MysteryStew） */
+    public List<ItemStack> ingredientStacks() {
+        List<ItemStack> food = new ArrayList<>();
+        for (Layer layer : layers) {
+            if (!layer.seasoning) {
+                mergeInto(food, layer.stack, false);
+            }
+        }
+        return food;
+    }
+
+    /** 锅里倒了几种调料（同一种倒几份只算一种；谜之炖菜每多一种多 2 秒） */
+    public int seasoningKinds() {
+        List<ItemStack> spice = new ArrayList<>();
+        for (Layer layer : layers) {
+            if (layer.seasoning) {
+                mergeInto(spice, layer.stack, true);
+            }
+        }
+        return spice.size();
+    }
+
     /** 锅里一共几个食材 */
     public int ingredientCount() {
         return count(false);

@@ -1,0 +1,13 @@
+{
+  "values": [
+    "minecraft:egg",
+    {
+      "id": "farmersdelight:fried_egg",
+      "required": false
+    },
+    {
+      "id": "#c:eggs",
+      "required": false
+    }
+  ]
+}
