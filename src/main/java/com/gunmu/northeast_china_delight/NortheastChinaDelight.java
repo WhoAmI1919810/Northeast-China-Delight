@@ -492,6 +492,24 @@ public class NortheastChinaDelight
         }
 
         /**
+         * 格子桌布的方块模型包一层（client/TableclothSkirtModel）：垂下来的布边伸出格子，原版平面光照取旁边那一格的光，
+         * 旁边放了不透光的方块布边就全黑（2026-11-05 用户截图）；包一层后布边取桌布自己这一格的光
+         */
+        @SubscribeEvent
+        public static void onModifyBakingResult(ModelEvent.ModifyBakingResult event)
+        {
+            for (var block : ModBlocks.GINGHAM_TABLECLOTHS.values())
+            {
+                for (var state : block.get().getStateDefinition().getPossibleStates())
+                {
+                    event.getModels().computeIfPresent(
+                            net.minecraft.client.renderer.block.BlockModelShaper.stateToModelLocation(state),
+                            (id, model) -> new com.gunmu.northeast_china_delight.client.TableclothSkirtModel(model));
+                }
+            }
+        }
+
+        /**
          * 酱油、大酱在流体储罐 / 管道里的贴图。
          * 没有这一段的话，机械动力的储罐会显示成紫黑格。
          *
