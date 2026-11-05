@@ -118,7 +118,7 @@ public class PotLidItem extends Item implements Equipable {
     *///?}
 
     /**
-     * 举着锅盖挡住了一下：挡下的伤害改成原本的三成（穿齐四件套时全挡、和盾牌一样，还「铛」一声），耐久自己扣（{@link #wear}）。
+     * 举着锅盖挡住了一下：挡下的伤害改成原本的三成（穿齐四件套时全挡、和盾牌一样），放木头挖掘中的声音，耐久自己扣（{@link #wear}）。
      * 原版扣盾牌耐久是按伤害算的（不到 3 点不扣、多了扣 1 + 伤害），这里不要，所以把原版那份关掉。
      * 没挡满，原版就当这一下没挡住（照样受伤、红一下、出受伤的声音），只是伤害少了一些；
      * 全挡（四件套）时原版照盾牌处理：不受伤、箭弹开、近身打的人被推开。
@@ -149,15 +149,12 @@ public class PotLidItem extends Item implements Equipable {
     }
     *///?}
 
-    /** 穿齐四件套全挡、「铛」一声；不然只挡三成 */
+    /**
+     * 穿齐四件套全挡，不然只挡三成。以前穿齐时挡住还「铛」一声（农夫乐事平底锅的金属声），盖过了木头的声音，
+     * 2026-11-05 用户说听不出格挡声换了，去掉了：格挡只放木头挖掘中的声音（{@link #playBlockSound}）
+     */
     private static float blockedFraction(LivingEntity blocker) {
-        if (!NortheastOutfit.isComplete(blocker)) {
-            return BLOCKED_FRACTION;
-        }
-        if (!blocker.level().isClientSide()) {
-            NortheastOutfit.playLidClang(blocker);
-        }
-        return NortheastOutfit.LID_BLOCKED_FRACTION;
+        return NortheastOutfit.isComplete(blocker) ? NortheastOutfit.LID_BLOCKED_FRACTION : BLOCKED_FRACTION;
     }
 
     /**

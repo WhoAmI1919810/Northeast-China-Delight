@@ -1,9 +1,5 @@
 package com.gunmu.northeast_china_delight.item;
 
-import com.gunmu.northeast_china_delight.util.DdIds;
-import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.sounds.SoundEvent;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.Mth;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.damagesource.DamageTypes;
@@ -29,8 +25,9 @@ import java.util.WeakHashMap;
  * 「东北行头」四件套：头戴大脸盆、身穿大花袄、主手木槌、副手木锅盖（2026-11-04 用户定的三条套装效果）。
  * 穿齐了才有，少一件都不算：
  * <ul>
- *   <li>锅盖真挡事：举锅盖挡下的伤害从三成变成全挡，和盾牌一样（{@link #LID_BLOCKED_FRACTION}，2026-11-05 用户），挡住时「铛」一声
- *       （农夫乐事平底锅砸人的声音），见 {@link PotLidItem#onShieldBlock}；</li>
+ *   <li>锅盖真挡事：举锅盖挡下的伤害从三成变成全挡，和盾牌一样（{@link #LID_BLOCKED_FRACTION}，2026-11-05 用户），
+ *       见 {@link PotLidItem#onShieldBlock}。以前挡住时还「铛」一声（农夫乐事平底锅的金属声），同日用户要锅盖格挡的声音换成
+ *       木头的，「铛」去掉了，挡住的声音见 PotLidItem；</li>
  *   <li>一棒子敲懵：木槌近身打中的东西多被击退一截（相当于击退 I）、缓慢 II 两秒，见 {@link #onLivingDamage} / {@link #onKnockBack}；</li>
  *   <li>自家人：找村民换东西便宜一点（每条交易的第一样要价少 15%，至少少 1 个；村庄英雄 I 是 30%），
  *       见 {@link #applyVillagerDiscount}，由 mixin/VillagerOutfitDiscountMixin 在原版算完声望、村庄英雄折扣之后调用。
@@ -49,8 +46,6 @@ public final class NortheastOutfit {
     private static final float EXTRA_KNOCKBACK = 0.5F;
     /** 找村民换东西少要的比例 */
     private static final float VILLAGER_DISCOUNT = 0.15F;
-    /** 「铛」：农夫乐事平底锅打中东西的声音（农夫乐事是必装前置），万一找不到退回原版盾牌挡住的声音 */
-    private static final String CLANG_SOUND = "item.skillet.attack.strong";
 
     /**
      * 这一下木槌刚打中、还没轮到原版击退的东西（记的是打中时的游戏刻）。原版在扣血之后才击退（LivingEntity#hurt），
@@ -66,16 +61,6 @@ public final class NortheastOutfit {
                 && entity.getItemBySlot(EquipmentSlot.CHEST).is(ModItems.FLORAL_JACKET.get())
                 && entity.getMainHandItem().is(ModItems.WOODEN_MALLET.get())
                 && entity.getOffhandItem().is(ModItems.BIG_POT_LID.get());
-    }
-
-    /** 锅盖挡住时「铛」一声（只在穿齐时调用） */
-    public static void playLidClang(LivingEntity entity) {
-        SoundEvent sound = BuiltInRegistries.SOUND_EVENT.get(DdIds.of("farmersdelight", CLANG_SOUND));
-        if (sound == null) {
-            sound = SoundEvents.SHIELD_BLOCK;
-        }
-        entity.level().playSound(null, entity.getX(), entity.getY(), entity.getZ(), sound, entity.getSoundSource(),
-                1.0F, 0.9F + entity.getRandom().nextFloat() * 0.2F);
     }
 
     /** 一棒子敲懵：穿齐了用木槌近身打中，缓慢两秒，并记下来等原版击退时加力度 */
