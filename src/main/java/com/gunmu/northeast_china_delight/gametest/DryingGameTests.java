@@ -125,8 +125,8 @@ public final class DryingGameTests {
         helper.assertTrue(recipe != null && recipe.id().equals(
                 DdIds.of(NortheastChinaDelight.MODID, "drying/dried_tofu")), "豆浆应匹配自带数据包的干豆腐配方");
         List<ItemStack> output = recipe.process(new ItemStack(ModItems.SOY_MILK.get()));
-        helper.assertTrue(count(output, ModItems.DRIED_TOFU.get()) == 1 && count(output, Items.BOWL) == 1,
-                "一份豆浆应产出一份干豆腐并返还一个碗");
+        helper.assertTrue(count(output, ModItems.DRIED_TOFU.get()) == 2 && count(output, Items.BOWL) == 1,
+                "一份豆浆应产出两份干豆腐并返还一个碗");
         helper.succeed();
     }
 
@@ -280,9 +280,9 @@ public final class DryingGameTests {
                 "Create 应通过真实风干处理入口完成加工");
         List<ItemEntity> bowls = helper.getLevel().getEntitiesOfClass(ItemEntity.class,
                 new AABB(pos).inflate(1), dropped -> dropped.getItem().is(Items.BOWL));
-        helper.assertTrue(entity.getItem().is(ModItems.DRIED_TOFU.get()) && entity.getItem().getCount() == 8
+        helper.assertTrue(entity.getItem().is(ModItems.DRIED_TOFU.get()) && entity.getItem().getCount() == 16
                 && bowls.stream().mapToInt(dropped -> dropped.getItem().getCount()).sum() == 8,
-                "八份豆浆应产出八份干豆腐及八个碗，不能丢失堆叠数量或抛出不可变列表异常");
+                "八份豆浆应产出十六份干豆腐及八个碗，不能丢失堆叠数量或抛出不可变列表异常");
         helper.succeed();
     }
 

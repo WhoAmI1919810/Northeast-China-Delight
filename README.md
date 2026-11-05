@@ -260,7 +260,7 @@ main 分支为 1.21.1（NeoForge）开发主线；1.20.1（Forge）版本线见 
     "priority": 0,
     "input": {"tag": "c:foods/soy_milk"},
     "results": [
-      {"item": "northeast_china_delight:dried_tofu", "count": 1},
+      {"item": "northeast_china_delight:dried_tofu", "count": 2},
       {"item": "minecraft:bowl", "count": 1}
     ]
   }
