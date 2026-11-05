@@ -6,13 +6,15 @@
         "ingredient": {
           "tag": "c:crops/red_bean"
         },
-        "count": 1
+        "count": 1,
+        "model": "northeast_china_delight:block/wooden_mortar_red_bean_raw"
       },
       {
         "ingredient": {
           "tag": "c:sugar"
         },
-        "count": 1
+        "count": 1,
+        "model": "northeast_china_delight:block/wooden_mortar_sugar"
       }
     ],
     "tool": {

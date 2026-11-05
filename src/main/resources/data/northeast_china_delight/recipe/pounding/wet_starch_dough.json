@@ -6,11 +6,13 @@
         "ingredient": {
           "tag": "c:crops/sweet_potato"
         },
-        "count": 1
+        "count": 1,
+        "model": "northeast_china_delight:block/wooden_mortar_sweet_potato_raw"
       },
       {
         "water": true,
-        "count": 1
+        "count": 1,
+        "model": "northeast_china_delight:block/wooden_mortar_water"
       }
     ],
     "tool": {

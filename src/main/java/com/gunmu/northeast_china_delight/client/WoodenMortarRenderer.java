@@ -58,7 +58,11 @@ public class WoodenMortarRenderer implements BlockEntityRenderer<WoodenMortarBlo
         BlockState state = mortar.getBlockState();
         int stage = state.getValue(WoodenMortarBlock.STATE);
         Level level = mortar.getLevel();
-        if (stage <= 0 || level == null) {
+        if (level == null) {
+            return;
+        }
+        if (stage <= 0) {
+            renderDeposited(mortar, level, state, pose, buffer, packedLight, packedOverlay);
             return;
         }
 
@@ -83,6 +87,40 @@ public class WoodenMortarRenderer implements BlockEntityRenderer<WoodenMortarBlo
             pose.pushPose();
             rotateToFacing(pose, facing);
             renderShaded(pose, consumer, level, pos, state, model, facing, packedLight, packedOverlay);
+            pose.popPose();
+        }
+    }
+
+    /**
+     * 料还没放齐（臼还是空臼的样子，方块模型照常画）：放进去了的那几样各画各的模型（配方 inputs 里的 model，
+     * 2026-11-05 用户：红薯和水得都放进去才有模型）。没写 model 的、不是 overlay 的配方什么都不多画
+     */
+    private static void renderDeposited(WoodenMortarBlockEntity mortar, Level level, BlockState state, PoseStack pose,
+                                        MultiBufferSource buffer, int packedLight, int packedOverlay) {
+        if (!mortar.hasDepositedInputs()) {
+            return;
+        }
+        PoundingRecipes.Recipe recipe = mortar.resolve(level);
+        if (recipe == null || recipe.stageModelMode() != PoundingRecipes.StageModelMode.OVERLAY) {
+            return;
+        }
+        VertexConsumer consumer = null;
+        Direction facing = state.getValue(WoodenMortarBlock.FACING);
+        for (int i = 0; i < recipe.inputs().size(); i++) {
+            ResourceLocation id = recipe.inputs().get(i).model();
+            if (id == null || mortar.inputCount(i) <= 0) {
+                continue;
+            }
+            BakedModel model = bakedModel(id);
+            if (model == Minecraft.getInstance().getModelManager().getMissingModel()) {
+                continue;
+            }
+            if (consumer == null) {
+                consumer = buffer.getBuffer(RenderType.cutout());
+            }
+            pose.pushPose();
+            rotateToFacing(pose, facing);
+            renderShaded(pose, consumer, level, mortar.getBlockPos(), state, model, facing, packedLight, packedOverlay);
             pose.popPose();
         }
     }

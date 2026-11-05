@@ -88,8 +88,14 @@ public final class PoundingRecipes {
         //?}
     }
 
-    /** 一种投入物需要多少份，以及每消耗一份返还什么容器（不写就按 {@link #leftover} 还）。 */
-    public record Input(Ingredient ingredient, int count, @Nullable ItemStack returnContainer) {
+    /**
+     * 一种投入物需要多少份，以及每消耗一份返还什么容器（不写就按 {@link #leftover} 还）。
+     *
+     * @param model 料还没放齐时，这一样放进去了臼里画的模型（overlay，同 stage_models；2026-11-05 用户：红薯和水得都放进去才有模型，
+     *              要各加载各的）。几样都放了就几个一起画；放齐以后照常画 stage_models 的第一个。null = 放齐前不画
+     */
+    public record Input(Ingredient ingredient, int count, @Nullable ItemStack returnContainer,
+                        @Nullable ResourceLocation model) {
         public Input {
             if (count <= 0) {
                 throw new IllegalArgumentException("舂捣输入数量必须为正整数");
@@ -97,6 +103,10 @@ public final class PoundingRecipes {
             if (returnContainer != null) {
                 returnContainer = returnContainer.copy();
             }
+        }
+
+        public Input(Ingredient ingredient, int count, @Nullable ItemStack returnContainer) {
+            this(ingredient, count, returnContainer, null);
         }
 
         /**
