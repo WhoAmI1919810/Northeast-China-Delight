@@ -35,10 +35,9 @@ import net.minecraft.world.phys.Vec3;
  *       食材最多放用得最多的那条配方那么多个、调料同理（{@link BigPotRecipes#maxIngredients} / {@link BigPotRecipes#maxSeasonings}）；</li>
  *   <li>食材和调料互不相干（2026-11-03 用户）：潜行空手右键随时拿出一个食材补救（最后放进去的先出来，隔着调料也照拿）；
  *       调料倒进去就拿不出来，放错了只能把水舀干重来；锅里只剩调料时右键没反应、不出提示；</li>
- *   <li>灶点着、锅里正好凑成一条配方、盖上锅盖才开始煮（每刻 {@link #serverTick}；2026-11-05 用户：不放锅盖就不开始烹饪），
- *       按配方的 {@code lid_speedup} 缩短时间。料凑齐的那一下提示盖锅盖。
- *       开始煮以后锅里的东西就不能动了：不能放、不能拿、不能舀水（右键没反应、不出提示），只能等煮好（2026-11-03 用户）；
- *       中途揭开盖就停在那儿（进度留着、照样锁着），盖回去接着煮；</li>
+ *   <li>灶点着、锅里正好凑成一条配方、盖上锅盖才开始煮（每刻 {@link #serverTick}；2026-11-05 用户：不放锅盖就不开始烹饪）。
+ *       开煮以后揭开盖照常煮，盖着时按配方的 {@code lid_speedup} 走得快，中途盖上只让剩下的变快（同日用户：中途可以揭盖）。
+ *       开始煮以后锅里的东西就不能动了：不能放、不能拿、不能舀水（右键没反应、不出提示），只能等煮好（2026-11-03 用户）；</li>
  *   <li>煮好了：料和液体都没了，锅里是一锅菜（配方 result 的 count 就是份数），
  *       拿配方写的容器右键盛一份（没写容器就空手盛），每份给配方的经验。拆灶时没盛完的菜不掉，只掉锅。</li>
  * </ul>
@@ -150,11 +149,7 @@ public final class BigPotCooking {
             }
             level.playSound(null, pos, SoundEvents.GENERIC_SPLASH, SoundSource.BLOCKS, 0.5F, 1.0F);
             splash(level, pos, state, pot, 12);
-            // 这一样放进去正好凑齐一条配方：提示盖锅盖（不盖不开煮）
-            boolean ready = BigPotRecipes.match(recipes, pot.liquid(), pot.liquidMb(), pot.contents()) != null;
-            tell(player, Component.translatable(ready
-                    ? "message.northeast_china_delight.big_pot.ready"
-                    : "message.northeast_china_delight.big_pot.added", one.getHoverName()));
+            tell(player, Component.translatable("message.northeast_china_delight.big_pot.added", one.getHoverName()));
         }
         return InteractionResult.sidedSuccess(level.isClientSide);
     }
@@ -190,8 +185,8 @@ public final class BigPotCooking {
 
     /**
      * 灶点着、灶上有锅时每个服务端 tick 调一次（只在 nw 那一格的方块实体上跑，见 {@link BigStoveBlock#getTicker}）。
-     * 锅里凑成哪条配方、盖着锅盖（state 里 pot=lid）就煮哪条，按 lid_speedup 缩短时间；换了配方从头算。
-     * {@code cooking} 不为空 = 已经开煮（锅里锁着），所以没盖盖时不设：料凑齐了还没盖盖，照样能放能拿。
+     * 锅里凑成哪条配方、盖上锅盖（state 里 pot=lid）才开煮；开煮以后揭着盖照常煮，盖着按 lid_speedup 缩短时间；换了配方从头算。
+     * {@code cooking} 不为空 = 已经开煮（锅里锁着），所以还没盖过盖时不设：料凑齐了没盖盖，照样能放能拿。
      */
     public static void serverTick(Level level, BlockPos pos, BlockState state, BigPotBlockEntity pot) {
         if (pot.hasResult()) {
@@ -199,18 +194,18 @@ public final class BigPotCooking {
         }
         BigPotRecipe recipe = BigPotRecipes.match(level.getRecipeManager(), pot.liquid(), pot.liquidMb(), pot.contents());
         boolean lid = state.getValue(BigStoveBlock.POT) == BigStoveBlock.Pot.LID;
-        if (recipe == null || !lid) {
-            // 不盖锅盖不开煮（2026-11-05 用户）。已经开煮的揭开盖就停在那儿：进度留着、锅里照样锁着，盖回去接着煮
-            if (recipe == null || !recipe.id().equals(pot.cooking())) {
-                pot.setCooking(null);
-            }
+        // 不盖锅盖不开煮（2026-11-05 用户）；已经开煮的揭开盖照常煮（同日用户：中途可以揭盖，进度正常走）
+        boolean started = recipe != null && recipe.id().equals(pot.cooking());
+        if (recipe == null || !started && !lid) {
+            pot.setCooking(null);
             return;
         }
         pot.setCooking(recipe.id());
-        // 进度按配方写的 cooking_time 记，盖着锅盖每刻走「cooking_time / 盖盖时长」，实际煮 cooking_time × (1 - lid_speedup%)
+        // 进度按不盖锅盖的时长算；盖着锅盖每刻多走「不盖盖时长 / 盖盖时长」，中途盖上只让剩下的变快
+        // （以前盖上就换成缩短后的总时长、煮过的刻数不变，进度一下放大 1.67 倍，2026-11-03 用户报）
         int total = recipe.cookingTime();
         pot.setCookTotal(total);
-        pot.tickCooking(total / (float) recipe.lidCookingTime());
+        pot.tickCooking(lid ? total / (float) recipe.lidCookingTime() : 1.0F);
         // 煮着时的冒泡、白雾在客户端画（clientTick，看锅里同步过去的 cooking）
         if (pot.cookProgress() < total - 0.001F) {
             return;
