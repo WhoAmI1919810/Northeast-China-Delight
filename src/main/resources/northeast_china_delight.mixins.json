@@ -12,7 +12,8 @@
     "RepairItemRecipeMixin",
     "SoundEngineMixin",
     "SideDishMerchantTradeMixin",
-    "VillagerOutfitDiscountMixin"
+    "VillagerOutfitDiscountMixin",
+    "LivingEntityLidSoundMixin"
   ],
   "client": [
     "LoomScreenMixin"
