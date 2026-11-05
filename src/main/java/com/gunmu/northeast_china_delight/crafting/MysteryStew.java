@@ -28,7 +28,8 @@ import java.util.Map;
  *   <li>能下锅的：配方用得上的东西，加上这里认的所有食材（{@link Kind} 那些标签里的，原版胡萝卜、农夫乐事番茄洋葱都算）
  *       和调料（{@link #SEASONINGS}）；</li>
  *   <li>每样食材按它的「性子」归一类（{@link Kind}，一类对一种效果，标签 {@code mystery_stew/kinds/<类>}）；
- *       锅里数量最多的两类给效果（用户：投了 3 个骨头、2 个主食、1 个萝卜，就给抗性提升和饱和、不给夜视）；
+ *       锅里数量最多的三类给效果（用户：投了 3 个骨头、2 个主食、1 个萝卜，就给抗性提升和饱和、不给夜视；
+ *       同日改成最多三种效果）；
  *       个数一样多时，珍稀度加起来高的先（{@link #rarity}：费工 2、难得 3、稀有 5，其余家常 1），再一样就先放进锅的先；</li>
  *   <li>等级无论放多少都是 I（同原版谜之炖菜）；时长：不放调料 4 秒，每多放一种调料加 2 秒（{@link #BASE_TICKS}、{@link #PER_SEASONING_TICKS}）。
  *       饱和例外，固定 {@link #SATURATION_TICKS} 刻（同原版蒲公英炖菜）：饱和每刻都补饥饿值，给 4 秒就是一碗吃满；</li>
@@ -49,8 +50,8 @@ public final class MysteryStew {
     public static final int PER_SEASONING_TICKS = 40;
     /** 饱和固定几刻（同原版蒲公英炖菜） */
     public static final int SATURATION_TICKS = 7;
-    /** 给几种效果：数量最多的两类 */
-    public static final int KINDS_GIVEN = 2;
+    /** 最多给几种效果：数量最多的三类（2026-11-05 用户从两种改成最多三种） */
+    public static final int KINDS_GIVEN = 3;
 
     /**
      * 能当调料下锅的：和锅里液面染色认的那几种一样（client/BigPotVisuals#SEASONINGS）。调料倒进去拿不出来、水舀干就跟着没
@@ -165,7 +166,7 @@ public final class MysteryStew {
     }
 
     /**
-     * 按锅里的食材（先放的在前、同样的并成一堆）和调料种数算效果：数量最多的两类，各给一种 I 级效果
+     * 按锅里的食材（先放的在前、同样的并成一堆）和调料种数算效果：数量最多的三类，各给一种 I 级效果（不够三类就少给）
      */
     public static List<MysteryStewEffects.Entry> effects(List<ItemStack> ingredients, int seasoningKinds) {
         // 每一类：[个数, 珍稀度合计, 最早放进去的是第几样]

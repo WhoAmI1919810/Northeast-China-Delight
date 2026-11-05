@@ -1,6 +1,7 @@
 package com.gunmu.northeast_china_delight.effect;
 
 import com.gunmu.northeast_china_delight.item.ModItems;
+import com.gunmu.northeast_china_delight.item.MysteryStewEffects;
 import com.gunmu.northeast_china_delight.item.SeasoningBottleItem;
 import com.gunmu.northeast_china_delight.util.DdIds;
 import com.gunmu.northeast_china_delight.util.DdAttributes;
@@ -15,6 +16,7 @@ import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.food.FoodData;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 //? if <1.20.2 {
 /*import net.minecraftforge.eventbus.api.SubscribeEvent;
 *///?} else {
@@ -107,6 +109,9 @@ public class DishEffectEvents {
     @SubscribeEvent
     public static void onItemTooltip(ItemTooltipEvent event) {
         ItemStack stack = event.getItemStack();
+        if (appendMysteryStew(event)) {
+            return;
+        }
         if (stack.is(ModItems.GRILL_RACK.get())) {
             event.getToolTip().add(Component.translatable("tooltip.northeast_china_delight.grill_rack")
                     .withStyle(ChatFormatting.GRAY));
@@ -157,24 +162,60 @@ public class DishEffectEvents {
         tooltip.add(Component.translatable("tooltip.northeast_china_delight.dish_effects")
                 .withStyle(ChatFormatting.GRAY));
         for (DishEffects.Applied applied : effects) {
-            MobEffectInstance instance = applied.instance();
-            Component name = Component.translatable(instance.getDescriptionId());
-            if (instance.getAmplifier() > 0) {
-                name = Component.translatable("potion.withAmplifier", name,
-                        Component.translatable("potion.potency." + instance.getAmplifier()));
-            }
-            name = name.copy().withStyle(DdEffects.category(instance).getTooltipFormatting());
-            tooltip.add(Component.literal(" ")
-                    .append(name)
-                    .append(" (")
+            tooltip.add(effectLine(applied.instance()));
+        }
+    }
+
+    /**
+     * 谜之炖菜（盆装谜之炖菜、拿碗盛出来的原版谜之炖菜）：只给创造模式的玩家看效果，同样写在「食用后获得：」下面。
+     * 原版只在创造模式物品栏的物品列表里列效果（TooltipFlag#isCreative），拿到自己背包里就看不见了
+     * （2026-11-05 用户：创造模式里看不到盛出来的炖菜的效果），所以这里按玩家是不是创造模式。
+     * 返回 true 表示是谜之炖菜（别的提示不用再看）
+     */
+    private static boolean appendMysteryStew(ItemTooltipEvent event) {
+        ItemStack stack = event.getItemStack();
+        boolean basin = stack.is(ModItems.MYSTERY_STEW.get());
+        if (!basin && !stack.is(Items.SUSPICIOUS_STEW)) {
+            return false;
+        }
+        Player player = event.getEntity();
+        // 原版谜之炖菜在创造模式物品列表里原版自己会列，不重复
+        if (player == null || !player.isCreative() || !basin && event.getFlags().isCreative()) {
+            return true;
+        }
+        List<MysteryStewEffects.Entry> effects = basin ? MysteryStewEffects.read(stack) : MysteryStewEffects.readBowl(stack);
+        if (effects.isEmpty()) {
+            return true;
+        }
+        List<Component> tooltip = event.getToolTip();
+        tooltip.add(Component.empty());
+        tooltip.add(Component.translatable("tooltip.northeast_china_delight.dish_effects")
+                .withStyle(ChatFormatting.GRAY));
+        for (MysteryStewEffects.Entry entry : effects) {
+            tooltip.add(effectLine(DdEffects.instance(entry.effect(), entry.duration(), 0)));
+        }
+        return true;
+    }
+
+    /** 「食用后获得：」下面的一行：效果名（等级）（时长）；不到 1 秒的不写时长（同原版药水提示，谜之炖菜的饱和只有 7 刻） */
+    private static Component effectLine(MobEffectInstance instance) {
+        Component name = Component.translatable(instance.getDescriptionId());
+        if (instance.getAmplifier() > 0) {
+            name = Component.translatable("potion.withAmplifier", name,
+                    Component.translatable("potion.potency." + instance.getAmplifier()));
+        }
+        name = name.copy().withStyle(DdEffects.category(instance).getTooltipFormatting());
+        net.minecraft.network.chat.MutableComponent line = Component.literal(" ").append(name);
+        if (instance.getDuration() > 20) {
+            line = line.append(" (")
                     //? if <1.20.2 {
                     /*.append(MobEffectUtil.formatDuration(instance, 1.0F))
                     *///?} else {
                     .append(MobEffectUtil.formatDuration(instance, 1.0F, 20.0F))
                     //?}
-                    .append(")")
-                    .withStyle(ChatFormatting.GRAY));
+                    .append(")");
         }
+        return line.withStyle(ChatFormatting.GRAY);
     }
 
     @SubscribeEvent
