@@ -2,10 +2,10 @@
   "type": "northeast_china_delight:pounding",
   "config": {
     "input": {
-      "item": "farmersdelight:cooked_rice"
+      "item": "northeast_china_delight:steamed_rice"
     },
     "return_container": {
-      "item": "minecraft:bowl"
+      "item": "northeast_china_delight:large_basin"
     },
     "tool": {
       "type": "neoforge:compound",
@@ -25,7 +25,7 @@
     "finished_model": "northeast_china_delight:block/wooden_mortar_rice_cake_done",
     "result": {
       "item": "northeast_china_delight:pounded_rice_cake",
-      "count": 2
+      "count": 4
     },
     "transition": "sequential"
   }
