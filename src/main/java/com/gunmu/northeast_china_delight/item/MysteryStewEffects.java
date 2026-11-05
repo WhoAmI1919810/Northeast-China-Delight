@@ -9,6 +9,7 @@ import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 //? if <1.20.5 {
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.Tag;
 import net.minecraft.world.item.SuspiciousStewItem;
 //?} else {
@@ -57,6 +58,37 @@ public final class MysteryStewEffects {
             out.add(new Entry(entry.effect(), entry.duration()));
         }
         return out;
+        *///?}
+    }
+
+    /**
+     * 一碗原版谜之炖菜上的效果（创造模式提示框用，effect/DishEffectEvents）。1.21.1 和盆装是同一个组件；
+     * 1.20.1 照原版的存法读：Effects 列表，每项 EffectId（数字 id，Forge 另存 forge:effect_id）+ EffectDuration（没写是 160 刻）
+     */
+    public static List<Entry> readBowl(ItemStack stack) {
+        //? if <1.20.5 {
+        CompoundTag tag = stack.getTag();
+        if (tag == null || !tag.contains("Effects", Tag.TAG_LIST)) {
+            return List.of();
+        }
+        ListTag list = tag.getList("Effects", Tag.TAG_COMPOUND);
+        List<Entry> out = new ArrayList<>();
+        for (int i = 0; i < list.size(); i++) {
+            CompoundTag entry = list.getCompound(i);
+            int duration = entry.contains("EffectDuration", Tag.TAG_ANY_NUMERIC) ? entry.getInt("EffectDuration") : 160;
+            ResourceLocation id = entry.contains("forge:effect_id", Tag.TAG_STRING)
+                    ? ResourceLocation.tryParse(entry.getString("forge:effect_id")) : null;
+            MobEffect effect = id != null ? BuiltInRegistries.MOB_EFFECT.get(id) : null;
+            if (effect == null) {
+                effect = MobEffect.byId(entry.getInt("EffectId"));
+            }
+            if (effect != null) {
+                out.add(new Entry(DdEffects.hold(effect), duration));
+            }
+        }
+        return out;
+        //?} else {
+        /*return read(stack);
         *///?}
     }
 
