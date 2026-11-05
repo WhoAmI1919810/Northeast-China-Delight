@@ -61,7 +61,7 @@ public class LargeBasinItem extends ItemNameBlockItem implements Equipable
     }
 
     /**
-     * 右键：对着水舀一盆水，得到水盆（见 {@link #scoopWater}）；对着别的方块什么也不做（放盆要潜行）；
+     * 右键：对着水舀一盆水，得到水盆（见 {@link #scoopWater}）；对着别的方块是放盆（{@link #useOn}，到不了这里）；
      * 对着空气扣头上 —— 原版 {@code Item#use} 自己不认 Equipable（只有盔甲、鞘翅在里面调了 swap），所以这里补上。
      */
     @Override
@@ -80,18 +80,29 @@ public class LargeBasinItem extends ItemNameBlockItem implements Equipable
     }
 
     /**
-     * 和水盆一样：潜行右键方块才放盆（地上的盆潜行空手右键收回，见 {@code BasinBlock}）；
-     * 不潜行返回 PASS，客户端接着调 {@link #use} 去舀水。
+     * 右键方块直接放下盆（2026-11-05 用户：空盆、水盆、盆装菜能直接右键放下；以前要潜行）。地上的盆潜行空手右键收回，见 {@code BasinBlock}。
+     * 视线上先碰到的是水源（隔着水点到了水底的方块）就返回 PASS，客户端接着调 {@link #use} 去舀水
      */
     @Override
     public InteractionResult useOn(UseOnContext context)
     {
         Player player = context.getPlayer();
-        if (player == null || player.isSecondaryUseActive())
+        if (player != null && aimsAtWaterSource(context.getLevel(), player))
         {
-            return super.useOn(context);
+            return InteractionResult.PASS;
         }
-        return InteractionResult.PASS;
+        return super.useOn(context);
+    }
+
+    private static boolean aimsAtWaterSource(Level level, Player player)
+    {
+        BlockHitResult hit = getPlayerPOVHitResult(level, player, ClipContext.Fluid.SOURCE_ONLY);
+        if (hit.getType() != HitResult.Type.BLOCK)
+        {
+            return false;
+        }
+        var fluid = level.getFluidState(hit.getBlockPos());
+        return fluid.is(FluidTags.WATER) && fluid.isSource();
     }
 
     /**

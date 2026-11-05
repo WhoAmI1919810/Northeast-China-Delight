@@ -26,9 +26,11 @@ import net.minecraft.world.phys.HitResult;
  * 水盆（装了一盆水的大脸盆）。
  *
  * <ul>
- *   <li>右键：像水桶一样把水倒出去，手里剩空的大脸盆；</li>
- *   <li>潜行 + 右键方块：把水盆放在地上（方块 {@code water_basin}，潜行空手右键能收回物品栏，见 {@code BasinBlock}）。</li>
+ *   <li>右键方块：把水盆放在地上（方块 {@code water_basin}，潜行空手右键能收回物品栏，见 {@code BasinBlock}）；</li>
+ *   <li>潜行 + 右键：像水桶一样把水倒出去，手里剩空的大脸盆。</li>
  * </ul>
+ * 2026-11-05 用户：空盆、水盆、盆装菜能直接右键放下，所以放和倒水对调了（以前右键倒水、潜行右键放）。
+ * 对着炼药锅、大灶、地上的盆这些自己会接水的方块，不潜行右键照旧由那个方块处理（往里倒）。
  *
  * <p>外观分流和大脸盆同一个渲染器：物品栏是 2D 贴图，手里 / 地上 / 展示框是方块模型（见 {@code client/LargeBasinItemRenderer}）。</p>
  */
@@ -39,24 +41,24 @@ public class WaterBasinItem extends ItemNameBlockItem
         super(block, properties);
     }
 
-    /** 只有潜行时才放方块；不潜行就交给 {@link #use} 倒水（返回 PASS 后客户端会接着调 use） */
+    /** 不潜行右键方块就放下；潜行交给 {@link #use} 倒水（返回 PASS 后客户端会接着调 use） */
     @Override
     public InteractionResult useOn(UseOnContext context)
     {
         Player player = context.getPlayer();
-        if (player == null || player.isSecondaryUseActive())
+        if (player != null && player.isSecondaryUseActive())
         {
-            return super.useOn(context);
+            return InteractionResult.PASS;
         }
-        return InteractionResult.PASS;
+        return super.useOn(context);
     }
 
-    /** 倒水：沿视线找方块，照原版水桶的 {@code emptyContents} 放一格水（下界里会蒸发，含水方块会被灌水） */
+    /** 潜行倒水：沿视线找方块，照原版水桶的 {@code emptyContents} 放一格水（下界里会蒸发，含水方块会被灌水） */
     @Override
     public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand)
     {
         ItemStack stack = player.getItemInHand(hand);
-        if (player.isSecondaryUseActive())
+        if (!player.isSecondaryUseActive())
         {
             return InteractionResultHolder.pass(stack);
         }
