@@ -273,7 +273,8 @@ public class ModItems {
     public static final Supplier<Item> NIAN_DOU_BAO = food("sticky_bean_bun", 7, 0.6F);
     public static final Supplier<Item> HONG_DOU_SONG_BING = food("red_bean_songpyeon", 3, 0.3F);
     public static final Supplier<Item> HUA_SHENG_SONG_BING = food("peanut_songpyeon", 3, 0.3F);
-    public static final Supplier<Item> DA_GAO = food("pounded_rice_cake", 3, 0.5F);
+    /** 打糕：木臼里一盆米饭（4 碗）舂出 4 个，每个按一碗农夫乐事米饭算，饥饿值 6；饱和度系数照旧 0.5（2026-11-05 用户） */
+    public static final Supplier<Item> DA_GAO = food("pounded_rice_cake", 6, 0.5F);
     /**
      * 唱片「大东北是我的家乡」——播放时听范围内的玩家能看到歌词。
      *
