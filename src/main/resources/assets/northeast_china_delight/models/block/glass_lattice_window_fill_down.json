@@ -24,25 +24,13 @@
         },
         "south": {
           "texture": "#glass"
-        },
-        "east": {
-          "texture": "#glass"
-        },
-        "west": {
-          "texture": "#glass"
-        },
-        "up": {
-          "texture": "#glass"
-        },
-        "down": {
-          "texture": "#glass"
         }
       }
     },
     {
       "from": [
         7.5,
-        0.05,
+        0,
         7
       ],
       "to": [

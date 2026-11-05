@@ -281,18 +281,6 @@
         },
         "south": {
           "texture": "#paper_inner"
-        },
-        "east": {
-          "texture": "#paper"
-        },
-        "west": {
-          "texture": "#paper"
-        },
-        "up": {
-          "texture": "#paper"
-        },
-        "down": {
-          "texture": "#paper"
         }
       }
     }
