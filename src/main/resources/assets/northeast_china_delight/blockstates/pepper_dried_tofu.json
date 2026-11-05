@@ -1,1 +1,19 @@
-{"variants": {"": {"model": "northeast_china_delight:block/pepper_dried_tofu"}}}
+{
+  "variants": {
+    "facing=north": {
+      "model": "northeast_china_delight:block/pepper_dried_tofu"
+    },
+    "facing=east": {
+      "model": "northeast_china_delight:block/pepper_dried_tofu",
+      "y": 90
+    },
+    "facing=south": {
+      "model": "northeast_china_delight:block/pepper_dried_tofu",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "northeast_china_delight:block/pepper_dried_tofu",
+      "y": 270
+    }
+  }
+}

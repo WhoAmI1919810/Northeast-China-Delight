@@ -7,6 +7,7 @@ import com.gunmu.northeast_china_delight.block.FacingDecorBlock;
 import com.gunmu.northeast_china_delight.block.GinsengCropBlock;
 import com.gunmu.northeast_china_delight.block.ModBlockTags;
 import com.gunmu.northeast_china_delight.block.ModBlocks;
+import com.gunmu.northeast_china_delight.block.PlacedDishBlock;
 import com.gunmu.northeast_china_delight.block.PlatedDishBlock;
 import com.gunmu.northeast_china_delight.compat.displaydelight.DisplayDelightCompat;
 import com.gunmu.northeast_china_delight.block.WoodenMortarBlock;
@@ -393,7 +394,7 @@ public final class ModGameplayEvents
         }
         if (!level.isClientSide)
         {
-            BlockState state = dish.defaultBlockState();
+            BlockState state = dish.defaultBlockState().setValue(PlacedDishBlock.FACING, player.getDirection().getOpposite());
             level.setBlock(pos, state, 3);
             SoundType sound = state.getSoundType(level, pos, player);
             level.playSound(null, pos, sound.getPlaceSound(), SoundSource.BLOCKS,

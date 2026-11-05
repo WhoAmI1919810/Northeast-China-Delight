@@ -1,1 +1,19 @@
-{"variants": {"": {"model": "northeast_china_delight:block/three_delicacy_dumpling"}}}
+{
+  "variants": {
+    "facing=north": {
+      "model": "northeast_china_delight:block/three_delicacy_dumpling"
+    },
+    "facing=east": {
+      "model": "northeast_china_delight:block/three_delicacy_dumpling",
+      "y": 90
+    },
+    "facing=south": {
+      "model": "northeast_china_delight:block/three_delicacy_dumpling",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "northeast_china_delight:block/three_delicacy_dumpling",
+      "y": 270
+    }
+  }
+}

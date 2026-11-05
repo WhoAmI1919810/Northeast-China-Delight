@@ -1,1 +1,19 @@
-{"variants": {"": {"model": "northeast_china_delight:block/smoked_meat_platter"}}}
+{
+  "variants": {
+    "facing=north": {
+      "model": "northeast_china_delight:block/smoked_meat_platter"
+    },
+    "facing=east": {
+      "model": "northeast_china_delight:block/smoked_meat_platter",
+      "y": 90
+    },
+    "facing=south": {
+      "model": "northeast_china_delight:block/smoked_meat_platter",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "northeast_china_delight:block/smoked_meat_platter",
+      "y": 270
+    }
+  }
+}

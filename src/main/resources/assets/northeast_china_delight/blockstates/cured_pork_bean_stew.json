@@ -1,1 +1,19 @@
-{"variants": {"": {"model": "northeast_china_delight:block/cured_pork_bean_stew"}}}
+{
+  "variants": {
+    "facing=north": {
+      "model": "northeast_china_delight:block/cured_pork_bean_stew"
+    },
+    "facing=east": {
+      "model": "northeast_china_delight:block/cured_pork_bean_stew",
+      "y": 90
+    },
+    "facing=south": {
+      "model": "northeast_china_delight:block/cured_pork_bean_stew",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "northeast_china_delight:block/cured_pork_bean_stew",
+      "y": 270
+    }
+  }
+}

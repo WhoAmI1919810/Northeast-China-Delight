@@ -1,1 +1,19 @@
-{"variants": {"": {"model": "northeast_china_delight:block/corn_fritter"}}}
+{
+  "variants": {
+    "facing=north": {
+      "model": "northeast_china_delight:block/corn_fritter"
+    },
+    "facing=east": {
+      "model": "northeast_china_delight:block/corn_fritter",
+      "y": 90
+    },
+    "facing=south": {
+      "model": "northeast_china_delight:block/corn_fritter",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "northeast_china_delight:block/corn_fritter",
+      "y": 270
+    }
+  }
+}

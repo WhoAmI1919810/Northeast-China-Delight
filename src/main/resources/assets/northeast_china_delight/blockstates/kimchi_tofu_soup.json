@@ -1,1 +1,19 @@
-{"variants": {"": {"model": "northeast_china_delight:block/kimchi_tofu_soup"}}}
+{
+  "variants": {
+    "facing=north": {
+      "model": "northeast_china_delight:block/kimchi_tofu_soup"
+    },
+    "facing=east": {
+      "model": "northeast_china_delight:block/kimchi_tofu_soup",
+      "y": 90
+    },
+    "facing=south": {
+      "model": "northeast_china_delight:block/kimchi_tofu_soup",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "northeast_china_delight:block/kimchi_tofu_soup",
+      "y": 270
+    }
+  }
+}

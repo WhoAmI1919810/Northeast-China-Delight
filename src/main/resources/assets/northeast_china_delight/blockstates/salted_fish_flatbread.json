@@ -1,1 +1,19 @@
-{"variants": {"": {"model": "northeast_china_delight:block/salted_fish_flatbread"}}}
+{
+  "variants": {
+    "facing=north": {
+      "model": "northeast_china_delight:block/salted_fish_flatbread"
+    },
+    "facing=east": {
+      "model": "northeast_china_delight:block/salted_fish_flatbread",
+      "y": 90
+    },
+    "facing=south": {
+      "model": "northeast_china_delight:block/salted_fish_flatbread",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "northeast_china_delight:block/salted_fish_flatbread",
+      "y": 270
+    }
+  }
+}

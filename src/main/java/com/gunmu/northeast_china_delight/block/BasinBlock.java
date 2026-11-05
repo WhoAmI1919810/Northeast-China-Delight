@@ -28,7 +28,7 @@ import net.minecraft.world.phys.BlockHitResult;
  * 拿空桶（或空盆）右键水盆，舀走一盆水、盆变回空盆。一盆水就是一桶水（1000 mB），舀进舀出不多不少。
  * 地上的盆（空盆、水盆）潜行空手右键，直接收回物品栏。</p>
  */
-public class BasinBlock extends DishBlock
+public class BasinBlock extends PlacedDishBlock
 {
     private final boolean filled;
 
@@ -116,7 +116,8 @@ public class BasinBlock extends DishBlock
                     : (pour ? Items.BUCKET : Items.WATER_BUCKET));
             player.setItemInHand(hand, ItemUtils.createFilledResult(held, player, result));
             Block next = pour ? ModBlocks.WATER_BASIN.get() : ModBlocks.LARGE_BASIN.get();
-            level.setBlock(pos, next.defaultBlockState(), Block.UPDATE_ALL);
+            level.setBlock(pos, PlacedDishBlock.withFacing(next.defaultBlockState(), level.getBlockState(pos)),
+                    Block.UPDATE_ALL);
             level.playSound(null, pos, pour ? SoundEvents.BUCKET_EMPTY : SoundEvents.BUCKET_FILL,
                     SoundSource.BLOCKS, 1.0F, 1.0F);
             level.gameEvent(player, pour ? GameEvent.FLUID_PLACE : GameEvent.FLUID_PICKUP, pos);

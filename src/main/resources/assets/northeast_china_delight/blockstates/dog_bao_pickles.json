@@ -1,1 +1,19 @@
-{"variants": {"": {"model": "northeast_china_delight:block/dog_bao_pickles"}}}
+{
+  "variants": {
+    "facing=north": {
+      "model": "northeast_china_delight:block/dog_bao_pickles"
+    },
+    "facing=east": {
+      "model": "northeast_china_delight:block/dog_bao_pickles",
+      "y": 90
+    },
+    "facing=south": {
+      "model": "northeast_china_delight:block/dog_bao_pickles",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "northeast_china_delight:block/dog_bao_pickles",
+      "y": 270
+    }
+  }
+}
