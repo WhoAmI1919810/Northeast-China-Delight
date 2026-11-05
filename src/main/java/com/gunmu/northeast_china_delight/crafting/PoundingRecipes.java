@@ -5,6 +5,7 @@ import com.gunmu.northeast_china_delight.util.DdIds;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.RecipeManager;
 import org.jetbrains.annotations.Nullable;
@@ -66,7 +67,7 @@ public final class PoundingRecipes {
         }
     }
 
-    /** 一种投入物需要多少份，以及每消耗一份返还什么容器。 */
+    /** 一种投入物需要多少份，以及每消耗一份返还什么容器（不写就按 {@link #leftover} 还）。 */
     public record Input(Ingredient ingredient, int count, @Nullable ItemStack returnContainer) {
         public Input {
             if (count <= 0) {
@@ -75,6 +76,21 @@ public final class PoundingRecipes {
             if (returnContainer != null) {
                 returnContainer = returnContainer.copy();
             }
+        }
+
+        /**
+         * 投进去的一份用完剩下的容器：配方写了 {@code return_container} 就还它；没写就看这样东西自己剩什么
+         * （2026-11-05 加：湿粉团的水可以是一桶、一盆或一瓶，各还各的）——药水瓶（水瓶）还空玻璃瓶，
+         * 有合成剩余物的还剩余物（水桶 → 空桶、水盆 → 空大脸盆），别的什么都不还
+         */
+        public ItemStack leftover(ItemStack inserted) {
+            if (returnContainer != null) {
+                return returnContainer.copy();
+            }
+            if (inserted.is(Items.POTION)) {
+                return new ItemStack(Items.GLASS_BOTTLE);
+            }
+            return inserted.hasCraftingRemainingItem() ? inserted.getCraftingRemainingItem().copy() : ItemStack.EMPTY;
         }
     }
 

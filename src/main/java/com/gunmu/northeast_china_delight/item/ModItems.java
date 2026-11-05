@@ -146,6 +146,8 @@ public class ModItems {
     public static final Supplier<Item> BEAN_SPROUTS = food("bean_sprouts", 2, 0.3F);
     public static final Supplier<Item> SOUR_CORN_KERNELS = food("sour_corn_kernels", 3, 0.4F);
     public static final Supplier<Item> SWEET_POTATO_STARCH = simple("sweet_potato_starch");
+    /** 湿粉团：木臼里 1 个红薯加一份水（一桶 / 一盆 / 一瓶）舂出 2 个，放熔炉烧干成淀粉（2026-11-05 用户） */
+    public static final Supplier<Item> WET_STARCH_DOUGH = simple("wet_starch_dough");
     public static final Supplier<Item> VERMICELLI = plain("vermicelli");
     public static final Supplier<Item> CORN_FLOUR = plain("corn_flour");
     public static final Supplier<Item> LA_PI = plain("mung_bean_sheet");
@@ -452,7 +454,7 @@ public class ModItems {
             SALT, SOY_PASTE, CHILI_SAUCE, SOY_SAUCE, VINEGAR, SOUR_WATER, WHITE_VINEGAR,
             FISH_SAUCE, SHRIMP_PASTE, CHILI_OIL, PEANUT_BUTTER, COOKING_OIL, ANIMAL_OIL,
             SOY_PASTE_CHUNK, SOY_RESIDUE,
-            WATER_DOUGH, BUCKWHEAT_NOODLES, DRIED_TOFU, TOFU, FROZEN_TOFU, SWEET_POTATO_STARCH,
+            WATER_DOUGH, BUCKWHEAT_NOODLES, DRIED_TOFU, TOFU, FROZEN_TOFU, WET_STARCH_DOUGH, SWEET_POTATO_STARCH,
             VERMICELLI, LA_PI, CORN_FLOUR, CRACKLINGS, COLD_NOODLE_SHEET, BEAN_SPROUTS, SOUR_CORN_KERNELS, ROASTED_PEANUTS, RED_BEAN_PASTE,
             CORN_STALK,
             LARGE_BASIN, WATER_BASIN, BRASS_BOWL, WOODEN_MALLET, BIG_IRON_POT, BIG_POT_LID, FLORAL_JACKET, ANIMAL_OIL_BLOCK_ITEM,

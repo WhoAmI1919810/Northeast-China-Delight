@@ -253,14 +253,23 @@ public class WoodenMortarBlock extends BaseEntityBlock {
 
             ItemStack moved = held.copy();
             moved.setCount(movedCount);
+            // 用完剩下的容器（配方写的 return_container，或者水桶 / 水盆 / 水瓶自己剩的空桶 / 空盆 / 空瓶）
+            ItemStack left = input.leftover(moved);
             if (!player.getAbilities().instabuild) {
                 held.shrink(movedCount);
             }
             mortar.addInput(slot, moved);
 
-            if (!player.getAbilities().instabuild && input.returnContainer() != null) {
+            if (!player.getAbilities().instabuild && !left.isEmpty()) {
+                // 手里那个用光了，第一个空容器放回手上（同原版倒空水桶），其余的塞背包
+                boolean handFree = held.isEmpty();
                 for (int i = 0; i < movedCount; i++) {
-                    giveOrDrop(player, input.returnContainer().copy());
+                    if (handFree) {
+                        player.setItemInHand(InteractionHand.MAIN_HAND, left.copy());
+                        handFree = false;
+                    } else {
+                        giveOrDrop(player, left.copy());
+                    }
                 }
             }
 
