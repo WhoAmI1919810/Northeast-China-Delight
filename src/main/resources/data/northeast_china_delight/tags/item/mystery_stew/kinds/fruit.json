@@ -1,0 +1,17 @@
+{
+  "values": [
+    "northeast_china_delight:frozen_pear",
+    "minecraft:apple",
+    "minecraft:melon_slice",
+    "minecraft:sweet_berries",
+    "minecraft:glow_berries",
+    {
+      "id": "#c:foods/fruit",
+      "required": false
+    },
+    {
+      "id": "#c:foods/berry",
+      "required": false
+    }
+  ]
+}

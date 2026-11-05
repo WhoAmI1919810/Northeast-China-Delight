@@ -39,6 +39,11 @@ public class ModBlockEntities {
             "big_pot",
             () -> BlockEntityType.Builder.of(BigPotBlockEntity::new, ModBlocks.BIG_STOVE.get()).build(null));
 
+    /** 放下的盆装谜之炖菜：存着这一盆给什么效果 */
+    public static final Supplier<BlockEntityType<MysteryStewPotBlockEntity>> MYSTERY_STEW_POT = BLOCK_ENTITIES.register(
+            "mystery_stew_pot",
+            () -> BlockEntityType.Builder.of(MysteryStewPotBlockEntity::new, ModBlocks.MYSTERY_STEW_POT.get()).build(null));
+
     public static void register(IEventBus eventBus) {
         BLOCK_ENTITIES.register(eventBus);
     }

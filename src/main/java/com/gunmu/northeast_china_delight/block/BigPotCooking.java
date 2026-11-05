@@ -2,10 +2,12 @@ package com.gunmu.northeast_china_delight.block;
 
 import com.gunmu.northeast_china_delight.crafting.BigPotRecipe;
 import com.gunmu.northeast_china_delight.crafting.BigPotRecipes;
+import com.gunmu.northeast_china_delight.crafting.MysteryStew;
 import com.gunmu.northeast_china_delight.item.ModItems;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -31,13 +33,16 @@ import net.minecraft.world.phys.Vec3;
  * <ul>
  *   <li>水桶 / 水盆右键：往锅里倒 1000 mB 水；空桶 / 空盆右键：舀走 1000 mB 水。舀干了倒进去的调料也跟着没了，
  *       调料放错了就把水舀走再倒回来（舀出来的是清水，调料不还）；</li>
- *   <li>拿着某条配方用得上的食材、调料右键：放一个进锅（瓶装、碗装的调料退回瓶子 / 碗）。锅里得先有水；
+ *   <li>拿着某条配方用得上的食材、调料右键：放一个进锅（瓶装、碗装的调料退回瓶子 / 碗）。配方用不上、但谜之炖菜认的食材调料
+ *       也能放（{@link MysteryStew#accepts}：原版胡萝卜、农夫乐事番茄洋葱、醋……）。锅里得先有水；
  *       食材最多放用得最多的那条配方那么多个、调料同理（{@link BigPotRecipes#maxIngredients} / {@link BigPotRecipes#maxSeasonings}）；</li>
  *   <li>食材和调料互不相干（2026-11-03 用户）：潜行空手右键随时拿出一个食材补救（最后放进去的先出来，隔着调料也照拿）；
  *       调料倒进去就拿不出来，放错了只能把水舀干重来；锅里只剩调料时右键没反应、不出提示；</li>
  *   <li>灶点着、锅里正好凑成一条配方、盖上锅盖才开始煮（每刻 {@link #serverTick}；2026-11-05 用户：不放锅盖就不开始烹饪）。
  *       开煮以后揭开盖照常煮，盖着时按配方的 {@code lid_speedup} 走得快，中途盖上只让剩下的变快（同日用户：中途可以揭盖）。
  *       开始煮以后锅里的东西就不能动了：不能放、不能拿、不能舀水（右键没反应、不出提示），只能等煮好（2026-11-03 用户）；</li>
+ *   <li>凑不上任何配方、锅里有水有食材，盖上锅盖照样煮，煮出一锅谜之炖菜（同日用户，{@link MysteryStew}）：
+ *       用大脸盆盛出一盆，效果按锅里数量最多的两类食材定；</li>
  *   <li>煮好了：料和液体都没了，锅里是一锅菜（配方 result 的 count 就是份数），
  *       拿配方写的容器右键盛一份（没写容器就空手盛），每份给配方的经验。拆灶时没盛完的菜不掉，只掉锅。</li>
  * </ul>
@@ -112,9 +117,9 @@ public final class BigPotCooking {
             return InteractionResult.sidedSuccess(level.isClientSide);
         }
 
-        // 食材、调料：哪条配方用得上才让放；煮着不让放，锅里没水不让放，放满了不让放
+        // 食材、调料：哪条配方用得上、或者谜之炖菜认的才让放；煮着不让放，锅里没水不让放，放满了不让放
         RecipeManager recipes = level.getRecipeManager();
-        if (!BigPotRecipes.usable(recipes, held)) {
+        if (!BigPotRecipes.usable(recipes, held) && !MysteryStew.accepts(held)) {
             return InteractionResult.PASS;
         }
         if (pot.cooking() != null) {
@@ -125,7 +130,7 @@ public final class BigPotCooking {
             tell(player, Component.translatable("message.northeast_china_delight.big_pot.need_water"));
             return InteractionResult.sidedSuccess(level.isClientSide);
         }
-        boolean seasoning = BigPotRecipes.isSeasoning(recipes, held);
+        boolean seasoning = BigPotRecipes.isSeasoning(recipes, held) || MysteryStew.isSeasoning(held);
         if (seasoning ? pot.seasoningCount() >= BigPotRecipes.maxSeasonings(recipes)
                 : pot.ingredientCount() >= BigPotRecipes.maxIngredients(recipes)) {
             tell(player, Component.translatable(seasoning
@@ -186,6 +191,7 @@ public final class BigPotCooking {
     /**
      * 灶点着、灶上有锅时每个服务端 tick 调一次（只在 nw 那一格的方块实体上跑，见 {@link BigStoveBlock#getTicker}）。
      * 锅里凑成哪条配方、盖上锅盖（state 里 pot=lid）才开煮；开煮以后揭着盖照常煮，盖着按 lid_speedup 缩短时间；换了配方从头算。
+     * 凑不上配方但有水有食材，盖上锅盖就煮谜之炖菜（cooking 记 {@link MysteryStew#ID}）。
      * {@code cooking} 不为空 = 已经开煮（锅里锁着），所以还没盖过盖时不设：料凑齐了没盖盖，照样能放能拿。
      */
     public static void serverTick(Level level, BlockPos pos, BlockState state, BigPotBlockEntity pot) {
@@ -194,24 +200,43 @@ public final class BigPotCooking {
         }
         BigPotRecipe recipe = BigPotRecipes.match(level.getRecipeManager(), pot.liquid(), pot.liquidMb(), pot.contents());
         boolean lid = state.getValue(BigStoveBlock.POT) == BigStoveBlock.Pot.LID;
-        // 不盖锅盖不开煮（2026-11-05 用户）；已经开煮的揭开盖照常煮（同日用户：中途可以揭盖，进度正常走）
-        boolean started = recipe != null && recipe.id().equals(pot.cooking());
-        if (recipe == null || !started && !lid) {
+        // 凑不上配方：有水有食材就煮谜之炖菜，不然什么都不煮
+        ResourceLocation id;
+        int total;
+        int lidTotal;
+        if (recipe != null) {
+            id = recipe.id();
+            total = recipe.cookingTime();
+            lidTotal = recipe.lidCookingTime();
+        } else if (MysteryStew.canCook(pot)) {
+            id = MysteryStew.ID;
+            total = MysteryStew.COOKING_TIME;
+            lidTotal = MysteryStew.LID_COOKING_TIME;
+        } else {
             pot.setCooking(null);
             return;
         }
-        pot.setCooking(recipe.id());
+        // 不盖锅盖不开煮（2026-11-05 用户）；已经开煮的揭开盖照常煮（同日用户：中途可以揭盖，进度正常走）
+        if (!lid && !id.equals(pot.cooking())) {
+            pot.setCooking(null);
+            return;
+        }
+        pot.setCooking(id);
         // 进度按不盖锅盖的时长算；盖着锅盖每刻多走「不盖盖时长 / 盖盖时长」，中途盖上只让剩下的变快
         // （以前盖上就换成缩短后的总时长、煮过的刻数不变，进度一下放大 1.67 倍，2026-11-03 用户报）
-        int total = recipe.cookingTime();
         pot.setCookTotal(total);
-        pot.tickCooking(lid ? total / (float) recipe.lidCookingTime() : 1.0F);
+        pot.tickCooking(lid ? total / (float) lidTotal : 1.0F);
         // 煮着时的冒泡、白雾在客户端画（clientTick，看锅里同步过去的 cooking）
         if (pot.cookProgress() < total - 0.001F) {
             return;
         }
         float surface = BigPotBlockEntity.liquidSurfaceY(Math.max(pot.liquidMb(), BUCKET_MB));
-        pot.finish(recipe.result(), recipe.container(), recipe.experience());
+        if (recipe != null) {
+            pot.finish(recipe.result(), recipe.container(), recipe.experience());
+        } else {
+            // 谜之炖菜：一盆，用大脸盆盛，不给经验
+            pot.finish(MysteryStew.cook(pot), new ItemStack(ModItems.LARGE_BASIN.get()), 0.0F);
+        }
         level.playSound(null, pos, SoundEvents.BREWING_STAND_BREW, SoundSource.BLOCKS, 1.0F, 0.8F);
         // 煮好了：像骨粉催熟那样冒一阵绿色粒子
         if (level instanceof ServerLevel server) {

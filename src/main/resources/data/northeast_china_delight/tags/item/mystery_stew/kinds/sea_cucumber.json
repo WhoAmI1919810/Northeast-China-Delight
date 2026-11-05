@@ -1,0 +1,9 @@
+{
+  "values": [
+    "northeast_china_delight:sea_cucumber",
+    {
+      "id": "#c:foods/sea_cucumber",
+      "required": false
+    }
+  ]
+}

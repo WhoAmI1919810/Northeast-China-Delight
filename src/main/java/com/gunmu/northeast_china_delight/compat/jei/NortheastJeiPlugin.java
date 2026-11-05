@@ -130,6 +130,9 @@ public class NortheastJeiPlugin implements IModPlugin {
         // 脸盆架怎么放盆、拿盆
         registration.addItemStackInfo(new ItemStack(ModBlocks.BASIN_STAND.get()),
                 Component.translatable("jei.northeast_china_delight.info.basin_stand"));
+        // 谜之炖菜不是配方煮的：大锅里凑不上配方时盖上锅盖煮出来
+        registration.addItemStackInfo(new ItemStack(ModItems.MYSTERY_STEW.get()),
+                Component.translatable("jei.northeast_china_delight.info.mystery_stew"));
         registration.addItemStackInfo(new ItemStack(ModItems.SALT.get()),
                 Component.translatable("jei.northeast_china_delight.info.salt"));
         // 手持小刀宰猪掉的副产物（PigOffalLootModifier），连着火时的熏制版一起，共用一页

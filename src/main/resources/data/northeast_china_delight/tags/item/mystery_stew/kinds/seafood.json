@@ -1,0 +1,47 @@
+{
+  "values": [
+    "northeast_china_delight:hairtail",
+    "northeast_china_delight:shrimp",
+    "northeast_china_delight:oyster",
+    "northeast_china_delight:salted_fish",
+    "minecraft:cod",
+    "minecraft:salmon",
+    "minecraft:tropical_fish",
+    "minecraft:cooked_cod",
+    "minecraft:cooked_salmon",
+    "minecraft:kelp",
+    "minecraft:dried_kelp",
+    {
+      "id": "farmersdelight:cod_slice",
+      "required": false
+    },
+    {
+      "id": "farmersdelight:salmon_slice",
+      "required": false
+    },
+    {
+      "id": "farmersdelight:cooked_cod_slice",
+      "required": false
+    },
+    {
+      "id": "farmersdelight:cooked_salmon_slice",
+      "required": false
+    },
+    {
+      "id": "#c:foods/raw_fish",
+      "required": false
+    },
+    {
+      "id": "#c:foods/shrimp",
+      "required": false
+    },
+    {
+      "id": "#c:foods/oyster",
+      "required": false
+    },
+    {
+      "id": "#c:foods/salted_fish",
+      "required": false
+    }
+  ]
+}

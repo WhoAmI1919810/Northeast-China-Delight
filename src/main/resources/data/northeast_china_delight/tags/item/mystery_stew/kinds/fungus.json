@@ -1,0 +1,12 @@
+{
+  "values": [
+    "northeast_china_delight:hazel_mushroom",
+    "northeast_china_delight:wood_ear",
+    "minecraft:red_mushroom",
+    "minecraft:brown_mushroom",
+    {
+      "id": "#c:mushrooms",
+      "required": false
+    }
+  ]
+}

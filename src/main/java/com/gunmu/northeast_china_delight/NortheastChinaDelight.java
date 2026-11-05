@@ -487,6 +487,7 @@ public class NortheastChinaDelight
             registerItemIcon(event, "sauerkraut_seafood_stew_icon");
             registerItemIcon(event, "chicken_mushroom_stew_icon");
             registerItemIcon(event, "steamed_rice_icon");
+            registerItemIcon(event, "mystery_stew_icon");
             registerAllBlockModels(event);
         }
 
@@ -539,7 +540,7 @@ public class NortheastChinaDelight
             // 木槌：物品栏画贴图、手/地面/展示框画 3D 模型，分流在 WoodenMalletItemRenderer 里
             event.registerItem(WoodenMalletItemRenderer.CLIENT_EXTENSION, ModItems.WOODEN_MALLET.get());
 
-            // 9 道大盆菜（含盆装米饭）：物品栏画贴图、手/地面画方块，分流在 DdFeastItemRenderer 里
+            // 10 道大盆菜（含盆装米饭、盆装谜之炖菜）：物品栏画贴图、手/地面画方块，分流在 DdFeastItemRenderer 里
             event.registerItem(DdFeastItemRenderer.CLIENT_EXTENSION,
                     ModItems.SUAN_CAI_DUN_GU_TOU.get(),
                     ModItems.DI_GUO_JI.get(),
@@ -549,7 +550,8 @@ public class NortheastChinaDelight
                     ModItems.DA_FENG_SHOU.get(),
                     ModItems.SUAN_CAI_HAI_XIAN_GUO.get(),
                     ModItems.XIAO_JI_DUN_MO_GU.get(),
-                    ModItems.PEN_MI_FAN.get());
+                    ModItems.PEN_MI_FAN.get(),
+                    ModItems.MYSTERY_STEW.get());
 
             event.registerFluidType(new IClientFluidTypeExtensions()
             {

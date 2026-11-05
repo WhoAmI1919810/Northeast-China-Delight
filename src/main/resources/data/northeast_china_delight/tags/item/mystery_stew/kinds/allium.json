@@ -1,0 +1,25 @@
+{
+  "values": [
+    "northeast_china_delight:green_onion",
+    {
+      "id": "farmersdelight:onion",
+      "required": false
+    },
+    {
+      "id": "#c:crops/green_onion",
+      "required": false
+    },
+    {
+      "id": "#c:crops/onion",
+      "required": false
+    },
+    {
+      "id": "#c:crops/garlic",
+      "required": false
+    },
+    {
+      "id": "#c:crops/ginger",
+      "required": false
+    }
+  ]
+}

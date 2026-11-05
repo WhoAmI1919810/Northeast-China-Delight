@@ -1,0 +1,71 @@
+{
+  "values": [
+    "northeast_china_delight:napa_cabbage",
+    "northeast_china_delight:cucumber",
+    "northeast_china_delight:green_pepper",
+    "northeast_china_delight:green_beans",
+    "northeast_china_delight:eggplant",
+    "northeast_china_delight:snow_mustard",
+    "northeast_china_delight:bean_sprouts",
+    {
+      "id": "farmersdelight:cabbage",
+      "required": false
+    },
+    {
+      "id": "farmersdelight:cabbage_leaf",
+      "required": false
+    },
+    {
+      "id": "farmersdelight:tomato",
+      "required": false
+    },
+    {
+      "id": "farmersdelight:pumpkin_slice",
+      "required": false
+    },
+    {
+      "id": "#c:crops/cabbage",
+      "required": false
+    },
+    {
+      "id": "#c:crops/napa_cabbage",
+      "required": false
+    },
+    {
+      "id": "#c:crops/cucumber",
+      "required": false
+    },
+    {
+      "id": "#c:crops/green_pepper",
+      "required": false
+    },
+    {
+      "id": "#c:crops/bell_pepper",
+      "required": false
+    },
+    {
+      "id": "#c:crops/green_bean",
+      "required": false
+    },
+    {
+      "id": "#c:crops/eggplant",
+      "required": false
+    },
+    {
+      "id": "#c:crops/tomato",
+      "required": false
+    },
+    {
+      "id": "#c:crops/snow_mustard",
+      "required": false
+    },
+    {
+      "id": "#c:foods/bean_sprouts",
+      "required": false
+    },
+    {
+      "id": "#c:foods/leafy_green",
+      "required": false
+    }
+  ]
+}
