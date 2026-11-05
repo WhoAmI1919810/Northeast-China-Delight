@@ -1,14 +1,23 @@
 {
   "type": "northeast_china_delight:pounding",
   "config": {
-    "input": {
-      "item": "northeast_china_delight:roasted_peanuts"
-    },
+    "input": [
+      {
+        "item": "northeast_china_delight:peanut"
+      },
+      {
+        "item": "northeast_china_delight:roasted_peanuts"
+      }
+    ],
     "tool": {
       "type": "neoforge:compound",
       "children": [
-        { "item": "northeast_china_delight:wooden_mallet" },
-        { "item": "minecraft:mace" }
+        {
+          "item": "northeast_china_delight:wooden_mallet"
+        },
+        {
+          "item": "minecraft:mace"
+        }
       ]
     },
     "pound_times": 3,
@@ -18,9 +27,9 @@
       "northeast_china_delight:block/wooden_mortar_peanut_1",
       "northeast_china_delight:block/wooden_mortar_peanut_2"
     ],
-    "finished_model": "northeast_china_delight:block/wooden_mortar_peanut_oil",
+    "finished_model": "northeast_china_delight:block/wooden_mortar_peanut_butter",
     "result": {
-      "item": "northeast_china_delight:cooking_oil",
+      "item": "northeast_china_delight:peanut_butter",
       "count": 1
     },
     "result_mb": 50,

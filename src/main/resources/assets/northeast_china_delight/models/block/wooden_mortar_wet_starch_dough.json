@@ -1,0 +1,141 @@
+{
+  "credit": "由 tools/mortar_contents/build.py 生成，只有木臼里的内容物（stage_model_mode: overlay）",
+  "texture_size": [
+    16,
+    16
+  ],
+  "textures": {
+    "dough": "northeast_china_delight:block/wooden_mortar_wet_starch_dough",
+    "particle": "northeast_china_delight:block/wooden_mortar_wet_starch_dough"
+  },
+  "elements": [
+    {
+      "from": [
+        3.5,
+        10,
+        4.5
+      ],
+      "to": [
+        8,
+        11.5,
+        9
+      ],
+      "faces": {
+        "up": {
+          "texture": "#dough"
+        },
+        "down": {
+          "texture": "#dough"
+        },
+        "north": {
+          "texture": "#dough"
+        },
+        "south": {
+          "texture": "#dough"
+        },
+        "east": {
+          "texture": "#dough"
+        },
+        "west": {
+          "texture": "#dough"
+        }
+      }
+    },
+    {
+      "from": [
+        4,
+        11.5,
+        5
+      ],
+      "to": [
+        7.5,
+        12.25,
+        8.5
+      ],
+      "faces": {
+        "up": {
+          "texture": "#dough"
+        },
+        "down": {
+          "texture": "#dough"
+        },
+        "north": {
+          "texture": "#dough"
+        },
+        "south": {
+          "texture": "#dough"
+        },
+        "east": {
+          "texture": "#dough"
+        },
+        "west": {
+          "texture": "#dough"
+        }
+      }
+    },
+    {
+      "from": [
+        8.5,
+        10,
+        7
+      ],
+      "to": [
+        12.5,
+        11.25,
+        11.5
+      ],
+      "faces": {
+        "up": {
+          "texture": "#dough"
+        },
+        "down": {
+          "texture": "#dough"
+        },
+        "north": {
+          "texture": "#dough"
+        },
+        "south": {
+          "texture": "#dough"
+        },
+        "east": {
+          "texture": "#dough"
+        },
+        "west": {
+          "texture": "#dough"
+        }
+      }
+    },
+    {
+      "from": [
+        9,
+        11.25,
+        7.5
+      ],
+      "to": [
+        12,
+        12,
+        11
+      ],
+      "faces": {
+        "up": {
+          "texture": "#dough"
+        },
+        "down": {
+          "texture": "#dough"
+        },
+        "north": {
+          "texture": "#dough"
+        },
+        "south": {
+          "texture": "#dough"
+        },
+        "east": {
+          "texture": "#dough"
+        },
+        "west": {
+          "texture": "#dough"
+        }
+      }
+    }
+  ]
+}

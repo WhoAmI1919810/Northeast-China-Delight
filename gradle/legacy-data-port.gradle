@@ -10,7 +10,8 @@
 //      见 legacyTagPathRenames（改名同时作用于配方里的引用和标签定义文件的路径，
 //      否则会出现「配方引用 forge:raw_fishes、定义却停在 forge:foods/raw_fish」这种空配方）。
 //   4. 条件/原料类型改名：neoforge:can_item_perform_ability → neoforge:can_tool_perform_action
-//      （字段 ability → action）；neoforge:components 原料 → 普通物品原料（1.20.1 没有数据组件）。
+//      （字段 ability → action）；neoforge:components 原料 → 普通物品原料（1.20.1 没有数据组件），
+//      写了 minecraft:damage / minecraft:potion_contents 的转成 forge:partial_nbt（Damage / Potion 标签）。
 //   5. 农夫乐事切菜板：1.20.x 的 result 直接是 ItemStack，tool 只收单个原料。
 //   6. 掉落条件里 1.21 的 "entity": "attacker" 改回 1.20.x 的 "killer"；
 //      物品谓词的 "items": "#tag" 改成 1.20.x 的 "tag": "tag"。
@@ -147,6 +148,15 @@ ext.legacyTransformNode = { Object node, Map env ->
                 return ['type': 'forge:partial_nbt',
                         'items': items instanceof List ? items : [items],
                         'nbt': "{\"Damage\":${dmg}}"]
+            }
+            // minecraft:potion_contents 组件 → NBT 的 Potion 标签（2026-11-05：舂湿粉团的水可以是一瓶水，
+            // 1.21 写 {"potion":"minecraft:water"}，1.20.1 的药水瓶是 {Potion:"minecraft:water"}；不转就成了任何药水都认）
+            if (components instanceof Map && components.containsKey('minecraft:potion_contents')) {
+                def contents = components.get('minecraft:potion_contents')
+                def potion = contents instanceof Map ? contents.get('potion') : contents
+                return ['type': 'forge:partial_nbt',
+                        'items': items instanceof List ? items : [items],
+                        'nbt': "{\"Potion\":\"${potion}\"}"]
             }
             return ['item': one]
         }

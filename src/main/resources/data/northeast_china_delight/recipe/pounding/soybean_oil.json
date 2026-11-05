@@ -1,0 +1,36 @@
+{
+  "type": "northeast_china_delight:pounding",
+  "config": {
+    "input": {
+      "tag": "c:crops/soybean"
+    },
+    "tool": {
+      "type": "neoforge:compound",
+      "children": [
+        {
+          "item": "northeast_china_delight:wooden_mallet"
+        },
+        {
+          "item": "minecraft:mace"
+        }
+      ]
+    },
+    "pound_times": 3,
+    "stage_model_mode": "overlay",
+    "stage_models": [
+      "northeast_china_delight:block/wooden_mortar_soybean_0",
+      "northeast_china_delight:block/wooden_mortar_soybean_1",
+      "northeast_china_delight:block/wooden_mortar_soybean_2"
+    ],
+    "finished_model": "northeast_china_delight:block/wooden_mortar_peanut_oil",
+    "result": {
+      "item": "northeast_china_delight:cooking_oil",
+      "count": 1
+    },
+    "result_mb": 50,
+    "result_container": {
+      "item": "minecraft:glass_bottle"
+    },
+    "transition": "sequential"
+  }
+}
