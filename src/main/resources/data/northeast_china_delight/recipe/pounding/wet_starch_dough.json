@@ -20,7 +20,9 @@
             },
             {
               "type": "neoforge:components",
-              "items": "minecraft:potion",
+              "items": [
+                "minecraft:potion"
+              ],
               "components": {
                 "minecraft:potion_contents": {
                   "potion": "minecraft:water"
