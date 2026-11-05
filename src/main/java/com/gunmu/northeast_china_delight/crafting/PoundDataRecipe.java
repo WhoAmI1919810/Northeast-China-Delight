@@ -317,6 +317,11 @@ public final class PoundDataRecipe implements Recipe<
         return new ItemStack(BuiltInRegistries.ITEM.get(itemId), count);
     }
 
+    /**
+     * 这里按普通 JsonOps 解析，没有注册表上下文：原料里凡是 HolderSet 写法的字段（比如 neoforge:components 的 items）
+     * 必须写成列表 {@code ["minecraft:potion"]}，单写一个字符串会解析失败、整条配方加载不上
+     * （2026-11-05 湿粉团的水瓶就栽在这，JEI 里看不到配方）
+     */
     private static Ingredient decodeIngredient(JsonObject config, String field) {
         JsonElement element = config.get(field);
         if (element == null) {
