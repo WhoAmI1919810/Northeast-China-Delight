@@ -44,7 +44,8 @@ import java.util.List;
  * <p>新格式的输入、产物都支持多项：{@code inputs} 中每一项有自己的 {@code count} 和可选
  * {@code return_container}（不写时还这样东西自己剩的容器：水桶还空桶、水盆还空大脸盆、水瓶还空瓶，
  * 见 {@link PoundingRecipes.Input#leftover}），一份水写 {@code {"water": true}} 代替 {@code ingredient}
- * （水桶 / 水盆 / 水瓶，见 {@link PoundingRecipes#water}）；{@code results} 中每一项可以有固定/随机数量、出现概率和副产物标记。
+ * （水桶 / 水盆 / 水瓶，见 {@link PoundingRecipes#water}），可选 {@code model}：料还没放齐时这一样放进去了臼里画什么
+ * （见 {@link PoundingRecipes.Input#model}）；{@code results} 中每一项可以有固定/随机数量、出现概率和副产物标记。
  * 旧的单输入 {@code input}/{@code return_container} 与单产物 {@code result} 仍然原样可用。
  */
 public final class PoundDataRecipe implements Recipe<
@@ -194,7 +195,14 @@ public final class PoundDataRecipe implements Recipe<
                 ItemStack container = entry.has("return_container")
                         ? decodeNestedItem(entry, "return_container")
                         : null;
-                inputs.add(new PoundingRecipes.Input(ingredient, count, container));
+                ResourceLocation model = null;
+                if (entry.has("model")) {
+                    model = ResourceLocation.tryParse(GsonHelper.getAsString(entry, "model"));
+                    if (model == null) {
+                        throw new JsonParseException("舂捣 inputs.model 无效：" + entry.get("model"));
+                    }
+                }
+                inputs.add(new PoundingRecipes.Input(ingredient, count, container, model));
             }
             return inputs;
         }
