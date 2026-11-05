@@ -144,33 +144,15 @@ public class NortheastJeiPlugin implements IModPlugin {
                         new ItemStack(ModItems.OIL_EDGE.get()),
                         new ItemStack(ModItems.SMOKED_PORK_HOCK.get()), new ItemStack(ModItems.SMOKED_PIG_LIVER.get())),
                 Component.translatable("jei.northeast_china_delight.info.pig_offal"));
-        // 冻梨、黄桃罐头共用一页（2026-11-05 用户）
+        // 冻梨、黄桃罐头共用一页（2026-11-05 用户）：平时只能买（冻梨农民卖，黄桃罐头副食商卖）；
+        // 第二句告诉没装果园乐事的人，装了就能用它的梨、桃子自己做（大缸冻梨、厨锅黄桃罐头），所以不管装没装都显示
         registration.addItemStackInfo(java.util.List.of(new ItemStack(ModItems.FROZEN_PEAR.get()),
-                new ItemStack(ModItems.CANNED_YELLOW_PEACH.get())), fruitPreserveInfo());
+                        new ItemStack(ModItems.CANNED_YELLOW_PEACH.get())),
+                Component.translatable("jei.northeast_china_delight.info.frozen_pear_canned_peach"),
+                Component.translatable("jei.northeast_china_delight.info.frozen_pear_canned_peach.fruitsdelight"));
         Component bellflowerInfo = Component.translatable("jei.northeast_china_delight.info.bellflower");
         registration.addItemStackInfo(new ItemStack(ModItems.BELLFLOWER_ROOT.get()), bellflowerInfo);
         registration.addItemStackInfo(new ItemStack(ModItems.BELLFLOWER_SEEDS.get()), bellflowerInfo);
-    }
-
-    /**
-     * 冻梨、黄桃罐头那一页。平时只能买：冻梨农民卖，黄桃罐头副食商卖；
-     * 装了「果园乐事」（Fruits Delight）时还能自己做（它的梨在大缸里冻成冻梨，桃子加糖在厨锅里做成黄桃罐头），
-     * 这时多一句。
-     *
-     * <p>判断「装了没」直接查物品注册表，不走可选的编译期依赖、也不用 {@code ModList}：
-     * 两版 Minecraft 上注册表的写法一样，1.20.1 那边不用加版本分支。</p>
-     */
-    private static Component[] fruitPreserveInfo()
-    {
-        Component sold = Component.translatable("jei.northeast_china_delight.info.frozen_pear_canned_peach");
-        if (!BuiltInRegistries.ITEM.containsKey(DdIds.of("fruitsdelight", "pear"))
-                && !BuiltInRegistries.ITEM.containsKey(DdIds.of("fruitsdelight", "peach"))) {
-            return new Component[] { sold };
-        }
-        return new Component[] {
-                sold,
-                Component.translatable("jei.northeast_china_delight.info.frozen_pear_canned_peach.fruitsdelight")
-        };
     }
 
     @Override
