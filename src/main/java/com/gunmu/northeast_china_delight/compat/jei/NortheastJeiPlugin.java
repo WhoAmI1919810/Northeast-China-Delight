@@ -121,12 +121,13 @@ public class NortheastJeiPlugin implements IModPlugin {
         // 窗花不是合成出来的：一手红纸一手剪刀右键剪，贴在糊纸窗上
         registration.addItemStackInfo(new ItemStack(ModItems.PAPER_CUT.get()),
                 Component.translatable("jei.northeast_china_delight.info.paper_cut"));
-        // 大灶是摆出来的，不是合成的；锅、锅盖怎么放
+        // 大灶是摆出来的，不是合成的：大铁锅和农夫乐事炉灶共用一页；锅盖单独一页（2026-11-05 用户拆开）
         registration.addItemStackInfo(java.util.List.of(new ItemStack(ModItems.BIG_IRON_POT.get()),
-                        new ItemStack(ModItems.BIG_POT_LID.get()),
                         new ItemStack(net.minecraft.core.registries.BuiltInRegistries.ITEM.get(
                                 com.gunmu.northeast_china_delight.util.DdIds.of("farmersdelight", "stove")))),
                 Component.translatable("jei.northeast_china_delight.info.big_stove"));
+        registration.addItemStackInfo(new ItemStack(ModItems.BIG_POT_LID.get()),
+                Component.translatable("jei.northeast_china_delight.info.big_pot_lid"));
         // 脸盆架怎么放盆、拿盆
         registration.addItemStackInfo(new ItemStack(ModBlocks.BASIN_STAND.get()),
                 Component.translatable("jei.northeast_china_delight.info.basin_stand"));
