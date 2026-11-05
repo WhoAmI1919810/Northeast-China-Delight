@@ -5,6 +5,7 @@ import com.gunmu.northeast_china_delight.compat.displaydelight.DisplayDelightCom
 import com.gunmu.northeast_china_delight.fluid.ModFluids;
 import com.gunmu.northeast_china_delight.item.ModItems;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.level.block.CampfireBlock;
 import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.block.Block;
@@ -76,6 +77,13 @@ public class ModBlocks {
             "corn_seeds_sack", "buckwheat_sack", "soybean_sack", "red_bean_sack", "peanut_sack",
             "hazelnut_sack", "hazel_mushroom_sack", "wood_ear_sack", "ginseng_sack"
     );
+
+    /**
+     * 盆（大脸盆、水盆、盆装菜、盆装谜之炖菜）：搪瓷盆，敲碎时是灯笼那种金属声；走上去、放下、敲击、摔落照旧是木头声
+     * （2026-11-05 用户：盆的破坏音效改为灯笼的）。要放在用到它的方块前面，静态字段按顺序初始化。
+     */
+    public static final SoundType BASIN_SOUND = new SoundType(1.0F, 1.0F, SoundEvents.LANTERN_BREAK,
+            SoundEvents.WOOD_STEP, SoundEvents.WOOD_PLACE, SoundEvents.WOOD_HIT, SoundEvents.WOOD_FALL);
 
     public static final Map<String, Supplier<Block>> CRATES = storageBlocks(CRATE_IDS, SoundType.WOOD);
     public static final Map<String, Supplier<Block>> SACKS = storageBlocks(SACK_IDS, SoundType.WOOL);
@@ -632,7 +640,7 @@ public class ModBlocks {
         return BlockBehaviour.Properties.of()
                 .mapColor(MapColor.WOOD)
                 .strength(0.5F)
-                .sound(SoundType.WOOD)
+                .sound(BASIN_SOUND)
                 .noOcclusion()
                 .forceSolidOn();
     }
@@ -676,7 +684,7 @@ public class ModBlocks {
                     BlockBehaviour.Properties.of()
                             .mapColor(MapColor.WOOD)
                             .strength(0.5F)
-                            .sound(SoundType.WOOD)
+                            .sound(BASIN_SOUND)
                             .noOcclusion()
                             .forceSolidOn());
 
@@ -693,7 +701,7 @@ public class ModBlocks {
                 BlockBehaviour.Properties.of()
                         .mapColor(MapColor.WOOD)
                         .strength(0.5F)
-                        .sound(SoundType.WOOD)
+                        .sound(BASIN_SOUND)
                         .noOcclusion()
                         .forceSolidOn());
     }
