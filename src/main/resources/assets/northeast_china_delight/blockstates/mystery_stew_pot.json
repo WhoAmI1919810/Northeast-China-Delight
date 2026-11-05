@@ -1,78 +1,153 @@
 {
   "variants": {
-    "facing=north,servings=0": {
-      "model": "northeast_china_delight:block/mystery_stew_pot_servings0"
-    },
-    "facing=north,servings=1": {
+    "facing=north,octopus=false,servings=0": {
       "model": "northeast_china_delight:block/mystery_stew_pot_servings1"
     },
-    "facing=north,servings=2": {
+    "facing=north,octopus=false,servings=1": {
+      "model": "northeast_china_delight:block/mystery_stew_pot_servings1"
+    },
+    "facing=north,octopus=false,servings=2": {
       "model": "northeast_china_delight:block/mystery_stew_pot_servings2"
     },
-    "facing=north,servings=3": {
+    "facing=north,octopus=false,servings=3": {
       "model": "northeast_china_delight:block/mystery_stew_pot_servings3"
     },
-    "facing=north,servings=4": {
+    "facing=north,octopus=false,servings=4": {
       "model": "northeast_china_delight:block/mystery_stew_pot_servings4"
     },
-    "facing=east,servings=0": {
-      "model": "northeast_china_delight:block/mystery_stew_pot_servings0",
-      "y": 90
+    "facing=north,octopus=true,servings=0": {
+      "model": "northeast_china_delight:block/mystery_stew_pot_octopus_servings1"
     },
-    "facing=east,servings=1": {
+    "facing=north,octopus=true,servings=1": {
+      "model": "northeast_china_delight:block/mystery_stew_pot_octopus_servings1"
+    },
+    "facing=north,octopus=true,servings=2": {
+      "model": "northeast_china_delight:block/mystery_stew_pot_octopus_servings2"
+    },
+    "facing=north,octopus=true,servings=3": {
+      "model": "northeast_china_delight:block/mystery_stew_pot_octopus_servings3"
+    },
+    "facing=north,octopus=true,servings=4": {
+      "model": "northeast_china_delight:block/mystery_stew_pot_octopus_servings4"
+    },
+    "facing=east,octopus=false,servings=0": {
       "model": "northeast_china_delight:block/mystery_stew_pot_servings1",
       "y": 90
     },
-    "facing=east,servings=2": {
+    "facing=east,octopus=false,servings=1": {
+      "model": "northeast_china_delight:block/mystery_stew_pot_servings1",
+      "y": 90
+    },
+    "facing=east,octopus=false,servings=2": {
       "model": "northeast_china_delight:block/mystery_stew_pot_servings2",
       "y": 90
     },
-    "facing=east,servings=3": {
+    "facing=east,octopus=false,servings=3": {
       "model": "northeast_china_delight:block/mystery_stew_pot_servings3",
       "y": 90
     },
-    "facing=east,servings=4": {
+    "facing=east,octopus=false,servings=4": {
       "model": "northeast_china_delight:block/mystery_stew_pot_servings4",
       "y": 90
     },
-    "facing=south,servings=0": {
-      "model": "northeast_china_delight:block/mystery_stew_pot_servings0",
-      "y": 180
+    "facing=east,octopus=true,servings=0": {
+      "model": "northeast_china_delight:block/mystery_stew_pot_octopus_servings1",
+      "y": 90
     },
-    "facing=south,servings=1": {
+    "facing=east,octopus=true,servings=1": {
+      "model": "northeast_china_delight:block/mystery_stew_pot_octopus_servings1",
+      "y": 90
+    },
+    "facing=east,octopus=true,servings=2": {
+      "model": "northeast_china_delight:block/mystery_stew_pot_octopus_servings2",
+      "y": 90
+    },
+    "facing=east,octopus=true,servings=3": {
+      "model": "northeast_china_delight:block/mystery_stew_pot_octopus_servings3",
+      "y": 90
+    },
+    "facing=east,octopus=true,servings=4": {
+      "model": "northeast_china_delight:block/mystery_stew_pot_octopus_servings4",
+      "y": 90
+    },
+    "facing=south,octopus=false,servings=0": {
       "model": "northeast_china_delight:block/mystery_stew_pot_servings1",
       "y": 180
     },
-    "facing=south,servings=2": {
+    "facing=south,octopus=false,servings=1": {
+      "model": "northeast_china_delight:block/mystery_stew_pot_servings1",
+      "y": 180
+    },
+    "facing=south,octopus=false,servings=2": {
       "model": "northeast_china_delight:block/mystery_stew_pot_servings2",
       "y": 180
     },
-    "facing=south,servings=3": {
+    "facing=south,octopus=false,servings=3": {
       "model": "northeast_china_delight:block/mystery_stew_pot_servings3",
       "y": 180
     },
-    "facing=south,servings=4": {
+    "facing=south,octopus=false,servings=4": {
       "model": "northeast_china_delight:block/mystery_stew_pot_servings4",
       "y": 180
     },
-    "facing=west,servings=0": {
-      "model": "northeast_china_delight:block/mystery_stew_pot_servings0",
-      "y": 270
+    "facing=south,octopus=true,servings=0": {
+      "model": "northeast_china_delight:block/mystery_stew_pot_octopus_servings1",
+      "y": 180
     },
-    "facing=west,servings=1": {
+    "facing=south,octopus=true,servings=1": {
+      "model": "northeast_china_delight:block/mystery_stew_pot_octopus_servings1",
+      "y": 180
+    },
+    "facing=south,octopus=true,servings=2": {
+      "model": "northeast_china_delight:block/mystery_stew_pot_octopus_servings2",
+      "y": 180
+    },
+    "facing=south,octopus=true,servings=3": {
+      "model": "northeast_china_delight:block/mystery_stew_pot_octopus_servings3",
+      "y": 180
+    },
+    "facing=south,octopus=true,servings=4": {
+      "model": "northeast_china_delight:block/mystery_stew_pot_octopus_servings4",
+      "y": 180
+    },
+    "facing=west,octopus=false,servings=0": {
       "model": "northeast_china_delight:block/mystery_stew_pot_servings1",
       "y": 270
     },
-    "facing=west,servings=2": {
+    "facing=west,octopus=false,servings=1": {
+      "model": "northeast_china_delight:block/mystery_stew_pot_servings1",
+      "y": 270
+    },
+    "facing=west,octopus=false,servings=2": {
       "model": "northeast_china_delight:block/mystery_stew_pot_servings2",
       "y": 270
     },
-    "facing=west,servings=3": {
+    "facing=west,octopus=false,servings=3": {
       "model": "northeast_china_delight:block/mystery_stew_pot_servings3",
       "y": 270
     },
-    "facing=west,servings=4": {
+    "facing=west,octopus=false,servings=4": {
       "model": "northeast_china_delight:block/mystery_stew_pot_servings4",
+      "y": 270
+    },
+    "facing=west,octopus=true,servings=0": {
+      "model": "northeast_china_delight:block/mystery_stew_pot_octopus_servings1",
+      "y": 270
+    },
+    "facing=west,octopus=true,servings=1": {
+      "model": "northeast_china_delight:block/mystery_stew_pot_octopus_servings1",
+      "y": 270
+    },
+    "facing=west,octopus=true,servings=2": {
+      "model": "northeast_china_delight:block/mystery_stew_pot_octopus_servings2",
+      "y": 270
+    },
+    "facing=west,octopus=true,servings=3": {
+      "model": "northeast_china_delight:block/mystery_stew_pot_octopus_servings3",
+      "y": 270
+    },
+    "facing=west,octopus=true,servings=4": {
+      "model": "northeast_china_delight:block/mystery_stew_pot_octopus_servings4",
       "y": 270
     }
   }
