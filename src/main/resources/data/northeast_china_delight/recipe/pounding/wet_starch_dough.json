@@ -9,28 +9,7 @@
         "count": 1
       },
       {
-        "ingredient": {
-          "type": "neoforge:compound",
-          "children": [
-            {
-              "item": "minecraft:water_bucket"
-            },
-            {
-              "item": "northeast_china_delight:water_basin"
-            },
-            {
-              "type": "neoforge:components",
-              "items": [
-                "minecraft:potion"
-              ],
-              "components": {
-                "minecraft:potion_contents": {
-                  "potion": "minecraft:water"
-                }
-              }
-            }
-          ]
-        },
+        "water": true,
         "count": 1
       }
     ],

@@ -43,7 +43,8 @@ import java.util.List;
  *
  * <p>新格式的输入、产物都支持多项：{@code inputs} 中每一项有自己的 {@code count} 和可选
  * {@code return_container}（不写时还这样东西自己剩的容器：水桶还空桶、水盆还空大脸盆、水瓶还空瓶，
- * 见 {@link PoundingRecipes.Input#leftover}）；{@code results} 中每一项可以有固定/随机数量、出现概率和副产物标记。
+ * 见 {@link PoundingRecipes.Input#leftover}），一份水写 {@code {"water": true}} 代替 {@code ingredient}
+ * （水桶 / 水盆 / 水瓶，见 {@link PoundingRecipes#water}）；{@code results} 中每一项可以有固定/随机数量、出现概率和副产物标记。
  * 旧的单输入 {@code input}/{@code return_container} 与单产物 {@code result} 仍然原样可用。
  */
 public final class PoundDataRecipe implements Recipe<
@@ -182,7 +183,10 @@ public final class PoundDataRecipe implements Recipe<
                     throw new JsonParseException("舂捣 inputs 的每一项都必须是对象");
                 }
                 JsonObject entry = element.getAsJsonObject();
-                Ingredient ingredient = decodeIngredient(entry, "ingredient");
+                // {"water": true}：一份水（水桶 / 水盆 / 水瓶），原料用代码拼，见 PoundingRecipes#water
+                Ingredient ingredient = GsonHelper.getAsBoolean(entry, "water", false)
+                        ? PoundingRecipes.water()
+                        : decodeIngredient(entry, "ingredient");
                 int count = integer(entry, "count", 1);
                 if (count <= 0) {
                     throw new JsonParseException("舂捣 inputs.count 必须为正整数");
@@ -319,8 +323,8 @@ public final class PoundDataRecipe implements Recipe<
 
     /**
      * 这里按普通 JsonOps 解析，没有注册表上下文：原料里凡是 HolderSet 写法的字段（比如 neoforge:components 的 items）
-     * 必须写成列表 {@code ["minecraft:potion"]}，单写一个字符串会解析失败、整条配方加载不上
-     * （2026-11-05 湿粉团的水瓶就栽在这，JEI 里看不到配方）
+     * 都解析不了——没有注册表时 HolderSetCodec 只认直接写出来的元素，物品 id 解出来是注册表引用，写成字符串、列表都报错，
+     * 整条配方加载不上（2026-11-05 湿粉团的水瓶栽了两次）。要认带组件的东西就在代码里拼原料，比如一份水用 {@code "water": true}
      */
     private static Ingredient decodeIngredient(JsonObject config, String field) {
         JsonElement element = config.get(field);

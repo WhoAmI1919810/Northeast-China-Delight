@@ -1,6 +1,7 @@
 package com.gunmu.northeast_china_delight.crafting;
 
 import com.gunmu.northeast_china_delight.NortheastChinaDelight;
+import com.gunmu.northeast_china_delight.item.ModItems;
 import com.gunmu.northeast_china_delight.util.DdIds;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.RandomSource;
@@ -65,6 +66,26 @@ public final class PoundingRecipes {
                 default -> null;
             };
         }
+    }
+
+    /**
+     * 一份水：水桶、水盆或一瓶水（配方 inputs 里写 {@code {"water": true}}，2026-11-05 舂湿粉团）。原料在这里用代码拼，不写进 JSON：
+     * 认水瓶得看药水瓶上的「水」，这种带组件的原料（neoforge:components）里的物品列表要有注册表才解析得了，
+     * 舂捣配方是用普通 JsonOps 解析的，写进 JSON 整条配方加载不上（JEI 里看不到配方，用户报了两次）
+     */
+    public static Ingredient water() {
+        Ingredient containers = Ingredient.of(Items.WATER_BUCKET, ModItems.WATER_BASIN.get());
+        //? if <1.20.5 {
+        net.minecraft.nbt.CompoundTag potion = new net.minecraft.nbt.CompoundTag();
+        potion.putString("Potion", "minecraft:water");
+        return net.minecraftforge.common.crafting.CompoundIngredient.of(containers,
+                net.minecraftforge.common.crafting.PartialNBTIngredient.of(Items.POTION, potion));
+        //?} else {
+        /*return net.neoforged.neoforge.common.crafting.CompoundIngredient.of(containers,
+                net.neoforged.neoforge.common.crafting.DataComponentIngredient.of(false,
+                        net.minecraft.world.item.alchemy.PotionContents.createItemStack(Items.POTION,
+                                net.minecraft.world.item.alchemy.Potions.WATER)));
+        *///?}
     }
 
     /** 一种投入物需要多少份，以及每消耗一份返还什么容器（不写就按 {@link #leftover} 还）。 */
