@@ -322,8 +322,9 @@ public class BigPotBlockEntity extends BlockEntity {
     }
 
     /**
-     * 煮一刻，进度走 rate（不盖锅盖 1；盖着锅盖 = 不盖盖时长 / 盖盖时长）。中途盖上只是剩下的走得快，
-     * 已经煮过的不跟着放大（2026-11-03 用户：以前一半多盖上锅盖就直接好了）
+     * 煮一刻，进度走 rate（= 不盖盖时长 / 盖盖时长；2026-11-05 起不盖锅盖不煮，见 BigPotCooking#serverTick）。
+     * 进度单位还是不盖盖时长的刻数，所以中途揭盖停下、再盖上接着走，已经煮过的不跟着放大
+     * （2026-11-03 用户：以前一半多盖上锅盖就直接好了）
      */
     public void tickCooking(float rate) {
         cookProgress += rate;
