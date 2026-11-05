@@ -1,6 +1,9 @@
 package com.gunmu.northeast_china_delight.item;
 
 import com.gunmu.northeast_china_delight.util.DdStacks;
+import net.minecraft.core.particles.ItemParticleOption;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.world.InteractionHand;
@@ -38,6 +41,12 @@ import net.neoforged.neoforge.event.entity.living.LivingShieldBlockEvent;
  * 同原版盾牌，附魔台上附不了），见 data/minecraft/tags/item/enchantable/durability.json。
  * 盖在锅上时大灶把这一个锅盖原样存着（耐久、附魔、改的名字都在），揭下来、拆灶还回来的就是它（BigPotBlockEntity#putLid）。</p>
  *
+ * <p>声音（2026-11-05 用户：格挡的音效换为木头的破坏中的音效，碎裂的音效换为木头被破坏的音效）：挡住一下放挖木头时那种
+ * 「笃」（{@link #playBlockSound}），被斧子打掉、耐久用完碎掉放木头方块被拆掉的声音（{@link #playBreakSound}），
+ * 都从服务端放、附近的人都听得见。原版盾牌的这几声不放：挡住、被打掉的声音是客户端收到实体事件时放的，
+ * 由 mixin/LivingEntityLidSoundMixin 拦掉（看 {@link #blocksWithLid}）；碎掉时原版的「物品损坏」声音连同碎片
+ * 走的是另一个实体事件，扣耐久改用 {@link DdStacks#hurtAndBreakSilently} 不发它，碎片自己冒。</p>
+ *
  * <p>对着大灶右键时先走大灶的交互（盖到锅上），大灶不接（PASS）才举起来，和拿盾牌点方块一样。
  * 「举着」的手里模型见 models/item/big_pot_lid_blocking.json，由客户端的 blocking 属性切换
  * （NortheastChinaDelight.ClientModEvents#onClientSetup）。</p>
@@ -54,6 +63,13 @@ public class PotLidItem extends Item implements Equipable {
     private static final int AXE_COOLDOWN = 100;
     /** 举着不放就一直举着（同原版盾牌） */
     private static final int USE_DURATION = 72000;
+    /**
+     * 挡住时的声音音调：同原版挖方块时一下下的 hit 声（木头 SoundType 音调 1 × 0.5），上下浮一点。
+     * 音量用 1：原版挖方块那声只有 (1 + 1) / 8，打架时听不清
+     */
+    private static final float BLOCK_SOUND_PITCH = 0.5F;
+    /** 碎掉、被斧子打掉时的声音：同原版拆掉木头方块（木头 SoundType 音量 (1 + 1) / 2、音调 1 × 0.8） */
+    private static final float BREAK_SOUND_PITCH = 0.8F;
 
     public PotLidItem(Properties properties) {
         super(properties);
@@ -116,6 +132,7 @@ public class PotLidItem extends Item implements Equipable {
         }
         event.setBlockedDamage(event.getOriginalBlockedDamage() * blockedFraction(blocker));
         event.setShieldTakesDamage(false);
+        playBlockSound(blocker);
         wear(blocker, lid, event.getDamageSource());
     }
     //?} else {
@@ -127,6 +144,7 @@ public class PotLidItem extends Item implements Equipable {
         }
         event.setBlockedDamage(event.getOriginalBlockedDamage() * blockedFraction(blocker));
         event.setShieldDamage(0.0F);
+        playBlockSound(blocker);
         wear(blocker, lid, event.getDamageSource());
     }
     *///?}
@@ -143,9 +161,11 @@ public class PotLidItem extends Item implements Equipable {
     }
 
     /**
-     * 扣耐久：挡一下 1 点；被斧子劈中掉最大耐久的六成、5 秒举不起来。扣耐久走原版 hurtAndBreak，
-     * 所以耐久附魔照样有几率免掉（斧子那六成也一样）、创造模式不扣。碎了就放下、出盾牌碎掉的声音（同原版盾牌）。
-     * 「斧子劈中」用原版判定能不能打掉盾牌的同一个条件：近身打（不是弹射物）、打的人 canDisableShield。
+     * 扣耐久：挡一下 1 点；被斧子劈中掉最大耐久的六成、5 秒举不起来。耐久附魔照样有几率免掉（斧子那六成也一样）、创造模式不扣。
+     * 碎了就放下（同原版盾牌）。「斧子劈中」用原版判定能不能打掉盾牌的同一个条件：近身打（不是弹射物）、打的人 canDisableShield。
+     *
+     * <p>被斧子打掉、碎掉都放木头被破坏的声音（同一下又打掉又碎掉只放一声）。扣耐久用 {@link DdStacks#hurtAndBreakSilently}：
+     * 原版碎掉时发的实体事件会让客户端放「物品损坏」的声音，用户要的是木头的声音，所以不发，物品碎片从服务端冒。</p>
      */
     private static void wear(LivingEntity blocker, ItemStack lid, DamageSource source) {
         if (blocker.level().isClientSide() || !(blocker instanceof Player player)) {
@@ -153,15 +173,50 @@ public class PotLidItem extends Item implements Equipable {
         }
         boolean axe = !source.is(DamageTypeTags.IS_PROJECTILE)
                 && source.getDirectEntity() instanceof LivingEntity attacker && attacker.canDisableShield();
-        InteractionHand hand = player.getUsedItemHand();
-        DdStacks.hurtAndBreak(lid, axe ? Math.round(lid.getMaxDamage() * AXE_WEAR) : 1, player, hand);
+        ItemStack before = lid.copy();
+        DdStacks.hurtAndBreakSilently(lid, axe ? Math.round(lid.getMaxDamage() * AXE_WEAR) : 1, player);
         if (lid.isEmpty()) {
             player.stopUsingItem();
-            // Player#playSound 在服务端不发给自己（原版留给客户端自己放），这里是服务端算的，得发给所有人
-            player.level().playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.SHIELD_BREAK,
-                    player.getSoundSource(), 0.8F, 0.8F + player.level().getRandom().nextFloat() * 0.4F);
+            playBreakSound(player);
+            if (player.level() instanceof ServerLevel server) {
+                // 原版碎掉时客户端在手边冒的物品碎片（LivingEntity#breakItem），这里从服务端冒
+                server.sendParticles(new ItemParticleOption(ParticleTypes.ITEM, before), player.getX(),
+                        player.getY(0.6), player.getZ(), 8, 0.2, 0.15, 0.2, 0.05);
+            }
         } else if (axe) {
             player.getCooldowns().addCooldown(lid.getItem(), AXE_COOLDOWN);
+            playBreakSound(player);
         }
+    }
+
+    /** 挡住一下：挖木头时那种「笃」（原版 block.wood.hit），服务端放，附近的人都听得见 */
+    private static void playBlockSound(LivingEntity blocker) {
+        if (blocker.level().isClientSide()) {
+            return;
+        }
+        blocker.level().playSound(null, blocker.getX(), blocker.getY(), blocker.getZ(), SoundEvents.WOOD_HIT,
+                blocker.getSoundSource(), 1.0F, BLOCK_SOUND_PITCH * (0.9F + blocker.getRandom().nextFloat() * 0.2F));
+    }
+
+    /**
+     * 碎掉、被斧子打掉：木头方块被拆掉的声音（原版 block.wood.break）。
+     * Player#playSound 在服务端不发给自己（原版留给客户端自己放），这里是服务端算的，得发给所有人
+     */
+    private static void playBreakSound(LivingEntity entity) {
+        entity.level().playSound(null, entity.getX(), entity.getY(), entity.getZ(), SoundEvents.WOOD_BREAK,
+                entity.getSoundSource(), 1.0F, BREAK_SOUND_PITCH);
+    }
+
+    /**
+     * 这个实体是不是举着木锅盖挡（客户端收到原版「挡住」「被斧子打掉」的实体事件时问，见 mixin/LivingEntityLidSoundMixin）。
+     * 正在用的东西就是锅盖才算；没在用东西时（收到事件前已经同步成放下了）看手里有没有锅盖
+     */
+    public static boolean blocksWithLid(LivingEntity entity) {
+        ItemStack using = entity.getUseItem();
+        if (!using.isEmpty()) {
+            return using.is(ModItems.BIG_POT_LID.get());
+        }
+        return entity.getMainHandItem().is(ModItems.BIG_POT_LID.get())
+                || entity.getOffhandItem().is(ModItems.BIG_POT_LID.get());
     }
 }
