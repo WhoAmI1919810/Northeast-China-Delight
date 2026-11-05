@@ -16,8 +16,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.LevelAccessor;
-import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
@@ -34,6 +32,7 @@ import java.util.function.Supplier;
 
 /**
  * 「一大盆菜」的方块形式 —— 做法照农夫乐事的 {@code FeastBlock}（牧羊人派、填馅南瓜那套）。
+ * 放法同碗装菜、盘装菜：潜行右键放下（{@code item/DdFeastItem}），放在哪都行（2026-11-05 用户）。
  */
 public class DdFeastBlock extends Block {
 
@@ -175,20 +174,8 @@ public class DdFeastBlock extends Block {
     }
     //?}
 
-    /** 必须放在实心方块上（和蛋糕一样） */
-    @Override
-    public boolean canSurvive(BlockState state, LevelReader level, BlockPos pos) {
-        return level.getBlockState(pos.below()).isFaceSturdy(level, pos.below(), Direction.UP);
-    }
-
-    @Override
-    public BlockState updateShape(BlockState state, Direction direction, BlockState neighborState,
-                                     LevelAccessor level, BlockPos pos, BlockPos neighborPos) {
-        if (direction == Direction.DOWN && !state.canSurvive(level, pos)) {
-            return net.minecraft.world.level.block.Blocks.AIR.defaultBlockState();
-        }
-        return super.updateShape(state, direction, neighborState, level, pos, neighborPos);
-    }
+    // 放在哪都行、底下的方块拆了也不掉，同碗装菜、盘装菜（DishBlock）。以前要放在实心面上、底下没了就碎（和蛋糕一样），
+    // 2026-11-05 用户：盆装菜的放置逻辑和碗装菜、盘装菜统一
 
     @Override
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
