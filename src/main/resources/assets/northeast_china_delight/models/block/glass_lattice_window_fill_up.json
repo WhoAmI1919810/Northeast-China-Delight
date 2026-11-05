@@ -24,18 +24,6 @@
         },
         "south": {
           "texture": "#glass"
-        },
-        "east": {
-          "texture": "#glass"
-        },
-        "west": {
-          "texture": "#glass"
-        },
-        "up": {
-          "texture": "#glass"
-        },
-        "down": {
-          "texture": "#glass"
         }
       }
     },
@@ -47,7 +35,7 @@
       ],
       "to": [
         8.5,
-        15.95,
+        16,
         9
       ],
       "faces": {
