@@ -3,7 +3,7 @@
   "parent": "block/block",
   "render_type": "minecraft:cutout",
   "textures": {
-    "particle": "northeast_china_delight:block/mystery_stew_pot",
+    "particle": "northeast_china_delight:block/large_basin_particle",
     "pot": "northeast_china_delight:block/mystery_stew_pot"
   },
   "elements": [

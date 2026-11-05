@@ -33,7 +33,7 @@ import java.util.List;
  *       食材和调料互不相干（2026-11-03 用户）：食材随时能拿出来补救，最后放进去的先出来（中间隔着调料也照拿）；
  *       调料倒进去就拿不出来，只有把锅里的液体全舀走时跟着没了；拆灶时只掉食材，调料不掉（盐也不掉）；</li>
  *   <li>正在煮哪条配方、煮了多少（按不盖锅盖的时长算，盖着盖走得快）；</li>
- *   <li>煮好的菜、还剩几份、得用什么盛、每盛一份给多少经验（拆灶时没盛完的就没了）。</li>
+ *   <li>煮好的菜、还剩几份、得用什么盛、每盛一份给多少经验（拆灶时没盛完的就没了），什么时候煮好的（冒泡用）。</li>
  * </ul>
  *
  * <p>锅里有什么会同步给客户端（右键时客户端要先知道锅里煮好了没、该不该让给手里的东西，锅里的东西也要画出来，
@@ -62,6 +62,11 @@ public class BigPotBlockEntity extends BlockEntity {
     private int servings;
     private ItemStack container = ItemStack.EMPTY;
     private float experience;
+    /**
+     * 这一锅什么时候煮好的（游戏刻）：煮好以后汤面上接着冒泡、越冒越少，盛过一份就不冒了（2026-11-05 用户，
+     * 见 BigPotCooking#clientTick），所以盛第一份时改回 -1。-1 = 不冒（没煮好、盛过了、以前的存档）
+     */
+    private long finishedAt = -1;
     /**
      * 盖在锅上的那个木锅盖，原样存着（耐久、附魔、改的名字都在；2026-11-04 锅盖有了耐久，用户问大锅能不能保存锅盖的耐久）。
      * 揭下来、拆灶时还回去的就是它；以前的存档里没有（空），由 BigStoveBlock 给个新的
@@ -369,6 +374,7 @@ public class BigPotBlockEntity extends BlockEntity {
         servings = dish.getCount();
         container = serveWith.isEmpty() ? ItemStack.EMPTY : serveWith.copyWithCount(1);
         experience = xpPerServing;
+        finishedAt = level != null ? level.getGameTime() : 0;
         cooking = null;
         cookProgress = 0;
         cookTotal = 0;
@@ -382,6 +388,7 @@ public class BigPotBlockEntity extends BlockEntity {
         }
         ItemStack dish = result.copyWithCount(1);
         servings--;
+        finishedAt = -1;
         if (servings <= 0) {
             result = ItemStack.EMPTY;
             container = ItemStack.EMPTY;
@@ -393,6 +400,11 @@ public class BigPotBlockEntity extends BlockEntity {
 
     public float experience() {
         return experience;
+    }
+
+    /** 这一锅什么时候煮好的（游戏刻）；-1 = 没煮好或者已经盛过一份 */
+    public long finishedAt() {
+        return finishedAt;
     }
 
     /**
@@ -413,6 +425,7 @@ public class BigPotBlockEntity extends BlockEntity {
         result = ItemStack.EMPTY;
         container = ItemStack.EMPTY;
         servings = 0;
+        finishedAt = -1;
         changed();
     }
 
@@ -475,6 +488,9 @@ public class BigPotBlockEntity extends BlockEntity {
             ItemStack.CODEC.encodeStart(ops, result).result().ifPresent(saved -> tag.put("Result", saved));
             tag.putInt("Servings", servings);
             tag.putFloat("Experience", experience);
+            if (finishedAt >= 0) {
+                tag.putLong("FinishedAt", finishedAt);
+            }
         }
         if (!container.isEmpty()) {
             ItemStack.CODEC.encodeStart(ops, container).result().ifPresent(saved -> tag.put("Container", saved));
@@ -547,6 +563,7 @@ public class BigPotBlockEntity extends BlockEntity {
                 : ItemStack.EMPTY;
         servings = result.isEmpty() ? 0 : tag.getInt("Servings");
         experience = tag.getFloat("Experience");
+        finishedAt = !result.isEmpty() && tag.contains("FinishedAt") ? tag.getLong("FinishedAt") : -1;
         container = tag.contains("Container")
                 ? ItemStack.CODEC.parse(ops, tag.get("Container")).result().orElse(ItemStack.EMPTY)
                 : ItemStack.EMPTY;

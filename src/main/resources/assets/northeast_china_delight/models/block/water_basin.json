@@ -2,7 +2,7 @@
   "credit": "水盆方块：large_basin 的盆体原样照搬，盆里加一层水面（原版 water_still，tintindex 0 按群系水色染色）",
   "render_type": "minecraft:translucent",
   "textures": {
-    "particle": "northeast_china_delight:block/large_basin",
+    "particle": "northeast_china_delight:block/large_basin_particle",
     "basin": "northeast_china_delight:block/large_basin",
     "water": "minecraft:block/water_still"
   },

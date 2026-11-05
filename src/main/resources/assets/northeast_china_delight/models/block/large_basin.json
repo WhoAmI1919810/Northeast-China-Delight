@@ -2,7 +2,7 @@
   "credit": "大脸盆方块：由 临时素材/1.json（Blockbench 导出）转写，元素与 UV 原样保留",
   "render_type": "minecraft:cutout",
   "textures": {
-    "particle": "northeast_china_delight:block/large_basin",
+    "particle": "northeast_china_delight:block/large_basin_particle",
     "basin": "northeast_china_delight:block/large_basin"
   },
   "elements": [

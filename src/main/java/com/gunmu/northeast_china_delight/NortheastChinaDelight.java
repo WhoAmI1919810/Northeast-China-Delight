@@ -123,6 +123,11 @@ import net.minecraftforge.client.event.RegisterColorHandlersEvent;
 /*import net.neoforged.neoforge.client.event.RegisterColorHandlersEvent;
 *///?}
 //? if <1.20.2 {
+import net.minecraftforge.client.event.RegisterParticleProvidersEvent;
+//?} else {
+/*import net.neoforged.neoforge.client.event.RegisterParticleProvidersEvent;
+*///?}
+//? if <1.20.2 {
 import net.minecraftforge.client.event.EntityRenderersEvent;
 //?} else {
 /*import net.neoforged.neoforge.client.event.EntityRenderersEvent;
@@ -173,6 +178,7 @@ public class NortheastChinaDelight
         *///?}
         ModItems.register(modEventBus);
         ModSounds.register(modEventBus);
+        com.gunmu.northeast_china_delight.particle.ModParticles.register(modEventBus);
         ModBlocks.register(modEventBus);
         ModFluids.register(modEventBus);
         ModBlockEntities.register(modEventBus);
@@ -236,7 +242,7 @@ public class NortheastChinaDelight
         MinecraftForge.EVENT_BUS.addListener(ModToolsmithTrades::addTrades);
         MinecraftForge.EVENT_BUS.addListener(ModCartographerTrades::addTrades);
         MinecraftForge.EVENT_BUS.addListener(ModWandererTrades::addTrades);
-        // 木锅盖当盾牌：只挡一成伤害
+        // 木锅盖当盾牌：挡三成伤害，穿齐四件套全挡
         MinecraftForge.EVENT_BUS.addListener(PotLidItem::onShieldBlock);
         // 「东北行头」四件套：木槌一棒子敲懵（缓慢 + 多击退）
         MinecraftForge.EVENT_BUS.addListener(com.gunmu.northeast_china_delight.item.NortheastOutfit::onLivingDamage);
@@ -350,6 +356,14 @@ public class NortheastChinaDelight
                     ModItems.BIG_POT_LID.get(), DdIds.of("minecraft", "blocking"),
                     (stack, level, entity, seed) ->
                             entity != null && entity.isUsingItem() && entity.getUseItem() == stack ? 1.0F : 0.0F));
+        }
+
+        /** 本模组的粒子长什么样（particle/ModParticles）：大铁锅汤面上的泡用原版气泡的贴图 */
+        @SubscribeEvent
+        public static void onRegisterParticles(RegisterParticleProvidersEvent event)
+        {
+            event.registerSpriteSet(com.gunmu.northeast_china_delight.particle.ModParticles.POT_BUBBLE.get(),
+                    com.gunmu.northeast_china_delight.client.PotBubbleParticle.Provider::new);
         }
 
         @SubscribeEvent
