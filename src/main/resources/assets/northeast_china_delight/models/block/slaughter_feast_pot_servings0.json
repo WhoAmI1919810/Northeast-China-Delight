@@ -2,7 +2,7 @@
   "parent": "block/block",
   "render_type": "minecraft:cutout",
   "textures": {
-    "particle": "northeast_china_delight:block/large_basin",
+    "particle": "northeast_china_delight:block/large_basin_particle",
     "basin": "northeast_china_delight:block/large_basin",
     "basin_inner": "northeast_china_delight:block/basin_top",
     "basin_bottom": "northeast_china_delight:block/basin_bottom",

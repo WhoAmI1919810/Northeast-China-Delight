@@ -29,7 +29,7 @@ import java.util.WeakHashMap;
  * 「东北行头」四件套：头戴大脸盆、身穿大花袄、主手木槌、副手木锅盖（2026-11-04 用户定的三条套装效果）。
  * 穿齐了才有，少一件都不算：
  * <ul>
- *   <li>锅盖真挡事：举锅盖挡下的伤害从一成变成五成（{@link #LID_BLOCKED_FRACTION}），挡住时「铛」一声
+ *   <li>锅盖真挡事：举锅盖挡下的伤害从三成变成全挡，和盾牌一样（{@link #LID_BLOCKED_FRACTION}，2026-11-05 用户），挡住时「铛」一声
  *       （农夫乐事平底锅砸人的声音），见 {@link PotLidItem#onShieldBlock}；</li>
  *   <li>一棒子敲懵：木槌近身打中的东西多被击退一截（相当于击退 I）、缓慢 II 两秒，见 {@link #onLivingDamage} / {@link #onKnockBack}；</li>
  *   <li>自家人：找村民换东西便宜一点（每条交易的第一样要价少 15%，至少少 1 个；村庄英雄 I 是 30%），
@@ -40,8 +40,8 @@ import java.util.WeakHashMap;
  */
 public final class NortheastOutfit {
 
-    /** 穿齐时锅盖挡下的伤害比例（单穿锅盖见 {@link PotLidItem#BLOCKED_FRACTION}） */
-    public static final float LID_BLOCKED_FRACTION = 0.5F;
+    /** 穿齐时锅盖挡下的伤害比例：全挡，和盾牌一样（单拿锅盖见 {@link PotLidItem#BLOCKED_FRACTION}） */
+    public static final float LID_BLOCKED_FRACTION = 1.0F;
     /** 木槌敲懵：缓慢 II、2 秒 */
     private static final int DAZE_TICKS = 40;
     private static final int DAZE_AMPLIFIER = 1;

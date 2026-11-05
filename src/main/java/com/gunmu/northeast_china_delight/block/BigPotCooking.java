@@ -1,9 +1,11 @@
 package com.gunmu.northeast_china_delight.block;
 
+import com.gunmu.northeast_china_delight.ModTags;
 import com.gunmu.northeast_china_delight.crafting.BigPotRecipe;
 import com.gunmu.northeast_china_delight.crafting.BigPotRecipes;
 import com.gunmu.northeast_china_delight.crafting.MysteryStew;
 import com.gunmu.northeast_china_delight.item.ModItems;
+import com.gunmu.northeast_china_delight.particle.ModParticles;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
@@ -15,7 +17,9 @@ import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.ExperienceOrb;
+import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.ItemUtils;
@@ -26,6 +30,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.phys.Vec3;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * 大铁锅做菜（大锅烹饪，配方见 {@link BigPotRecipe}）。不做界面，全靠右键：
@@ -49,8 +54,13 @@ import net.minecraft.world.phys.Vec3;
  *
  * <p>往锅里放东西、盛菜都得先揭锅盖（盖着盖时右键只会揭盖，见 {@link BigStoveBlock}）。</p>
  *
- * <p>粒子：放料、倒水溅水花；煮着时冒泡和白雾（客户端每刻，{@link #clientTick}）；煮好时冒一阵绿色粒子
- * （像骨粉催熟）；煮着或煮好时揭锅盖冒一股白雾（{@link #lidLifted}）。</p>
+ * <p>东西也能直接掉进锅里（2026-11-05 用户，{@link #dropIn}）：落在锅口的掉落物、从上面往下送的漏斗和投掷器。
+ * 只收水桶、水盆（倒水，还出空桶、空盆）、食材和盐，规矩同右键，收不进就留在灶上，都不出提示。</p>
+ *
+ * <p>粒子：放料、倒水溅水花；煮着时冒白雾，煮到六成以上汤面上冒泡（{@link ModParticles#POT_BUBBLE}，
+ * 客户端每刻，{@link #clientTick}）；煮好时冒一阵绿色粒子（像骨粉催熟），之后接着冒泡、越来越少，
+ * 盛过一份就不冒；一锅谜之炖菜往上飘效果粒子（{@link MysteryStewPotBlock#effectParticle}）；
+ * 煮着或煮好时揭锅盖冒一股白雾（{@link #lidLifted}）。</p>
  */
 public final class BigPotCooking {
 
@@ -82,20 +92,14 @@ public final class BigPotCooking {
         }
 
         // 倒水 / 舀水：水桶、水盆一次 1000 mB
-        boolean waterBucket = held.is(Items.WATER_BUCKET);
-        if (waterBucket || held.is(ModItems.WATER_BASIN.get())) {
-            if (pot.liquidMb() > 0 && !pot.liquid().isSame(Fluids.WATER)
-                    || pot.liquidMb() + BUCKET_MB > BigPotBlockEntity.LIQUID_CAPACITY) {
+        if (isWater(held)) {
+            if (!canPour(pot)) {
                 tell(player, Component.translatable("message.northeast_china_delight.big_pot.liquid_full"));
                 return InteractionResult.sidedSuccess(level.isClientSide);
             }
             if (!level.isClientSide) {
-                pot.addLiquid(Fluids.WATER, BUCKET_MB);
-                player.setItemInHand(hand, ItemUtils.createFilledResult(held, player,
-                        new ItemStack(waterBucket ? Items.BUCKET : ModItems.LARGE_BASIN.get())));
-                level.playSound(null, pos, SoundEvents.BUCKET_EMPTY, SoundSource.BLOCKS, 1.0F, 1.0F);
-                splash(level, pos, state, pot, 20);
-                level.gameEvent(player, GameEvent.FLUID_PLACE, pos);
+                player.setItemInHand(hand, ItemUtils.createFilledResult(held, player, emptied(held)));
+                pour(pot, level, pos, state, player);
             }
             return InteractionResult.sidedSuccess(level.isClientSide);
         }
@@ -119,7 +123,7 @@ public final class BigPotCooking {
 
         // 食材、调料：哪条配方用得上、或者谜之炖菜认的才让放；煮着不让放，锅里没水不让放，放满了不让放
         RecipeManager recipes = level.getRecipeManager();
-        if (!BigPotRecipes.usable(recipes, held) && !MysteryStew.accepts(held)) {
+        if (!usable(recipes, held)) {
             return InteractionResult.PASS;
         }
         if (pot.cooking() != null) {
@@ -130,9 +134,8 @@ public final class BigPotCooking {
             tell(player, Component.translatable("message.northeast_china_delight.big_pot.need_water"));
             return InteractionResult.sidedSuccess(level.isClientSide);
         }
-        boolean seasoning = BigPotRecipes.isSeasoning(recipes, held) || MysteryStew.isSeasoning(held);
-        if (seasoning ? pot.seasoningCount() >= BigPotRecipes.maxSeasonings(recipes)
-                : pot.ingredientCount() >= BigPotRecipes.maxIngredients(recipes)) {
+        boolean seasoning = isSeasoning(recipes, held);
+        if (full(pot, recipes, seasoning)) {
             tell(player, Component.translatable(seasoning
                     ? "message.northeast_china_delight.big_pot.seasoning_full"
                     : "message.northeast_china_delight.big_pot.full"));
@@ -140,7 +143,7 @@ public final class BigPotCooking {
         }
         if (!level.isClientSide) {
             ItemStack one = held.copyWithCount(1);
-            pot.push(one, seasoning);
+            addOne(pot, one, seasoning, level, pos, state);
             ItemStack remainder = held.hasCraftingRemainingItem() ? held.getCraftingRemainingItem() : ItemStack.EMPTY;
             if (!player.getAbilities().instabuild) {
                 held.shrink(1);
@@ -152,11 +155,115 @@ public final class BigPotCooking {
                     }
                 }
             }
-            level.playSound(null, pos, SoundEvents.GENERIC_SPLASH, SoundSource.BLOCKS, 0.5F, 1.0F);
-            splash(level, pos, state, pot, 12);
             tell(player, Component.translatable("message.northeast_china_delight.big_pot.added", one.getHoverName()));
         }
         return InteractionResult.sidedSuccess(level.isClientSide);
+    }
+
+    // ---------------------------------------------------------------- 倒水、放料（右键和掉进锅里共用）
+
+    /** 水桶、水盆：一次倒 1000 mB 水 */
+    private static boolean isWater(ItemStack stack) {
+        return stack.is(Items.WATER_BUCKET) || stack.is(ModItems.WATER_BASIN.get());
+    }
+
+    /** 倒完水还回来的：水桶还空桶，水盆还空盆 */
+    private static ItemStack emptied(ItemStack water) {
+        return new ItemStack(water.is(Items.WATER_BUCKET) ? Items.BUCKET : ModItems.LARGE_BASIN.get());
+    }
+
+    /** 还倒得下一桶水：锅里没液体或者是水，而且没满 */
+    private static boolean canPour(BigPotBlockEntity pot) {
+        return !(pot.liquidMb() > 0 && !pot.liquid().isSame(Fluids.WATER))
+                && pot.liquidMb() + BUCKET_MB <= BigPotBlockEntity.LIQUID_CAPACITY;
+    }
+
+    /** 倒一桶水：倒水声、溅水花（容器由调用的地方还） */
+    private static void pour(BigPotBlockEntity pot, Level level, BlockPos pos, BlockState state, @Nullable Entity by) {
+        pot.addLiquid(Fluids.WATER, BUCKET_MB);
+        level.playSound(null, pos, SoundEvents.BUCKET_EMPTY, SoundSource.BLOCKS, 1.0F, 1.0F);
+        splash(level, pos, state, pot, 20);
+        level.gameEvent(by, GameEvent.FLUID_PLACE, pos);
+    }
+
+    /** 能当料下锅：哪条配方用得上，或者谜之炖菜认 */
+    private static boolean usable(RecipeManager recipes, ItemStack stack) {
+        return BigPotRecipes.usable(recipes, stack) || MysteryStew.accepts(stack);
+    }
+
+    private static boolean isSeasoning(RecipeManager recipes, ItemStack stack) {
+        return BigPotRecipes.isSeasoning(recipes, stack) || MysteryStew.isSeasoning(stack);
+    }
+
+    /** 这一类（食材 / 调料）放满了：最多放用得最多的那条配方那么多个 */
+    private static boolean full(BigPotBlockEntity pot, RecipeManager recipes, boolean seasoning) {
+        return seasoning ? pot.seasoningCount() >= BigPotRecipes.maxSeasonings(recipes)
+                : pot.ingredientCount() >= BigPotRecipes.maxIngredients(recipes);
+    }
+
+    /** 放一个料：压在栈顶、水声、溅水花（瓶子碗这些由调用的地方还） */
+    private static void addOne(BigPotBlockEntity pot, ItemStack one, boolean seasoning, Level level, BlockPos pos,
+                               BlockState state) {
+        pot.push(one, seasoning);
+        level.playSound(null, pos, SoundEvents.GENERIC_SPLASH, SoundSource.BLOCKS, 0.5F, 1.0F);
+        splash(level, pos, state, pot, 12);
+    }
+
+    // ---------------------------------------------------------------- 掉进锅里
+
+    /**
+     * 掉进锅里一个（2026-11-05 用户）：落在锅口的掉落物（{@link BigStoveBlock#stepOn}）、从上面往下送的漏斗和投掷器
+     * （{@link BigStoveBlock#getContainer}）都走这里，只在服务端调。
+     *
+     * <ul>
+     *   <li>只收水桶、水盆（倒 1000 mB 水，还一个空桶 / 空盆）、食材和盐。瓶装、碗装的调料不收（用户），
+     *       别的调料也不收；食材里要是有倒完得还容器的也不收；</li>
+     *   <li>别的规矩同右键：灶上得是揭开盖的锅、锅里不能是煮好的菜；放料得锅里先有水、没在煮、没放满；
+     *       倒水煮着也能倒（同右键，多出来的水不影响凑配方）；</li>
+     *   <li>都不出提示（用户：收不进就掉在灶上，放进去也不弹提示）。</li>
+     * </ul>
+     *
+     * @param simulate 只问收不收，不动锅
+     * @return 收不进返回 null；收了返回要还出来的东西（空桶、空盆，别的是空），调用的地方把送来的那一堆减一个
+     */
+    @Nullable
+    public static ItemStack dropIn(BigPotBlockEntity pot, BlockState state, Level level, BlockPos pos, ItemStack stack,
+                                   @Nullable Entity by, boolean simulate) {
+        if (stack.isEmpty() || state.getValue(BigStoveBlock.POT) != BigStoveBlock.Pot.POT || pot.hasResult()) {
+            return null;
+        }
+        if (isWater(stack)) {
+            if (!canPour(pot)) {
+                return null;
+            }
+            if (!simulate) {
+                pour(pot, level, pos, state, by);
+            }
+            return emptied(stack);
+        }
+        RecipeManager recipes = level.getRecipeManager();
+        if (stack.hasCraftingRemainingItem() || !usable(recipes, stack)) {
+            return null;
+        }
+        boolean seasoning = isSeasoning(recipes, stack);
+        if (seasoning && !stack.is(ModTags.FOODS_SALT)
+                || pot.cooking() != null || pot.liquidMb() <= 0 || full(pot, recipes, seasoning)) {
+            return null;
+        }
+        if (!simulate) {
+            addOne(pot, stack.copyWithCount(1), seasoning, level, pos, state);
+        }
+        return ItemStack.EMPTY;
+    }
+
+    /** 掉进锅里还出来的空桶、空盆（或者没收进去的东西）：从 (x, y, z) 蹦出来，落在灶上 */
+    public static void popOut(Level level, double x, double y, double z, ItemStack stack) {
+        if (stack.isEmpty()) {
+            return;
+        }
+        ItemEntity item = new ItemEntity(level, x, y, z, stack);
+        item.setDefaultPickUpDelay();
+        level.addFreshEntity(item);
     }
 
     /**
@@ -226,7 +333,7 @@ public final class BigPotCooking {
         // （以前盖上就换成缩短后的总时长、煮过的刻数不变，进度一下放大 1.67 倍，2026-11-03 用户报）
         pot.setCookTotal(total);
         pot.tickCooking(lid ? total / (float) lidTotal : 1.0F);
-        // 煮着时的冒泡、白雾在客户端画（clientTick，看锅里同步过去的 cooking）
+        // 煮着时的冒泡、白雾在客户端画（clientTick，看锅里同步过去的 cooking 和每秒一次的进度）
         if (pot.cookProgress() < total - 0.001F) {
             return;
         }
@@ -246,18 +353,52 @@ public final class BigPotCooking {
         }
     }
 
+    /** 煮到几成开始在汤面上冒泡（2026-11-05 用户：烹饪进度超过 60%） */
+    private static final float BUBBLE_FROM = 0.6F;
+    /** 冒泡时每刻冒一个的几率 */
+    private static final float BUBBLE_CHANCE = 0.5F;
+    /** 煮好以后接着冒泡、越冒越少，过这么久就不冒了（刻，1 分钟；盛过一份就不冒，见 BigPotBlockEntity#finishedAt） */
+    private static final int BUBBLE_FADE_TICKS = 1200;
+    /** 一锅谜之炖菜每刻往上飘一个效果粒子的几率 */
+    private static final float STEW_EFFECT_CHANCE = 0.35F;
+
     /**
-     * 客户端每刻（灶点着、灶上有锅时）：锅里凑成配方开始煮了（cooking 会同步过来），揭着盖就在液面上冒泡、往上飘白雾，
-     * 盖着盖只从锅盖边上偶尔漏一点白雾。煮好以后不冒。
+     * 客户端每刻（灶上有锅时，点没点着都跑，见 {@link BigStoveBlock#getTicker}）。盖着盖看不见锅里，只在煮着时从锅盖边上偶尔漏一点白雾。
+     * <ul>
+     *   <li>煮着（点着火、cooking 同步过来了）：往上飘白雾；煮到六成以上汤面上冒泡（{@link #BUBBLE_FROM}，2026-11-05 用户）。
+     *       进度每秒同步一次，所以最多晚一秒才开始冒；</li>
+     *   <li>煮好了：接着冒泡，一分钟里越冒越少直到不冒（{@link #BUBBLE_FADE_TICKS}），盛过一份就不冒了（同日用户）；
+     *       是一锅谜之炖菜就往上飘效果粒子（同日用户，{@link MysteryStewPotBlock#effectParticle}）。</li>
+     * </ul>
      */
     public static void clientTick(Level level, BlockPos pos, BlockState state, BigPotBlockEntity pot) {
-        if (pot.cooking() == null || pot.hasResult()) {
-            return;
-        }
         RandomSource random = level.getRandom();
         Vec3 center = center(pos, state);
         double base = originY(pos, state);
-        if (state.getValue(BigStoveBlock.POT) == BigStoveBlock.Pot.LID) {
+        boolean lid = state.getValue(BigStoveBlock.POT) == BigStoveBlock.Pot.LID;
+        if (pot.hasResult()) {
+            if (lid) {
+                return;
+            }
+            // 锅里的成品模型汤面同 1000 mB 的水面（block/big_pot/dish/<菜>，BigPotRenderer）
+            double surface = base + BigPotBlockEntity.liquidSurfaceY(BUCKET_MB) / 16.0;
+            long since = pot.finishedAt() < 0 ? -1 : level.getGameTime() - pot.finishedAt();
+            if (since >= 0 && since < BUBBLE_FADE_TICKS
+                    && random.nextFloat() < BUBBLE_CHANCE * (1.0F - since / (float) BUBBLE_FADE_TICKS)) {
+                bubble(level, random, center, surface);
+            }
+            if (pot.result().is(ModItems.MYSTERY_STEW.get()) && random.nextFloat() < STEW_EFFECT_CHANCE) {
+                double a = random.nextDouble() * Math.PI * 2;
+                double r = Math.sqrt(random.nextDouble()) * 0.55;
+                MysteryStewPotBlock.effectParticle(level, random, center.x + Math.cos(a) * r, surface + 0.05,
+                        center.z + Math.sin(a) * r, false);
+            }
+            return;
+        }
+        if (pot.cooking() == null || !state.getValue(BigStoveBlock.LIT)) {
+            return;
+        }
+        if (lid) {
             if (random.nextFloat() < 0.08F) {
                 double a = random.nextDouble() * Math.PI * 2;
                 level.addParticle(ParticleTypes.CLOUD, center.x + Math.cos(a) * 0.82, base + 1.1,
@@ -266,12 +407,9 @@ public final class BigPotCooking {
             return;
         }
         double surface = base + (pot.liquidMb() > 0 ? BigPotBlockEntity.liquidSurfaceY(pot.liquidMb()) : 11.0F) / 16.0;
-        if (pot.liquidMb() > 0 && random.nextFloat() < 0.6F) {
-            // 液面上咕嘟咕嘟冒泡（锅里水面那一圈半径 10 像素，往里收一点）
-            double a = random.nextDouble() * Math.PI * 2;
-            double r = Math.sqrt(random.nextDouble()) * 0.55;
-            level.addParticle(ParticleTypes.BUBBLE_POP, center.x + Math.cos(a) * r, surface + 0.02,
-                    center.z + Math.sin(a) * r, 0.0, 0.02, 0.0);
+        if (pot.liquidMb() > 0 && pot.cookTotal() > 0 && pot.cookProgress() >= pot.cookTotal() * BUBBLE_FROM
+                && random.nextFloat() < BUBBLE_CHANCE) {
+            bubble(level, random, center, surface);
         }
         if (random.nextFloat() < 0.15F) {
             double a = random.nextDouble() * Math.PI * 2;
@@ -279,6 +417,14 @@ public final class BigPotCooking {
             level.addParticle(ParticleTypes.CLOUD, center.x + Math.cos(a) * r, surface + 0.1,
                     center.z + Math.sin(a) * r, 0.0, 0.03 + random.nextDouble() * 0.02, 0.0);
         }
+    }
+
+    /** 汤面上冒一个泡（锅里汤面那一圈半径 10 像素，往里收一点） */
+    private static void bubble(Level level, RandomSource random, Vec3 center, double surface) {
+        double a = random.nextDouble() * Math.PI * 2;
+        double r = Math.sqrt(random.nextDouble()) * 0.55;
+        level.addParticle(ModParticles.POT_BUBBLE.get(), center.x + Math.cos(a) * r, surface + 0.01,
+                center.z + Math.sin(a) * r, 0.0, 0.0, 0.0);
     }
 
     /**
@@ -346,8 +492,8 @@ public final class BigPotCooking {
         }
     }
 
-    /** 锅的正中（四格的交点），在灶面上一点 */
-    private static Vec3 center(BlockPos pos, BlockState state) {
+    /** 锅的正中（四格的交点），在灶面上一点（漏斗、投掷器送进来的还出空桶空盆也从这儿蹦出来，见 BigStoveBlock） */
+    static Vec3 center(BlockPos pos, BlockState state) {
         BlockPos origin = BigStoveBlock.origin(pos, state);
         return new Vec3(origin.getX() + 1.0, origin.getY() + 1.05, origin.getZ() + 1.0);
     }

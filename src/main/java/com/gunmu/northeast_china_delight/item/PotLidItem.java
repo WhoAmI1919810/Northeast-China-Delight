@@ -25,14 +25,15 @@ import net.neoforged.neoforge.event.entity.living.LivingShieldBlockEvent;
 //?}
 
 /**
- * 木锅盖：盖在大灶的大铁锅上（见 BigStoveBlock），也能拿在手里当盾牌（2026-11-04 用户：锅盖起到盾牌的作用，
- * 只能格挡 10% 的伤害）。
+ * 木锅盖：盖在大灶的大铁锅上（见 BigStoveBlock），也能拿在手里当盾牌（2026-11-04 用户：锅盖起到盾牌的作用；
+ * 2026-11-05 用户：正常情况下能格挡 30% 伤害，四件套集齐时能和盾牌一样）。
  *
  * <p>右键举起来，和原版盾牌一样：举满 5 刻才算挡着、只挡正面来的攻击、斧子能把它打下来；
- * 但挡住的只有一成伤害（{@link #BLOCKED_FRACTION}），其余九成照样挨（{@link #onShieldBlock}）。
+ * 但挡住的只有三成伤害（{@link #BLOCKED_FRACTION}），其余七成照样挨（{@link #onShieldBlock}）；
+ * 穿齐「东北行头」四件套就和盾牌一样全挡（{@link NortheastOutfit#LID_BLOCKED_FRACTION}）。
  * 潜行点物品栏里的锅盖会进副手（{@link Equipable}，同原版盾牌）。</p>
  *
- * <p>耐久（同日用户改的）：原版盾牌的一半 {@link #DURABILITY}；每挡一下掉 1 点，被斧子劈中（原版判定能打掉盾牌的那一下）
+ * <p>耐久（同日用户改的，2026-11-05 下调到 64）：{@link #DURABILITY}；每挡一下掉 1 点，被斧子劈中（原版判定能打掉盾牌的那一下）
  * 掉最大耐久的六成（{@link #AXE_WEAR}），并且像盾牌一样 5 秒内举不起来。耐久、经验修补能附（附魔书上铁砧；
  * 同原版盾牌，附魔台上附不了），见 data/minecraft/tags/item/enchantable/durability.json。
  * 盖在锅上时大灶把这一个锅盖原样存着（耐久、附魔、改的名字都在），揭下来、拆灶还回来的就是它（BigPotBlockEntity#putLid）。</p>
@@ -43,11 +44,11 @@ import net.neoforged.neoforge.event.entity.living.LivingShieldBlockEvent;
  */
 public class PotLidItem extends Item implements Equipable {
 
-    /** 挡下的伤害比例：只挡一成（穿齐「东北行头」四件套时五成，见 {@link NortheastOutfit}） */
-    public static final float BLOCKED_FRACTION = 0.1F;
-    /** 耐久：原版盾牌（336）的一半 */
-    public static final int DURABILITY = 168;
-    /** 被斧子劈中掉的耐久：最大耐久的六成（四舍五入，168 → 101） */
+    /** 挡下的伤害比例：挡三成（穿齐「东北行头」四件套时全挡，见 {@link NortheastOutfit}） */
+    public static final float BLOCKED_FRACTION = 0.3F;
+    /** 耐久 64（2026-11-05 用户从 168 下调） */
+    public static final int DURABILITY = 64;
+    /** 被斧子劈中掉的耐久：最大耐久的六成（四舍五入，64 → 38） */
     private static final float AXE_WEAR = 0.6F;
     /** 被斧子劈中后举不起来的时间（同原版盾牌被打掉，5 秒） */
     private static final int AXE_COOLDOWN = 100;
@@ -101,9 +102,10 @@ public class PotLidItem extends Item implements Equipable {
     //?}
 
     /**
-     * 举着锅盖挡住了一下：挡下的伤害改成原本的一成（穿齐四件套时五成，还「铛」一声），耐久自己扣（{@link #wear}）。
+     * 举着锅盖挡住了一下：挡下的伤害改成原本的三成（穿齐四件套时全挡、和盾牌一样，还「铛」一声），耐久自己扣（{@link #wear}）。
      * 原版扣盾牌耐久是按伤害算的（不到 3 点不扣、多了扣 1 + 伤害），这里不要，所以把原版那份关掉。
-     * 没挡满，原版就当这一下没挡住（照样受伤、红一下、出受伤的声音），只是伤害少了一些。
+     * 没挡满，原版就当这一下没挡住（照样受伤、红一下、出受伤的声音），只是伤害少了一些；
+     * 全挡（四件套）时原版照盾牌处理：不受伤、箭弹开、近身打的人被推开。
      */
     //? if <1.20.2 {
     /*public static void onShieldBlock(ShieldBlockEvent event) {
@@ -129,7 +131,7 @@ public class PotLidItem extends Item implements Equipable {
     }
     //?}
 
-    /** 穿齐四件套挡五成、「铛」一声；不然只挡一成 */
+    /** 穿齐四件套全挡、「铛」一声；不然只挡三成 */
     private static float blockedFraction(LivingEntity blocker) {
         if (!NortheastOutfit.isComplete(blocker)) {
             return BLOCKED_FRACTION;

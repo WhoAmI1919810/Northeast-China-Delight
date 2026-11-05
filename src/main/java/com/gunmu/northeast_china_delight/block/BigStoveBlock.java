@@ -15,14 +15,20 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.util.StringRepresentable;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.SimpleContainer;
+import net.minecraft.world.WorldlyContainer;
+import net.minecraft.world.WorldlyContainerHolder;
 //? if >=1.20.5 {
 import net.minecraft.world.ItemInteractionResult;
 //?}
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.FireChargeItem;
 import net.minecraft.world.item.FlintAndSteelItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.EntityBlock;
 import net.minecraft.world.level.block.Mirror;
@@ -39,6 +45,7 @@ import net.minecraft.world.level.block.state.properties.DirectionProperty;
 import net.minecraft.world.level.block.state.properties.EnumProperty;
 import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.Vec3;
 
 import org.jetbrains.annotations.Nullable;
 
@@ -55,6 +62,8 @@ import java.util.function.UnaryOperator;
  *   <li>打火石 / 火焰弹点火，锹灭火（{@link #LIT}，四格一起改；点着亮度 13）。算农夫乐事的热源（标签里），
  *       点着时上面的厨锅照样能加热。</li>
  *   <li>拆掉任意一格：这一格掉一个农夫乐事炉灶，剩下三格变回炉灶（朝向、点没点着照旧），锅和锅盖掉出来。</li>
+ *   <li>东西直接掉进锅里（2026-11-05 用户）：落在锅口的掉落物（{@link #stepOn}）、从上面往下送的漏斗和投掷器
+ *       （{@link #getContainer}），收什么见 {@link BigPotCooking#dropIn}。</li>
  * </ul>
  *
  * <p>锅里装的东西存在 nw 那一格的 {@link BigPotBlockEntity} 上；在锅里做菜的入口都在 {@link BigPotCooking}，
@@ -62,7 +71,7 @@ import java.util.function.UnaryOperator;
  *
  * <p>不重写 codec()，理由同 {@link AnimalOilBlock}。</p>
  */
-public class BigStoveBlock extends Block implements EntityBlock {
+public class BigStoveBlock extends Block implements EntityBlock, WorldlyContainerHolder {
 
     /** 四格里的哪一格（facing=north 时的方位） */
     public enum Part implements StringRepresentable {
@@ -371,6 +380,125 @@ public class BigStoveBlock extends Block implements EntityBlock {
         return InteractionResult.sidedSuccess(level.isClientSide);
     }
 
+    // ---------------------------------------------------------------- 掉进锅里
+
+    /** 锅口那一圈的半径（格，从四格的交点量）：锅沿外圈 13.75 像素，往里收到内壁 */
+    private static final double MOUTH_RADIUS = 0.8;
+
+    /**
+     * 掉落物落在锅口里就进锅（2026-11-05 用户，收什么见 {@link BigPotCooking#dropIn}）：一堆能收几个收几个，
+     * 收不进的留在灶上；停在灶上的掉落物原版每 4 刻还会挪一下、再调到这里，锅里有了水、腾出地方就接着收。
+     * 落在锅外的四个角上不收。水桶、水盆倒完的空桶、空盆在原地蹦出来。
+     */
+    @Override
+    public void stepOn(Level level, BlockPos pos, BlockState state, Entity entity) {
+        super.stepOn(level, pos, state, entity);
+        if (level.isClientSide || !(entity instanceof ItemEntity item) || !item.isAlive()
+                || state.getValue(POT) != Pot.POT) {
+            return;
+        }
+        BigPotBlockEntity pot = potAt(level, pos, state);
+        if (pot == null) {
+            return;
+        }
+        Vec3 center = BigPotCooking.center(pos, state);
+        double dx = item.getX() - center.x;
+        double dz = item.getZ() - center.z;
+        if (dx * dx + dz * dz > MOUTH_RADIUS * MOUTH_RADIUS) {
+            return;
+        }
+        ItemStack stack = item.getItem().copy();
+        int before = stack.getCount();
+        while (!stack.isEmpty()) {
+            ItemStack back = BigPotCooking.dropIn(pot, state, level, pos, stack, item, false);
+            if (back == null) {
+                break;
+            }
+            stack.shrink(1);
+            BigPotCooking.popOut(level, item.getX(), item.getY(), item.getZ(), back);
+        }
+        if (stack.getCount() != before) {
+            if (stack.isEmpty()) {
+                item.discard();
+            } else {
+                item.setItem(stack);
+            }
+        }
+    }
+
+    /**
+     * 漏斗、投掷器从上面往锅里送（2026-11-05 用户：漏斗、投掷器等送来的也收）：灶上有锅时，灶就是一个只能从顶上
+     * 放进去的「箱子」，同原版堆肥桶。原版漏斗、投掷器找送去哪时认这个（Forge、NeoForge 都是没有物品能力才问这里，
+     * 大灶没有物品能力；NeoForge 只给原版堆肥桶套了物品能力，机械动力的漏斗这类按物品能力找的不认）。
+     * 收什么同掉落物（{@link BigPotCooking#dropIn}）；收不进的留在漏斗、投掷器里，等锅里腾出地方（同往满了的箱子里送）。
+     * 灶上没锅时不算箱子，投掷器照常把东西扔出去。
+     */
+    @Override
+    public WorldlyContainer getContainer(BlockState state, LevelAccessor level, BlockPos pos) {
+        if (state.getValue(POT) == Pot.NONE || !(level instanceof Level world) || world.isClientSide) {
+            return null;
+        }
+        BigPotBlockEntity pot = potAt(world, pos, state);
+        return pot == null ? null : new PotInput(pot, state, world, pos);
+    }
+
+    /**
+     * 从上面送进锅的一格：看着永远是空的、一次只收一个，放进来马上倒进锅（setChanged 时），同原版堆肥桶的 InputContainer。
+     * 万一放进来的收不进（问的时候能收、放的时候锅变了），就从锅口蹦出来，不吞东西
+     */
+    private static final class PotInput extends SimpleContainer implements WorldlyContainer {
+        private static final int[] TOP = {0};
+        private static final int[] NONE = {};
+
+        private final BigPotBlockEntity pot;
+        private final BlockState state;
+        private final Level level;
+        private final BlockPos pos;
+
+        PotInput(BigPotBlockEntity pot, BlockState state, Level level, BlockPos pos) {
+            super(1);
+            this.pot = pot;
+            this.state = state;
+            this.level = level;
+            this.pos = pos;
+        }
+
+        @Override
+        public int getMaxStackSize() {
+            return 1;
+        }
+
+        @Override
+        public int[] getSlotsForFace(Direction side) {
+            return side == Direction.UP ? TOP : NONE;
+        }
+
+        @Override
+        public boolean canPlaceItemThroughFace(int slot, ItemStack stack, @Nullable Direction side) {
+            return side == Direction.UP && BigPotCooking.dropIn(pot, state, level, pos, stack, null, true) != null;
+        }
+
+        @Override
+        public boolean canTakeItemThroughFace(int slot, ItemStack stack, Direction side) {
+            return false;
+        }
+
+        @Override
+        public void setChanged() {
+            ItemStack stack = removeItemNoUpdate(0);
+            Vec3 mouth = BigPotCooking.center(pos, state);
+            while (!stack.isEmpty()) {
+                ItemStack back = BigPotCooking.dropIn(pot, state, level, pos, stack, null, false);
+                if (back == null) {
+                    BigPotCooking.popOut(level, mouth.x, mouth.y, mouth.z, stack);
+                    return;
+                }
+                stack.shrink(1);
+                BigPotCooking.popOut(level, mouth.x, mouth.y, mouth.z, back);
+            }
+        }
+    }
+
     // ---------------------------------------------------------------- 火苗
 
     /** 点着时灶门口冒火苗和烟、偶尔噼啪响；每口灶只让 nw 那一格出（灶门在 nw / ne 交界上） */
@@ -413,14 +541,15 @@ public class BigStoveBlock extends Block implements EntityBlock {
     }
 
     /**
-     * 只有点着、而且灶上有锅时才 tick：服务端煮菜（BigPotCooking.serverTick），客户端冒泡、冒白雾（BigPotCooking.clientTick；
+     * 灶上有锅时才 tick：服务端煮菜（BigPotCooking.serverTick，还得点着），客户端冒泡、冒白雾、谜之炖菜飘效果粒子
+     * （BigPotCooking.clientTick；煮好以后的冒泡、效果粒子灭了火也有，所以客户端不看点没点着。
      * 不放在 animateTick 里，那个是随机抽周围的方块调，一格两三秒才轮到一次，冒泡会一阵一阵的）
      */
     @Nullable
     @Override
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> type) {
-        if (state.getValue(PART) != Part.NW || !state.getValue(LIT)
-                || state.getValue(POT) == Pot.NONE || type != ModBlockEntities.BIG_POT.get()) {
+        if (state.getValue(PART) != Part.NW || state.getValue(POT) == Pot.NONE
+                || type != ModBlockEntities.BIG_POT.get() || !level.isClientSide && !state.getValue(LIT)) {
             return null;
         }
         if (level.isClientSide) {
