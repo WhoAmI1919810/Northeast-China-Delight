@@ -7,6 +7,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.tags.DamageTypeTags;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.damagesource.DamageSource;
@@ -42,9 +43,9 @@ import net.neoforged.neoforge.event.entity.living.LivingShieldBlockEvent;
  * 同原版盾牌，附魔台上附不了），见 data/minecraft/tags/item/enchantable/durability.json。
  * 盖在锅上时大灶把这一个锅盖原样存着（耐久、附魔、改的名字都在），揭下来、拆灶还回来的就是它（BigPotBlockEntity#putLid）。</p>
  *
- * <p>声音（2026-11-05 用户：格挡的音效换为木头的破坏中的音效，碎裂的音效换为木头被破坏的音效）：挡住一下放挖木头时那种
- * 「笃」（{@link #playBlockSound}），被斧子打掉、耐久用完碎掉放木头方块被拆掉的声音（{@link #playBreakSound}），
- * 都从服务端放、附近的人都听得见。原版盾牌的这几声不放：挡住、被打掉的声音是客户端收到实体事件时放的，
+ * <p>声音（2026-11-05 用户）：挡住一下放挖木头时那种「笃」（{@link #playBlockSound}，用户：格挡的音效换为木头的破坏中的音效）；
+ * 被斧子打掉放僵尸撞木门的「门：晃动」，耐久用完碎掉放僵尸撞破木门的「门：毁坏」（{@link #playDoorSound}，同日用户改的，
+ * 之前是木头被破坏的声音）。都从服务端放、附近的人都听得见。原版盾牌的这几声不放：挡住、被打掉的声音是客户端收到实体事件时放的，
  * 由 mixin/LivingEntityLidSoundMixin 拦掉（看 {@link #blocksWithLid}）；碎掉时原版的「物品损坏」声音连同碎片
  * 走的是另一个实体事件，扣耐久改用 {@link DdStacks#hurtAndBreakSilently} 不发它，碎片自己冒。</p>
  *
@@ -69,15 +70,6 @@ public class PotLidItem extends Item implements Equipable {
      * 音量用 1：原版挖方块那声只有 (1 + 1) / 8，打架时听不清
      */
     private static final float BLOCK_SOUND_PITCH = 0.5F;
-    /** 碎掉、被斧子打掉时的声音：同原版拆掉木头方块（木头 SoundType 音量 (1 + 1) / 2、音调 1 × 0.8） */
-    private static final float BREAK_SOUND_PITCH = 0.8F;
-    /**
-     * 声音叠几遍（2026-11-05 用户：音量很小，提升一下响度）：原版一个声音最响就是录音本身的音量（音量参数超过 1 只是传得远，
-     * SoundEngine 把增益夹在 1 以内），挖木头那声用的是脚步录音、本来就轻，所以同时放几遍叠起来，见 {@link #playLayered}。
-     * 挡住那声叠 3 遍（约响 3 倍）；碎掉那声录音本来响一些，叠 2 遍
-     */
-    private static final int BLOCK_SOUND_LAYERS = 3;
-    private static final int BREAK_SOUND_LAYERS = 2;
 
     public PotLidItem(Properties properties) {
         super(properties);
@@ -169,8 +161,9 @@ public class PotLidItem extends Item implements Equipable {
      * 扣耐久：挡一下 1 点；被斧子劈中掉最大耐久的六成、5 秒举不起来。耐久附魔照样有几率免掉（斧子那六成也一样）、创造模式不扣。
      * 碎了就放下（同原版盾牌）。「斧子劈中」用原版判定能不能打掉盾牌的同一个条件：近身打（不是弹射物）、打的人 canDisableShield。
      *
-     * <p>被斧子打掉、碎掉都放木头被破坏的声音（同一下又打掉又碎掉只放一声）。扣耐久用 {@link DdStacks#hurtAndBreakSilently}：
-     * 原版碎掉时发的实体事件会让客户端放「物品损坏」的声音，用户要的是木头的声音，所以不发，物品碎片从服务端冒。</p>
+     * <p>被斧子打掉放「门：晃动」，碎掉放「门：毁坏」（同一下又打掉又碎掉只放「门：毁坏」）。扣耐久用
+     * {@link DdStacks#hurtAndBreakSilently}：原版碎掉时发的实体事件会让客户端放「物品损坏」的声音，这里不要，所以不发，
+     * 物品碎片从服务端冒。</p>
      */
     private static void wear(LivingEntity blocker, ItemStack lid, DamageSource source) {
         if (blocker.level().isClientSide() || !(blocker instanceof Player player)) {
@@ -182,7 +175,7 @@ public class PotLidItem extends Item implements Equipable {
         DdStacks.hurtAndBreakSilently(lid, axe ? Math.round(lid.getMaxDamage() * AXE_WEAR) : 1, player);
         if (lid.isEmpty()) {
             player.stopUsingItem();
-            playBreakSound(player);
+            playDoorSound(player, SoundEvents.ZOMBIE_BREAK_WOODEN_DOOR);
             if (player.level() instanceof ServerLevel server) {
                 // 原版碎掉时客户端在手边冒的物品碎片（LivingEntity#breakItem），这里从服务端冒
                 server.sendParticles(new ItemParticleOption(ParticleTypes.ITEM, before), player.getX(),
@@ -190,38 +183,31 @@ public class PotLidItem extends Item implements Equipable {
             }
         } else if (axe) {
             player.getCooldowns().addCooldown(lid.getItem(), AXE_COOLDOWN);
-            playBreakSound(player);
+            playDoorSound(player, SoundEvents.ZOMBIE_ATTACK_WOODEN_DOOR);
         }
     }
 
-    /** 挡住一下：挖木头时那种「笃」（原版 block.wood.hit），服务端放，附近的人都听得见 */
+    /**
+     * 挡住一下：挖木头时那种「笃」（原版 block.wood.hit），服务端放，附近的人都听得见。
+     * 曾经同一声叠 3 遍放大（同日用户嫌小声），用户改了斧子、碎掉的声音以后说不用叠了，放一遍
+     */
     private static void playBlockSound(LivingEntity blocker) {
         if (blocker.level().isClientSide()) {
             return;
         }
-        playLayered(blocker, SoundEvents.WOOD_HIT, BLOCK_SOUND_PITCH * (0.9F + blocker.getRandom().nextFloat() * 0.2F),
-                BLOCK_SOUND_LAYERS);
+        blocker.level().playSound(null, blocker.getX(), blocker.getY(), blocker.getZ(), SoundEvents.WOOD_HIT,
+                blocker.getSoundSource(), 1.0F, BLOCK_SOUND_PITCH * (0.9F + blocker.getRandom().nextFloat() * 0.2F));
     }
 
     /**
-     * 碎掉、被斧子打掉：木头方块被拆掉的声音（原版 block.wood.break）。
+     * 僵尸撞木门的声音（被斧子打掉：entity.zombie.attack_wooden_door「门：晃动」；碎掉：entity.zombie.break_wooden_door
+     * 「门：毁坏」），音量、音调照原版僵尸破门（LevelRenderer#levelEvent 1019 / 1021：音量 2、音调 1 上下浮两成）。
      * Player#playSound 在服务端不发给自己（原版留给客户端自己放），这里是服务端算的，得发给所有人
      */
-    private static void playBreakSound(LivingEntity entity) {
-        playLayered(entity, SoundEvents.WOOD_BREAK, BREAK_SOUND_PITCH, BREAK_SOUND_LAYERS);
-    }
-
-    /**
-     * 同一个声音在原地同时放 layers 遍，叠起来更响：都用同一个种子（客户端按种子挑同一段录音，木头声每种都有好几段）、
-     * 同一个音调，同一刻发出去、客户端同一帧开始放，波形对得上，叠 n 遍大约是 n 倍响。服务端放，附近的人都听得见
-     */
-    private static void playLayered(LivingEntity entity, SoundEvent sound, float pitch, int layers) {
-        Level level = entity.level();
-        long seed = entity.getRandom().nextLong();
-        for (int i = 0; i < layers; i++) {
-            level.playSeededSound(null, entity.getX(), entity.getY(), entity.getZ(), sound, entity.getSoundSource(),
-                    1.0F, pitch, seed);
-        }
+    private static void playDoorSound(LivingEntity entity, SoundEvent sound) {
+        RandomSource random = entity.getRandom();
+        entity.level().playSound(null, entity.getX(), entity.getY(), entity.getZ(), sound, entity.getSoundSource(),
+                2.0F, (random.nextFloat() - random.nextFloat()) * 0.2F + 1.0F);
     }
 
     /**
