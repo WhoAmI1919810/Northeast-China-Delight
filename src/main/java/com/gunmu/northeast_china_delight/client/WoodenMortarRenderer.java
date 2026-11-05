@@ -90,11 +90,15 @@ public class WoodenMortarRenderer implements BlockEntityRenderer<WoodenMortarBlo
 
     /**
      * 料还没放齐（臼还是空臼的样子，方块模型照常画）：放进去了的那几样各画各的模型（配方 inputs 里的 model，
-     * 2026-11-05 用户：红薯和水得都放进去才有模型）。没写 model 的、不是 overlay 的配方什么都不多画
+     * 2026-11-05 用户：红薯和水得都放进去才有模型）。没写 model 的、不是 overlay 的配方什么都不多画。
+     *
+     * <p>只在还没舂过（进度 0）时画：取成品时服务端清空方块实体、把臼改回空臼是同一刻的事，客户端却先收到「改回空臼」、
+     * 后收到「清空」，中间那一下方块实体里还留着放进去的料，不拦就闪回放料那一步（同日用户报）。
+     * 舂过的那份旧数据进度一定大于 0；放最后一样料时进度是 0，照画，和接下来放齐那一步一个样，不闪。</p>
      */
     private static void renderDeposited(WoodenMortarBlockEntity mortar, Level level, BlockState state, PoseStack pose,
                                         MultiBufferSource buffer, int packedLight, int packedOverlay) {
-        if (!mortar.hasDepositedInputs()) {
+        if (!mortar.hasDepositedInputs() || mortar.progress() > 0 || mortar.hasPendingResults()) {
             return;
         }
         PoundingRecipes.Recipe recipe = mortar.resolve(level);
