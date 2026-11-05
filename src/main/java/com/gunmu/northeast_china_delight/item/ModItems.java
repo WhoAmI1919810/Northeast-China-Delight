@@ -146,7 +146,7 @@ public class ModItems {
     public static final Supplier<Item> BEAN_SPROUTS = food("bean_sprouts", 2, 0.3F);
     public static final Supplier<Item> SOUR_CORN_KERNELS = food("sour_corn_kernels", 3, 0.4F);
     public static final Supplier<Item> SWEET_POTATO_STARCH = simple("sweet_potato_starch");
-    /** 湿粉团：木臼里 1 个红薯加一份水（一桶 / 一盆 / 一瓶）舂出 2 个，放熔炉烧干成淀粉（2026-11-05 用户） */
+    /** 湿粉团：木臼里 1 个红薯加一份水（一桶 / 一盆 / 一瓶）舂出 2 个，放烟熏炉熏干成淀粉（2026-11-05 用户：要批量烟熏，不要批量熔炼） */
     public static final Supplier<Item> WET_STARCH_DOUGH = simple("wet_starch_dough");
     public static final Supplier<Item> VERMICELLI = plain("vermicelli");
     public static final Supplier<Item> CORN_FLOUR = plain("corn_flour");
