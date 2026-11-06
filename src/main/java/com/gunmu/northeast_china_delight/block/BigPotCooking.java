@@ -144,7 +144,7 @@ public final class BigPotCooking {
         if (!level.isClientSide) {
             ItemStack one = held.copyWithCount(1);
             addOne(pot, one, seasoning, level, pos, state);
-            ItemStack remainder = held.hasCraftingRemainingItem() ? held.getCraftingRemainingItem() : ItemStack.EMPTY;
+            ItemStack remainder = remainderOf(held);
             if (!player.getAbilities().instabuild) {
                 held.shrink(1);
                 if (!remainder.isEmpty()) {
@@ -184,6 +184,18 @@ public final class BigPotCooking {
         level.playSound(null, pos, SoundEvents.BUCKET_EMPTY, SoundSource.BLOCKS, 1.0F, 1.0F);
         splash(level, pos, state, pot, 20);
         level.gameEvent(by, GameEvent.FLUID_PLACE, pos);
+    }
+
+    /**
+     * 放进锅里以后还回来的容器：登记了合成剩余物的照还（瓶装调料还玻璃瓶、辣椒酱还碗）。
+     * 大酱是一碗酱，但没登记合成剩余物——蘸酱菜是拿这碗酱直接合成的，酱碗就是菜的碗，登记了合成时会白多一个碗；
+     * 下锅时在这里单独还碗（2026-11-06 用户：得莫利炖鱼的盐换成大酱，投入酱要返回碗）
+     */
+    private static ItemStack remainderOf(ItemStack held) {
+        if (held.hasCraftingRemainingItem()) {
+            return held.getCraftingRemainingItem();
+        }
+        return held.is(ModItems.SOY_PASTE.get()) ? new ItemStack(Items.BOWL) : ItemStack.EMPTY;
     }
 
     /** 能当料下锅：哪条配方用得上，或者谜之炖菜认 */
