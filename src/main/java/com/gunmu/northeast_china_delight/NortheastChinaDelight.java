@@ -370,6 +370,8 @@ public class NortheastChinaDelight
                     ModItems.BIG_POT_LID.get(), DdIds.of("minecraft", "blocking"),
                     (stack, level, entity, seed) ->
                             entity != null && entity.isUsingItem() && entity.getUseItem() == stack ? 1.0F : 0.0F));
+            // 脸盆架镜子照活物要用模板缓冲，主画面默认不带（client/MirrorReflections）
+            event.enqueueWork(com.gunmu.northeast_china_delight.client.MirrorReflections::enableStencil);
         }
 
         /**
@@ -386,6 +388,16 @@ public class NortheastChinaDelight
             LyricsHudOverlay.render(event.getGuiGraphics(),
                     event.getGuiGraphics().guiWidth(),
                     event.getGuiGraphics().guiHeight());
+        }
+
+        /** 脸盆架的镜子照出镜子前面的活物（client/MirrorReflections）；1.20.1 在下面的 ClientForgeEvents 里接 */
+        @SubscribeEvent
+        public static void onRenderLevelStage(net.neoforged.neoforge.client.event.RenderLevelStageEvent event)
+        {
+            if (event.getStage() == net.neoforged.neoforge.client.event.RenderLevelStageEvent.Stage.AFTER_BLOCK_ENTITIES) {
+                com.gunmu.northeast_china_delight.client.MirrorReflections.render(event.getPoseStack(), event.getCamera(),
+                        event.getFrustum(), event.getPartialTick().getGameTimeDeltaPartialTick(false));
+            }
         }
         //?}
 
@@ -837,6 +849,15 @@ public class NortheastChinaDelight
             com.gunmu.northeast_china_delight.client.LyricsHudOverlay.render(event.getGuiGraphics(),
                     event.getGuiGraphics().guiWidth(),
                     event.getGuiGraphics().guiHeight());
+        }
+
+        @SubscribeEvent
+        public static void onRenderLevelStage(net.minecraftforge.client.event.RenderLevelStageEvent event)
+        {
+            if (event.getStage() == net.minecraftforge.client.event.RenderLevelStageEvent.Stage.AFTER_BLOCK_ENTITIES) {
+                com.gunmu.northeast_china_delight.client.MirrorReflections.render(event.getPoseStack(), event.getCamera(),
+                        event.getFrustum(), event.getPartialTick());
+            }
         }
     }
     *///?}
