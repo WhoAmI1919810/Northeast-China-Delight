@@ -1,0 +1,47 @@
+{
+  "type": "minecraft:chest",
+  "random_sequence": "northeast_china_delight:chests/courtyard_kitchen_feasts",
+  "pools": [
+    {
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "northeast_china_delight:sauerkraut_bone_stew"
+        },
+        {
+          "type": "minecraft:item",
+          "name": "northeast_china_delight:ground_pot_chicken"
+        },
+        {
+          "type": "minecraft:item",
+          "name": "northeast_china_delight:ground_pot_ribs"
+        },
+        {
+          "type": "minecraft:item",
+          "name": "northeast_china_delight:slaughter_feast"
+        },
+        {
+          "type": "minecraft:item",
+          "name": "northeast_china_delight:pork_vermicelli_stew"
+        },
+        {
+          "type": "minecraft:item",
+          "name": "northeast_china_delight:harvest_stew"
+        },
+        {
+          "type": "minecraft:item",
+          "name": "northeast_china_delight:demoli_fish_stew"
+        },
+        {
+          "type": "minecraft:item",
+          "name": "northeast_china_delight:sauerkraut_seafood_stew"
+        },
+        {
+          "type": "minecraft:item",
+          "name": "northeast_china_delight:chicken_mushroom_stew"
+        }
+      ]
+    }
+  ]
+}
