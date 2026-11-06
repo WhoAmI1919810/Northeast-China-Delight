@@ -313,12 +313,17 @@ public class Vat extends Block implements EntityBlock {
             return returnRemovedRecipe(level, pos, state, vat, player);
         }
 
-        if (stack.is(Items.WATER_BUCKET) && canAddWater(vat)) {
+        // 水桶、水盆都是一层水（1000 mB），倒完还空桶 / 空大脸盆（水盆 2026-11-06 用户：「让大缸也认水盆」）
+        boolean waterBasin = stack.is(ModItems.WATER_BASIN.get());
+        if ((stack.is(Items.WATER_BUCKET) || waterBasin) && canAddWater(vat)) {
             if (!level.isClientSide) {
                 vat.addWater(VatRecipes.WATER_MB_PER_LEVEL);
                 if (!player.getAbilities().instabuild) {
                     stack.shrink(1);
-                    player.addItem(new ItemStack(Items.BUCKET));
+                    ItemStack empty = new ItemStack(waterBasin ? ModItems.LARGE_BASIN.get() : Items.BUCKET);
+                    if (!player.addItem(empty)) {
+                        player.drop(empty, false);
+                    }
                 }
                 level.playSound(null, pos, SoundEvents.BUCKET_EMPTY, SoundSource.BLOCKS, 1.0F, 1.0F);
                 refreshSalted(level, pos, vat);
