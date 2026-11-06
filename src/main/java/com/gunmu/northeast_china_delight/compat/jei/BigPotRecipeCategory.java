@@ -21,6 +21,7 @@ import mezz.jei.api.recipe.IFocusGroup;
 import mezz.jei.api.recipe.RecipeIngredientRole;
 import mezz.jei.api.recipe.RecipeType;
 import mezz.jei.api.recipe.category.IRecipeCategory;
+import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
@@ -30,11 +31,13 @@ import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Fluid;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -51,6 +54,7 @@ import java.util.Map;
  *   <li>箭头指向右边的大成品格（数量 = 一锅盛几份），按烹饪时间一遍遍走满（烹饪进度）；箭头下面是盛菜用的容器，
  *       右边一把勺子勾向成品；</li>
  *   <li>锅盖缩短时间（{@code lid_speedup}）在 JEI 里不显示；</li>
+ *   <li>鼠标移到锅上出一个框：要什么液体、要多少（2026-11-06 用户，{@link #getTooltipStrings}）；</li>
  *   <li>3 格调料、6 格食材、容器格不管配方用没用都画出来，没用的空着（用户嫌格子忽多忽少难看）。</li>
  * </ul>
  */
@@ -96,6 +100,14 @@ public class BigPotRecipeCategory implements IRecipeCategory<BigPotJeiRecipe> {
     /** 容器格右边一把勺子，勾向成品（勺子那块图连着一圈 JEI 底色，放在成品框下面，不压框） */
     private static final int LADLE_X = 141;
     private static final int LADLE_Y = 55;
+    /**
+     * 锅口那圈在 JEI 里的位置：按 drawStove 的变换把锅沿（锅心 16,16、半径 13.75 像素、高 17.25）投到界面上，
+     * 是个中心 (29, 32.5)、半宽 14.6、半高 7.3 的椭圆；各放宽一点，鼠标在这个椭圆里就算移到锅上
+     */
+    private static final double POT_CENTER_X = 29.0;
+    private static final double POT_CENTER_Y = 32.5;
+    private static final double POT_HALF_WIDTH = 15.0;
+    private static final double POT_HALF_HEIGHT = 8.0;
 
     /**
      * 篝火、箭头（灰底 + 白色走满）、秒表、经验球、勺子都直接用农夫乐事厨锅那页的图（2026-11-03 用户：照参考图用农夫乐事的图案）。
@@ -218,6 +230,57 @@ public class BigPotRecipeCategory implements IRecipeCategory<BigPotJeiRecipe> {
         for (Fluid fluid : recipe.liquids()) {
             builder.addInvisibleIngredients(RecipeIngredientRole.INPUT).addFluidStack(fluid, recipe.liquidMb());
         }
+    }
+
+    /**
+     * 鼠标移到锅上：一个框写锅里要什么液体、要多少（2026-11-06 用户）。用 getTooltipStrings 而不是新的 getTooltip：
+     * 两版 JEI 都有它，新版的 getTooltip 默认也是调它。
+     */
+    @Override
+    public List<Component> getTooltipStrings(BigPotJeiRecipe recipe, IRecipeSlotsView view,
+                                             double mouseX, double mouseY) {
+        double dx = (mouseX - POT_CENTER_X) / POT_HALF_WIDTH;
+        double dy = (mouseY - POT_CENTER_Y) / POT_HALF_HEIGHT;
+        if (dx * dx + dy * dy > 1.0) {
+            return List.of();
+        }
+        if (recipe.liquidMb() <= 0) {
+            return List.of(Component.translatable("jei.northeast_china_delight.big_pot.liquid_none"));
+        }
+        List<Component> lines = new ArrayList<>();
+        String tag = recipe.liquidTag() == null ? null : "#" + recipe.liquidTag();
+        MutableComponent names = Component.empty();
+        if (recipe.liquids().isEmpty() && tag != null) {
+            names.append(tag);
+        }
+        for (int i = 0; i < recipe.liquids().size(); i++) {
+            if (i > 0) {
+                names.append(Component.translatable("jei.northeast_china_delight.big_pot.liquid_separator"));
+            }
+            names.append(recipe.liquids().get(i).getFluidType().getDescription());
+        }
+        lines.add(Component.translatable("jei.northeast_china_delight.big_pot.liquid", names));
+        if (tag != null && !recipe.liquids().isEmpty()) {
+            lines.add(Component.translatable("jei.northeast_china_delight.big_pot.liquid_tag", tag)
+                    .withStyle(ChatFormatting.GRAY));
+        }
+        lines.add(amount(recipe.liquidMb(), recipe.liquidMaxMb()));
+        return lines;
+    }
+
+    /** 用量那行：正好 / 至少 / 最多 / 范围（配方里的大于、小于已经换成整数毫升的大于等于、小于等于） */
+    private static Component amount(int min, int max) {
+        String prefix = "jei.northeast_china_delight.big_pot.liquid_";
+        if (min == max) {
+            return Component.translatable(prefix + "exact", min);
+        }
+        if (max == Integer.MAX_VALUE) {
+            return Component.translatable(prefix + "at_least", min);
+        }
+        if (min <= 1) {
+            return Component.translatable(prefix + "at_most", max);
+        }
+        return Component.translatable(prefix + "between", min, max);
     }
 
     @Override
