@@ -1,6 +1,7 @@
 package com.gunmu.northeast_china_delight.client;
 
 import com.gunmu.northeast_china_delight.NortheastChinaDelight;
+import com.gunmu.northeast_china_delight.block.BasinStandBlock;
 import com.gunmu.northeast_china_delight.block.FacingDecorBlock;
 import com.gunmu.northeast_china_delight.block.ModBlocks;
 import com.gunmu.northeast_china_delight.util.DdIds;
@@ -58,7 +59,8 @@ import java.util.List;
  *   <li>镜子前面的活物照镜面对称画一遍，只画在圈出来的那块里，画到的地方模板改成 3；
  *       对称一下三角形绕向反了，画的时候把正面改成顺时针；</li>
  *   <li>模板为 3 的地方盖一层半透明的镜子贴图，亮度跟着那里的光照；</li>
- *   <li>这块的深度改回镜面本身的深度，后面画半透明方块、粒子时镜子照样挡得住。</li>
+ *   <li>这块的深度改回镜面本身的深度，后面画的粒子等镜子照样挡得住（画完活物要重新打开深度测试，原版画实体会把它关掉）；
+ *       「极佳」里放着水盆的，没照到活物的地方深度写在镜面稍后，让半透明层里的镜子合成时盖上来。</li>
  * </ol>
  *
  * <p>只在图像品质「高品质」「极佳」里照，「流畅」里不照，镜子就是原来那张贴图（用户 2026-11-06）。
@@ -135,7 +137,8 @@ public final class MirrorReflections {
             if (!state.is(ModBlocks.BASIN_STAND.get())) {
                 continue;
             }
-            Mirror mirror = Mirror.of(pos, state.getValue(FacingDecorBlock.FACING));
+            Mirror mirror = Mirror.of(pos, state.getValue(FacingDecorBlock.FACING),
+                    state.getValue(BasinStandBlock.BASIN) == BasinStandBlock.Basin.WATER);
             if (mirror.side(cam) > 0.02 && mirror.center.distanceTo(cam) <= MAX_DISTANCE && frustum.isVisible(mirror.box())) {
                 mirrors.add(mirror);
             }
@@ -159,6 +162,10 @@ public final class MirrorReflections {
         Vec3 shift = mirror.normal.scale(0.003).subtract(cam);
         Vec3[] corners = {mirror.corner(1, 1).add(shift), mirror.corner(-1, 1).add(shift),
                 mirror.corner(-1, -1).add(shift), mirror.corner(1, -1).add(shift)};
+        // 镜面稍后面一点（第 5 步「极佳」里放着水盆时用）
+        Vec3 back = mirror.normal.scale(-0.01).subtract(cam);
+        Vec3[] behind = {mirror.corner(1, 1).add(back), mirror.corner(-1, 1).add(back),
+                mirror.corner(-1, -1).add(back), mirror.corner(1, -1).add(back)};
 
         RenderSystem.stencilMask(0xFF);
         RenderSystem.clearStencil(0);
@@ -194,6 +201,10 @@ public final class MirrorReflections {
         drawEntities(mirror, entities, poseStack, cam, partialTick);
         GL11.glFrontFace(GL11.GL_CCW);
         RenderSystem.disableCull();
+        // 原版画完一批实体会把深度测试关掉（RenderStateShard.DepthTestStateShard 的 clearRenderState）。
+        // 深度测试关着的时候 OpenGL 根本不写深度，第 5 步写回镜面深度就白写了：镜子那块深度停在「最远」，
+        // 后画的粒子、玉米串辣椒串从镜子后面透出来（2026-11-06 用户报），这里重新打开
+        RenderSystem.enableDepthTest();
 
         // 4. 活物上面盖一层半透明的镜子贴图：光滑的镜面
         RenderSystem.stencilFunc(GL11.GL_EQUAL, 3, 0xFF);
@@ -209,10 +220,20 @@ public final class MirrorReflections {
         RenderSystem.disableBlend();
 
         // 5. 镜面那块的深度改回镜面本身
-        RenderSystem.stencilFunc(GL11.GL_EQUAL, 1, 0x01);
         RenderSystem.colorMask(false, false, false, false);
         RenderSystem.depthMask(true);
-        quad(pose, corners);
+        if (mirror.translucent && Minecraft.useShaderTransparency()) {
+            // 「极佳」里放着水盆的脸盆架：整个模型在半透明那一层的画面上，镜子最后合成时才盖到主画面上（按深度比远近）。
+            // 没照到活物的地方深度写在镜面稍后面，让那一层的镜子盖上来（不然露出主画面里镜子后面的东西）；
+            // 照到活物的地方写在镜面前面，倒影留在镜子上面
+            RenderSystem.stencilFunc(GL11.GL_EQUAL, 1, 0xFF);
+            quad(pose, behind);
+            RenderSystem.stencilFunc(GL11.GL_EQUAL, 3, 0xFF);
+            quad(pose, corners);
+        } else {
+            RenderSystem.stencilFunc(GL11.GL_EQUAL, 1, 0x01);
+            quad(pose, corners);
+        }
 
         RenderSystem.colorMask(true, true, true, true);
         RenderSystem.depthFunc(GL11.GL_LEQUAL);
@@ -362,14 +383,15 @@ public final class MirrorReflections {
      * 一面镜子：镜面中心、朝外的法线（同脸盆架的朝向，镜子朝着放的人）、横向（朝向顺时针那边）。
      * 镜面中心 = 方块中心往朝向反方向挪 {@link #BACK}，高度在方块上面 {@link #Y0}..{@link #Y1}
      */
-    private record Mirror(BlockPos pos, Vec3 center, Vec3 normal, Vec3 right) {
+    private record Mirror(BlockPos pos, Vec3 center, Vec3 normal, Vec3 right, boolean translucent) {
 
-        static Mirror of(BlockPos pos, Direction facing) {
+        /** translucent：放着水盆，整个脸盆架模型在半透明那一层画 */
+        static Mirror of(BlockPos pos, Direction facing, boolean translucent) {
             Vec3 normal = Vec3.atLowerCornerOf(facing.getNormal());
             Vec3 right = Vec3.atLowerCornerOf(facing.getClockWise().getNormal());
             Vec3 center = new Vec3(pos.getX() + 0.5, pos.getY() + (Y0 + Y1) / 2.0, pos.getZ() + 0.5)
                     .subtract(normal.scale(BACK));
-            return new Mirror(pos, center, normal, right);
+            return new Mirror(pos, center, normal, right, translucent);
         }
 
         /** 点在镜面哪一边、离镜面多远：正的是镜子正面 */
