@@ -122,13 +122,20 @@ public class NortheastJeiPlugin implements IModPlugin {
         // 窗花不是合成出来的：一手红纸一手剪刀右键剪，贴在糊纸窗上
         registration.addItemStackInfo(new ItemStack(ModItems.PAPER_CUT.get()),
                 Component.translatable("jei.northeast_china_delight.info.paper_cut"));
-        // 大灶是摆出来的，不是合成的：大铁锅和农夫乐事炉灶共用一页；锅盖单独一页（2026-11-05 用户拆开）
+        // 大灶是摆出来的，不是合成的：大铁锅、农夫乐事炉灶和锅盖共用一页（2026-11-06 用户把锅盖也放进来）；
+        // 锅盖另有自己一页（2026-11-05 用户拆开）
         registration.addItemStackInfo(java.util.List.of(new ItemStack(ModItems.BIG_IRON_POT.get()),
                         new ItemStack(net.minecraft.core.registries.BuiltInRegistries.ITEM.get(
-                                com.gunmu.northeast_china_delight.util.DdIds.of("farmersdelight", "stove")))),
+                                com.gunmu.northeast_china_delight.util.DdIds.of("farmersdelight", "stove"))),
+                        new ItemStack(ModItems.BIG_POT_LID.get())),
                 Component.translatable("jei.northeast_china_delight.info.big_stove"));
         registration.addItemStackInfo(new ItemStack(ModItems.BIG_POT_LID.get()),
                 Component.translatable("jei.northeast_china_delight.info.big_pot_lid"));
+        // 东北四件套（NortheastOutfit）单开一页，文案是用户原话（2026-11-06）
+        registration.addItemStackInfo(java.util.List.of(new ItemStack(ModItems.LARGE_BASIN.get()),
+                        new ItemStack(ModItems.FLORAL_JACKET.get()), new ItemStack(ModItems.WOODEN_MALLET.get()),
+                        new ItemStack(ModItems.BIG_POT_LID.get())),
+                Component.translatable("jei.northeast_china_delight.info.northeast_outfit"));
         // 压水井能给容器装水（2026-11-05 用户：脸盆架那页意义不明，换成压水井）
         registration.addItemStackInfo(new ItemStack(ModBlocks.HAND_PUMP.get()),
                 Component.translatable("jei.northeast_china_delight.info.hand_pump"));

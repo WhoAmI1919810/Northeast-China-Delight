@@ -26,7 +26,7 @@ import java.util.List;
  * {
  *   "type": "northeast_china_delight:big_pot_cooking",
  *   "config": {
- *     "liquid":      { "fluid": "minecraft:water", "amount": 1000 },      // 可省；"fluid" 写 "#标签" 也行
+ *     "liquid":      { "fluid": "minecraft:water", "amount": 1000 },      // 可省；"fluid" 写 "#标签" 也行；amount 见下
  *     "ingredients": [ { "item": "...", "count": 2 }, { "tag": "..." } ],  // 食材，最多 6 格
  *     "seasonings":  [ { "tag": "c:foods/seasonings/soy_sauce" } ],       // 调料，最多 3 格（瓶装调料一格 = 一剂）
  *     "container":   { "item": "northeast_china_delight:large_basin" },   // 盛菜用的容器，可省（空手盛）
@@ -37,6 +37,10 @@ import java.util.List;
  *   }
  * }
  * </pre>
+ *
+ * <p>{@code amount} 写数字是正好这么多毫升（默认 1000）；写对象是一个范围（2026-11-06 用户：「液体的量允许有范围」），
+ * {@code min} 大于等于、{@code max} 小于等于、{@code more_than} 大于、{@code less_than} 小于，至少写一个，
+ * 例如 {@code {"min": 1000, "max": 2000}}。以前数字是「至少这么多」，倒多了水也照样凑得上。</p>
  *
  * <p>{@code "disabled": true} 停用这条配方（数据包用同 ID 覆盖），{@link #decode} 返回 null。</p>
  */
@@ -53,8 +57,13 @@ public record BigPotRecipe(ResourceLocation id, @Nullable Liquid liquid, List<En
     public record Entry(Ingredient ingredient, int count) {
     }
 
-    /** 锅里要的液体：一种流体或一个流体标签，加上毫升数 */
-    public record Liquid(@Nullable Fluid fluid, @Nullable TagKey<Fluid> tag, int amount) {
+    /** 锅里要的液体：一种流体或一个流体标签，加上毫升数的范围（两头都算，max 不限时是 Integer.MAX_VALUE） */
+    public record Liquid(@Nullable Fluid fluid, @Nullable TagKey<Fluid> tag, int min, int max) {
+
+        /** 锅里这么多毫升行不行 */
+        public boolean accepts(int mb) {
+            return mb >= min && mb <= max;
+        }
 
         public boolean test(Fluid other) {
             if (other == null || other == Fluids.EMPTY) {
@@ -120,22 +129,38 @@ public record BigPotRecipe(ResourceLocation id, @Nullable Liquid liquid, List<En
 
     private static Liquid decodeLiquid(JsonObject json) {
         String name = GsonHelper.getAsString(json, "fluid");
-        int amount = integer(json, "amount", 1000);
-        if (amount <= 0) {
-            throw new JsonParseException("大锅烹饪 liquid.amount 必须为正整数");
+        int min;
+        int max;
+        if (json.has("amount") && json.get("amount").isJsonObject()) {
+            JsonObject range = json.getAsJsonObject("amount");
+            if (range.has("min") && range.has("more_than") || range.has("max") && range.has("less_than")) {
+                throw new JsonParseException("大锅烹饪 liquid.amount 里 min 和 more_than、max 和 less_than 只能各写一个");
+            }
+            if (!range.has("min") && !range.has("more_than") && !range.has("max") && !range.has("less_than")) {
+                throw new JsonParseException("大锅烹饪 liquid.amount 范围至少要写 min、max、more_than、less_than 里的一个");
+            }
+            min = range.has("more_than") ? integer(range, "more_than", 0) + 1 : integer(range, "min", 1);
+            max = range.has("less_than")
+                    ? integer(range, "less_than", 0) - 1
+                    : integer(range, "max", Integer.MAX_VALUE);
+        } else {
+            min = max = integer(json, "amount", 1000);
+        }
+        if (min <= 0 || max < min) {
+            throw new JsonParseException("大锅烹饪 liquid.amount 必须为正整数，范围不能是空的");
         }
         if (name.startsWith("#")) {
             ResourceLocation tag = ResourceLocation.tryParse(name.substring(1));
             if (tag == null) {
                 throw new JsonParseException("大锅烹饪流体标签无效：" + name);
             }
-            return new Liquid(null, TagKey.create(Registries.FLUID, tag), amount);
+            return new Liquid(null, TagKey.create(Registries.FLUID, tag), min, max);
         }
         ResourceLocation fluidId = ResourceLocation.tryParse(name);
         if (fluidId == null || !BuiltInRegistries.FLUID.containsKey(fluidId)) {
             throw new JsonParseException("大锅烹饪流体不存在：" + name);
         }
-        return new Liquid(BuiltInRegistries.FLUID.get(fluidId), null, amount);
+        return new Liquid(BuiltInRegistries.FLUID.get(fluidId), null, min, max);
     }
 
     private static List<Entry> decodeEntries(JsonObject config, String field, int max) {

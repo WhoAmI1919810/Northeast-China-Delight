@@ -21,7 +21,7 @@ public final class BigPotJeiRecipes {
     private static BigPotJeiRecipe of(BigPotRecipe recipe) {
         return new BigPotJeiRecipe(recipe.id(),
                 recipe.liquid() == null ? List.of() : recipe.liquid().fluids(),
-                recipe.liquid() == null ? 0 : recipe.liquid().amount(),
+                recipe.liquid() == null ? 0 : recipe.liquid().min(),
                 slots(recipe.ingredients()), slots(recipe.seasonings()),
                 recipe.container().copy(), recipe.result().copy(), recipe.cookingTime(), recipe.experience());
     }
