@@ -155,6 +155,8 @@ public final class DishFlavors {
         put(map, Flavor.GREASY, 2, 1000, "snowy_bean_paste");
         put(map, Flavor.GREASY, 1, 400, "candied_peanuts");
         put(map, Flavor.GREASY, 1, 600, "grilled_oil_edge");
+        // 烤冷面照烤油边给油腻那套（2026-11-06 用户：给得多一些，和烤油边之类的看齐），时长照旧 1000 刻；原来是均衡、只给滋养
+        put(map, Flavor.GREASY, 2, 1000, "grilled_cold_noodles");
         put(map, Flavor.GREASY, 1, 200, "grilled_chicken_frame");
 
         put(map, Flavor.REFRESHING, 2, 600, "sweet_potato_porridge");
@@ -198,7 +200,6 @@ public final class DishFlavors {
         put(map, Flavor.BALANCED, 5, 1200, "borscht");
         put(map, Flavor.BALANCED, 3, 1000, "ginseng_chicken_soup");
         put(map, Flavor.BALANCED, 5, 1200, "bibimbap");
-        put(map, Flavor.BALANCED, 2, 1000, "grilled_cold_noodles");
         put(map, Flavor.BALANCED, 2, "red_bean_songpyeon");
         put(map, Flavor.BALANCED, 2, "peanut_songpyeon");
 
