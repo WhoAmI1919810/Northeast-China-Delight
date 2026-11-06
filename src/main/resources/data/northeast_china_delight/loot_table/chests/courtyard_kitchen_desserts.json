@@ -1,0 +1,55 @@
+{
+  "type": "minecraft:chest",
+  "random_sequence": "northeast_china_delight:chests/courtyard_kitchen_desserts",
+  "pools": [
+    {
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "northeast_china_delight:kvass"
+        },
+        {
+          "type": "minecraft:item",
+          "name": "northeast_china_delight:canned_yellow_peach"
+        },
+        {
+          "type": "minecraft:item",
+          "name": "northeast_china_delight:peanut_cake"
+        },
+        {
+          "type": "minecraft:item",
+          "name": "northeast_china_delight:pounded_rice_cake"
+        },
+        {
+          "type": "minecraft:item",
+          "name": "northeast_china_delight:red_bean_songpyeon"
+        },
+        {
+          "type": "minecraft:item",
+          "name": "northeast_china_delight:peanut_songpyeon"
+        },
+        {
+          "type": "minecraft:item",
+          "name": "northeast_china_delight:sticky_bean_bun"
+        },
+        {
+          "type": "minecraft:item",
+          "name": "northeast_china_delight:hazelnut_sugar_fire_bun"
+        },
+        {
+          "type": "minecraft:item",
+          "name": "northeast_china_delight:candied_sweet_potato"
+        },
+        {
+          "type": "minecraft:item",
+          "name": "northeast_china_delight:snowy_bean_paste"
+        },
+        {
+          "type": "minecraft:item",
+          "name": "northeast_china_delight:candied_peanuts"
+        }
+      ]
+    }
+  ]
+}

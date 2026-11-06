@@ -280,7 +280,7 @@ main 分支为 1.21.1（NeoForge）开发主线；1.20.1（Forge）版本线见 
 | `worldgen.village_farm_crops_enabled` | `true`，允许本模组作物在村庄农田生成 |
 | `worldgen.village_farm_allowed_crops` | 全部 16 种农田作物的播种物品 ID |
 | `chest_loot.enabled` | `true`，允许本模组物品在箱子战利品生成 |
-| `chest_loot.allowed_items` | 全部 70 种现有箱子候选的物品 ID |
+| `chest_loot.allowed_items` | 全部 138 种现有箱子候选的物品 ID |
 
 列表由游戏自动写入完整默认值，可直接删除不希望生成的条目；填写完整注册 ID，例如 `northeast_china_delight:soybean`、`northeast_china_delight:corn_seeds`，不要填写中文名。设为 `[]` 表示不允许生成任何本模组候选，开关设为 `false` 则直接关闭对应生成。
 

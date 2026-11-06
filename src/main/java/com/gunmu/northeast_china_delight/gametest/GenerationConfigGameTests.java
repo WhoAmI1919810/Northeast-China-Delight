@@ -70,7 +70,12 @@ public final class GenerationConfigGameTests {
             "northeast_china_delight:chests/courtyard_kitchen",
             "northeast_china_delight:chests/courtyard_house",
             "northeast_china_delight:chests/courtyard_granary",
-            "northeast_china_delight:chests/courtyard_disc");
+            "northeast_china_delight:chests/courtyard_disc",
+            // 厨房表每格先按权重挑一张子表再抽（2026-11-06）：子表里的物品同样要在默认名单里
+            "northeast_china_delight:chests/courtyard_kitchen_staples",
+            "northeast_china_delight:chests/courtyard_kitchen_desserts",
+            "northeast_china_delight:chests/courtyard_kitchen_dishes",
+            "northeast_china_delight:chests/courtyard_kitchen_feasts");
 
     private GenerationConfigGameTests() {
     }
@@ -291,7 +296,7 @@ public final class GenerationConfigGameTests {
     @GameTest(template = "empty")
     public static void chestDefaultsCoverExistingChestTables(GameTestHelper helper) {
         var allowed = Set.copyOf(NortheastChinaConfig.DEFAULT_CHEST_LOOT_ITEMS);
-        helper.assertTrue(allowed.size() == 70, "默认箱子列表应包含全部 70 种现有候选");
+        helper.assertTrue(allowed.size() == 138, "默认箱子列表应包含全部 138 种现有候选");
         for (String id : allowed) {
             helper.assertTrue(BuiltInRegistries.ITEM.containsKey(DdIds.parse(id)), "默认候选必须是已注册物品：" + id);
         }
@@ -306,7 +311,9 @@ public final class GenerationConfigGameTests {
             for (var pool : json.getAsJsonArray("pools")) {
                 for (var entry : pool.getAsJsonObject().getAsJsonArray("entries")) {
                     var value = entry.getAsJsonObject();
-                    if (value.has("name") && value.get("name").getAsString().startsWith(NortheastChinaDelight.MODID + ":")) {
+                    // 引用子表的条目（minecraft:loot_table）写的 name 是表名，不是物品，子表自己在 COURTYARD_TABLES 里查
+                    boolean nested = value.has("type") && value.get("type").getAsString().equals("minecraft:loot_table");
+                    if (!nested && value.has("name") && value.get("name").getAsString().startsWith(NortheastChinaDelight.MODID + ":")) {
                         helper.assertTrue(allowed.contains(value.get("name").getAsString()), "小院箱子候选不得遗漏");
                     }
                 }

@@ -1,0 +1,235 @@
+{
+  "type": "minecraft:chest",
+  "random_sequence": "northeast_china_delight:chests/courtyard_kitchen_dishes",
+  "pools": [
+    {
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "northeast_china_delight:braised_pork_hock"
+        },
+        {
+          "type": "minecraft:item",
+          "name": "northeast_china_delight:braised_pork_strips"
+        },
+        {
+          "type": "minecraft:item",
+          "name": "northeast_china_delight:soy_milk"
+        },
+        {
+          "type": "minecraft:item",
+          "name": "northeast_china_delight:old_style_crispy_pork"
+        },
+        {
+          "type": "minecraft:item",
+          "name": "northeast_china_delight:new_style_crispy_pork"
+        },
+        {
+          "type": "minecraft:item",
+          "name": "northeast_china_delight:three_fresh_veggies"
+        },
+        {
+          "type": "minecraft:item",
+          "name": "northeast_china_delight:pepper_dried_tofu"
+        },
+        {
+          "type": "minecraft:item",
+          "name": "northeast_china_delight:sauerkraut_bone_stew_bowl"
+        },
+        {
+          "type": "minecraft:item",
+          "name": "northeast_china_delight:ground_pot_chicken_bowl"
+        },
+        {
+          "type": "minecraft:item",
+          "name": "northeast_china_delight:sour_noodle_soup"
+        },
+        {
+          "type": "minecraft:item",
+          "name": "northeast_china_delight:steamed_egg_soy_paste"
+        },
+        {
+          "type": "minecraft:item",
+          "name": "northeast_china_delight:ground_pot_ribs_bowl"
+        },
+        {
+          "type": "minecraft:item",
+          "name": "northeast_china_delight:slaughter_feast_bowl"
+        },
+        {
+          "type": "minecraft:item",
+          "name": "northeast_china_delight:cured_pork_bean_stew"
+        },
+        {
+          "type": "minecraft:item",
+          "name": "northeast_china_delight:crispy_pork_strips"
+        },
+        {
+          "type": "minecraft:item",
+          "name": "northeast_china_delight:braised_pork_ribs"
+        },
+        {
+          "type": "minecraft:item",
+          "name": "northeast_china_delight:pickled_cucumber_pork_stirfry"
+        },
+        {
+          "type": "minecraft:item",
+          "name": "northeast_china_delight:sweet_potato_porridge"
+        },
+        {
+          "type": "minecraft:item",
+          "name": "northeast_china_delight:pork_vermicelli_stew_bowl"
+        },
+        {
+          "type": "minecraft:item",
+          "name": "northeast_china_delight:sauerkraut_fried_vermicelli"
+        },
+        {
+          "type": "minecraft:item",
+          "name": "northeast_china_delight:buckwheat_cold_noodles"
+        },
+        {
+          "type": "minecraft:item",
+          "name": "northeast_china_delight:dog_bao_pickles"
+        },
+        {
+          "type": "minecraft:item",
+          "name": "northeast_china_delight:pickled_veggie_salad"
+        },
+        {
+          "type": "minecraft:item",
+          "name": "northeast_china_delight:shredded_pollack"
+        },
+        {
+          "type": "minecraft:item",
+          "name": "northeast_china_delight:dip_veggie_platter"
+        },
+        {
+          "type": "minecraft:item",
+          "name": "northeast_china_delight:stuffed_cucumber_pickle"
+        },
+        {
+          "type": "minecraft:item",
+          "name": "northeast_china_delight:peanut_potato_salad"
+        },
+        {
+          "type": "minecraft:item",
+          "name": "northeast_china_delight:harvest_stew_bowl"
+        },
+        {
+          "type": "minecraft:item",
+          "name": "northeast_china_delight:cabbage_tofu_vermicelli_stew"
+        },
+        {
+          "type": "minecraft:item",
+          "name": "northeast_china_delight:spicy_beef_soup"
+        },
+        {
+          "type": "minecraft:item",
+          "name": "northeast_china_delight:kimchi_fried_rice"
+        },
+        {
+          "type": "minecraft:item",
+          "name": "northeast_china_delight:potato_pancake"
+        },
+        {
+          "type": "minecraft:item",
+          "name": "northeast_china_delight:shrimp_paste_scrambled_egg"
+        },
+        {
+          "type": "minecraft:item",
+          "name": "northeast_china_delight:shrimp_paste_tofu_stew"
+        },
+        {
+          "type": "minecraft:item",
+          "name": "northeast_china_delight:seafood_tofu_soup"
+        },
+        {
+          "type": "minecraft:item",
+          "name": "northeast_china_delight:snow_mustard_tofu_stew"
+        },
+        {
+          "type": "minecraft:item",
+          "name": "northeast_china_delight:kimchi_tofu_soup"
+        },
+        {
+          "type": "minecraft:item",
+          "name": "northeast_china_delight:corn_fritter"
+        },
+        {
+          "type": "minecraft:item",
+          "name": "northeast_china_delight:crushed_corn_porridge"
+        },
+        {
+          "type": "minecraft:item",
+          "name": "northeast_china_delight:smoked_meat_platter"
+        },
+        {
+          "type": "minecraft:item",
+          "name": "northeast_china_delight:orange_crispy_pork"
+        },
+        {
+          "type": "minecraft:item",
+          "name": "northeast_china_delight:mung_bean_sheet_salad"
+        },
+        {
+          "type": "minecraft:item",
+          "name": "northeast_china_delight:braised_sea_cucumber_scallion"
+        },
+        {
+          "type": "minecraft:item",
+          "name": "northeast_china_delight:sea_cucumber_tofu_soup"
+        },
+        {
+          "type": "minecraft:item",
+          "name": "northeast_china_delight:salted_fish_flatbread"
+        },
+        {
+          "type": "minecraft:item",
+          "name": "northeast_china_delight:dry_fried_hairtail"
+        },
+        {
+          "type": "minecraft:item",
+          "name": "northeast_china_delight:braised_hairtail"
+        },
+        {
+          "type": "minecraft:item",
+          "name": "northeast_china_delight:soy_paste_soup"
+        },
+        {
+          "type": "minecraft:item",
+          "name": "northeast_china_delight:demoli_fish_stew_bowl"
+        },
+        {
+          "type": "minecraft:item",
+          "name": "northeast_china_delight:borscht"
+        },
+        {
+          "type": "minecraft:item",
+          "name": "northeast_china_delight:sauerkraut_seafood_stew_bowl"
+        },
+        {
+          "type": "minecraft:item",
+          "name": "northeast_china_delight:ginseng_chicken_soup"
+        },
+        {
+          "type": "minecraft:item",
+          "name": "northeast_china_delight:chicken_mushroom_stew_bowl"
+        },
+        {
+          "type": "minecraft:item",
+          "name": "northeast_china_delight:bibimbap"
+        },
+        {
+          "type": "minecraft:item",
+          "name": "northeast_china_delight:kimchi_pancake"
+        },
+        {
+          "type": "minecraft:item",
+          "name": "northeast_china_delight:tiger_salad"
+        }
+      ]
+    }
+  ]
+}
