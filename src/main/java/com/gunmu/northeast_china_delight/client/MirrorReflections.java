@@ -21,6 +21,7 @@ import net.minecraft.client.GraphicsStatus;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.GameRenderer;
+import net.minecraft.client.renderer.LevelRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.culling.Frustum;
 import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
@@ -31,7 +32,6 @@ import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.level.LightLayer;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
@@ -56,9 +56,13 @@ import java.util.List;
  * <ol>
  *   <li>模板缓冲把镜面没被挡住的那块圈出来（写 1）；</li>
  *   <li>这块的深度清到最远（glDepthRange(1, 1)）；</li>
- *   <li>镜子前面的活物照镜面对称画一遍，只画在圈出来的那块里，画到的地方模板改成 3；
+ *   <li>镜子前面的活物照镜面对称画一遍，只画在圈出来的那块里，一个活物一个模板编号（1 | 序号 &lt;&lt; 1）；
  *       对称一下三角形绕向反了，画的时候把正面改成顺时针；</li>
- *   <li>模板为 3 的地方盖一层半透明的镜子贴图，亮度跟着那里的光照；</li>
+ *   <li>每个活物上盖一层镜子贴图（同方块一样用光照贴图、乘朝向的面亮度，和模型里那片镜子一个颜色）：
+ *       离镜子 {@link #CLEAR_DISTANCE} 格以内盖 {@link #GLOSS}，像隔着一层光滑的玻璃；再远越盖越实，
+ *       到 {@link #FADE_DISTANCE} 格完全盖住、和不照一样，走近时倒影慢慢浮出来，不会突然冒出来
+ *       （2026-11-06 用户：玩家越远照到的越不清晰，和完全不显示衔接一下，3 格以内最清晰）。
+ *       人离镜子 {@link #CAMERA_CLEAR_DISTANCE}..{@link #MAX_DISTANCE} 格之间也照这样整体淡掉；</li>
  *   <li>这块的深度改回镜面本身的深度，后面画的粒子等镜子照样挡得住（画完活物要重新打开深度测试，原版画实体会把它关掉）；
  *       「极佳」里放着水盆的，没照到活物的地方深度写在镜面稍后，让半透明层里的镜子合成时盖上来。</li>
  * </ol>
@@ -73,11 +77,15 @@ public final class MirrorReflections {
     private static final int SCAN_RADIUS = 12;
     private static final int SCAN_HEIGHT = 5;
     private static final int RESCAN_TICKS = 10;
-    /** 离镜子多远以内才照、一次最多照几面镜子、每面最多照几个活物、镜子前面多远的活物照得进去 */
-    private static final double MAX_DISTANCE = 12.0;
+    /** 一次最多照几面镜子、每面最多照几个活物（模板编号用到 1 | 12 << 1 = 25，八位够） */
     private static final int MAX_MIRRORS = 2;
     private static final int MAX_ENTITIES = 12;
-    private static final double REACH = 8.0;
+    /** 活物离镜子多远：这以内最清楚、到这儿完全看不见（中间平滑过渡） */
+    private static final double CLEAR_DISTANCE = 3.0;
+    private static final double FADE_DISTANCE = 8.0;
+    /** 人（相机）离镜子多远：这以内不淡、到这儿完全不照 */
+    private static final double CAMERA_CLEAR_DISTANCE = 9.0;
+    private static final double MAX_DISTANCE = 12.0;
 
     /** 镜面在模型里的位置（basin_stand.json，朝北那份）：x 2.75..13.25、y 22.75..26.75，正面在 z 13.9 */
     private static final double HALF_WIDTH = (13.25 - 2.75) / 2.0 / 16.0;
@@ -88,7 +96,7 @@ public final class MirrorReflections {
     private static final float TEX_U0 = 2.75F / 16.0F;
     private static final float TEX_U1 = 13.25F / 16.0F;
     private static final float TEX_V1 = 4.0F / 16.0F;
-    /** 盖在照出来的活物上那层镜子贴图有多实 */
+    /** 离得近时盖在照出来的活物上那层镜子贴图有多实 */
     private static final float GLOSS = 0.35F;
     private static final ResourceLocation MIRROR_TEXTURE = DdIds.of(NortheastChinaDelight.MODID, "block/mirror");
 
@@ -146,14 +154,26 @@ public final class MirrorReflections {
         mirrors.sort(Comparator.comparingDouble(m -> m.center.distanceToSqr(cam)));
         for (int i = 0; i < Math.min(MAX_MIRRORS, mirrors.size()); i++) {
             Mirror mirror = mirrors.get(i);
-            List<LivingEntity> entities = mirror.entities(level);
-            if (!entities.isEmpty()) {
-                draw(mirror, entities, poseStack, cam, level, partialTick);
+            float cameraFade = fade(mirror.center.distanceTo(cam), CAMERA_CLEAR_DISTANCE, MAX_DISTANCE);
+            List<Seen> seen = mirror.entities(level, cameraFade);
+            if (!seen.isEmpty()) {
+                draw(mirror, seen, poseStack, cam, level, partialTick);
             }
         }
     }
 
-    private static void draw(Mirror mirror, List<LivingEntity> entities, PoseStack poseStack, Vec3 cam,
+    /** 清晰度：near 以内 1，far 以外 0，中间平滑（smoothstep）过渡 */
+    private static float fade(double distance, double near, double far) {
+        double t = Mth.clamp((distance - near) / (far - near), 0.0, 1.0);
+        return (float) (1.0 - t * t * (3.0 - 2.0 * t));
+    }
+
+    /** 第 i 个活物的模板编号：第 0 位是「镜面里」，往上几位是序号 */
+    private static int stencilRef(int i) {
+        return 1 | ((i + 1) << 1);
+    }
+
+    private static void draw(Mirror mirror, List<Seen> seen, PoseStack poseStack, Vec3 cam,
                              ClientLevel level, float partialTick) {
         Minecraft mc = Minecraft.getInstance();
         mc.getMainRenderTarget().bindWrite(false);
@@ -193,12 +213,11 @@ public final class MirrorReflections {
         RenderSystem.depthFunc(GL11.GL_LEQUAL);
         RenderSystem.colorMask(true, true, true, true);
 
-        // 3. 照出来的活物：只画在模板第 0 位是 1 的地方，画到的地方模板改成 3
-        RenderSystem.stencilFunc(GL11.GL_EQUAL, 3, 0x01);
+        // 3. 照出来的活物：只画在模板第 0 位是 1 的地方，画到的地方模板写成这个活物的编号（drawEntities 里一个一个设）
         RenderSystem.stencilOp(GL11.GL_KEEP, GL11.GL_KEEP, GL11.GL_REPLACE);
         RenderSystem.enableCull();
         GL11.glFrontFace(GL11.GL_CW);
-        drawEntities(mirror, entities, poseStack, cam, partialTick);
+        drawEntities(mirror, seen, poseStack, cam, partialTick);
         GL11.glFrontFace(GL11.GL_CCW);
         RenderSystem.disableCull();
         // 原版画完一批实体会把深度测试关掉（RenderStateShard.DepthTestStateShard 的 clearRenderState）。
@@ -206,33 +225,32 @@ public final class MirrorReflections {
         // 后画的粒子、玉米串辣椒串从镜子后面透出来（2026-11-06 用户报），这里重新打开
         RenderSystem.enableDepthTest();
 
-        // 4. 活物上面盖一层半透明的镜子贴图：光滑的镜面
-        RenderSystem.stencilFunc(GL11.GL_EQUAL, 3, 0xFF);
+        // 4. 每个活物上盖一层镜子贴图：近的薄（光滑的镜面），远的厚，到头完全盖住
         RenderSystem.stencilOp(GL11.GL_KEEP, GL11.GL_KEEP, GL11.GL_KEEP);
         RenderSystem.depthMask(false);
         RenderSystem.depthFunc(GL11.GL_ALWAYS);
         RenderSystem.enableBlend();
         RenderSystem.defaultBlendFunc();
-        float light = brightness(level, mirror.pos.above());
-        RenderSystem.setShaderColor(light, light, light, GLOSS);
-        glossQuad(pose, corners);
         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
+        int light = LevelRenderer.getLightColor(level, mirror.pos.above());
+        float shade = level.getShade(mirror.facing, true);
+        for (int i = 0; i < seen.size(); i++) {
+            RenderSystem.stencilFunc(GL11.GL_EQUAL, stencilRef(i), 0xFF);
+            glossQuad(pose, corners, light, shade, GLOSS + (1.0F - GLOSS) * (1.0F - seen.get(i).fade()));
+        }
         RenderSystem.disableBlend();
 
         // 5. 镜面那块的深度改回镜面本身
         RenderSystem.colorMask(false, false, false, false);
         RenderSystem.depthMask(true);
+        RenderSystem.stencilFunc(GL11.GL_EQUAL, 1, 0x01);
+        quad(pose, corners);
         if (mirror.translucent && Minecraft.useShaderTransparency()) {
             // 「极佳」里放着水盆的脸盆架：整个模型在半透明那一层的画面上，镜子最后合成时才盖到主画面上（按深度比远近）。
-            // 没照到活物的地方深度写在镜面稍后面，让那一层的镜子盖上来（不然露出主画面里镜子后面的东西）；
-            // 照到活物的地方写在镜面前面，倒影留在镜子上面
+            // 没照到活物的地方（模板正好是 1）深度改写在镜面稍后面，让那一层的镜子盖上来（不然露出主画面里镜子后面的东西）；
+            // 照到活物的地方留在镜面前面，倒影留在镜子上面
             RenderSystem.stencilFunc(GL11.GL_EQUAL, 1, 0xFF);
             quad(pose, behind);
-            RenderSystem.stencilFunc(GL11.GL_EQUAL, 3, 0xFF);
-            quad(pose, corners);
-        } else {
-            RenderSystem.stencilFunc(GL11.GL_EQUAL, 1, 0x01);
-            quad(pose, corners);
         }
 
         RenderSystem.colorMask(true, true, true, true);
@@ -245,7 +263,7 @@ public final class MirrorReflections {
     }
 
     /** 活物照镜面对称画一遍：以镜面为界翻过去（镜面都是正南正北或正东正西，翻一个轴就行） */
-    private static void drawEntities(Mirror mirror, List<LivingEntity> entities, PoseStack poseStack, Vec3 cam,
+    private static void drawEntities(Mirror mirror, List<Seen> seen, PoseStack poseStack, Vec3 cam,
                                      float partialTick) {
         EntityRenderDispatcher dispatcher = Minecraft.getInstance().getEntityRenderDispatcher();
         MultiBufferSource.BufferSource buffers = bufferSource();
@@ -256,15 +274,18 @@ public final class MirrorReflections {
         poseStack.translate(-c.x, -c.y, -c.z);
         dispatcher.setRenderShadow(false);
         try {
-            for (LivingEntity entity : entities) {
+            for (int i = 0; i < seen.size(); i++) {
+                LivingEntity entity = seen.get(i).entity();
                 double x = Mth.lerp(partialTick, entity.xOld, entity.getX()) - cam.x;
                 double y = Mth.lerp(partialTick, entity.yOld, entity.getY()) - cam.y;
                 double z = Mth.lerp(partialTick, entity.zOld, entity.getZ()) - cam.z;
                 float yaw = Mth.lerp(partialTick, entity.yRotO, entity.getYRot());
+                // 模板状态在真正画（endBatch）的时候才起作用，所以一个活物画完就 endBatch
+                RenderSystem.stencilFunc(GL11.GL_EQUAL, stencilRef(i), 0x01);
                 dispatcher.render(entity, x, y, z, yaw, partialTick, poseStack, buffers,
                         dispatcher.getPackedLightCoords(entity, partialTick));
+                buffers.endBatch();
             }
-            buffers.endBatch();
         } finally {
             dispatcher.setRenderShadow(true);
             poseStack.popPose();
@@ -305,38 +326,36 @@ public final class MirrorReflections {
 
     /**
      * 镜子贴图那块（同模型里的 uv）贴在镜面上。四个角的顺序同 {@link #draw}：右上、左上、左下、右下（「右」是朝向顺时针那边，
-     * 站在镜子前面看是左手边），模型里镜面正面 u 2.75 在这一边
+     * 站在镜子前面看是左手边），模型里镜面正面 u 2.75 在这一边。
+     * 颜色同方块：光照贴图（light）× 朝向的面亮度（shade），完全盖住时和模型里那片镜子一个样
      */
-    private static void glossQuad(Matrix4f pose, Vec3[] corners) {
+    private static void glossQuad(Matrix4f pose, Vec3[] corners, int light, float shade, float alpha) {
         TextureAtlasSprite sprite = Minecraft.getInstance().getTextureAtlas(TextureAtlas.LOCATION_BLOCKS).apply(MIRROR_TEXTURE);
         float u0 = Mth.lerp(TEX_U0, sprite.getU0(), sprite.getU1());
         float u1 = Mth.lerp(TEX_U1, sprite.getU0(), sprite.getU1());
         float v0 = sprite.getV0();
         float v1 = Mth.lerp(TEX_V1, sprite.getV0(), sprite.getV1());
         float[][] uv = {{u0, v0}, {u1, v0}, {u1, v1}, {u0, v1}};
-        RenderSystem.setShader(GameRenderer::getPositionTexShader);
+        RenderSystem.setShader(GameRenderer::getPositionColorTexLightmapShader);
         RenderSystem.setShaderTexture(0, TextureAtlas.LOCATION_BLOCKS);
+        Minecraft.getInstance().gameRenderer.lightTexture().turnOnLightLayer();
         //? if >=1.20.5 {
-        BufferBuilder builder = Tesselator.getInstance().begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX);
+        BufferBuilder builder = Tesselator.getInstance().begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR_TEX_LIGHTMAP);
         for (int i = 0; i < 4; i++) {
-            builder.addVertex(pose, (float) corners[i].x, (float) corners[i].y, (float) corners[i].z).setUv(uv[i][0], uv[i][1]);
+            builder.addVertex(pose, (float) corners[i].x, (float) corners[i].y, (float) corners[i].z)
+                    .setColor(shade, shade, shade, alpha).setUv(uv[i][0], uv[i][1]).setLight(light);
         }
         BufferUploader.drawWithShader(builder.buildOrThrow());
         //?} else {
         /*BufferBuilder builder = Tesselator.getInstance().getBuilder();
-        builder.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_TEX);
+        builder.begin(VertexFormat.Mode.QUADS, DefaultVertexFormat.POSITION_COLOR_TEX_LIGHTMAP);
         for (int i = 0; i < 4; i++) {
-            builder.vertex(pose, (float) corners[i].x, (float) corners[i].y, (float) corners[i].z).uv(uv[i][0], uv[i][1]).endVertex();
+            builder.vertex(pose, (float) corners[i].x, (float) corners[i].y, (float) corners[i].z)
+                    .color(shade, shade, shade, alpha).uv(uv[i][0], uv[i][1]).uv2(light).endVertex();
         }
         BufferUploader.drawWithShader(builder.end());
         *///?}
-    }
-
-    /** 盖上去那层贴图的亮度：跟着镜子那儿的光照（夜里不能比镜子本身还亮） */
-    private static float brightness(ClientLevel level, BlockPos pos) {
-        int sky = level.getBrightness(LightLayer.SKY, pos) - level.getSkyDarken();
-        int block = level.getBrightness(LightLayer.BLOCK, pos);
-        return Mth.clamp(Math.max(sky, block) / 15.0F, 0.15F, 1.0F);
+        Minecraft.getInstance().gameRenderer.lightTexture().turnOffLightLayer();
     }
 
     /** 每半秒扫一遍相机周围的脸盆架 */
@@ -383,7 +402,7 @@ public final class MirrorReflections {
      * 一面镜子：镜面中心、朝外的法线（同脸盆架的朝向，镜子朝着放的人）、横向（朝向顺时针那边）。
      * 镜面中心 = 方块中心往朝向反方向挪 {@link #BACK}，高度在方块上面 {@link #Y0}..{@link #Y1}
      */
-    private record Mirror(BlockPos pos, Vec3 center, Vec3 normal, Vec3 right, boolean translucent) {
+    private record Mirror(BlockPos pos, Direction facing, Vec3 center, Vec3 normal, Vec3 right, boolean translucent) {
 
         /** translucent：放着水盆，整个脸盆架模型在半透明那一层画 */
         static Mirror of(BlockPos pos, Direction facing, boolean translucent) {
@@ -391,7 +410,7 @@ public final class MirrorReflections {
             Vec3 right = Vec3.atLowerCornerOf(facing.getClockWise().getNormal());
             Vec3 center = new Vec3(pos.getX() + 0.5, pos.getY() + (Y0 + Y1) / 2.0, pos.getZ() + 0.5)
                     .subtract(normal.scale(BACK));
-            return new Mirror(pos, center, normal, right, translucent);
+            return new Mirror(pos, facing, center, normal, right, translucent);
         }
 
         /** 点在镜面哪一边、离镜面多远：正的是镜子正面 */
@@ -408,13 +427,23 @@ public final class MirrorReflections {
             return new AABB(corner(-1, -1), corner(1, 1)).inflate(0.05);
         }
 
-        /** 镜子正面一定范围里的活物，近的在前 */
-        List<LivingEntity> entities(ClientLevel level) {
-            AABB area = new AABB(center, center).inflate(REACH, 4.0, REACH);
-            List<LivingEntity> found = level.getEntitiesOfClass(LivingEntity.class, area,
-                    e -> e.isAlive() && side(e.getBoundingBox().getCenter()) > 0.05);
-            found.sort(Comparator.comparingDouble(e -> e.distanceToSqr(center)));
+        /** 镜子正面看得见的活物和各自的清晰度（离镜面中心越远越淡，再乘上人离镜子远近的 cameraFade），近的在前 */
+        List<Seen> entities(ClientLevel level, float cameraFade) {
+            AABB area = new AABB(center, center).inflate(FADE_DISTANCE, 4.0, FADE_DISTANCE);
+            List<Seen> found = new ArrayList<>();
+            for (LivingEntity e : level.getEntitiesOfClass(LivingEntity.class, area,
+                    x -> x.isAlive() && side(x.getBoundingBox().getCenter()) > 0.05)) {
+                float f = fade(e.getBoundingBox().getCenter().distanceTo(center), CLEAR_DISTANCE, FADE_DISTANCE) * cameraFade;
+                if (f > 0.004F) {
+                    found.add(new Seen(e, f));
+                }
+            }
+            found.sort(Comparator.comparingDouble(s -> s.entity().distanceToSqr(center)));
             return found.size() > MAX_ENTITIES ? new ArrayList<>(found.subList(0, MAX_ENTITIES)) : found;
         }
+    }
+
+    /** 照得进去的一个活物和它的清晰度（1 最清楚，0 看不见） */
+    private record Seen(LivingEntity entity, float fade) {
     }
 }
