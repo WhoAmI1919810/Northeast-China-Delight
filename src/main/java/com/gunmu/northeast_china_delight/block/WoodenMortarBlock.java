@@ -296,6 +296,33 @@ public class WoodenMortarBlock extends BaseEntityBlock {
         return InteractionResult.SUCCESS;
     }
 
+    /**
+     * 压水井往空臼里放一份水（2026-11-06 用户：出水嘴前下方一格是空的木臼就放 1 份水进去，{@link HandPumpBlock}）。
+     * 只认真空臼：没放料、没搁木槌、没开舂；还得有配方收水（默认是红薯湿粉团）。记成一桶水，和拿水桶放的一样，
+     * 退料时照样要一个空桶。倒水声由压水井出。只在服务端调。
+     */
+    public static boolean pumpWater(BlockState state, Level level, BlockPos pos) {
+        if (level.isClientSide || !(level.getBlockEntity(pos) instanceof WoodenMortarBlockEntity mortar)
+                || state.getValue(STATE) != 0 || state.getValue(MALLET) || mortar.hasMallet()
+                || mortar.hasDepositedInputs() || mortar.started()) {
+            return false;
+        }
+        ItemStack water = new ItemStack(Items.WATER_BUCKET);
+        var manager = level.getRecipeManager();
+        if (PoundingRecipes.room(manager, new ArrayList<>(), water) <= 0) {
+            return false;
+        }
+        List<ItemStack> contents = new ArrayList<>();
+        contents.add(water);
+        PoundingRecipes.Fit fit = PoundingRecipes.choose(manager, contents);
+        if (fit == null) {
+            return false;
+        }
+        mortar.setDeposits(fit.recipe().id(), fit.slots());
+        setStage(level, pos, state, fit.complete() ? fit.recipe().filledState() : 0);
+        return true;
+    }
+
     /** 放进去的这样东西用完剩什么：看配方里认它的那一格（同一样东西各条配方一般剩的一样） */
     private static ItemStack leftover(PoundingRecipes.Recipe recipe, ItemStack moved) {
         for (PoundingRecipes.Input input : recipe.inputs()) {

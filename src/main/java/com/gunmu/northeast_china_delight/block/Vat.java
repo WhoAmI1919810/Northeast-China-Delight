@@ -227,6 +227,26 @@ public class Vat extends Block implements EntityBlock {
     }
 
     /** 现在能不能再往缸里倒一桶水 */
+    /**
+     * 压水井往缸里倒一层水（2026-11-06 用户：出水嘴前下方一格是大缸就水位 +1，{@link HandPumpBlock}）。
+     * 规矩同拿水桶右键：压着石头不收，满了、有酸引水、配方丢了不收；倒完同样重算腌制状态、看能不能开工。
+     * 倒水声由压水井出。只在服务端调。
+     */
+    public boolean pumpWater(BlockState state, Level level, BlockPos pos) {
+        VatBlockEntity vat = vatAt(level, pos);
+        if (vat == null || level.isClientSide) {
+            return false;
+        }
+        resetStalledProgress(level, pos, state, vat);
+        if (vat.isPressed() || !canAddWater(vat)) {
+            return false;
+        }
+        vat.addWater(VatRecipes.WATER_MB_PER_LEVEL);
+        refreshSalted(level, pos, vat);
+        tryStart(level, pos, vat);
+        return true;
+    }
+
     private static boolean canAddWater(VatBlockEntity vat) {
         if (vat.hasMissingUnfinishedRecipe()) {
             return false;
