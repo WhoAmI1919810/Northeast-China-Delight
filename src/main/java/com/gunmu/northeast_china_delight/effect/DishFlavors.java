@@ -65,7 +65,7 @@ public final class DishFlavors {
             Map.entry("seafood_tofu_soup", 0),
             Map.entry("snow_mustard_tofu_stew", 0),
             Map.entry("sea_cucumber_tofu_soup", 0),
-            Map.entry("sauerkraut_seafood_stew", 0),
+            Map.entry("sauerkraut_seafood_stew_bowl", 0),   // 原来写的是盆（吃不了），碗装那碗一直没暖身（2026-11-06 用户让改）
             Map.entry("spicy_beef_soup", 0),
             Map.entry("kimchi_tofu_soup", 0),
             Map.entry("ginseng_chicken_soup", 0),
