@@ -269,6 +269,130 @@ main 分支为 1.21.1（NeoForge）开发主线；1.20.1（Forge）版本线见 
 
 支持新 ID 新增、同 ID 覆盖及 `{"type":"northeast_china_delight:drying","config":{"disabled":true}}` 禁用。原料支持物品、标签和任选数组；产物为 1–2 项，按每份原料扩展数量并自动分堆。加工时长仍由机械动力的鼓风机配置决定，不增加独立的配方时长。执行 `/reload` 后新规则用于实际风干，并刷新 1.21.1 的 JEI 页面；1.20.1 保持原有风干分类不注册的状态。
 
+## 木臼舂捣配方数据包
+
+木臼使用 `northeast_china_delight:pounding` 配方类型，默认七条配方 ID 为 `northeast_china_delight:pounding/peanut_butter`、`pounding/soybean_oil`、`pounding/corn_oil`、`pounding/red_bean_paste`、`pounding/rice_cake`、`pounding/wet_starch_dough`、`pounding/peanut_cake`。覆盖花生糕时，1.21.1 文件路径为 `data/northeast_china_delight/recipe/pounding/peanut_cake.json`，1.20.1 为 `data/northeast_china_delight/recipes/pounding/peanut_cake.json`。禁用示例：
+
+```json
+{"type":"northeast_china_delight:pounding","config":{"disabled":true}}
+```
+
+下面以花生糕为例展示完整格式（1.20.1 的数据包里去掉 `minecraft:mace`，通用标签改用 `forge:`）：
+
+```json
+{
+  "type": "northeast_china_delight:pounding",
+  "config": {
+    "priority": 0,
+    "inputs": [
+      {
+        "ingredient": {"item": "northeast_china_delight:roasted_peanuts"},
+        "count": 1,
+        "model": "northeast_china_delight:block/wooden_mortar_peanut_0"
+      },
+      {
+        "ingredient": {"item": "minecraft:honey_bottle"},
+        "count": 1,
+        "liquid": {"fluid": "create:honey", "texture": "northeast_china_delight:block/honey_still"}
+      }
+    ],
+    "tool": [{"item": "northeast_china_delight:wooden_mallet"}, {"item": "minecraft:mace"}],
+    "pound_times": 4,
+    "charge_threshold": 0.9,
+    "stage_model_mode": "overlay",
+    "stage_models": [
+      "northeast_china_delight:block/wooden_mortar_peanut_0",
+      "northeast_china_delight:block/wooden_mortar_peanut_cake_1",
+      "northeast_china_delight:block/wooden_mortar_peanut_cake_2",
+      "northeast_china_delight:block/wooden_mortar_peanut_cake_3"
+    ],
+    "finished_model": "northeast_china_delight:block/wooden_mortar_peanut_cake",
+    "transition": "sequential",
+    "result": {"item": "northeast_china_delight:peanut_cake", "count": 2}
+  }
+}
+```
+
+`config` 中的主要字段：
+
+| 字段 | 含义 |
+| --- | --- |
+| `priority` | 可选，默认 `0`。臼里的料同时凑齐几条配方时先选大的，一样大再按配方 ID 排 |
+| `inputs` | 投料，每项一种料：`ingredient` 支持物品、标签和任选数组，`count` 是要几份（默认 `1`）；写 `{"water": true}` 代替 `ingredient` 表示一份水（水桶、水盆或一瓶水）；可选的 `return_container`、`model`、`liquid` 见下文。旧的单项写法 `input` 加 `return_container` 仍可用 |
+| `tool` | 敲击用的工具，写法同原料；不写默认是木棍。默认配方用木槌，1.21.1 还认重锤 |
+| `pound_times` | 敲几下出成品，默认 `2` |
+| `charge_threshold` | 挥击蓄力要到多少才算一下，`0`–`1`，默认 `0.9`（攻速 1 的玩家约 0.9 秒蓄满） |
+| `stage_models` | 放齐料以后、敲完之前各一步的模型，最多 4 个；第一个是刚放齐的样子，之后每敲一下按 `transition` 换 |
+| `stage_model_mode` | `full`（默认，阶段模型是整只木臼）或 `overlay`（阶段模型只有臼里的东西，底下另画一只空木臼） |
+| `finished_model` | 可选，成品的样子；不写沿用最后一个阶段模型 |
+| `transition` | `sequential` 一步步往下换，`random`（默认）每敲一下随机换一个，`conditional` 预留、目前不换 |
+| `result` / `results` / `random_results` | 产物，见下文 |
+| `result_container` | 可选，取成品时手里得拿着的容器，每取一次扣一个（如舂植物油要拿玻璃瓶） |
+| `result_mb` | 可选，成品按毫升装：产物必须是唯一一项、数量 1 的本模组瓶装调料，并且要写 `result_container`；拿空瓶装出一瓶这么多毫升的，拿没装满的同种瓶子就往里续，`1`–`250` |
+| `finished_liquid` | 可选，舂出来是液体时，成品画成一层液面，写法同 `inputs.liquid`；写了它又没写 `finished_model` 时只画液面 |
+
+产物三种写法：`result` 只写一项（`{"item": …, "count": N}`）；`results` 是数组，每项可以写 `count`，或者用 `min_count`、`max_count` 给随机数量，`chance`（`0`–`1`，默认必出）各自掷概率，`byproduct: true` 只是在 JEI 里标成副产物；`random_results` 是随机池，每个池写 `entries`（每项带 `weight`），可选 `id` 和 `chance`（整个池出不出），一个池只出其中一项。成品在最后一下敲完时就掷好，之后重载数据包也不会变。
+
+放料和敲击：拿着料右键往臼里放，只要臼里已有的料加上手里这样东西还有某条配方装得下就能放；几条配方要的份数不同时一次放一个，只有一条用得上时一次放够。放进去以后，配方写的 `return_container` 或这样东西自己剩的容器还给玩家（水桶还空桶、水盆还空大脸盆、一瓶水和蜂蜜瓶还玻璃瓶）。先放哪样都行：臼里的料正好凑齐某条配方时显示它放齐的样子，开舂之前还能接着放、改凑别的配方；第一下敲击时才按臼里全部的料定下是哪条配方，敲过以后不能再放。已经放进去的料取不出来。手持 `tool` 左键敲击，蓄力够了才算一下，每下扣 1 点耐久，拿着工具敲正在加工的木臼不会把它挖掉。敲满 `pound_times` 下后空手右键取成品（写了 `result_container` 就拿着它）。木槌搁在臼上时不能放料，先空手右键取回木槌。
+
+模型和液面：模型属于客户端资源，放在资源包的 `assets/<命名空间>/models/block/` 下会被自动加载。`inputs.model` 是料还没放齐时、这一样放进去以后画的模型（只在 `overlay` 下画），几样都放了就叠在一起画。`inputs.liquid` 标明这样东西是倒进臼里的液体：从放进去到第一下敲击之前，臼里画一层液面，不用另做模型。液体可以直接写流体 ID，例如 `"liquid": "minecraft:water"`，按这种流体自己的静止贴图和颜色画，水按群系水色、半透明；也可以写成对象 `{"fluid": …, "texture": …, "color": …}`，`texture` 是贴图 ID，`color` 写 `"#RRGGBB"` 或 `"#AARRGGBB"`（不写不染色），两样都写时流体存在就用流体，不存在（没装那个模组）就用贴图。`{"water": true}` 不写 `liquid` 也当水画。本模组自带的内容物模型在 `northeast_china_delight:block/wooden_mortar_*` 下，可直接引用。
+
+新增配方使用不同文件名或命名空间即可获得新 ID。配方应作为世界数据包加载，执行 `/reload` 后新规则生效、JEI 页面跟着刷新。正在加工的木臼按开舂时定下的配方 ID 继续；那条配方被删掉或禁用后就敲不动了，空手右键取回臼里的料。
+
+## 大锅烹饪配方数据包
+
+大锅（2×2 大灶上的铁锅）使用 `northeast_china_delight:big_pot_cooking` 配方类型，默认十条配方 ID 为 `northeast_china_delight:big_pot_cooking/` 下的 `harvest_stew`、`slaughter_feast`、`sauerkraut_seafood_stew`、`sauerkraut_bone_stew`、`ground_pot_chicken`、`ground_pot_ribs`、`pork_vermicelli_stew`、`chicken_mushroom_stew`、`demoli_fish_stew`、`steamed_rice`。覆盖得莫利炖鱼时，1.21.1 文件路径为 `data/northeast_china_delight/recipe/big_pot_cooking/demoli_fish_stew.json`，1.20.1 为 `data/northeast_china_delight/recipes/big_pot_cooking/demoli_fish_stew.json`。
+
+大锅配方没有 `disabled` 写法。要去掉一条，用同 ID 的文件覆盖并加上加载器的条件：1.21.1 写 `"neoforge:conditions": [{"type": "neoforge:false"}]`，1.20.1 写 `"conditions": [{"type": "forge:false"}]`，和 `type` 同一层。
+
+下面以得莫利炖鱼为例展示完整格式（1.20.1 的数据包里通用标签改用 `forge:`）：
+
+```json
+{
+  "type": "northeast_china_delight:big_pot_cooking",
+  "config": {
+    "liquid": {"fluid": "minecraft:water", "amount": 1000},
+    "ingredients": [
+      {"tag": "c:foods/raw_fish"},
+      {"tag": "c:foods/tofu"},
+      {"tag": "c:foods/vermicelli"},
+      {"tag": "c:crops/napa_cabbage"},
+      {"tag": "c:mushrooms"},
+      {"tag": "c:foods/raw_pork"}
+    ],
+    "seasonings": [
+      {"tag": "c:foods/seasonings/soy_sauce"},
+      {"tag": "c:foods/soy_paste"},
+      {"tag": "c:foods/seasonings/cooking_oil"}
+    ],
+    "container": {"item": "northeast_china_delight:large_basin"},
+    "result": {"item": "northeast_china_delight:demoli_fish_stew", "count": 1},
+    "cooking_time": 600,
+    "lid_speedup": 40,
+    "experience": 1.0
+  }
+}
+```
+
+`config` 中的字段：
+
+| 字段 | 含义 |
+| --- | --- |
+| `liquid` | 可选，锅里要的液体：`fluid` 写流体 ID，或 `"#标签"`；`amount` 是毫升，默认 `1000`。不写表示锅里不能有液体。目前只能用水桶、水盆往锅里倒水，写别的液体的配方做不出来 |
+| `ingredients` | 食材，最多 6 格；每格是原料写法（物品、标签或任选数组），可加 `count`（`1`–`64`，默认 `1`）。同样的东西写成一格加 `count`，不要写成两格 |
+| `seasonings` | 调料，最多 3 格，写法同食材；和 `ingredients` 至少要有一样 |
+| `container` | 可选，盛菜的容器，每盛一份用掉一个；不写就空手盛 |
+| `result` | 煮出来的菜，`count` 是一锅能盛几份 |
+| `cooking_time` | 可选，烹饪时间，单位刻，默认 `200`；本模组的配方都写 `600`（30 秒） |
+| `lid_speedup` | 可选，盖着锅盖时时间缩短的百分比，`0`–`100`，默认 `40`（时间 × 60%） |
+| `experience` | 可选，每盛一份给的经验，默认 `0` |
+
+锅里的做法：在点着的大灶上揭开锅盖操作。水桶、水盆一次倒 1000 mB 水，锅最多装 4000 mB；空桶、空大脸盆一次舀走 1000 mB。写在任意一条配方 `seasonings` 里的东西都算调料，其余算食材；锅里得先有水才能放料。食材最多放「用食材最多的那条配方」那么多个，调料同理。潜行空手右键拿出最后放进去的一个食材；调料拿不出来，把水舀干时调料跟着没。瓶装调料放一次扣一剂，碗装的调料放进去还碗。锅里的料正好凑成一条配方（一样不多一样不少、份数对上、液体够量）、灶点着、盖上锅盖才开煮；开煮以后锅里的东西就锁住了，揭着盖按 `cooking_time` 走，盖着按 `lid_speedup` 缩短。煮好时锅里的液体清空，拿 `container` 右键盛一份，盛满 `result.count` 份为止，每份给 `experience`。锅里有水有食材、但凑不上任何一条配方时，盖上锅盖照样开煮，煮成一锅谜之炖菜。
+
+模型：锅里煮好的那一锅画 `block/big_pot/dish/<成品物品 ID 的路径>`（命名空间同成品物品），放在资源包的 `assets/<命名空间>/models/block/big_pot/dish/` 下会被自动加载，没有就把成品平放在锅里。生食材在锅里用什么模型、各种调料把水染成什么颜色写在代码里：数据包加的食材画成平放的物品，不在那张表里的调料不染色。
+
+新增配方使用不同文件名或命名空间即可获得新 ID。配方应作为世界数据包加载，执行 `/reload` 后新规则生效、JEI 页面跟着刷新。
+
 ## 自然生成配置
 
 在 `config/northeast_china_delight-common.toml` 中，农田与箱子分别有一个开关和一个允许列表：
