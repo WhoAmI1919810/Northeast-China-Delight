@@ -46,6 +46,7 @@ public final class BigPotDataRecipe implements Recipe<
     private final JsonObject config;
     @Nullable
     private final ResourceLocation id;
+    @Nullable
     private final BigPotRecipe rule;
 
     private BigPotDataRecipe(JsonObject config, @Nullable ResourceLocation id) {
@@ -55,8 +56,12 @@ public final class BigPotDataRecipe implements Recipe<
                 id != null ? id : DdIds.of(NortheastChinaDelight.MODID, "big_pot_cooking/unbound"));
     }
 
-    /** 带上配方 id 的规则（1.21.1 的配方对象里没有 id，得从 RecipeHolder 拿） */
+    /** 带上配方 id 的规则（1.21.1 的配方对象里没有 id，得从 RecipeHolder 拿）；停用的配方是 null */
+    @Nullable
     public BigPotRecipe rule(@Nullable ResourceLocation recipeId) {
+        if (this.rule == null) {
+            return null;
+        }
         ResourceLocation effective = this.id != null ? this.id : recipeId;
         if (effective == null || effective.equals(this.rule.id())) {
             return this.rule;
@@ -84,7 +89,7 @@ public final class BigPotDataRecipe implements Recipe<
             RecipeInput input, HolderLookup.Provider registries
             //?}
     ) {
-        return this.rule.result().copy();
+        return this.rule == null ? ItemStack.EMPTY : this.rule.result().copy();
     }
 
     @Override
@@ -100,12 +105,15 @@ public final class BigPotDataRecipe implements Recipe<
             HolderLookup.Provider registries
             //?}
     ) {
-        return this.rule.result().copy();
+        return this.rule == null ? ItemStack.EMPTY : this.rule.result().copy();
     }
 
     @Override
     public NonNullList<Ingredient> getIngredients() {
         NonNullList<Ingredient> ingredients = NonNullList.create();
+        if (this.rule == null) {
+            return ingredients;
+        }
         this.rule.ingredients().forEach(entry -> ingredients.add(entry.ingredient()));
         this.rule.seasonings().forEach(entry -> ingredients.add(entry.ingredient()));
         return ingredients;
