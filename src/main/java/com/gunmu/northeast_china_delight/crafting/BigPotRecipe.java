@@ -37,6 +37,8 @@ import java.util.List;
  *   }
  * }
  * </pre>
+ *
+ * <p>{@code "disabled": true} 停用这条配方（数据包用同 ID 覆盖），{@link #decode} 返回 null。</p>
  */
 public record BigPotRecipe(ResourceLocation id, @Nullable Liquid liquid, List<Entry> ingredients, List<Entry> seasonings,
                            ItemStack container, ItemStack result, int cookingTime, int lidSpeedup, float experience) {
@@ -85,7 +87,11 @@ public record BigPotRecipe(ResourceLocation id, @Nullable Liquid liquid, List<En
         return !container.isEmpty();
     }
 
+    @Nullable
     public static BigPotRecipe decode(JsonObject config, ResourceLocation id) {
+        if (GsonHelper.getAsBoolean(config, "disabled", false)) {
+            return null;
+        }
         Liquid liquid = config.has("liquid") ? decodeLiquid(GsonHelper.getAsJsonObject(config, "liquid")) : null;
         List<Entry> ingredients = decodeEntries(config, "ingredients", MAX_INGREDIENTS);
         List<Entry> seasonings = decodeEntries(config, "seasonings", MAX_SEASONINGS);

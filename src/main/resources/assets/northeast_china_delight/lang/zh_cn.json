@@ -310,6 +310,7 @@
   "message.northeast_china_delight.vat.need_bottle_white_vinegar": "白醋要用玻璃瓶装",
   "message.northeast_china_delight.mortar.need_container": "要用%s来装",
   "message.northeast_china_delight.mortar.bottle_full": "瓶子装不下了",
+  "message.northeast_china_delight.mortar.need_container_back": "要%s个%s才能把料取回来",
   "message.northeast_china_delight.vat.need_bottle_fish_sauce": "鱼露要用玻璃瓶装",
   "message.northeast_china_delight.vat.need_bottle_shrimp_paste": "虾酱要用玻璃瓶装",
   "message.northeast_china_delight.vat.need_bottle_kvass": "格瓦斯要用玻璃瓶装",

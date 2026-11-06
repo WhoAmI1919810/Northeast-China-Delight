@@ -19,11 +19,17 @@ public final class BigPotRecipes {
         List<BigPotRecipe> recipes = new ArrayList<>();
         //? if <1.20.5 {
         for (BigPotDataRecipe entry : manager.getAllRecipesFor(ModBigPotRecipes.TYPE.get())) {
-            recipes.add(entry.rule(entry.getId()));
+            BigPotRecipe recipe = entry.rule(entry.getId());
+            if (recipe != null) {
+                recipes.add(recipe);
+            }
         }
         //?} else {
         /*for (var entry : manager.getAllRecipesFor(ModBigPotRecipes.TYPE.get())) {
-            recipes.add(entry.value().rule(entry.id()));
+            BigPotRecipe recipe = entry.value().rule(entry.id());
+            if (recipe != null) {
+                recipes.add(recipe);
+            }
         }
         *///?}
         recipes.sort(Comparator.comparing(recipe -> recipe.id().toString()));

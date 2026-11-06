@@ -333,7 +333,7 @@ main 分支为 1.21.1（NeoForge）开发主线；1.20.1（Forge）版本线见 
 
 产物三种写法：`result` 只写一项（`{"item": …, "count": N}`）；`results` 是数组，每项可以写 `count`，或者用 `min_count`、`max_count` 给随机数量，`chance`（`0`–`1`，默认必出）各自掷概率，`byproduct: true` 只是在 JEI 里标成副产物；`random_results` 是随机池，每个池写 `entries`（每项带 `weight`），可选 `id` 和 `chance`（整个池出不出），一个池只出其中一项。成品在最后一下敲完时就掷好，之后重载数据包也不会变。
 
-放料和敲击：拿着料右键往臼里放，只要臼里已有的料加上手里这样东西还有某条配方装得下就能放；几条配方要的份数不同时一次放一个，只有一条用得上时一次放够。放进去以后，配方写的 `return_container` 或这样东西自己剩的容器还给玩家（水桶还空桶、水盆还空大脸盆、一瓶水和蜂蜜瓶还玻璃瓶）。先放哪样都行：臼里的料正好凑齐某条配方时显示它放齐的样子，开舂之前还能接着放、改凑别的配方；第一下敲击时才按臼里全部的料定下是哪条配方，敲过以后不能再放。已经放进去的料取不出来。手持 `tool` 左键敲击，蓄力够了才算一下，每下扣 1 点耐久，拿着工具敲正在加工的木臼不会把它挖掉。敲满 `pound_times` 下后空手右键取成品（写了 `result_container` 就拿着它）。木槌搁在臼上时不能放料，先空手右键取回木槌。
+放料和敲击：拿着料右键往臼里放，只要臼里已有的料加上手里这样东西还有某条配方装得下就能放；几条配方要的份数不同时一次放一个，只有一条用得上时一次放够。放进去以后，配方写的 `return_container` 或这样东西自己剩的容器还给玩家（水桶还空桶、水盆还空大脸盆、一瓶水和蜂蜜瓶还玻璃瓶）。先放哪样都行：臼里的料正好凑齐某条配方时显示它放齐的样子，开舂之前还能接着放、改凑别的配方；第一下敲击时才按臼里全部的料定下是哪条配方，敲过以后不能再放。开舂之前空手右键把臼里的料全退回来；倒进去时还过空容器的（水桶、水盆、蜂蜜瓶这类），要背包里有同样多的空容器才退，退的时候一并收回。手持 `tool` 左键敲击，蓄力够了才算一下，每下扣 1 点耐久，拿着工具敲正在加工的木臼不会把它挖掉。敲满 `pound_times` 下后空手右键取成品（写了 `result_container` 就拿着它）。木槌搁在臼上时不能放料，先空手右键取回木槌。
 
 模型和液面：模型属于客户端资源，放在资源包的 `assets/<命名空间>/models/block/` 下会被自动加载。`inputs.model` 是料还没放齐时、这一样放进去以后画的模型（只在 `overlay` 下画），几样都放了就叠在一起画。`inputs.liquid` 标明这样东西是倒进臼里的液体：从放进去到第一下敲击之前，臼里画一层液面，不用另做模型。液体可以直接写流体 ID，例如 `"liquid": "minecraft:water"`，按这种流体自己的静止贴图和颜色画，水按群系水色、半透明；也可以写成对象 `{"fluid": …, "texture": …, "color": …}`，`texture` 是贴图 ID，`color` 写 `"#RRGGBB"` 或 `"#AARRGGBB"`（不写不染色），两样都写时流体存在就用流体，不存在（没装那个模组）就用贴图。`{"water": true}` 不写 `liquid` 也当水画。本模组自带的内容物模型在 `northeast_china_delight:block/wooden_mortar_*` 下，可直接引用。
 
@@ -341,9 +341,11 @@ main 分支为 1.21.1（NeoForge）开发主线；1.20.1（Forge）版本线见 
 
 ## 大锅烹饪配方数据包
 
-大锅（2×2 大灶上的铁锅）使用 `northeast_china_delight:big_pot_cooking` 配方类型，默认十条配方 ID 为 `northeast_china_delight:big_pot_cooking/` 下的 `harvest_stew`、`slaughter_feast`、`sauerkraut_seafood_stew`、`sauerkraut_bone_stew`、`ground_pot_chicken`、`ground_pot_ribs`、`pork_vermicelli_stew`、`chicken_mushroom_stew`、`demoli_fish_stew`、`steamed_rice`。覆盖得莫利炖鱼时，1.21.1 文件路径为 `data/northeast_china_delight/recipe/big_pot_cooking/demoli_fish_stew.json`，1.20.1 为 `data/northeast_china_delight/recipes/big_pot_cooking/demoli_fish_stew.json`。
+大锅（2×2 大灶上的铁锅）使用 `northeast_china_delight:big_pot_cooking` 配方类型，默认十条配方 ID 为 `northeast_china_delight:big_pot_cooking/` 下的 `harvest_stew`、`slaughter_feast`、`sauerkraut_seafood_stew`、`sauerkraut_bone_stew`、`ground_pot_chicken`、`ground_pot_ribs`、`pork_vermicelli_stew`、`chicken_mushroom_stew`、`demoli_fish_stew`、`steamed_rice`。覆盖得莫利炖鱼时，1.21.1 文件路径为 `data/northeast_china_delight/recipe/big_pot_cooking/demoli_fish_stew.json`，1.20.1 为 `data/northeast_china_delight/recipes/big_pot_cooking/demoli_fish_stew.json`。禁用示例：
 
-大锅配方没有 `disabled` 写法。要去掉一条，用同 ID 的文件覆盖并加上加载器的条件：1.21.1 写 `"neoforge:conditions": [{"type": "neoforge:false"}]`，1.20.1 写 `"conditions": [{"type": "forge:false"}]`，和 `type` 同一层。
+```json
+{"type":"northeast_china_delight:big_pot_cooking","config":{"disabled":true}}
+```
 
 下面以得莫利炖鱼为例展示完整格式（1.20.1 的数据包里通用标签改用 `forge:`）：
 

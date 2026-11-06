@@ -40,6 +40,7 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -54,6 +55,8 @@ import java.util.List;
  *   <li>空臼（STATE 0）手持木槌右键 → 把木槌搁在臼上（{@link #MALLET}），再空手右键取回</li>
  *   <li>空臼（STATE 0）手持配方投入物右键 → 逐次投入；臼里的料正好凑齐某条配方就转到它的装料状态，
  *       还没开舂前能接着放、改凑别的配方（2026-11-06，见 {@link #deposit}）</li>
+ *   <li>还没开舂时空手右键 → 臼里的料全退回来；倒进去时还过空容器的（水桶、蜂蜜瓶、盆装米饭……）
+ *       要从背包里收回同样多的空容器，见 {@link #takeBack}</li>
  *   <li>装料 / 加工中（filled..done-1）左键敲击 → 加工一次，切模型；每敲一下扣木槌 1 点耐久。
  *       第一下敲击时才按臼里的料定下是哪条配方</li>
  *   <li>成品状态（doneState）空手右键 → 取出成品，转回 STATE 0</li>
@@ -303,7 +306,7 @@ public class WoodenMortarBlock extends BaseEntityBlock {
         return ItemStack.EMPTY;
     }
 
-    /** 空手右键：成品状态时取货 */
+    /** 空手右键：成品状态时取货；还没开舂时退料 */
     @Nullable
     private InteractionResult onTakeResult(BlockState state, Level level, BlockPos pos, Player player) {
         if (!(level.getBlockEntity(pos) instanceof WoodenMortarBlockEntity mortar)) {
@@ -363,6 +366,10 @@ public class WoodenMortarBlock extends BaseEntityBlock {
             }
             return null;
         }
+        if (!mortar.started() && mortar.hasDepositedInputs()) {
+            // 还没开舂：空手右键退料；手里拿着东西不退，免得拿着放不进去的东西一点就全倒出来
+            return player.getMainHandItem().isEmpty() ? takeBack(mortar, recipe, state, level, pos, player) : null;
+        }
         if (state.getValue(STATE) < recipe.doneState()) {
             return null;
         }
@@ -411,6 +418,84 @@ public class WoodenMortarBlock extends BaseEntityBlock {
         level.playSound(null, pos, container != null && container.is(Items.GLASS_BOTTLE)
                 ? SoundEvents.BOTTLE_FILL : SoundEvents.ITEM_FRAME_REMOVE_ITEM, SoundSource.BLOCKS, 0.8F, 1.0F);
         return InteractionResult.SUCCESS;
+    }
+
+    /**
+     * 退料（2026-11-06，用户要的「放进去的料能取出来」）：还没开舂，臼里的料原样退回，臼回到空臼。
+     *
+     * <p>倒进去的时候已经把空容器还给玩家了（{@link #leftover}：空桶、空瓶、空盆、配方写的 return_container），
+     * 原样退满桶就白多一个桶。所以有这种料就得从背包里收回同样多的空容器才退；
+     * 哪样不够就提示「要几个什么」，一样都不退。创造模式放料时没扣东西、也没还容器，这里也不收。</p>
+     */
+    private static InteractionResult takeBack(WoodenMortarBlockEntity mortar, PoundingRecipes.Recipe recipe,
+                                              BlockState state, Level level, BlockPos pos, Player player) {
+        boolean creative = player.getAbilities().instabuild;
+        List<ItemStack> containers = new ArrayList<>();
+        if (!creative) {
+            for (ItemStack stack : mortar.depositedStacks()) {
+                ItemStack left = leftover(recipe, stack);
+                if (left.isEmpty()) {
+                    continue;
+                }
+                int count = left.getCount() * stack.getCount();
+                ItemStack same = containers.stream().filter(c -> c.is(left.getItem())).findFirst().orElse(null);
+                if (same != null) {
+                    same.grow(count);
+                } else {
+                    containers.add(left.copyWithCount(count));
+                }
+            }
+            for (ItemStack need : containers) {
+                if (countInInventory(player, need) < need.getCount()) {
+                    if (!level.isClientSide) {
+                        player.displayClientMessage(Component.translatable(
+                                "message.northeast_china_delight.mortar.need_container_back",
+                                need.getCount(), need.getHoverName()), true);
+                    }
+                    return InteractionResult.FAIL;
+                }
+            }
+        }
+        if (level.isClientSide) {
+            return InteractionResult.SUCCESS;
+        }
+        for (ItemStack need : containers) {
+            removeFromInventory(player, need);
+        }
+        for (ItemStack stack : mortar.takeDepositedInputs()) {
+            giveOrDrop(player, stack);
+        }
+        mortar.clear();
+        setStage(level, pos, state, 0);
+        level.playSound(null, pos, SoundEvents.ITEM_FRAME_REMOVE_ITEM, SoundSource.BLOCKS, 0.8F, 1.0F);
+        return InteractionResult.SUCCESS;
+    }
+
+    private static int countInInventory(Player player, ItemStack like) {
+        var inventory = player.getInventory();
+        int count = 0;
+        for (int i = 0; i < inventory.getContainerSize(); i++) {
+            ItemStack stack = inventory.getItem(i);
+            if (stack.is(like.getItem())) {
+                count += stack.getCount();
+            }
+        }
+        return count;
+    }
+
+    /** 从背包里扣掉 like.getCount() 个同样的东西（先查过够不够） */
+    private static void removeFromInventory(Player player, ItemStack like) {
+        var inventory = player.getInventory();
+        int left = like.getCount();
+        for (int i = 0; i < inventory.getContainerSize() && left > 0; i++) {
+            ItemStack stack = inventory.getItem(i);
+            if (stack.is(like.getItem())) {
+                int taken = Math.min(left, stack.getCount());
+                stack.shrink(taken);
+                left -= taken;
+            }
+        }
+        inventory.setChanged();
     }
 
     private static void giveResults(Player player, List<ItemStack> results) {
