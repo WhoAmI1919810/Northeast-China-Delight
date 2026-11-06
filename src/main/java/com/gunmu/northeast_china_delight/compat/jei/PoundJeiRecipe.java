@@ -7,11 +7,15 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-/** JEI 里的一条「舂捣」配方，保留全部输入、产物和阶段模型信息。 */
+/**
+ * JEI 里的一条「舂捣」配方，保留全部输入、产物和阶段模型信息。
+ * {@code liquid}：配方里倒进臼里的液体，木臼图上放齐那一步要画的液面（见 PoundingRecipes.Liquid，2026-11-06）
+ */
 public record PoundJeiRecipe(ResourceLocation id, List<Input> inputs, List<ItemStack> tool,
                              int poundTimes, float chargeThreshold, List<Output> outputs,
                              List<ResourceLocation> stageModels, PoundingRecipes.StageModelMode stageModelMode,
-                             @Nullable ItemStack resultContainer, int resultMb) {
+                             @Nullable ItemStack resultContainer, int resultMb,
+                             @Nullable PoundingRecipes.Liquid liquid) {
 
     /** {@code items} 中每个候选的 count 已经设置成配方需求数量。 */
     public record Input(List<ItemStack> items, int count) {

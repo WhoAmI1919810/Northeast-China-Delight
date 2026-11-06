@@ -9,18 +9,26 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.BiomeColors;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.Sheets;
+import net.minecraft.client.renderer.texture.OverlayTexture;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.material.Fluid;
+import net.minecraft.world.level.material.Fluids;
+import org.jetbrains.annotations.Nullable;
 //? if >=1.20.2 {
 import net.minecraft.client.resources.model.ModelResourceLocation;
 //?}
@@ -40,6 +48,9 @@ import net.neoforged.neoforge.client.model.data.ModelData;
  * <p>亮度要和地上的静态木臼一样：空臼直接用 blockstate 里按朝向转好的那个方块模型、走原版方块的画法
  * （面明暗 + 平滑光照 + 遮挡剔除），内容物自己按面打明暗，见 {@link #renderShaded}。
  * 以前整个用 {@code renderModel} 画，它不做面明暗，侧面都跟顶面一样亮，一装料木臼就比旁边亮一截。</p>
+ *
+ * <p>倒进去的液体（配方 {@code inputs.liquid}，开舂之前）和舂出来的液体（{@code finished_liquid}）不走模型，
+ * 按流体贴图直接画一层液面，见 {@link #renderLiquid}（2026-11-06 用户）。</p>
  */
 public class WoodenMortarRenderer implements BlockEntityRenderer<WoodenMortarBlockEntity> {
 
@@ -68,10 +79,15 @@ public class WoodenMortarRenderer implements BlockEntityRenderer<WoodenMortarBlo
 
         PoundingRecipes.Recipe recipe = mortar.resolve(level);
         boolean overlay = recipe != null && recipe.stageModelMode() == PoundingRecipes.StageModelMode.OVERLAY;
+        boolean done = recipe != null && stage >= recipe.doneState();
         ResourceLocation modelId = recipe == null ? FALLBACK_MODEL : recipe.stageModel(stage);
         BakedModel model = bakedModel(modelId);
         if (model == Minecraft.getInstance().getModelManager().getMissingModel()) {
             model = overlay ? null : bakedModel(FALLBACK_MODEL);
+        }
+        if (done && recipe.finishedLiquid() != null && recipe.finishedModel() == null) {
+            // 成品是液体、又没另给成品模型：只画液面，不沿用最后一步的模型
+            model = null;
         }
 
         VertexConsumer consumer = buffer.getBuffer(RenderType.cutout());
@@ -89,6 +105,13 @@ public class WoodenMortarRenderer implements BlockEntityRenderer<WoodenMortarBlo
             renderShaded(pose, consumer, level, pos, state, model, facing, packedLight, packedOverlay);
             pose.popPose();
         }
+        if (recipe != null) {
+            PoundingRecipes.Liquid liquid = done ? recipe.finishedLiquid()
+                    : mortar.started() ? null : recipe.depositedLiquid(mortar::inputCount);
+            if (liquid != null) {
+                renderLiquid(pose, buffer, level, pos, liquid, packedLight);
+            }
+        }
     }
 
     /**
@@ -105,7 +128,15 @@ public class WoodenMortarRenderer implements BlockEntityRenderer<WoodenMortarBlo
             return;
         }
         PoundingRecipes.Recipe recipe = mortar.resolve(level);
-        if (recipe == null || recipe.stageModelMode() != PoundingRecipes.StageModelMode.OVERLAY) {
+        if (recipe == null) {
+            return;
+        }
+        // 倒进去的液体：料没放齐也先画上（同一样东西放进去就看得见）
+        PoundingRecipes.Liquid liquid = recipe.depositedLiquid(mortar::inputCount);
+        if (liquid != null) {
+            renderLiquid(pose, buffer, level, mortar.getBlockPos(), liquid, packedLight);
+        }
+        if (recipe.stageModelMode() != PoundingRecipes.StageModelMode.OVERLAY) {
             return;
         }
         VertexConsumer consumer = null;
@@ -127,6 +158,65 @@ public class WoodenMortarRenderer implements BlockEntityRenderer<WoodenMortarBlo
             renderShaded(pose, consumer, level, mortar.getBlockPos(), state, model, facing, packedLight, packedOverlay);
             pose.popPose();
         }
+    }
+
+    /** 臼里的液面：臼底 y 10、内腔是 2..14 的八角形，液面顶在 10.5（同以前那层水 / 油模型），五块拼起来，只画顶面 */
+    private static final float LIQUID_Y = 10.5F;
+    private static final float[][] LIQUID_RECTS = {
+            {4, 2, 12, 3}, {3, 3, 13, 4}, {2, 4, 14, 12}, {3, 12, 13, 13}, {4, 13, 12, 14}};
+
+    /**
+     * 画一层液面（2026-11-06 用户：配方写明哪样是液体，直接画对应的液面）。流体按它自己的静止贴图和颜色（水按群系水色，
+     * 同原版炼药锅；JEI 里没有世界时用原版默认水色）；只给了贴图的按贴图和 color。用实体半透明的固定缓冲，
+     * 液面下的花生、红薯块隔着液面看得见（同大锅、大缸，见 BigPotRenderer#renderLiquid）
+     */
+    public static void renderLiquid(PoseStack pose, MultiBufferSource buffer, @Nullable Level level,
+                                    @Nullable BlockPos pos, PoundingRecipes.Liquid liquid, int light) {
+        TextureAtlasSprite sprite = null;
+        int color = liquid.color();
+        Fluid fluid = liquid.fluid() == null ? Fluids.EMPTY : BuiltInRegistries.FLUID.get(liquid.fluid());
+        if (fluid != Fluids.EMPTY) {
+            sprite = VatRenderer.fluidSprite(fluid);
+            if (color == -1) {
+                color = fluid.isSame(Fluids.WATER) && level != null && pos != null
+                        ? 0xFF000000 | BiomeColors.getAverageWaterColor(level, pos)
+                        : VatRenderer.fluidTint(fluid);
+            }
+        }
+        if (sprite == null && liquid.texture() != null) {
+            sprite = Minecraft.getInstance()
+                    .getTextureAtlas(net.minecraft.world.inventory.InventoryMenu.BLOCK_ATLAS).apply(liquid.texture());
+        }
+        if (sprite == null) {
+            return;
+        }
+        float red = ((color >> 16) & 0xFF) / 255.0F;
+        float green = ((color >> 8) & 0xFF) / 255.0F;
+        float blue = (color & 0xFF) / 255.0F;
+        float alpha = ((color >>> 24) & 0xFF) / 255.0F;
+        VertexConsumer consumer = buffer.getBuffer(Sheets.translucentCullBlockSheet());
+        float y = LIQUID_Y / 16.0F;
+        for (float[] r : LIQUID_RECTS) {
+            float x0 = r[0] / 16.0F;
+            float z0 = r[1] / 16.0F;
+            float x1 = r[2] / 16.0F;
+            float z1 = r[3] / 16.0F;
+            VatRenderer.quad(consumer, pose.last(), light, OverlayTexture.NO_OVERLAY, red, green, blue, alpha,
+                    x0, y, z0, u(sprite, x0), v(sprite, z0),
+                    x0, y, z1, u(sprite, x0), v(sprite, z1),
+                    x1, y, z1, u(sprite, x1), v(sprite, z1),
+                    x1, y, z0, u(sprite, x1), v(sprite, z0),
+                    0, 1, 0);
+        }
+    }
+
+    /** 贴图铺满一格（不用 getU：1.20.1 和 1.21.1 的参数单位不一样） */
+    private static float u(TextureAtlasSprite sprite, float blocks) {
+        return sprite.getU0() + (sprite.getU1() - sprite.getU0()) * blocks;
+    }
+
+    private static float v(TextureAtlasSprite sprite, float blocks) {
+        return sprite.getV0() + (sprite.getV1() - sprite.getV0()) * blocks;
     }
 
     /**

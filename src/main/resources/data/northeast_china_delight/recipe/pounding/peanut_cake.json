@@ -14,7 +14,10 @@
           "item": "minecraft:honey_bottle"
         },
         "count": 1,
-        "model": "northeast_china_delight:block/wooden_mortar_honey"
+        "liquid": {
+          "fluid": "create:honey",
+          "texture": "northeast_china_delight:block/honey_still"
+        }
       }
     ],
     "tool": {
@@ -31,7 +34,7 @@
     "pound_times": 4,
     "stage_model_mode": "overlay",
     "stage_models": [
-      "northeast_china_delight:block/wooden_mortar_peanut_cake_0",
+      "northeast_china_delight:block/wooden_mortar_peanut_0",
       "northeast_china_delight:block/wooden_mortar_peanut_cake_1",
       "northeast_china_delight:block/wooden_mortar_peanut_cake_2",
       "northeast_china_delight:block/wooden_mortar_peanut_cake_3"

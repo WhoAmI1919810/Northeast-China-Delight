@@ -12,7 +12,7 @@
       {
         "water": true,
         "count": 1,
-        "model": "northeast_china_delight:block/wooden_mortar_water"
+        "liquid": "minecraft:water"
       }
     ],
     "tool": {
