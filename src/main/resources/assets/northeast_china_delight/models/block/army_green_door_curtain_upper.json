@@ -1,0 +1,99 @@
+{
+  "parent": "minecraft:block/block",
+  "textures": {
+    "cloth": "northeast_china_delight:block/army_green_door_curtain_top",
+    "particle": "northeast_china_delight:block/army_green_door_curtain_top",
+    "rod": "northeast_china_delight:block/curtain_rod"
+  },
+  "elements": [
+    {
+      "from": [
+        0,
+        0,
+        13.5
+      ],
+      "to": [
+        16,
+        16,
+        15
+      ],
+      "faces": {
+        "north": {
+          "texture": "#cloth"
+        },
+        "south": {
+          "texture": "#cloth"
+        },
+        "east": {
+          "texture": "#cloth"
+        },
+        "west": {
+          "texture": "#cloth"
+        },
+        "up": {
+          "texture": "#cloth"
+        },
+        "down": {
+          "texture": "#cloth"
+        }
+      }
+    },
+    {
+      "from": [
+        -0.5,
+        14,
+        13
+      ],
+      "to": [
+        16.5,
+        15.5,
+        15.5
+      ],
+      "faces": {
+        "north": {
+          "texture": "#rod",
+          "uv": [
+            0.0,
+            0.5,
+            16.0,
+            2
+          ]
+        },
+        "east": {
+          "texture": "#rod"
+        },
+        "south": {
+          "texture": "#rod",
+          "uv": [
+            0.0,
+            0.5,
+            16.0,
+            2
+          ]
+        },
+        "west": {
+          "texture": "#rod"
+        },
+        "up": {
+          "texture": "#rod",
+          "uv": [
+            0.0,
+            13,
+            16.0,
+            15.5
+          ]
+        },
+        "down": {
+          "texture": "#rod",
+          "uv": [
+            0.0,
+            0.5,
+            16.0,
+            3
+          ]
+        }
+      }
+    }
+  ],
+  "render_type": "minecraft:translucent"
+}

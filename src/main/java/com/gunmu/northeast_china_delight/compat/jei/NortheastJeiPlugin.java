@@ -116,7 +116,8 @@ public class NortheastJeiPlugin implements IModPlugin {
                 Component.translatable("jei.northeast_china_delight.info.sea_cucumber"));
         // 棉门帘、大花布门帘是普通门帘在织布机里染出来的，不是合成配方
         registration.addItemStackInfo(java.util.List.of(new ItemStack(ModBlocks.PLAIN_DOOR_CURTAIN.get()),
-                        new ItemStack(ModBlocks.COTTON_DOOR_CURTAIN.get()), new ItemStack(ModBlocks.FLORAL_DOOR_CURTAIN.get())),
+                        new ItemStack(ModBlocks.COTTON_DOOR_CURTAIN.get()), new ItemStack(ModBlocks.FLORAL_DOOR_CURTAIN.get()),
+                        new ItemStack(ModBlocks.ARMY_GREEN_DOOR_CURTAIN.get())),
                 Component.translatable("jei.northeast_china_delight.info.door_curtains"));
         // 窗花不是合成出来的：一手红纸一手剪刀右键剪，贴在糊纸窗上
         registration.addItemStackInfo(new ItemStack(ModItems.PAPER_CUT.get()),
