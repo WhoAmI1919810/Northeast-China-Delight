@@ -411,6 +411,7 @@ public class ModItems {
             blockItem("plain_door_curtain", ModBlocks.PLAIN_DOOR_CURTAIN),
             blockItem("cotton_door_curtain", ModBlocks.COTTON_DOOR_CURTAIN),
             blockItem("floral_door_curtain", ModBlocks.FLORAL_DOOR_CURTAIN),
+            blockItem("army_green_door_curtain", ModBlocks.ARMY_GREEN_DOOR_CURTAIN),
             RED_PAPER,
             PAPER_CUT,
             RED_STEEL_ROOFING,

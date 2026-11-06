@@ -320,6 +320,9 @@ public class ModBlocks {
             block("cotton_door_curtain", DoorCurtainBlock::new, curtainProperties(MapColor.COLOR_BLUE));
     public static final Supplier<Block> FLORAL_DOOR_CURTAIN =
             block("floral_door_curtain", DoorCurtainBlock::new, curtainProperties(MapColor.COLOR_RED));
+    /** 军绿棉门帘：上部开一扇透明塑料窗（2026-11-06 用户），织布机里用绿色染料染普通门帘得到 */
+    public static final Supplier<Block> ARMY_GREEN_DOOR_CURTAIN =
+            block("army_green_door_curtain", DoorCurtainBlock::new, curtainProperties(MapColor.COLOR_GREEN));
 
     /** 格子桌布：16 种染料色，id 是「<颜色>_gingham_tablecloth」（2026-11-04，村庄副食店的柜台上铺的；见 GinghamTableclothBlock） */
     public static final Map<DyeColor, Supplier<Block>> GINGHAM_TABLECLOTHS = ginghamTablecloths();
