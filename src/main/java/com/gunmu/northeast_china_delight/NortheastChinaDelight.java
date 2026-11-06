@@ -356,6 +356,8 @@ public class NortheastChinaDelight
                     ModItems.BIG_POT_LID.get(), DdIds.of("minecraft", "blocking"),
                     (stack, level, entity, seed) ->
                             entity != null && entity.isUsingItem() && entity.getUseItem() == stack ? 1.0F : 0.0F));
+            // 脸盆架镜子照活物要用模板缓冲，主画面默认不带（client/MirrorReflections）
+            event.enqueueWork(com.gunmu.northeast_china_delight.client.MirrorReflections::enableStencil);
         }
 
         /** 本模组的粒子长什么样（particle/ModParticles）：大铁锅汤面上的泡用原版气泡的贴图 */
@@ -790,4 +792,25 @@ public class NortheastChinaDelight
         }
         *///?}
     }
+
+    /**
+     * 1.20.1（Forge）的游戏总线客户端事件。Forge 的 @Mod.EventBusSubscriber 不会像 NeoForge 那样把游戏总线事件拆出去，
+     * RenderLevelStageEvent 在 Forge 里挂在主事件总线上，所以单独开一个 Bus.FORGE 的类来接。
+     * （main 分支这里还接了唱片歌词 HUD，1.20.1 没有那个功能，不接。）
+     */
+    //? if <1.20.2 {
+    @Mod.EventBusSubscriber(modid = MODID, bus = Mod.EventBusSubscriber.Bus.FORGE, value = Dist.CLIENT)
+    public static class ClientForgeEvents
+    {
+        /** 脸盆架的镜子照出镜子前面的活物（client/MirrorReflections） */
+        @SubscribeEvent
+        public static void onRenderLevelStage(net.minecraftforge.client.event.RenderLevelStageEvent event)
+        {
+            if (event.getStage() == net.minecraftforge.client.event.RenderLevelStageEvent.Stage.AFTER_BLOCK_ENTITIES) {
+                com.gunmu.northeast_china_delight.client.MirrorReflections.render(event.getPoseStack(), event.getCamera(),
+                        event.getFrustum(), event.getPartialTick());
+            }
+        }
+    }
+    //?}
 }
