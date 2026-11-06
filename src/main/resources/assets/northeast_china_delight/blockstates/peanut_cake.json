@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "facing=north": {
+      "model": "northeast_china_delight:block/peanut_cake"
+    },
+    "facing=east": {
+      "model": "northeast_china_delight:block/peanut_cake",
+      "y": 90
+    },
+    "facing=south": {
+      "model": "northeast_china_delight:block/peanut_cake",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "northeast_china_delight:block/peanut_cake",
+      "y": 270
+    }
+  }
+}
