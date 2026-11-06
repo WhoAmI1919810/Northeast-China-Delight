@@ -68,6 +68,8 @@ public final class SideDishMerchantTrades
         trades.get(1).add(sell(4, ModItems.TOFU.get(), 1, 16, 2));
         trades.get(1).add(sellWithUses(ModItems.SOY_SAUCE.get(), 1, 3, 16, 2));
         trades.get(1).add(buy(ModItems.SOYBEAN.get(), 24, 16, 2));
+        // 收花生原来在 5 级（经验 30），2026-11-06 用户让挪到 1 级；经验照 1 级的给 2
+        trades.get(1).add(buy(ModItems.PEANUT.get(), 22, 16, 2));
 
         trades.get(2).add(sell(6, ModItems.DRIED_TOFU.get(), 1, 16, 5));
         trades.get(2).add(sell(8, ModItems.VERMICELLI.get(), 1, 16, 5));
@@ -105,7 +107,6 @@ public final class SideDishMerchantTrades
         trades.get(5).add(sell(2, ModItems.CORN_FLOUR.get(), 1, 12, 30));
         trades.get(5).add(sell(5, ModItems.WATER_DOUGH.get(), 1, 12, 30));
         trades.get(5).add(sellFull(ModItems.PEANUT_BUTTER.get(), 8, 12, 30));
-        trades.get(5).add(buy(ModItems.PEANUT.get(), 22, 16, 30));
         trades.get(5).add(sellBetween(8, 10, ModItems.DOG_BAO_PICKLES.get(), 1, 12, 30));
     }
 
