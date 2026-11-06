@@ -673,6 +673,9 @@ public class ModBlocks {
             feastBlock("chicken_mushroom_stew", () -> ModItems.XIAO_JI_DUN_MO_GU_BOWL.get());
     public static final Supplier<Block> SUAN_CAI_HAI_XIAN_GUO_POT =
             feastBlock("sauerkraut_seafood_stew", () -> ModItems.SUAN_CAI_HAI_XIAN_GUO_BOWL.get());
+    /** 盆装得莫利炖鱼（2026-11-06 从碗装菜改成盆装菜）：方块叫 demoli_fish_stew_pot，盛出来是原来那碗 demoli_fish_stew */
+    public static final Supplier<Block> DE_MO_LI_DUN_YU_POT =
+            feastBlock("demoli_fish_stew", () -> ModItems.DE_MO_LI_DUN_YU.get());
     /** 盆装米饭：一盆盛 4 碗农夫乐事的米饭（2026-11-03） */
     public static final Supplier<Block> PEN_MI_FAN_POT =
             feastBlock("steamed_rice", () -> net.minecraft.core.registries.BuiltInRegistries.ITEM.get(
