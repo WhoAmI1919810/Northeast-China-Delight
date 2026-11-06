@@ -1,0 +1,46 @@
+{
+  "type": "northeast_china_delight:pounding",
+  "config": {
+    "inputs": [
+      {
+        "ingredient": {
+          "item": "northeast_china_delight:roasted_peanuts"
+        },
+        "count": 1,
+        "model": "northeast_china_delight:block/wooden_mortar_peanut_0"
+      },
+      {
+        "ingredient": {
+          "item": "minecraft:honey_bottle"
+        },
+        "count": 1,
+        "model": "northeast_china_delight:block/wooden_mortar_honey"
+      }
+    ],
+    "tool": {
+      "type": "neoforge:compound",
+      "children": [
+        {
+          "item": "northeast_china_delight:wooden_mallet"
+        },
+        {
+          "item": "minecraft:mace"
+        }
+      ]
+    },
+    "pound_times": 4,
+    "stage_model_mode": "overlay",
+    "stage_models": [
+      "northeast_china_delight:block/wooden_mortar_peanut_cake_0",
+      "northeast_china_delight:block/wooden_mortar_peanut_cake_1",
+      "northeast_china_delight:block/wooden_mortar_peanut_cake_2",
+      "northeast_china_delight:block/wooden_mortar_peanut_cake_3"
+    ],
+    "finished_model": "northeast_china_delight:block/wooden_mortar_peanut_cake",
+    "result": {
+      "item": "northeast_china_delight:peanut_cake",
+      "count": 2
+    },
+    "transition": "sequential"
+  }
+}

@@ -278,6 +278,11 @@ public class ModItems {
     /** 打糕：木臼里一盆米饭（4 碗）舂出 4 个，每个按一碗农夫乐事米饭算，饥饿值 6；饱和度系数照旧 0.5（2026-11-05 用户） */
     public static final Supplier<Item> DA_GAO = food("pounded_rice_cake", 6, 0.5F);
     /**
+     * 花生糕（辽宁兴城特产）：熟花生 + 蜂蜜在木臼里舂 4 下出 2 块（2026-11-06 用户）。两样料的小点心，只管饱、不给效果
+     * （用户：只有两种调料的点心给生命提升太夸张），所以不进 DishFlavors；无器具，摆展示乐事的小餐盘
+     */
+    public static final Supplier<Item> PEANUT_CAKE = food("peanut_cake", 4, 0.5F);
+    /**
      * 唱片「大东北是我的家乡」——播放时听范围内的玩家能看到歌词。
      *
      * <p>1.20.5+（1.21.1 / 1.21.4）走 jukebox_song 注册表 + jukeboxPlayable 数据组件；
@@ -564,7 +569,7 @@ public class ModItems {
             ZHAN_JIANG_CAI, MING_TAI_YU_SI, TIGER_SALAD, XIA_JIANG_CHAO_JI_DAN,
             JIANG_BAN_LA_PI, CONG_SHAO_HAI_SHEN, LA_ROU_DUN_DOU_JIAO,
             DRY_FRIED_HAIRTAIL, BRAISED_HAIRTAIL,
-            BAKED_SWEET_POTATO, DA_FAN_BAO, NIAN_DOU_BAO, HONG_DOU_SONG_BING, HUA_SHENG_SONG_BING, HAZELNUT_SUGAR_FIRE_BUN, DA_GAO,
+            BAKED_SWEET_POTATO, DA_FAN_BAO, NIAN_DOU_BAO, HONG_DOU_SONG_BING, HUA_SHENG_SONG_BING, HAZELNUT_SUGAR_FIRE_BUN, DA_GAO, PEANUT_CAKE,
             GRILLED_CHICKEN_FRAME, GRILLED_CORN, GRILLED_OIL_EDGE, GRILLED_COLD_NOODLES,
             SUAN_CAI_JIAO_ZI, XIA_REN_ZHU_ROU_XIAN_SHUI_JIAO, SAN_XIAN_XIAN_SHUI_JIAO,
             JIANG_DA_GU, JIANG_NIU_ROU,

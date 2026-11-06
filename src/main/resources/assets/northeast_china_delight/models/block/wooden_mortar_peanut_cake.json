@@ -1,0 +1,294 @@
+{
+  "credit": "由 tools/mortar_contents/build.py 生成，只有木臼里的内容物（stage_model_mode: overlay）；花生糕（2026-11-06）",
+  "texture_size": [
+    16,
+    16
+  ],
+  "textures": {
+    "top": "northeast_china_delight:block/wooden_mortar_peanut_cake_top",
+    "side": "northeast_china_delight:block/wooden_mortar_peanut_cake_side",
+    "kernel": "northeast_china_delight:block/wooden_mortar_peanut_kernel",
+    "particle": "northeast_china_delight:block/wooden_mortar_peanut_cake_top"
+  },
+  "elements": [
+    {
+      "from": [
+        4.5,
+        10.0,
+        4.9
+      ],
+      "to": [
+        11.5,
+        11.6,
+        7.3
+      ],
+      "faces": {
+        "up": {
+          "texture": "#top"
+        },
+        "down": {
+          "texture": "#side",
+          "uv": [
+            0,
+            0,
+            7.0,
+            2.4
+          ]
+        },
+        "north": {
+          "texture": "#side",
+          "uv": [
+            0,
+            0,
+            7.0,
+            4
+          ]
+        },
+        "south": {
+          "texture": "#side",
+          "uv": [
+            0,
+            0,
+            7.0,
+            4
+          ]
+        },
+        "east": {
+          "texture": "#side",
+          "uv": [
+            0,
+            0,
+            2.4,
+            4
+          ]
+        },
+        "west": {
+          "texture": "#side",
+          "uv": [
+            0,
+            0,
+            2.4,
+            4
+          ]
+        }
+      }
+    },
+    {
+      "from": [
+        5.8,
+        11.45,
+        6.0
+      ],
+      "to": [
+        7.0,
+        11.95,
+        6.8
+      ],
+      "faces": {
+        "up": {
+          "texture": "#kernel"
+        },
+        "down": {
+          "texture": "#kernel"
+        },
+        "north": {
+          "texture": "#kernel"
+        },
+        "south": {
+          "texture": "#kernel"
+        },
+        "east": {
+          "texture": "#kernel"
+        },
+        "west": {
+          "texture": "#kernel"
+        }
+      }
+    },
+    {
+      "from": [
+        8.8,
+        11.45,
+        5.45
+      ],
+      "to": [
+        10.0,
+        11.95,
+        6.25
+      ],
+      "faces": {
+        "up": {
+          "texture": "#kernel"
+        },
+        "down": {
+          "texture": "#kernel"
+        },
+        "north": {
+          "texture": "#kernel"
+        },
+        "south": {
+          "texture": "#kernel"
+        },
+        "east": {
+          "texture": "#kernel"
+        },
+        "west": {
+          "texture": "#kernel"
+        }
+      }
+    },
+    {
+      "from": [
+        4.6,
+        10.0,
+        8.9
+      ],
+      "to": [
+        11.6,
+        11.6,
+        11.3
+      ],
+      "faces": {
+        "up": {
+          "texture": "#top"
+        },
+        "down": {
+          "texture": "#side",
+          "uv": [
+            0,
+            0,
+            7.0,
+            2.4
+          ]
+        },
+        "north": {
+          "texture": "#side",
+          "uv": [
+            0,
+            0,
+            7.0,
+            4
+          ]
+        },
+        "south": {
+          "texture": "#side",
+          "uv": [
+            0,
+            0,
+            7.0,
+            4
+          ]
+        },
+        "east": {
+          "texture": "#side",
+          "uv": [
+            0,
+            0,
+            2.4,
+            4
+          ]
+        },
+        "west": {
+          "texture": "#side",
+          "uv": [
+            0,
+            0,
+            2.4,
+            4
+          ]
+        }
+      },
+      "rotation": {
+        "angle": -22.5,
+        "axis": "y",
+        "origin": [
+          8.1,
+          10.0,
+          10.1
+        ]
+      }
+    },
+    {
+      "from": [
+        6.022,
+        11.45,
+        9.388
+      ],
+      "to": [
+        7.222,
+        11.95,
+        10.188
+      ],
+      "faces": {
+        "up": {
+          "texture": "#kernel"
+        },
+        "down": {
+          "texture": "#kernel"
+        },
+        "north": {
+          "texture": "#kernel"
+        },
+        "south": {
+          "texture": "#kernel"
+        },
+        "east": {
+          "texture": "#kernel"
+        },
+        "west": {
+          "texture": "#kernel"
+        }
+      },
+      "rotation": {
+        "angle": -22.5,
+        "axis": "y",
+        "origin": [
+          6.622,
+          11.6,
+          9.788
+        ]
+      }
+    },
+    {
+      "from": [
+        8.793,
+        11.45,
+        9.986
+      ],
+      "to": [
+        9.993,
+        11.95,
+        10.786
+      ],
+      "faces": {
+        "up": {
+          "texture": "#kernel"
+        },
+        "down": {
+          "texture": "#kernel"
+        },
+        "north": {
+          "texture": "#kernel"
+        },
+        "south": {
+          "texture": "#kernel"
+        },
+        "east": {
+          "texture": "#kernel"
+        },
+        "west": {
+          "texture": "#kernel"
+        }
+      },
+      "rotation": {
+        "angle": -22.5,
+        "axis": "y",
+        "origin": [
+          9.393,
+          11.6,
+          10.386
+        ]
+      }
+    }
+  ]
+}
