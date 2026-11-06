@@ -77,13 +77,13 @@ public final class DishEffectGameTests {
         Holder<MobEffect> greasy = DdEffects.hold(ModEffects.GREASY);
         for (String dish : List.of("harvest_stew_bowl", "slaughter_feast_bowl", "ground_pot_chicken_bowl",
                 "ground_pot_ribs_bowl", "pork_vermicelli_stew_bowl", "chicken_mushroom_stew_bowl",
-                "sauerkraut_seafood_stew_bowl", "sauerkraut_bone_stew_bowl", "demoli_fish_stew")) {
+                "sauerkraut_seafood_stew_bowl", "sauerkraut_bone_stew_bowl", "demoli_fish_stew_bowl")) {
             DishEffects.Applied boost = find(dish, healthBoost);
             helper.assertTrue(boost != null && boost.amplifier() == 1 && boost.durationTicks() == 1800,
                     "大盆菜应给 90 秒生命提升 II：" + dish);
             helper.assertTrue(gives(dish, haste), "大盆菜应给急迫：" + dish);
             helper.assertTrue(!gives(dish, DdEffects.hold(MobEffects.MOVEMENT_SLOWDOWN)), "大盆菜不应缓慢：" + dish);
-            boolean balanced = dish.startsWith("sauerkraut_") || dish.equals("demoli_fish_stew");
+            boolean balanced = dish.startsWith("sauerkraut_") || dish.equals("demoli_fish_stew_bowl");
             helper.assertTrue(gives(dish, greasy) != balanced,
                     "酸菜海鲜锅、酸菜炖大骨、得莫利炖鱼给滋养，其余给油腻：" + dish);
         }

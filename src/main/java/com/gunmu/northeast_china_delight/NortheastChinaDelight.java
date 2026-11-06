@@ -515,7 +515,7 @@ public class NortheastChinaDelight
             registerItemIcon(event, "harvest_stew_icon");
             registerItemIcon(event, "sauerkraut_seafood_stew_icon");
             registerItemIcon(event, "chicken_mushroom_stew_icon");
-            registerItemIcon(event, "demoli_fish_stew_pot_icon");
+            registerItemIcon(event, "demoli_fish_stew_icon");
             registerItemIcon(event, "steamed_rice_icon");
             registerItemIcon(event, "mystery_stew_icon");
             registerAllBlockModels(event);
@@ -598,7 +598,7 @@ public class NortheastChinaDelight
                     ModItems.DA_FENG_SHOU.get(),
                     ModItems.SUAN_CAI_HAI_XIAN_GUO.get(),
                     ModItems.XIAO_JI_DUN_MO_GU.get(),
-                    ModItems.DE_MO_LI_DUN_YU_POT.get(),
+                    ModItems.DE_MO_LI_DUN_YU.get(),
                     ModItems.PEN_MI_FAN.get(),
                     ModItems.MYSTERY_STEW.get());
 

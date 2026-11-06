@@ -55,7 +55,7 @@ public final class DishFlavors {
     private static final Set<String> FEAST_BOWLS = Set.of(
             "harvest_stew_bowl", "slaughter_feast_bowl", "sauerkraut_seafood_stew_bowl", "sauerkraut_bone_stew_bowl",
             "ground_pot_chicken_bowl", "ground_pot_ribs_bowl", "pork_vermicelli_stew_bowl", "chicken_mushroom_stew_bowl",
-            "demoli_fish_stew");
+            "demoli_fish_stew_bowl");
 
     /** 大盆菜碗装那一份的效果时长：90 秒 */
     private static final int FEAST_TICKS = 1800;
@@ -70,7 +70,7 @@ public final class DishFlavors {
             Map.entry("kimchi_tofu_soup", 0),
             Map.entry("ginseng_chicken_soup", 0),
             Map.entry("cabbage_tofu_vermicelli_stew", 0),
-            Map.entry("demoli_fish_stew", 0),
+            Map.entry("demoli_fish_stew_bowl", 0),
             Map.entry("borscht", 0),
             Map.entry("shrimp_paste_tofu_stew", 0),
             Map.entry("crushed_corn_porridge", 0),
@@ -149,7 +149,7 @@ public final class DishFlavors {
         put(map, Flavor.BALANCED, 6, FEAST_TICKS, "sauerkraut_seafood_stew_bowl");
         put(map, Flavor.BALANCED, 6, FEAST_TICKS, "sauerkraut_bone_stew_bowl");
         // 得莫利炖鱼 2026-11-06 改成盆装菜，碗装那一碗照大盆菜给；口味照旧均衡（鱼炖豆腐粉条，不算油腻）
-        put(map, Flavor.BALANCED, 6, FEAST_TICKS, "demoli_fish_stew");
+        put(map, Flavor.BALANCED, 6, FEAST_TICKS, "demoli_fish_stew_bowl");
         put(map, Flavor.GREASY, 2, "salted_fish_flatbread");
         put(map, Flavor.GREASY, 2, 800, "kimchi_pancake");
         put(map, Flavor.GREASY, 2, 1000, "snowy_bean_paste");

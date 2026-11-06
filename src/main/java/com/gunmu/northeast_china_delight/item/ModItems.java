@@ -307,13 +307,12 @@ public class ModItems {
     public static final Supplier<Item> DRY_FRIED_HAIRTAIL = bowlFood("dry_fried_hairtail", 8, 0.6F);
     public static final Supplier<Item> BRAISED_HAIRTAIL = bowlFood("braised_hairtail", 8, 0.6F);
     public static final Supplier<Item> DA_JIANG_TANG = brassBowlFood("soy_paste_soup", 6, 0.5F);
-    public static final Supplier<Item> DE_MO_LI_DUN_YU = bowlFood("demoli_fish_stew", 11, 0.8F);
     /**
-     * 盆装得莫利炖鱼（2026-11-06）：别的盆装菜是「盆 = 菜名、碗 = 菜名_bowl」，这道碗装的先有、占着 demoli_fish_stew
-     * （老存档里的碗别变成盆），盆就叫 demoli_fish_stew_pot，和方块同名
+     * 盆装得莫利炖鱼（2026-11-06 从碗装菜改成盆装菜）。名字同别的盆装菜：盆 = 菜名、碗 = 菜名_bowl
+     * （用户：这道菜的用量就是大盆菜的，名字要统一）；原来那碗占的 demoli_fish_stew 给了盆，老存档里的碗读出来是一盆
      */
-    public static final Supplier<Item> DE_MO_LI_DUN_YU_POT =
-            feastItem("demoli_fish_stew_pot", () -> ModBlocks.DE_MO_LI_DUN_YU_POT.get());
+    public static final Supplier<Item> DE_MO_LI_DUN_YU = feastItem("demoli_fish_stew", () -> ModBlocks.DE_MO_LI_DUN_YU_POT.get());
+    public static final Supplier<Item> DE_MO_LI_DUN_YU_BOWL = bowlFood("demoli_fish_stew_bowl", 11, 0.8F);
     public static final Supplier<Item> SU_BO_TANG = bowlFood("borscht", 10, 0.7F);
     public static final Supplier<Item> SUAN_CAI_HAI_XIAN_GUO =
             feastItem("sauerkraut_seafood_stew", () -> ModBlocks.SUAN_CAI_HAI_XIAN_GUO_POT.get());
@@ -577,12 +576,12 @@ public class ModItems {
             BAI_CAI_DOU_FU_DUN_FEN_TIAO,
             DI_GUO_JI_BOWL, DI_GUO_PAI_GU_BOWL, SHA_ZHU_CAI_BOWL,
             SUAN_CAI_DUN_GU_TOU_BOWL, ZHU_ROU_DUN_FEN_TIAO_BOWL,
-            XIAO_JI_DUN_MO_GU_BOWL, SUAN_CAI_HAI_XIAN_GUO_BOWL, DA_FENG_SHOU_BOWL, DE_MO_LI_DUN_YU,
+            XIAO_JI_DUN_MO_GU_BOWL, SUAN_CAI_HAI_XIAN_GUO_BOWL, DA_FENG_SHOU_BOWL, DE_MO_LI_DUN_YU_BOWL,
             LA_NIU_ROU_TANG_FAN, LA_BAI_CAI_CHAO_FAN, LA_BAI_CAI_TANG_FAN,
             DA_JIANG_TANG, SHEN_JI_TANG, BUCKWHEAT_COLD_NOODLES, DOG_BAO_PICKLES, BIBIMBAP,
             DI_GUO_JI, DI_GUO_PAI_GU, SHA_ZHU_CAI, DA_FENG_SHOU,
             SUAN_CAI_DUN_GU_TOU, ZHU_ROU_DUN_FEN_TIAO,
-            XIAO_JI_DUN_MO_GU, SUAN_CAI_HAI_XIAN_GUO, DE_MO_LI_DUN_YU_POT, PEN_MI_FAN, MYSTERY_STEW
+            XIAO_JI_DUN_MO_GU, SUAN_CAI_HAI_XIAN_GUO, DE_MO_LI_DUN_YU, PEN_MI_FAN, MYSTERY_STEW
     );
 
     private static <I extends Item> Supplier<I> regItem(String id,
