@@ -235,7 +235,7 @@
   "message.northeast_china_delight.big_pot.not_empty": "锅里还有东西，先盛完或者拿出来",
   "message.northeast_china_delight.big_pot.need_water": "需加水烹饪",
   "message.northeast_china_delight.big_pot.seasoning_full": "调料放够了；放错了就用大脸盆把水舀走再倒回来",
-  "jei.northeast_china_delight.info.hand_pump": "拿空桶、空的大脸盆或玻璃瓶右键压水井即可装水，水不会用完。",
+  "jei.northeast_china_delight.info.hand_pump": "拿空桶、空的大脸盆或玻璃瓶右键压水井即可装水，水不会用完。空手右键时可以给前方的各种容器倒水。",
   "jei.northeast_china_delight.info.mystery_stew": "当大铁锅中投放的食材无法匹配任意配方时，烹饪得到谜之炖菜，其效果由投放食材的种类和数量决定，放入调料可延长其效果。",
   "item.northeast_china_delight.paper_cut": "窗花",
   "block.northeast_china_delight.creative_vat": "创造大缸",
