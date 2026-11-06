@@ -1,0 +1,50 @@
+{
+  "type": "northeast_china_delight:big_pot_cooking",
+  "config": {
+    "liquid": {
+      "fluid": "minecraft:water",
+      "amount": 1000
+    },
+    "ingredients": [
+      {
+        "tag": "c:foods/raw_fish"
+      },
+      {
+        "tag": "c:foods/tofu"
+      },
+      {
+        "tag": "c:foods/vermicelli"
+      },
+      {
+        "tag": "c:crops/napa_cabbage"
+      },
+      {
+        "tag": "c:mushrooms"
+      },
+      {
+        "tag": "c:foods/raw_pork"
+      }
+    ],
+    "seasonings": [
+      {
+        "tag": "c:foods/seasonings/soy_sauce"
+      },
+      {
+        "tag": "c:foods/seasonings/salt"
+      },
+      {
+        "tag": "c:foods/seasonings/cooking_oil"
+      }
+    ],
+    "container": {
+      "item": "northeast_china_delight:large_basin"
+    },
+    "result": {
+      "item": "northeast_china_delight:demoli_fish_stew_pot",
+      "count": 1
+    },
+    "cooking_time": 600,
+    "lid_speedup": 40,
+    "experience": 1.0
+  }
+}

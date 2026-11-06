@@ -150,6 +150,23 @@
           }
         ]
       }
+    },
+    "demoli": {
+      "trigger": "minecraft:placed_block",
+      "conditions": {
+        "location": [
+          {
+            "condition": "minecraft:location_check",
+            "predicate": {
+              "block": {
+                "blocks": [
+                  "northeast_china_delight:demoli_fish_stew_pot"
+                ]
+              }
+            }
+          }
+        ]
+      }
     }
   },
   "requirements": [
@@ -161,7 +178,8 @@
       "pork_vermicelli",
       "sauerkraut_bone",
       "chicken_mushroom",
-      "seafood"
+      "seafood",
+      "demoli"
     ]
   ]
 }

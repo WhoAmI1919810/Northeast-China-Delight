@@ -150,6 +150,23 @@
           }
         ]
       }
+    },
+    "demoli": {
+      "trigger": "minecraft:placed_block",
+      "conditions": {
+        "location": [
+          {
+            "condition": "minecraft:location_check",
+            "predicate": {
+              "block": {
+                "blocks": [
+                  "northeast_china_delight:demoli_fish_stew_pot"
+                ]
+              }
+            }
+          }
+        ]
+      }
     }
   },
   "requirements": [
@@ -176,6 +193,9 @@
     ],
     [
       "seafood"
+    ],
+    [
+      "demoli"
     ]
   ]
 }

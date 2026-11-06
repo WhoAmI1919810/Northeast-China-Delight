@@ -270,6 +270,9 @@ public final class BigPotVisuals {
             item(list, ModItems.FROZEN_TOFU.get(), "frozen_tofu");
             item(list, ModItems.HAZEL_MUSHROOM.get(), "hazel_mushroom");
             item(list, Items.CHICKEN, "chicken");
+            // 整条生鱼（2026-11-06，得莫利炖鱼）：照鲤鱼做的，鳕鱼、鲑鱼都画这一条；带鱼又细又长、银白，套这条不像，照旧画成平放的物品
+            list.add(new IngredientModel(stack -> stack.is(ModTags.FOODS_RAW_FISH) && !stack.is(ModItems.HAIRTAIL.get()),
+                    "raw_fish"));
             tag(list, ModTags.FOODS_RAW_PORK, "raw_pork");
             tag(list, ModTags.FOODS_RAW_BEEF, "raw_beef");
             tag(list, ModTags.FOODS_RAW_MUTTON, "raw_mutton");
