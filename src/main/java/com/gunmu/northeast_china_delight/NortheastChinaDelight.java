@@ -806,7 +806,7 @@ public class NortheastChinaDelight
         @SubscribeEvent
         public static void onRenderLevelStage(net.minecraftforge.client.event.RenderLevelStageEvent event)
         {
-            if (event.getStage() == net.minecraftforge.client.event.RenderLevelStageEvent.Stage.AFTER_BLOCK_ENTITIES) {
+            if (event.getStage() == net.minecraftforge.client.event.RenderLevelStageEvent.Stage.AFTER_TRANSLUCENT_BLOCKS) {
                 com.gunmu.northeast_china_delight.client.MirrorReflections.render(event.getPoseStack(), event.getCamera(),
                         event.getFrustum(), event.getPartialTick());
             }

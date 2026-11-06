@@ -49,7 +49,9 @@ import java.util.List;
  * 再盖一层半透明的镜子贴图，像隔着一层光滑的玻璃。不用方块实体：客户端每半秒扫一遍身边的脸盆架记下位置，
  * 老存档里早就放着的、结构里生成的脸盆架也都照得出来。</p>
  *
- * <p>在「方块实体画完」那一步（RenderLevelStageEvent AFTER_BLOCK_ENTITIES）画，对离得近、看得见、人站在镜子正面的几面镜子：</p>
+ * <p>在「半透明方块画完」那一步（RenderLevelStageEvent AFTER_TRANSLUCENT_BLOCKS）画。放着水盆的脸盆架整个模型在半透明那一层，
+ * 镜子到这时才画上；以前在「方块实体画完」时画，倒影画完后写回的深度比镜面靠前一点，后来画的镜子过不了深度测试，
+ * 放了水盆就看不见镜子、透出后面的墙和窗（2026-11-06 用户报）。对离得近、看得见、人站在镜子正面的几面镜子：</p>
  * <ol>
  *   <li>模板缓冲把镜面没被挡住的那块圈出来（写 1）；</li>
  *   <li>这块的深度清到最远（glDepthRange(1, 1)）；</li>
@@ -113,7 +115,7 @@ public final class MirrorReflections {
         }
     }
 
-    /** RenderLevelStageEvent AFTER_BLOCK_ENTITIES 时调；poseStack 是那一步的（坐标以相机为原点） */
+    /** RenderLevelStageEvent AFTER_TRANSLUCENT_BLOCKS 时调；poseStack 的坐标以相机为原点（1.21.1 那一步不给，调用处新建空的） */
     public static void render(PoseStack poseStack, Camera camera, Frustum frustum, float partialTick) {
         Minecraft mc = Minecraft.getInstance();
         ClientLevel level = mc.level;
