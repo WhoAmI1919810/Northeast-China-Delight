@@ -94,7 +94,7 @@ public final class BigPotRecipes {
         return n;
     }
 
-    /** 锅里的液体和料正好凑成哪条配方（料要一样不多一样不少、个数对上；液体够量就行）；凑不上返回 null */
+    /** 锅里的液体和料正好凑成哪条配方（料要一样不多一样不少、个数对上；液体的量在配方的范围里）；凑不上返回 null */
     @Nullable
     public static BigPotRecipe match(RecipeManager manager, Fluid liquid, int liquidMb, List<ItemStack> contents) {
         for (BigPotRecipe recipe : all(manager)) {
@@ -110,7 +110,7 @@ public final class BigPotRecipes {
             if (liquidMb > 0) {
                 return false;
             }
-        } else if (liquidMb < recipe.liquid().amount() || !recipe.liquid().test(liquid)) {
+        } else if (!recipe.liquid().accepts(liquidMb) || !recipe.liquid().test(liquid)) {
             return false;
         }
         List<BigPotRecipe.Entry> entries = new ArrayList<>(recipe.ingredients());

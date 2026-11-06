@@ -45,7 +45,8 @@ import org.jetbrains.annotations.Nullable;
  *       调料倒进去就拿不出来，放错了只能把水舀干重来；锅里只剩调料时右键没反应、不出提示；</li>
  *   <li>灶点着、锅里正好凑成一条配方、盖上锅盖才开始煮（每刻 {@link #serverTick}；2026-11-05 用户：不放锅盖就不开始烹饪）。
  *       开煮以后揭开盖照常煮，盖着时按配方的 {@code lid_speedup} 走得快，中途盖上只让剩下的变快（同日用户：中途可以揭盖）。
- *       开始煮以后锅里的东西就不能动了：不能放、不能拿、不能舀水（右键没反应、不出提示），只能等煮好（2026-11-03 用户）；</li>
+ *       开始煮以后锅里的东西就不能动了：不能放、不能拿、不能舀水（右键没反应、不出提示），只能等煮好（2026-11-03 用户）；
+ *       也不能倒水（2026-11-06 配方的水量有了上限，多倒一桶会凑不上）；</li>
  *   <li>凑不上任何配方、锅里有水有食材，盖上锅盖照样煮，煮出一锅谜之炖菜（同日用户，{@link MysteryStew}）：
  *       用大脸盆盛出一盆，效果按锅里数量最多的两类食材定；</li>
  *   <li>煮好了：料和液体都没了，锅里是一锅菜（配方 result 的 count 就是份数），
@@ -93,6 +94,10 @@ public final class BigPotCooking {
 
         // 倒水 / 舀水：水桶、水盆一次 1000 mB
         if (isWater(held)) {
+            if (pot.cooking() != null) {
+                // 煮着不让倒水，不出提示：配方的水量有范围（2026-11-06），多倒一桶就凑不上、改煮谜之炖菜了
+                return InteractionResult.sidedSuccess(level.isClientSide);
+            }
             if (!canPour(pot)) {
                 tell(player, Component.translatable("message.northeast_china_delight.big_pot.liquid_full"));
                 return InteractionResult.sidedSuccess(level.isClientSide);
@@ -245,7 +250,7 @@ public final class BigPotCooking {
             return null;
         }
         if (isWater(stack)) {
-            if (!canPour(pot)) {
+            if (pot.cooking() != null || !canPour(pot)) {
                 return null;
             }
             if (!simulate) {

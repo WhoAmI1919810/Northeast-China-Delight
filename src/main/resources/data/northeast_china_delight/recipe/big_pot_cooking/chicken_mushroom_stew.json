@@ -3,7 +3,10 @@
   "config": {
     "liquid": {
       "fluid": "minecraft:water",
-      "amount": 1000
+      "amount": {
+        "min": 1000,
+        "max": 2000
+      }
     },
     "ingredients": [
       {
