@@ -45,7 +45,9 @@ import java.util.List;
  * {@code return_container}（不写时还这样东西自己剩的容器：水桶还空桶、水盆还空大脸盆、水瓶还空瓶，
  * 见 {@link PoundingRecipes.Input#leftover}），一份水写 {@code {"water": true}} 代替 {@code ingredient}
  * （水桶 / 水盆 / 水瓶，见 {@link PoundingRecipes#water}），可选 {@code model}：料还没放齐时这一样放进去了臼里画什么
- * （见 {@link PoundingRecipes.Input#model}）；{@code results} 中每一项可以有固定/随机数量、出现概率和副产物标记。
+ * （见 {@link PoundingRecipes.Input#model}）；倒进臼里的液体写 {@code liquid}（流体 id，或 {@code {"fluid": …, "texture": …, "color": …}}，
+ * 见 {@link PoundingRecipes.Liquid}），臼里直接画这层液面，不用再给液体单做模型；舂出来是液体的写顶层 {@code finished_liquid}；
+ * {@code results} 中每一项可以有固定/随机数量、出现概率和副产物标记。
  * 旧的单输入 {@code input}/{@code return_container} 与单产物 {@code result} 仍然原样可用。
  */
 public final class PoundDataRecipe implements Recipe<
@@ -80,7 +82,7 @@ public final class PoundDataRecipe implements Recipe<
                         this.rule.tool(), this.rule.poundTimes(), this.rule.chargeThreshold(),
                         this.rule.stageModels(), this.rule.results(), this.rule.transition(),
                         this.rule.stageModelMode(), this.rule.finishedModel(), this.rule.resultContainer(),
-                        this.rule.resultMb());
+                        this.rule.resultMb(), this.rule.finishedLiquid());
     }
 
     @Nullable
@@ -170,9 +172,13 @@ public final class PoundDataRecipe implements Recipe<
         PoundingRecipes.Transition transition = PoundingRecipes.Transition.parse(
                 config.has("transition") ? config.get("transition").getAsString() : null);
 
+        PoundingRecipes.Liquid finishedLiquid = config.has("finished_liquid")
+                ? decodeLiquid(config.get("finished_liquid"), "finished_liquid")
+                : null;
+
         return new PoundingRecipes.Recipe(recipeId, integer(config, "priority", 0), inputs, tool,
                 poundTimes, chargeThreshold, stageModels, results, transition, stageModelMode, finishedModel,
-                resultContainer, resultMb);
+                resultContainer, resultMb, finishedLiquid);
     }
 
     private static List<PoundingRecipes.Input> decodeInputs(JsonObject config) {
@@ -185,7 +191,8 @@ public final class PoundDataRecipe implements Recipe<
                 }
                 JsonObject entry = element.getAsJsonObject();
                 // {"water": true}：一份水（水桶 / 水盆 / 水瓶），原料用代码拼，见 PoundingRecipes#water
-                Ingredient ingredient = GsonHelper.getAsBoolean(entry, "water", false)
+                boolean water = GsonHelper.getAsBoolean(entry, "water", false);
+                Ingredient ingredient = water
                         ? PoundingRecipes.water()
                         : decodeIngredient(entry, "ingredient");
                 int count = integer(entry, "count", 1);
@@ -202,7 +209,11 @@ public final class PoundDataRecipe implements Recipe<
                         throw new JsonParseException("舂捣 inputs.model 无效：" + entry.get("model"));
                     }
                 }
-                inputs.add(new PoundingRecipes.Input(ingredient, count, container, model));
+                // 倒进臼里的液体：写了 liquid 按写的，一份水不写也画水面
+                PoundingRecipes.Liquid liquid = entry.has("liquid")
+                        ? decodeLiquid(entry.get("liquid"), "inputs.liquid")
+                        : water ? PoundingRecipes.Liquid.WATER : null;
+                inputs.add(new PoundingRecipes.Input(ingredient, count, container, model, liquid));
             }
             return inputs;
         }
@@ -213,6 +224,48 @@ public final class PoundDataRecipe implements Recipe<
                 : null;
         inputs.add(new PoundingRecipes.Input(ingredient, 1, container));
         return inputs;
+    }
+
+    /**
+     * 液体：字符串就是流体 id；对象可以写 fluid（流体 id）、texture（贴图 id）、color（"#RRGGBB" / "#AARRGGBB" 或整数，
+     * 不写不染色），fluid 和 texture 至少一样，见 {@link PoundingRecipes.Liquid}
+     */
+    private static PoundingRecipes.Liquid decodeLiquid(JsonElement element, String field) {
+        if (element.isJsonPrimitive()) {
+            ResourceLocation fluid = ResourceLocation.tryParse(element.getAsString());
+            if (fluid == null) {
+                throw new JsonParseException("舂捣配方 " + field + " 的流体 id 无效：" + element);
+            }
+            return new PoundingRecipes.Liquid(fluid, null, -1);
+        }
+        if (!element.isJsonObject()) {
+            throw new JsonParseException("舂捣配方 " + field + " 只能写流体 id 或对象：" + element);
+        }
+        JsonObject json = element.getAsJsonObject();
+        ResourceLocation fluid = json.has("fluid") ? ResourceLocation.tryParse(GsonHelper.getAsString(json, "fluid")) : null;
+        ResourceLocation texture = json.has("texture")
+                ? ResourceLocation.tryParse(GsonHelper.getAsString(json, "texture"))
+                : null;
+        if ((json.has("fluid") && fluid == null) || (json.has("texture") && texture == null)
+                || (fluid == null && texture == null)) {
+            throw new JsonParseException("舂捣配方 " + field + " 要写有效的 fluid 或 texture：" + element);
+        }
+        int color = -1;
+        if (json.has("color")) {
+            JsonElement c = json.get("color");
+            if (c.isJsonPrimitive() && c.getAsJsonPrimitive().isNumber()) {
+                color = c.getAsInt();
+            } else {
+                String hex = c.getAsString().replace("#", "");
+                try {
+                    long value = Long.parseLong(hex, 16);
+                    color = (int) (hex.length() <= 6 ? 0xFF000000L | value : value);
+                } catch (NumberFormatException e) {
+                    throw new JsonParseException("舂捣配方 " + field + ".color 无效：" + c);
+                }
+            }
+        }
+        return new PoundingRecipes.Liquid(fluid, texture, color);
     }
 
     private static List<PoundingRecipes.Result> decodeResults(JsonObject config) {

@@ -22,7 +22,7 @@
       "northeast_china_delight:block/wooden_mortar_soybean_1",
       "northeast_china_delight:block/wooden_mortar_soybean_2"
     ],
-    "finished_model": "northeast_china_delight:block/wooden_mortar_peanut_oil",
+    "finished_liquid": "northeast_china_delight:vegetable_oil",
     "result": {
       "item": "northeast_china_delight:cooking_oil",
       "count": 1

@@ -90,13 +90,35 @@ public final class PoundingRecipes {
     }
 
     /**
+     * 臼里的一层液体（2026-11-06 用户：「木臼的配方格式里最好写明白，哪些投料是用于放入液体，这样直接渲染相应液面」）。
+     * 不再给每种液体单做一层模型，渲染器按这里画液面（{@code WoodenMortarRenderer#renderLiquid}，形状同以前那层水 / 油）：
+     * <ul>
+     *   <li>{@code fluid}：按这种流体自己的静止贴图和颜色画；水按群系水色、半透明，同原版炼药锅；</li>
+     *   <li>{@code texture}：直接给贴图（{@code color} 是 ARGB 染色，-1 不染）。两样都写时流体在就用流体，不在（没装那个模组）
+     *       就用贴图——蜂蜜写的是机械动力的 create:honey，没装机械动力时用本模组自己画的 honey_still
+     *       （机械动力的美术资源保留所有权利，不能拷进本模组，只能装了它时现取）。</li>
+     * </ul>
+     */
+    public record Liquid(@Nullable ResourceLocation fluid, @Nullable ResourceLocation texture, int color) {
+        public static final Liquid WATER = new Liquid(DdIds.of("minecraft", "water"), null, -1);
+
+        public Liquid {
+            if (fluid == null && texture == null) {
+                throw new IllegalArgumentException("舂捣配方的液体要写 fluid 或 texture");
+            }
+        }
+    }
+
+    /**
      * 一种投入物需要多少份，以及每消耗一份返还什么容器（不写就按 {@link #leftover} 还）。
      *
      * @param model 料还没放齐时，这一样放进去了臼里画的模型（overlay，同 stage_models；2026-11-05 用户：红薯和水得都放进去才有模型，
      *              要各加载各的）。几样都放了就几个一起画；放齐以后照常画 stage_models 的第一个。null = 放齐前不画
+     * @param liquid 这一样是倒进臼里的液体（配方写 {@code liquid}；{@code "water": true} 不写也算水）：放进去以后、
+     *               开舂之前画这层液面，敲过第一下就归 stage_models 管
      */
     public record Input(Ingredient ingredient, int count, @Nullable ItemStack returnContainer,
-                        @Nullable ResourceLocation model) {
+                        @Nullable ResourceLocation model, @Nullable Liquid liquid) {
         public Input {
             if (count <= 0) {
                 throw new IllegalArgumentException("舂捣输入数量必须为正整数");
@@ -107,7 +129,12 @@ public final class PoundingRecipes {
         }
 
         public Input(Ingredient ingredient, int count, @Nullable ItemStack returnContainer) {
-            this(ingredient, count, returnContainer, null);
+            this(ingredient, count, returnContainer, null, null);
+        }
+
+        public Input(Ingredient ingredient, int count, @Nullable ItemStack returnContainer,
+                     @Nullable ResourceLocation model) {
+            this(ingredient, count, returnContainer, model, null);
         }
 
         /**
@@ -177,12 +204,13 @@ public final class PoundingRecipes {
      * @param resultContainer 取成品时手里必须拿着的容器（比如舂出来的油要拿玻璃瓶装），每取一次扣一个；null 表示空手就能取
      * @param resultMb        大于 0 时成品按毫升装：唯一的产物是一种瓶装调料，拿空容器装出一瓶这么多毫升的，
      *                        拿没装满的同种瓶子就往里续；0 表示成品就是整件物品
+     * @param finishedLiquid  成品是一层液体（比如舂出来的植物油）：成品状态画这层液面；没写 finished_model 时只画液面
      */
     public record Recipe(ResourceLocation id, int priority, List<Input> inputs, Ingredient tool,
                          int poundTimes, float chargeThreshold, List<ResourceLocation> stageModels,
                          List<Result> results, Transition transition, StageModelMode stageModelMode,
                          @Nullable ResourceLocation finishedModel, @Nullable ItemStack resultContainer,
-                         int resultMb) {
+                         int resultMb, @Nullable Liquid finishedLiquid) {
 
         public Recipe {
             inputs = List.copyOf(inputs);
@@ -211,7 +239,33 @@ public final class PoundingRecipes {
                       int poundTimes, float chargeThreshold, List<ResourceLocation> stageModels,
                       List<Result> results, Transition transition) {
             this(id, priority, inputs, tool, poundTimes, chargeThreshold, stageModels, results, transition,
-                    StageModelMode.FULL, null, null, 0);
+                    StageModelMode.FULL, null, null, 0, null);
+        }
+
+        /** 没有成品液面的写法 */
+        public Recipe(ResourceLocation id, int priority, List<Input> inputs, Ingredient tool,
+                      int poundTimes, float chargeThreshold, List<ResourceLocation> stageModels,
+                      List<Result> results, Transition transition, StageModelMode stageModelMode,
+                      @Nullable ResourceLocation finishedModel, @Nullable ItemStack resultContainer, int resultMb) {
+            this(id, priority, inputs, tool, poundTimes, chargeThreshold, stageModels, results, transition,
+                    stageModelMode, finishedModel, resultContainer, resultMb, null);
+        }
+
+        /** 开舂之前臼里要画的液面：放进去了的那几样里第一样写了 liquid 的（slots 是各格放了几个，同方块实体） */
+        @Nullable
+        public Liquid depositedLiquid(java.util.function.IntUnaryOperator slots) {
+            for (int i = 0; i < this.inputs.size(); i++) {
+                if (this.inputs.get(i).liquid() != null && slots.applyAsInt(i) > 0) {
+                    return this.inputs.get(i).liquid();
+                }
+            }
+            return null;
+        }
+
+        /** 配方里第一样液体（JEI 画放齐那一步用） */
+        @Nullable
+        public Liquid firstLiquid() {
+            return depositedLiquid(i -> 1);
         }
 
         /** 装料后的第一个状态（stageModels[0]） */

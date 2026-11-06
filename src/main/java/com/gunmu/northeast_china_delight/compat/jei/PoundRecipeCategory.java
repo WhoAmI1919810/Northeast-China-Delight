@@ -334,6 +334,10 @@ public class PoundRecipeCategory implements IRecipeCategory<PoundJeiRecipe> {
             minecraft.getBlockRenderer().renderSingleBlock(state, pose, buffers,
                     LightTexture.FULL_BRIGHT, OverlayTexture.NO_OVERLAY, ModelData.EMPTY, RenderType.cutout());
         }
+        if (recipe.liquid() != null) {
+            // 倒进臼里的液体不在模型里，按流体 / 贴图画一层液面（没有世界，水用原版默认水色）
+            WoodenMortarRenderer.renderLiquid(pose, buffers, null, null, recipe.liquid(), LightTexture.FULL_BRIGHT);
+        }
         buffers.endBatch();
         pose.popPose();
     }
@@ -393,7 +397,7 @@ public class PoundRecipeCategory implements IRecipeCategory<PoundJeiRecipe> {
             PoundJeiRecipe empty = new PoundJeiRecipe(DdIds.of(NortheastChinaDelight.MODID, "pounding/icon"),
                     java.util.List.of(), java.util.List.of(), 1, 0.9F, java.util.List.of(),
                     java.util.List.of(DdIds.of(NortheastChinaDelight.MODID, "block/wooden_mortar_1")),
-                    PoundingRecipes.StageModelMode.FULL, null, 0);
+                    PoundingRecipes.StageModelMode.FULL, null, 0, null);
             drawStation(graphics, empty, xOffset + 8.0F, yOffset + 10.0F, 9.0F);
         }
     }

@@ -294,6 +294,44 @@ public final class PoundGameTests {
         helper.succeed();
     }
 
+    /** 2026-11-06：配方写明哪样投料是液体（liquid），成品是液体写 finished_liquid；一份水不写 liquid 也算水 */
+    @GameTest(template = "empty")
+    public static void liquidFieldsDecode(GameTestHelper helper) {
+        PoundingRecipes.Recipe recipe = decode(
+                "{\"inputs\":["
+                        + "{\"ingredient\":{\"item\":\"minecraft:honey_bottle\"},\"count\":1,"
+                        + "\"liquid\":{\"fluid\":\"create:honey\",\"texture\":\"northeast_china_delight:block/honey_still\",\"color\":\"#80FF8800\"}},"
+                        + "{\"water\":true,\"count\":1},"
+                        + "{\"ingredient\":{\"item\":\"minecraft:sugar\"},\"count\":1,\"liquid\":\"minecraft:lava\"},"
+                        + "{\"ingredient\":{\"item\":\"minecraft:wheat\"},\"count\":1}],"
+                        + "\"tool\":{\"item\":\"northeast_china_delight:wooden_mallet\"},"
+                        + "\"stage_models\":[\"northeast_china_delight:block/wooden_mortar_1\"],"
+                        + "\"finished_liquid\":\"northeast_china_delight:vegetable_oil\","
+                        + "\"result\":{\"item\":\"minecraft:paper\",\"count\":1}}",
+                DdIds.of(NortheastChinaDelight.MODID, "pounding/test_liquid"));
+        if (recipe == null) {
+            helper.fail("带 liquid 的配方应能解析");
+            return;
+        }
+        PoundingRecipes.Liquid honey = recipe.inputs().get(0).liquid();
+        helper.assertTrue(honey != null && honey.fluid() != null && honey.fluid().getPath().equals("honey")
+                        && honey.texture() != null && honey.color() == 0x80FF8800,
+                "对象写法：fluid、texture、color 都要读到");
+        PoundingRecipes.Liquid water = recipe.inputs().get(1).liquid();
+        helper.assertTrue(water != null && water.fluid() != null && water.fluid().getPath().equals("water"),
+                "一份水不写 liquid 也应算水");
+        PoundingRecipes.Liquid lava = recipe.inputs().get(2).liquid();
+        helper.assertTrue(lava != null && lava.fluid() != null && lava.fluid().getPath().equals("lava") && lava.color() == -1,
+                "字符串写法就是流体 id，不染色");
+        helper.assertTrue(recipe.inputs().get(3).liquid() == null, "没写 liquid 的不是液体");
+        helper.assertTrue(recipe.finishedLiquid() != null
+                        && recipe.finishedLiquid().fluid().getPath().equals("vegetable_oil"),
+                "finished_liquid 应读到");
+        helper.assertTrue(recipe.depositedLiquid(i -> i == 2 ? 1 : 0) == lava,
+                "只放了第三样时画的应是第三样的液面");
+        helper.succeed();
+    }
+
     private static String sharedPeanutJson(boolean withHoney) {
         String honey = withHoney ? ",{\"ingredient\":{\"item\":\"minecraft:honey_bottle\"},\"count\":1}" : "";
         return "{\"inputs\":[{\"ingredient\":{\"item\":\"northeast_china_delight:roasted_peanuts\"},\"count\":1}"
