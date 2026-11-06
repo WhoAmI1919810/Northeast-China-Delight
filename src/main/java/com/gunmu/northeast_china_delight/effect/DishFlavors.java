@@ -133,7 +133,7 @@ public final class DishFlavors {
         put(map, Flavor.GREASY, 1, 1000, "candied_sweet_potato");
         put(map, Flavor.GREASY, 1, 800, "dry_fried_hairtail");
         put(map, Flavor.GREASY, 1, 800, "braised_hairtail");
-        put(map, Flavor.GREASY, 2, 1000, "hazelnut_sugar_fire_bun");
+        // 榛子糖火烧不给效果了，只管饱（2026-11-06 用户，同花生糕）；原来是油腻 2 种、1000 刻
         put(map, Flavor.GREASY, 1, 1000, "corn_fritter");
         put(map, Flavor.GREASY, 1, 1000, "potato_pancake");
         put(map, Flavor.GREASY, 3, "three_fresh_veggies");
