@@ -252,6 +252,59 @@ public final class PoundGameTests {
         helper.succeed();
     }
 
+    /**
+     * 2026-11-06 用户：「臼应该在玩家捶打时，才检查匹配哪一项配方」。两条配方共用熟花生：只放熟花生凑的是前一条，
+     * 再放蜂蜜就改凑后一条，先放哪样都行；凑齐的那条再多放一样就放不进。
+     * 后一条的 id 故意排在前面（同优先级按 id 排）：以前一放熟花生就会被它认死，前一条再也做不出来。
+     */
+    @GameTest(template = "empty")
+    public static void depositChoosesRecipeByAllContents(GameTestHelper helper) {
+        PoundingRecipes.Recipe withHoney = decode(sharedPeanutJson(true),
+                DdIds.of(NortheastChinaDelight.MODID, "pounding/a_test_peanut_honey"));
+        PoundingRecipes.Recipe peanutOnly = decode(sharedPeanutJson(false),
+                DdIds.of(NortheastChinaDelight.MODID, "pounding/b_test_peanut_only"));
+        if (withHoney == null || peanutOnly == null) {
+            helper.fail("Test pounding JSON should decode");
+            return;
+        }
+        List<PoundingRecipes.Recipe> recipes = List.of(withHoney, peanutOnly);
+        ItemStack peanut = new ItemStack(ModItems.ROASTED_PEANUTS.get());
+        ItemStack honey = new ItemStack(Items.HONEY_BOTTLE);
+
+        PoundingRecipes.Fit onlyPeanut = PoundingRecipes.choose(recipes, List.of(peanut));
+        helper.assertTrue(onlyPeanut != null && onlyPeanut.complete() && onlyPeanut.recipe() == peanutOnly,
+                "只放熟花生应凑齐只要熟花生的那条");
+        PoundingRecipes.Fit onlyHoney = PoundingRecipes.choose(recipes, List.of(honey));
+        helper.assertTrue(onlyHoney != null && !onlyHoney.complete() && onlyHoney.recipe() == withHoney,
+                "只放蜂蜜应算熟花生 + 蜂蜜那条、还没凑齐");
+        for (List<ItemStack> both : List.of(List.of(peanut, honey), List.of(honey, peanut))) {
+            PoundingRecipes.Fit fit = PoundingRecipes.choose(recipes, both);
+            helper.assertTrue(fit != null && fit.complete() && fit.recipe() == withHoney,
+                    "熟花生和蜂蜜都放了，不管先后都应凑齐熟花生 + 蜂蜜那条");
+        }
+        helper.assertTrue(PoundingRecipes.choose(recipes, List.of(peanut, new ItemStack(Items.COBBLESTONE))) == null,
+                "放了哪条配方都不要的东西应一条也凑不上");
+
+        helper.assertTrue(PoundingRecipes.room(recipes, List.of(), peanut.copyWithCount(5)) == 1,
+                "两条都只要一个熟花生，一次只放一个");
+        helper.assertTrue(PoundingRecipes.room(recipes, List.of(peanut), peanut.copyWithCount(5)) == 0,
+                "已经有一个熟花生，两条都不收第二个");
+        helper.assertTrue(PoundingRecipes.room(recipes, List.of(peanut), honey.copyWithCount(3)) == 1,
+                "凑齐只要熟花生那条以后还能放蜂蜜");
+        helper.succeed();
+    }
+
+    private static String sharedPeanutJson(boolean withHoney) {
+        String honey = withHoney ? ",{\"ingredient\":{\"item\":\"minecraft:honey_bottle\"},\"count\":1}" : "";
+        return "{\"inputs\":[{\"ingredient\":{\"item\":\"northeast_china_delight:roasted_peanuts\"},\"count\":1}"
+                + honey + "],"
+                + "\"tool\":{\"item\":\"northeast_china_delight:wooden_mallet\"},"
+                + "\"pound_times\":3,"
+                + "\"stage_models\":[\"northeast_china_delight:block/wooden_mortar_1\"],"
+                + "\"result\":{\"item\":\"minecraft:paper\",\"count\":1},"
+                + "\"transition\":\"sequential\"}";
+    }
+
     private static PoundingRecipes.Recipe decode(String json, ResourceLocation id) {
         try {
             Method method = PoundDataRecipe.class.getDeclaredMethod("decode", JsonObject.class,

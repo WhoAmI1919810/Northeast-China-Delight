@@ -22,7 +22,8 @@ import java.util.List;
 
 /**
  * 木臼的方块实体：记住装进去的是哪条舂捣配方、每种输入已投入多少、已经捣了几次，
- * 以及最后一次敲击时已经掷好的产物。
+ * 以及最后一次敲击时已经掷好的产物。开舂之前记的配方只是「眼下这些料像哪条」，每放一样料重挑一次，
+ * 开舂那一下才定下来（2026-11-06 用户，见 {@code WoodenMortarBlock#pound}）。
  */
 public class WoodenMortarBlockEntity extends BlockEntity {
 
@@ -84,6 +85,38 @@ public class WoodenMortarBlockEntity extends BlockEntity {
         }
         setChanged();
         sync();
+    }
+
+    /**
+     * 还没开舂时按新挑的配方重新分格（2026-11-06：放料时每放一样都按臼里全部的料重挑配方，见 PoundingRecipes#choose）。
+     * 进度、产物快照清零；slots 和这条配方的 inputs 一一对应。
+     */
+    public void setDeposits(ResourceLocation id, List<ItemStack> slots) {
+        this.recipeId = id;
+        this.progress = 0;
+        this.pendingResults = null;
+        this.depositedInputs.clear();
+        for (ItemStack stack : slots) {
+            this.depositedInputs.add(stack.copy());
+        }
+        setChanged();
+        sync();
+    }
+
+    /** 臼里放进去的料（不分格、不含空格），挑配方用 */
+    public List<ItemStack> depositedStacks() {
+        List<ItemStack> out = new ArrayList<>();
+        for (ItemStack stack : this.depositedInputs) {
+            if (!stack.isEmpty()) {
+                out.add(stack.copy());
+            }
+        }
+        return out;
+    }
+
+    /** 已经开舂（敲过至少一下，或者已经出了成品）：这以后配方就定了，不能再放料 */
+    public boolean started() {
+        return this.progress > 0 || this.pendingResults != null;
     }
 
     public int inputCount(int slot) {

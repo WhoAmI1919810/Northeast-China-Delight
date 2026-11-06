@@ -52,8 +52,10 @@ import java.util.List;
  * <p>交互：
  * <ul>
  *   <li>空臼（STATE 0）手持木槌右键 → 把木槌搁在臼上（{@link #MALLET}），再空手右键取回</li>
- *   <li>空臼（STATE 0）手持配方投入物右键 → 逐次投入；所有输入数量满足后转 STATE 1</li>
- *   <li>装料 / 加工中（filled..done-1）左键敲击 → 加工一次，切模型；每敲一下扣木槌 1 点耐久</li>
+ *   <li>空臼（STATE 0）手持配方投入物右键 → 逐次投入；臼里的料正好凑齐某条配方就转到它的装料状态，
+ *       还没开舂前能接着放、改凑别的配方（2026-11-06，见 {@link #deposit}）</li>
+ *   <li>装料 / 加工中（filled..done-1）左键敲击 → 加工一次，切模型；每敲一下扣木槌 1 点耐久。
+ *       第一下敲击时才按臼里的料定下是哪条配方</li>
  *   <li>成品状态（doneState）空手右键 → 取出成品，转回 STATE 0</li>
  * </ul>
  *
@@ -195,7 +197,6 @@ public class WoodenMortarBlock extends BaseEntityBlock {
             return InteractionResult.PASS;
         }
         int stage = state.getValue(STATE);
-        var manager = level.getRecipeManager();
 
         // 带槌空臼只允许空手取回木槌。这里必须用 FAIL 而不是 PASS：
         // 1.21 的 useItemOn 收到 PASS 后会继续走 useWithoutItem，等于手持米饭也能把槌取走。
@@ -218,81 +219,88 @@ public class WoodenMortarBlock extends BaseEntityBlock {
                 level.playSound(null, pos, SoundEvents.ITEM_FRAME_ADD_ITEM, SoundSource.BLOCKS, 0.8F, 1.0F);
                 return InteractionResult.SUCCESS;
             }
+        }
 
-            // 空臼或正在分批装料：找这条配方里还没满足、且当前手持物能填的第一个输入槽。
-            PoundingRecipes.Recipe recipe = mortar.resolve(level);
-            if (recipe == null) {
-                // 已经有部分投料、但原配方被数据包删掉/禁用：先把旧料交给空手右键退还，
-                // 不能借机绑定一条新配方，否则 beginFill 会把旧料静默清掉。
-                if (mortar.recipeId() != null) {
-                    return InteractionResult.FAIL;
-                }
-                recipe = PoundingRecipes.byInput(manager, held);
-                if (recipe == null) {
-                    return InteractionResult.PASS;
-                }
-            }
+        return deposit(held, state, level, pos, player, mortar, stage);
+    }
 
-            int slot = firstMissingInput(recipe, held, mortar);
-            if (slot < 0) {
-                return InteractionResult.PASS;
-            }
-            if (level.isClientSide) {
-                return InteractionResult.SUCCESS;
-            }
-
-            PoundingRecipes.Input input = recipe.inputs().get(slot);
-            int movedCount = Math.min(input.count() - mortar.inputCount(slot), held.getCount());
-            if (movedCount <= 0) {
-                return InteractionResult.PASS;
-            }
-
-            if (mortar.recipeId() == null || !mortar.recipeId().equals(recipe.id())) {
-                mortar.beginFill(recipe.id(), recipe.inputs().size());
-            }
-
-            ItemStack moved = held.copy();
-            moved.setCount(movedCount);
-            // 用完剩下的容器（配方写的 return_container，或者水桶 / 水盆 / 水瓶自己剩的空桶 / 空盆 / 空瓶）
-            ItemStack left = input.leftover(moved);
-            if (!player.getAbilities().instabuild) {
-                held.shrink(movedCount);
-            }
-            mortar.addInput(slot, moved);
-
-            if (!player.getAbilities().instabuild && !left.isEmpty()) {
-                // 手里那个用光了，第一个空容器放回手上（同原版倒空水桶），其余的塞背包
-                boolean handFree = held.isEmpty();
-                for (int i = 0; i < movedCount; i++) {
-                    if (handFree) {
-                        player.setItemInHand(InteractionHand.MAIN_HAND, left.copy());
-                        handFree = false;
-                    } else {
-                        giveOrDrop(player, left.copy());
-                    }
-                }
-            }
-
-            if (mortar.inputsSatisfied(recipe)) {
-                setStage(level, pos, state, recipe.filledState());
-            }
-            level.playSound(null, pos, SoundEvents.ITEM_FRAME_ADD_ITEM, SoundSource.BLOCKS, 0.8F, 1.0F);
+    /**
+     * 放一样料（2026-11-06 改：开舂之前随时能接着放，每放一样都按臼里全部的料重挑配方）。
+     *
+     * <p>以前一放第一样东西就认死一条配方：熟花生一放进去就凑齐了花生酱，想再加蜂蜜做别的来不及。
+     * 用户：「臼应该在玩家捶打时，才检查匹配哪一项配方」。现在：</p>
+     * <ul>
+     *   <li>手里这样东西只要还有哪条配方装得下（连同臼里已有的料）就让放，放几个见 {@link PoundingRecipes#room}；</li>
+     *   <li>放完按 {@link PoundingRecipes#choose} 挑：正好凑齐某条就显示它装好料的样子（可以开舂了），
+     *       没凑齐就显示放了一半的料；凑齐了也还能接着放，凑成别的配方就改显示那条；</li>
+     *   <li>开舂那一下再挑一遍才定（{@link #pound}），敲过以后不能再放。</li>
+     * </ul>
+     */
+    private InteractionResult deposit(ItemStack held, BlockState state, Level level, BlockPos pos, Player player,
+                                      WoodenMortarBlockEntity mortar, int stage) {
+        if (held.isEmpty() || mortar.started()) {
+            return InteractionResult.PASS;
+        }
+        PoundingRecipes.Recipe bound = mortar.resolve(level);
+        if (bound == null && mortar.recipeId() != null) {
+            // 已经有部分投料、但原配方被数据包删掉/禁用：先把旧料交给空手右键退还，
+            // 不能借机挑一条新配方，否则旧料会被静默清掉。
+            return InteractionResult.FAIL;
+        }
+        // 只有空臼、放了一半（还是空臼的样子）、或者刚凑齐还没敲的时候能放
+        if (stage != 0 && (bound == null || stage != bound.filledState())) {
+            return InteractionResult.PASS;
+        }
+        var manager = level.getRecipeManager();
+        List<ItemStack> contents = mortar.depositedStacks();
+        int movedCount = PoundingRecipes.room(manager, contents, held);
+        if (movedCount <= 0) {
+            return InteractionResult.PASS;
+        }
+        if (level.isClientSide) {
             return InteractionResult.SUCCESS;
         }
 
-        // 加工与取货都不在这里：敲击走左键事件，取货走空手右键（onTakeResult）
-        return InteractionResult.PASS;
-    }
+        ItemStack moved = held.copyWithCount(movedCount);
+        contents.add(moved.copy());
+        PoundingRecipes.Fit fit = PoundingRecipes.choose(manager, contents);
+        if (fit == null) {
+            return InteractionResult.PASS;
+        }
+        // 用完剩下的容器（配方写的 return_container，或者水桶 / 水盆 / 水瓶 / 蜂蜜瓶自己剩的空桶 / 空盆 / 空瓶），
+        // 按挑中的这条配方里认它的那一格算
+        ItemStack left = leftover(fit.recipe(), moved);
+        if (!player.getAbilities().instabuild) {
+            held.shrink(movedCount);
+        }
+        mortar.setDeposits(fit.recipe().id(), fit.slots());
 
-    private static int firstMissingInput(PoundingRecipes.Recipe recipe, ItemStack held,
-                                         WoodenMortarBlockEntity mortar) {
-        for (int i = 0; i < recipe.inputs().size(); i++) {
-            PoundingRecipes.Input input = recipe.inputs().get(i);
-            if (mortar.inputCount(i) < input.count() && input.ingredient().test(held)) {
-                return i;
+        if (!player.getAbilities().instabuild && !left.isEmpty()) {
+            // 手里那个用光了，第一个空容器放回手上（同原版倒空水桶），其余的塞背包
+            boolean handFree = held.isEmpty();
+            for (int i = 0; i < movedCount; i++) {
+                if (handFree) {
+                    player.setItemInHand(InteractionHand.MAIN_HAND, left.copy());
+                    handFree = false;
+                } else {
+                    giveOrDrop(player, left.copy());
+                }
             }
         }
-        return -1;
+
+        setStage(level, pos, state, fit.complete() ? fit.recipe().filledState() : 0);
+        level.playSound(null, pos, SoundEvents.ITEM_FRAME_ADD_ITEM, SoundSource.BLOCKS, 0.8F, 1.0F);
+        return InteractionResult.SUCCESS;
+    }
+
+    /** 放进去的这样东西用完剩什么：看配方里认它的那一格（同一样东西各条配方一般剩的一样） */
+    private static ItemStack leftover(PoundingRecipes.Recipe recipe, ItemStack moved) {
+        for (PoundingRecipes.Input input : recipe.inputs()) {
+            if (input.ingredient().test(moved)) {
+                return input.leftover(moved);
+            }
+        }
+        return ItemStack.EMPTY;
     }
 
     /** 空手右键：成品状态时取货 */
@@ -435,6 +443,21 @@ public class WoodenMortarBlock extends BaseEntityBlock {
         }
         int stage = state.getValue(STATE);
         PoundingRecipes.Recipe recipe = mortar.resolve(level);
+        // recipe == null：空臼，或者原配方被数据包删掉 / 禁用了（旧料等空手右键退还，不趁机换配方）
+        if (recipe != null && !mortar.started()) {
+            // 开舂这一下才定配方（2026-11-06 用户）：按臼里现有的料再挑一遍，放料时挑的只是显示用的
+            PoundingRecipes.Fit fit = PoundingRecipes.choose(level.getRecipeManager(), mortar.depositedStacks());
+            if (fit == null || !fit.complete()) {
+                return false;
+            }
+            if (!recipe.id().equals(fit.recipe().id())) {
+                recipe = fit.recipe();
+                mortar.setDeposits(recipe.id(), fit.slots());
+                stage = recipe.filledState();
+                setStage(level, pos, state, stage);
+                state = level.getBlockState(pos);
+            }
+        }
         if (recipe == null || stage < recipe.filledState() || stage >= recipe.doneState()) {
             return false;
         }
