@@ -394,9 +394,12 @@ public class NortheastChinaDelight
         @SubscribeEvent
         public static void onRenderLevelStage(net.neoforged.neoforge.client.event.RenderLevelStageEvent event)
         {
-            if (event.getStage() == net.neoforged.neoforge.client.event.RenderLevelStageEvent.Stage.AFTER_BLOCK_ENTITIES) {
-                com.gunmu.northeast_china_delight.client.MirrorReflections.render(event.getPoseStack(), event.getCamera(),
-                        event.getFrustum(), event.getPartialTick().getGameTimeDeltaPartialTick(false));
+            // 半透明方块画完以后再照：放着水盆的脸盆架整个模型是半透明那一层的，镜子到这时才画好（见 MirrorReflections）。
+            // 这一步 NeoForge 不给 PoseStack，相机旋转已经在全局的模型视图矩阵里，新建一个空的就行
+            if (event.getStage() == net.neoforged.neoforge.client.event.RenderLevelStageEvent.Stage.AFTER_TRANSLUCENT_BLOCKS) {
+                com.gunmu.northeast_china_delight.client.MirrorReflections.render(
+                        event.getPoseStack() != null ? event.getPoseStack() : new com.mojang.blaze3d.vertex.PoseStack(),
+                        event.getCamera(), event.getFrustum(), event.getPartialTick().getGameTimeDeltaPartialTick(false));
             }
         }
         //?}
@@ -854,7 +857,7 @@ public class NortheastChinaDelight
         @SubscribeEvent
         public static void onRenderLevelStage(net.minecraftforge.client.event.RenderLevelStageEvent event)
         {
-            if (event.getStage() == net.minecraftforge.client.event.RenderLevelStageEvent.Stage.AFTER_BLOCK_ENTITIES) {
+            if (event.getStage() == net.minecraftforge.client.event.RenderLevelStageEvent.Stage.AFTER_TRANSLUCENT_BLOCKS) {
                 com.gunmu.northeast_china_delight.client.MirrorReflections.render(event.getPoseStack(), event.getCamera(),
                         event.getFrustum(), event.getPartialTick());
             }
