@@ -21,7 +21,8 @@ import java.util.Map;
 /**
  * 木臼「舂捣」配方的规则核心。
  *
- * <p>装料可以分多次右键完成；所有输入数量满足后进入加工状态。加工满后按 {@link Result}
+ * <p>装料可以分多次右键完成；每放一样都按臼里全部的料重挑配方（{@link #choose}），正好凑齐某条就可以开舂，
+ * 开舂那一下才定是哪条（2026-11-06 用户：几条配方共用一样料时，先放哪样都行）。加工满后按 {@link Result}
  * 逐项掷概率和数量，结果在最后一次敲击时快照进方块实体，之后重载数据包不会重掷。
  */
 public final class PoundingRecipes {
@@ -357,7 +358,7 @@ public final class PoundingRecipes {
         return List.copyOf(recipes);
     }
 
-    /** 手持 stack 能否作为某条舂捣配方的投入料 */
+    /** 手持 stack 能否作为某条舂捣配方的投入料（木臼放料已改用 {@link #room} / {@link #choose}，这里留给别处查询） */
     @Nullable
     public static Recipe byInput(RecipeManager manager, ItemStack stack) {
         if (stack.isEmpty()) {
@@ -369,6 +370,128 @@ public final class PoundingRecipes {
             }
         }
         return null;
+    }
+
+    // ---------------------------------------------------------------- 按臼里的料挑配方
+
+    /**
+     * 臼里的料按某条配方分好格：{@code slots} 和配方 inputs 一一对应；{@code complete} = 每格都正好凑齐。
+     *
+     * <p>2026-11-06 用户：「臼应该在玩家捶打时，才检查匹配哪一项配方」。放料时不再一放第一样就认死一条配方
+     * （以前熟花生一放进去就凑齐了花生酱，想加蜂蜜做别的已经来不及），而是每放一样都按臼里全部的料重新挑，
+     * 开舂那一下再挑一遍才算数，见 {@code WoodenMortarBlock#pound}。</p>
+     */
+    public record Fit(Recipe recipe, List<ItemStack> slots, boolean complete) {
+    }
+
+    /**
+     * 这些料能不能全放进这条配方：每样都有一格认它、每格不超过配方要的数、一格只放同一种东西。
+     * 能就返回分好的各格（没放的格是空），不能返回 null。
+     */
+    @Nullable
+    public static List<ItemStack> fit(Recipe recipe, List<ItemStack> contents) {
+        List<Input> inputs = recipe.inputs();
+        List<ItemStack> slots = new ArrayList<>();
+        for (int i = 0; i < inputs.size(); i++) {
+            slots.add(ItemStack.EMPTY);
+        }
+        for (ItemStack stack : contents) {
+            int left = stack.getCount();
+            for (int i = 0; i < inputs.size() && left > 0; i++) {
+                ItemStack in = slots.get(i);
+                if (!inputs.get(i).ingredient().test(stack) || (!in.isEmpty() && !same(in, stack))) {
+                    continue;
+                }
+                int moved = Math.min(inputs.get(i).count() - in.getCount(), left);
+                if (moved <= 0) {
+                    continue;
+                }
+                if (in.isEmpty()) {
+                    slots.set(i, stack.copyWithCount(moved));
+                } else {
+                    in.grow(moved);
+                }
+                left -= moved;
+            }
+            if (left > 0) {
+                return null;
+            }
+        }
+        return slots;
+    }
+
+    /** 分好的各格是不是每格都凑齐了 */
+    public static boolean complete(Recipe recipe, List<ItemStack> slots) {
+        for (int i = 0; i < recipe.inputs().size(); i++) {
+            if (slots.get(i).getCount() < recipe.inputs().get(i).count()) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
+     * 臼里这些料算哪条配方：放得下的配方里先挑正好凑齐的，没有凑齐的就挑第一条放得下的（显示放了一半的料用）；
+     * 都放不下返回 null。同样凑齐的几条按 priority、再按 id 排，同 {@link #all}。
+     */
+    @Nullable
+    public static Fit choose(RecipeManager manager, List<ItemStack> contents) {
+        return choose(all(manager), contents);
+    }
+
+    /** 同上，配方由调用的地方给（按 {@link #all} 的顺序排好；测试用） */
+    @Nullable
+    public static Fit choose(List<Recipe> recipes, List<ItemStack> contents) {
+        Fit partial = null;
+        for (Recipe recipe : recipes) {
+            List<ItemStack> slots = fit(recipe, contents);
+            if (slots == null) {
+                continue;
+            }
+            if (complete(recipe, slots)) {
+                return new Fit(recipe, slots, true);
+            }
+            if (partial == null) {
+                partial = new Fit(recipe, slots, false);
+            }
+        }
+        return partial;
+    }
+
+    /**
+     * 这一下右键该往臼里放几个手里的东西：放得下的每条配方各自还能再收几个，取最少的那个；一条都收不下返回 0。
+     * 几条配方要的数不一样时就一个一个放，好停在要得少的那条上；只有一条用得上时一下放够（同以前）。
+     */
+    public static int room(RecipeManager manager, List<ItemStack> contents, ItemStack held) {
+        return room(all(manager), contents, held);
+    }
+
+    /** 同上，配方由调用的地方给（测试用） */
+    public static int room(List<Recipe> recipes, List<ItemStack> contents, ItemStack held) {
+        int room = 0;
+        for (Recipe recipe : recipes) {
+            int fits = 0;
+            for (int n = 1; n <= held.getCount(); n++) {
+                List<ItemStack> more = new ArrayList<>(contents);
+                more.add(held.copyWithCount(n));
+                if (fit(recipe, more) == null) {
+                    break;
+                }
+                fits = n;
+            }
+            if (fits > 0) {
+                room = room == 0 ? fits : Math.min(room, fits);
+            }
+        }
+        return room;
+    }
+
+    private static boolean same(ItemStack a, ItemStack b) {
+        //? if <1.20.5 {
+        return ItemStack.isSameItemSameTags(a, b);
+        //?} else {
+        /*return ItemStack.isSameItemSameComponents(a, b);
+        *///?}
     }
 
     @Nullable
