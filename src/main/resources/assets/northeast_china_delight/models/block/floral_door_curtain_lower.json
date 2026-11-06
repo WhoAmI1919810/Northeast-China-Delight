@@ -2,7 +2,6 @@
   "parent": "minecraft:block/block",
   "textures": {
     "cloth": "northeast_china_delight:block/floral_door_curtain_bottom",
-    "rod": "northeast_china_delight:block/curtain_rod",
     "particle": "northeast_china_delight:block/floral_door_curtain_top"
   },
   "elements": [
@@ -35,38 +34,6 @@
         },
         "down": {
           "texture": "#cloth"
-        }
-      }
-    },
-    {
-      "from": [
-        0.05,
-        0.5,
-        13
-      ],
-      "to": [
-        15.95,
-        2,
-        15.5
-      ],
-      "faces": {
-        "north": {
-          "texture": "#rod"
-        },
-        "east": {
-          "texture": "#rod"
-        },
-        "south": {
-          "texture": "#rod"
-        },
-        "west": {
-          "texture": "#rod"
-        },
-        "up": {
-          "texture": "#rod"
-        },
-        "down": {
-          "texture": "#rod"
         }
       }
     }
