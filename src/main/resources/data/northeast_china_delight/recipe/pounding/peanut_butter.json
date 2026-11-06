@@ -22,7 +22,7 @@
       "northeast_china_delight:block/wooden_mortar_peanut_1",
       "northeast_china_delight:block/wooden_mortar_peanut_2"
     ],
-    "finished_model": "northeast_china_delight:block/wooden_mortar_peanut_butter",
+    "finished_liquid": "northeast_china_delight:peanut_butter",
     "result": {
       "item": "northeast_china_delight:peanut_butter",
       "count": 1
