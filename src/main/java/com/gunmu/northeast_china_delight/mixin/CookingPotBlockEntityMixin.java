@@ -34,6 +34,10 @@ import vectorwing.farmersdelight.common.crafting.CookingPotRecipe;
  *   <li>做的本身就是瓶装调料（比如食用油 + 辣椒熬辣椒油）：出锅是满满一瓶 250 mB，原料瓶也得是满瓶、整瓶倒进去，
  *       不然 50 mB 油就能熬出 250 mB 辣椒油。这种原料瓶不满时锅不开火。</li>
  * </ul>
+ * <p>
+ * 大酱（一碗酱）放进厨锅用掉以后弹出一个碗（2026-11-07 用户：「先把大酱的问题修了」）。大酱没登记合成剩余物——蘸酱菜、饭包
+ * 是拿那碗酱直接在工作台合成的，酱碗就是菜的碗，登记了会白多一个碗；农夫乐事厨锅只认合成剩余物和它自己那张表（桶、药水瓶），
+ * 所以以前碗跟着酱一起被扣掉了。这里在扣料那一下补上（大锅在 BigPotCooking.remainderOf 里另还）。
  */
 @Mixin(CookingPotBlockEntity.class)
 public abstract class CookingPotBlockEntityMixin {
@@ -109,7 +113,11 @@ public abstract class CookingPotBlockEntityMixin {
             at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/ItemStack;shrink(I)V", remap = true))
     private void northeast$useOneDose(ItemStack stack, int amount, Operation<Void> original) {
         if (!SeasoningBottleItem.isBottle(stack)) {
+            boolean soyPaste = stack.is(ModItems.SOY_PASTE.get());
             original.call(stack, amount);
+            if (soyPaste) {
+                ((CookingPotBlockEntityInvoker) this).northeast$ejectIngredientRemainder(new ItemStack(Items.BOWL));
+            }
             return;
         }
         if ((stack.is(ModItems.DEEP_FRY_OILS) && this.northeast$cookingResult.is(ModItems.DEEP_FRIED_DISHES))
