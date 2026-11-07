@@ -14,6 +14,7 @@ import net.minecraft.world.InteractionResult;
 //? if >=1.20.5 {
 import net.minecraft.world.ItemInteractionResult;
 //?}
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.BucketItem;
@@ -32,6 +33,7 @@ import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
 import net.minecraft.world.level.block.state.properties.EnumProperty;
 import net.minecraft.world.level.gameevent.GameEvent;
@@ -55,10 +57,14 @@ import org.jetbrains.annotations.Nullable;
  * 「不改模型，只往前下方一格倒」——槽口低，前面同一层放容器会插进锅壁）。炼药锅水位 +1，大缸水位 +1（一层 1000 mB），地上或脸盆架上的空大脸盆变水盆，
  * 大灶上揭着盖的大铁锅倒一桶水，空木臼放一份水；各自的规矩同拿水桶倒（满了、压着石头、煮着、盖着锅盖就不收）。
  * 倒进去了，嘴口落一道水下去；没倒进去照旧光喷水花。</p>
+ *
+ * <p>红石（2026-11-07 用户：「让水井接受到红石信号时也能有相当于右键一次的反应」）：上下哪一半收到信号都算，
+ * 信号从无到有那一下压一次，同空手右键（倒水或者喷水花），一直通着电不连着压；{@link #POWERED} 记有没有信号，同门。</p>
  */
 public class HandPumpBlock extends FacingDecorBlock {
 
     public static final EnumProperty<DoubleBlockHalf> HALF = BlockStateProperties.DOUBLE_BLOCK_HALF;
+    public static final BooleanProperty POWERED = BlockStateProperties.POWERED;
     /** 井身：下半格整格高，上半格到 10 像素（井帽、压把轴架）；出水槽、压把不算进选框 */
     public static final VoxelShape SHAPE = Block.box(4, 0, 4, 12, 16, 12);
     public static final VoxelShape UPPER_SHAPE = Block.box(4, 0, 4, 12, 10, 12);
@@ -68,7 +74,7 @@ public class HandPumpBlock extends FacingDecorBlock {
 
     public HandPumpBlock(BlockBehaviour.Properties properties) {
         super(properties, SHAPE, true);
-        registerDefaultState(defaultBlockState().setValue(HALF, DoubleBlockHalf.LOWER));
+        registerDefaultState(defaultBlockState().setValue(HALF, DoubleBlockHalf.LOWER).setValue(POWERED, false));
     }
 
     @Override
@@ -101,6 +107,7 @@ public class HandPumpBlock extends FacingDecorBlock {
         if (direction.getAxis() == Direction.Axis.Y && (half == DoubleBlockHalf.LOWER) == (direction == Direction.UP)) {
             return neighborState.is(this) && neighborState.getValue(HALF) != half
                     ? state.setValue(FACING, neighborState.getValue(FACING))
+                            .setValue(POWERED, neighborState.getValue(POWERED))
                     : Blocks.AIR.defaultBlockState();
         }
         return super.updateShape(state, direction, neighborState, level, pos, neighborPos);
@@ -136,7 +143,29 @@ public class HandPumpBlock extends FacingDecorBlock {
     @Override
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
         super.createBlockStateDefinition(builder);
-        builder.add(HALF);
+        builder.add(HALF, POWERED);
+    }
+
+    /** 红石：上下两半有一半收到信号就算通电；从没电到有电那一下压一次（同空手右键），两半一起记 POWERED */
+    @Override
+    public void neighborChanged(BlockState state, Level level, BlockPos pos, Block neighborBlock, BlockPos neighborPos,
+                                boolean movedByPiston) {
+        if (level.isClientSide) {
+            return;
+        }
+        BlockPos other = state.getValue(HALF) == DoubleBlockHalf.LOWER ? pos.above() : pos.below();
+        boolean powered = level.hasNeighborSignal(pos) || level.hasNeighborSignal(other);
+        if (powered == state.getValue(POWERED)) {
+            return;
+        }
+        level.setBlock(pos, state.setValue(POWERED, powered), Block.UPDATE_CLIENTS);
+        BlockState otherState = level.getBlockState(other);
+        if (otherState.is(this)) {
+            level.setBlock(other, otherState.setValue(POWERED, powered), Block.UPDATE_CLIENTS);
+        }
+        if (powered && level instanceof ServerLevel server) {
+            pumpOnce(server, base(state, pos), state.getValue(FACING), null);
+        }
     }
 
     /** 井身那格：点上半格时是下面那格 */
@@ -200,26 +229,29 @@ public class HandPumpBlock extends FacingDecorBlock {
             return InteractionResult.PASS;
         }
         if (level instanceof ServerLevel server) {
-            BlockPos pos = base(state, clicked);
-            Direction facing = state.getValue(FACING);
-            BlockPos target = pourInto(server, pos, facing, player);
-            if (target != null) {
-                stream(server, pos, facing, target);
-                return InteractionResult.SUCCESS;
-            }
-            double x = pos.getX() + 0.5 + facing.getStepX() * MOUTH_FORWARD;
-            double y = pos.getY() + MOUTH_Y;
-            double z = pos.getZ() + 0.5 + facing.getStepZ() * MOUTH_FORWARD;
-            server.sendParticles(ParticleTypes.SPLASH, x, y - 0.05, z, 18, 0.05, 0.03, 0.05, 0.12);
-            server.sendParticles(ParticleTypes.FALLING_WATER, x, y, z, 6, 0.03, 0.0, 0.03, 0.0);
-            level.playSound(null, pos, SoundEvents.BUCKET_EMPTY, SoundSource.BLOCKS, 0.5F, 1.2F);
+            pumpOnce(server, base(state, clicked), state.getValue(FACING), player);
         }
         return InteractionResult.sidedSuccess(level.isClientSide);
     }
 
+    /** 光压一下：出水嘴前下方有盛水的家伙就倒进去、落一道水，没有就在槽口喷水花（右键和红石共用） */
+    private static void pumpOnce(ServerLevel server, BlockPos pos, Direction facing, @Nullable Entity by) {
+        BlockPos target = pourInto(server, pos, facing, by);
+        if (target != null) {
+            stream(server, pos, facing, target);
+            return;
+        }
+        double x = pos.getX() + 0.5 + facing.getStepX() * MOUTH_FORWARD;
+        double y = pos.getY() + MOUTH_Y;
+        double z = pos.getZ() + 0.5 + facing.getStepZ() * MOUTH_FORWARD;
+        server.sendParticles(ParticleTypes.SPLASH, x, y - 0.05, z, 18, 0.05, 0.03, 0.05, 0.12);
+        server.sendParticles(ParticleTypes.FALLING_WATER, x, y, z, 6, 0.03, 0.0, 0.03, 0.0);
+        server.playSound(null, pos, SoundEvents.BUCKET_EMPTY, SoundSource.BLOCKS, 0.5F, 1.2F);
+    }
+
     /** 往出水嘴前下方那一格倒水。倒进去了返回接水的那格，没倒进去返回 null */
     @Nullable
-    private static BlockPos pourInto(ServerLevel level, BlockPos pos, Direction facing, Player player) {
+    private static BlockPos pourInto(ServerLevel level, BlockPos pos, Direction facing, @Nullable Entity player) {
         BlockPos target = pos.relative(facing).below();
         BlockState state = level.getBlockState(target);
         boolean poured = false;
