@@ -52,6 +52,8 @@ public class BigPotBlockEntity extends BlockEntity {
     private List<ItemStack> merged;
     @Nullable
     private ResourceLocation cooking;
+    /** 盖上锅盖后还要等几刻才真正开煮；这 3 秒里揭盖可以反悔。0 = 不在等待 */
+    private int startDelay;
     /** 煮了多少：按不盖锅盖的时长算的刻数（盖着锅盖每刻多走一些，见 {@link #tickCooking}） */
     private float cookProgress;
     /** 这一锅不盖锅盖要煮多少刻，给 Jade 算进度 */
@@ -62,6 +64,8 @@ public class BigPotBlockEntity extends BlockEntity {
     private int servings;
     private ItemStack container = ItemStack.EMPTY;
     private float experience;
+    /** 本次要做成的菜；等待、烹饪、煮好没盛完时都给 Jade 显示「本次烹饪：XX」 */
+    private ItemStack displayDish = ItemStack.EMPTY;
     /**
      * 这一锅什么时候煮好的（游戏刻）：煮好以后汤面上接着冒泡、越冒越少，盛过一份就不冒了（2026-11-05 用户，
      * 见 BigPotCooking#clientTick），所以盛第一份时改回 -1。-1 = 不冒（没煮好、盛过了、以前的存档）
@@ -183,6 +187,17 @@ public class BigPotBlockEntity extends BlockEntity {
         return food;
     }
 
+    /** 锅里的调料（不含食材）：同一种调料并成一堆，Jade 只取名字，不显示份数 */
+    public List<ItemStack> seasoningStacks() {
+        List<ItemStack> spice = new ArrayList<>();
+        for (Layer layer : layers) {
+            if (layer.seasoning) {
+                mergeInto(spice, layer.stack, true);
+            }
+        }
+        return spice;
+    }
+
     /** 锅里倒了几种调料（同一种倒几份只算一种；谜之炖菜每多一种多 2 秒） */
     public int seasoningKinds() {
         List<ItemStack> spice = new ArrayList<>();
@@ -224,6 +239,11 @@ public class BigPotBlockEntity extends BlockEntity {
         return cookProgress;
     }
 
+    /** 锅盖放下后的反悔等待还剩几刻；0 = 已在烹饪或没在等待 */
+    public int startDelay() {
+        return startDelay;
+    }
+
     public int cookTotal() {
         return cookTotal;
     }
@@ -249,6 +269,19 @@ public class BigPotBlockEntity extends BlockEntity {
 
     public ItemStack container() {
         return container;
+    }
+
+    /** 本次烹饪的成品（等待、烹饪、煮好没盛完都算）；Jade 用它显示菜名 */
+    public ItemStack displayDish() {
+        return displayDish;
+    }
+
+    /** 旧存档或数据包中途换配方时补上本次成品名；已有预览菜名就不覆盖 */
+    public void rememberDish(ItemStack dish) {
+        if (displayDish.isEmpty() && !dish.isEmpty()) {
+            displayDish = dish.copyWithCount(1);
+            sync();
+        }
     }
 
     /** 锅里什么都没有（没液体、没料、没有煮好的菜） */
@@ -336,15 +369,47 @@ public class BigPotBlockEntity extends BlockEntity {
         return ItemStack.EMPTY;
     }
 
-    /** 正在煮的配方换了（或者凑不上任何配方）就从头算 */
+    /** 正在煮的配方换了（或者凑不上任何配方）就从头算；清空时连反悔等待和预览菜名一起清掉 */
     public void setCooking(@Nullable ResourceLocation recipe) {
-        if (recipe == null ? cooking != null : !recipe.equals(cooking)) {
+        if (recipe == null) {
+            if (cooking != null || startDelay > 0 || !displayDish.isEmpty()) {
+                cooking = null;
+                cookProgress = 0;
+                cookTotal = 0;
+                startDelay = 0;
+                displayDish = ItemStack.EMPTY;
+                sync();
+            }
+            return;
+        }
+        if (!recipe.equals(cooking)) {
             cooking = recipe;
             cookProgress = 0;
-            if (recipe == null) {
-                cookTotal = 0;
-            }
+            startDelay = 0;
             sync();
+        }
+    }
+
+    /** 盖上锅盖：先记下本次做什么，等 {@code delay} 刻再开始推进度 */
+    public void beginCooking(ResourceLocation recipe, int total, int delay, ItemStack dish) {
+        cooking = recipe;
+        cookProgress = 0;
+        cookTotal = total;
+        startDelay = Math.max(0, delay);
+        displayDish = dish.copyWithCount(1);
+        sync();
+    }
+
+    /** 反悔等待走一刻；到 0 时同步一次，让 Jade 从等待切到进度条 */
+    public void tickStartDelay() {
+        if (startDelay <= 0) {
+            return;
+        }
+        startDelay--;
+        if (startDelay <= 0) {
+            sync();
+        } else {
+            setChanged();
         }
     }
 
@@ -373,9 +438,11 @@ public class BigPotBlockEntity extends BlockEntity {
         result = dish.copyWithCount(1);
         servings = dish.getCount();
         container = serveWith.isEmpty() ? ItemStack.EMPTY : serveWith.copyWithCount(1);
+        displayDish = dish.copyWithCount(1);
         experience = xpPerServing;
         finishedAt = level != null ? level.getGameTime() : 0;
         cooking = null;
+        startDelay = 0;
         cookProgress = 0;
         cookTotal = 0;
         changed();
@@ -393,6 +460,7 @@ public class BigPotBlockEntity extends BlockEntity {
             result = ItemStack.EMPTY;
             container = ItemStack.EMPTY;
             servings = 0;
+            displayDish = ItemStack.EMPTY;
         }
         sync();
         return dish;
@@ -421,10 +489,12 @@ public class BigPotBlockEntity extends BlockEntity {
         liquidMb = 0;
         layers.clear();
         cooking = null;
+        startDelay = 0;
         cookProgress = 0;
         result = ItemStack.EMPTY;
         container = ItemStack.EMPTY;
         servings = 0;
+        displayDish = ItemStack.EMPTY;
         finishedAt = -1;
         changed();
     }
@@ -482,6 +552,7 @@ public class BigPotBlockEntity extends BlockEntity {
         if (cooking != null) {
             tag.putString("Cooking", cooking.toString());
         }
+        tag.putInt("StartDelay", startDelay);
         tag.putFloat("CookProgress", cookProgress);
         tag.putInt("CookTotal", cookTotal);
         if (!result.isEmpty()) {
@@ -494,6 +565,9 @@ public class BigPotBlockEntity extends BlockEntity {
         }
         if (!container.isEmpty()) {
             ItemStack.CODEC.encodeStart(ops, container).result().ifPresent(saved -> tag.put("Container", saved));
+        }
+        if (!displayDish.isEmpty()) {
+            ItemStack.CODEC.encodeStart(ops, displayDish).result().ifPresent(saved -> tag.put("DisplayDish", saved));
         }
         if (!lid.isEmpty()) {
             ItemStack.CODEC.encodeStart(ops, lid).result().ifPresent(saved -> tag.put("Lid", saved));
@@ -556,6 +630,7 @@ public class BigPotBlockEntity extends BlockEntity {
             spice.forEach(stack -> layers.add(new Layer(stack, true)));
         }
         cooking = tag.contains("Cooking") ? ResourceLocation.tryParse(tag.getString("Cooking")) : null;
+        startDelay = Math.max(0, tag.getInt("StartDelay"));
         cookProgress = tag.contains("CookProgress") ? tag.getFloat("CookProgress") : tag.getInt("CookTicks");
         cookTotal = tag.getInt("CookTotal");
         result = tag.contains("Result")
@@ -566,6 +641,9 @@ public class BigPotBlockEntity extends BlockEntity {
         finishedAt = !result.isEmpty() && tag.contains("FinishedAt") ? tag.getLong("FinishedAt") : -1;
         container = tag.contains("Container")
                 ? ItemStack.CODEC.parse(ops, tag.get("Container")).result().orElse(ItemStack.EMPTY)
+                : ItemStack.EMPTY;
+        displayDish = tag.contains("DisplayDish")
+                ? ItemStack.CODEC.parse(ops, tag.get("DisplayDish")).result().orElse(ItemStack.EMPTY)
                 : ItemStack.EMPTY;
         lid = tag.contains("Lid")
                 ? ItemStack.CODEC.parse(ops, tag.get("Lid")).result().orElse(ItemStack.EMPTY)

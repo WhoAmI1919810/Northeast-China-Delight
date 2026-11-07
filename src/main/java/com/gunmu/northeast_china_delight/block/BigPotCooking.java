@@ -43,8 +43,8 @@ import org.jetbrains.annotations.Nullable;
  *       食材最多放用得最多的那条配方那么多个、调料同理（{@link BigPotRecipes#maxIngredients} / {@link BigPotRecipes#maxSeasonings}）；</li>
  *   <li>食材和调料互不相干（2026-11-03 用户）：潜行空手右键随时拿出一个食材补救（最后放进去的先出来，隔着调料也照拿）；
  *       调料倒进去就拿不出来，放错了只能把水舀干重来；锅里只剩调料时右键没反应、不出提示；</li>
- *   <li>灶点着、锅里正好凑成一条配方、盖上锅盖才开始煮（每刻 {@link #serverTick}；2026-11-05 用户：不放锅盖就不开始烹饪）。
- *       开煮以后揭开盖照常煮，盖着时按配方的 {@code lid_speedup} 走得快，中途盖上只让剩下的变快（同日用户：中途可以揭盖）。
+ *   <li>灶点着、锅里正好凑成一条配方、盖上锅盖后先等 3 秒再开始煮（每刻 {@link #serverTick}）；这 3 秒内揭盖会取消本次烹饪。
+ *       开煮以后揭开盖照常煮，盖着时按配方的 {@code lid_speedup} 走得快，中途盖上只让剩下的变快。
  *       开始煮以后锅里的东西就不能动了：不能放、不能拿、不能舀水（右键没反应、不出提示），只能等煮好（2026-11-03 用户）；
  *       也不能倒水（2026-11-06 配方的水量有了上限，多倒一桶会凑不上）；</li>
  *   <li>凑不上任何配方、锅里有水有食材，盖上锅盖照样煮，煮出一锅谜之炖菜（同日用户，{@link MysteryStew}）：
@@ -66,6 +66,8 @@ import org.jetbrains.annotations.Nullable;
 public final class BigPotCooking {
 
     private static final int BUCKET_MB = 1000;
+    /** 放上锅盖后先等 3 秒再开煮；这 3 秒内揭盖可以反悔 */
+    private static final int START_DELAY_TICKS = 60;
 
     private BigPotCooking() {
     }
@@ -76,10 +78,11 @@ public final class BigPotCooking {
         // 煮好了：只认盛菜的容器
         if (pot.hasResult()) {
             ItemStack container = pot.container();
-            if (container.isEmpty() || !held.is(container.getItem())) {
-                tell(player, container.isEmpty()
-                        ? Component.translatable("message.northeast_china_delight.big_pot.serve_by_hand")
-                        : Component.translatable("message.northeast_china_delight.big_pot.serve_with",
+            if (container.isEmpty()) {
+                return InteractionResult.sidedSuccess(level.isClientSide);
+            }
+            if (!held.is(container.getItem())) {
+                tell(player, Component.translatable("message.northeast_china_delight.big_pot.serve_with",
                         container.getHoverName()));
                 return InteractionResult.sidedSuccess(level.isClientSide);
             }
@@ -99,7 +102,7 @@ public final class BigPotCooking {
                 return InteractionResult.sidedSuccess(level.isClientSide);
             }
             if (!canPour(pot)) {
-                tell(player, Component.translatable("message.northeast_china_delight.big_pot.liquid_full"));
+                tell(player, Component.translatable("message.northeast_china_delight.big_pot.full"));
                 return InteractionResult.sidedSuccess(level.isClientSide);
             }
             if (!level.isClientSide) {
@@ -141,9 +144,7 @@ public final class BigPotCooking {
         }
         boolean seasoning = isSeasoning(recipes, held);
         if (full(pot, recipes, seasoning)) {
-            tell(player, Component.translatable(seasoning
-                    ? "message.northeast_china_delight.big_pot.seasoning_full"
-                    : "message.northeast_china_delight.big_pot.full"));
+            tell(player, Component.translatable("message.northeast_china_delight.big_pot.full"));
             return InteractionResult.sidedSuccess(level.isClientSide);
         }
         if (!level.isClientSide) {
@@ -289,9 +290,14 @@ public final class BigPotCooking {
      */
     public static InteractionResult onEmptyHand(BigPotBlockEntity pot, BlockState state, Level level, BlockPos pos,
                                                 Player player) {
-        if (pot.hasResult() && pot.container().isEmpty()) {
-            if (!level.isClientSide) {
-                serve(pot, level, pos, state, player);
+        if (pot.hasResult()) {
+            if (pot.container().isEmpty()) {
+                if (!level.isClientSide) {
+                    serve(pot, level, pos, state, player);
+                }
+            } else if (!level.isClientSide) {
+                tell(player, Component.translatable("message.northeast_china_delight.big_pot.serve_with",
+                        pot.container().getHoverName()));
             }
             return InteractionResult.sidedSuccess(level.isClientSide);
         }
@@ -314,7 +320,8 @@ public final class BigPotCooking {
 
     /**
      * 灶点着、灶上有锅时每个服务端 tick 调一次（只在 nw 那一格的方块实体上跑，见 {@link BigStoveBlock#getTicker}）。
-     * 锅里凑成哪条配方、盖上锅盖（state 里 pot=lid）才开煮；开煮以后揭着盖照常煮，盖着按 lid_speedup 缩短时间；换了配方从头算。
+     * 锅里凑成哪条配方、盖上锅盖（state 里 pot=lid）才进入 3 秒反悔期，等满后开煮；开煮以后揭着盖照常煮，
+     * 盖着按 lid_speedup 缩短时间；换了配方从头算。
      * 凑不上配方但有水有食材，盖上锅盖就煮谜之炖菜（cooking 记 {@link MysteryStew#ID}）。
      * {@code cooking} 不为空 = 已经开煮（锅里锁着），所以还没盖过盖时不设：料凑齐了没盖盖，照样能放能拿。
      */
@@ -322,45 +329,45 @@ public final class BigPotCooking {
         if (pot.hasResult()) {
             return;
         }
-        BigPotRecipe recipe = BigPotRecipes.match(level.getRecipeManager(), pot.liquid(), pot.liquidMb(), pot.contents());
         boolean lid = state.getValue(BigStoveBlock.POT) == BigStoveBlock.Pot.LID;
-        // 凑不上配方：有水有食材就煮谜之炖菜，不然什么都不煮
-        ResourceLocation id;
-        int total;
-        int lidTotal;
-        if (recipe != null) {
-            id = recipe.id();
-            total = recipe.cookingTime();
-            lidTotal = recipe.lidCookingTime();
-        } else if (MysteryStew.canCook(pot)) {
-            id = MysteryStew.ID;
-            total = MysteryStew.COOKING_TIME;
-            lidTotal = MysteryStew.LID_COOKING_TIME;
-        } else {
+        CookingPlan plan = plan(pot, level);
+        if (plan == null) {
             pot.setCooking(null);
             return;
         }
-        // 不盖锅盖不开煮（2026-11-05 用户）；已经开煮的揭开盖照常煮（同日用户：中途可以揭盖，进度正常走）
-        if (!lid && !id.equals(pot.cooking())) {
-            pot.setCooking(null);
+        // 锅盖刚放下：先进入 3 秒反悔期，不推进度
+        if (pot.cooking() == null) {
+            if (!lid) {
+                return;
+            }
+            pot.beginCooking(plan.id(), plan.total(), START_DELAY_TICKS, plan.result());
             return;
         }
-        pot.setCooking(id);
+        // 反悔期：锅盖揭开就取消；等满 3 秒才开始真正烹饪
+        if (pot.startDelay() > 0) {
+            if (!lid) {
+                pot.setCooking(null);
+                return;
+            }
+            pot.tickStartDelay();
+            return;
+        }
+        // 旧存档没有预览菜名：补一次；数据包在中途换了配方（正常玩法不会发生）：从头按当前配方算
+        pot.rememberDish(plan.result());
+        if (!plan.id().equals(pot.cooking())) {
+            pot.beginCooking(plan.id(), plan.total(), 0, plan.result());
+            return;
+        }
         // 进度按不盖锅盖的时长算；盖着锅盖每刻多走「不盖盖时长 / 盖盖时长」，中途盖上只让剩下的变快
         // （以前盖上就换成缩短后的总时长、煮过的刻数不变，进度一下放大 1.67 倍，2026-11-03 用户报）
-        pot.setCookTotal(total);
-        pot.tickCooking(lid ? total / (float) lidTotal : 1.0F);
+        pot.setCookTotal(plan.total());
+        pot.tickCooking(lid ? plan.total() / (float) plan.lidTotal() : 1.0F);
         // 煮着时的冒泡、白雾在客户端画（clientTick，看锅里同步过去的 cooking 和每秒一次的进度）
-        if (pot.cookProgress() < total - 0.001F) {
+        if (pot.cookProgress() < plan.total() - 0.001F) {
             return;
         }
         float surface = BigPotBlockEntity.liquidSurfaceY(Math.max(pot.liquidMb(), BUCKET_MB));
-        if (recipe != null) {
-            pot.finish(recipe.result(), recipe.container(), recipe.experience());
-        } else {
-            // 谜之炖菜：一盆，用大脸盆盛，不给经验
-            pot.finish(MysteryStew.cook(pot), new ItemStack(ModItems.LARGE_BASIN.get()), 0.0F);
-        }
+        pot.finish(plan.result(), plan.container(), plan.experience());
         level.playSound(null, pos, SoundEvents.BREWING_STAND_BREW, SoundSource.BLOCKS, 1.0F, 0.8F);
         // 煮好了：像骨粉催熟那样冒一阵绿色粒子
         if (level instanceof ServerLevel server) {
@@ -368,6 +375,47 @@ public final class BigPotCooking {
             server.sendParticles(ParticleTypes.HAPPY_VILLAGER, center.x, originY(pos, state) + surface / 16.0 + 0.2,
                     center.z, 24, 0.45, 0.2, 0.45, 0.0);
         }
+    }
+
+    /** 当前锅里能做什么：配方优先，凑不上就是谜之炖菜；都不能煮返回 null */
+    @Nullable
+    private static CookingPlan plan(BigPotBlockEntity pot, Level level) {
+        BigPotRecipe recipe = BigPotRecipes.match(level.getRecipeManager(), pot.liquid(), pot.liquidMb(), pot.contents());
+        if (recipe != null) {
+            return new CookingPlan(recipe.id(), recipe.cookingTime(), recipe.lidCookingTime(),
+                    recipe.result(), recipe.container(), recipe.experience());
+        }
+        if (MysteryStew.canCook(pot)) {
+            return new CookingPlan(MysteryStew.ID, MysteryStew.COOKING_TIME, MysteryStew.LID_COOKING_TIME,
+                    MysteryStew.cook(pot), new ItemStack(ModItems.LARGE_BASIN.get()), 0.0F);
+        }
+        return null;
+    }
+
+    /** 放上锅盖时由 BigStoveBlock 调：立刻显示「本次烹饪：XX」，并开始 3 秒反悔期 */
+    public static void lidPlaced(BigPotBlockEntity pot, Level level, BlockPos pos, BlockState state, Player player) {
+        if (level.isClientSide || pot.hasResult() || pot.cooking() != null) {
+            return;
+        }
+        CookingPlan plan = plan(pot, level);
+        if (plan == null) {
+            return;
+        }
+        pot.beginCooking(plan.id(), plan.total(), START_DELAY_TICKS, plan.result());
+        tell(player, Component.translatable("message.northeast_china_delight.big_pot.cooking",
+                plan.result().getHoverName()));
+    }
+
+    /** 揭盖时先处理反悔：还在 3 秒等待里就取消这次烹饪；已经开始煮的只按常速继续 */
+    public static void lidRemoved(BigPotBlockEntity pot, Level level, BlockPos pos, BlockState state) {
+        if (pot.cooking() != null && pot.startDelay() > 0) {
+            pot.setCooking(null);
+        }
+        lidLifted(level, pos, state, pot);
+    }
+
+    private record CookingPlan(ResourceLocation id, int total, int lidTotal, ItemStack result, ItemStack container,
+                               float experience) {
     }
 
     /** 煮到几成开始在汤面上冒泡（2026-11-05 用户：烹饪进度超过 60%） */

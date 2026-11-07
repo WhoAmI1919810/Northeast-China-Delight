@@ -7,7 +7,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.ItemTags;
@@ -139,6 +138,11 @@ public class BigStoveBlock extends Block implements EntityBlock, WorldlyContaine
         return BuiltInRegistries.BLOCK.get(DdIds.of("farmersdelight", "stove"));
     }
 
+    /** 农夫乐事的厨锅方块；大灶成型时要把压在上面的厨锅震下来 */
+    public static boolean isCookingPot(BlockState state) {
+        return state.is(BuiltInRegistries.BLOCK.get(DdIds.of("farmersdelight", "cooking_pot")));
+    }
+
     /**
      * 刚在 pos 放下一个炉灶：看它所在的四个 2×2 里有没有一个四格全是炉灶，有就拼成大灶。
      * 大灶正面朝刚放的这个炉灶的正面（也就是朝着放它的人）；四个里有一个点着，大灶就是点着的。
@@ -163,6 +167,14 @@ public class BigStoveBlock extends Block implements EntityBlock, WorldlyContaine
                 }
                 if (!all) {
                     continue;
+                }
+                // 大灶成型后上面不能再放厨锅：先把已经压在上面的厨锅连内容物一起震下来
+                for (Part part : Part.values()) {
+                    int[] o = part.offset(facing);
+                    BlockPos above = origin.offset(o[0], 0, o[1]).above();
+                    if (isCookingPot(level.getBlockState(above))) {
+                        level.destroyBlock(above, true);
+                    }
                 }
                 BlockState base = ModBlocks.BIG_STOVE.get().defaultBlockState().setValue(FACING, facing).setValue(LIT, lit);
                 for (Part part : Part.values()) {
@@ -297,6 +309,7 @@ public class BigStoveBlock extends Block implements EntityBlock, WorldlyContaine
                 BigPotBlockEntity contents = potAt(level, pos, state);
                 if (contents != null) {
                     contents.putLid(lid);
+                    BigPotCooking.lidPlaced(contents, level, pos, state, player);
                 }
                 level.playSound(null, pos, SoundEvents.WOOD_PLACE, SoundSource.BLOCKS, 1.0F, 1.0F);
                 level.gameEvent(player, GameEvent.BLOCK_CHANGE, pos);
@@ -356,17 +369,13 @@ public class BigStoveBlock extends Block implements EntityBlock, WorldlyContaine
                 return cooking;
             }
             if (!BigPotCooking.canTakePot(contents)) {
-                if (!level.isClientSide) {
-                    player.displayClientMessage(
-                            Component.translatable("message.northeast_china_delight.big_pot.not_empty"), true);
-                }
                 return InteractionResult.sidedSuccess(level.isClientSide);
             }
         }
         if (!level.isClientSide) {
             if (pot == Pot.LID && contents != null) {
-                // 煮着或煮好了揭盖：冒一股白雾
-                BigPotCooking.lidLifted(level, pos, state, contents);
+                // 反悔等待中揭盖取消；煮着或煮好了揭盖只按常速继续 / 冒一股白雾
+                BigPotCooking.lidRemoved(contents, level, pos, state);
             }
             Pot next = pot == Pot.LID ? Pot.POT : Pot.NONE;
             updateAll(level, pos, state, s -> s.setValue(POT, next));
