@@ -53,7 +53,8 @@ import java.util.Optional;
  * 这两个数越小越密。
  *
  * <p>生成规则（按需求实现）：每个院子在东西南北四个方向上各自掷一次，
- * 每个方向 20~50 格内随机取一个距离，有 30% 概率再生成一个院子；
+ * 每个方向 20~50 格内随机取一个距离，按 {@code walk_chance} 决定是否再生成一个院子；
+ * 群落内优先把配置里的院子模板各放一次，避免随机抽样长期漏掉某一种；
  * 新院子重复同样的过程，直到掷不中、位置不合法、不是寒冷群系，或者到达 20 户上限。
  * 单个 placement 区域最多尝试三个候选点：原候选区块内一次，失败后在周围 ±3 区块内
  * 各再补一次；三次都失败才放弃这个区域。
@@ -246,13 +247,15 @@ public class NortheastCourtyardStructure extends Structure
     {
         List<Yard> yards = new ArrayList<>();
         Map<String, StructureTemplate> sizes = new HashMap<>();
+        List<String> unplacedTemplates = new ArrayList<>(this.templates);
         Yard first = this.tryMakeYard(context, random, sizes,
-                this.pickTemplate(random), startX, startZ);
+                this.pickTemplate(random, unplacedTemplates), startX, startZ);
         if (first == null)
         {
             return List.of();
         }
         yards.add(first);
+        unplacedTemplates.remove(first.template());
         ArrayDeque<Yard> queue = new ArrayDeque<>();
         queue.add(first);
 
@@ -265,12 +268,13 @@ public class NortheastCourtyardStructure extends Structure
                 {
                     return yards;
                 }
-                if (random.nextFloat() >= this.walkChanceFor(yards))
+                if (unplacedTemplates.isEmpty()
+                        && random.nextFloat() >= this.walkChanceFor(yards))
                 {
                     continue;
                 }
                 int distance = this.stepMin + random.nextInt(this.stepMax - this.stepMin + 1);
-                String template = this.pickTemplate(random);
+                String template = this.pickTemplate(random, unplacedTemplates);
                 int x;
                 int z;
                 if ("center".equals(this.stepMeasure))
@@ -318,19 +322,18 @@ public class NortheastCourtyardStructure extends Structure
                     continue;
                 }
                 yards.add(candidate);
+                unplacedTemplates.remove(candidate.template());
                 queue.add(candidate);
             }
         }
         return yards;
     }
 
-    /**
-     * 判断一个候选位置能不能放院子：地表不能是水、坡度不能太陡、
-     * 生物群系必须还是数据包里配置的那套（默认就是寒冷群系那堆）。
-     */
-    private String pickTemplate(WorldgenRandom random)
+    /** 从尚未出现的模板里抽；所有模板都出现过以后恢复全池随机。 */
+    private String pickTemplate(WorldgenRandom random, List<String> unplacedTemplates)
     {
-        return this.templates.get(random.nextInt(this.templates.size()));
+        List<String> pool = unplacedTemplates.isEmpty() ? this.templates : unplacedTemplates;
+        return pool.get(random.nextInt(pool.size()));
     }
 
     private float walkChanceFor(List<Yard> placed)

@@ -312,6 +312,8 @@
   "jade.northeast_china_delight.big_pot.seasonings": "Seasonings: %s",
   "jade.northeast_china_delight.big_pot.separator": ", ",
   "jade.northeast_china_delight.big_pot.result": "This batch makes: %s",
+  "jade.northeast_china_delight.big_pot.cooking": "Cooking: %s%%",
+  "jade.northeast_china_delight.big_pot.done": "Cooking complete",
   "config.jade.plugin_northeast_china_delight.big_stove": "Big Stove",
   "message.northeast_china_delight.vat.need_container": "Soy paste needs a bowl",
   "message.northeast_china_delight.vat.need_bottle": "Soy sauce needs a glass bottle",
