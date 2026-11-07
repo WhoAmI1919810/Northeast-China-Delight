@@ -44,6 +44,11 @@ public class ModBlockEntities {
             "mystery_stew_pot",
             () -> BlockEntityType.Builder.of(MysteryStewPotBlockEntity::new, ModBlocks.MYSTERY_STEW_POT.get()).build(null));
 
+    /** 脸盆架：保留方块实体类型以兼容旧存档，治疗冷却已改存玩家数据 */
+    public static final Supplier<BlockEntityType<BasinStandBlockEntity>> BASIN_STAND = BLOCK_ENTITIES.register(
+            "basin_stand",
+            () -> BlockEntityType.Builder.of(BasinStandBlockEntity::new, ModBlocks.BASIN_STAND.get()).build(null));
+
     public static void register(IEventBus eventBus) {
         BLOCK_ENTITIES.register(eventBus);
     }
