@@ -7,7 +7,16 @@
       "entries": [
         {
           "type": "minecraft:item",
-          "name": "northeast_china_delight:hand_pump"
+          "name": "northeast_china_delight:hand_pump",
+          "conditions": [
+            {
+              "condition": "minecraft:block_state_property",
+              "block": "northeast_china_delight:hand_pump",
+              "properties": {
+                "half": "lower"
+              }
+            }
+          ]
         }
       ],
       "conditions": [
