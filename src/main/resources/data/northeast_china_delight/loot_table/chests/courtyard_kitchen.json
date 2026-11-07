@@ -4,33 +4,37 @@
   "pools": [
     {
       "rolls": {
-        "min": 2,
-        "max": 4
+        "min": 7,
+        "max": 13
       },
       "entries": [
+        {
+          "type": "minecraft:empty",
+          "weight": 15
+        },
         {
           "type": "minecraft:loot_table",
           "value": "northeast_china_delight:chests/courtyard_kitchen_staples",
           "name": "northeast_china_delight:chests/courtyard_kitchen_staples",
-          "weight": 89
+          "weight": 45
         },
         {
           "type": "minecraft:loot_table",
           "value": "northeast_china_delight:chests/courtyard_kitchen_desserts",
           "name": "northeast_china_delight:chests/courtyard_kitchen_desserts",
-          "weight": 7
+          "weight": 17
         },
         {
           "type": "minecraft:loot_table",
           "value": "northeast_china_delight:chests/courtyard_kitchen_dishes",
           "name": "northeast_china_delight:chests/courtyard_kitchen_dishes",
-          "weight": 3
+          "weight": 17
         },
         {
           "type": "minecraft:loot_table",
           "value": "northeast_china_delight:chests/courtyard_kitchen_feasts",
           "name": "northeast_china_delight:chests/courtyard_kitchen_feasts",
-          "weight": 1
+          "weight": 6
         }
       ]
     }
