@@ -3,6 +3,7 @@ package com.gunmu.northeast_china_delight.compat.jade;
 import com.gunmu.northeast_china_delight.block.BigPotBlockEntity;
 import com.gunmu.northeast_china_delight.block.BigStoveBlock;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.state.BlockState;
@@ -24,8 +25,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * 准星指大灶（四格哪一格都行，锅的数据在西北那格上，见 {@link BigStoveBlock#potAt}）：只显示两样——放进锅里的料（图标）
- * 和烹饪进度条（百分比；走满了写「烹饪完成」）。别的（火、锅盖、水、怎么盛）不写，2026-11-03 用户嫌多。
+ * 准星指大灶（四格哪一格都行，锅的数据在西北那格上，见 {@link BigStoveBlock#potAt}）：投料阶段把食材（图标）和调料（只写名称）
+ * 分开显示；盖上锅盖后只显示「本次烹饪：菜名」和进度条（百分比；走满了写「烹饪完成」）。别的（火、锅盖、水、怎么盛）不写。
  * 进度每秒从服务端同步一次（{@link BigPotBlockEntity#tickCooking}）。
  */
 public enum BigStoveComponentProvider implements IBlockComponentProvider {
@@ -56,21 +57,41 @@ public enum BigStoveComponentProvider implements IBlockComponentProvider {
         }
         IElementHelper helper = IElementHelper.get();
 
-        List<ItemStack> contents = pot.contents();
-        if (!contents.isEmpty()) {
-            List<IElement> line = new ArrayList<>();
-            line.add(helper.text(Component.translatable("jade.northeast_china_delight.big_pot.contents")));
-            for (int i = 0; i < contents.size() && i < MAX_CONTENT_ICONS; i++) {
-                line.add(helper.smallItem(contents.get(i)));
+        ItemStack currentDish = pot.hasResult() ? pot.result() : pot.displayDish();
+        if ((pot.hasResult() || pot.cooking() != null) && !currentDish.isEmpty()) {
+            tooltip.add(helper.text(Component.translatable(
+                    "message.northeast_china_delight.big_pot.cooking", currentDish.getHoverName())));
+        } else {
+            List<ItemStack> ingredients = pot.ingredientStacks();
+            if (!ingredients.isEmpty()) {
+                List<IElement> line = new ArrayList<>();
+                line.add(helper.text(Component.translatable("jade.northeast_china_delight.big_pot.contents")));
+                for (int i = 0; i < ingredients.size() && i < MAX_CONTENT_ICONS; i++) {
+                    line.add(helper.smallItem(ingredients.get(i).copyWithCount(1)));
+                }
+                tooltip.add(line);
             }
-            tooltip.add(line);
+
+            List<ItemStack> seasonings = pot.seasoningStacks();
+            if (!seasonings.isEmpty()) {
+                MutableComponent names = Component.empty();
+                for (int i = 0; i < seasonings.size(); i++) {
+                    if (i > 0) {
+                        names.append(Component.translatable("jade.northeast_china_delight.big_pot.separator"));
+                    }
+                    names.append(seasonings.get(i).getHoverName());
+                }
+                tooltip.add(helper.text(Component.translatable(
+                        "jade.northeast_china_delight.big_pot.seasonings", names)));
+            }
         }
 
         float ratio;
         if (pot.hasResult()) {
             ratio = 1.0F;
         } else if (pot.cooking() != null && pot.cookTotal() > 0) {
-            ratio = Math.min(1.0F, pot.cookProgress() / pot.cookTotal());
+            ratio = pot.startDelay() > 0 ? 0.0F
+                    : Math.min(1.0F, pot.cookProgress() / pot.cookTotal());
         } else {
             return;
         }

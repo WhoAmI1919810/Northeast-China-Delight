@@ -466,6 +466,33 @@ public final class ModGameplayEvents
         level.getServer().execute(() -> BigStoveBlock.tryForm(level, pos, level.getBlockState(pos)));
     }
 
+    /** 大灶上不能再放农夫乐事厨锅；右键大灶时直接拦下，避免先放上去再被震掉 */
+    @SubscribeEvent
+    public static void onCookingPotOnBigStove(PlayerInteractEvent.RightClickBlock event)
+    {
+        if (event.isCanceled())
+        {
+            return;
+        }
+        if (event.getFace() != Direction.UP)
+        {
+            return;
+        }
+        ItemStack stack = event.getItemStack();
+        if (stack.isEmpty()
+                || !BuiltInRegistries.ITEM.getKey(stack.getItem())
+                .equals(DdIds.of("farmersdelight", "cooking_pot")))
+        {
+            return;
+        }
+        if (!(event.getLevel().getBlockState(event.getPos()).getBlock() instanceof BigStoveBlock))
+        {
+            return;
+        }
+        event.setCanceled(true);
+        event.setCancellationResult(InteractionResult.FAIL);
+    }
+
     @SubscribeEvent
     public static void onBlockBreak(BlockEvent.BreakEvent event)
     {
