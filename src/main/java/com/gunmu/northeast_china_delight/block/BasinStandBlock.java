@@ -118,13 +118,17 @@ public class BasinStandBlock extends FacingDecorBlock implements EntityBlock {
     /** 空手右键：正常右键水盆洗脸，潜行右键或其它状态则取下盆。 */
     private static InteractionResult handleEmptyHand(BlockState state, Level level, BlockPos pos, Player player) {
         if (state.getValue(BASIN) == Basin.WATER && !player.isSecondaryUseActive()) {
-            return wash(level, pos, player);
+            return wash(state, level, pos, player);
         }
         return takeBasin(state, level, pos, player);
     }
 
-    /** 洗脸：每次空手右键都出水花；玩家冷却好了才给 3 秒生命恢复 I，所有脸盆架共用该冷却。 */
-    private static InteractionResult wash(Level level, BlockPos pos, Player player) {
+    /**
+     * 洗脸：每次空手右键都出水花；玩家冷却好了才给 3 秒生命恢复 I，所有脸盆架共用该冷却。
+     * 一盆水洗三次（2026-11-07 用户）：方块实体记已经洗过几次，用过 {@link BasinStandBlockEntity#USES_BEFORE_EMPTY} 次以后
+     * 再洗一次照常出水花、给效果，然后水盆变空盆（次数跟着清零，见 {@link BasinStandBlockEntity#setBlockState}）。
+     */
+    private static InteractionResult wash(BlockState state, Level level, BlockPos pos, Player player) {
         if (level instanceof ServerLevel server) {
             double x = pos.getX() + 0.5;
             double y = pos.getY() + 0.75;
@@ -133,6 +137,14 @@ public class BasinStandBlock extends FacingDecorBlock implements EntityBlock {
             server.sendParticles(ParticleTypes.FALLING_WATER, x, y + 0.03, z, 6, 0.16, 0.01, 0.16, 0.0);
             if (tryStartHealing(player, server.getServer().overworld().getGameTime())) {
                 player.addEffect(new MobEffectInstance(MobEffects.REGENERATION, HEAL_DURATION_TICKS, 0));
+            }
+            if (level.getBlockEntity(pos) instanceof BasinStandBlockEntity stand) {
+                if (stand.uses() >= BasinStandBlockEntity.USES_BEFORE_EMPTY) {
+                    level.setBlock(pos, state.setValue(BASIN, Basin.BASIN), Block.UPDATE_ALL);
+                    level.gameEvent(player, GameEvent.BLOCK_CHANGE, pos);
+                } else {
+                    stand.setUses(stand.uses() + 1);
+                }
             }
         }
         return InteractionResult.sidedSuccess(level.isClientSide);
