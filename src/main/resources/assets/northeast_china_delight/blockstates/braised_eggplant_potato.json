@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "facing=north": {
+      "model": "northeast_china_delight:block/braised_eggplant_potato"
+    },
+    "facing=east": {
+      "model": "northeast_china_delight:block/braised_eggplant_potato",
+      "y": 90
+    },
+    "facing=south": {
+      "model": "northeast_china_delight:block/braised_eggplant_potato",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "northeast_china_delight:block/braised_eggplant_potato",
+      "y": 270
+    }
+  }
+}

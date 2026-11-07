@@ -226,6 +226,8 @@ public class ModItems {
             dishBowl("old_style_crispy_pork", () -> ModBlocks.OLD_STYLE_GUO_BAO_ROU.get(), 9, 0.7F);
     public static final Supplier<Item> NEW_STYLE_GUO_BAO_ROU = bowlFood("new_style_crispy_pork", 9, 0.7F);
     public static final Supplier<Item> DI_SAN_XIAN = bowlFood("three_fresh_veggies", 8, 0.6F);
+    /** 土豆焖茄子（2026-11-07 用户）：马铃薯 + 茄子 + 大葱 + 大酱，厨锅碗装；比地三鲜少过一道油，饱食度低一点 */
+    public static final Supplier<Item> TU_DOU_MEN_QIE_ZI = bowlFood("braised_eggplant_potato", 7, 0.6F);
     public static final Supplier<Item> JIAN_JIAO_GAN_DOU_FU = bowlFood("pepper_dried_tofu", 7, 0.5F);
     public static final Supplier<Item> SUAN_CAI_DUN_GU_TOU = feastItem("sauerkraut_bone_stew", () -> ModBlocks.SUAN_CAI_DUN_GU_TOU_POT.get());
     public static final Supplier<Item> SUAN_CAI_DUN_GU_TOU_BOWL = bowlFood("sauerkraut_bone_stew_bowl", 10, 0.7F);
@@ -576,7 +578,7 @@ public class ModItems {
             SUAN_CAI_JIAO_ZI, XIA_REN_ZHU_ROU_XIAN_SHUI_JIAO, SAN_XIAN_XIAN_SHUI_JIAO,
             JIANG_DA_GU, JIANG_NIU_ROU,
             SOY_MILK, SOUR_TANGZI, CHA_ZI_ZHOU, SWEET_POTATO_PORRIDGE,
-            EGG_SOY_PASTE, XIA_JIANG_DUN_DOU_FU, HAI_XIAN_DOU_FU_TANG, SNOW_MUSTARD_TOFU_STEW,
+            EGG_SOY_PASTE, XIA_JIANG_DUN_DOU_FU, HAI_XIAN_DOU_FU_TANG, SNOW_MUSTARD_TOFU_STEW, TU_DOU_MEN_QIE_ZI,
             HAI_SHEN_DOU_FU_TANG, SU_BO_TANG,
             BAI_CAI_DOU_FU_DUN_FEN_TIAO,
             DI_GUO_JI_BOWL, DI_GUO_PAI_GU_BOWL, SHA_ZHU_CAI_BOWL,

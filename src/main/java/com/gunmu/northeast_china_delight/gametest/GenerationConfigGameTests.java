@@ -296,7 +296,7 @@ public final class GenerationConfigGameTests {
     @GameTest(template = "empty")
     public static void chestDefaultsCoverExistingChestTables(GameTestHelper helper) {
         var allowed = Set.copyOf(NortheastChinaConfig.DEFAULT_CHEST_LOOT_ITEMS);
-        helper.assertTrue(allowed.size() == 138, "默认箱子列表应包含全部 138 种现有候选");
+        helper.assertTrue(allowed.size() == 139, "默认箱子列表应包含全部 139 种现有候选");
         for (String id : allowed) {
             helper.assertTrue(BuiltInRegistries.ITEM.containsKey(DdIds.parse(id)), "默认候选必须是已注册物品：" + id);
         }

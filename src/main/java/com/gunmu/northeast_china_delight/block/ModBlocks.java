@@ -538,7 +538,8 @@ public class ModBlocks {
             "grilled_chicken_frame", "grilled_corn", "sauerkraut_crackling_dumpling",
             "shrimp_pork_dumpling", "three_delicacy_dumpling", "dry_fried_hairtail",
             "braised_hairtail", "hazelnut_sugar_fire_bun",
-            "soy_milk", "snow_mustard_tofu_stew", "dog_bao_pickles", "pounded_rice_cake", "peanut_cake"
+            "soy_milk", "snow_mustard_tofu_stew", "dog_bao_pickles", "pounded_rice_cake", "peanut_cake",
+            "braised_eggplant_potato"
     );
 
     public static final List<String> TRAY_DISH_IDS = List.of(
