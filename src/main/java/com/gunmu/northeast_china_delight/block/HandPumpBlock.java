@@ -51,8 +51,8 @@ import org.jetbrains.annotations.Nullable;
  * 模型是建模师做的（同日用户：「建模师做了一个新的水井模型，把它用上」，work/水井.rar，转格式 work/tools/hand_pump/modeler.py）：
  * 一共 25.65 像素高；出水槽从井身斜着往前下方伸，槽口在前面那一格边上 1.5 像素、离地 11.5 像素左右。</p>
  *
- * <p>光压时往出水嘴底下倒水（2026-11-06 用户，{@link #pourInto}）：接水的是前面那一格，前面那格空着就是再往下一格
- * （水从嘴里落下去，先碰到哪个算哪个）。炼药锅水位 +1，大缸水位 +1（一层 1000 mB），地上或脸盆架上的空大脸盆变水盆，
+ * <p>光压时往出水嘴前下方那一格倒水（2026-11-06 用户，{@link #pourInto}；11-07 换了建模师的模型后用户定：
+ * 「不改模型，只往前下方一格倒」——槽口低，前面同一层放容器会插进锅壁）。炼药锅水位 +1，大缸水位 +1（一层 1000 mB），地上或脸盆架上的空大脸盆变水盆，
  * 大灶上揭着盖的大铁锅倒一桶水，空木臼放一份水；各自的规矩同拿水桶倒（满了、压着石头、煮着、盖着锅盖就不收）。
  * 倒进去了，嘴口落一道水下去；没倒进去照旧光喷水花。</p>
  */
@@ -217,13 +217,10 @@ public class HandPumpBlock extends FacingDecorBlock {
         return InteractionResult.sidedSuccess(level.isClientSide);
     }
 
-    /** 往嘴口底下倒水：前面那一格，空着就再往下一格。倒进去了返回接水的那格，没倒进去返回 null */
+    /** 往出水嘴前下方那一格倒水。倒进去了返回接水的那格，没倒进去返回 null */
     @Nullable
     private static BlockPos pourInto(ServerLevel level, BlockPos pos, Direction facing, Player player) {
-        BlockPos target = pos.relative(facing);
-        if (level.getBlockState(target).isAir()) {
-            target = target.below();
-        }
+        BlockPos target = pos.relative(facing).below();
         BlockState state = level.getBlockState(target);
         boolean poured = false;
         // 大锅自己倒水时就有倒水声、水花和事件（BigPotCooking#pour），这里不再出一遍
