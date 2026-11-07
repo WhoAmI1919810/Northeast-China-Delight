@@ -65,9 +65,9 @@ public class HandPumpBlock extends FacingDecorBlock {
 
     public static final EnumProperty<DoubleBlockHalf> HALF = BlockStateProperties.DOUBLE_BLOCK_HALF;
     public static final BooleanProperty POWERED = BlockStateProperties.POWERED;
-    /** 井身：下半格整格高，上半格到 10 像素（井帽、压把轴架）；出水槽、压把不算进选框 */
+    /** 井身：下半格整格高，上半格到 9.65 像素（井帽顶部）；出水槽、压把不算进选框 */
     public static final VoxelShape SHAPE = Block.box(4, 0, 4, 12, 16, 12);
-    public static final VoxelShape UPPER_SHAPE = Block.box(4, 0, 4, 12, 10, 12);
+    public static final VoxelShape UPPER_SHAPE = Block.box(4, 0, 4, 12, 9.65, 12);
     /** 槽口（朝北放时在整体坐标约 8, 11.5, -1.6）：离井身中心往前 0.6 格、离地 0.7 格 */
     private static final double MOUTH_FORWARD = 0.6;
     private static final double MOUTH_Y = 0.7;
@@ -80,6 +80,12 @@ public class HandPumpBlock extends FacingDecorBlock {
     @Override
     public VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
         return state.getValue(HALF) == DoubleBlockHalf.UPPER ? UPPER_SHAPE : SHAPE;
+    }
+
+    /** 上下两格都要有碰撞：上半格按井帽高度挡住，不能只让下半格参与碰撞。 */
+    @Override
+    public VoxelShape getCollisionShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
+        return getShape(state, level, pos, context);
     }
 
     /** 上面那格放得下才能放（同门帘） */
