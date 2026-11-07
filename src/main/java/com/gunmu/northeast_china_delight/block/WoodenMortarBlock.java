@@ -632,6 +632,15 @@ public class WoodenMortarBlock extends BaseEntityBlock {
     }
 
     /** 这一下左键会被 {@link #pound} 当成敲击（工具对、正在加工、没搁木槌）；不看蓄力，免得没蓄满时变成在挖 */
+    /**
+     * 这一下左键是不是在敲正在加工的木臼（手里拿着当前配方的工具）。左键事件用：是的话两边都拦下，
+     * 不让创造模式在客户端先把木臼拆掉（见 ModGameplayEvents#onLeftClickBlock），也不让服务端拆。
+     */
+    public static boolean isPoundingHit(Player player, Level level, BlockPos pos) {
+        BlockState state = level.getBlockState(pos);
+        return state.getBlock() instanceof WoodenMortarBlock && isPoundingHit(state, player, level, pos);
+    }
+
     private static boolean isPoundingHit(BlockState state, Player player, BlockGetter getter, BlockPos pos) {
         if (!(getter instanceof Level level) || !(level.getBlockEntity(pos) instanceof WoodenMortarBlockEntity mortar)
                 || state.getValue(MALLET) || mortar.hasMallet()) {

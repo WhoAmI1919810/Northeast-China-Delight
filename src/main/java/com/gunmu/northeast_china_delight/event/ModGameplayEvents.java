@@ -116,19 +116,25 @@ public final class ModGameplayEvents
      * <p>还得攒够当前配方要求的蓄力才能响这一下（连点没用）；旧配方默认仍是 90%。
      * 敲成之后手动把挥击计数器归零 —— 原版只在客户端重置它，服务端那个只增不减，
      * 不归零的话蓄力门槛从第二下起就永远满足，等于没做。</p>
+     *
+     * <p>拿着工具敲正在加工的木臼时，客户端和服务端都把这一下拦下（2026-11-07 用户报：创造模式舂捣时木臼总显示一个固定的
+     * 打糕模型）。创造模式下客户端收到左键会先在本地把方块拆掉（{@code MultiPlayerGameMode#startDestroyBlock}，事件没被拦才拆），
+     * 木臼的方块实体跟着没了；服务端回过来的只有方块状态、没有配方，渲染器只好按 blockstate 里自带的打糕模型画。
+     * 服务端那边蓄力不够没敲成也照样拦，免得创造模式点一下就把木臼拆了（生存模式这时本来就挖不动，见 getDestroyProgress）。</p>
      */
     @SubscribeEvent
     public static void onLeftClickBlock(PlayerInteractEvent.LeftClickBlock event) {
         if (event.getAction() != PlayerInteractEvent.LeftClickBlock.Action.START) {
             return;
         }
-        if (event.getLevel().isClientSide()) {
+        Player player = event.getEntity();
+        Level level = event.getLevel();
+        if (!WoodenMortarBlock.isPoundingHit(player, level, event.getPos())) {
             return;
         }
-        Player player = event.getEntity();
-        if (WoodenMortarBlock.pound(player, event.getLevel(), event.getPos())) {
+        event.setCanceled(true);
+        if (!level.isClientSide() && WoodenMortarBlock.pound(player, level, event.getPos())) {
             player.resetAttackStrengthTicker();
-            event.setCanceled(true);
         }
     }
 
