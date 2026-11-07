@@ -46,6 +46,9 @@ public class LyricsHudOverlay {
     /** 歌曲总时长（与 jukebox_song 里的 length_in_seconds 一致） */
     private static final float SONG_LENGTH = 116.3f;
 
+    /** 最后一句歌词结束时间（1:38，之后不再显示歌词） */
+    private static final float LAST_LYRIC_END = 98.0f;
+
     /** 当前活跃的唱片声音实例（由 mixin 捕获） */
     private static SoundInstance activeSound = null;
     private static boolean playing = false;
@@ -119,7 +122,13 @@ public class LyricsHudOverlay {
         // 当前歌词行结束时间 = 下一行的开始时间
         float lineEnd = targetIndex < LYRICS.size() - 1
                 ? LYRICS.get(targetIndex + 1).startSec
-                : SONG_LENGTH;
+                : LAST_LYRIC_END;
+
+        // 最后一句唱完后立即停止渲染，不等到整首音乐结束
+        if (elapsedSec >= lineEnd) {
+            currentLyricIndex = -1;
+            return;
+        }
         // 在最后 FADE_OUT 秒内淡出
         float fadeStart = lineEnd - FADE_OUT;
         float alpha = 1.0f;

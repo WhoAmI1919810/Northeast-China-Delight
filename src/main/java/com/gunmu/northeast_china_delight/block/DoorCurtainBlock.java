@@ -27,20 +27,22 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 /**
  * 门帘（棉门帘 / 大花布门帘）：上下两格，像门一样挂在门洞一侧。
  *
- * <p>不用开关：人和生物都能直接掀帘子走过去（没有碰撞箱），只留一个能瞄准、能挖的选框。
+ * <p>不用开关：人和生物都能直接掀帘子走过去（没有碰撞箱）。只有上半格顶部的木条参与瞄准和破坏，
+ * 正常视高看向帘面时射线会穿过去，可以直接与门帘后面的门互动。
+ * 放置时点击位置就是上半格，整条门帘向下补出下半格；朝向取被点击的方块侧面。
  * 上下两半的配对照原版门：一半没了另一半跟着没；掉落表只让下半掉东西，
- * 创造模式敲上半时把下半直接抹掉，不让它掉出物品。</p>
+ * 生存模式敲上半时同步结算下半掉落，创造模式则直接抹掉下半，保证整条门帘只掉一份。</p>
  */
 public class DoorCurtainBlock extends Block {
 
     public static final DirectionProperty FACING = BlockStateProperties.HORIZONTAL_FACING;
     public static final EnumProperty<DoubleBlockHalf> HALF = BlockStateProperties.DOUBLE_BLOCK_HALF;
 
-    // 模型里帘子在 z 13.5..15（facing=north），上下两根木条略宽，选框按木条算
-    private static final VoxelShape SHAPE_NORTH = Block.box(0, 0, 13, 16, 16, 15.5);
-    private static final VoxelShape SHAPE_SOUTH = Block.box(0, 0, 0.5, 16, 16, 3);
-    private static final VoxelShape SHAPE_WEST = Block.box(13, 0, 0, 15.5, 16, 16);
-    private static final VoxelShape SHAPE_EAST = Block.box(0.5, 0, 0, 3, 16, 16);
+    // 只有上半格顶部的木条参与瞄准：帘面本身没有碰撞箱，正常视高可以透过门帘直接点后面的门。
+    private static final VoxelShape TOP_SHAPE_NORTH = Block.box(0, 14, 13, 16, 16, 15.5);
+    private static final VoxelShape TOP_SHAPE_SOUTH = Block.box(0, 14, 0.5, 16, 16, 3);
+    private static final VoxelShape TOP_SHAPE_WEST = Block.box(13, 14, 0, 15.5, 16, 16);
+    private static final VoxelShape TOP_SHAPE_EAST = Block.box(0.5, 14, 0, 3, 16, 16);
 
     public DoorCurtainBlock(BlockBehaviour.Properties properties) {
         super(properties);
@@ -51,11 +53,14 @@ public class DoorCurtainBlock extends Block {
 
     @Override
     public VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
+        if (state.getValue(HALF) == DoubleBlockHalf.LOWER) {
+            return Shapes.empty();
+        }
         return switch (state.getValue(FACING)) {
-            case SOUTH -> SHAPE_SOUTH;
-            case WEST -> SHAPE_WEST;
-            case EAST -> SHAPE_EAST;
-            default -> SHAPE_NORTH;
+            case SOUTH -> TOP_SHAPE_SOUTH;
+            case WEST -> TOP_SHAPE_WEST;
+            case EAST -> TOP_SHAPE_EAST;
+            default -> TOP_SHAPE_NORTH;
         };
     }
 
@@ -68,17 +73,26 @@ public class DoorCurtainBlock extends Block {
     public BlockState getStateForPlacement(BlockPlaceContext context) {
         BlockPos pos = context.getClickedPos();
         Level level = context.getLevel();
-        if (pos.getY() < level.getMaxBuildHeight() - 1 && level.getBlockState(pos.above()).canBeReplaced(context)) {
+        BlockPos belowPos = pos.below();
+        if (belowPos.getY() >= level.getMinBuildHeight() && level.getBlockState(belowPos).canBeReplaced(context)) {
+            Direction clickedFace = context.getClickedFace();
+            Direction facing = clickedFace.getAxis().isHorizontal()
+                    ? clickedFace
+                    : context.getHorizontalDirection();
             return defaultBlockState()
-                    .setValue(FACING, context.getHorizontalDirection())
-                    .setValue(HALF, DoubleBlockHalf.LOWER);
+                    .setValue(FACING, facing)
+                    .setValue(HALF, DoubleBlockHalf.UPPER);
         }
         return null;
     }
 
     @Override
     public void setPlacedBy(Level level, BlockPos pos, BlockState state, LivingEntity placer, ItemStack stack) {
-        level.setBlock(pos.above(), state.setValue(HALF, DoubleBlockHalf.UPPER), 3);
+        if (state.getValue(HALF) == DoubleBlockHalf.UPPER) {
+            level.setBlock(pos.below(), state.setValue(HALF, DoubleBlockHalf.LOWER), 3);
+        } else {
+            level.setBlock(pos.above(), state.setValue(HALF, DoubleBlockHalf.UPPER), 3);
+        }
     }
 
     @Override
@@ -96,27 +110,35 @@ public class DoorCurtainBlock extends Block {
     //? if <1.20.2 {
     /*@Override
     public void playerWillDestroy(Level level, BlockPos pos, BlockState state, Player player) {
-        removeLowerHalfInCreative(level, pos, state, player);
+        removeLowerHalf(level, pos, state, player);
         super.playerWillDestroy(level, pos, state, player);
     }
     *///?} else {
     @Override
     public BlockState playerWillDestroy(Level level, BlockPos pos, BlockState state, Player player) {
-        removeLowerHalfInCreative(level, pos, state, player);
+        removeLowerHalf(level, pos, state, player);
         return super.playerWillDestroy(level, pos, state, player);
     }
     //?}
 
-    /** 照原版门 / 高草：创造模式敲上半时，下半直接换成空气（35 = 通知客户端 + 不掉落），免得下半掉出一个门帘 */
-    private static void removeLowerHalfInCreative(Level level, BlockPos pos, BlockState state, Player player) {
-        if (level.isClientSide || !player.isCreative() || state.getValue(HALF) != DoubleBlockHalf.UPPER) {
+    /**
+     * 门帘只能从上半格顶部木条处瞄准。破坏上半格时把下半格一并处理：
+     * 创造模式直接抹掉，生存模式正常破坏下半格并走掉落表，否则整条门帘会没有掉落物。
+     */
+    private static void removeLowerHalf(Level level, BlockPos pos, BlockState state, Player player) {
+        if (level.isClientSide || state.getValue(HALF) != DoubleBlockHalf.UPPER) {
             return;
         }
         BlockPos below = pos.below();
         BlockState belowState = level.getBlockState(below);
-        if (belowState.is(state.getBlock()) && belowState.getValue(HALF) == DoubleBlockHalf.LOWER) {
+        if (!belowState.is(state.getBlock()) || belowState.getValue(HALF) != DoubleBlockHalf.LOWER) {
+            return;
+        }
+        if (player.isCreative()) {
             level.setBlock(below, Blocks.AIR.defaultBlockState(), 35);
             level.levelEvent(player, 2001, below, Block.getId(belowState));
+        } else {
+            level.destroyBlock(below, true, player);
         }
     }
 
