@@ -4,7 +4,7 @@ main 分支为 1.21.1（NeoForge）开发主线；1.20.1（Forge）版本线见 
 
 ## 当前最新版本
 
-已发布：**4.0.0**
+已发布：**4.0.1**
 
 - Minecraft 1.21.1：NeoForge 21.1
 - Minecraft 1.20.1：Forge 47.1
@@ -12,6 +12,10 @@ main 分支为 1.21.1（NeoForge）开发主线；1.20.1（Forge）版本线见 
 需要[农夫乐事](https://github.com/vectorwing/FarmersDelight)作为前置。
 
 ## 更新记录
+
+**4.0.1**
+- 修复东北小院只生成两种的问题
+- 完善大铁锅的 Jade 信息，显示烹饪进度
 
 **4.0.0**
 - 将机械动力变为**可选**模组，而非前置模组
