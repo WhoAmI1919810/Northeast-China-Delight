@@ -191,6 +191,8 @@ public final class DishFlavors {
         put(map, Flavor.BALANCED, 2, 600, "shrimp_paste_tofu_stew");
         put(map, Flavor.BALANCED, 3, 800, "seafood_tofu_soup");
         put(map, Flavor.BALANCED, 2, "snow_mustard_tofu_stew");
+        // 土豆焖茄子（2026-11-07）：马铃薯、茄子、大葱 3 种（大酱是调料不算），30 秒；焖的不过油，不算油腻
+        put(map, Flavor.BALANCED, 3, "braised_eggplant_potato");
         put(map, Flavor.BALANCED, 5, "three_delicacy_dumpling");
         put(map, Flavor.BALANCED, 4, 600, "sauerkraut_crackling_dumpling");
         put(map, Flavor.BALANCED, 2, 600, "cured_pork_bean_stew");

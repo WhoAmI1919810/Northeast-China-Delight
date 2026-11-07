@@ -31,6 +31,10 @@
         },
         {
           "type": "minecraft:item",
+          "name": "northeast_china_delight:braised_eggplant_potato"
+        },
+        {
+          "type": "minecraft:item",
           "name": "northeast_china_delight:pepper_dried_tofu"
         },
         {
