@@ -311,6 +311,8 @@
   "jade.northeast_china_delight.big_pot.seasonings": "调料：%s",
   "jade.northeast_china_delight.big_pot.separator": "、",
   "jade.northeast_china_delight.big_pot.result": "本次烹饪得到：%s",
+  "jade.northeast_china_delight.big_pot.cooking": "烹饪中 %s%%",
+  "jade.northeast_china_delight.big_pot.done": "烹饪完成",
   "config.jade.plugin_northeast_china_delight.big_stove": "大灶",
   "message.northeast_china_delight.vat.need_container": "大酱要用碗盛",
   "message.northeast_china_delight.vat.need_bottle": "酱油要用玻璃瓶装",
