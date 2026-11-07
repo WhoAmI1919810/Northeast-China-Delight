@@ -12,22 +12,17 @@ import snownee.jade.api.IBlockComponentProvider;
 import snownee.jade.api.ITooltip;
 import snownee.jade.api.TooltipPosition;
 import snownee.jade.api.config.IPluginConfig;
-import snownee.jade.api.ui.BoxStyle;
 import snownee.jade.api.ui.IElement;
 import snownee.jade.api.ui.IElementHelper;
-//? if <1.20.2 {
-/*import snownee.jade.api.ui.IProgressStyle;
-*///?} else {
-import snownee.jade.api.ui.ProgressStyle;
-//?}
 
 import java.util.ArrayList;
 import java.util.List;
 
 /**
  * 准星指大灶（四格哪一格都行，锅的数据在西北那格上，见 {@link BigStoveBlock#potAt}）：投料阶段把食材（图标）和调料（只写名称）
- * 分开显示；盖上锅盖后只显示「本次烹饪：菜名」和进度条（百分比；走满了写「烹饪完成」）。别的（火、锅盖、水、怎么盛）不写。
- * 进度每秒从服务端同步一次（{@link BigPotBlockEntity#tickCooking}）。
+ * 分开显示；盖上锅盖以后（3 秒反悔期、煮着、煮好了还没盛完）只显示一行「本次烹饪得到：菜名」，不显示投料、调料和进度
+ * （2026-11-07 用户：「开煮后的 jade 以我为准」——原话「当开始烹饪时，不显示投料和调料，只显示‘本次烹饪得到：XX’」，
+ * 「Jade 持续显示直到制作结束，烹饪完成也一直显示」）。别的（火、锅盖、水、怎么盛）不写。
  */
 public enum BigStoveComponentProvider implements IBlockComponentProvider {
 
@@ -58,54 +53,32 @@ public enum BigStoveComponentProvider implements IBlockComponentProvider {
         IElementHelper helper = IElementHelper.get();
 
         ItemStack currentDish = pot.hasResult() ? pot.result() : pot.displayDish();
-        if ((pot.hasResult() || pot.cooking() != null) && !currentDish.isEmpty()) {
-            tooltip.add(helper.text(Component.translatable(
-                    "message.northeast_china_delight.big_pot.cooking", currentDish.getHoverName())));
-        } else {
-            List<ItemStack> ingredients = pot.ingredientStacks();
-            if (!ingredients.isEmpty()) {
-                List<IElement> line = new ArrayList<>();
-                line.add(helper.text(Component.translatable("jade.northeast_china_delight.big_pot.contents")));
-                for (int i = 0; i < ingredients.size() && i < MAX_CONTENT_ICONS; i++) {
-                    line.add(helper.smallItem(ingredients.get(i).copyWithCount(1)));
-                }
-                tooltip.add(line);
-            }
-
-            List<ItemStack> seasonings = pot.seasoningStacks();
-            if (!seasonings.isEmpty()) {
-                MutableComponent names = Component.empty();
-                for (int i = 0; i < seasonings.size(); i++) {
-                    if (i > 0) {
-                        names.append(Component.translatable("jade.northeast_china_delight.big_pot.separator"));
-                    }
-                    names.append(seasonings.get(i).getHoverName());
-                }
+        if (pot.hasResult() || pot.cooking() != null) {
+            if (!currentDish.isEmpty()) {
                 tooltip.add(helper.text(Component.translatable(
-                        "jade.northeast_china_delight.big_pot.seasonings", names)));
+                        "jade.northeast_china_delight.big_pot.result", currentDish.getHoverName())));
             }
-        }
-
-        float ratio;
-        if (pot.hasResult()) {
-            ratio = 1.0F;
-        } else if (pot.cooking() != null && pot.cookTotal() > 0) {
-            ratio = pot.startDelay() > 0 ? 0.0F
-                    : Math.min(1.0F, pot.cookProgress() / pot.cookTotal());
-        } else {
             return;
         }
-        // 走满了写「烹饪完成」，不写「烹饪中 100%」
-        Component text = ratio >= 1.0F
-                ? Component.translatable("jade.northeast_china_delight.big_pot.done")
-                : Component.translatable("jade.northeast_china_delight.big_pot.cooking", Math.round(ratio * 100.0F));
-        // 进度条上的文字用白色，同大缸
-        //? if <1.20.2 {
-        /*IProgressStyle style = helper.progressStyle().textColor(0xFFFFFF);
-        tooltip.add(helper.progress(ratio, text, style, BoxStyle.DEFAULT, false));
-        *///?} else {
-        ProgressStyle style = helper.progressStyle().textColor(0xFFFFFF);
-        tooltip.add(helper.progress(ratio, text, style, BoxStyle.getNestedBox(), false));
-        //?}
+        List<ItemStack> ingredients = pot.ingredientStacks();
+        if (!ingredients.isEmpty()) {
+            List<IElement> line = new ArrayList<>();
+            line.add(helper.text(Component.translatable("jade.northeast_china_delight.big_pot.contents")));
+            for (int i = 0; i < ingredients.size() && i < MAX_CONTENT_ICONS; i++) {
+                line.add(helper.smallItem(ingredients.get(i).copyWithCount(1)));
+            }
+            tooltip.add(line);
+        }
+        List<ItemStack> seasonings = pot.seasoningStacks();
+        if (!seasonings.isEmpty()) {
+            MutableComponent names = Component.empty();
+            for (int i = 0; i < seasonings.size(); i++) {
+                if (i > 0) {
+                    names.append(Component.translatable("jade.northeast_china_delight.big_pot.separator"));
+                }
+                names.append(seasonings.get(i).getHoverName());
+            }
+            tooltip.add(helper.text(Component.translatable("jade.northeast_china_delight.big_pot.seasonings", names)));
+        }
     }
 }

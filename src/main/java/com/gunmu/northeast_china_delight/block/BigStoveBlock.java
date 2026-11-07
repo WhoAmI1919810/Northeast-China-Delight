@@ -10,6 +10,7 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.ItemTags;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
 import net.minecraft.util.StringRepresentable;
 import net.minecraft.world.InteractionHand;
@@ -212,6 +213,29 @@ public class BigStoveBlock extends Block implements EntityBlock, WorldlyContaine
             if (s.is(this) && s.getValue(FACING) == facing && s.getValue(PART) == part) {
                 level.setBlock(at, change.apply(s), Block.UPDATE_ALL);
             }
+        }
+    }
+
+    /**
+     * 大灶头顶不许有农夫乐事厨锅（2026-11-07 用户：「当炉灶变成大灶时，上面就不能放置厨锅」）。右键大灶顶面放厨锅在
+     * ModGameplayEvents#onCookingPotOnBigStove 里直接拦了，可从旁边方块的侧面点、用命令放，厨锅照样会落到大灶上，
+     * 而大灶在农夫乐事的热源标签里，放上去就能加热做菜。所以头顶一出现厨锅（放方块会通知下面这格），下一刻把它连内容物震下来。
+     * 排到下一刻再拆，不在厨锅自己放下的过程中途拆，免得农夫乐事放完方块再去碰已经没了的方块实体。
+     */
+    @Override
+    public void neighborChanged(BlockState state, Level level, BlockPos pos, Block neighborBlock, BlockPos neighborPos,
+                                boolean movedByPiston) {
+        super.neighborChanged(state, level, pos, neighborBlock, neighborPos, movedByPiston);
+        if (!level.isClientSide && neighborPos.equals(pos.above()) && isCookingPot(level.getBlockState(neighborPos))) {
+            level.scheduleTick(pos, this, 1);
+        }
+    }
+
+    @Override
+    public void tick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random) {
+        BlockPos above = pos.above();
+        if (isCookingPot(level.getBlockState(above))) {
+            level.destroyBlock(above, true);
         }
     }
 
