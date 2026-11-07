@@ -470,7 +470,8 @@ public class ModBlocks {
 
     /**
      * 大灶：四个农夫乐事炉灶在同一层摆成 2×2 自动拼成（见 BigStoveBlock#tryForm），没有自己的物品，拆了还是炉灶。
-     * 数值照原版砖块（农夫乐事的炉灶也是照砖块），点着亮度 13 同炉灶；推不动（推开一格就拼不回去了）。
+     * 数值照原版砖块（农夫乐事的炉灶也是照砖块）；点着亮度 15，超过雪融化的亮度阈值 11，
+     * 灶周约 3 格内的雪层会随随机 tick 融化。推不动（推开一格就拼不回去了）。
      */
     public static final Supplier<Block> BIG_STOVE = block(
             "big_stove",
@@ -480,7 +481,7 @@ public class ModBlocks {
                     .instrument(NoteBlockInstrument.BASEDRUM)
                     .requiresCorrectToolForDrops()
                     .strength(2.0F, 6.0F)
-                    .lightLevel(state -> state.getValue(BigStoveBlock.LIT) ? 13 : 0)
+                    .lightLevel(state -> state.getValue(BigStoveBlock.LIT) ? 15 : 0)
                     .noOcclusion()
                     .pushReaction(PushReaction.BLOCK)
     );

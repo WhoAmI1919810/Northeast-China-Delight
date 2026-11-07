@@ -49,12 +49,14 @@ import java.util.Optional;
  *   allow_flip    —— 是否允许院子朝南 / 朝北两种朝向
  * </pre>
  * 「多大概率刷」还有第二层：{@code worldgen/structure_set/northeast_yards.json} 里的
- * {@code spacing}（每多少格试一次）和 {@code separation}（同格内最小间隔），
+ * {@code spacing}（每多少区块试一次）和 {@code separation}（同格内最小间隔），
  * 这两个数越小越密。
  *
  * <p>生成规则（按需求实现）：每个院子在东西南北四个方向上各自掷一次，
  * 每个方向 20~50 格内随机取一个距离，有 30% 概率再生成一个院子；
  * 新院子重复同样的过程，直到掷不中、位置不合法、不是寒冷群系，或者到达 20 户上限。
+ * 单个 placement 区域最多尝试三个候选点：原候选区块内一次，失败后在周围 ±3 区块内
+ * 各再补一次；三次都失败才放弃这个区域。
  */
 public class NortheastCourtyardStructure extends Structure
 {
@@ -102,6 +104,8 @@ public class NortheastCourtyardStructure extends Structure
     public static final float WALK_CHANCE_STEP = 0.15F;
     public static final float WALK_CHANCE_MIN = 0.20F;
     public static final int WATER_CLEARANCE = 15;
+    private static final int MAX_CANDIDATE_ATTEMPTS = 3;
+    private static final int LOCAL_CANDIDATE_RADIUS_CHUNKS = 3;
 
     private static final List<Direction> HORIZONTALS =
             List.of(Direction.EAST, Direction.WEST, Direction.NORTH, Direction.SOUTH);
@@ -179,17 +183,30 @@ public class NortheastCourtyardStructure extends Structure
         {
             return Optional.empty();
         }
-        int x = context.chunkPos().getMinBlockX() + random.nextInt(16);
-        int z = context.chunkPos().getMinBlockZ() + random.nextInt(16);
-
-        List<Yard> yards = this.growCluster(context, random, x, z);
+        int baseX = context.chunkPos().getMinBlockX();
+        int baseZ = context.chunkPos().getMinBlockZ();
+        List<Yard> yards = List.of();
+        for (int attempt = 0; attempt < MAX_CANDIDATE_ATTEMPTS && yards.isEmpty(); attempt++)
+        {
+            int x = baseX + random.nextInt(16);
+            int z = baseZ + random.nextInt(16);
+            if (attempt > 0)
+            {
+                x += (random.nextInt(LOCAL_CANDIDATE_RADIUS_CHUNKS * 2 + 1)
+                        - LOCAL_CANDIDATE_RADIUS_CHUNKS) * 16;
+                z += (random.nextInt(LOCAL_CANDIDATE_RADIUS_CHUNKS * 2 + 1)
+                        - LOCAL_CANDIDATE_RADIUS_CHUNKS) * 16;
+            }
+            yards = this.growCluster(context, random, x, z);
+        }
         if (yards.isEmpty())
         {
             return Optional.empty();
         }
+        List<Yard> generatedYards = yards;
         BlockPos origin = yards.get(0).pos();
         return Optional.of(new GenerationStub(origin, builder -> {
-            for (Yard yard : yards)
+            for (Yard yard : generatedYards)
             {
                 if (this.clearRadius <= 0 && this.clearAbove <= 0)
                 {
@@ -203,7 +220,7 @@ public class NortheastCourtyardStructure extends Structure
                         this.clearRadius, this.clearAbove,
                         yard.rotation() == Rotation.CLOCKWISE_180 ? -1 : 1));
             }
-            for (Yard yard : yards)
+            for (Yard yard : generatedYards)
             {
                 StructureTemplate yardTemplate = context.structureTemplateManager()
                         .getOrCreate(DdIds.parse(yard.template()));
