@@ -8,6 +8,7 @@
   ],
   "textures": {
     "0": "northeast_china_delight:block/hand_pump_upper",
+    "1": "northeast_china_delight:block/hand_pump_upper",
     "particle": "northeast_china_delight:block/hand_pump_upper"
   },
   "elements": [
