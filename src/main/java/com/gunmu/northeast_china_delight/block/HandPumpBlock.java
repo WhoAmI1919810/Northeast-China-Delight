@@ -91,7 +91,9 @@ public class HandPumpBlock extends FacingDecorBlock {
             return null;
         }
         BlockState state = super.getStateForPlacement(context);
-        return state == null ? null : state.setValue(HALF, DoubleBlockHalf.LOWER);
+        // 放下时就按现在有没有信号记好，不然放在通着电的地方，下一刻检测到有电就当成「刚接通」自动压一下
+        boolean powered = level.hasNeighborSignal(pos) || level.hasNeighborSignal(pos.above());
+        return state == null ? null : state.setValue(HALF, DoubleBlockHalf.LOWER).setValue(POWERED, powered);
     }
 
     @Override
