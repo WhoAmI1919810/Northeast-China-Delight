@@ -396,6 +396,11 @@ public class BigStoveBlock extends Block implements EntityBlock, WorldlyContaine
                 return InteractionResult.sidedSuccess(level.isClientSide);
             }
         }
+        if (isFakePlayer(player)) {
+            // 机械动力的机械手（Deployer）等假玩家空手右键：盛菜（上面 onEmptyHand）照常，揭盖、拿锅不行。
+            // 2026-11-08 用户报机械手把锅取出来了：机械手投完手里的料、手空了照样右键，以前就走到这里把锅盖、锅拿走
+            return InteractionResult.PASS;
+        }
         if (!level.isClientSide) {
             if (pot == Pot.LID && contents != null) {
                 // 反悔等待中揭盖取消；煮着或煮好了揭盖只按常速继续 / 冒一股白雾
@@ -411,6 +416,15 @@ public class BigStoveBlock extends Block implements EntityBlock, WorldlyContaine
             level.gameEvent(player, GameEvent.BLOCK_CHANGE, pos);
         }
         return InteractionResult.sidedSuccess(level.isClientSide);
+    }
+
+    /** 机械动力的机械手（Deployer）用的是加载器的假玩家 */
+    private static boolean isFakePlayer(Player player) {
+        //? if <1.20.2 {
+        return player instanceof net.minecraftforge.common.util.FakePlayer;
+        //?} else {
+        /*return player instanceof net.neoforged.neoforge.common.util.FakePlayer;
+        *///?}
     }
 
     // ---------------------------------------------------------------- 掉进锅里
@@ -570,7 +584,15 @@ public class BigStoveBlock extends Block implements EntityBlock, WorldlyContaine
     @Nullable
     @Override
     public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
-        return state.getValue(PART) == Part.NW ? new BigPotBlockEntity(pos, state) : null;
+        if (state.getValue(PART) == Part.NW) {
+            return new BigPotBlockEntity(pos, state);
+        }
+        // 另外三格：1.20.1 挂一个空的方块实体放物品能力（Forge 的能力只能挂在方块实体上），1.20.2 起按方块注册能力，不用
+        //? if <1.20.2 {
+        return new BigStovePartBlockEntity(pos, state);
+        //?} else {
+        /*return null;
+        *///?}
     }
 
     /**

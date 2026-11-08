@@ -39,6 +39,11 @@ public class ModBlockEntities {
             "big_pot",
             () -> BlockEntityType.Builder.of(BigPotBlockEntity::new, ModBlocks.BIG_STOVE.get()).build(null));
 
+    /** 大灶另外三格的方块实体：只在 1.20.1 上放，用来挂物品能力（见 BigStovePartBlockEntity） */
+    public static final Supplier<BlockEntityType<BigStovePartBlockEntity>> BIG_STOVE_PART = BLOCK_ENTITIES.register(
+            "big_stove_part",
+            () -> BlockEntityType.Builder.of(BigStovePartBlockEntity::new, ModBlocks.BIG_STOVE.get()).build(null));
+
     /** 放下的盆装谜之炖菜：存着这一盆给什么效果 */
     public static final Supplier<BlockEntityType<MysteryStewPotBlockEntity>> MYSTERY_STEW_POT = BLOCK_ENTITIES.register(
             "mystery_stew_pot",
