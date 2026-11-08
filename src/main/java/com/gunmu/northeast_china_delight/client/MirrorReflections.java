@@ -70,6 +70,11 @@ import java.util.List;
  * <p>只在图像品质「高品质」「极佳」里照，「流畅」里不照，镜子就是原来那张贴图（用户 2026-11-06）。
  * 主画面原来没有模板缓冲，客户端初始化时开（{@link #enableStencil}）。开着光影包（Iris / Oculus）时不画：
  * 光影包用自己的画面，模板那一套对不上，会画乱。</p>
+ *
+ * <p>装了 Iris / Oculus 就整个不开（2026-11-08 有人反馈装了东北乐事、开光影后什么都看不见）：以前不管装没装光影模组，
+ * 初始化时都把主画面的深度缓冲换成「深度 + 模板」格式，这是东北乐事对光影画面唯一的改动。新版 Iris、Oculus 认这种格式，
+ * 可旧版、别的光影实现未必，于是只要装了光影模组就不开模板缓冲、也不照（{@link #render} 见到没模板缓冲就不画），
+ * 镜子就是原来那张贴图。</p>
  */
 public final class MirrorReflections {
 
@@ -117,8 +122,11 @@ public final class MirrorReflections {
     private MirrorReflections() {
     }
 
-    /** 主画面加模板缓冲（原版默认不带）；客户端初始化时在渲染线程调一次 */
+    /** 主画面加模板缓冲（原版默认不带）；客户端初始化时在渲染线程调一次。装了光影模组就不开 */
     public static void enableStencil() {
+        if (shaderModLoaded()) {
+            return;
+        }
         RenderTarget target = Minecraft.getInstance().getMainRenderTarget();
         if (!target.isStencilEnabled()) {
             target.enableStencil();
@@ -377,6 +385,16 @@ public final class MirrorReflections {
     }
 
     /** Iris / Oculus 开着光影包时不画；没装就当没开（反射拿，免得编译时依赖它们） */
+    /** 装没装光影模组（Iris、Oculus），装了就不碰主画面的格式 */
+    private static boolean shaderModLoaded() {
+        //? if <1.20.2 {
+        /*net.minecraftforge.fml.ModList mods = net.minecraftforge.fml.ModList.get();
+        *///?} else {
+        net.neoforged.fml.ModList mods = net.neoforged.fml.ModList.get();
+        //?}
+        return mods.isLoaded("iris") || mods.isLoaded("oculus");
+    }
+
     private static boolean shaderPackInUse() {
         if (!irisChecked) {
             irisChecked = true;
