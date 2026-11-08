@@ -301,6 +301,11 @@ public class NortheastChinaDelight
         *///?} else {
         event.registerBlockEntity(Capabilities.FluidHandler.BLOCK, ModBlockEntities.VAT.get(),
                 (vat, side) -> vat);
+        // 大灶从上面送料（机械动力溜槽、漏斗口这类认物品能力的），四格都认、只认上面，见 BigPotItemHandler（2026-11-08）
+        event.registerBlock(Capabilities.ItemHandler.BLOCK,
+                (level, pos, state, blockEntity, side) -> side == null || side == net.minecraft.core.Direction.UP
+                        ? new com.gunmu.northeast_china_delight.block.BigPotItemHandler(level, pos) : null,
+                com.gunmu.northeast_china_delight.block.ModBlocks.BIG_STOVE.get());
         // 调料瓶暴露流体能力，分液池才能倒出瓶子里实际剩下的量
         event.registerItem(Capabilities.FluidHandler.ITEM,
                 (stack, context) -> com.gunmu.northeast_china_delight.item.SeasoningBottleFluidHandler.of(stack),

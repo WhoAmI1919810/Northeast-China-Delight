@@ -95,6 +95,33 @@ public class BigPotBlockEntity extends BlockEntity {
         super(ModBlockEntities.BIG_POT.get(), pos, state);
     }
 
+    //? if <1.20.2 {
+    /*// 1.20.1（Forge）的物品能力挂在方块实体上：机械动力溜槽等从上面送料，见 BigPotItemHandler（1.20.2 起按方块注册）
+    private net.minecraftforge.common.util.LazyOptional<net.minecraftforge.items.IItemHandler> itemHandler =
+            net.minecraftforge.common.util.LazyOptional.empty();
+
+    @Override
+    public <T> net.minecraftforge.common.util.LazyOptional<T> getCapability(
+            net.minecraftforge.common.capabilities.Capability<T> capability,
+            @Nullable net.minecraft.core.Direction side) {
+        if (capability == net.minecraftforge.common.capabilities.ForgeCapabilities.ITEM_HANDLER
+                && (side == null || side == net.minecraft.core.Direction.UP) && this.level != null) {
+            if (!this.itemHandler.isPresent()) {
+                this.itemHandler = net.minecraftforge.common.util.LazyOptional.of(
+                        () -> new BigPotItemHandler(this.level, this.worldPosition));
+            }
+            return this.itemHandler.cast();
+        }
+        return super.getCapability(capability, side);
+    }
+
+    @Override
+    public void invalidateCaps() {
+        super.invalidateCaps();
+        this.itemHandler.invalidate();
+    }
+    *///?}
+
     /** 盖上锅盖时存下这一个（只存一个） */
     public void putLid(ItemStack stack) {
         lid = stack.copyWithCount(1);
