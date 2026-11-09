@@ -235,7 +235,7 @@
   "message.northeast_china_delight.big_pot.added": "Added to the pot: %s",
   "message.northeast_china_delight.big_pot.need_water": "Needs water to cook",
   "message.northeast_china_delight.big_pot.cooking": "Now cooking: %s",
-  "jei.northeast_china_delight.info.hand_pump": "Right-click a Hand Pump with an empty bucket, an empty Large Basin or a glass bottle to fill it with water; the water never runs out. Right-click it empty-handed to pour water into the containers in front of it.",
+  "jei.northeast_china_delight.info.hand_pump": "Right-click with an empty bucket, Large Basin or glass bottle to get water; it never runs out. Empty-handed, pours water into a cauldron, vat, Create Basin or Item Drain in front. It cannot pump water in the Nether.",
   "jei.northeast_china_delight.info.mystery_stew": "When the ingredients in a Big Iron Pot match no recipe, cooking yields Suspicious Stew. Its effects depend on the kinds and amounts of ingredients, and seasonings extend them.",
   "item.northeast_china_delight.paper_cut": "Window Paper-Cut",
   "block.northeast_china_delight.creative_vat": "Creative Vat",

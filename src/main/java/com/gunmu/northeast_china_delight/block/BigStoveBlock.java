@@ -419,7 +419,7 @@ public class BigStoveBlock extends Block implements EntityBlock, WorldlyContaine
     }
 
     /** 机械动力的机械手（Deployer）用的是加载器的假玩家 */
-    private static boolean isFakePlayer(Player player) {
+    static boolean isFakePlayer(Player player) {
         //? if <1.20.2 {
         return player instanceof net.minecraftforge.common.util.FakePlayer;
         //?} else {
@@ -435,7 +435,7 @@ public class BigStoveBlock extends Block implements EntityBlock, WorldlyContaine
     /**
      * 掉落物落在锅口里就进锅（2026-11-05 用户，收什么见 {@link BigPotCooking#dropIn}）：一堆能收几个收几个，
      * 收不进的留在灶上；停在灶上的掉落物原版每 4 刻还会挪一下、再调到这里，锅里有了水、腾出地方就接着收。
-     * 落在锅外的四个角上不收。水桶、水盆倒完的空桶、空盆在原地蹦出来。
+     * 落在锅外的四个角上不收。返还的空桶、空盆、调料瓶、碗先送进大灶相邻库存，送不进才从锅口外沿弹出。
      */
     @Override
     public void stepOn(Level level, BlockPos pos, BlockState state, Entity entity) {
@@ -462,7 +462,7 @@ public class BigStoveBlock extends Block implements EntityBlock, WorldlyContaine
                 break;
             }
             stack.shrink(1);
-            BigPotCooking.popOut(level, item.getX(), item.getY(), item.getZ(), back);
+            BigPotCooking.output(level, pos, state, back);
         }
         if (stack.getCount() != before) {
             if (stack.isEmpty()) {
@@ -491,7 +491,7 @@ public class BigStoveBlock extends Block implements EntityBlock, WorldlyContaine
 
     /**
      * 从上面送进锅的一格：看着永远是空的、一次只收一个，放进来马上倒进锅（setChanged 时），同原版堆肥桶的 InputContainer。
-     * 万一放进来的收不进（问的时候能收、放的时候锅变了），就从锅口蹦出来，不吞东西
+     * 万一放进来的收不进（问的时候能收、放的时候锅变了），就送到相邻库存或从锅口外沿弹出，不吞东西
      */
     private static final class PotInput extends SimpleContainer implements WorldlyContainer {
         private static final int[] TOP = {0};
@@ -533,15 +533,14 @@ public class BigStoveBlock extends Block implements EntityBlock, WorldlyContaine
         @Override
         public void setChanged() {
             ItemStack stack = removeItemNoUpdate(0);
-            Vec3 mouth = BigPotCooking.center(pos, state);
             while (!stack.isEmpty()) {
                 ItemStack back = BigPotCooking.dropIn(pot, state, level, pos, stack, null, false);
                 if (back == null) {
-                    BigPotCooking.popOut(level, mouth.x, mouth.y, mouth.z, stack);
+                    BigPotCooking.output(level, pos, state, stack);
                     return;
                 }
                 stack.shrink(1);
-                BigPotCooking.popOut(level, mouth.x, mouth.y, mouth.z, back);
+                BigPotCooking.output(level, pos, state, back);
             }
         }
     }

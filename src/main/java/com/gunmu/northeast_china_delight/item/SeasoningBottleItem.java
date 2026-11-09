@@ -73,6 +73,16 @@ public class SeasoningBottleItem extends Item {
         return use(stack, DOSE_MB);
     }
 
+    /** 瓶里还有完整的一份（50 mB）。大锅投料必须先问这一句，不足一份不能按一份扣。 */
+    public static boolean hasPortion(ItemStack stack) {
+        return isBottle(stack) && remainingMb(stack) >= DOSE_MB;
+    }
+
+    /** 扣掉一份。调用前必须先确认 {@link #hasPortion(ItemStack)}，否则会把不足一份的余量吞掉。 */
+    public static ItemStack consumePortion(ItemStack stack) {
+        return use(stack, DOSE_MB);
+    }
+
     public static ItemStack use(ItemStack stack, int mb) {
         int used = stack.getDamageValue() + Math.max(0, mb);
         if (used >= CAPACITY_MB) {

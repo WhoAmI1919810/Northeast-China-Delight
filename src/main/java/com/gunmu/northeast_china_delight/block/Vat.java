@@ -439,6 +439,10 @@ public class Vat extends Block implements EntityBlock {
         // 投料阶段不认领 kind：此时材料未必配齐（先放盐的缸会暂时像鱼露）。
         // kind 只由 tryStart→ready 在材料+封口真正凑齐时设置，避免中途误认后翻不回来。
         VatRecipe.Slot recipeSlot = recipe.slots().get(slot);
+        if (recipeSlot.perDose() && SeasoningBottleItem.isBottle(stack) && !SeasoningBottleItem.hasPortion(stack)) {
+            // 不足完整一份的瓶装调料不能按一份入缸，避免把瓶底余量吞掉
+            return false;
+        }
         vat.addContent(stack);
         if (recipeSlot.perDose() && SeasoningBottleItem.isBottle(stack)) {
             // 带余量的瓶装调料（鱼露、虾酱）：缸里只记一份剂量，
