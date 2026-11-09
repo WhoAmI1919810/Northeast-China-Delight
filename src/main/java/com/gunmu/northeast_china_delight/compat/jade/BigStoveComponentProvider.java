@@ -70,7 +70,10 @@ public enum BigStoveComponentProvider implements IBlockComponentProvider {
                 List<IElement> line = new ArrayList<>();
                 line.add(helper.text(Component.translatable("jade.northeast_china_delight.big_pot.contents")));
                 for (int i = 0; i < ingredients.size() && i < MAX_CONTENT_ICONS; i++) {
-                    line.add(helper.smallItem(ingredients.get(i).copyWithCount(1)));
+                    if (i > 0) {
+                        line.add(helper.spacer(2, 0));
+                    }
+                    line.add(helper.item(ingredients.get(i).copy(), 0.5F));
                 }
                 tooltip.add(line);
             }

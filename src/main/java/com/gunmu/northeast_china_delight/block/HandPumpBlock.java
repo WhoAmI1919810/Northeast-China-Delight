@@ -2,6 +2,8 @@ package com.gunmu.northeast_china_delight.block;
 
 import com.gunmu.northeast_china_delight.item.ModItems;
 import com.gunmu.northeast_china_delight.item.SeasoningBottleItem;
+import com.gunmu.northeast_china_delight.compat.OptionalMods;
+import com.gunmu.northeast_china_delight.compat.create.CreateHandPumpCompat;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
@@ -36,10 +38,18 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
 import net.minecraft.world.level.block.state.properties.EnumProperty;
+import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
+//? if <1.20.2 {
+/*import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.capability.IFluidHandler;
+*///?} else {
+import net.neoforged.neoforge.fluids.FluidStack;
+import net.neoforged.neoforge.fluids.capability.IFluidHandler;
+//?}
 import org.jetbrains.annotations.Nullable;
 
 /**
@@ -53,8 +63,9 @@ import org.jetbrains.annotations.Nullable;
  * 模型是建模师做的（同日用户：「建模师做了一个新的水井模型，把它用上」，work/水井.rar，转格式 work/tools/hand_pump/modeler.py）：
  * 一共 25.65 像素高；出水槽从井身斜着往前下方伸，槽口在前面那一格边上 1.5 像素、离地 11.5 像素左右。</p>
  *
- * <p>光压时往出水嘴前下方那一格倒水（2026-11-06 用户，{@link #pourInto}；11-07 换了建模师的模型后用户定：
- * 「不改模型，只往前下方一格倒」——槽口低，前面同一层放容器会插进锅壁）。炼药锅水位 +1，大缸水位 +1（一层 1000 mB），地上或脸盆架上的空大脸盆变水盆，
+ * <p>光压时先看出水嘴正前方同一层（2026-11-09 用户：「如果其前面（不是前下方，是出水口的正前方）如果是大脸盆，则给盆装水」）：
+ * 空大脸盆直接变水盆；前面不是空盆时，才按原规则往出水嘴前下方那一格倒水（2026-11-06 用户，{@link #pourInto}；11-07 换了建模师的模型后用户定：
+ * 「不改模型，只往前下方一格倒」）。前下方那格接炼药锅水位 +1、大缸水位 +1（一层 1000 mB）、地上或脸盆架上的空大脸盆变水盆，
  * 大灶上揭着盖的大铁锅倒一桶水，空木臼放一份水；各自的规矩同拿水桶倒（满了、压着石头、煮着、盖着锅盖就不收）。
  * 倒进去了，嘴口落一道水下去；没倒进去照旧光喷水花。</p>
  *
@@ -71,6 +82,7 @@ public class HandPumpBlock extends FacingDecorBlock {
     /** 槽口（朝北放时在整体坐标约 8, 11.5, -1.6）：离井身中心往前 0.6 格、离地 0.7 格 */
     private static final double MOUTH_FORWARD = 0.6;
     private static final double MOUTH_Y = 0.7;
+    private static final int PUMP_WATER_MB = 1000;
 
     public HandPumpBlock(BlockBehaviour.Properties properties) {
         super(properties, SHAPE, true);
@@ -208,6 +220,9 @@ public class HandPumpBlock extends FacingDecorBlock {
     //?}
 
     private static InteractionResult pump(ItemStack held, Level level, BlockPos pos, Player player, InteractionHand hand) {
+        if (waterEvaporates(level)) {
+            return InteractionResult.PASS;
+        }
         ItemStack filled;
         if (held.is(Items.BUCKET)) {
             filled = new ItemStack(Items.WATER_BUCKET);
@@ -233,6 +248,9 @@ public class HandPumpBlock extends FacingDecorBlock {
      * 哪只手里有盛东西的家伙就让开 —— 主手的桶自己去倒水，副手拿着空桶的轮到副手时再压水。
      */
     private static InteractionResult splash(BlockState state, Level level, BlockPos clicked, Player player) {
+        if (waterEvaporates(level)) {
+            return InteractionResult.sidedSuccess(level.isClientSide);
+        }
         if (isContainer(player.getMainHandItem()) || isContainer(player.getOffhandItem())) {
             return InteractionResult.PASS;
         }
@@ -242,8 +260,11 @@ public class HandPumpBlock extends FacingDecorBlock {
         return InteractionResult.sidedSuccess(level.isClientSide);
     }
 
-    /** 光压一下：出水嘴前下方有盛水的家伙就倒进去、落一道水，没有就在槽口喷水花（右键和红石共用） */
+    /** 光压一下：出水嘴正前方是空大脸盆就优先装盆，否则看前下方；有容器就落一道水，没有就在槽口喷水花（右键和红石共用） */
     private static void pumpOnce(ServerLevel server, BlockPos pos, Direction facing, @Nullable Entity by) {
+        if (waterEvaporates(server)) {
+            return;
+        }
         BlockPos target = pourInto(server, pos, facing, by);
         if (target != null) {
             stream(server, pos, facing, target);
@@ -257,10 +278,11 @@ public class HandPumpBlock extends FacingDecorBlock {
         server.playSound(null, pos, SoundEvents.BUCKET_EMPTY, SoundSource.BLOCKS, 0.5F, 1.2F);
     }
 
-    /** 往出水嘴前下方那一格倒水。倒进去了返回接水的那格，没倒进去返回 null */
+    /** 先给出水嘴正前方的空大脸盆装水，否则往出水嘴前下方那一格倒水。倒进去了返回接水的那格，没倒进去返回 null */
     @Nullable
     private static BlockPos pourInto(ServerLevel level, BlockPos pos, Direction facing, @Nullable Entity player) {
-        BlockPos target = pos.relative(facing).below();
+        BlockPos front = pos.relative(facing);
+        BlockPos target = level.getBlockState(front).is(ModBlocks.LARGE_BASIN.get()) ? front : front.below();
         BlockState state = level.getBlockState(target);
         boolean poured = false;
         // 大锅自己倒水时就有倒水声、水花和事件（BigPotCooking#pour），这里不再出一遍
@@ -290,12 +312,41 @@ public class HandPumpBlock extends FacingDecorBlock {
             poured = vat.pumpWater(state, level, target);
         } else if (state.getBlock() instanceof WoodenMortarBlock) {
             poured = WoodenMortarBlock.pumpWater(state, level, target);
+        } else {
+            int filled = fillFluidHandler(level, target);
+            if (filled <= 0 && OptionalMods.create()) {
+                filled = CreateHandPumpCompat.fillItemDrain(level, target, PUMP_WATER_MB);
+            }
+            poured = filled > 0;
         }
         if (poured && !quiet) {
             level.playSound(null, pos, SoundEvents.BUCKET_EMPTY, SoundSource.BLOCKS, 0.8F, 1.0F);
             level.gameEvent(player, GameEvent.FLUID_PLACE, target);
         }
         return poured ? target : null;
+    }
+
+    /** 标准方块流体能力：工作盆、流体罐，以及其他按通用接口接收水的外部方块。 */
+    private static int fillFluidHandler(ServerLevel level, BlockPos target) {
+        IFluidHandler handler;
+        //? if <1.20.2 {
+        /*net.minecraft.world.level.block.entity.BlockEntity blockEntity = level.getBlockEntity(target);
+        if (blockEntity == null) {
+            return 0;
+        }
+        handler = blockEntity.getCapability(
+                net.minecraftforge.common.capabilities.ForgeCapabilities.FLUID_HANDLER, null).orElse(null);
+        *///?} else {
+        handler = level.getCapability(
+                net.neoforged.neoforge.capabilities.Capabilities.FluidHandler.BLOCK, target, null);
+        //?}
+        return handler == null ? 0 : handler.fill(new FluidStack(Fluids.WATER, PUMP_WATER_MB),
+                IFluidHandler.FluidAction.EXECUTE);
+    }
+
+    /** 下界这类超热维度里水会蒸发，压水井不应产出水，也不应播放取水反馈。 */
+    private static boolean waterEvaporates(Level level) {
+        return level.dimensionType().ultraWarm();
     }
 
     /**
@@ -305,7 +356,7 @@ public class HandPumpBlock extends FacingDecorBlock {
         double x = pos.getX() + 0.5 + facing.getStepX() * MOUTH_FORWARD;
         double z = pos.getZ() + 0.5 + facing.getStepZ() * MOUTH_FORWARD;
         double top = pos.getY() + MOUTH_Y;
-        double bottom = target.getY() + 0.9;
+        double bottom = target.getY() + (target.getY() == pos.getY() ? DishBlock.BASIN_SHAPE.max(Direction.Axis.Y) : 0.9);
         int steps = Math.max(2, (int) Math.ceil((top - bottom) / 0.12));
         for (int i = 0; i <= steps; i++) {
             double y = top - (top - bottom) * i / steps;

@@ -4,7 +4,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.phys.Vec3;
 //? if <1.20.2 {
 /*import net.minecraftforge.items.IItemHandler;
 *///?} else {
@@ -16,7 +15,7 @@ import net.neoforged.neoforge.items.IItemHandler;
  *
  * <p>原版漏斗认的是 {@link BigStoveBlock#getContainer}（WorldlyContainerHolder），可机械动力的溜槽、漏斗口只认加载器的物品能力，
  * NeoForge 也只替原版堆肥桶做了转换，所以以前溜槽眼里大灶是块实心方块。这里把同一套规矩包成物品能力：
- * 一次收一个，收什么见 {@link BigPotCooking#dropIn}（同掉进锅里、漏斗往下送）；水桶、水盆倒完的空桶、空盆从锅口蹦出来；
+ * 一次收一个，收什么见 {@link BigPotCooking#dropIn}（同掉进锅里、漏斗往下送）；返还物先送进相邻库存，送不进才从锅口外沿弹出；
  * 不往外给东西。只认从上面来（side 为 UP 或者不分面），四格哪一格都行。</p>
  *
  * <p>1.21.1 按方块注册（NortheastChinaDelight#registerCapabilities）；1.20.1 的能力只能挂在方块实体上，
@@ -60,8 +59,7 @@ public final class BigPotItemHandler implements IItemHandler {
             return stack;
         }
         if (!simulate && !back.isEmpty()) {
-            Vec3 mouth = BigPotCooking.center(this.pos, state);
-            BigPotCooking.popOut(this.level, mouth.x, mouth.y, mouth.z, back);
+            BigPotCooking.output(this.level, this.pos, state, back);
         }
         return stack.copyWithCount(stack.getCount() - 1);
     }

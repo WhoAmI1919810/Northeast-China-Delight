@@ -1,12 +1,13 @@
 package com.gunmu.northeast_china_delight.block;
 
-import com.gunmu.northeast_china_delight.ModTags;
 import com.gunmu.northeast_china_delight.crafting.BigPotRecipe;
 import com.gunmu.northeast_china_delight.crafting.BigPotRecipes;
 import com.gunmu.northeast_china_delight.crafting.MysteryStew;
 import com.gunmu.northeast_china_delight.item.ModItems;
+import com.gunmu.northeast_china_delight.item.SeasoningBottleItem;
 import com.gunmu.northeast_china_delight.particle.ModParticles;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -32,6 +33,17 @@ import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 
+//? if <1.20.2 {
+/*import net.minecraftforge.common.capabilities.ForgeCapabilities;
+import net.minecraftforge.items.IItemHandler;
+*///?} else {
+import net.neoforged.neoforge.capabilities.Capabilities;
+import net.neoforged.neoforge.items.IItemHandler;
+//?}
+
+import java.util.HashSet;
+import java.util.Set;
+
 /**
  * 大铁锅做菜（大锅烹饪，配方见 {@link BigPotRecipe}）。不做界面，全靠右键：
  *
@@ -56,7 +68,8 @@ import org.jetbrains.annotations.Nullable;
  * <p>往锅里放东西、盛菜都得先揭锅盖（盖着盖时右键只会揭盖，见 {@link BigStoveBlock}）。</p>
  *
  * <p>东西也能直接掉进锅里（2026-11-05 用户，{@link #dropIn}）：落在锅口的掉落物、从上面往下送的漏斗和投掷器。
- * 只收水桶、水盆（倒水，还出空桶、空盆）、食材和盐，规矩同右键，收不进就留在灶上，都不出提示。</p>
+ * 水桶、水盆倒水后还出空桶、空盆；食材和所有配方认的调料都收，瓶装调料一次只扣完整的一份 50 mB。
+ * 收不进的留在灶上，都不出提示；返还的瓶、碗先送进贴着大灶的库存，送不进才从锅口外沿蹦出来。</p>
  *
  * <p>粒子：放料、倒水溅水花；煮着时冒白雾，煮到六成以上汤面上冒泡（{@link ModParticles#POT_BUBBLE}，
  * 客户端每刻，{@link #clientTick}）；煮好时冒一阵绿色粒子（像骨粉催熟），之后接着冒泡、越来越少，
@@ -106,7 +119,16 @@ public final class BigPotCooking {
                 return InteractionResult.sidedSuccess(level.isClientSide);
             }
             if (!level.isClientSide) {
-                player.setItemInHand(hand, ItemUtils.createFilledResult(held, player, emptied(held)));
+                ItemStack emptyContainer = emptied(held);
+                if (BigStoveBlock.isFakePlayer(player)) {
+                    // 机械手（Deployer）没有正常背包：倒完的空桶 / 空盆直接送进贴锅库存
+                    if (!player.getAbilities().instabuild) {
+                        held.shrink(1);
+                        output(level, pos, state, emptyContainer);
+                    }
+                } else {
+                    player.setItemInHand(hand, ItemUtils.createFilledResult(held, player, emptyContainer));
+                }
                 pour(pot, level, pos, state, player);
             }
             return InteractionResult.sidedSuccess(level.isClientSide);
@@ -143,6 +165,10 @@ public final class BigPotCooking {
             return InteractionResult.sidedSuccess(level.isClientSide);
         }
         boolean seasoning = isSeasoning(recipes, held);
+        if (seasoning && !seasoningReady(held)) {
+            // 瓶里不足一份：不把余量当一份吞掉，直接当这次右键没发生
+            return InteractionResult.sidedSuccess(level.isClientSide);
+        }
         if (full(pot, recipes, seasoning)) {
             tell(player, Component.translatable("message.northeast_china_delight.big_pot.full"));
             return InteractionResult.sidedSuccess(level.isClientSide);
@@ -150,11 +176,14 @@ public final class BigPotCooking {
         if (!level.isClientSide) {
             ItemStack one = held.copyWithCount(1);
             addOne(pot, one, seasoning, level, pos, state);
-            ItemStack remainder = remainderOf(held);
+            ItemStack remainder = remainderOf(one);
             if (!player.getAbilities().instabuild) {
                 held.shrink(1);
                 if (!remainder.isEmpty()) {
-                    if (held.isEmpty()) {
+                    if (BigStoveBlock.isFakePlayer(player)) {
+                        // 机械手（Deployer）投完调料后，剩余瓶 / 碗不留在假玩家背包里
+                        output(level, pos, state, remainder);
+                    } else if (held.isEmpty()) {
                         player.setItemInHand(hand, remainder);
                     } else if (!player.getInventory().add(remainder)) {
                         player.drop(remainder, false);
@@ -198,10 +227,18 @@ public final class BigPotCooking {
      * 下锅时在这里单独还碗（2026-11-06 用户：得莫利炖鱼的盐换成大酱，投入酱要返回碗）
      */
     private static ItemStack remainderOf(ItemStack held) {
+        if (SeasoningBottleItem.isBottle(held)) {
+            return SeasoningBottleItem.consumePortion(held);
+        }
         if (held.hasCraftingRemainingItem()) {
             return held.getCraftingRemainingItem();
         }
         return held.is(ModItems.SOY_PASTE.get()) ? new ItemStack(Items.BOWL) : ItemStack.EMPTY;
+    }
+
+    /** 瓶装调料至少要剩完整的一份；盐、碗装调料等一个物品本身就是一份 */
+    private static boolean seasoningReady(ItemStack stack) {
+        return !SeasoningBottleItem.isBottle(stack) || SeasoningBottleItem.hasPortion(stack);
     }
 
     /** 能当料下锅：哪条配方用得上，或者谜之炖菜认 */
@@ -234,15 +271,16 @@ public final class BigPotCooking {
      * （{@link BigStoveBlock#getContainer}）都走这里，只在服务端调。
      *
      * <ul>
-     *   <li>只收水桶、水盆（倒 1000 mB 水，还一个空桶 / 空盆）、食材和盐。瓶装、碗装的调料不收（用户），
-     *       别的调料也不收；食材里要是有倒完得还容器的也不收；</li>
+     *   <li>收水桶、水盆（倒 1000 mB 水，还一个空桶 / 空盆）、食材和配方认的调料。瓶装调料一次扣完整的一份
+     *       50 mB，不足一份不收；碗装调料一个算一份，返还一个碗；非调料且带合成剩余物的物品不收；</li>
      *   <li>别的规矩同右键：灶上得是揭开盖的锅、锅里不能是煮好的菜；放料得锅里先有水、没在煮、没放满；
      *       倒水煮着也能倒（同右键，多出来的水不影响凑配方）；</li>
      *   <li>都不出提示（用户：收不进就掉在灶上，放进去也不弹提示）。</li>
      * </ul>
      *
      * @param simulate 只问收不收，不动锅
-     * @return 收不进返回 null；收了返回要还出来的东西（空桶、空盆，别的是空），调用的地方把送来的那一堆减一个
+     * @return 收不进返回 null；收了返回要还出来的东西（空桶、空盆、剩余调料瓶、空玻璃瓶或碗，没有则空），
+     *         调用的地方把送来的那一堆减一个
      */
     @Nullable
     public static ItemStack dropIn(BigPotBlockEntity pot, BlockState state, Level level, BlockPos pos, ItemStack stack,
@@ -260,21 +298,21 @@ public final class BigPotCooking {
             return emptied(stack);
         }
         RecipeManager recipes = level.getRecipeManager();
-        if (stack.hasCraftingRemainingItem() || !usable(recipes, stack)) {
+        boolean seasoning = isSeasoning(recipes, stack);
+        if (!usable(recipes, stack) || !seasoningReady(stack)
+                || (!seasoning && stack.hasCraftingRemainingItem())) {
             return null;
         }
-        boolean seasoning = isSeasoning(recipes, stack);
-        if (seasoning && !stack.is(ModTags.FOODS_SALT)
-                || pot.cooking() != null || pot.liquidMb() <= 0 || full(pot, recipes, seasoning)) {
+        if (pot.cooking() != null || pot.liquidMb() <= 0 || full(pot, recipes, seasoning)) {
             return null;
         }
         if (!simulate) {
             addOne(pot, stack.copyWithCount(1), seasoning, level, pos, state);
         }
-        return ItemStack.EMPTY;
+        return remainderOf(stack);
     }
 
-    /** 掉进锅里还出来的空桶、空盆（或者没收进去的东西）：从 (x, y, z) 蹦出来，落在灶上 */
+    /** 在指定位置生成一个掉落物（收不进锅的东西、没有相邻库存可收的返还物） */
     public static void popOut(Level level, double x, double y, double z, ItemStack stack) {
         if (stack.isEmpty()) {
             return;
@@ -282,6 +320,76 @@ public final class BigPotCooking {
         ItemEntity item = new ItemEntity(level, x, y, z, stack);
         item.setDefaultPickUpDelay();
         level.addFreshEntity(item);
+    }
+
+    /**
+     * 投料后返还的容器：先尝试送进贴着大灶四格的库存，全都送不进才在锅口外沿蹦出来。
+     * 不往上方找，避免剩余调料瓶又回到本次输入用的溜槽 / 漏斗，形成闭环。
+     */
+    public static void output(Level level, BlockPos pos, BlockState state, ItemStack stack) {
+        if (stack.isEmpty() || level.isClientSide) {
+            return;
+        }
+        ItemStack left = insertIntoNearby(level, pos, state, stack);
+        if (!left.isEmpty()) {
+            popOutSafe(level, pos, state, left);
+        }
+    }
+
+    private static final Direction[] OUTPUT_SIDES = {
+            Direction.NORTH, Direction.EAST, Direction.SOUTH, Direction.WEST, Direction.DOWN
+    };
+
+    private static ItemStack insertIntoNearby(Level level, BlockPos pos, BlockState state, ItemStack stack) {
+        BlockPos origin = BigStoveBlock.origin(pos, state);
+        Direction facing = state.getValue(BigStoveBlock.FACING);
+        Set<BlockPos> stove = new HashSet<>();
+        for (BigStoveBlock.Part part : BigStoveBlock.Part.values()) {
+            int[] offset = part.offset(facing);
+            stove.add(origin.offset(offset[0], 0, offset[1]));
+        }
+        Set<BlockPos> checked = new HashSet<>();
+        for (BlockPos cell : stove) {
+            for (Direction side : OUTPUT_SIDES) {
+                BlockPos target = cell.relative(side);
+                if (stove.contains(target) || !checked.add(target)) {
+                    continue;
+                }
+                if (level.getBlockState(target).getBlock() instanceof BigStoveBlock) {
+                    // 别的灶也不是容器，别把返还物投进下一口锅里
+                    continue;
+                }
+                IItemHandler handler = itemHandlerAt(level, target, side.getOpposite());
+                if (handler == null) {
+                    continue;
+                }
+                for (int slot = 0; slot < handler.getSlots() && !stack.isEmpty(); slot++) {
+                    stack = handler.insertItem(slot, stack, false);
+                }
+                if (stack.isEmpty()) {
+                    return ItemStack.EMPTY;
+                }
+            }
+        }
+        return stack;
+    }
+
+    @Nullable
+    private static IItemHandler itemHandlerAt(Level level, BlockPos pos, Direction side) {
+        //? if <1.20.2 {
+        /*net.minecraft.world.level.block.entity.BlockEntity blockEntity = level.getBlockEntity(pos);
+        return blockEntity == null ? null
+                : blockEntity.getCapability(ForgeCapabilities.ITEM_HANDLER, side).orElse(null);
+        *///?} else {
+        return level.getCapability(Capabilities.ItemHandler.BLOCK, pos, side);
+        //?}
+    }
+
+    private static void popOutSafe(Level level, BlockPos pos, BlockState state, ItemStack stack) {
+        Vec3 center = center(pos, state);
+        Direction facing = state.getValue(BigStoveBlock.FACING);
+        popOut(level, center.x + facing.getStepX() * 1.35, center.y + 0.2,
+                center.z + facing.getStepZ() * 1.35, stack);
     }
 
     /**
