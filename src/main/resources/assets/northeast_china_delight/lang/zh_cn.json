@@ -310,6 +310,7 @@
   "jade.northeast_china_delight.big_pot.contents": "食材：",
   "jade.northeast_china_delight.big_pot.seasonings": "调料：%s",
   "jade.northeast_china_delight.big_pot.separator": "、",
+  "jade.northeast_china_delight.big_pot.count": "×%s",
   "jade.northeast_china_delight.big_pot.result": "本次烹饪得到：%s",
   "jade.northeast_china_delight.big_pot.cooking": "烹饪中 %s%%",
   "jade.northeast_china_delight.big_pot.done": "烹饪完成",

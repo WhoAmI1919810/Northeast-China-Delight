@@ -311,6 +311,7 @@
   "jade.northeast_china_delight.big_pot.contents": "Ingredients: ",
   "jade.northeast_china_delight.big_pot.seasonings": "Seasonings: %s",
   "jade.northeast_china_delight.big_pot.separator": ", ",
+  "jade.northeast_china_delight.big_pot.count": "×%s",
   "jade.northeast_china_delight.big_pot.result": "This batch makes: %s",
   "jade.northeast_china_delight.big_pot.cooking": "Cooking: %s%%",
   "jade.northeast_china_delight.big_pot.done": "Cooking complete",
