@@ -180,13 +180,22 @@ public final class VatGameTests {
     @GameTest(template = "empty")
     public static void vatJeiCollectionContainersFollowProducts(GameTestHelper helper) {
         for (VatRecipe recipe : VatRecipes.all(helper.getLevel())) {
+            List<VatJeiRecipe> pages = VatJeiRecipes.pagesFor(recipe);
+            if (pages.isEmpty()) {
+                if (VatJeiRecipes.hasRequiredInputs(recipe)) {
+                    helper.fail("配方 " + recipe.id() + " 输入齐全却没有 JEI 页面");
+                }
+                continue;
+            }
             net.minecraft.world.level.material.Fluid product = recipe.liquid().product();
             VatRecipes.Serving serving = product == null ? null : VatRecipes.servingOf(product);
-            for (VatJeiRecipe.State state : VatJeiRecipes.pagesFor(recipe).get(0).states()) {
-                if (serving == null && !state.collectionContainers().isEmpty()
-                        || serving != null && (state.collectionContainers().size() != 1
-                        || !state.collectionContainers().get(0).is(serving.container()))) {
-                    helper.fail("JEI collection container differs from gameplay: " + recipe.id());
+            for (VatJeiRecipe page : pages) {
+                for (VatJeiRecipe.State state : page.states()) {
+                    if (serving == null && !state.collectionContainers().isEmpty()
+                            || serving != null && (state.collectionContainers().size() != 1
+                            || !state.collectionContainers().get(0).is(serving.container()))) {
+                        helper.fail("JEI collection container differs from gameplay: " + recipe.id());
+                    }
                 }
             }
         }
@@ -381,10 +390,10 @@ public final class VatGameTests {
     public static void vatMappedConverterSurvivesNetwork(GameTestHelper helper) {
         JsonObject config = JsonParser.parseString("""
                 {"kind":"SPICY_PICKLE","seal":"PRESS","seconds":1,"liquid":{},
-                 "slots":[{"ingredient":{"tag":"northeast_china_delight:spicy_pickle_ingredients"},
+                 "slots":[{"ingredient":{"tag":"chinese_regional_culinary_ingredients:spicy_pickle_ingredients"},
                    "fate":"KEEP","bounds":{"type":"exact","count":1},
                    "converter":{"type":"mapped","entries":[
-                     {"ingredient":{"tag":"c:crops/napa_cabbage"},
+                     {"ingredient":{"tag":"chinese_regional_culinary_ingredients:spicy_pickle_ingredients"},
                       "result":"chinese_regional_culinary_ingredients:spicy_cabbage"}]}}]}
                 """).getAsJsonObject();
         VatRecipe recipe = roundTripVerbRecipe(helper, config);
@@ -625,11 +634,16 @@ public final class VatGameTests {
 
     @GameTest(template = "empty")
     public static void vatJeiPagesAreGenerated(GameTestHelper helper) {
+        int displayed = 0;
         for (VatRecipe recipe : VatRecipes.all(helper.getLevel())) {
             List<VatJeiRecipe> pages = VatJeiRecipes.pagesFor(recipe);
             if (pages.isEmpty()) {
-                helper.fail("配方 " + recipe.id() + " 在 JEI 里一页都没有");
+                if (VatJeiRecipes.hasRequiredInputs(recipe)) {
+                    helper.fail("配方 " + recipe.id() + " 输入齐全却在 JEI 里一页都没有");
+                }
+                continue;
             }
+            displayed += pages.size();
             for (VatJeiRecipe page : pages) {
                 for (VatJeiRecipe.State state : page.states()) {
                     if (state.results().isEmpty() && !state.hasResultFluid()) {
@@ -640,6 +654,7 @@ public final class VatGameTests {
             checkPageFollowsIngredient(helper, recipe, pages, VatRecipes.Kind.MEAT);
             checkPageFollowsIngredient(helper, recipe, pages, VatRecipes.Kind.SALTED_FISH);
         }
+        helper.assertTrue(displayed > 0, "JEI 至少应展示一个输入齐全的大缸配方");
         helper.succeed();
     }
 

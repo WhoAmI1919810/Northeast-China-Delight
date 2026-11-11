@@ -171,28 +171,33 @@ dependencies {
     def crciJar = files("${rootDir}/libs/chinese_regional_culinary_ingredients-0.1.0+${sc.current.version}.jar")
     def skipCreateForGameTest = providers.gradleProperty('gameTestWithoutCreate')
             .map { it.toBoolean() }.getOrElse(false)
+    def devCrciJar = providers.gradleProperty('crciDevJar').map { file(it) }.getOrNull()
     compileOnly crciJar
-    localRuntime crciJar
+    if (devCrciJar != null) {
+        localRuntime files(devCrciJar)
+    } else {
+        localRuntime crciJar
+    }
 
     if (sc.current.version.compareTo('1.20.2') < 0) {
 
         compileOnly "maven.modrinth:farmers-delight:${farmersdelight_version}"
-        localRuntime "maven.modrinth:farmers-delight:${farmersdelight_version}"
+        modRuntimeOnly "maven.modrinth:farmers-delight:${farmersdelight_version}"
 
         compileOnly "maven.modrinth:create:${create_version}"
         if (!skipCreateForGameTest) {
-            localRuntime "maven.modrinth:create:${create_version}"
+            modRuntimeOnly "maven.modrinth:create:${create_version}"
         }
         compileOnly "net.createmod.ponder:Ponder-Forge-${minecraft_version}:${ponder_version}"
         compileOnly "dev.engine-room.flywheel:flywheel-forge-api-${minecraft_version}:${flywheel_version}"
         compileOnly "com.tterrag.registrate:Registrate:${registrate_version}"
 
         compileOnly "maven.modrinth:jade:${jade_version}"
-        localRuntime "maven.modrinth:jade:${jade_version}"
+        modRuntimeOnly "maven.modrinth:jade:${jade_version}"
 
         compileOnly "mezz.jei:jei-${minecraft_version}-common-api:${jei_version}"
         compileOnly "mezz.jei:jei-${minecraft_version}-forge-api:${jei_version}"
-        localRuntime "mezz.jei:jei-${minecraft_version}-forge:${jei_version}"
+        modRuntimeOnly "mezz.jei:jei-${minecraft_version}-forge:${jei_version}"
 
         // 高级战利品显示（ALI）兼容：只用它的插件 API 做展示，没装 ALI 时本模组的类不会被加载
         compileOnly "maven.modrinth:advanced-loot-info:${ali_version}"

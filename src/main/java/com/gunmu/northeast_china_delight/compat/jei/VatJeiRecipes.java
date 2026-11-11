@@ -43,6 +43,15 @@ public final class VatJeiRecipes {
         return expand(recipe);
     }
 
+    /** JEI 是否具备展示该配方所需的主料、调料和封口物；缺少可选模组原料时为 false。 */
+    public static boolean hasRequiredInputs(VatRecipe recipe) {
+        List<List<ItemStack>> candidates = new ArrayList<>(recipe.slots().size());
+        for (VatRecipe.Slot slot : recipe.slots()) {
+            candidates.add(candidatesOf(slot));
+        }
+        return !missingRequiredInput(recipe, candidates) && !missingRequiredSeal(recipe);
+    }
+
     /**
      * 一页对应配方的一个水位档。
      * <p>
