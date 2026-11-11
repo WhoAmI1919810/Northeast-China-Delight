@@ -2,12 +2,17 @@ package com.gunmu.northeast_china_delight.gametest;
 
 import com.gunmu.chinese_regional_culinary_ingredients.worldgen.UniqueShopPoolElement;
 import com.gunmu.northeast_china_delight.NortheastChinaDelight;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.Tag;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.levelgen.structure.pools.StructureTemplatePool;
+import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplate;
+import net.neoforged.fml.ModList;
 //? if <1.20.2 {
 /*import net.minecraftforge.gametest.GameTestHolder;
 import net.minecraftforge.gametest.PrefixGameTestTemplate;
@@ -30,6 +35,31 @@ public final class VillageShopGameTests {
         for (String biome : BIOMES) {
             assertUniqueShop(helper, pools, "village/" + biome + "/houses");
             assertUniqueShop(helper, pools, "village/" + biome + "/zombie/houses");
+        }
+        helper.succeed();
+    }
+
+    @GameTest(template = "empty")
+    public static void createShopStructuresOverrideBasePack(GameTestHelper helper) {
+        if (!ModList.get().isLoaded("create")) {
+            helper.succeed();
+            return;
+        }
+        for (String biome : BIOMES) {
+            ResourceLocation id = id("chinese_regional_culinary_ingredients",
+                    "village/side_dish_shop_" + biome);
+            StructureTemplate template = helper.getLevel().getStructureManager().get(id).orElse(null);
+            helper.assertTrue(template != null, "缺少副食店结构 " + id);
+            CompoundTag saved = template.save(new CompoundTag());
+            ListTag palette = saved.getList("palette", Tag.TAG_COMPOUND);
+            boolean hasCreateBlock = false;
+            for (int index = 0; index < palette.size(); index++) {
+                if (palette.getCompound(index).getString("Name").startsWith("create:")) {
+                    hasCreateBlock = true;
+                    break;
+                }
+            }
+            helper.assertTrue(hasCreateBlock, "Create 版副食店资源包未覆盖结构: " + id);
         }
         helper.succeed();
     }
