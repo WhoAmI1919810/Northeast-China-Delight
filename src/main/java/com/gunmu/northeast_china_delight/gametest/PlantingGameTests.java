@@ -7,7 +7,7 @@ import com.gunmu.chinese_regional_culinary_ingredients.item.CrciItems;
 import com.gunmu.northeast_china_delight.NortheastChinaDelight;
 import com.gunmu.chinese_regional_culinary_ingredients.block.HazelnutBushBlock;
 import com.gunmu.chinese_regional_culinary_ingredients.block.GinsengCropBlock;
-import com.gunmu.northeast_china_delight.block.ModBlockTags;
+import com.gunmu.chinese_regional_culinary_ingredients.block.CrciBlockTags;
 import com.gunmu.northeast_china_delight.block.ModBlocks;
 import com.gunmu.northeast_china_delight.item.ModItems;
 import net.minecraft.core.BlockPos;
@@ -115,7 +115,7 @@ public final class PlantingGameTests
         helper.assertTrue(level.getBlockState(plant).is(CrciBlocks.GINSENG_CROP.get()),
                 "人参放下的瞬间就没有留下，当前=" + level.getBlockState(plant)
                         + "，下方=" + level.getBlockState(plant.below())
-                        + "，下方在可种植标签=" + level.getBlockState(plant.below()).is(ModBlockTags.GINSENG_PLANTABLE_ON)
+                        + "，下方在可种植标签=" + level.getBlockState(plant.below()).is(CrciBlockTags.GINSENG_PLANTABLE_ON)
                         + "，群系温度=" + level.getBiome(plant).value().getBaseTemperature()
                         + "，能否存活=" + CrciBlocks.GINSENG_CROP.get().defaultBlockState()
                         .canSurvive(level, plant));

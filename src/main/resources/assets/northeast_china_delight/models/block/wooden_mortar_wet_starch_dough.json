@@ -5,8 +5,8 @@
     16
   ],
   "textures": {
-    "dough": "northeast_china_delight:block/wooden_mortar_wet_starch_dough",
-    "particle": "northeast_china_delight:block/wooden_mortar_wet_starch_dough"
+    "dough": "chinese_regional_culinary_ingredients:block/wooden_mortar_wet_starch_dough",
+    "particle": "chinese_regional_culinary_ingredients:block/wooden_mortar_wet_starch_dough"
   },
   "elements": [
     {

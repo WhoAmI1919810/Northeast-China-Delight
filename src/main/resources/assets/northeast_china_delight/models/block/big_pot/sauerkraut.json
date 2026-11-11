@@ -2,7 +2,7 @@
   "credit": "Northeast China Delight big pot ingredient model",
   "parent": "block/block",
   "render_type": "minecraft:cutout",
-  "textures": {"particle": "northeast_china_delight:block/big_pot/sauerkraut", "0": "northeast_china_delight:block/big_pot/sauerkraut"},
+  "textures": {"particle": "chinese_regional_culinary_ingredients:block/big_pot/sauerkraut", "0": "chinese_regional_culinary_ingredients:block/big_pot/sauerkraut"},
   "elements": [
     {"from": [7.9203, 0.0, 6.0301], "to": [8.471, 0.2898, 10.3777], "faces": {"north": {"uv": [0.25, 0.5, 0.5, 0.75], "texture": "#0"}, "east": {"uv": [0.25, 0, 1, 0.25], "texture": "#0"}, "south": {"uv": [0.25, 0.75, 0.5, 1], "texture": "#0"}, "west": {"uv": [0.25, 0.25, 1, 0.5], "texture": "#0"}, "up": {"uv": [0.25, 0, 0.5, 0.75], "texture": "#0"}, "down": {"uv": [0.25, 0, 0.5, 0.75], "texture": "#0"}}},
     {"from": [6.7609, 0.05, 6.175], "to": [7.3116, 0.3398, 10.2328], "rotation": {"angle": 22.5, "axis": "y", "origin": [7.0363, 0.0, 8.2039]}, "faces": {"north": {"uv": [1.25, 0.5, 1.5, 0.75], "texture": "#0"}, "east": {"uv": [1.25, 0, 2, 0.25], "texture": "#0"}, "south": {"uv": [1.5, 0, 1.75, 0.25], "texture": "#0"}, "west": {"uv": [1, 0.5, 1.75, 0.75], "texture": "#0"}, "up": {"uv": [1.5, 0.25, 1.75, 1], "texture": "#0"}, "down": {"uv": [1, 0, 1.25, 0.75], "texture": "#0"}}},

@@ -2,10 +2,10 @@
   "parent": "block/block",
   "render_type": "minecraft:translucent",
   "textures": {
-    "particle": "northeast_china_delight:block/animal_oil_block_top",
-    "down": "northeast_china_delight:block/animal_oil_block_bottom",
-    "up": "northeast_china_delight:block/animal_oil_block_top",
-    "side": "northeast_china_delight:block/animal_oil_block_side"
+    "particle": "chinese_regional_culinary_ingredients:block/animal_oil_block_top",
+    "down": "chinese_regional_culinary_ingredients:block/animal_oil_block_bottom",
+    "up": "chinese_regional_culinary_ingredients:block/animal_oil_block_top",
+    "side": "chinese_regional_culinary_ingredients:block/animal_oil_block_side"
   },
   "elements": [
     {

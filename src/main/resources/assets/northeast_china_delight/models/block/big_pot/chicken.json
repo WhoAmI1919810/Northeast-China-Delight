@@ -2,7 +2,7 @@
   "credit": "Northeast China Delight big pot ingredient model",
   "parent": "block/block",
   "render_type": "minecraft:cutout",
-  "textures": {"particle": "northeast_china_delight:block/big_pot/chicken", "0": "northeast_china_delight:block/big_pot/chicken"},
+  "textures": {"particle": "chinese_regional_culinary_ingredients:block/big_pot/chicken", "0": "chinese_regional_culinary_ingredients:block/big_pot/chicken"},
   "elements": [
     {"from": [6.0757, 0.0, 6.1024], "to": [7.9881, 1.5937, 8.2274], "rotation": {"angle": 45, "axis": "y", "origin": [7.0319, 0.0, 7.1649]}, "faces": {"north": {"uv": [0, 0.25, 0.5, 0.75], "texture": "#0"}, "east": {"uv": [0, 0, 0.5, 0.5], "texture": "#0"}, "south": {"uv": [0.5, 0.5, 1, 1], "texture": "#0"}, "west": {"uv": [0.5, 0, 1, 0.5], "texture": "#0"}, "up": {"uv": [0, 0.25, 0.5, 0.75], "texture": "#0"}, "down": {"uv": [0.25, 0.25, 0.75, 0.75], "texture": "#0"}}},
     {"from": [7.4085, 0.1275, 7.7009], "to": [8.6835, 1.2962, 8.6571], "rotation": {"angle": 45, "axis": "y", "origin": [8.046, 0.1275, 8.179]}, "faces": {"north": {"uv": [0.5, 0.75, 0.75, 1], "texture": "#0"}, "east": {"uv": [0.25, 0.5, 0.5, 0.75], "texture": "#0"}, "south": {"uv": [0.5, 0.5, 0.75, 0.75], "texture": "#0"}, "west": {"uv": [0, 0.5, 0.25, 0.75], "texture": "#0"}, "up": {"uv": [0, 0.25, 0.25, 0.5], "texture": "#0"}, "down": {"uv": [0, 0, 0.25, 0.25], "texture": "#0"}}},

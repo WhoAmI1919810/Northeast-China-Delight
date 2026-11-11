@@ -5,10 +5,10 @@
     16
   ],
   "textures": {
-    "mash": "northeast_china_delight:block/wooden_mortar_sweet_potato_mash",
-    "flesh": "northeast_china_delight:block/wooden_mortar_sweet_potato_flesh",
-    "skin": "northeast_china_delight:block/wooden_mortar_sweet_potato_skin",
-    "particle": "northeast_china_delight:block/wooden_mortar_sweet_potato_mash"
+    "mash": "chinese_regional_culinary_ingredients:block/wooden_mortar_sweet_potato_mash",
+    "flesh": "chinese_regional_culinary_ingredients:block/wooden_mortar_sweet_potato_flesh",
+    "skin": "chinese_regional_culinary_ingredients:block/wooden_mortar_sweet_potato_skin",
+    "particle": "chinese_regional_culinary_ingredients:block/wooden_mortar_sweet_potato_mash"
   },
   "elements": [
     {

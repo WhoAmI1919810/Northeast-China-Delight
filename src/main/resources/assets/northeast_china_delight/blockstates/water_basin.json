@@ -1,18 +1,18 @@
 {
   "variants": {
     "facing=north": {
-      "model": "northeast_china_delight:block/water_basin"
+      "model": "chinese_regional_culinary_ingredients:block/water_basin"
     },
     "facing=east": {
-      "model": "northeast_china_delight:block/water_basin",
+      "model": "chinese_regional_culinary_ingredients:block/water_basin",
       "y": 90
     },
     "facing=south": {
-      "model": "northeast_china_delight:block/water_basin",
+      "model": "chinese_regional_culinary_ingredients:block/water_basin",
       "y": 180
     },
     "facing=west": {
-      "model": "northeast_china_delight:block/water_basin",
+      "model": "chinese_regional_culinary_ingredients:block/water_basin",
       "y": 270
     }
   }

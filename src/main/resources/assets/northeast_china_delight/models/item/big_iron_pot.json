@@ -1,11 +1,11 @@
 {
   "parent": "minecraft:block/block",
   "textures": {
-    "1": "northeast_china_delight:block/big_iron_pot_nw",
-    "particle": "northeast_china_delight:block/big_iron_pot_nw",
-    "0": "northeast_china_delight:block/big_iron_pot_ne",
-    "3": "northeast_china_delight:block/big_iron_pot_sw",
-    "2": "northeast_china_delight:block/big_iron_pot_se"
+    "1": "chinese_regional_culinary_ingredients:block/big_iron_pot_nw",
+    "particle": "chinese_regional_culinary_ingredients:block/big_iron_pot_nw",
+    "0": "chinese_regional_culinary_ingredients:block/big_iron_pot_ne",
+    "3": "chinese_regional_culinary_ingredients:block/big_iron_pot_sw",
+    "2": "chinese_regional_culinary_ingredients:block/big_iron_pot_se"
   },
   "elements": [
     {

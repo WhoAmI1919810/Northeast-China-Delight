@@ -2,10 +2,10 @@
   "parent": "block/block",
   "render_type": "minecraft:cutout",
   "textures": {
-    "particle": "northeast_china_delight:block/large_basin_particle",
+    "particle": "chinese_regional_culinary_ingredients:block/large_basin_particle",
     "food_top": "northeast_china_delight:item/ground_pot_chicken",
     "food_side": "northeast_china_delight:item/ground_pot_chicken",
-    "basin": "northeast_china_delight:item/large_basin"
+    "basin": "chinese_regional_culinary_ingredients:item/large_basin"
   },
   "elements": [
     {

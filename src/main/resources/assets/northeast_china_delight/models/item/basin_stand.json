@@ -1,5 +1,5 @@
 {
-  "parent": "northeast_china_delight:block/basin_stand",
+  "parent": "chinese_regional_culinary_ingredients:block/basin_stand",
   "display": {
     "gui": {
       "rotation": [

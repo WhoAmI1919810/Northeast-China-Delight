@@ -1,6 +1,6 @@
 package com.gunmu.northeast_china_delight.mixin;
 
-import com.gunmu.northeast_china_delight.effect.ModEffects;
+import com.gunmu.chinese_regional_culinary_ingredients.effect.CrciMobEffects;
 import com.gunmu.northeast_china_delight.util.DdEffects;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
@@ -17,7 +17,7 @@ public class PowderSnowBlockMixin
     private static void northeast_china_delight$warmthWalksOnPowderSnow(Entity entity,
                                                                 CallbackInfoReturnable<Boolean> callback)
     {
-        if (entity instanceof LivingEntity living && DdEffects.hasEffect(living, ModEffects.WARMTH))
+        if (entity instanceof LivingEntity living && DdEffects.hasEffect(living, CrciMobEffects.WARMTH))
         {
             callback.setReturnValue(true);
         }

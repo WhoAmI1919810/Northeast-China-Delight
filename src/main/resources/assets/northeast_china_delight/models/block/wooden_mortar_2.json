@@ -5212,7 +5212,7 @@
     }
   ],
   "textures": {
-    "2": "northeast_china_delight:block/wooden_mortar_2",
-    "particle": "northeast_china_delight:block/wooden_mortar_2"
+    "2": "chinese_regional_culinary_ingredients:block/wooden_mortar_2",
+    "particle": "chinese_regional_culinary_ingredients:block/wooden_mortar_2"
   }
 }

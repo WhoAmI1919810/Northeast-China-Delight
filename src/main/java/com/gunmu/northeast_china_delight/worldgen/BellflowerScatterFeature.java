@@ -3,7 +3,7 @@ package com.gunmu.northeast_china_delight.worldgen;
 import com.gunmu.chinese_regional_culinary_ingredients.block.CrciBlocks;
 
 import com.gunmu.chinese_regional_culinary_ingredients.block.BellflowerCropBlock;
-import com.gunmu.northeast_china_delight.block.ModBlockTags;
+import com.gunmu.chinese_regional_culinary_ingredients.block.CrciBlockTags;
 import com.gunmu.northeast_china_delight.block.ModBlocks;
 import com.mojang.serialization.Codec;
 import net.minecraft.core.BlockPos;
@@ -121,6 +121,11 @@ public class BellflowerScatterFeature extends Feature<NoneFeatureConfiguration>
             }
         }
         return null;
+    }
+
+    private static boolean isWildSoil(BlockState state)
+    {
+        return state.is(CrciBlockTags.BELLFLOWER_PLANTABLE_ON);
     }
 
     private static boolean isRichSoil(BlockState state)

@@ -6,8 +6,8 @@
     32
   ],
   "textures": {
-    "2": "northeast_china_delight:block/big_iron_pot_se",
-    "particle": "northeast_china_delight:block/big_iron_pot_se"
+    "2": "chinese_regional_culinary_ingredients:block/big_iron_pot_se",
+    "particle": "chinese_regional_culinary_ingredients:block/big_iron_pot_se"
   },
   "elements": [
     {

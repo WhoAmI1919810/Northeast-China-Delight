@@ -1,13 +1,13 @@
 {
   "replace": false,
   "values": [
-    "northeast_china_delight:wooden_mortar",
+    "chinese_regional_culinary_ingredients:wooden_mortar",
     "northeast_china_delight:paper_lattice_window",
     "northeast_china_delight:glass_lattice_window",
     "northeast_china_delight:sorghum_stalk_fence",
     "northeast_china_delight:board_fence",
     "northeast_china_delight:korean_paper_door",
     "northeast_china_delight:small_stool",
-    "northeast_china_delight:basin_stand"
+    "chinese_regional_culinary_ingredients:basin_stand"
   ]
 }

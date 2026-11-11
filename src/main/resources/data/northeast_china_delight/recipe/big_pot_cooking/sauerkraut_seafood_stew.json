@@ -1,5 +1,5 @@
 {
-  "type": "northeast_china_delight:big_pot_cooking",
+  "type": "chinese_regional_culinary_ingredients:big_pot_cooking",
   "config": {
     "liquid": {
       "fluid": "minecraft:water",
@@ -34,7 +34,7 @@
       }
     ],
     "container": {
-      "item": "northeast_china_delight:large_basin"
+      "item": "chinese_regional_culinary_ingredients:large_basin"
     },
     "result": {
       "item": "northeast_china_delight:sauerkraut_seafood_stew",

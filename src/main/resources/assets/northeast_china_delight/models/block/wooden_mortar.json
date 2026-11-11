@@ -6,8 +6,8 @@
     64
   ],
   "textures": {
-    "particle": "northeast_china_delight:block/wooden_mortar",
-    "0": "northeast_china_delight:block/wooden_mortar"
+    "particle": "chinese_regional_culinary_ingredients:block/wooden_mortar",
+    "0": "chinese_regional_culinary_ingredients:block/wooden_mortar"
   },
   "elements": [
     {

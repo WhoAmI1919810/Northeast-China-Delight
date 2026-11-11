@@ -5,9 +5,9 @@
     16
   ],
   "textures": {
-    "paste": "northeast_china_delight:block/wooden_mortar_red_bean_paste",
-    "coarse": "northeast_china_delight:block/wooden_mortar_red_bean_coarse",
-    "particle": "northeast_china_delight:block/wooden_mortar_red_bean_paste"
+    "paste": "chinese_regional_culinary_ingredients:block/wooden_mortar_red_bean_paste",
+    "coarse": "chinese_regional_culinary_ingredients:block/wooden_mortar_red_bean_coarse",
+    "particle": "chinese_regional_culinary_ingredients:block/wooden_mortar_red_bean_paste"
   },
   "elements": [
     {

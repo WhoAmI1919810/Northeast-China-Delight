@@ -1,8 +1,10 @@
 package com.gunmu.northeast_china_delight.effect;
 
+
+import com.gunmu.chinese_regional_culinary_ingredients.effect.CrciMobEffects;
 import com.gunmu.northeast_china_delight.item.ModItems;
-import com.gunmu.northeast_china_delight.item.MysteryStewEffects;
-import com.gunmu.northeast_china_delight.item.SeasoningBottleItem;
+import com.gunmu.chinese_regional_culinary_ingredients.item.MysteryStewEffects;
+import com.gunmu.chinese_regional_culinary_ingredients.item.SeasoningBottleItem;
 import com.gunmu.northeast_china_delight.util.DdIds;
 import com.gunmu.northeast_china_delight.util.DdAttributes;
 import com.gunmu.northeast_china_delight.util.DdEffects;
@@ -80,8 +82,8 @@ public class DishEffectEvents {
         }
 
         switch (info.flavor()) {
-            case GREASY -> DdEffects.removeEffect(player, ModEffects.REFRESHING);
-            case REFRESHING -> DdEffects.removeEffect(player, ModEffects.GREASY);
+            case GREASY -> DdEffects.removeEffect(player, CrciMobEffects.REFRESHING);
+            case REFRESHING -> DdEffects.removeEffect(player, CrciMobEffects.GREASY);
             default -> {
             }
         }
@@ -225,8 +227,8 @@ public class DishEffectEvents {
         }
         DishFlavors.Flavor flavor = DishFlavors.flavorOf(event.getItem().getItem());
         Holder<MobEffect> effect = switch (flavor == null ? DishFlavors.Flavor.BALANCED : flavor) {
-            case GREASY -> DdEffects.hold(ModEffects.GREASY);
-            case REFRESHING -> DdEffects.hold(ModEffects.REFRESHING);
+            case GREASY -> DdEffects.hold(CrciMobEffects.GREASY);
+            case REFRESHING -> DdEffects.hold(CrciMobEffects.REFRESHING);
             default -> null;
         };
         if (effect == null) {
@@ -264,7 +266,7 @@ public class DishEffectEvents {
         UUID id = player.getUUID();
         FoodData food = player.getFoodData();
 
-        MobEffectInstance greasy = DdEffects.getEffect(player, ModEffects.GREASY);
+        MobEffectInstance greasy = DdEffects.getEffect(player, CrciMobEffects.GREASY);
         float exhaustion = food.getExhaustionLevel();
         Float last = LAST_EXHAUSTION.put(id, exhaustion);
         if (greasy != null && last != null && exhaustion > last) {
@@ -275,7 +277,7 @@ public class DishEffectEvents {
             LAST_EXHAUSTION.put(id, adjusted);
         }
 
-        MobEffectInstance refreshing = DdEffects.getEffect(player, ModEffects.REFRESHING);
+        MobEffectInstance refreshing = DdEffects.getEffect(player, CrciMobEffects.REFRESHING);
         applyWarmthSpeed(player);
         if (refreshing == null || player.getHealth() >= player.getMaxHealth() || food.getFoodLevel() < 18) {
             REGEN_CREDIT.remove(id);
@@ -312,7 +314,7 @@ public class DishEffectEvents {
         if (attribute == null) {
             return;
         }
-        MobEffectInstance warmth = DdEffects.getEffect(player, ModEffects.WARMTH);
+        MobEffectInstance warmth = DdEffects.getEffect(player, CrciMobEffects.WARMTH);
         int level = warmth == null ? 0 : warmth.getAmplifier() + 1;
         boolean cold = level > 0 && isColdBiome(player);
         net.minecraft.world.entity.ai.attributes.AttributeModifier existing =

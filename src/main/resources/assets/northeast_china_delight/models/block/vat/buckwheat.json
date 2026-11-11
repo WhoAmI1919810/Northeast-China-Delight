@@ -2,7 +2,7 @@
   "credit": "Northeast China Delight vat display model",
   "parent": "block/block",
   "render_type": "minecraft:cutout",
-  "textures": {"particle": "northeast_china_delight:block/vat/buckwheat", "0": "northeast_china_delight:block/vat/buckwheat"},
+  "textures": {"particle": "chinese_regional_culinary_ingredients:block/vat/buckwheat", "0": "chinese_regional_culinary_ingredients:block/vat/buckwheat"},
   "elements": [
     {"from": [5.8, 0, 5.9], "to": [6.6, 0.8, 6.9], "faces": {"north": {"uv": [0.5, 1, 1, 1.5], "texture": "#0", "tintindex": 0}, "east": {"uv": [0.5, 1.5, 1, 2], "texture": "#0", "tintindex": 0}, "south": {"uv": [0, 1, 0.5, 1.5], "texture": "#0", "tintindex": 0}, "west": {"uv": [0, 0, 0.5, 0.5], "texture": "#0", "tintindex": 0}, "up": {"uv": [1, 1, 1.5, 1.5], "texture": "#0", "tintindex": 0}, "down": {"texture": "#0", "uv": [1, 1, 1.5, 1.5], "tintindex": 0}}},
     {"from": [7.4, 0, 5.5], "to": [8.2, 0.81, 6.5], "rotation": {"angle": 22.5, "axis": "y", "origin": [7.8, 0.405, 6]}, "faces": {"north": {"uv": [0, 1.5, 0.5, 2], "texture": "#0", "tintindex": 0}, "east": {"uv": [1.5, 1.5, 2, 2], "texture": "#0", "tintindex": 0}, "south": {"uv": [0.5, 0, 1, 0.5], "texture": "#0", "tintindex": 0}, "west": {"uv": [0, 0.5, 0.5, 1], "texture": "#0", "tintindex": 0}, "up": {"uv": [1.5, 1.5, 2, 2], "texture": "#0", "tintindex": 0}, "down": {"texture": "#0", "uv": [1.5, 1.5, 2, 2], "tintindex": 0}}},

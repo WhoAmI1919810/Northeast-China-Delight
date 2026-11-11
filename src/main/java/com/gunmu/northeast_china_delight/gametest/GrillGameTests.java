@@ -6,18 +6,18 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.gunmu.northeast_china_delight.NortheastChinaDelight;
-import com.gunmu.northeast_china_delight.ModTags;
-import com.gunmu.northeast_china_delight.block.GrillBlockEntity;
-import com.gunmu.northeast_china_delight.block.GrillCampfireBlock;
+import com.gunmu.chinese_regional_culinary_ingredients.CrciTags;
+import com.gunmu.chinese_regional_culinary_ingredients.block.GrillBlockEntity;
+import com.gunmu.chinese_regional_culinary_ingredients.block.GrillCampfireBlock;
 import com.gunmu.northeast_china_delight.block.ModBlocks;
 import com.gunmu.northeast_china_delight.compat.jei.GrillJeiRecipe;
 import com.gunmu.northeast_china_delight.compat.jei.GrillJeiRecipes;
-import com.gunmu.northeast_china_delight.crafting.GrillDataRecipe;
-import com.gunmu.northeast_china_delight.crafting.GrillRecipes;
-import com.gunmu.northeast_china_delight.crafting.GrillVisual;
-import com.gunmu.northeast_china_delight.crafting.ModGrillRecipes;
-import com.gunmu.northeast_china_delight.item.BottleColors;
-import com.gunmu.northeast_china_delight.item.GrillSeasonings;
+import com.gunmu.chinese_regional_culinary_ingredients.crafting.GrillDataRecipe;
+import com.gunmu.chinese_regional_culinary_ingredients.crafting.GrillRecipes;
+import com.gunmu.chinese_regional_culinary_ingredients.crafting.GrillVisual;
+import com.gunmu.chinese_regional_culinary_ingredients.crafting.ModGrillRecipes;
+import com.gunmu.chinese_regional_culinary_ingredients.item.BottleColors;
+import com.gunmu.chinese_regional_culinary_ingredients.item.GrillSeasonings;
 import com.gunmu.northeast_china_delight.item.ModItems;
 import com.gunmu.northeast_china_delight.util.DdIds;
 import io.netty.buffer.Unpooled;
@@ -69,7 +69,7 @@ public final class GrillGameTests {
 
     private static JsonObject fixture() {
         return JsonParser.parseString("""
-                {"type":"northeast_china_delight:grill","config":{
+                {"type":"chinese_regional_culinary_ingredients:grill","config":{
                   "input":[{"item":"minecraft:carrot"},{"item":"minecraft:potato"}],
                   "seasonings":[{"item":"minecraft:sugar"}],
                   "result":{"item":"minecraft:golden_carrot","count":2},"seconds":4
@@ -244,7 +244,7 @@ public final class GrillGameTests {
                 && GrillRecipes.byId(manager, SOURCE_ID).result().is(Items.BAKED_POTATO),
                 "同 ID 覆盖应更换产物与时长");
         recipes.put(SOURCE_ID, decode(SOURCE_ID, JsonParser.parseString("""
-                {"type":"northeast_china_delight:grill","config":{"disabled":true}}
+                {"type":"chinese_regional_culinary_ingredients:grill","config":{"disabled":true}}
                 """).getAsJsonObject()));
         replace(manager, recipes);
         helper.assertTrue(GrillRecipes.byId(manager, SOURCE_ID) == null && GrillRecipes.all(manager).size() == 1
@@ -287,7 +287,7 @@ public final class GrillGameTests {
         helper.assertTrue(grill.addSeasoning(0, new ItemStack(Items.EGG), manager), "覆盖后应能加新增的调料");
         grill.setProgress(0, 2);
         JsonObject disabled = JsonParser.parseString("""
-                {"type":"northeast_china_delight:grill","config":{"disabled":true}}
+                {"type":"chinese_regional_culinary_ingredients:grill","config":{"disabled":true}}
                 """).getAsJsonObject();
         recipes.put(SOURCE_ID, decode(SOURCE_ID, disabled));
         replace(manager, recipes);
@@ -366,10 +366,10 @@ public final class GrillGameTests {
     public static void grillSerializersSyncIngredientsResultsAndDisabledRules(GameTestHelper helper) {
         JsonObject tagged = fixture();
         JsonObject input = new JsonObject();
-        input.addProperty("tag", ModTags.CROPS_CORN.location().toString());
+        input.addProperty("tag", CrciTags.CROPS_CORN.location().toString());
         tagged.getAsJsonObject("config").add("input", input);
         JsonObject sugar = new JsonObject();
-        sugar.addProperty("tag", ModTags.SUGAR.location().toString());
+        sugar.addProperty("tag", CrciTags.SUGAR.location().toString());
         JsonArray seasonings = new JsonArray();
         seasonings.add(sugar);
         tagged.getAsJsonObject("config").add("seasonings", seasonings);
@@ -387,7 +387,7 @@ public final class GrillGameTests {
                 "MapCodec 应可往返序列化配方");
         *///?}
         GrillDataRecipe disabled = decode(SOURCE_ID, JsonParser.parseString("""
-                {"type":"northeast_china_delight:grill","config":{"disabled":true}}
+                {"type":"chinese_regional_culinary_ingredients:grill","config":{"disabled":true}}
                 """).getAsJsonObject());
         helper.assertTrue(networkCopy(helper, SOURCE_ID, disabled).rule(SOURCE_ID) == null,
                 "禁用标记也应随配方同步");

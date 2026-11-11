@@ -2,8 +2,8 @@
 	"credit": "Made with Blockbench",
 	"parent": "block/block",
 	"textures": {
-		"particle": "northeast_china_delight:block/grill_rack_bars",
-		"bars": "northeast_china_delight:block/grill_rack_bars"
+		"particle": "chinese_regional_culinary_ingredients:block/grill_rack_bars",
+		"bars": "chinese_regional_culinary_ingredients:block/grill_rack_bars"
 	},
 	"elements": [
 		{

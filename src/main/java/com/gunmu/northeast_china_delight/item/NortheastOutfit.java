@@ -1,5 +1,7 @@
 package com.gunmu.northeast_china_delight.item;
 
+
+import com.gunmu.chinese_regional_culinary_ingredients.item.PotLidItem;
 import net.minecraft.util.Mth;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.damagesource.DamageTypes;

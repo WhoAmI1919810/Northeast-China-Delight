@@ -1,10 +1,10 @@
 package com.gunmu.northeast_china_delight.compat.jade;
 
-import com.gunmu.northeast_china_delight.block.ModBlockStateProperties;
-import com.gunmu.northeast_china_delight.block.Vat;
-import com.gunmu.northeast_china_delight.block.VatBlockEntity;
-import com.gunmu.northeast_china_delight.crafting.VatRecipe;
-import com.gunmu.northeast_china_delight.crafting.VatRecipes;
+import com.gunmu.chinese_regional_culinary_ingredients.block.CrciBlockStateProperties;
+import com.gunmu.chinese_regional_culinary_ingredients.block.Vat;
+import com.gunmu.chinese_regional_culinary_ingredients.block.VatBlockEntity;
+import com.gunmu.chinese_regional_culinary_ingredients.crafting.VatRecipe;
+import com.gunmu.chinese_regional_culinary_ingredients.crafting.VatRecipes;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
@@ -68,7 +68,7 @@ public enum VatComponentProvider implements IBlockComponentProvider {
 
         if (water > 0) {
             tooltip.add(Component.translatable("jade.northeast_china_delight.vat.water", water,
-                    ModBlockStateProperties.VAT_MAX_WATER));
+                    CrciBlockStateProperties.VAT_MAX_WATER));
         }
 
         if (!contents.isEmpty()) {
@@ -96,7 +96,7 @@ public enum VatComponentProvider implements IBlockComponentProvider {
                         ? Component.translatable("jade.northeast_china_delight.vat.done." + stage)
                         : Component.translatable(recipe.doneKey(), recipe.verb());
             } else {
-                boolean started = progress > 0 || com.gunmu.northeast_china_delight.crafting.VatBrewing
+                boolean started = progress > 0 || com.gunmu.chinese_regional_culinary_ingredients.crafting.VatBrewing
                         .ready(vat) != null;
                 text = started
                         ? recipe == null

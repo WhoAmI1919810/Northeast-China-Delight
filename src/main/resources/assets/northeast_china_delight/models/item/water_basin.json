@@ -3,7 +3,7 @@
   "parent": "builtin/entity",
   "gui_light": "front",
   "textures": {
-    "particle": "northeast_china_delight:item/water_basin"
+    "particle": "chinese_regional_culinary_ingredients:item/water_basin"
   },
   "display": {
     "gui": {

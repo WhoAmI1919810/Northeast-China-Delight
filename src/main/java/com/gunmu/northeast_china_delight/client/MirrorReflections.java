@@ -1,8 +1,8 @@
 package com.gunmu.northeast_china_delight.client;
 
 import com.gunmu.northeast_china_delight.NortheastChinaDelight;
-import com.gunmu.northeast_china_delight.block.BasinStandBlock;
-import com.gunmu.northeast_china_delight.block.FacingDecorBlock;
+import com.gunmu.chinese_regional_culinary_ingredients.block.BasinStandBlock;
+import com.gunmu.chinese_regional_culinary_ingredients.block.FacingDecorBlock;
 import com.gunmu.northeast_china_delight.block.ModBlocks;
 import com.gunmu.northeast_china_delight.util.DdIds;
 import com.mojang.blaze3d.pipeline.RenderTarget;

@@ -1,9 +1,9 @@
 {
   "parent": "minecraft:block/block",
   "textures": {
-    "lid": "northeast_china_delight:block/big_pot_lid",
-    "handle": "northeast_china_delight:block/big_pot_lid_handle",
-    "particle": "northeast_china_delight:block/big_pot_lid"
+    "lid": "chinese_regional_culinary_ingredients:block/big_pot_lid",
+    "handle": "chinese_regional_culinary_ingredients:block/big_pot_lid_handle",
+    "particle": "chinese_regional_culinary_ingredients:block/big_pot_lid"
   },
   "elements": [
     {

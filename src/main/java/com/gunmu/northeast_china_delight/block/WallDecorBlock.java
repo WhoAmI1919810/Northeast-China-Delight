@@ -1,5 +1,7 @@
 package com.gunmu.northeast_china_delight.block;
 
+
+import com.gunmu.chinese_regional_culinary_ingredients.block.FacingDecorBlock;
 import net.minecraft.core.Direction;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.block.state.BlockBehaviour;

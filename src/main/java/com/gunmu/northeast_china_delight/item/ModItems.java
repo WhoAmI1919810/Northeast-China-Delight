@@ -1,7 +1,17 @@
 package com.gunmu.northeast_china_delight.item;
 
-import com.gunmu.chinese_regional_culinary_ingredients.block.CrciBlocks;
 
+import com.gunmu.chinese_regional_culinary_ingredients.block.DdFeastBlock;
+import com.gunmu.chinese_regional_culinary_ingredients.client.DdFeastItemRenderer;
+import com.gunmu.chinese_regional_culinary_ingredients.client.LargeBasinItemRenderer;
+import com.gunmu.chinese_regional_culinary_ingredients.client.WoodenMalletItemRenderer;
+import com.gunmu.chinese_regional_culinary_ingredients.item.DdConsumableItem;
+import com.gunmu.chinese_regional_culinary_ingredients.item.DdFeastItem;
+import com.gunmu.chinese_regional_culinary_ingredients.item.DishBlockItem;
+import com.gunmu.chinese_regional_culinary_ingredients.item.LargeBasinItem;
+import com.gunmu.chinese_regional_culinary_ingredients.item.MysteryStewEffects;
+import com.gunmu.chinese_regional_culinary_ingredients.item.WaterBasinItem;
+import com.gunmu.chinese_regional_culinary_ingredients.item.WoodenMalletItem;
 import com.gunmu.northeast_china_delight.block.ModBlocks;
 import com.gunmu.northeast_china_delight.NortheastChinaDelight;
 import com.gunmu.chinese_regional_culinary_ingredients.item.CrciItems;
@@ -71,10 +81,8 @@ public class ModItems {
     public static final Supplier<Item> SEA_WATER_BUCKET = regItem("sea_water_bucket",
             properties -> new BucketItem(Fluids.WATER, properties),
             new Item.Properties().stacksTo(1).craftRemainder(Items.BUCKET));
-    /** 格瓦斯：不饿也能喝，随时能喝（2026-11-04 用户：像药水一样） */
-    public static final Supplier<Item> KVASS = regItem("kvass", DdDrinkItem::new, new Item.Properties()
-            .craftRemainder(Items.GLASS_BOTTLE)
-            .food(foodReturning(alwaysEdible(stats(2, 0.25F)), Items.GLASS_BOTTLE)));
+    /** 格瓦斯：由 CRCI 注册，东北只保留别名供地区配方与交易引用。 */
+    public static final Supplier<Item> KVASS = CrciItems.KVASS;
     /**
      * 黄桃罐头：7 点饥饿值、实际 3 点饱和度（原版公式为 nutrition × modifier × 2，
      * 因此这里换算成 3/14 的饱和度系数）；吃完返还玻璃瓶。
@@ -93,36 +101,28 @@ public class ModItems {
      * 大脸盆：空盆能放在地上（方块见 {@link ModBlocks#LARGE_BASIN}），也能扣头上（见 {@link LargeBasinItem}）。
      * 物品图标仍旧是 2D 贴图 —— 2D/3D 的分流放在客户端渲染器里（{@code client/LargeBasinItemRenderer}）。
      */
-    public static final Supplier<Item> LARGE_BASIN = regItem("large_basin",
-            properties -> new LargeBasinItem(ModBlocks.LARGE_BASIN.get(), properties),
-            new Item.Properties());
+    public static final Supplier<Item> LARGE_BASIN = CrciItems.LARGE_BASIN;
     /**
      * 水盆：装了一盆水（1000 mB）的大脸盆。空盆对着水右键舀，或在机械动力注液器下灌；
      * 右键倒水、潜行右键放在地上（见 {@link WaterBasinItem}，方块见 {@link ModBlocks#WATER_BASIN}）；放进厨锅煮盐后返还空盆。
      * 返还物要拿 LARGE_BASIN 的实例，所以和 basinFood 一样在注册事件里现做属性。
      */
-    public static final Supplier<Item> WATER_BASIN = ITEMS.register("water_basin",
-            () -> new WaterBasinItem(ModBlocks.WATER_BASIN.get(),
-                    new Item.Properties().stacksTo(1).craftRemainder(LARGE_BASIN.get())));
-    public static final Supplier<Item> GRILL_RACK = simple("grill_rack");
-    public static final Supplier<Item> BRASS_BOWL = simple("brass_bowl");
+    public static final Supplier<Item> WATER_BASIN = CrciItems.WATER_BASIN;
+    public static final Supplier<Item> GRILL_RACK = CrciItems.GRILL_RACK;
+    public static final Supplier<Item> BRASS_BOWL = CrciItems.BRASS_BOWL;
 
     /**
      * 木槌：木臼「舂捣」配方里的工具，本身也是一把钝器（耐久 118、攻击 5 / 攻速 1.0）。
      * 物品栏是 2D 贴图、拿在手里是 3D 模型，分流在 {@code client/WoodenMalletItemRenderer}。
      */
-    public static final Supplier<Item> WOODEN_MALLET = regItem(
-            "wooden_mallet",
-            WoodenMalletItem::new,
-            malletProperties()
-    );
+    public static final Supplier<Item> WOODEN_MALLET = CrciItems.WOODEN_MALLET;
 
     /** 木耳本身就是「种子」：对着带皮的橡木 / 白桦 / 深色橡木侧面右键种下段木木耳 */
 
     public static final Supplier<Item> BRAISED_PORK_HOCK = bowlFood("braised_pork_hock", 9, 0.8F);
     public static final Supplier<Item> BRAISED_PORK_STRIPS = bowlFood("braised_pork_strips", 8, 0.7F);
 
-    public static final Supplier<Item> SOY_MILK = bowlFood("soy_milk", 4, 0.4F);
+    public static final Supplier<Item> SOY_MILK = CrciItems.SOY_MILK;
     public static final Supplier<Item> OLD_STYLE_GUO_BAO_ROU =
             dishBowl("old_style_crispy_pork", () -> ModBlocks.OLD_STYLE_GUO_BAO_ROU.get(), 9, 0.7F);
     public static final Supplier<Item> NEW_STYLE_GUO_BAO_ROU = bowlFood("new_style_crispy_pork", 9, 0.7F);
@@ -234,7 +234,7 @@ public class ModItems {
      * 盆装谜之炖菜：大锅里凑不上配方时煮出来的（2026-11-05），效果存在物品上（MysteryStewEffects），拿碗盛出来是一碗原版谜之炖菜；
      * 创造模式的提示框里列效果（effect/DishEffectEvents#onItemTooltip）
      */
-    public static final Supplier<Item> MYSTERY_STEW = feastItem("mystery_stew", () -> ModBlocks.MYSTERY_STEW_POT.get());
+    public static final Supplier<Item> MYSTERY_STEW = CrciItems.MYSTERY_STEW;
     public static final Supplier<Item> BIBIMBAP = brassBowlFood("bibimbap", 10, 0.7F);
     public static final Supplier<Item> KIMCHI_PANCAKE = bowlFood("kimchi_pancake", 8, 0.6F);
     public static final Supplier<Item> GRILLED_CHICKEN_FRAME = food("grilled_chicken_frame", 6, 0.6F);
@@ -245,35 +245,11 @@ public class ModItems {
     public static final Supplier<Item> GRILLED_OIL_EDGE = food("grilled_oil_edge", 6, 0.6F);
     public static final Supplier<Item> GRILLED_COLD_NOODLES = food("grilled_cold_noodles", 7, 0.6F);
 
-    public static final Supplier<Item> UNFIRED_VAT_BLANK = regItem(
-            "unfired_vat_blank",
-            (properties) -> new DisplayOnlyBlockItem(ModBlocks.UNFIRED_VAT_BLANK.get(),
-                    "message.northeast_china_delight.unfired_vat_blank.place_hint", properties),
-            new Item.Properties().stacksTo(1)
-    );
-
-    public static final Supplier<Item> VAT = regItem(
-            "vat",
-            (properties) -> new BlockItem(ModBlocks.VAT.get(), properties),
-            new Item.Properties().stacksTo(1)
-    );
-
-    public static final Supplier<Item> CREATIVE_VAT = regItem(
-            "creative_vat",
-            (properties) -> new BlockItem(ModBlocks.CREATIVE_VAT.get(), properties),
-            new Item.Properties().stacksTo(1)
-    );
-
-    public static final Supplier<Item> WOODEN_MORTAR = regItem(
-            "wooden_mortar",
-            (properties) -> new BlockItem(ModBlocks.WOODEN_MORTAR.get(), properties),
-            new Item.Properties().stacksTo(16)
-    );
-    public static final Supplier<Item> ANIMAL_OIL_BLOCK_ITEM = regItem(
-            "animal_oil_block",
-            (properties) -> new BlockItem(ModBlocks.ANIMAL_OIL_BLOCK.get(), properties),
-            new Item.Properties()
-    );
+    public static final Supplier<Item> UNFIRED_VAT_BLANK = CrciItems.UNFIRED_VAT_BLANK;
+    public static final Supplier<Item> VAT = CrciItems.VAT;
+    public static final Supplier<Item> CREATIVE_VAT = CrciItems.CREATIVE_VAT;
+    public static final Supplier<Item> WOODEN_MORTAR = CrciItems.WOODEN_MORTAR;
+    public static final Supplier<Item> ANIMAL_OIL_BLOCK_ITEM = CrciItems.ANIMAL_OIL_BLOCK_ITEM;
 
     public static final Supplier<Item> CORN_SKEWER = regItem(
             "corn_skewer",
@@ -294,11 +270,9 @@ public class ModItems {
     public static final Supplier<Item> RED_STEEL_ROOFING = simple("red_steel_roofing");
     public static final Supplier<Item> BLUE_STEEL_ROOFING = simple("blue_steel_roofing");
     public static final Supplier<Item> GREEN_STEEL_ROOFING = simple("green_steel_roofing");
-    /** 大铁锅：放在大灶上（见 BigStoveBlock）；以后能直接往里放水、调料、食材做菜（入口在 BigPotCooking） */
-    public static final Supplier<Item> BIG_IRON_POT = regItem("big_iron_pot", Item::new, new Item.Properties().stacksTo(1));
-    /** 木锅盖：盖在大灶上的大铁锅上；拿在手里也能当盾牌，挡三成伤害（四件套全挡），耐久 64（见 {@link PotLidItem}） */
-    public static final Supplier<Item> BIG_POT_LID = regItem("big_pot_lid", PotLidItem::new,
-            new Item.Properties().durability(PotLidItem.DURABILITY));
+    /** 大铁锅和锅盖均由 CRCI 注册。 */
+    public static final Supplier<Item> BIG_IRON_POT = CrciItems.BIG_IRON_POT;
+    public static final Supplier<Item> BIG_POT_LID = CrciItems.BIG_POT_LID;
     /** 大花袄：穿在胸甲槽，护甲 1、耐久照皮革胸甲（材料见 {@link ModArmorMaterials}）；四件套效果见 {@link NortheastOutfit} */
     public static final Supplier<Item> FLORAL_JACKET = regItem("floral_jacket",
             properties -> new ArmorItem(ModArmorMaterials.FLORAL_JACKET, ArmorItem.Type.CHESTPLATE, properties),
@@ -346,13 +320,11 @@ public class ModItems {
             blockItem("kang_wall_flower", ModBlocks.KANG_WALL_FLOWER),
             blockItem("kang_wall_landscape", ModBlocks.KANG_WALL_LANDSCAPE),
             blockItem("kang_wall_fret", ModBlocks.KANG_WALL_FRET),
-            blockItem("radiator", ModBlocks.RADIATOR),
-            blockItem("basin_stand", ModBlocks.BASIN_STAND)
+            blockItem("radiator", ModBlocks.RADIATOR)
     );
 
     public static final List<Supplier<? extends Item>> INGREDIENT_TAB_ITEMS = List.of(
-            LARGE_BASIN, WATER_BASIN, BRASS_BOWL, WOODEN_MALLET, BIG_IRON_POT, BIG_POT_LID,
-            FLORAL_JACKET, ANIMAL_OIL_BLOCK_ITEM, UNFIRED_VAT_BLANK, MUSIC_DISC_NORTHEAST
+            FLORAL_JACKET, MUSIC_DISC_NORTHEAST
     );
 
     private static Supplier<Item> blockItem(String id, Supplier<? extends Block> block) {
@@ -397,9 +369,6 @@ public class ModItems {
 
     private static List<Supplier<? extends Item>> blockTabItems() {
         List<Supplier<? extends Item>> list = new ArrayList<>();
-        list.add(VAT);
-        list.add(WOODEN_MORTAR);
-        list.add(GRILL_RACK);
         list.add(CORN_SKEWER);
         list.add(CHILI_SKEWER);
         list.addAll(BUILDING_BLOCK_ITEMS);
@@ -412,7 +381,7 @@ public class ModItems {
      * 无容器菜单独列出，不能因为借用餐盘模型就误归入碗装。
      */
     public static final List<Supplier<? extends Item>> DISH_TAB_ITEMS = List.of(
-            KVASS, CANNED_YELLOW_PEACH,
+            CANNED_YELLOW_PEACH,
             OLD_STYLE_GUO_BAO_ROU, NEW_STYLE_GUO_BAO_ROU, ORANGE_GUO_BAO_ROU,
             LIU_ROU_DUAN, HONG_SHAO_PAI_GU, DI_SAN_XIAN, JIAN_JIAO_GAN_DOU_FU,
             BRAISED_PORK_HOCK, BRAISED_PORK_STRIPS, BA_SI_TU_DOU,
@@ -427,7 +396,7 @@ public class ModItems {
             GRILLED_CHICKEN_FRAME, GRILLED_CORN, GRILLED_OIL_EDGE, GRILLED_COLD_NOODLES,
             SUAN_CAI_JIAO_ZI, XIA_REN_ZHU_ROU_XIAN_SHUI_JIAO, SAN_XIAN_XIAN_SHUI_JIAO,
             JIANG_DA_GU, JIANG_NIU_ROU,
-            SOY_MILK, SOUR_TANGZI, CHA_ZI_ZHOU, SWEET_POTATO_PORRIDGE,
+            SOUR_TANGZI, CHA_ZI_ZHOU, SWEET_POTATO_PORRIDGE,
             EGG_SOY_PASTE, XIA_JIANG_DUN_DOU_FU, HAI_XIAN_DOU_FU_TANG, SNOW_MUSTARD_TOFU_STEW, TU_DOU_MEN_QIE_ZI,
             HAI_SHEN_DOU_FU_TANG, SU_BO_TANG,
             BAI_CAI_DOU_FU_DUN_FEN_TIAO,

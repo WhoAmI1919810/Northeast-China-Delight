@@ -1,36 +1,27 @@
 package com.gunmu.northeast_china_delight;
 
+
+import com.gunmu.chinese_regional_culinary_ingredients.client.LargeBasinItemRenderer;
 import com.gunmu.chinese_regional_culinary_ingredients.fluid.CrciFluids;
 
-import com.gunmu.northeast_china_delight.block.GrillCampfireBlock;
-import com.gunmu.northeast_china_delight.block.ModBlockEntities;
+import com.gunmu.chinese_regional_culinary_ingredients.item.CrciItems;
+
+import com.gunmu.chinese_regional_culinary_ingredients.block.CrciBlockEntities;
+import com.gunmu.chinese_regional_culinary_ingredients.block.CrciBlocks;
+import com.gunmu.chinese_regional_culinary_ingredients.block.GrillCampfireBlock;
 import com.gunmu.northeast_china_delight.block.ModBlocks;
-import com.gunmu.northeast_china_delight.block.Vat;
-import com.gunmu.northeast_china_delight.block.VatBlockEntity;
-import com.gunmu.northeast_china_delight.client.GrillCampfireRenderer;
-import com.gunmu.northeast_china_delight.client.VatRenderer;
-import com.gunmu.northeast_china_delight.client.WoodenMortarRenderer;
-import com.gunmu.northeast_china_delight.client.BigPotRenderer;
 import com.gunmu.northeast_china_delight.compat.CreateVillageShops;
 import com.gunmu.northeast_china_delight.compat.OptionalMods;
 import com.gunmu.northeast_china_delight.compat.create.CreateArmCompat;
 import com.gunmu.northeast_china_delight.compat.create.ModFanProcessingTypes;
 import com.gunmu.northeast_china_delight.compat.jei.VatJeiSync;
-import com.gunmu.northeast_china_delight.crafting.ModVatRecipes;
-import com.gunmu.northeast_china_delight.crafting.ModGrillRecipes;
-import com.gunmu.northeast_china_delight.crafting.ModDryingRecipes;
-import com.gunmu.northeast_china_delight.crafting.ModCraftingRecipes;
-import com.gunmu.northeast_china_delight.crafting.ModPoundRecipes;
-import com.gunmu.northeast_china_delight.crafting.ModBigPotRecipes;
 import com.gunmu.northeast_china_delight.effect.DishEffectEvents;
-import com.gunmu.northeast_china_delight.effect.ModEffects;
 import com.gunmu.northeast_china_delight.entity.ModEntities;
 import com.gunmu.northeast_china_delight.event.ModGameplayEvents;
 import com.gunmu.northeast_china_delight.item.LegacySeaWater;
-import com.gunmu.northeast_china_delight.fluid.ModFluids;
 import com.gunmu.northeast_china_delight.item.ModItems;
 import com.gunmu.northeast_china_delight.item.ModSounds;
-import com.gunmu.northeast_china_delight.item.PotLidItem;
+import com.gunmu.chinese_regional_culinary_ingredients.item.PotLidItem;
 import com.gunmu.northeast_china_delight.loot.ModLootModifiers;
 import com.gunmu.northeast_china_delight.util.DdIds;
 import com.gunmu.northeast_china_delight.villager.ModButcherTrades;
@@ -146,9 +137,9 @@ import net.minecraftforge.client.extensions.common.IClientFluidTypeExtensions;
 /*import net.neoforged.neoforge.client.extensions.common.IClientFluidTypeExtensions;
 *///?}
 //? if >=1.20.5 {
-/*import com.gunmu.northeast_china_delight.client.DdFeastItemRenderer;
-import com.gunmu.northeast_china_delight.client.LargeBasinItemRenderer;
-import com.gunmu.northeast_china_delight.client.WoodenMalletItemRenderer;
+import com.gunmu.chinese_regional_culinary_ingredients.client.DdFeastItemRenderer;
+import com.gunmu.chinese_regional_culinary_ingredients.client.WoodenMalletItemRenderer;
+import com.gunmu.northeast_china_delight.client.LyricsHudOverlay;
 import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.neoforged.neoforge.client.extensions.common.RegisterClientExtensionsEvent;
 *///?}
@@ -182,20 +173,10 @@ public class NortheastChinaDelight
         *///?}
         ModItems.register(modEventBus);
         ModSounds.register(modEventBus);
-        com.gunmu.northeast_china_delight.particle.ModParticles.register(modEventBus);
         ModBlocks.register(modEventBus);
-        ModFluids.register(modEventBus);
-        ModBlockEntities.register(modEventBus);
         ModEntities.register(modEventBus);
-        ModVatRecipes.register(modEventBus);
-        ModGrillRecipes.register(modEventBus);
-        ModDryingRecipes.register(modEventBus);
-        ModPoundRecipes.register(modEventBus);
-        ModBigPotRecipes.register(modEventBus);
-        ModCraftingRecipes.register(modEventBus);
         ModCreativeTabs.register(modEventBus);
         ModLootModifiers.register(modEventBus);
-        ModEffects.register(modEventBus);
         // 鼓风机批量风干：机械动力是可选前置，没装就不注册（ModFanProcessingTypes 里全是 Create 的类）
         if (OptionalMods.create()) {
             ModFanProcessingTypes.register(modEventBus);
@@ -231,8 +212,6 @@ public class NortheastChinaDelight
         *///?}
 
         modEventBus.addListener(this::addItemsToCreativeTab);
-        modEventBus.addListener(this::registerCapabilities);
-        modEventBus.addListener(this::onCommonSetup);
 
         // 注册服务器及其他游戏事件
         //? if <1.20.2 {
@@ -272,14 +251,6 @@ public class NortheastChinaDelight
         *///?}
     }
 
-    private void onCommonSetup(@NotNull FMLCommonSetupEvent event)
-    {
-        event.enqueueWork(() -> {
-            // 水盆倒进炼药锅、空盆从满水的炼药锅里舀水
-            com.gunmu.northeast_china_delight.item.BasinCauldronInteractions.register();
-        });
-    }
-
     private void addItemsToCreativeTab(@NotNull BuildCreativeModeTabContentsEvent event)
     {
         if (event.getTabKey().equals(ModCreativeTabs.INGREDIENTS_TAB_KEY))
@@ -294,21 +265,6 @@ public class NortheastChinaDelight
         {
             ModItems.BLOCK_TAB_ITEMS.forEach(item -> event.accept(item.get()));
         }
-    }
-
-    private void registerCapabilities(@NotNull RegisterCapabilitiesEvent event)
-    {
-        //? if <1.20.2 {
-        // 1.20.1（Forge）的流体能力在 VatBlockEntity#getCapability 里暴露，这里不用注册
-        //?} else {
-        /*event.registerBlockEntity(Capabilities.FluidHandler.BLOCK, ModBlockEntities.VAT.get(),
-                (vat, side) -> vat);
-        // 大灶从上面送料（机械动力溜槽、漏斗口这类认物品能力的），四格都认、只认上面，见 BigPotItemHandler（2026-11-08）
-        event.registerBlock(Capabilities.ItemHandler.BLOCK,
-                (level, pos, state, blockEntity, side) -> side == null || side == net.minecraft.core.Direction.UP
-                        ? new com.gunmu.northeast_china_delight.block.BigPotItemHandler(level, pos) : null,
-                com.gunmu.northeast_china_delight.block.ModBlocks.BIG_STOVE.get());
-        *///?}
     }
 
     @SubscribeEvent
@@ -358,102 +314,43 @@ public class NortheastChinaDelight
         {
             LOGGER.info("da dong bei shi wo di jia xiang ~");
             LOGGER.info("MINECRAFT NAME >> {}", Minecraft.getInstance().getUser().getName());
-            // 木锅盖举起来挡的时候换一个手里的模型（同原版盾牌的 blocking 属性，见 models/item/big_pot_lid.json 的 overrides）
-            event.enqueueWork(() -> net.minecraft.client.renderer.item.ItemProperties.register(
-                    ModItems.BIG_POT_LID.get(), DdIds.of("minecraft", "blocking"),
-                    (stack, level, entity, seed) ->
-                            entity != null && entity.isUsingItem() && entity.getUseItem() == stack ? 1.0F : 0.0F));
             // 脸盆架镜子照活物要用模板缓冲，主画面默认不带（client/MirrorReflections）
             event.enqueueWork(com.gunmu.northeast_china_delight.client.MirrorReflections::enableStencil);
         }
 
-        /** 本模组的粒子长什么样（particle/ModParticles）：大铁锅汤面上的泡用原版气泡的贴图 */
+        /**
+         * 唱片歌词 HUD：唱片机播放「大东北是我的家乡」时在物品栏上方滚动显示歌词。
+         *
+         * <p>NeoForge 的 @EventBusSubscriber 会把游戏总线事件与模组总线事件分开注册，
+         * 所以这个游戏总线事件挂在 MOD 总线的类里也能被正确接上；1.20.1（Forge）没有这套
+         * 自动分流，那边交给下面的 ClientForgeEvents（Bus.FORGE）单独接。</p>
+         */
+        //? if >=1.20.2 {
         @SubscribeEvent
-        public static void onRegisterParticles(RegisterParticleProvidersEvent event)
+        public static void onRenderGui(net.neoforged.neoforge.client.event.RenderGuiEvent.Post event)
         {
-            event.registerSpriteSet(com.gunmu.northeast_china_delight.particle.ModParticles.POT_BUBBLE.get(),
-                    com.gunmu.northeast_china_delight.client.PotBubbleParticle.Provider::new);
+            LyricsHudOverlay.render(event.getGuiGraphics(),
+                    event.getGuiGraphics().guiWidth(),
+                    event.getGuiGraphics().guiHeight());
         }
 
+        /** 脸盆架的镜子照出镜子前面的活物（client/MirrorReflections）；1.20.1 在下面的 ClientForgeEvents 里接 */
         @SubscribeEvent
-        public static void onRegisterBlockColors(RegisterColorHandlersEvent.Block event)
+        public static void onRenderLevelStage(net.neoforged.neoforge.client.event.RenderLevelStageEvent event)
         {
-            // 水盆的水面（tintindex 0）跟着群系水色走，和旁边的水一个颜色；脸盆架上放着的水盆也一样
-            event.register(
-                    (state, level, pos, tintIndex) -> level != null && pos != null
-                            ? BiomeColors.getAverageWaterColor(level, pos)
-                            : 0x3F76E4,
-                    ModBlocks.WATER_BASIN.get(), ModBlocks.BASIN_STAND.get());
-            event.register(
-                    (state, level, pos, tintIndex) -> {
-                        if (level != null && pos != null
-                                && level.getBlockEntity(pos) instanceof VatBlockEntity vat
-                                && vat.sourWaterMb() > 0) {
-                            return 0xD9D2AE;
-                        }
-                        int color = level != null && pos != null
-                                ? BiomeColors.getAverageWaterColor(level, pos)
-                                : 0x3F76E4;
-                        if (state.getValue(Vat.SALTED)) {
-                            int r = (color >> 16) & 0xFF;
-                            int g = (color >> 8) & 0xFF;
-                            int b = color & 0xFF;
-                            r += (int) ((255 - r) * 0.45F);
-                            g += (int) ((255 - g) * 0.45F);
-                            b += (int) ((255 - b) * 0.45F);
-                            color = (r << 16) | (g << 8) | b;
-                        }
-                        if (level != null && pos != null
-                                && level.getBlockEntity(pos) instanceof VatBlockEntity vat) {
-                            float weight = 1.0F;
-                            for (ItemStack content : vat.contents()) {
-                                int tint = com.gunmu.northeast_china_delight.client.VatItemShapes.liquidTint(content);
-                                if (tint == 0xFFFFFF) {
-                                    continue;
-                                }
-                                float strength = com.gunmu.northeast_china_delight.client.VatItemShapes
-                                        .liquidStrength(content) * weight;
-                                color = blend(color, tint, strength);
-                                weight *= 0.55F;
-                            }
-                        }
-                        return color;
-                    },
-                    ModBlocks.VAT.get());
+            // 半透明方块画完以后再照：放着水盆的脸盆架整个模型是半透明那一层的，镜子到这时才画好（见 MirrorReflections）。
+            // 这一步 NeoForge 不给 PoseStack，相机旋转已经在全局的模型视图矩阵里，新建一个空的就行
+            if (event.getStage() == net.neoforged.neoforge.client.event.RenderLevelStageEvent.Stage.AFTER_TRANSLUCENT_BLOCKS) {
+                com.gunmu.northeast_china_delight.client.MirrorReflections.render(
+                        event.getPoseStack() != null ? event.getPoseStack() : new com.mojang.blaze3d.vertex.PoseStack(),
+                        event.getCamera(), event.getFrustum(), event.getPartialTick().getGameTimeDeltaPartialTick(false));
+            }
         }
-
-        private static int blend(int base, int tint, float amount)
-        {
-            float a = Math.max(0.0F, Math.min(1.0F, amount));
-            int br = (base >> 16) & 0xFF;
-            int bg = (base >> 8) & 0xFF;
-            int bb = base & 0xFF;
-            int tr = (tint >> 16) & 0xFF;
-            int tg = (tint >> 8) & 0xFF;
-            int tb = tint & 0xFF;
-            int r = (int) (br + (tr - br) * a);
-            int g = (int) (bg + (tg - bg) * a);
-            int b = (int) (bb + (tb - bb) * a);
-            return (r << 16) | (g << 8) | b;
-        }
-
-        @SubscribeEvent
-        public static void onRegisterItemColors(RegisterColorHandlersEvent.Item event)
-        {
-            event.register(
-                    (stack, tintIndex) -> tintIndex == 0
-                            ? com.gunmu.northeast_china_delight.item.BottleColors.of(stack.getItem())
-                            : -1,
-                    com.gunmu.northeast_china_delight.item.BottleColors.bottles());
-        }
+        //?}
 
         @SubscribeEvent
         public static void onRegisterRenderers(EntityRenderersEvent.RegisterRenderers event)
         {
-            event.registerBlockEntityRenderer(ModBlockEntities.VAT.get(), VatRenderer::new);
-            event.registerBlockEntityRenderer(ModBlockEntities.GRILL_CAMPFIRE.get(), GrillCampfireRenderer::new);
-            event.registerBlockEntityRenderer(ModBlockEntities.WOODEN_MORTAR.get(), WoodenMortarRenderer::new);
-            event.registerBlockEntityRenderer(ModBlockEntities.BIG_POT.get(), BigPotRenderer::new);
             // 小板凳的座位实体看不见
             event.registerEntityRenderer(ModEntities.SEAT.get(), net.minecraft.client.renderer.entity.NoopRenderer::new);
         }
@@ -466,10 +363,6 @@ public class NortheastChinaDelight
         @SubscribeEvent
         public static void onRegisterAdditionalModels(ModelEvent.RegisterAdditional event)
         {
-            registerItemIcon(event, "large_basin_icon");
-            registerItemIcon(event, "water_basin_icon");
-            registerItemIcon(event, "wooden_mallet_icon");
-            registerItemIcon(event, "wooden_mallet_model");
             registerItemIcon(event, "sauerkraut_bone_stew_icon");
             registerItemIcon(event, "ground_pot_chicken_icon");
             registerItemIcon(event, "ground_pot_ribs_icon");
@@ -538,19 +431,12 @@ public class NortheastChinaDelight
          * 没有这一段的话，机械动力的储罐会显示成紫黑格。
          *
          * <p>1.20.1 没有这个事件 —— 那边的贴图挂在 {@code FluidType#initializeClient} 上，
-         * 见 {@code ModFluids.DdFluidType}。</p>
+         * 见 {@code CrciFluids.DdFluidType}。</p>
          */
         //? if >=1.20.5 {
         /*@SubscribeEvent
         public static void onRegisterClientExtensions(RegisterClientExtensionsEvent event)
         {
-            // 大脸盆：物品栏画贴图、手/地面/头上画方块，分流在 LargeBasinItemRenderer 里
-            event.registerItem(LargeBasinItemRenderer.CLIENT_EXTENSION, ModItems.LARGE_BASIN.get());
-            event.registerItem(LargeBasinItemRenderer.WATER_BASIN_CLIENT_EXTENSION, ModItems.WATER_BASIN.get());
-
-            // 木槌：物品栏画贴图、手/地面/展示框画 3D 模型，分流在 WoodenMalletItemRenderer 里
-            event.registerItem(WoodenMalletItemRenderer.CLIENT_EXTENSION, ModItems.WOODEN_MALLET.get());
-
             // 11 道大盆菜（含盆装米饭、盆装谜之炖菜）：物品栏画贴图、手/地面画方块，分流在 DdFeastItemRenderer 里
             event.registerItem(DdFeastItemRenderer.CLIENT_EXTENSION,
                     ModItems.SUAN_CAI_DUN_GU_TOU.get(),
@@ -565,35 +451,6 @@ public class NortheastChinaDelight
                     ModItems.PEN_MI_FAN.get(),
                     ModItems.MYSTERY_STEW.get());
 
-            event.registerFluidType(new IClientFluidTypeExtensions()
-            {
-                @Override
-                public ResourceLocation getStillTexture()
-                {
-                    return DdIds.of(MODID, "block/soy_milk_still");
-                }
-
-                @Override
-                public ResourceLocation getFlowingTexture()
-                {
-                    return DdIds.of(MODID, "block/soy_milk_flow");
-                }
-            }, ModFluids.SOY_MILK_TYPE);
-
-            event.registerFluidType(new IClientFluidTypeExtensions()
-            {
-                @Override
-                public ResourceLocation getStillTexture()
-                {
-                    return DdIds.of(MODID, "block/kvass_still");
-                }
-
-                @Override
-                public ResourceLocation getFlowingTexture()
-                {
-                    return DdIds.of(MODID, "block/kvass_flow");
-                }
-            }, ModFluids.KVASS_TYPE);
         }
         *///?}
     }

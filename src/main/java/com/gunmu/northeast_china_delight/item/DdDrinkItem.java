@@ -1,5 +1,7 @@
 package com.gunmu.northeast_china_delight.item;
 
+
+import com.gunmu.chinese_regional_culinary_ingredients.item.DdConsumableItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.UseAnim;
 

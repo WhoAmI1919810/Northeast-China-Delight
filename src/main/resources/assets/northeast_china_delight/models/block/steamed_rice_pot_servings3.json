@@ -3,8 +3,8 @@
   "parent": "block/block",
   "render_type": "minecraft:cutout",
   "textures": {
-    "particle": "northeast_china_delight:block/large_basin_particle",
-    "basin": "northeast_china_delight:block/large_basin",
+    "particle": "chinese_regional_culinary_ingredients:block/large_basin_particle",
+    "basin": "chinese_regional_culinary_ingredients:block/large_basin",
     "rice": "northeast_china_delight:block/steamed_rice_pot"
   },
   "elements": [

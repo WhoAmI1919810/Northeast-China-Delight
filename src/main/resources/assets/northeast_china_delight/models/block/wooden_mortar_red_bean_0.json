@@ -5,9 +5,9 @@
     16
   ],
   "textures": {
-    "skin": "northeast_china_delight:block/wooden_mortar_red_bean_skin",
-    "sugar": "northeast_china_delight:block/wooden_mortar_sugar",
-    "particle": "northeast_china_delight:block/wooden_mortar_red_bean_skin"
+    "skin": "chinese_regional_culinary_ingredients:block/wooden_mortar_red_bean_skin",
+    "sugar": "chinese_regional_culinary_ingredients:block/wooden_mortar_sugar",
+    "particle": "chinese_regional_culinary_ingredients:block/wooden_mortar_red_bean_skin"
   },
   "elements": [
     {

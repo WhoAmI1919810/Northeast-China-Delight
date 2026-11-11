@@ -5,20 +5,20 @@ import com.gunmu.chinese_regional_culinary_ingredients.fluid.CrciFluids;
 import com.gunmu.chinese_regional_culinary_ingredients.item.CrciItems;
 
 import com.gunmu.northeast_china_delight.block.ModBlocks;
-import com.gunmu.northeast_china_delight.block.VatBlockEntity;
+import com.gunmu.chinese_regional_culinary_ingredients.block.VatBlockEntity;
 import com.gunmu.northeast_china_delight.compat.jei.VatJeiRecipe;
 import com.gunmu.northeast_china_delight.compat.jei.VatJeiRecipes;
-import com.gunmu.northeast_china_delight.crafting.VatBrewing;
-import com.gunmu.northeast_china_delight.crafting.ModVatRecipes;
-import com.gunmu.northeast_china_delight.crafting.VatDataRecipe;
-import com.gunmu.northeast_china_delight.crafting.VatRecipe;
-import com.gunmu.northeast_china_delight.crafting.VatRecipes;
-import com.gunmu.northeast_china_delight.crafting.VatRecipeValidator;
-import com.gunmu.northeast_china_delight.fluid.ModFluids;
+import com.gunmu.chinese_regional_culinary_ingredients.crafting.VatBrewing;
+import com.gunmu.chinese_regional_culinary_ingredients.crafting.ModVatRecipes;
+import com.gunmu.chinese_regional_culinary_ingredients.crafting.VatDataRecipe;
+import com.gunmu.chinese_regional_culinary_ingredients.crafting.VatRecipe;
+import com.gunmu.chinese_regional_culinary_ingredients.crafting.VatRecipes;
+import com.gunmu.chinese_regional_culinary_ingredients.crafting.VatRecipeValidator;
+import com.gunmu.chinese_regional_culinary_ingredients.fluid.CrciFluids;
 import com.gunmu.northeast_china_delight.item.ModItems;
 import com.gunmu.northeast_china_delight.NortheastChinaDelight;
 import com.gunmu.northeast_china_delight.util.DdIds;
-import com.gunmu.northeast_china_delight.block.Vat;
+import com.gunmu.chinese_regional_culinary_ingredients.block.Vat;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -149,16 +149,16 @@ public final class VatGameTests {
     public static void vatFinishedKvassRequiresBottle(GameTestHelper helper) {
         VatBlockEntity vat = finishedVat(helper, VatRecipes.Kind.KVASS);
         int amount = VatRecipes.KVASS_SERVINGS * VatRecipes.SERVING_MB;
-        vat.setProductMb(com.gunmu.northeast_china_delight.fluid.ModFluids.kvassSource(), amount);
+        vat.setProductMb(com.gunmu.chinese_regional_culinary_ingredients.fluid.CrciFluids.kvassSource(), amount);
         Player player = mockPlayer(helper, GameType.SURVIVAL);
         click(helper, player, ItemStack.EMPTY);
         click(helper, player, new ItemStack(Items.BOWL));
-        if (vat.productMb(com.gunmu.northeast_china_delight.fluid.ModFluids.kvassSource()) != amount) {
+        if (vat.productMb(com.gunmu.chinese_regional_culinary_ingredients.fluid.CrciFluids.kvassSource()) != amount) {
             helper.fail("An empty hand or bowl must not collect kvass");
         }
         click(helper, player, new ItemStack(Items.GLASS_BOTTLE));
         if (player.getInventory().countItem(ModItems.KVASS.get()) != 1
-                || vat.productMb(com.gunmu.northeast_china_delight.fluid.ModFluids.kvassSource()) != amount - VatRecipes.SERVING_MB) {
+                || vat.productMb(com.gunmu.chinese_regional_culinary_ingredients.fluid.CrciFluids.kvassSource()) != amount - VatRecipes.SERVING_MB) {
             helper.fail("A glass bottle should collect exactly one serving of kvass");
         }
         helper.succeed();
@@ -168,7 +168,7 @@ public final class VatGameTests {
     public static void vatKvassJeiUsesLiquidAndBottle(GameTestHelper helper) {
         VatRecipe recipe = VatRecipes.recipeOf(VatRecipes.Kind.KVASS, helper.getLevel());
         VatJeiRecipe.State state = VatJeiRecipes.pagesFor(recipe).get(0).first();
-        if (!state.hasResultFluid() || state.resultFluid() != ModFluids.KVASS.get()
+        if (!state.hasResultFluid() || state.resultFluid() != CrciFluids.KVASS.get()
                 || state.resultFluidMb() != recipe.productMbFor(VatRecipes.KVASS_WATER_LEVEL)
                 || state.hasResultItem() || state.collectionContainers().size() != 1
                 || !state.collectionContainers().get(0).is(Items.GLASS_BOTTLE)) {
@@ -241,7 +241,7 @@ public final class VatGameTests {
             JsonObject config = verbTestConfig();
             config.add("verb", JsonParser.parseString(value));
             try {
-                com.gunmu.northeast_china_delight.crafting.VatRecipeJson.decode(null, config);
+                com.gunmu.chinese_regional_culinary_ingredients.crafting.VatRecipeJson.decode(null, config);
             } catch (JsonParseException expected) {
                 continue;
             }
@@ -569,7 +569,7 @@ public final class VatGameTests {
                 .orElseThrow().value();
         *///?}
         JsonObject override = JsonParser.parseString("""
-                {"type":"northeast_china_delight:vat", "config":{
+                {"type":"chinese_regional_culinary_ingredients:vat", "config":{
                   "kind":"BEAN_SPROUTS", "priority":20, "seal":"CLOTH", "seconds":7,
                   "liquid":{"water_min":1,"water_max":1,"water_after":"CLEAR"},
                   "slots":[{"ingredient":{"item":"chinese_regional_culinary_ingredients:soybean"},

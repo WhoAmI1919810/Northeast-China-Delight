@@ -3,7 +3,7 @@
   "parent": "builtin/entity",
   "gui_light": "front",
   "textures": {
-    "particle": "northeast_china_delight:item/wooden_mallet"
+    "particle": "chinese_regional_culinary_ingredients:item/wooden_mallet"
   },
   "display": {
     "thirdperson_righthand": {

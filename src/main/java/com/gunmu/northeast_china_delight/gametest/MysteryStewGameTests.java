@@ -1,11 +1,11 @@
 package com.gunmu.northeast_china_delight.gametest;
 
 import com.gunmu.northeast_china_delight.NortheastChinaDelight;
-import com.gunmu.northeast_china_delight.block.MysteryStewPotBlockEntity;
+import com.gunmu.chinese_regional_culinary_ingredients.block.MysteryStewPotBlockEntity;
 import com.gunmu.northeast_china_delight.block.ModBlocks;
-import com.gunmu.northeast_china_delight.crafting.MysteryStew;
-import com.gunmu.northeast_china_delight.effect.ModEffects;
-import com.gunmu.northeast_china_delight.item.MysteryStewEffects;
+import com.gunmu.chinese_regional_culinary_ingredients.crafting.MysteryStew;
+import com.gunmu.chinese_regional_culinary_ingredients.effect.CrciMobEffects;
+import com.gunmu.chinese_regional_culinary_ingredients.item.MysteryStewEffects;
 import com.gunmu.northeast_china_delight.item.ModItems;
 import com.gunmu.northeast_china_delight.util.DdEffects;
 import net.minecraft.core.BlockPos;
@@ -172,8 +172,8 @@ public final class MysteryStewGameTests {
     private static List<MysteryStewEffects.Entry> mixedEffects() {
         return List.of(
                 new MysteryStewEffects.Entry(DdEffects.hold(MobEffects.POISON), 80),
-                new MysteryStewEffects.Entry(DdEffects.hold(ModEffects.GREASY), 80),
-                new MysteryStewEffects.Entry(DdEffects.hold(ModEffects.WARMTH), 80));
+                new MysteryStewEffects.Entry(DdEffects.hold(CrciMobEffects.GREASY), 80),
+                new MysteryStewEffects.Entry(DdEffects.hold(CrciMobEffects.WARMTH), 80));
     }
 
     private static BlockPos placeBasin(GameTestHelper helper, ServerLevel level, Player player,

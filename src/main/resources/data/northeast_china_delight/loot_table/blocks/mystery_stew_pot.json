@@ -6,7 +6,7 @@
       "conditions": [
         {
           "condition": "minecraft:block_state_property",
-          "block": "northeast_china_delight:mystery_stew_pot",
+          "block": "chinese_regional_culinary_ingredients:mystery_stew_pot",
           "properties": {
             "servings": "1"
           }
@@ -15,7 +15,7 @@
       "entries": [
         {
           "type": "minecraft:item",
-          "name": "northeast_china_delight:large_basin"
+          "name": "chinese_regional_culinary_ingredients:large_basin"
         }
       ]
     },
@@ -24,7 +24,7 @@
       "conditions": [
         {
           "condition": "minecraft:block_state_property",
-          "block": "northeast_china_delight:mystery_stew_pot",
+          "block": "chinese_regional_culinary_ingredients:mystery_stew_pot",
           "properties": {
             "servings": "2"
           }
@@ -33,7 +33,7 @@
       "entries": [
         {
           "type": "minecraft:item",
-          "name": "northeast_china_delight:large_basin"
+          "name": "chinese_regional_culinary_ingredients:large_basin"
         }
       ]
     },
@@ -42,7 +42,7 @@
       "conditions": [
         {
           "condition": "minecraft:block_state_property",
-          "block": "northeast_china_delight:mystery_stew_pot",
+          "block": "chinese_regional_culinary_ingredients:mystery_stew_pot",
           "properties": {
             "servings": "3"
           }
@@ -51,7 +51,7 @@
       "entries": [
         {
           "type": "minecraft:item",
-          "name": "northeast_china_delight:large_basin"
+          "name": "chinese_regional_culinary_ingredients:large_basin"
         }
       ]
     },
@@ -60,7 +60,7 @@
       "conditions": [
         {
           "condition": "minecraft:block_state_property",
-          "block": "northeast_china_delight:mystery_stew_pot",
+          "block": "chinese_regional_culinary_ingredients:mystery_stew_pot",
           "properties": {
             "servings": "4"
           }
@@ -69,7 +69,7 @@
       "entries": [
         {
           "type": "minecraft:item",
-          "name": "northeast_china_delight:mystery_stew"
+          "name": "chinese_regional_culinary_ingredients:mystery_stew"
         }
       ]
     },
@@ -78,7 +78,7 @@
       "conditions": [
         {
           "condition": "minecraft:block_state_property",
-          "block": "northeast_china_delight:mystery_stew_pot",
+          "block": "chinese_regional_culinary_ingredients:mystery_stew_pot",
           "properties": {
             "servings": "0"
           }
@@ -87,7 +87,7 @@
       "entries": [
         {
           "type": "minecraft:item",
-          "name": "northeast_china_delight:large_basin"
+          "name": "chinese_regional_culinary_ingredients:large_basin"
         }
       ]
     }

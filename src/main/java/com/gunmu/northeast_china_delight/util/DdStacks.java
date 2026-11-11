@@ -1,5 +1,7 @@
 package com.gunmu.northeast_china_delight.util;
 
+
+import com.gunmu.chinese_regional_culinary_ingredients.item.PotLidItem;
 //? if >=1.20.5 {
 /*import net.minecraft.core.component.DataComponents;
 *///?}

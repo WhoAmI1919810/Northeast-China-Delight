@@ -1,7 +1,9 @@
 package com.gunmu.northeast_china_delight.compat.create;
 
+
+import com.gunmu.chinese_regional_culinary_ingredients.block.BigPotCooking;
 import com.gunmu.northeast_china_delight.NortheastChinaDelight;
-import com.gunmu.northeast_china_delight.block.BigStoveBlock;
+import com.gunmu.chinese_regional_culinary_ingredients.block.BigStoveBlock;
 import com.gunmu.northeast_china_delight.item.ModItems;
 import com.gunmu.northeast_china_delight.util.DdIds;
 import com.simibubi.create.content.kinetics.mechanicalArm.AllArmInteractionPointTypes;
@@ -28,7 +30,7 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 /**
  * 让机械动力动力臂直接把物品投入大锅。大锅本身没有 Create 的交互点，
  * 只在装了机械动力时注册一个「只进不出」的交互点，实际投料仍走
- * {@link com.gunmu.northeast_china_delight.block.BigPotItemHandler}，
+ * {@link com.gunmu.chinese_regional_culinary_ingredients.block.BigPotItemHandler}，
  * 因此瓶装 / 碗装调料和水盆的返还物仍由 {@code BigPotCooking#output} 统一处理。
  */
 public final class CreateArmCompat {

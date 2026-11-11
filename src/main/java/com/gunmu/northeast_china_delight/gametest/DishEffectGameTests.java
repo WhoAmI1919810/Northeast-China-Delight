@@ -3,7 +3,7 @@ package com.gunmu.northeast_china_delight.gametest;
 import com.gunmu.northeast_china_delight.NortheastChinaDelight;
 import com.gunmu.northeast_china_delight.effect.DishEffects;
 import com.gunmu.northeast_china_delight.effect.DishFlavors;
-import com.gunmu.northeast_china_delight.effect.ModEffects;
+import com.gunmu.chinese_regional_culinary_ingredients.effect.CrciMobEffects;
 import com.gunmu.northeast_china_delight.util.DdEffects;
 import com.gunmu.northeast_china_delight.util.DdIds;
 import net.minecraft.core.Holder;
@@ -62,7 +62,7 @@ public final class DishEffectGameTests {
                 "kimchi_pancake", "snowy_bean_paste", "grilled_chicken_frame", "braised_beef_sauce")) {
             helper.assertTrue(!gives(dish, slowness), "食材不多于 3 种的油腻菜不应缓慢：" + dish);
             helper.assertTrue(gives(dish, DdEffects.hold(MobEffects.HEALTH_BOOST))
-                            && gives(dish, DdEffects.hold(ModEffects.GREASY)),
+                            && gives(dish, DdEffects.hold(CrciMobEffects.GREASY)),
                     "去掉缓慢后其余油腻效果应照常：" + dish);
             helper.assertTrue(find(dish, DdEffects.hold(MobEffects.HEALTH_BOOST)).amplifier() == 0,
                     "不是大盆菜的生命提升只给 I：" + dish);
@@ -74,7 +74,7 @@ public final class DishEffectGameTests {
     public static void feastBowlsGiveHealthBoostTwoForNinetySeconds(GameTestHelper helper) {
         Holder<MobEffect> healthBoost = DdEffects.hold(MobEffects.HEALTH_BOOST);
         Holder<MobEffect> haste = DdEffects.hold(MobEffects.DIG_SPEED);
-        Holder<MobEffect> greasy = DdEffects.hold(ModEffects.GREASY);
+        Holder<MobEffect> greasy = DdEffects.hold(CrciMobEffects.GREASY);
         for (String dish : List.of("harvest_stew_bowl", "slaughter_feast_bowl", "ground_pot_chicken_bowl",
                 "ground_pot_ribs_bowl", "pork_vermicelli_stew_bowl", "chicken_mushroom_stew_bowl",
                 "sauerkraut_seafood_stew_bowl", "sauerkraut_bone_stew_bowl", "demoli_fish_stew_bowl")) {

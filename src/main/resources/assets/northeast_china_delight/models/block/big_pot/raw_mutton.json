@@ -2,7 +2,7 @@
   "credit": "Northeast China Delight big pot ingredient model",
   "parent": "block/block",
   "render_type": "minecraft:cutout",
-  "textures": {"particle": "northeast_china_delight:block/big_pot/raw_mutton", "0": "northeast_china_delight:block/big_pot/raw_mutton"},
+  "textures": {"particle": "chinese_regional_culinary_ingredients:block/big_pot/raw_mutton", "0": "chinese_regional_culinary_ingredients:block/big_pot/raw_mutton"},
   "elements": [
     {"from": [6.1526, 0.1307, 5.6745], "to": [6.6635, 1.0455, 6.9813], "faces": {"north": {"uv": [0.75, 0.75, 1, 1], "texture": "#0"}, "east": {"uv": [2.25, 0.25, 2.5, 0.5], "texture": "#0"}, "south": {"uv": [0.25, 0.25, 0.5, 0.5], "texture": "#0"}, "west": {"uv": [2.25, 0.25, 2.5, 0.5], "texture": "#0"}, "up": {"uv": [0.75, 0.5, 1, 0.75], "texture": "#0"}, "down": {"uv": [0.5, 0.5, 0.75, 0.75], "texture": "#0"}}},
     {"from": [6.1467, 0.0, 5.8705], "to": [6.6694, 1.1761, 6.7853], "faces": {"north": {"uv": [0.5, 0.5, 0.75, 0.75], "texture": "#0"}, "east": {"uv": [2.25, 0, 2.5, 0.25], "texture": "#0"}, "south": {"uv": [0.75, 0.25, 1, 0.5], "texture": "#0"}, "west": {"uv": [2.25, 0, 2.5, 0.25], "texture": "#0"}, "up": {"uv": [0.25, 0.75, 0.5, 1], "texture": "#0"}, "down": {"uv": [0, 0.5, 0.25, 0.75], "texture": "#0"}}},

@@ -1,7 +1,7 @@
 package com.gunmu.northeast_china_delight.compat.jei;
 
-import com.gunmu.northeast_china_delight.crafting.VatRecipeValidator;
-import com.gunmu.northeast_china_delight.crafting.VatRecipes;
+import com.gunmu.chinese_regional_culinary_ingredients.crafting.VatRecipeValidator;
+import com.gunmu.chinese_regional_culinary_ingredients.crafting.VatRecipes;
 import com.mojang.logging.LogUtils;
 import org.slf4j.Logger;
 //? if <1.20.2 {

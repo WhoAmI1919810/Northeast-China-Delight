@@ -1,7 +1,7 @@
 package com.gunmu.northeast_china_delight.compat.jade;
 
-import com.gunmu.northeast_china_delight.block.BigPotBlockEntity;
-import com.gunmu.northeast_china_delight.block.BigStoveBlock;
+import com.gunmu.chinese_regional_culinary_ingredients.block.BigPotBlockEntity;
+import com.gunmu.chinese_regional_culinary_ingredients.block.BigStoveBlock;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;

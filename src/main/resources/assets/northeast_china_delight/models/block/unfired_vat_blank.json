@@ -1,11 +1,11 @@
 {
   "parent": "block/composter",
   "textures": {
-    "particle": "northeast_china_delight:block/unfired_vat_blank_side",
-    "top": "northeast_china_delight:block/unfired_vat_blank_top",
-    "bottom": "northeast_china_delight:block/unfired_vat_blank_bottom",
-    "side": "northeast_china_delight:block/unfired_vat_blank_side",
-    "inside": "northeast_china_delight:block/unfired_vat_blank_bottom"
+    "particle": "chinese_regional_culinary_ingredients:block/unfired_vat_blank_side",
+    "top": "chinese_regional_culinary_ingredients:block/unfired_vat_blank_top",
+    "bottom": "chinese_regional_culinary_ingredients:block/unfired_vat_blank_bottom",
+    "side": "chinese_regional_culinary_ingredients:block/unfired_vat_blank_side",
+    "inside": "chinese_regional_culinary_ingredients:block/unfired_vat_blank_bottom"
   },
   "elements": [
     {

@@ -1,5 +1,5 @@
 {
-  "parent": "northeast_china_delight:greasy",
+  "parent": "chinese_regional_culinary_ingredients:greasy",
   "display": {
     "icon": {
       "id": "minecraft:potion",
@@ -24,7 +24,7 @@
       "trigger": "minecraft:effects_changed",
       "conditions": {
         "effects": {
-          "northeast_china_delight:greasy": {}
+          "chinese_regional_culinary_ingredients:greasy": {}
         }
       }
     },
@@ -32,7 +32,7 @@
       "trigger": "minecraft:effects_changed",
       "conditions": {
         "effects": {
-          "northeast_china_delight:refreshing": {}
+          "chinese_regional_culinary_ingredients:refreshing": {}
         }
       }
     },
@@ -40,7 +40,7 @@
       "trigger": "minecraft:effects_changed",
       "conditions": {
         "effects": {
-          "northeast_china_delight:warmth": {}
+          "chinese_regional_culinary_ingredients:warmth": {}
         }
       }
     }

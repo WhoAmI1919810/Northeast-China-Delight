@@ -5,9 +5,9 @@
     16
   ],
   "textures": {
-    "paste": "northeast_china_delight:block/wooden_mortar_peanut_cake_paste",
-    "kernel": "northeast_china_delight:block/wooden_mortar_peanut_kernel",
-    "particle": "northeast_china_delight:block/wooden_mortar_peanut_cake_paste"
+    "paste": "chinese_regional_culinary_ingredients:block/wooden_mortar_peanut_cake_paste",
+    "kernel": "chinese_regional_culinary_ingredients:block/wooden_mortar_peanut_kernel",
+    "particle": "chinese_regional_culinary_ingredients:block/wooden_mortar_peanut_cake_paste"
   },
   "elements": [
     {

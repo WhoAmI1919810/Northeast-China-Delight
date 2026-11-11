@@ -6,7 +6,7 @@
     32
   ],
   "textures": {
-    "0": "northeast_china_delight:item/wooden_mallet_model"
+    "0": "chinese_regional_culinary_ingredients:item/wooden_mallet_model"
   },
   "elements": [
     {

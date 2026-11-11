@@ -15,7 +15,7 @@
       "entries": [
         {
           "type": "minecraft:item",
-          "name": "northeast_china_delight:large_basin"
+          "name": "chinese_regional_culinary_ingredients:large_basin"
         }
       ]
     },
@@ -33,7 +33,7 @@
       "entries": [
         {
           "type": "minecraft:item",
-          "name": "northeast_china_delight:large_basin"
+          "name": "chinese_regional_culinary_ingredients:large_basin"
         }
       ]
     },
@@ -51,7 +51,7 @@
       "entries": [
         {
           "type": "minecraft:item",
-          "name": "northeast_china_delight:large_basin"
+          "name": "chinese_regional_culinary_ingredients:large_basin"
         }
       ]
     },
@@ -87,7 +87,7 @@
       "entries": [
         {
           "type": "minecraft:item",
-          "name": "northeast_china_delight:large_basin"
+          "name": "chinese_regional_culinary_ingredients:large_basin"
         }
       ]
     }

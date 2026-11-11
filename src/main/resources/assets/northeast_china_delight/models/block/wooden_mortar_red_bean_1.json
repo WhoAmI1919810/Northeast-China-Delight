@@ -5,10 +5,10 @@
     16
   ],
   "textures": {
-    "skin": "northeast_china_delight:block/wooden_mortar_red_bean_skin",
-    "inside": "northeast_china_delight:block/wooden_mortar_red_bean_inside",
-    "crumbs": "northeast_china_delight:block/wooden_mortar_red_bean_crumbs",
-    "particle": "northeast_china_delight:block/wooden_mortar_red_bean_skin"
+    "skin": "chinese_regional_culinary_ingredients:block/wooden_mortar_red_bean_skin",
+    "inside": "chinese_regional_culinary_ingredients:block/wooden_mortar_red_bean_inside",
+    "crumbs": "chinese_regional_culinary_ingredients:block/wooden_mortar_red_bean_crumbs",
+    "particle": "chinese_regional_culinary_ingredients:block/wooden_mortar_red_bean_skin"
   },
   "elements": [
     {

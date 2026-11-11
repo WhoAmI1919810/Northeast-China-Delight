@@ -1,5 +1,7 @@
 package com.gunmu.northeast_china_delight.block;
 
+
+import com.gunmu.chinese_regional_culinary_ingredients.block.DishBlock;
 import com.gunmu.northeast_china_delight.entity.ModEntities;
 import com.gunmu.northeast_china_delight.entity.SeatEntity;
 import net.minecraft.core.BlockPos;

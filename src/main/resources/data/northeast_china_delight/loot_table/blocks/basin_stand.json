@@ -7,7 +7,7 @@
       "entries": [
         {
           "type": "minecraft:item",
-          "name": "northeast_china_delight:basin_stand"
+          "name": "chinese_regional_culinary_ingredients:basin_stand"
         }
       ],
       "conditions": [
@@ -22,7 +22,7 @@
       "entries": [
         {
           "type": "minecraft:item",
-          "name": "northeast_china_delight:large_basin"
+          "name": "chinese_regional_culinary_ingredients:large_basin"
         }
       ],
       "conditions": [
@@ -31,7 +31,7 @@
         },
         {
           "condition": "minecraft:block_state_property",
-          "block": "northeast_china_delight:basin_stand",
+          "block": "chinese_regional_culinary_ingredients:basin_stand",
           "properties": {
             "basin": "basin"
           }
@@ -44,7 +44,7 @@
       "entries": [
         {
           "type": "minecraft:item",
-          "name": "northeast_china_delight:water_basin"
+          "name": "chinese_regional_culinary_ingredients:water_basin"
         }
       ],
       "conditions": [
@@ -53,7 +53,7 @@
         },
         {
           "condition": "minecraft:block_state_property",
-          "block": "northeast_china_delight:basin_stand",
+          "block": "chinese_regional_culinary_ingredients:basin_stand",
           "properties": {
             "basin": "water"
           }

@@ -1,21 +1,23 @@
 package com.gunmu.northeast_china_delight.event;
 
+
+import com.gunmu.chinese_regional_culinary_ingredients.crafting.SeasoningBottleMergeRecipe;
 import com.gunmu.chinese_regional_culinary_ingredients.block.CrciBlocks;
 
 import com.gunmu.chinese_regional_culinary_ingredients.item.CrciItems;
 
 import com.gunmu.northeast_china_delight.NortheastChinaDelight;
 import com.gunmu.northeast_china_delight.advancement.ModAdvancements;
-import com.gunmu.northeast_china_delight.block.BigStoveBlock;
-import com.gunmu.northeast_china_delight.block.FacingDecorBlock;
+import com.gunmu.chinese_regional_culinary_ingredients.block.BigStoveBlock;
+import com.gunmu.chinese_regional_culinary_ingredients.block.FacingDecorBlock;
 import com.gunmu.chinese_regional_culinary_ingredients.block.GinsengCropBlock;
-import com.gunmu.northeast_china_delight.block.ModBlockTags;
+import com.gunmu.chinese_regional_culinary_ingredients.block.CrciBlockTags;
 import com.gunmu.northeast_china_delight.block.ModBlocks;
-import com.gunmu.northeast_china_delight.block.PlacedDishBlock;
-import com.gunmu.northeast_china_delight.block.PlatedDishBlock;
-import com.gunmu.northeast_china_delight.compat.displaydelight.DisplayDelightCompat;
-import com.gunmu.northeast_china_delight.block.WoodenMortarBlock;
-import com.gunmu.northeast_china_delight.effect.ModEffects;
+import com.gunmu.chinese_regional_culinary_ingredients.block.PlacedDishBlock;
+import com.gunmu.chinese_regional_culinary_ingredients.block.PlatedDishBlock;
+import com.gunmu.chinese_regional_culinary_ingredients.compat.displaydelight.DisplayDelightCompat;
+import com.gunmu.chinese_regional_culinary_ingredients.block.WoodenMortarBlock;
+import com.gunmu.chinese_regional_culinary_ingredients.effect.CrciMobEffects;
 import com.gunmu.northeast_china_delight.item.ModItems;
 import com.gunmu.northeast_china_delight.item.SeasoningBottleItem;
 import com.gunmu.northeast_china_delight.util.DdEffects;
@@ -246,7 +248,7 @@ public final class ModGameplayEvents
             if (hasVisibleRadiator(player)) {
                 // 环境效果：粒子半透明（同信标）
                 MobEffectInstance warmth = DdEffects.ambientInstance(
-                        DdEffects.hold(ModEffects.WARMTH), RADIATOR_DURATION_TICKS, 0);
+                        DdEffects.hold(CrciMobEffects.WARMTH), RADIATOR_DURATION_TICKS, 0);
                 player.addEffect(warmth);
             }
         }
@@ -443,7 +445,7 @@ public final class ModGameplayEvents
     @SubscribeEvent
     public static void onEntityPlaceBlock(BlockEvent.EntityPlaceEvent event)
     {
-        if (!(event.getLevel() instanceof ServerLevel level) || !event.getPlacedBlock().is(ModBlockTags.BIG_STOVE_PARTS))
+        if (!(event.getLevel() instanceof ServerLevel level) || !event.getPlacedBlock().is(CrciBlockTags.BIG_STOVE_PARTS))
         {
             return;
         }

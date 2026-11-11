@@ -2,7 +2,7 @@
   "credit": "Northeast China Delight big pot dish model (food taken from steamed_rice_pot)",
   "parent": "block/block",
   "render_type": "minecraft:cutout",
-  "textures": {"particle": "northeast_china_delight:block/large_basin", "basin": "northeast_china_delight:block/large_basin", "rice": "northeast_china_delight:block/steamed_rice_pot"},
+  "textures": {"particle": "chinese_regional_culinary_ingredients:block/large_basin", "basin": "chinese_regional_culinary_ingredients:block/large_basin", "rice": "northeast_china_delight:block/steamed_rice_pot"},
   "elements": [
     {"name": "broth", "from": [13, 10.1, 11], "to": [19, 11, 12], "faces": {"north": {"uv": [0, 0, 4.0, 1.6], "texture": "#rice"}, "south": {"uv": [0, 0, 4.0, 1.6], "texture": "#rice"}, "east": {"uv": [0, 0, 4.0, 1.6], "texture": "#rice"}, "west": {"uv": [0, 0, 4.0, 1.6], "texture": "#rice"}, "up": {"uv": [0, 0, 4.0, 1.6], "texture": "#rice"}, "down": {"uv": [0, 0, 4.0, 1.6], "texture": "#rice"}}},
     {"name": "broth", "from": [12, 10.1, 12], "to": [20, 11, 13], "faces": {"north": {"uv": [0, 0, 4.0, 1.6], "texture": "#rice"}, "south": {"uv": [0, 0, 4.0, 1.6], "texture": "#rice"}, "east": {"uv": [0, 0, 4.0, 1.6], "texture": "#rice"}, "west": {"uv": [0, 0, 4.0, 1.6], "texture": "#rice"}, "up": {"uv": [0, 0, 4.0, 1.6], "texture": "#rice"}, "down": {"uv": [0, 0, 4.0, 1.6], "texture": "#rice"}}},
