@@ -20,9 +20,10 @@ public final class DryingJeiRecipes {
         }
         return DryingRecipes.all(manager).stream()
                 .map(recipe -> new DryingJeiRecipe(recipe.id(),
-                        Arrays.stream(recipe.input().getItems()).map(ItemStack::copy).toList(),
-                        recipe.results().stream().map(ItemStack::copy).toList()))
-                .filter(recipe -> !recipe.ingredient().isEmpty())
+                        JeiAvailability.filter(Arrays.stream(recipe.input().getItems())
+                                .map(ItemStack::copy).toList()),
+                        JeiAvailability.filter(recipe.results().stream().map(ItemStack::copy).toList())))
+                .filter(recipe -> !recipe.ingredient().isEmpty() && !recipe.results().isEmpty())
                 .toList();
     }
 }

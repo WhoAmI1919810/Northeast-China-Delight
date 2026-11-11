@@ -3,6 +3,9 @@ package com.gunmu.northeast_china_delight.compat.jei;
 import com.gunmu.chinese_regional_culinary_ingredients.item.CrciItems;
 
 import com.gunmu.chinese_regional_culinary_ingredients.crafting.VatRecipes;
+import com.gunmu.chinese_regional_culinary_ingredients.region.CrciAvailability;
+import com.gunmu.chinese_regional_culinary_ingredients.region.CrciContentCatalog;
+import com.gunmu.chinese_regional_culinary_ingredients.region.CrciUseSite;
 import com.gunmu.northeast_china_delight.block.ModBlocks;
 import com.gunmu.northeast_china_delight.item.ModItems;
 import com.gunmu.northeast_china_delight.NortheastChinaDelight;
@@ -21,6 +24,7 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Item;
 import net.minecraft.client.Minecraft;
 import org.slf4j.Logger;
 
@@ -35,6 +39,8 @@ public class NortheastJeiPlugin implements IModPlugin {
 
     private static final Logger LOGGER = LogUtils.getLogger();
     private static IJeiRuntime runtime;
+    private static Runnable availabilityListener;
+    private static java.util.Set<ResourceLocation> hiddenCrciItems = java.util.Set.of();
     private static java.util.List<VatJeiRecipe> registeredVatRecipes = java.util.List.of();
     private static java.util.List<GrillJeiRecipe> registeredGrillRecipes = java.util.List.of();
     private static java.util.List<PoundJeiRecipe> registeredPoundRecipes = java.util.List.of();
@@ -171,6 +177,11 @@ public class NortheastJeiPlugin implements IModPlugin {
         // 海水桶只为老存档留着，没有获取方式，不在 JEI 里出现
         jeiRuntime.getIngredientManager().removeIngredientsAtRuntime(VanillaTypes.ITEM_STACK,
                 java.util.List.of(new ItemStack(ModItems.SEA_WATER_BUCKET.get())));
+        if (availabilityListener == null) {
+            availabilityListener = CrciAvailability.addChangeListener(() ->
+                    Minecraft.getInstance().execute(NortheastJeiPlugin::syncAvailability));
+        }
+        syncAvailability();
         LOGGER.info("大缸 JEI 配方：{} 页，源配方 {} 条",
                 registeredVatRecipes.size(), registeredVatRecipes.size());
         if (registeredVatRecipes.isEmpty() || registeredGrillRecipes.isEmpty()) {
@@ -181,6 +192,11 @@ public class NortheastJeiPlugin implements IModPlugin {
 
     @Override
     public void onRuntimeUnavailable() {
+        if (availabilityListener != null) {
+            availabilityListener.run();
+            availabilityListener = null;
+        }
+        hiddenCrciItems = java.util.Set.of();
         runtime = null;
         registeredVatRecipes = java.util.List.of();
         registeredGrillRecipes = java.util.List.of();
@@ -189,6 +205,44 @@ public class NortheastJeiPlugin implements IModPlugin {
         //? if >=1.20.5 {
         registeredDryingRecipes = java.util.List.of();
         //?}
+    }
+
+    private static void syncAvailability() {
+        if (runtime == null) {
+            return;
+        }
+        java.util.Set<ResourceLocation> disabled = new java.util.LinkedHashSet<>();
+        for (Item item : CrciContentCatalog.enableableItems()) {
+            ResourceLocation id = BuiltInRegistries.ITEM.getKey(item);
+            if (id != null && !CrciAvailability.isAvailable(item, CrciUseSite.JEI)) {
+                disabled.add(id);
+            }
+        }
+
+        java.util.List<ItemStack> added = new java.util.ArrayList<>();
+        for (ResourceLocation id : hiddenCrciItems) {
+            if (!disabled.contains(id) && BuiltInRegistries.ITEM.containsKey(id)) {
+                added.add(new ItemStack(BuiltInRegistries.ITEM.get(id)));
+            }
+        }
+        java.util.List<ItemStack> removed = new java.util.ArrayList<>();
+        for (ResourceLocation id : disabled) {
+            if (BuiltInRegistries.ITEM.containsKey(id)) {
+                removed.add(new ItemStack(BuiltInRegistries.ITEM.get(id)));
+            }
+        }
+        if (!added.isEmpty()) {
+            runtime.getIngredientManager().addIngredientsAtRuntime(VanillaTypes.ITEM_STACK, added);
+        }
+        if (!removed.isEmpty()) {
+            runtime.getIngredientManager().removeIngredientsAtRuntime(VanillaTypes.ITEM_STACK, removed);
+        }
+        hiddenCrciItems = java.util.Set.copyOf(disabled);
+
+        var connection = Minecraft.getInstance().getConnection();
+        if (connection != null) {
+            refreshRecipes(connection.getRecipeManager());
+        }
     }
 
     public static void refreshRecipes(net.minecraft.world.item.crafting.RecipeManager manager) {
