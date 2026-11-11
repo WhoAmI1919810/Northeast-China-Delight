@@ -39,7 +39,7 @@ public class ModCreativeTabs {
     public static final Supplier<CreativeModeTab> INGREDIENTS_TAB =
             CREATIVE_MODE_TABS.register(INGREDIENTS_TAB_KEY.location().getPath(),
                     () -> CreativeModeTab.builder()
-                            .icon(() -> new ItemStack(ModItems.SOYBEAN.get()))
+                            .icon(() -> new ItemStack(ModItems.NAPA_CABBAGE.get()))
                             .title(Component.translatable("itemGroup.northeast_china_delight.ingredients"))
                             .build());
 

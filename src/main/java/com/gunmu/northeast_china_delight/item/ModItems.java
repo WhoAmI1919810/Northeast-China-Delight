@@ -3,6 +3,7 @@ package com.gunmu.northeast_china_delight.item;
 import com.gunmu.northeast_china_delight.block.ModBlocks;
 import com.gunmu.northeast_china_delight.NortheastChinaDelight;
 import com.gunmu.northeast_china_delight.util.DdIds;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
@@ -61,7 +62,7 @@ public class ModItems {
     public static final TagKey<Item> DEEP_FRIED_DISHES = TagKey.create(Registries.ITEM,
             DdIds.of(NortheastChinaDelight.MODID, "deep_fried_dishes"));
 
-    public static final Supplier<Item> SOYBEAN = selfSeeding("soybean", () -> ModBlocks.SOYBEAN_CROP.get());
+    public static final Supplier<Item> SOYBEAN = externalItem(NortheastChinaDelight.CRCI_MODID, "soybean");
     public static final Supplier<Item> EGGPLANT = food("eggplant", 2, 0.3F);
     public static final Supplier<Item> GREEN_PEPPER = food("green_pepper", 2, 0.3F);
     public static final Supplier<Item> CORN = food("corn", 3, 0.4F);
@@ -455,7 +456,7 @@ public class ModItems {
             GINSENG_SEEDS, BELLFLOWER_SEEDS,
             NAPA_CABBAGE, SNOW_MUSTARD, CUCUMBER, EGGPLANT, GREEN_PEPPER, GREEN_ONION, RED_CHILI,
             GREEN_BEANS, CORN, SWEET_POTATO, GREEN_RADISH, BELLFLOWER_ROOT,
-            SOYBEAN, PEANUT, RED_BEAN, BUCKWHEAT,
+            PEANUT, RED_BEAN, BUCKWHEAT,
             HAZELNUT, HAZEL_MUSHROOM, HAZEL_MUSHROOM_COLONY, WOOD_EAR, GINSENG,
             FROZEN_PEAR,
             PORK_RIBS, PORK_INTESTINE, PORK_HOCK, PIG_BLOOD, PIG_LIVER, PORK_FAT, OIL_EDGE, CHICKEN_FRAME,
@@ -483,7 +484,7 @@ public class ModItems {
 
     /** 堆肥桶：作物本体及兼作种子的作物，按原版作物档 0.65。 */
     public static final List<Supplier<? extends Item>> COMPOSTABLE_CROPS = List.of(
-            SOYBEAN, EGGPLANT, GREEN_PEPPER, CORN, GREEN_BEANS, BUCKWHEAT,
+            EGGPLANT, GREEN_PEPPER, CORN, GREEN_BEANS, BUCKWHEAT,
             NAPA_CABBAGE, SNOW_MUSTARD, CUCUMBER, SWEET_POTATO, PEANUT, RED_BEAN,
             RED_CHILI, GREEN_ONION, GREEN_RADISH, BELLFLOWER_ROOT, GINSENG,
             HAZELNUT, HAZEL_MUSHROOM, HAZEL_MUSHROOM_COLONY, WOOD_EAR, CORN_STALK
@@ -651,6 +652,11 @@ public class ModItems {
         return regItem(id,
                 properties -> new ItemNameBlockItem(crop.get(), properties),
                 new Item.Properties());
+    }
+
+    /** 已迁到 CRCI 的内容按注册名取，东北乐事拆分分支不再自己注册这些东西。 */
+    private static Supplier<Item> externalItem(String namespace, String path) {
+        return () -> BuiltInRegistries.ITEM.get(DdIds.of(namespace, path));
     }
 
     /** 单纯注册一个普通物品（不能吃）：调料、加工品原料用 */

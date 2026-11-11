@@ -15,7 +15,7 @@
         },
         {
           "type": "minecraft:item",
-          "name": "northeast_china_delight:soybean",
+          "name": "chinese_regional_culinary_ingredients:soybean",
           "weight": 10,
           "functions": [
             { "function": "minecraft:set_count", "count": { "min": 2, "max": 8 } }

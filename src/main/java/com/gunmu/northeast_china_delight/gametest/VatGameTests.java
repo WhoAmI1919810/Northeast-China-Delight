@@ -568,7 +568,7 @@ public final class VatGameTests {
                 {"type":"northeast_china_delight:vat", "config":{
                   "kind":"BEAN_SPROUTS", "priority":20, "seal":"CLOTH", "seconds":7,
                   "liquid":{"water_min":1,"water_max":1,"water_after":"CLEAR"},
-                  "slots":[{"ingredient":{"item":"northeast_china_delight:soybean"},
+                  "slots":[{"ingredient":{"item":"chinese_regional_culinary_ingredients:soybean"},
                     "bounds":{"type":"exact","count":1},"fate":"CONVERT",
                     "result":"northeast_china_delight:bean_sprouts"}]
                 }}

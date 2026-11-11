@@ -34,7 +34,7 @@
     "display_models": [
       {
         "ingredient": {
-          "item": "northeast_china_delight:soybean"
+          "item": "chinese_regional_culinary_ingredients:soybean"
         },
         "model": "northeast_china_delight:block/vat/soybean"
       },
