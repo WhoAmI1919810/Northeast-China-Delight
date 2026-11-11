@@ -3,6 +3,7 @@ package com.gunmu.northeast_china_delight.gametest;
 import com.gunmu.northeast_china_delight.NortheastChinaDelight;
 import com.gunmu.northeast_china_delight.block.MysteryStewPotBlockEntity;
 import com.gunmu.northeast_china_delight.block.ModBlocks;
+import com.gunmu.northeast_china_delight.crafting.MysteryStew;
 import com.gunmu.northeast_china_delight.effect.ModEffects;
 import com.gunmu.northeast_china_delight.item.MysteryStewEffects;
 import com.gunmu.northeast_china_delight.item.ModItems;
@@ -86,6 +87,86 @@ public final class MysteryStewGameTests {
                     "食用碗装谜之炖菜后缺少效果 " + effectId(entry));
         }
         helper.succeed();
+    }
+
+    @GameTest(template = "empty")
+    public static void stewDurationUsesItemCountVarietyAndSeasoning(GameTestHelper helper) {
+        List<ItemStack> ingredients = List.of(
+                new ItemStack(Items.BEEF, 3),
+                new ItemStack(Items.PORKCHOP, 2),
+                new ItemStack(Items.MUTTON, 2));
+
+        assertFormulaDuration(helper, "无调料", ingredients, 0, "[minecraft:strength:170]");
+        assertFormulaDuration(helper, "1 种调料", ingredients, 1, "[minecraft:strength:238]");
+        assertFormulaDuration(helper, "2 种调料", ingredients, 2, "[minecraft:strength:297]");
+        assertFormulaDuration(helper, "3 种调料", ingredients, 3, "[minecraft:strength:391]");
+        helper.succeed();
+    }
+
+    @GameTest(template = "empty")
+    public static void stewDurationIsCalculatedPerEffectKind(GameTestHelper helper) {
+        List<ItemStack> ingredients = List.of(
+                new ItemStack(Items.BEEF, 3),
+                new ItemStack(Items.PORKCHOP, 2),
+                new ItemStack(Items.MUTTON),
+                new ItemStack(Items.CARROT));
+
+        assertFormulaDuration(helper, "肉类与根茎类", ingredients, 2,
+                "[minecraft:strength:287, minecraft:night_vision:178]");
+        helper.succeed();
+    }
+
+    @GameTest(template = "empty")
+    public static void stewKeepsSaturationDurationAndThreeEffectSelection(GameTestHelper helper) {
+        List<ItemStack> ingredients = List.of(
+                new ItemStack(Items.BEEF, 2),
+                new ItemStack(Items.APPLE, 2),
+                new ItemStack(Items.POTATO, 2),
+                new ItemStack(Items.CARROT));
+
+        assertFormulaDuration(helper, "三效果与饱和", ingredients, 3,
+                "[minecraft:strength:294, minecraft:jump_boost:179, minecraft:saturation:7]");
+        helper.succeed();
+    }
+
+    @GameTest(template = "empty")
+    public static void stewEffectInitialDurationsMatchDesign(GameTestHelper helper) {
+        assertInitialTicks(helper, MysteryStew.Kind.POISON, 60);
+        assertInitialTicks(helper, MysteryStew.Kind.ROTTEN, 60);
+        assertInitialTicks(helper, MysteryStew.Kind.SEA_CUCUMBER, 60);
+        assertInitialTicks(helper, MysteryStew.Kind.OFFAL, 60);
+        assertInitialTicks(helper, MysteryStew.Kind.BONE, 60);
+        assertInitialTicks(helper, MysteryStew.Kind.FRUIT, 60);
+        assertInitialTicks(helper, MysteryStew.Kind.GINSENG, 80);
+        assertInitialTicks(helper, MysteryStew.Kind.GOLDEN, 80);
+        assertInitialTicks(helper, MysteryStew.Kind.CHORUS, 80);
+        assertInitialTicks(helper, MysteryStew.Kind.SPICY, 80);
+        assertInitialTicks(helper, MysteryStew.Kind.NUT, 80);
+        assertInitialTicks(helper, MysteryStew.Kind.SEAFOOD, 80);
+        assertInitialTicks(helper, MysteryStew.Kind.FAT, 90);
+        assertInitialTicks(helper, MysteryStew.Kind.ROOT, 90);
+        assertInitialTicks(helper, MysteryStew.Kind.ALLIUM, 90);
+        assertInitialTicks(helper, MysteryStew.Kind.BEAN, 90);
+        assertInitialTicks(helper, MysteryStew.Kind.GREENS, 90);
+        assertInitialTicks(helper, MysteryStew.Kind.PICKLE, 110);
+        assertInitialTicks(helper, MysteryStew.Kind.FUNGUS, 110);
+        assertInitialTicks(helper, MysteryStew.Kind.EGG, 110);
+        assertInitialTicks(helper, MysteryStew.Kind.MEAT, 110);
+        assertInitialTicks(helper, MysteryStew.Kind.STAPLE, 0);
+        helper.succeed();
+    }
+
+    private static void assertFormulaDuration(GameTestHelper helper, String stage,
+                                              List<ItemStack> ingredients, int seasoningKinds,
+                                              String expected) {
+        List<MysteryStewEffects.Entry> actual = MysteryStew.effects(ingredients, seasoningKinds);
+        helper.assertTrue(expected.equals(describe(actual)),
+                stage + "时长不符，期望 " + expected + "，实际 " + describe(actual));
+    }
+
+    private static void assertInitialTicks(GameTestHelper helper, MysteryStew.Kind kind, int expected) {
+        helper.assertTrue(kind.initialTicks() == expected,
+                kind + " 初始时长应为 " + expected + " 刻，实际为 " + kind.initialTicks());
     }
 
     private static List<MysteryStewEffects.Entry> mixedEffects() {

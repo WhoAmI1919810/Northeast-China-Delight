@@ -60,6 +60,8 @@ public class BigPotBlockEntity extends BlockEntity {
     private int cookTotal;
     /** 再过几刻把进度发给客户端（不存档） */
     private int syncCountdown;
+    /** 上一次通知比较器的档位，避免每刻都触发红石更新 */
+    private int lastComparatorOutput = -1;
     private ItemStack result = ItemStack.EMPTY;
     private int servings;
     private ItemStack container = ItemStack.EMPTY;
@@ -225,7 +227,7 @@ public class BigPotBlockEntity extends BlockEntity {
         return spice;
     }
 
-    /** 锅里倒了几种调料（同一种倒几份只算一种；谜之炖菜每多一种多 2 秒） */
+    /** 锅里倒了几种调料（同一种倒几份只算一种；谜之炖菜按这个种数乘时长倍率） */
     public int seasoningKinds() {
         List<ItemStack> spice = new ArrayList<>();
         for (Layer layer : layers) {
@@ -273,6 +275,24 @@ public class BigPotBlockEntity extends BlockEntity {
 
     public int cookTotal() {
         return cookTotal;
+    }
+
+    /**
+     * 红石比较器读烹饪进度：没开始是 0，等待开煮或烹饪中按进度涨到 14，煮好是 15。
+     * 进度本身按不盖锅盖的刻数算，锅盖加速不会把比较器读数放大。
+     */
+    public int comparatorOutput() {
+        if (hasResult()) {
+            return 15;
+        }
+        if (cooking == null) {
+            return 0;
+        }
+        if (startDelay > 0 || cookTotal <= 0) {
+            return 1;
+        }
+        float ratio = Math.max(0.0F, Math.min(1.0F, cookProgress / cookTotal));
+        return 1 + Math.min(13, (int) (ratio * 14.0F));
     }
 
     public void setCookTotal(int total) {
@@ -447,6 +467,7 @@ public class BigPotBlockEntity extends BlockEntity {
      */
     public void tickCooking(float rate) {
         cookProgress += rate;
+        syncComparator();
         if (--syncCountdown <= 0) {
             syncCountdown = 20;
             sync();       // 每秒发一次进度（Jade）
@@ -537,7 +558,21 @@ public class BigPotBlockEntity extends BlockEntity {
         setChanged();
         if (level != null && !level.isClientSide) {
             level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 3);
+            syncComparator();
         }
+    }
+
+    /** 只有比较器档位真的变了才刷新四格，避免每秒、每刻都发无意义的红石更新。 */
+    private void syncComparator() {
+        if (level == null || level.isClientSide) {
+            return;
+        }
+        int output = comparatorOutput();
+        if (output == lastComparatorOutput) {
+            return;
+        }
+        lastComparatorOutput = output;
+        BigStoveBlock.updateAnalogOutput(level, worldPosition, getBlockState());
     }
 
     // ---------------------------------------------------------------- 存档
