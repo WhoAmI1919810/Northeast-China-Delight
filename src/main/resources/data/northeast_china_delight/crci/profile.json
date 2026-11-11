@@ -1,0 +1,317 @@
+{
+  "schema": 1,
+  "owner": "northeast_china_delight",
+  "enabled_content": [
+    "chinese_regional_culinary_ingredients:eggplant_seeds",
+    "chinese_regional_culinary_ingredients:green_pepper_seeds",
+    "chinese_regional_culinary_ingredients:corn_seeds",
+    "chinese_regional_culinary_ingredients:green_beans_seeds",
+    "chinese_regional_culinary_ingredients:napa_cabbage_seeds",
+    "chinese_regional_culinary_ingredients:snow_mustard_seeds",
+    "chinese_regional_culinary_ingredients:cucumber_seeds",
+    "chinese_regional_culinary_ingredients:red_chili_seeds",
+    "chinese_regional_culinary_ingredients:green_onion_seeds",
+    "chinese_regional_culinary_ingredients:green_radish_seeds",
+    "chinese_regional_culinary_ingredients:ginseng_seeds",
+    "chinese_regional_culinary_ingredients:bellflower_seeds",
+    "chinese_regional_culinary_ingredients:napa_cabbage",
+    "chinese_regional_culinary_ingredients:snow_mustard",
+    "chinese_regional_culinary_ingredients:cucumber",
+    "chinese_regional_culinary_ingredients:eggplant",
+    "chinese_regional_culinary_ingredients:green_pepper",
+    "chinese_regional_culinary_ingredients:green_onion",
+    "chinese_regional_culinary_ingredients:red_chili",
+    "chinese_regional_culinary_ingredients:green_beans",
+    "chinese_regional_culinary_ingredients:corn",
+    "chinese_regional_culinary_ingredients:sweet_potato",
+    "chinese_regional_culinary_ingredients:green_radish",
+    "chinese_regional_culinary_ingredients:bellflower_root",
+    "chinese_regional_culinary_ingredients:peanut",
+    "chinese_regional_culinary_ingredients:red_bean",
+    "chinese_regional_culinary_ingredients:buckwheat",
+    "chinese_regional_culinary_ingredients:soybean",
+    "chinese_regional_culinary_ingredients:hazelnut",
+    "chinese_regional_culinary_ingredients:hazel_mushroom",
+    "chinese_regional_culinary_ingredients:hazel_mushroom_colony",
+    "chinese_regional_culinary_ingredients:wood_ear",
+    "chinese_regional_culinary_ingredients:ginseng",
+    "chinese_regional_culinary_ingredients:frozen_pear",
+    "chinese_regional_culinary_ingredients:pork_ribs",
+    "chinese_regional_culinary_ingredients:pork_intestine",
+    "chinese_regional_culinary_ingredients:pork_hock",
+    "chinese_regional_culinary_ingredients:pig_blood",
+    "chinese_regional_culinary_ingredients:pig_liver",
+    "chinese_regional_culinary_ingredients:pork_fat",
+    "chinese_regional_culinary_ingredients:oil_edge",
+    "chinese_regional_culinary_ingredients:chicken_frame",
+    "chinese_regional_culinary_ingredients:shrimp",
+    "chinese_regional_culinary_ingredients:hairtail",
+    "chinese_regional_culinary_ingredients:oyster",
+    "chinese_regional_culinary_ingredients:sea_cucumber",
+    "chinese_regional_culinary_ingredients:raw_sausage",
+    "chinese_regional_culinary_ingredients:blood_sausage",
+    "chinese_regional_culinary_ingredients:rice_sausage",
+    "chinese_regional_culinary_ingredients:red_sausage",
+    "chinese_regional_culinary_ingredients:smoked_pork_hock",
+    "chinese_regional_culinary_ingredients:smoked_pig_liver",
+    "chinese_regional_culinary_ingredients:sour_cabbage",
+    "chinese_regional_culinary_ingredients:pickled_snow_mustard",
+    "chinese_regional_culinary_ingredients:spicy_cabbage",
+    "chinese_regional_culinary_ingredients:pickled_cucumber",
+    "chinese_regional_culinary_ingredients:pickled_carrot",
+    "chinese_regional_culinary_ingredients:pickled_green_radish",
+    "chinese_regional_culinary_ingredients:salted_pork",
+    "chinese_regional_culinary_ingredients:salted_fish",
+    "chinese_regional_culinary_ingredients:salt",
+    "chinese_regional_culinary_ingredients:soy_paste",
+    "chinese_regional_culinary_ingredients:chili_sauce",
+    "chinese_regional_culinary_ingredients:soy_sauce",
+    "chinese_regional_culinary_ingredients:vinegar",
+    "chinese_regional_culinary_ingredients:sour_water",
+    "chinese_regional_culinary_ingredients:white_vinegar",
+    "chinese_regional_culinary_ingredients:fish_sauce",
+    "chinese_regional_culinary_ingredients:shrimp_paste",
+    "chinese_regional_culinary_ingredients:chili_oil",
+    "chinese_regional_culinary_ingredients:peanut_butter",
+    "chinese_regional_culinary_ingredients:cooking_oil",
+    "chinese_regional_culinary_ingredients:animal_oil",
+    "chinese_regional_culinary_ingredients:soy_paste_chunk",
+    "chinese_regional_culinary_ingredients:soy_residue",
+    "chinese_regional_culinary_ingredients:sour_dough",
+    "chinese_regional_culinary_ingredients:buckwheat_noodles",
+    "chinese_regional_culinary_ingredients:dried_tofu",
+    "chinese_regional_culinary_ingredients:tofu",
+    "chinese_regional_culinary_ingredients:frozen_tofu",
+    "chinese_regional_culinary_ingredients:wet_starch_dough",
+    "chinese_regional_culinary_ingredients:sweet_potato_starch",
+    "chinese_regional_culinary_ingredients:vermicelli",
+    "chinese_regional_culinary_ingredients:mung_bean_sheet",
+    "chinese_regional_culinary_ingredients:corn_flour",
+    "chinese_regional_culinary_ingredients:cracklings",
+    "chinese_regional_culinary_ingredients:cold_noodle_sheet",
+    "chinese_regional_culinary_ingredients:bean_sprouts",
+    "chinese_regional_culinary_ingredients:sour_corn_kernels",
+    "chinese_regional_culinary_ingredients:roasted_peanuts",
+    "chinese_regional_culinary_ingredients:red_bean_paste",
+    "chinese_regional_culinary_ingredients:corn_stalk",
+    "chinese_regional_culinary_ingredients:spirit_cabbage",
+    "chinese_regional_culinary_ingredients:soy_milk",
+    "chinese_regional_culinary_ingredients:kvass",
+    "chinese_regional_culinary_ingredients:napa_cabbage_crate",
+    "chinese_regional_culinary_ingredients:cucumber_crate",
+    "chinese_regional_culinary_ingredients:green_radish_crate",
+    "chinese_regional_culinary_ingredients:green_onion_crate",
+    "chinese_regional_culinary_ingredients:eggplant_crate",
+    "chinese_regional_culinary_ingredients:green_pepper_crate",
+    "chinese_regional_culinary_ingredients:red_chili_crate",
+    "chinese_regional_culinary_ingredients:green_beans_crate",
+    "chinese_regional_culinary_ingredients:corn_crate",
+    "chinese_regional_culinary_ingredients:sweet_potato_crate",
+    "chinese_regional_culinary_ingredients:sour_cabbage_crate",
+    "chinese_regional_culinary_ingredients:spicy_cabbage_crate",
+    "chinese_regional_culinary_ingredients:pickled_cucumber_crate",
+    "chinese_regional_culinary_ingredients:pickled_carrot_crate",
+    "chinese_regional_culinary_ingredients:pickled_green_radish_crate",
+    "chinese_regional_culinary_ingredients:frozen_pear_crate",
+    "chinese_regional_culinary_ingredients:bellflower_crate",
+    "chinese_regional_culinary_ingredients:snow_mustard_crate",
+    "chinese_regional_culinary_ingredients:pickled_snow_mustard_crate",
+    "chinese_regional_culinary_ingredients:corn_seeds_sack",
+    "chinese_regional_culinary_ingredients:buckwheat_sack",
+    "chinese_regional_culinary_ingredients:soybean_sack",
+    "chinese_regional_culinary_ingredients:red_bean_sack",
+    "chinese_regional_culinary_ingredients:peanut_sack",
+    "chinese_regional_culinary_ingredients:hazelnut_sack",
+    "chinese_regional_culinary_ingredients:hazel_mushroom_sack",
+    "chinese_regional_culinary_ingredients:wood_ear_sack",
+    "chinese_regional_culinary_ingredients:ginseng_sack"
+  ],
+  "trade_overrides": [],
+  "farm_crops": [
+    {
+      "seed": "chinese_regional_culinary_ingredients:soybean",
+      "full_growth": {
+        "Name": "chinese_regional_culinary_ingredients:soybean_crop",
+        "Properties": { "age": "7" }
+      },
+      "pools": [
+        { "id": "plains", "weight": 1 },
+        { "id": "taiga", "weight": 8 },
+        { "id": "taiga_small", "weight": 1 }
+      ]
+    },
+    {
+      "seed": "chinese_regional_culinary_ingredients:corn_seeds",
+      "full_growth": {
+        "Name": "chinese_regional_culinary_ingredients:corn_crop",
+        "Properties": { "age": "7" }
+      },
+      "pools": [
+        { "id": "plains", "weight": 1 }
+      ]
+    },
+    {
+      "seed": "chinese_regional_culinary_ingredients:napa_cabbage_seeds",
+      "full_growth": {
+        "Name": "chinese_regional_culinary_ingredients:napa_cabbage_crop",
+        "Properties": { "age": "7" }
+      },
+      "pools": [
+        { "id": "plains", "weight": 1 },
+        { "id": "snowy", "weight": 15 },
+        { "id": "taiga", "weight": 8 },
+        { "id": "taiga_small", "weight": 1 }
+      ]
+    },
+    {
+      "seed": "chinese_regional_culinary_ingredients:snow_mustard_seeds",
+      "full_growth": {
+        "Name": "chinese_regional_culinary_ingredients:snow_mustard_crop",
+        "Properties": { "age": "7" }
+      },
+      "pools": [
+        { "id": "plains", "weight": 1 },
+        { "id": "snowy", "weight": 12 },
+        { "id": "taiga", "weight": 6 },
+        { "id": "taiga_small", "weight": 1 }
+      ]
+    },
+    {
+      "seed": "chinese_regional_culinary_ingredients:bellflower_seeds",
+      "full_growth": {
+        "Name": "chinese_regional_culinary_ingredients:bellflower_crop",
+        "Properties": { "age": "7" }
+      },
+      "pools": [
+        { "id": "plains", "weight": 1 },
+        { "id": "taiga", "weight": 6 },
+        { "id": "taiga_small", "weight": 1 }
+      ]
+    },
+    {
+      "seed": "chinese_regional_culinary_ingredients:cucumber_seeds",
+      "full_growth": {
+        "Name": "chinese_regional_culinary_ingredients:cucumber_crop",
+        "Properties": { "age": "7" }
+      },
+      "pools": [
+        { "id": "plains", "weight": 1 }
+      ]
+    },
+    {
+      "seed": "chinese_regional_culinary_ingredients:green_onion_seeds",
+      "full_growth": {
+        "Name": "chinese_regional_culinary_ingredients:green_onion_crop",
+        "Properties": { "age": "3" }
+      },
+      "pools": [
+        { "id": "plains", "weight": 1 }
+      ]
+    },
+    {
+      "seed": "chinese_regional_culinary_ingredients:green_radish_seeds",
+      "full_growth": {
+        "Name": "chinese_regional_culinary_ingredients:green_radish_crop",
+        "Properties": { "age": "7" }
+      },
+      "pools": [
+        { "id": "plains", "weight": 1 },
+        { "id": "snowy", "weight": 15 },
+        { "id": "taiga", "weight": 8 },
+        { "id": "taiga_small", "weight": 1 }
+      ]
+    },
+    {
+      "seed": "chinese_regional_culinary_ingredients:eggplant_seeds",
+      "full_growth": {
+        "Name": "chinese_regional_culinary_ingredients:eggplant_crop",
+        "Properties": { "age": "7" }
+      },
+      "pools": [
+        { "id": "plains", "weight": 1 }
+      ]
+    },
+    {
+      "seed": "chinese_regional_culinary_ingredients:green_beans_seeds",
+      "full_growth": {
+        "Name": "chinese_regional_culinary_ingredients:green_beans_crop",
+        "Properties": { "age": "7" }
+      },
+      "pools": [
+        { "id": "plains", "weight": 1 }
+      ]
+    },
+    {
+      "seed": "chinese_regional_culinary_ingredients:buckwheat",
+      "full_growth": {
+        "Name": "chinese_regional_culinary_ingredients:buckwheat_crop",
+        "Properties": { "age": "7" }
+      },
+      "pools": [
+        { "id": "snowy", "weight": 15 },
+        { "id": "taiga", "weight": 8 },
+        { "id": "taiga_small", "weight": 1 }
+      ]
+    },
+    {
+      "seed": "chinese_regional_culinary_ingredients:red_bean",
+      "full_growth": {
+        "Name": "chinese_regional_culinary_ingredients:red_bean_crop",
+        "Properties": { "age": "7" }
+      },
+      "pools": [
+        { "id": "savanna", "weight": 1 }
+      ]
+    },
+    {
+      "seed": "chinese_regional_culinary_ingredients:peanut",
+      "full_growth": {
+        "Name": "chinese_regional_culinary_ingredients:peanut_crop",
+        "Properties": { "age": "7" }
+      },
+      "pools": [
+        { "id": "desert", "weight": 1 },
+        { "id": "savanna", "weight": 1 }
+      ]
+    },
+    {
+      "seed": "chinese_regional_culinary_ingredients:sweet_potato",
+      "full_growth": {
+        "Name": "chinese_regional_culinary_ingredients:sweet_potato_crop",
+        "Properties": { "age": "7" }
+      },
+      "pools": [
+        { "id": "desert", "weight": 1 },
+        { "id": "savanna", "weight": 1 }
+      ]
+    },
+    {
+      "seed": "chinese_regional_culinary_ingredients:green_pepper_seeds",
+      "full_growth": {
+        "Name": "chinese_regional_culinary_ingredients:green_pepper_crop",
+        "Properties": { "age": "7" }
+      },
+      "pools": [
+        { "id": "savanna", "weight": 1 }
+      ]
+    },
+    {
+      "seed": "chinese_regional_culinary_ingredients:red_chili_seeds",
+      "full_growth": {
+        "Name": "chinese_regional_culinary_ingredients:red_chili_crop",
+        "Properties": { "age": "7" }
+      },
+      "pools": [
+        { "id": "savanna", "weight": 1 }
+      ]
+    }
+  ],
+  "trades": {
+    "farmer": [],
+    "wanderer": [],
+    "side_dish": [],
+    "butcher": [],
+    "fisherman": []
+  },
+  "side_dish_shop": true
+}
