@@ -10,7 +10,6 @@ import com.gunmu.chinese_regional_culinary_ingredients.block.CrciBlockEntities;
 import com.gunmu.chinese_regional_culinary_ingredients.block.CrciBlocks;
 import com.gunmu.chinese_regional_culinary_ingredients.block.GrillCampfireBlock;
 import com.gunmu.northeast_china_delight.block.ModBlocks;
-import com.gunmu.northeast_china_delight.compat.CreateVillageShops;
 import com.gunmu.northeast_china_delight.compat.OptionalMods;
 import com.gunmu.northeast_china_delight.compat.create.CreateArmCompat;
 import com.gunmu.northeast_china_delight.compat.create.ModFanProcessingTypes;
@@ -175,8 +174,6 @@ public class NortheastChinaDelight
         if (OptionalMods.create()) {
             ModFanProcessingTypes.register(modEventBus);
             CreateArmCompat.register(modEventBus);
-            // 村庄副食店换成带机械动力方块的那一套（模组自带的数据包，见 CreateVillageShops）
-            modEventBus.addListener(CreateVillageShops::onAddPackFinders);
         }
         ModMapDecorations.register(modEventBus);
         ModWorldGen.register(modEventBus);
