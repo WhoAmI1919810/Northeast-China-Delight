@@ -228,7 +228,7 @@ public final class VatGameTests {
     public static void vatLegacyRecipesGetDefaultVerbs(GameTestHelper helper) {
         VatRecipe recipe = roundTripVerbRecipe(helper, verbTestConfig());
         if (recipe == null || !(recipe.verb().getContents() instanceof TranslatableContents contents)
-                || !contents.getKey().equals("process.northeast_china_delight.vat.sprouting")) {
+                || !contents.getKey().equals("process.chinese_regional_culinary_ingredients.vat.sprouting")) {
             helper.fail("Legacy vat recipes without a verb should keep a suitable default action");
         }
         helper.succeed();
@@ -261,7 +261,7 @@ public final class VatGameTests {
     private static VatRecipe roundTripVerbRecipe(GameTestHelper helper, JsonObject config) {
         ResourceLocation id = DdIds.of(NortheastChinaDelight.MODID, "vat/verb_sync_test");
         JsonObject json = new JsonObject();
-        json.addProperty("type", NortheastChinaDelight.MODID + ":vat");
+        json.addProperty("type", "chinese_regional_culinary_ingredients:vat");
         json.add("config", config);
         //? if <1.20.5 {
         /*VatDataRecipe source = ModVatRecipes.SERIALIZER.get().fromJson(id, json);
@@ -560,7 +560,7 @@ public final class VatGameTests {
 
     @GameTest(template = "empty")
     public static void vatDataPackIdsOverrideAndDisable(GameTestHelper helper) {
-        ResourceLocation id = DdIds.of(NortheastChinaDelight.MODID, "vat/bean_sprouts");
+        ResourceLocation id = DdIds.of("chinese_regional_culinary_ingredients", "vat/bean_sprouts");
         //? if <1.20.5 {
         /*VatDataRecipe source = (VatDataRecipe) helper.getLevel().getRecipeManager().byKey(id)
                 .orElseThrow();

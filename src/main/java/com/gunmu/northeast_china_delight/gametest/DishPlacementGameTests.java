@@ -90,8 +90,11 @@ public final class DishPlacementGameTests
             var dishBlock = ModBlocks.DISH_BLOCKS.get(id);
             helper.assertTrue(dishBlock != null, "料理方块未注册: " + id);
 
-            var item = BuiltInRegistries.ITEM.get(
-                    DdIds.of(NortheastChinaDelight.MODID, id));
+            var item = BuiltInRegistries.ITEM.get(DdIds.of(NortheastChinaDelight.MODID, id));
+            if (item == net.minecraft.world.item.Items.AIR) {
+                item = BuiltInRegistries.ITEM.get(
+                        DdIds.of("chinese_regional_culinary_ingredients", id));
+            }
             helper.assertTrue(item != net.minecraft.world.item.Items.AIR,
                     "料理物品未注册: " + id);
             player.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(item));

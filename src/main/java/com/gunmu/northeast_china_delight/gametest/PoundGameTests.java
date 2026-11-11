@@ -89,9 +89,9 @@ public final class PoundGameTests {
             helper.fail("Overlay pounding JSON should decode");
             return;
         }
-        ResourceLocation first = DdIds.of(NortheastChinaDelight.MODID, "block/wooden_mortar_rice_cake_0");
-        ResourceLocation second = DdIds.of(NortheastChinaDelight.MODID, "block/wooden_mortar_rice_cake_1");
-        ResourceLocation done = DdIds.of(NortheastChinaDelight.MODID, "block/wooden_mortar_rice_cake_done");
+        ResourceLocation first = DdIds.of("chinese_regional_culinary_ingredients", "block/wooden_mortar_rice_cake_0");
+        ResourceLocation second = DdIds.of("chinese_regional_culinary_ingredients", "block/wooden_mortar_rice_cake_1");
+        ResourceLocation done = DdIds.of("chinese_regional_culinary_ingredients", "block/wooden_mortar_rice_cake_done");
         if (recipe.stageModelMode() != PoundingRecipes.StageModelMode.OVERLAY || recipe.doneState() != 3
                 || !recipe.stageModel(1).equals(first) || !recipe.stageModel(2).equals(second)
                 || !recipe.stageModel(3).equals(done)) {

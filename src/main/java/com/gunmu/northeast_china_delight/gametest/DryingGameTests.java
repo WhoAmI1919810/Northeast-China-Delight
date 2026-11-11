@@ -125,7 +125,7 @@ public final class DryingGameTests {
         DryingRecipes.Recipe recipe = DryingRecipes.byInput(helper.getLevel().getRecipeManager(),
                 new ItemStack(ModItems.SOY_MILK.get()));
         helper.assertTrue(recipe != null && recipe.id().equals(
-                DdIds.of(NortheastChinaDelight.MODID, "drying/dried_tofu")), "豆浆应匹配自带数据包的干豆腐配方");
+                DdIds.of("chinese_regional_culinary_ingredients", "drying/dried_tofu")), "豆浆应匹配自带数据包的干豆腐配方");
         List<ItemStack> output = recipe.process(new ItemStack(ModItems.SOY_MILK.get()));
         helper.assertTrue(count(output, CrciItems.DRIED_TOFU.get()) == 2 && count(output, Items.BOWL) == 1,
                 "一份豆浆应产出两份干豆腐并返还一个碗");
@@ -273,7 +273,7 @@ public final class DryingGameTests {
                 pos.getZ() + 0.5, new ItemStack(ModItems.SOY_MILK.get(), 8));
         helper.getLevel().addFreshEntity(entity);
         CompoundTag processing = new CompoundTag();
-        processing.putString("Type", "chinese_regional_culinary_ingredients:drying");
+        processing.putString("Type", "northeast_china_delight:drying");
         processing.putInt("Time", 1);
         CompoundTag createData = new CompoundTag();
         createData.put("Processing", processing);
