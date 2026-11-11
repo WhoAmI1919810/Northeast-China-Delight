@@ -99,15 +99,11 @@ public final class GenerationConfigGameTests {
     }
 
     private static void withChestConfig(boolean enabled, List<String> items, Runnable checks) {
-        boolean previousEnabled = NortheastChinaConfig.CHEST_LOOT_ENABLED.get();
-        var previousItems = NortheastChinaConfig.CHEST_LOOT_ALLOWED_ITEMS.get();
-        NortheastChinaConfig.CHEST_LOOT_ENABLED.set(enabled);
-        NortheastChinaConfig.CHEST_LOOT_ALLOWED_ITEMS.set(items);
+        NortheastChinaConfig.setChestLootTestOverride(enabled, items);
         try {
             checks.run();
         } finally {
-            NortheastChinaConfig.CHEST_LOOT_ENABLED.set(previousEnabled);
-            NortheastChinaConfig.CHEST_LOOT_ALLOWED_ITEMS.set(previousItems);
+            NortheastChinaConfig.setChestLootTestOverride(null, null);
         }
     }
 

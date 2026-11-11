@@ -158,6 +158,9 @@ public final class NortheastChinaConfig
             "chinese_regional_culinary_ingredients:vinegar",
             "chinese_regional_culinary_ingredients:white_vinegar");
 
+    private static Boolean chestLootEnabledTestOverride;
+    private static List<? extends String> chestLootAllowedItemsTestOverride;
+
     //? if <1.20.2 {
     /*public static final ForgeConfigSpec SPEC;
 
@@ -246,6 +249,9 @@ public final class NortheastChinaConfig
 
     public static boolean isChestLootEnabled()
     {
+        if (chestLootEnabledTestOverride != null) {
+            return chestLootEnabledTestOverride;
+        }
         return !SPEC.isLoaded() || CHEST_LOOT_ENABLED.get();
     }
 
@@ -257,8 +263,23 @@ public final class NortheastChinaConfig
             return true;
         }
         return isChestLootEnabled()
-                && (SPEC.isLoaded() ? CHEST_LOOT_ALLOWED_ITEMS.get() : DEFAULT_CHEST_LOOT_ITEMS)
+                && chestLootAllowedItems()
                 .contains(itemId.toString());
+    }
+
+    /** GameTest 专用：在内存中覆盖读取结果，避免测试反复写配置文件触发监听器。传 null 清除覆盖。 */
+    public static void setChestLootTestOverride(Boolean enabled, List<? extends String> items)
+    {
+        chestLootEnabledTestOverride = enabled;
+        chestLootAllowedItemsTestOverride = items == null ? null : List.copyOf(items);
+    }
+
+    private static List<? extends String> chestLootAllowedItems()
+    {
+        if (chestLootAllowedItemsTestOverride != null) {
+            return chestLootAllowedItemsTestOverride;
+        }
+        return SPEC.isLoaded() ? CHEST_LOOT_ALLOWED_ITEMS.get() : DEFAULT_CHEST_LOOT_ITEMS;
     }
 
     private NortheastChinaConfig()
