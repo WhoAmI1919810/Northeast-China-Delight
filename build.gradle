@@ -337,6 +337,14 @@ publishing {
     tasks.named('build') { finalizedBy copyJar }
 }
 
+// Run tasks consume the CRCI artifact from libs. Declare the dependency so a combined
+// `build runGameTestServer` invocation does not fail Gradle's implicit dependency validation.
+tasks.configureEach { task ->
+    if (task.name.startsWith('run')) {
+        task.dependsOn(tasks.named('copyJarToLibs'))
+    }
+}
+
 tasks.withType(JavaCompile).configureEach {
     options.encoding = 'UTF-8'
     // 多版本移植期错误可能超过 javac 默认的 100 条上限，报全一点方便一次改完
