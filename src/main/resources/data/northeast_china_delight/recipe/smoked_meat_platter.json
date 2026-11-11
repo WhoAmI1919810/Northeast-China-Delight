@@ -3,9 +3,9 @@
   "category": "misc",
   "ingredients": [
     { "item": "minecraft:bowl" },
-    { "item": "northeast_china_delight:red_sausage" },
-    { "item": "northeast_china_delight:smoked_pork_hock" },
-    { "item": "northeast_china_delight:smoked_pig_liver" },
+    { "item": "chinese_regional_culinary_ingredients:red_sausage" },
+    { "item": "chinese_regional_culinary_ingredients:smoked_pork_hock" },
+    { "item": "chinese_regional_culinary_ingredients:smoked_pig_liver" },
     { "item": "northeast_china_delight:braised_pork_bone_sauce" },
     { "item": "northeast_china_delight:braised_beef_sauce" }
   ],

@@ -8,11 +8,11 @@
   ],
   "key": {
     "X": {
-      "item": "northeast_china_delight:red_bean"
+      "item": "chinese_regional_culinary_ingredients:red_bean"
     }
   },
   "result": {
     "count": 1,
-    "id": "northeast_china_delight:red_bean_sack"
+    "id": "chinese_regional_culinary_ingredients:red_bean_sack"
   }
 }

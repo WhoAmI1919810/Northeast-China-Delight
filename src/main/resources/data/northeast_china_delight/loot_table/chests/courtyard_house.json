@@ -15,7 +15,7 @@
         },
         {
           "type": "minecraft:item",
-          "name": "northeast_china_delight:corn_seeds",
+          "name": "chinese_regional_culinary_ingredients:corn_seeds",
           "weight": 10,
           "functions": [
             { "function": "minecraft:set_count", "count": { "min": 1, "max": 6 } }
@@ -23,7 +23,7 @@
         },
         {
           "type": "minecraft:item",
-          "name": "northeast_china_delight:napa_cabbage",
+          "name": "chinese_regional_culinary_ingredients:napa_cabbage",
           "weight": 8,
           "functions": [
             { "function": "minecraft:set_count", "count": { "min": 1, "max": 3 } }
@@ -31,7 +31,7 @@
         },
         {
           "type": "minecraft:item",
-          "name": "northeast_china_delight:snow_mustard",
+          "name": "chinese_regional_culinary_ingredients:snow_mustard",
           "weight": 7,
           "functions": [
             { "function": "minecraft:set_count", "count": { "min": 1, "max": 3 } }
@@ -39,7 +39,7 @@
         },
         {
           "type": "minecraft:item",
-          "name": "northeast_china_delight:snow_mustard_seeds",
+          "name": "chinese_regional_culinary_ingredients:snow_mustard_seeds",
           "weight": 6,
           "functions": [
             { "function": "minecraft:set_count", "count": { "min": 1, "max": 3 } }
@@ -47,7 +47,7 @@
         },
         {
           "type": "minecraft:item",
-          "name": "northeast_china_delight:buckwheat",
+          "name": "chinese_regional_culinary_ingredients:buckwheat",
           "weight": 8,
           "functions": [
             { "function": "minecraft:set_count", "count": { "min": 1, "max": 4 } }
@@ -55,7 +55,7 @@
         },
         {
           "type": "minecraft:item",
-          "name": "northeast_china_delight:peanut",
+          "name": "chinese_regional_culinary_ingredients:peanut",
           "weight": 7,
           "functions": [
             { "function": "minecraft:set_count", "count": { "min": 1, "max": 4 } }
@@ -63,7 +63,7 @@
         },
         {
           "type": "minecraft:item",
-          "name": "northeast_china_delight:red_bean",
+          "name": "chinese_regional_culinary_ingredients:red_bean",
           "weight": 7,
           "functions": [
             { "function": "minecraft:set_count", "count": { "min": 1, "max": 4 } }
@@ -71,7 +71,7 @@
         },
         {
           "type": "minecraft:item",
-          "name": "northeast_china_delight:bellflower_root",
+          "name": "chinese_regional_culinary_ingredients:bellflower_root",
           "weight": 5,
           "functions": [
             { "function": "minecraft:set_count", "count": { "min": 1, "max": 2 } }
@@ -79,7 +79,7 @@
         },
         {
           "type": "minecraft:item",
-          "name": "northeast_china_delight:bellflower_seeds",
+          "name": "chinese_regional_culinary_ingredients:bellflower_seeds",
           "weight": 5,
           "functions": [
             { "function": "minecraft:set_count", "count": { "min": 1, "max": 2 } }
@@ -101,14 +101,14 @@
             { "function": "minecraft:set_count", "count": { "min": 1, "max": 3 } }
           ]
         },
-        { "type": "minecraft:item", "name": "northeast_china_delight:salt", "weight": 5 },
-        { "type": "minecraft:item", "name": "northeast_china_delight:dried_tofu", "weight": 4 },
-        { "type": "minecraft:item", "name": "northeast_china_delight:vermicelli", "weight": 4 },
-        { "type": "minecraft:item", "name": "northeast_china_delight:vinegar", "weight": 3 },
-        { "type": "minecraft:item", "name": "northeast_china_delight:soy_paste", "weight": 3 },
+        { "type": "minecraft:item", "name": "chinese_regional_culinary_ingredients:salt", "weight": 5 },
+        { "type": "minecraft:item", "name": "chinese_regional_culinary_ingredients:dried_tofu", "weight": 4 },
+        { "type": "minecraft:item", "name": "chinese_regional_culinary_ingredients:vermicelli", "weight": 4 },
+        { "type": "minecraft:item", "name": "chinese_regional_culinary_ingredients:vinegar", "weight": 3 },
+        { "type": "minecraft:item", "name": "chinese_regional_culinary_ingredients:soy_paste", "weight": 3 },
         {
           "type": "minecraft:item",
-          "name": "northeast_china_delight:corn_flour",
+          "name": "chinese_regional_culinary_ingredients:corn_flour",
           "weight": 3,
           "functions": [
             { "function": "minecraft:set_count", "count": { "min": 1, "max": 3 } }
@@ -116,13 +116,13 @@
         },
         {
           "type": "minecraft:item",
-          "name": "northeast_china_delight:sour_dough",
+          "name": "chinese_regional_culinary_ingredients:sour_dough",
           "weight": 2,
           "functions": [
             { "function": "minecraft:set_count", "count": { "min": 1, "max": 2 } }
           ]
         },
-        { "type": "minecraft:item", "name": "northeast_china_delight:peanut_butter", "weight": 2 },
+        { "type": "minecraft:item", "name": "chinese_regional_culinary_ingredients:peanut_butter", "weight": 2 },
         { "type": "minecraft:empty", "weight": 8 }
       ]
     }

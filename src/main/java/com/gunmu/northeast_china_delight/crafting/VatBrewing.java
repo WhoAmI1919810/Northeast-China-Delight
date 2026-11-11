@@ -1,5 +1,9 @@
 package com.gunmu.northeast_china_delight.crafting;
 
+import com.gunmu.chinese_regional_culinary_ingredients.fluid.CrciFluids;
+
+import com.gunmu.chinese_regional_culinary_ingredients.item.CrciItems;
+
 import com.gunmu.northeast_china_delight.block.Vat;
 import com.gunmu.northeast_china_delight.block.VatBlockEntity;
 import net.minecraft.core.BlockPos;
@@ -438,8 +442,8 @@ public final class VatBrewing {
             }
         }
         if (vat.sourWaterMb() > 0 && held.is(net.minecraft.world.item.Items.GLASS_BOTTLE)) {
-            vat.takeOneServing(com.gunmu.northeast_china_delight.fluid.ModFluids.sourWaterSource());
-            return new ItemStack(com.gunmu.northeast_china_delight.item.ModItems.SOUR_WATER.get());
+            vat.takeOneServing(com.gunmu.chinese_regional_culinary_ingredients.fluid.CrciFluids.sourWaterSource());
+            return new ItemStack(com.gunmu.chinese_regional_culinary_ingredients.item.CrciItems.SOUR_WATER.get());
         }
         return null;
     }

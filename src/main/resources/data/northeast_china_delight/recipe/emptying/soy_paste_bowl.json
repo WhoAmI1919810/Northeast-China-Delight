@@ -8,7 +8,7 @@
   "type": "create:emptying",
   "ingredients": [
     {
-      "item": "northeast_china_delight:soy_paste"
+      "item": "chinese_regional_culinary_ingredients:soy_paste"
     }
   ],
   "results": [
@@ -17,7 +17,7 @@
     },
     {
       "amount": 250,
-      "id": "northeast_china_delight:soy_paste"
+      "id": "chinese_regional_culinary_ingredients:soy_paste"
     }
   ]
 }

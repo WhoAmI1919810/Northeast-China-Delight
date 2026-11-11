@@ -1,7 +1,7 @@
 {
   "values": [
-    "northeast_china_delight:red_chili",
-    "northeast_china_delight:spicy_cabbage",
+    "chinese_regional_culinary_ingredients:red_chili",
+    "chinese_regional_culinary_ingredients:spicy_cabbage",
     {
       "id": "#c:crops/chile_pepper",
       "required": false

@@ -8,11 +8,11 @@
   ],
   "key": {
     "X": {
-      "item": "northeast_china_delight:green_radish"
+      "item": "chinese_regional_culinary_ingredients:green_radish"
     }
   },
   "result": {
     "count": 1,
-    "id": "northeast_china_delight:green_radish_crate"
+    "id": "chinese_regional_culinary_ingredients:green_radish_crate"
   }
 }

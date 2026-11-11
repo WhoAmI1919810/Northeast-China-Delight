@@ -1,7 +1,9 @@
 package com.gunmu.northeast_china_delight.worldgen;
 
+import com.gunmu.chinese_regional_culinary_ingredients.block.CrciBlocks;
+
 import com.gunmu.northeast_china_delight.block.ModBlocks;
-import com.gunmu.northeast_china_delight.block.WildWoodEarBlock;
+import com.gunmu.chinese_regional_culinary_ingredients.block.WildWoodEarBlock;
 import com.gunmu.northeast_china_delight.block.WoodEarRules;
 import com.mojang.serialization.Codec;
 import net.minecraft.core.BlockPos;
@@ -90,7 +92,7 @@ public class WildWoodEarFeature extends Feature<NoneFeatureConfiguration>
             {
                 continue;
             }
-            BlockState ear = ModBlocks.WILD_WOOD_EAR.get().defaultBlockState()
+            BlockState ear = CrciBlocks.WILD_WOOD_EAR.get().defaultBlockState()
                     .setValue(WildWoodEarBlock.FACING, side.getOpposite());
             if (ear.canSurvive(level, target))
             {

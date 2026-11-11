@@ -1,4 +1,0 @@
-{
-  "parent": "minecraft:item/generated",
-  "textures": { "layer0": "northeast_china_delight:item/snow_mustard_seeds" }
-}

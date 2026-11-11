@@ -6,7 +6,7 @@
   },
   "experience": 1.0,
   "ingredients": [
-    { "item": "northeast_china_delight:sour_dough" },
+    { "item": "chinese_regional_culinary_ingredients:sour_dough" },
     { "item": "minecraft:water_bucket" }
   ],
   "recipe_book_tab": "meals",

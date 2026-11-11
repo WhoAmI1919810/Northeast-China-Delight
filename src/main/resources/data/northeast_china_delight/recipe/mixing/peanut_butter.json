@@ -8,13 +8,13 @@
   "type": "create:mixing",
   "ingredients": [
     {
-      "item": "northeast_china_delight:roasted_peanuts"
+      "item": "chinese_regional_culinary_ingredients:roasted_peanuts"
     }
   ],
   "results": [
     {
       "amount": 250,
-      "id": "northeast_china_delight:peanut_butter"
+      "id": "chinese_regional_culinary_ingredients:peanut_butter"
     }
   ]
 }

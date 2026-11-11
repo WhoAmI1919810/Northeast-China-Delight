@@ -1,5 +1,7 @@
 package com.gunmu.northeast_china_delight.client;
 
+import com.gunmu.chinese_regional_culinary_ingredients.item.CrciItems;
+
 import com.gunmu.northeast_china_delight.crafting.VatRecipes;
 import com.gunmu.northeast_china_delight.item.ModItems;
 import net.minecraft.world.item.Item;
@@ -33,12 +35,12 @@ public final class VatItemShapes {
         Item item = stack.getItem();
         int fresh = 0xFFFFFF;
 
-        if (item == ModItems.NAPA_CABBAGE.get() || item == ModItems.SNOW_MUSTARD.get()
-                || item == ModItems.SOUR_CABBAGE.get() || item == ModItems.PICKLED_SNOW_MUSTARD.get()
-                || item == ModItems.SPICY_CABBAGE.get()) {
-            int tint = item == ModItems.SOUR_CABBAGE.get() ? 0xE8F0C8
-                    : item == ModItems.PICKLED_SNOW_MUSTARD.get() ? 0xE8F0C8
-                    : item == ModItems.SPICY_CABBAGE.get() ? 0xFFD8C0 : fresh;
+        if (item == CrciItems.NAPA_CABBAGE.get() || item == CrciItems.SNOW_MUSTARD.get()
+                || item == CrciItems.SOUR_CABBAGE.get() || item == CrciItems.PICKLED_SNOW_MUSTARD.get()
+                || item == CrciItems.SPICY_CABBAGE.get()) {
+            int tint = item == CrciItems.SOUR_CABBAGE.get() ? 0xE8F0C8
+                    : item == CrciItems.PICKLED_SNOW_MUSTARD.get() ? 0xE8F0C8
+                    : item == CrciItems.SPICY_CABBAGE.get() ? 0xFFD8C0 : fresh;
             return List.of(
                     box(0.30F, 0.00F, 0.30F, 0.70F, 0.34F, 0.70F, tint),
                     box(0.14F, 0.30F, 0.14F, 0.86F, 0.70F, 0.86F, tint),
@@ -46,13 +48,13 @@ public final class VatItemShapes {
                     box(0.20F, 0.88F, 0.20F, 0.80F, 1.00F, 0.80F, tint));
         }
 
-        if (item == ModItems.CUCUMBER.get() || item == Items.CARROT
-                || item == ModItems.GREEN_RADISH.get() || item == ModItems.PICKLED_CUCUMBER.get()
-                || item == ModItems.PICKLED_CARROT.get() || item == ModItems.PICKLED_GREEN_RADISH.get()) {
-            boolean pickled = item == ModItems.PICKLED_CUCUMBER.get() || item == ModItems.PICKLED_CARROT.get()
-                    || item == ModItems.PICKLED_GREEN_RADISH.get();
+        if (item == CrciItems.CUCUMBER.get() || item == Items.CARROT
+                || item == CrciItems.GREEN_RADISH.get() || item == CrciItems.PICKLED_CUCUMBER.get()
+                || item == CrciItems.PICKLED_CARROT.get() || item == CrciItems.PICKLED_GREEN_RADISH.get()) {
+            boolean pickled = item == CrciItems.PICKLED_CUCUMBER.get() || item == CrciItems.PICKLED_CARROT.get()
+                    || item == CrciItems.PICKLED_GREEN_RADISH.get();
             int tint = pickled ? 0xF0E0B0 : fresh;
-            boolean leafy = item == Items.CARROT || item == ModItems.GREEN_RADISH.get();
+            boolean leafy = item == Items.CARROT || item == CrciItems.GREEN_RADISH.get();
             List<Box> boxes = new ArrayList<>(List.of(
                     box(0.32F, 0.06F, 0.06F, 0.68F, 0.58F, 0.62F, tint),
                     box(0.36F, 0.10F, 0.60F, 0.64F, 0.52F, 0.86F, tint),
@@ -63,16 +65,16 @@ public final class VatItemShapes {
             return boxes;
         }
 
-        if (item == Items.PORKCHOP || item == ModItems.SALTED_PORK.get()) {
-            int meat = item == ModItems.SALTED_PORK.get() ? 0xE0B8A8 : fresh;
+        if (item == Items.PORKCHOP || item == CrciItems.SALTED_PORK.get()) {
+            int meat = item == CrciItems.SALTED_PORK.get() ? 0xE0B8A8 : fresh;
             return List.of(
                     box(0.06F, 0.06F, 0.12F, 0.86F, 0.46F, 0.88F, meat),
                     box(0.12F, 0.44F, 0.20F, 0.78F, 0.60F, 0.80F, 0xFFE8DC),
                     box(0.78F, 0.08F, 0.34F, 1.00F, 0.34F, 0.56F, 0xFFF4E8));
         }
 
-        if (VatRecipes.isRawFish(stack) || item == ModItems.SALTED_FISH.get()) {
-            int tint = item == ModItems.SALTED_FISH.get() ? 0xE8D4B4 : fresh;
+        if (VatRecipes.isRawFish(stack) || item == CrciItems.SALTED_FISH.get()) {
+            int tint = item == CrciItems.SALTED_FISH.get() ? 0xE8D4B4 : fresh;
             return List.of(
                     box(0.00F, 0.16F, 0.30F, 0.12F, 0.48F, 0.72F, tint),
                     box(0.10F, 0.08F, 0.18F, 0.70F, 0.54F, 0.84F, tint),
@@ -80,7 +82,7 @@ public final class VatItemShapes {
                     box(0.68F, 0.06F, 0.32F, 0.98F, 0.52F, 0.68F, tint));
         }
 
-        if (item == ModItems.SHRIMP.get()) {
+        if (item == CrciItems.SHRIMP.get()) {
             return List.of(
                     box(0.54F, 0.04F, 0.46F, 0.88F, 0.40F, 0.76F, fresh),
                     box(0.30F, 0.08F, 0.30F, 0.60F, 0.48F, 0.66F, 0xFFE0D0),
@@ -88,9 +90,9 @@ public final class VatItemShapes {
                     box(0.02F, 0.20F, 0.34F, 0.14F, 0.46F, 0.56F, fresh));
         }
 
-        if (item == ModItems.CORN_SEEDS.get() || item == ModItems.BUCKWHEAT.get()
-                || item == ModItems.SOYBEAN.get() || item == ModItems.SOUR_CORN_KERNELS.get()) {
-            int tint = item == ModItems.SOUR_CORN_KERNELS.get() ? 0xF0E0A0 : fresh;
+        if (item == CrciItems.CORN_SEEDS.get() || item == CrciItems.BUCKWHEAT.get()
+                || item == CrciItems.SOYBEAN.get() || item == CrciItems.SOUR_CORN_KERNELS.get()) {
+            int tint = item == CrciItems.SOUR_CORN_KERNELS.get() ? 0xF0E0A0 : fresh;
             return List.of(
                     box(0.06F, 0.00F, 0.16F, 0.26F, 0.20F, 0.36F, tint),
                     box(0.30F, 0.00F, 0.06F, 0.52F, 0.22F, 0.28F, tint),
@@ -111,7 +113,7 @@ public final class VatItemShapes {
                     box(0.62F, 0.60F, 0.28F, 0.82F, 0.92F, 0.50F, 0xFFE8A8));
         }
 
-        if (item == ModItems.BEAN_SPROUTS.get()) {
+        if (item == CrciItems.BEAN_SPROUTS.get()) {
             return List.of(
                     box(0.16F, 0.00F, 0.24F, 0.26F, 0.74F, 0.34F, 0xF8FFE8),
                     box(0.12F, 0.72F, 0.20F, 0.30F, 0.92F, 0.38F, 0xE8F0A0),
@@ -129,25 +131,25 @@ public final class VatItemShapes {
                     box(0.56F, 0.60F, 0.32F, 0.78F, 0.68F, 0.68F, 0xB88448));
         }
 
-        if (item == ModItems.SOY_PASTE_CHUNK.get() || item == ModItems.SOY_RESIDUE.get()) {
-            int tint = item == ModItems.SOY_RESIDUE.get() ? 0xD0B090 : fresh;
+        if (item == CrciItems.SOY_PASTE_CHUNK.get() || item == CrciItems.SOY_RESIDUE.get()) {
+            int tint = item == CrciItems.SOY_RESIDUE.get() ? 0xD0B090 : fresh;
             return List.of(
                     box(0.06F, 0.00F, 0.18F, 0.46F, 0.42F, 0.66F, tint),
                     box(0.36F, 0.00F, 0.10F, 0.78F, 0.52F, 0.58F, tint),
                     box(0.24F, 0.34F, 0.44F, 0.66F, 0.78F, 0.90F, tint));
         }
 
-        if (item == ModItems.SALT.get()) {
+        if (item == CrciItems.SALT.get()) {
             return List.of(
                     box(0.10F, 0.00F, 0.10F, 0.90F, 0.16F, 0.90F, fresh),
                     box(0.24F, 0.14F, 0.24F, 0.76F, 0.30F, 0.76F, 0xF4F8FF),
                     box(0.36F, 0.28F, 0.36F, 0.64F, 0.42F, 0.64F, fresh));
         }
 
-        if (item == ModItems.CHILI_SAUCE.get() || item == ModItems.FISH_SAUCE.get()
-                || item == ModItems.SHRIMP_PASTE.get()) {
-            int bodyTint = item == ModItems.CHILI_SAUCE.get() ? 0xFFD8D0
-                    : item == ModItems.FISH_SAUCE.get() ? 0xFFE0B0 : 0xFFD0C0;
+        if (item == CrciItems.CHILI_SAUCE.get() || item == CrciItems.FISH_SAUCE.get()
+                || item == CrciItems.SHRIMP_PASTE.get()) {
+            int bodyTint = item == CrciItems.CHILI_SAUCE.get() ? 0xFFD8D0
+                    : item == CrciItems.FISH_SAUCE.get() ? 0xFFE0B0 : 0xFFD0C0;
             return List.of(
                     box(0.28F, 0.00F, 0.28F, 0.72F, 0.54F, 0.72F, bodyTint),
                     box(0.34F, 0.52F, 0.34F, 0.66F, 0.70F, 0.66F, fresh),
@@ -155,7 +157,7 @@ public final class VatItemShapes {
                     box(0.38F, 0.84F, 0.38F, 0.62F, 0.98F, 0.62F, 0xE0E0E8));
         }
 
-        if (item == ModItems.WATER_DOUGH.get()) {
+        if (item == CrciItems.WATER_DOUGH.get()) {
             return List.of(
                     box(0.10F, 0.00F, 0.10F, 0.90F, 0.34F, 0.90F, fresh),
                     box(0.20F, 0.32F, 0.20F, 0.80F, 0.56F, 0.80F, 0xF4F0E8));
@@ -176,9 +178,9 @@ public final class VatItemShapes {
      */
     static float heightScale(ItemStack stack) {
         Item item = stack.getItem();
-        if (item == ModItems.NAPA_CABBAGE.get() || item == ModItems.SNOW_MUSTARD.get()
-                || item == ModItems.SOUR_CABBAGE.get() || item == ModItems.PICKLED_SNOW_MUSTARD.get()
-                || item == ModItems.SPICY_CABBAGE.get()) {
+        if (item == CrciItems.NAPA_CABBAGE.get() || item == CrciItems.SNOW_MUSTARD.get()
+                || item == CrciItems.SOUR_CABBAGE.get() || item == CrciItems.PICKLED_SNOW_MUSTARD.get()
+                || item == CrciItems.SPICY_CABBAGE.get()) {
             return 1.16F;
         }
         return 1.0F;
@@ -186,16 +188,16 @@ public final class VatItemShapes {
 
     public static int liquidTint(ItemStack stack) {
         Item item = stack.getItem();
-        if (item == ModItems.CHILI_SAUCE.get()) {
+        if (item == CrciItems.CHILI_SAUCE.get()) {
             return 0xE0553C;
         }
-        if (item == ModItems.SOY_PASTE_CHUNK.get() || item == ModItems.SOY_RESIDUE.get()) {
+        if (item == CrciItems.SOY_PASTE_CHUNK.get() || item == CrciItems.SOY_RESIDUE.get()) {
             return 0x6E4A26;
         }
-        if (item == ModItems.FISH_SAUCE.get()) {
+        if (item == CrciItems.FISH_SAUCE.get()) {
             return 0xB0703A;
         }
-        if (item == ModItems.SHRIMP_PASTE.get()) {
+        if (item == CrciItems.SHRIMP_PASTE.get()) {
             return 0xC0603A;
         }
         if (VatRecipes.isRawFish(stack)) {
@@ -204,22 +206,22 @@ public final class VatItemShapes {
         if (item == Items.PORKCHOP) {
             return 0xE0A0A0;
         }
-        if (item == ModItems.SHRIMP.get()) {
+        if (item == CrciItems.SHRIMP.get()) {
             return 0xE8A88C;
         }
-        if (item == ModItems.NAPA_CABBAGE.get() || item == ModItems.SNOW_MUSTARD.get()
-                || item == ModItems.CUCUMBER.get()
-                || item == ModItems.GREEN_RADISH.get() || item == Items.CARROT
-                || item == ModItems.SOUR_CABBAGE.get() || item == ModItems.PICKLED_SNOW_MUSTARD.get()
-                || item == ModItems.SPICY_CABBAGE.get()) {
+        if (item == CrciItems.NAPA_CABBAGE.get() || item == CrciItems.SNOW_MUSTARD.get()
+                || item == CrciItems.CUCUMBER.get()
+                || item == CrciItems.GREEN_RADISH.get() || item == Items.CARROT
+                || item == CrciItems.SOUR_CABBAGE.get() || item == CrciItems.PICKLED_SNOW_MUSTARD.get()
+                || item == CrciItems.SPICY_CABBAGE.get()) {
             return 0xA8C070;
         }
-        if (item == Items.BREAD || item == ModItems.CORN_SEEDS.get() || item == ModItems.BUCKWHEAT.get()
-                || item == Items.WHEAT || item == ModItems.SOYBEAN.get()
-                || item == ModItems.BEAN_SPROUTS.get() || item == ModItems.SOUR_CORN_KERNELS.get()) {
+        if (item == Items.BREAD || item == CrciItems.CORN_SEEDS.get() || item == CrciItems.BUCKWHEAT.get()
+                || item == Items.WHEAT || item == CrciItems.SOYBEAN.get()
+                || item == CrciItems.BEAN_SPROUTS.get() || item == CrciItems.SOUR_CORN_KERNELS.get()) {
             return 0xE0C078;
         }
-        if (item == ModItems.SALT.get()) {
+        if (item == CrciItems.SALT.get()) {
             return 0xF2F6FF;
         }
         return 0xFFFFFF;
@@ -227,19 +229,19 @@ public final class VatItemShapes {
 
     public static float liquidStrength(ItemStack stack) {
         Item item = stack.getItem();
-        if (item == ModItems.CHILI_SAUCE.get()) {
+        if (item == CrciItems.CHILI_SAUCE.get()) {
             return 0.72F;
         }
-        if (item == ModItems.SOY_PASTE_CHUNK.get() || item == ModItems.SOY_RESIDUE.get()) {
+        if (item == CrciItems.SOY_PASTE_CHUNK.get() || item == CrciItems.SOY_RESIDUE.get()) {
             return 0.62F;
         }
-        if (item == ModItems.FISH_SAUCE.get() || item == ModItems.SHRIMP_PASTE.get()) {
+        if (item == CrciItems.FISH_SAUCE.get() || item == CrciItems.SHRIMP_PASTE.get()) {
             return 0.55F;
         }
-        if (VatRecipes.isRawFish(stack) || item == Items.PORKCHOP || item == ModItems.SHRIMP.get()) {
+        if (VatRecipes.isRawFish(stack) || item == Items.PORKCHOP || item == CrciItems.SHRIMP.get()) {
             return 0.28F;
         }
-        if (item == ModItems.SALT.get()) {
+        if (item == CrciItems.SALT.get()) {
             return 0.5F;
         }
         return 0.26F;

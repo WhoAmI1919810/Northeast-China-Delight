@@ -1,5 +1,7 @@
 package com.gunmu.northeast_china_delight.villager;
 
+import com.gunmu.chinese_regional_culinary_ingredients.item.CrciItems;
+
 import com.gunmu.northeast_china_delight.item.ModItems;
 import net.minecraft.world.entity.npc.VillagerTrades;
 import net.minecraft.world.item.Item;
@@ -33,15 +35,15 @@ public final class ModWandererTrades
     }
 
     private static final List<Item> SEEDS = List.of(
-            ModItems.NAPA_CABBAGE_SEEDS.get(), ModItems.CUCUMBER_SEEDS.get(),
-            ModItems.GREEN_RADISH_SEEDS.get(), ModItems.GREEN_ONION_SEEDS.get(),
-            ModItems.EGGPLANT_SEEDS.get(), ModItems.GREEN_PEPPER_SEEDS.get(),
-            ModItems.RED_CHILI_SEEDS.get(), ModItems.GREEN_BEANS_SEEDS.get(),
-            ModItems.CORN_SEEDS.get(), ModItems.SOYBEAN.get(),
-            ModItems.BUCKWHEAT.get(), ModItems.SWEET_POTATO.get(),
-            ModItems.PEANUT.get(), ModItems.RED_BEAN.get(),
-            ModItems.HAZELNUT.get(), ModItems.BELLFLOWER_SEEDS.get(),
-            ModItems.SNOW_MUSTARD_SEEDS.get());
+            CrciItems.NAPA_CABBAGE_SEEDS.get(), CrciItems.CUCUMBER_SEEDS.get(),
+            CrciItems.GREEN_RADISH_SEEDS.get(), CrciItems.GREEN_ONION_SEEDS.get(),
+            CrciItems.EGGPLANT_SEEDS.get(), CrciItems.GREEN_PEPPER_SEEDS.get(),
+            CrciItems.RED_CHILI_SEEDS.get(), CrciItems.GREEN_BEANS_SEEDS.get(),
+            CrciItems.CORN_SEEDS.get(), CrciItems.SOYBEAN.get(),
+            CrciItems.BUCKWHEAT.get(), CrciItems.SWEET_POTATO.get(),
+            CrciItems.PEANUT.get(), CrciItems.RED_BEAN.get(),
+            CrciItems.HAZELNUT.get(), CrciItems.BELLFLOWER_SEEDS.get(),
+            CrciItems.SNOW_MUSTARD_SEEDS.get());
 
     public static void addTrades(WandererTradesEvent event)
     {
@@ -51,10 +53,10 @@ public final class ModWandererTrades
         // 特殊货：山参（48~64 绿宝石 1 根，一次只卖一根 —— 雪地里刨出来的东西，不该白菜价）
         rare.add(ginsengListing());
 
-        generic.add(new BasicItemListing(1, new ItemStack(ModItems.HAZELNUT.get()), 12, 1));
-        generic.add(new BasicItemListing(1, new ItemStack(ModItems.HAZEL_MUSHROOM.get()), 12, 1));
-        generic.add(new BasicItemListing(1, new ItemStack(ModItems.WOOD_EAR.get()), 12, 1));
-        generic.add(new BasicItemListing(1, new ItemStack(ModItems.BELLFLOWER_ROOT.get()), 12, 1));
+        generic.add(new BasicItemListing(1, new ItemStack(CrciItems.HAZELNUT.get()), 12, 1));
+        generic.add(new BasicItemListing(1, new ItemStack(CrciItems.HAZEL_MUSHROOM.get()), 12, 1));
+        generic.add(new BasicItemListing(1, new ItemStack(CrciItems.WOOD_EAR.get()), 12, 1));
+        generic.add(new BasicItemListing(1, new ItemStack(CrciItems.BELLFLOWER_ROOT.get()), 12, 1));
         for (Item seed : SEEDS)
         {
             generic.add(new BasicItemListing(1, new ItemStack(seed), 12, 1));
@@ -69,7 +71,7 @@ public final class ModWandererTrades
             return new MerchantOffer(
                     new ItemStack(Items.EMERALD, price),
                     ItemStack.EMPTY,
-                    new ItemStack(ModItems.GINSENG.get()),
+                    new ItemStack(CrciItems.GINSENG.get()),
                     1,
                     1,
                     0.0F);
@@ -77,7 +79,7 @@ public final class ModWandererTrades
             /*return new MerchantOffer(
                     new ItemCost(Items.EMERALD, price),
                     Optional.empty(),
-                    new ItemStack(ModItems.GINSENG.get()),
+                    new ItemStack(CrciItems.GINSENG.get()),
                     1,
                     1,
                     0.0F);

@@ -1,7 +1,7 @@
 {
   "replace": false,
   "values": [
-    "northeast_china_delight:cooking_oil",
-    "northeast_china_delight:animal_oil"
+    "chinese_regional_culinary_ingredients:cooking_oil",
+    "chinese_regional_culinary_ingredients:animal_oil"
   ]
 }

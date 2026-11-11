@@ -2,7 +2,7 @@
   "parent": "northeast_china_delight:sauerkraut",
   "display": {
     "icon": {
-      "id": "northeast_china_delight:spicy_cabbage"
+      "id": "chinese_regional_culinary_ingredients:spicy_cabbage"
     },
     "title": {
       "translate": "advancements.northeast_china_delight.vat_master.title"
@@ -21,11 +21,11 @@
         "items": [
           {
             "items": [
-              "northeast_china_delight:sour_cabbage",
-              "northeast_china_delight:pickled_snow_mustard",
-              "northeast_china_delight:pickled_cucumber",
-              "northeast_china_delight:pickled_carrot",
-              "northeast_china_delight:pickled_green_radish"
+              "chinese_regional_culinary_ingredients:sour_cabbage",
+              "chinese_regional_culinary_ingredients:pickled_snow_mustard",
+              "chinese_regional_culinary_ingredients:pickled_cucumber",
+              "chinese_regional_culinary_ingredients:pickled_carrot",
+              "chinese_regional_culinary_ingredients:pickled_green_radish"
             ]
           }
         ]
@@ -37,7 +37,7 @@
         "items": [
           {
             "items": [
-              "northeast_china_delight:spicy_cabbage"
+              "chinese_regional_culinary_ingredients:spicy_cabbage"
             ]
           }
         ]
@@ -49,7 +49,7 @@
         "items": [
           {
             "items": [
-              "northeast_china_delight:salted_pork"
+              "chinese_regional_culinary_ingredients:salted_pork"
             ]
           }
         ]
@@ -61,7 +61,7 @@
         "items": [
           {
             "items": [
-              "northeast_china_delight:salted_fish"
+              "chinese_regional_culinary_ingredients:salted_fish"
             ]
           }
         ]
@@ -73,7 +73,7 @@
         "items": [
           {
             "items": [
-              "northeast_china_delight:soy_paste"
+              "chinese_regional_culinary_ingredients:soy_paste"
             ]
           }
         ]
@@ -85,7 +85,7 @@
         "items": [
           {
             "items": [
-              "northeast_china_delight:soy_sauce"
+              "chinese_regional_culinary_ingredients:soy_sauce"
             ]
           }
         ]
@@ -97,7 +97,7 @@
         "items": [
           {
             "items": [
-              "northeast_china_delight:vinegar"
+              "chinese_regional_culinary_ingredients:vinegar"
             ]
           }
         ]
@@ -109,7 +109,7 @@
         "items": [
           {
             "items": [
-              "northeast_china_delight:white_vinegar"
+              "chinese_regional_culinary_ingredients:white_vinegar"
             ]
           }
         ]
@@ -121,7 +121,7 @@
         "items": [
           {
             "items": [
-              "northeast_china_delight:fish_sauce"
+              "chinese_regional_culinary_ingredients:fish_sauce"
             ]
           }
         ]
@@ -133,7 +133,7 @@
         "items": [
           {
             "items": [
-              "northeast_china_delight:shrimp_paste"
+              "chinese_regional_culinary_ingredients:shrimp_paste"
             ]
           }
         ]
@@ -145,7 +145,7 @@
         "items": [
           {
             "items": [
-              "northeast_china_delight:bean_sprouts"
+              "chinese_regional_culinary_ingredients:bean_sprouts"
             ]
           }
         ]
@@ -157,7 +157,7 @@
         "items": [
           {
             "items": [
-              "northeast_china_delight:sour_corn_kernels"
+              "chinese_regional_culinary_ingredients:sour_corn_kernels"
             ]
           }
         ]

@@ -1,5 +1,7 @@
 package com.gunmu.northeast_china_delight.loot;
 
+import com.gunmu.chinese_regional_culinary_ingredients.item.CrciItems;
+
 import com.gunmu.northeast_china_delight.item.ModItems;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
@@ -41,18 +43,18 @@ public class NortheastFishingLootModifier extends LootModifier
     private static final Entry[] GENERAL = {
             new Entry(() -> Items.COD, 45), new Entry(() -> Items.SALMON, 25),
             new Entry(() -> Items.PUFFERFISH, 13), new Entry(() -> Items.TROPICAL_FISH, 2),
-            new Entry(ModItems.SHRIMP, 15)
+            new Entry(CrciItems.SHRIMP, 15)
     };
 
     private static final Entry[] OYSTER = {
             new Entry(() -> Items.COD, 30), new Entry(() -> Items.SALMON, 25),
             new Entry(() -> Items.PUFFERFISH, 13), new Entry(() -> Items.TROPICAL_FISH, 2),
-            new Entry(ModItems.SHRIMP, 15), new Entry(ModItems.OYSTER, 15)
+            new Entry(CrciItems.SHRIMP, 15), new Entry(CrciItems.OYSTER, 15)
     };
 
     private static final Entry[] HAIRTAIL = {
             new Entry(() -> Items.COD, 25), new Entry(() -> Items.SALMON, 25),
-            new Entry(ModItems.HAIRTAIL, 25), new Entry(ModItems.SEA_CUCUMBER, 25)
+            new Entry(CrciItems.HAIRTAIL, 25), new Entry(CrciItems.SEA_CUCUMBER, 25)
     };
 
     //? if <1.20.5 {

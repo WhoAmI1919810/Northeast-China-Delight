@@ -1,5 +1,9 @@
 package com.gunmu.northeast_china_delight.client;
 
+import com.gunmu.chinese_regional_culinary_ingredients.fluid.CrciFluids;
+
+import com.gunmu.chinese_regional_culinary_ingredients.item.CrciItems;
+
 import com.gunmu.northeast_china_delight.block.Vat;
 import com.gunmu.northeast_china_delight.block.VatBlockEntity;
 import com.gunmu.northeast_china_delight.crafting.VatRecipe;
@@ -64,7 +68,7 @@ public class VatRenderer implements BlockEntityRenderer<VatBlockEntity> {
             net.minecraft.world.level.material.Fluid product = VatRecipes.productOf(vat);
             int amount = product == null ? 0 : vat.productMb(product);
             // 酸引水的水面由方块状态里的 water_level 模型画，这里再画会叠出两层
-            if (product != null && amount > 0 && !product.isSame(ModFluids.sourWaterSource())) {
+            if (product != null && amount > 0 && !product.isSame(CrciFluids.sourWaterSource())) {
                 float ratio = amount / (float) capacityOf(product);
                 renderFluidSurface(pose, buffer, product, 0.10F + 0.72F * ratio, light);
             }
@@ -86,10 +90,10 @@ public class VatRenderer implements BlockEntityRenderer<VatBlockEntity> {
         if (vat.chiliSauceCount() > 0) {
             seasoningTint = 0xE0553C;
             seasoningAmount = 0.45F;
-        } else if (vat.countOf(ModItems.FISH_SAUCE.get()) > 0) {
+        } else if (vat.countOf(CrciItems.FISH_SAUCE.get()) > 0) {
             seasoningTint = 0xB0703A;
             seasoningAmount = 0.34F;
-        } else if (vat.countOf(ModItems.SHRIMP_PASTE.get()) > 0) {
+        } else if (vat.countOf(CrciItems.SHRIMP_PASTE.get()) > 0) {
             seasoningTint = 0xC0603A;
             seasoningAmount = 0.34F;
         }
@@ -103,7 +107,7 @@ public class VatRenderer implements BlockEntityRenderer<VatBlockEntity> {
                 continue;
             }
             if (done && (vat.kind() == VatRecipes.Kind.PASTE || vat.kind() == VatRecipes.Kind.SOY_SAUCE)) {
-                if (content.is(ModItems.SOY_PASTE_CHUNK.get())) {
+                if (content.is(CrciItems.SOY_PASTE_CHUNK.get())) {
                     continue;
                 }
                 if (vat.kind() == VatRecipes.Kind.SOY_SAUCE && content.is(com.gunmu.northeast_china_delight.ModTags.CROPS_WHEAT)) {
@@ -213,7 +217,7 @@ public class VatRenderer implements BlockEntityRenderer<VatBlockEntity> {
         if (fluid.isSame(ModFluids.kvassSource())) {
             return VatRecipes.KVASS_SERVINGS * VatRecipes.SERVING_MB;
         }
-        if (fluid.isSame(ModFluids.sourWaterSource())) {
+        if (fluid.isSame(CrciFluids.sourWaterSource())) {
             return VatRecipes.SOUR_WATER_MB;
         }
         return VatRecipes.PRODUCT_CAPACITY_MB;
@@ -284,9 +288,9 @@ public class VatRenderer implements BlockEntityRenderer<VatBlockEntity> {
 
     private static boolean isSeasoning(ItemStack stack) {
         return stack.is(com.gunmu.northeast_china_delight.ModTags.FOODS_SALT)
-                || stack.is(ModItems.CHILI_SAUCE.get())
-                || stack.is(ModItems.FISH_SAUCE.get())
-                || stack.is(ModItems.SHRIMP_PASTE.get());
+                || stack.is(CrciItems.CHILI_SAUCE.get())
+                || stack.is(CrciItems.FISH_SAUCE.get())
+                || stack.is(CrciItems.SHRIMP_PASTE.get());
     }
 
     private static void renderShape(PoseStack pose, MultiBufferSource buffer, ItemStack stack,

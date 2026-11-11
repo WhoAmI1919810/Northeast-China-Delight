@@ -4,28 +4,28 @@
   "ingredients": [
     {
       "type": "neoforge:components",
-      "items": "northeast_china_delight:animal_oil",
+      "items": "chinese_regional_culinary_ingredients:animal_oil",
       "components": {
         "minecraft:damage": 0
       }
     },
     {
       "type": "neoforge:components",
-      "items": "northeast_china_delight:animal_oil",
+      "items": "chinese_regional_culinary_ingredients:animal_oil",
       "components": {
         "minecraft:damage": 0
       }
     },
     {
       "type": "neoforge:components",
-      "items": "northeast_china_delight:animal_oil",
+      "items": "chinese_regional_culinary_ingredients:animal_oil",
       "components": {
         "minecraft:damage": 0
       }
     },
     {
       "type": "neoforge:components",
-      "items": "northeast_china_delight:animal_oil",
+      "items": "chinese_regional_culinary_ingredients:animal_oil",
       "components": {
         "minecraft:damage": 0
       }

@@ -1,7 +1,7 @@
 {
   "type": "northeast_china_delight:grill",
   "config": {
-    "input": {"item": "northeast_china_delight:cold_noodle_sheet"},
+    "input": {"item": "chinese_regional_culinary_ingredients:cold_noodle_sheet"},
     "seasonings": [
       [{"tag": "c:foods/seasonings/chili_sauce"}, {"item": "farmersdelight:tomato_sauce"}],
       {"tag": "c:eggs"},

@@ -9,7 +9,7 @@
   "ingredients": [
     {
       "type": "neoforge:components",
-      "items": "northeast_china_delight:shrimp_paste",
+      "items": "chinese_regional_culinary_ingredients:shrimp_paste",
       "components": {
         "minecraft:damage": 0
       },
@@ -22,7 +22,7 @@
     },
     {
       "amount": 250,
-      "id": "northeast_china_delight:shrimp_paste"
+      "id": "chinese_regional_culinary_ingredients:shrimp_paste"
     }
   ]
 }

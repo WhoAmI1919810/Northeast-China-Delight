@@ -1,5 +1,7 @@
 package com.gunmu.northeast_china_delight.compat.jei;
 
+import com.gunmu.chinese_regional_culinary_ingredients.item.CrciItems;
+
 import com.gunmu.northeast_china_delight.crafting.VatRecipes;
 import com.gunmu.northeast_china_delight.block.ModBlocks;
 import com.gunmu.northeast_china_delight.item.ModItems;
@@ -102,17 +104,17 @@ public class NortheastJeiPlugin implements IModPlugin {
             *///?}
         }
         Component ginsengInfo = Component.translatable("jei.northeast_china_delight.info.ginseng");
-        registration.addItemStackInfo(new ItemStack(ModItems.GINSENG.get()), ginsengInfo);
-        registration.addItemStackInfo(new ItemStack(ModItems.GINSENG_SEEDS.get()), ginsengInfo);
-        registration.addItemStackInfo(new ItemStack(ModItems.WOOD_EAR.get()),
+        registration.addItemStackInfo(new ItemStack(CrciItems.GINSENG.get()), ginsengInfo);
+        registration.addItemStackInfo(new ItemStack(CrciItems.GINSENG_SEEDS.get()), ginsengInfo);
+        registration.addItemStackInfo(new ItemStack(CrciItems.WOOD_EAR.get()),
                 Component.translatable("jei.northeast_china_delight.info.wood_ear"));
-        registration.addItemStackInfo(new ItemStack(ModItems.HAZEL_MUSHROOM.get()),
+        registration.addItemStackInfo(new ItemStack(CrciItems.HAZEL_MUSHROOM.get()),
                 Component.translatable("jei.northeast_china_delight.info.hazel_mushroom"));
-        registration.addItemStackInfo(new ItemStack(ModItems.HAIRTAIL.get()),
+        registration.addItemStackInfo(new ItemStack(CrciItems.HAIRTAIL.get()),
                 Component.translatable("jei.northeast_china_delight.info.hairtail"));
-        registration.addItemStackInfo(new ItemStack(ModItems.OYSTER.get()),
+        registration.addItemStackInfo(new ItemStack(CrciItems.OYSTER.get()),
                 Component.translatable("jei.northeast_china_delight.info.oyster"));
-        registration.addItemStackInfo(new ItemStack(ModItems.SEA_CUCUMBER.get()),
+        registration.addItemStackInfo(new ItemStack(CrciItems.SEA_CUCUMBER.get()),
                 Component.translatable("jei.northeast_china_delight.info.sea_cucumber"));
         // 棉门帘、大花布门帘是普通门帘在织布机里染出来的，不是合成配方
         registration.addItemStackInfo(java.util.List.of(new ItemStack(ModBlocks.PLAIN_DOOR_CURTAIN.get()),
@@ -142,25 +144,25 @@ public class NortheastJeiPlugin implements IModPlugin {
         // 谜之炖菜不是配方煮的：大锅里凑不上配方时盖上锅盖煮出来
         registration.addItemStackInfo(new ItemStack(ModItems.MYSTERY_STEW.get()),
                 Component.translatable("jei.northeast_china_delight.info.mystery_stew"));
-        registration.addItemStackInfo(new ItemStack(ModItems.SALT.get()),
+        registration.addItemStackInfo(new ItemStack(CrciItems.SALT.get()),
                 Component.translatable("jei.northeast_china_delight.info.salt"));
         // 手持小刀宰猪掉的副产物（PigOffalLootModifier），连着火时的熏制版一起，共用一页
         registration.addItemStackInfo(java.util.List.of(
-                        new ItemStack(ModItems.PORK_RIBS.get()), new ItemStack(ModItems.PORK_INTESTINE.get()),
-                        new ItemStack(ModItems.PORK_HOCK.get()), new ItemStack(ModItems.PIG_BLOOD.get()),
-                        new ItemStack(ModItems.PIG_LIVER.get()), new ItemStack(ModItems.PORK_FAT.get()),
-                        new ItemStack(ModItems.OIL_EDGE.get()),
-                        new ItemStack(ModItems.SMOKED_PORK_HOCK.get()), new ItemStack(ModItems.SMOKED_PIG_LIVER.get())),
+                        new ItemStack(CrciItems.PORK_RIBS.get()), new ItemStack(CrciItems.PORK_INTESTINE.get()),
+                        new ItemStack(CrciItems.PORK_HOCK.get()), new ItemStack(CrciItems.PIG_BLOOD.get()),
+                        new ItemStack(CrciItems.PIG_LIVER.get()), new ItemStack(CrciItems.PORK_FAT.get()),
+                        new ItemStack(CrciItems.OIL_EDGE.get()),
+                        new ItemStack(CrciItems.SMOKED_PORK_HOCK.get()), new ItemStack(CrciItems.SMOKED_PIG_LIVER.get())),
                 Component.translatable("jei.northeast_china_delight.info.pig_offal"));
         // 冻梨、黄桃罐头共用一页（2026-11-05 用户）：平时只能买（冻梨农民卖，黄桃罐头副食商卖）；
         // 第二句告诉没装果园乐事的人，装了就能用它的梨、桃子自己做（大缸冻梨、厨锅黄桃罐头），所以不管装没装都显示
-        registration.addItemStackInfo(java.util.List.of(new ItemStack(ModItems.FROZEN_PEAR.get()),
+        registration.addItemStackInfo(java.util.List.of(new ItemStack(CrciItems.FROZEN_PEAR.get()),
                         new ItemStack(ModItems.CANNED_YELLOW_PEACH.get())),
                 Component.translatable("jei.northeast_china_delight.info.frozen_pear_canned_peach"),
                 Component.translatable("jei.northeast_china_delight.info.frozen_pear_canned_peach.fruitsdelight"));
         Component bellflowerInfo = Component.translatable("jei.northeast_china_delight.info.bellflower");
-        registration.addItemStackInfo(new ItemStack(ModItems.BELLFLOWER_ROOT.get()), bellflowerInfo);
-        registration.addItemStackInfo(new ItemStack(ModItems.BELLFLOWER_SEEDS.get()), bellflowerInfo);
+        registration.addItemStackInfo(new ItemStack(CrciItems.BELLFLOWER_ROOT.get()), bellflowerInfo);
+        registration.addItemStackInfo(new ItemStack(CrciItems.BELLFLOWER_SEEDS.get()), bellflowerInfo);
     }
 
     @Override

@@ -1,8 +1,8 @@
 {
   "values": [
-    "northeast_china_delight:salted_pork",
-    "northeast_china_delight:raw_sausage",
-    "northeast_china_delight:red_sausage",
+    "chinese_regional_culinary_ingredients:salted_pork",
+    "chinese_regional_culinary_ingredients:raw_sausage",
+    "chinese_regional_culinary_ingredients:red_sausage",
     "minecraft:beef",
     "minecraft:porkchop",
     "minecraft:mutton",

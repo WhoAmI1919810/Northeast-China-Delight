@@ -23,7 +23,7 @@
           "type": "per_layer_exact",
           "count": 2
         },
-        "result": "northeast_china_delight:sour_corn_kernels"
+        "result": "chinese_regional_culinary_ingredients:sour_corn_kernels"
       }
     ],
     "biome_seconds": {
@@ -34,13 +34,13 @@
     "display_models": [
       {
         "ingredient": {
-          "item": "northeast_china_delight:sour_corn_kernels"
+          "item": "chinese_regional_culinary_ingredients:sour_corn_kernels"
         },
         "model": "northeast_china_delight:block/vat/sour_corn_kernels"
       },
       {
         "ingredient": {
-          "item": "northeast_china_delight:corn_seeds"
+          "item": "chinese_regional_culinary_ingredients:corn_seeds"
         },
         "model": "northeast_china_delight:block/vat/corn_seeds"
       },

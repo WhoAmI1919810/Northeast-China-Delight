@@ -13,12 +13,12 @@
     {
       "type": "neoforge:single",
       "amount": 250,
-      "fluid": "northeast_china_delight:chili_oil"
+      "fluid": "chinese_regional_culinary_ingredients:chili_oil"
     }
   ],
   "results": [
     {
-      "id": "northeast_china_delight:chili_oil"
+      "id": "chinese_regional_culinary_ingredients:chili_oil"
     }
   ]
 }

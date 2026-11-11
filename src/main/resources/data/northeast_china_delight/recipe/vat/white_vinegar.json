@@ -14,7 +14,7 @@
       "water_after": "KEEP",
       "sour_water_mb": 3000,
       "sour_water_after": "DRAIN_REQUIRED",
-      "product": "northeast_china_delight:white_vinegar",
+      "product": "chinese_regional_culinary_ingredients:white_vinegar",
       "product_mb": 2500
     },
     "slots": [
@@ -38,7 +38,7 @@
     "display_models": [
       {
         "ingredient": {
-          "item": "northeast_china_delight:corn_seeds"
+          "item": "chinese_regional_culinary_ingredients:corn_seeds"
         },
         "model": "northeast_china_delight:block/vat/corn_seeds"
       },
@@ -50,7 +50,7 @@
       },
       {
         "ingredient": {
-          "item": "northeast_china_delight:buckwheat"
+          "item": "chinese_regional_culinary_ingredients:buckwheat"
         },
         "model": "northeast_china_delight:block/vat/buckwheat"
       },

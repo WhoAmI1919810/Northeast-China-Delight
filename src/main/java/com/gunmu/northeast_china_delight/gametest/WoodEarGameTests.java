@@ -1,10 +1,14 @@
 package com.gunmu.northeast_china_delight.gametest;
 
+import com.gunmu.chinese_regional_culinary_ingredients.block.CrciBlocks;
+
+import com.gunmu.chinese_regional_culinary_ingredients.item.CrciItems;
+
 import com.gunmu.northeast_china_delight.NortheastChinaDelight;
 import com.gunmu.northeast_china_delight.NortheastChinaConfig;
 import com.gunmu.northeast_china_delight.block.ModBlocks;
-import com.gunmu.northeast_china_delight.block.WildWoodEarBlock;
-import com.gunmu.northeast_china_delight.block.WoodEarCropBlock;
+import com.gunmu.chinese_regional_culinary_ingredients.block.WildWoodEarBlock;
+import com.gunmu.chinese_regional_culinary_ingredients.block.WoodEarCropBlock;
 import com.gunmu.northeast_china_delight.block.WoodEarRules;
 import com.gunmu.northeast_china_delight.item.ModItems;
 import com.gunmu.northeast_china_delight.worldgen.WildWoodEarFeature;
@@ -58,7 +62,7 @@ public final class WoodEarGameTests {
     }
 
     private static BlockState crop(int age) {
-        return ModBlocks.WOOD_EAR_CROP.get().defaultBlockState()
+        return CrciBlocks.WOOD_EAR_CROP.get().defaultBlockState()
                 .setValue(WoodEarCropBlock.FACING, Direction.NORTH)
                 .setValue(WoodEarCropBlock.AGE, age);
     }
@@ -81,13 +85,13 @@ public final class WoodEarGameTests {
     public static void woodEarIsPlantedOnTheSideOfALog(GameTestHelper helper) {
         helper.setBlock(LOG, Blocks.OAK_LOG);
         Player player = survivalPlayer(helper);
-        ItemStack ears = new ItemStack(ModItems.WOOD_EAR.get(), 2);
+        ItemStack ears = new ItemStack(CrciItems.WOOD_EAR.get(), 2);
         player.setItemInHand(InteractionHand.MAIN_HAND, ears);
         BlockPos log = helper.absolutePos(LOG);
         BlockHitResult hit = new BlockHitResult(Vec3.atCenterOf(log).add(0.0, 0.0, 0.5), Direction.SOUTH, log, false);
         ears.useOn(new UseOnContext(player, InteractionHand.MAIN_HAND, hit));
         BlockState planted = helper.getLevel().getBlockState(helper.absolutePos(EAR));
-        helper.assertTrue(planted.is(ModBlocks.WOOD_EAR_CROP.get())
+        helper.assertTrue(planted.is(CrciBlocks.WOOD_EAR_CROP.get())
                         && planted.getValue(WoodEarCropBlock.FACING) == Direction.NORTH
                         && planted.getValue(WoodEarCropBlock.AGE) == 0
                         && player.getMainHandItem().getCount() == 1,
@@ -103,9 +107,9 @@ public final class WoodEarGameTests {
         BlockState after = helper.getLevel().getBlockState(helper.absolutePos(EAR));
         int dropped = helper.getLevel().getEntitiesOfClass(ItemEntity.class,
                         new AABB(helper.absolutePos(EAR)).inflate(2.0),
-                        entity -> entity.getItem().is(ModItems.WOOD_EAR.get()))
+                        entity -> entity.getItem().is(CrciItems.WOOD_EAR.get()))
                 .stream().mapToInt(entity -> entity.getItem().getCount()).sum();
-        helper.assertTrue(after.is(ModBlocks.WOOD_EAR_CROP.get())
+        helper.assertTrue(after.is(CrciBlocks.WOOD_EAR_CROP.get())
                         && after.getValue(WoodEarCropBlock.AGE) == WoodEarCropBlock.REGROW_AGE
                         && dropped >= 2 && dropped <= 3,
                 "成熟木耳右键应收 2~3 个，并退回小耳接着长");
@@ -126,7 +130,7 @@ public final class WoodEarGameTests {
         boolean found = false;
         for (Direction side : Direction.Plane.HORIZONTAL) {
             BlockState state = helper.getLevel().getBlockState(helper.absolutePos(tree.relative(side)));
-            if (state.is(ModBlocks.WILD_WOOD_EAR.get()) && state.getValue(WildWoodEarBlock.FACING) == side.getOpposite()) {
+            if (state.is(CrciBlocks.WILD_WOOD_EAR.get()) && state.getValue(WildWoodEarBlock.FACING) == side.getOpposite()) {
                 found = true;
             }
         }

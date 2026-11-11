@@ -7,62 +7,62 @@
       "entries": [
         {
           "type": "minecraft:item",
-          "name": "northeast_china_delight:salt",
+          "name": "chinese_regional_culinary_ingredients:salt",
           "weight": 10
         },
         {
           "type": "minecraft:item",
-          "name": "northeast_china_delight:cooking_oil",
+          "name": "chinese_regional_culinary_ingredients:cooking_oil",
           "weight": 8
         },
         {
           "type": "minecraft:item",
-          "name": "northeast_china_delight:animal_oil",
+          "name": "chinese_regional_culinary_ingredients:animal_oil",
           "weight": 6
         },
         {
           "type": "minecraft:item",
-          "name": "northeast_china_delight:soy_sauce",
+          "name": "chinese_regional_culinary_ingredients:soy_sauce",
           "weight": 6
         },
         {
           "type": "minecraft:item",
-          "name": "northeast_china_delight:soy_paste",
+          "name": "chinese_regional_culinary_ingredients:soy_paste",
           "weight": 5
         },
         {
           "type": "minecraft:item",
-          "name": "northeast_china_delight:chili_sauce",
+          "name": "chinese_regional_culinary_ingredients:chili_sauce",
           "weight": 5
         },
         {
           "type": "minecraft:item",
-          "name": "northeast_china_delight:chili_oil",
+          "name": "chinese_regional_culinary_ingredients:chili_oil",
           "weight": 4
         },
         {
           "type": "minecraft:item",
-          "name": "northeast_china_delight:vinegar",
+          "name": "chinese_regional_culinary_ingredients:vinegar",
           "weight": 4
         },
         {
           "type": "minecraft:item",
-          "name": "northeast_china_delight:white_vinegar",
+          "name": "chinese_regional_culinary_ingredients:white_vinegar",
           "weight": 3
         },
         {
           "type": "minecraft:item",
-          "name": "northeast_china_delight:fish_sauce",
+          "name": "chinese_regional_culinary_ingredients:fish_sauce",
           "weight": 3
         },
         {
           "type": "minecraft:item",
-          "name": "northeast_china_delight:shrimp_paste",
+          "name": "chinese_regional_culinary_ingredients:shrimp_paste",
           "weight": 3
         },
         {
           "type": "minecraft:item",
-          "name": "northeast_china_delight:vermicelli",
+          "name": "chinese_regional_culinary_ingredients:vermicelli",
           "weight": 4,
           "functions": [
             {
@@ -76,12 +76,12 @@
         },
         {
           "type": "minecraft:item",
-          "name": "northeast_china_delight:mung_bean_sheet",
+          "name": "chinese_regional_culinary_ingredients:mung_bean_sheet",
           "weight": 3
         },
         {
           "type": "minecraft:item",
-          "name": "northeast_china_delight:cold_noodle_sheet",
+          "name": "chinese_regional_culinary_ingredients:cold_noodle_sheet",
           "weight": 3
         },
         {
@@ -114,7 +114,7 @@
         },
         {
           "type": "minecraft:item",
-          "name": "northeast_china_delight:corn_flour",
+          "name": "chinese_regional_culinary_ingredients:corn_flour",
           "weight": 4,
           "functions": [
             {
@@ -128,7 +128,7 @@
         },
         {
           "type": "minecraft:item",
-          "name": "northeast_china_delight:sour_dough",
+          "name": "chinese_regional_culinary_ingredients:sour_dough",
           "weight": 3,
           "functions": [
             {
@@ -142,12 +142,12 @@
         },
         {
           "type": "minecraft:item",
-          "name": "northeast_china_delight:peanut_butter",
+          "name": "chinese_regional_culinary_ingredients:peanut_butter",
           "weight": 3
         },
         {
           "type": "minecraft:item",
-          "name": "northeast_china_delight:pickled_snow_mustard",
+          "name": "chinese_regional_culinary_ingredients:pickled_snow_mustard",
           "weight": 3,
           "functions": [
             {
@@ -161,7 +161,7 @@
         },
         {
           "type": "minecraft:item",
-          "name": "northeast_china_delight:sweet_potato_starch",
+          "name": "chinese_regional_culinary_ingredients:sweet_potato_starch",
           "weight": 1,
           "functions": [
             {

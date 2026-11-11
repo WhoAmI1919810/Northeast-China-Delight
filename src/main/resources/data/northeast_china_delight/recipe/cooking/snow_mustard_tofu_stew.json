@@ -3,7 +3,7 @@
   "container": { "count": 1, "id": "minecraft:bowl" },
   "experience": 0.35,
   "ingredients": [
-    { "item": "northeast_china_delight:pickled_snow_mustard" },
+    { "item": "chinese_regional_culinary_ingredients:pickled_snow_mustard" },
     { "tag": "c:foods/tofu" },
     { "tag": "c:foods/seasonings/salt" }
   ],

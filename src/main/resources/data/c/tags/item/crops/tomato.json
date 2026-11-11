@@ -1,9 +1,0 @@
-{
-  "values": [
-    "farmersdelight:tomato",
-    {
-      "id": "foodcraft:tomato",
-      "required": false
-    }
-  ]
-}

@@ -24,7 +24,7 @@
           "min": 1,
           "max": 6
         },
-        "result": "northeast_china_delight:salted_pork"
+        "result": "chinese_regional_culinary_ingredients:salted_pork"
       },
       {
         "ingredient": {
@@ -45,7 +45,7 @@
     "display_models": [
       {
         "ingredient": {
-          "item": "northeast_china_delight:salted_pork"
+          "item": "chinese_regional_culinary_ingredients:salted_pork"
         },
         "model": "northeast_china_delight:block/vat/salted_pork"
       },

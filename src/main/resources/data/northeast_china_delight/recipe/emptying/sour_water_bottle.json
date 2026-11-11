@@ -8,7 +8,7 @@
   "type": "create:emptying",
   "ingredients": [
     {
-      "item": "northeast_china_delight:sour_water"
+      "item": "chinese_regional_culinary_ingredients:sour_water"
     }
   ],
   "results": [
@@ -17,7 +17,7 @@
     },
     {
       "amount": 250,
-      "id": "northeast_china_delight:sour_water"
+      "id": "chinese_regional_culinary_ingredients:sour_water"
     }
   ]
 }

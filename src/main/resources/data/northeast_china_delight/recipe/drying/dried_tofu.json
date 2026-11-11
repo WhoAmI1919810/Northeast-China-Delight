@@ -4,7 +4,7 @@
     "priority": 0,
     "input": { "tag": "c:foods/soy_milk" },
     "results": [
-      { "item": "northeast_china_delight:dried_tofu", "count": 2 },
+      { "item": "chinese_regional_culinary_ingredients:dried_tofu", "count": 2 },
       { "item": "minecraft:bowl", "count": 1 }
     ]
   }

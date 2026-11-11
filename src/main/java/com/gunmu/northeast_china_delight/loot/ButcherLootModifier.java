@@ -1,5 +1,7 @@
 package com.gunmu.northeast_china_delight.loot;
 
+import com.gunmu.chinese_regional_culinary_ingredients.item.CrciItems;
+
 import com.gunmu.northeast_china_delight.NortheastChinaConfig;
 import com.gunmu.northeast_china_delight.item.ModItems;
 import com.mojang.serialization.Codec;
@@ -32,19 +34,19 @@ public class ButcherLootModifier extends LootModifier
     *///?}
 
     private static final Entry[] RAW = {
-            new Entry(() -> ModItems.PORK_RIBS.get(), 8),
-            new Entry(() -> ModItems.OIL_EDGE.get(), 7),
-            new Entry(() -> ModItems.PORK_HOCK.get(), 7),
-            new Entry(() -> ModItems.PORK_INTESTINE.get(), 6),
-            new Entry(() -> ModItems.PIG_LIVER.get(), 6),
-            new Entry(() -> ModItems.PIG_BLOOD.get(), 5),
-            new Entry(() -> ModItems.CHICKEN_FRAME.get(), 5)
+            new Entry(() -> CrciItems.PORK_RIBS.get(), 8),
+            new Entry(() -> CrciItems.OIL_EDGE.get(), 7),
+            new Entry(() -> CrciItems.PORK_HOCK.get(), 7),
+            new Entry(() -> CrciItems.PORK_INTESTINE.get(), 6),
+            new Entry(() -> CrciItems.PIG_LIVER.get(), 6),
+            new Entry(() -> CrciItems.PIG_BLOOD.get(), 5),
+            new Entry(() -> CrciItems.CHICKEN_FRAME.get(), 5)
     };
 
     private static final Entry[] DISH = {
-            new Entry(() -> ModItems.RED_SAUSAGE.get(), 8),
-            new Entry(() -> ModItems.BLOOD_SAUSAGE.get(), 7),
-            new Entry(() -> ModItems.RICE_SAUSAGE.get(), 7),
+            new Entry(() -> CrciItems.RED_SAUSAGE.get(), 8),
+            new Entry(() -> CrciItems.BLOOD_SAUSAGE.get(), 7),
+            new Entry(() -> CrciItems.RICE_SAUSAGE.get(), 7),
             new Entry(() -> ModItems.GRILLED_CHICKEN_FRAME.get(), 6),
             new Entry(() -> ModItems.GRILLED_OIL_EDGE.get(), 6),
             new Entry(() -> ModItems.LIU_ROU_DUAN.get(), 4),

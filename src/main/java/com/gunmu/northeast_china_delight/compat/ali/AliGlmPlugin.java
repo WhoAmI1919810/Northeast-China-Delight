@@ -1,5 +1,7 @@
 package com.gunmu.northeast_china_delight.compat.ali;
 
+import com.gunmu.chinese_regional_culinary_ingredients.item.CrciItems;
+
 import com.gunmu.northeast_china_delight.NortheastChinaConfig;
 import com.gunmu.northeast_china_delight.NortheastChinaDelight;
 import com.gunmu.northeast_china_delight.item.ModItems;
@@ -136,13 +138,13 @@ public final class AliGlmPlugin implements IGlobalLootModifierPlugin {
 
             float processed = AliGlmData.VILLAGE_SEEDS_PROCESSED / AliGlmData.VILLAGE_PROCESSED_TOTAL;
 
-            operations.add(AliGlmNodes.add(utils, conditions, ModItems.CORN_FLOUR.get(),
+            operations.add(AliGlmNodes.add(utils, conditions, CrciItems.CORN_FLOUR.get(),
                     processed * AliGlmData.VILLAGE_PROCESSED_CORN_FLOUR, AliGlmNodes.count(1, 3)));
-            operations.add(AliGlmNodes.add(utils, conditions, ModItems.WATER_DOUGH.get(),
+            operations.add(AliGlmNodes.add(utils, conditions, CrciItems.WATER_DOUGH.get(),
                     processed * AliGlmData.VILLAGE_PROCESSED_WATER_DOUGH, AliGlmNodes.count(1, 3)));
-            operations.add(AliGlmNodes.add(utils, conditions, ModItems.PEANUT_BUTTER.get(),
+            operations.add(AliGlmNodes.add(utils, conditions, CrciItems.PEANUT_BUTTER.get(),
                     processed * AliGlmData.VILLAGE_PROCESSED_PEANUT_BUTTER, AliGlmNodes.count(1, 1)));
-            operations.add(AliGlmNodes.add(utils, conditions, ModItems.PICKLED_SNOW_MUSTARD.get(),
+            operations.add(AliGlmNodes.add(utils, conditions, CrciItems.PICKLED_SNOW_MUSTARD.get(),
                     processed * AliGlmData.VILLAGE_PROCESSED_PICKLED_SNOW_MUSTARD, AliGlmNodes.count(1, 2)));
 
             return operations;

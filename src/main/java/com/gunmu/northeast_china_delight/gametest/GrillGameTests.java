@@ -1,5 +1,7 @@
 package com.gunmu.northeast_china_delight.gametest;
 
+import com.gunmu.chinese_regional_culinary_ingredients.item.CrciItems;
+
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -148,10 +150,10 @@ public final class GrillGameTests {
         RecipeManager manager = helper.getLevel().getRecipeManager();
         List<GrillRecipes.Recipe> rules = GrillRecipes.all(manager);
         Map<String, Item> inputs = Map.of(
-                "grilled_chicken_frame", ModItems.CHICKEN_FRAME.get(),
-                "grilled_corn", ModItems.CORN.get(),
-                "grilled_oil_edge", ModItems.OIL_EDGE.get(),
-                "grilled_cold_noodles", ModItems.COLD_NOODLE_SHEET.get());
+                "grilled_chicken_frame", CrciItems.CHICKEN_FRAME.get(),
+                "grilled_corn", CrciItems.CORN.get(),
+                "grilled_oil_edge", CrciItems.OIL_EDGE.get(),
+                "grilled_cold_noodles", CrciItems.COLD_NOODLE_SHEET.get());
         helper.assertTrue(rules.size() == 4, "默认烤架配方应全部从 JSON 加载");
         for (var expected : inputs.entrySet()) {
             ResourceLocation id = DdIds.of(NortheastChinaDelight.MODID, "grill/" + expected.getKey());
@@ -184,17 +186,17 @@ public final class GrillGameTests {
         GrillRecipes.Recipe rule = GrillRecipes.byId(manager,
                 DdIds.of(NortheastChinaDelight.MODID, "grill/grilled_cold_noodles"));
         GrillBlockEntity grill = emptyGrill();
-        grill.setFood(0, new ItemStack(ModItems.COLD_NOODLE_SHEET.get()), rule);
-        for (Item seasoning : List.of(ModItems.CHILI_SAUCE.get(), Items.EGG, Items.SUGAR, ModItems.VINEGAR.get())) {
+        grill.setFood(0, new ItemStack(CrciItems.COLD_NOODLE_SHEET.get()), rule);
+        for (Item seasoning : List.of(CrciItems.CHILI_SAUCE.get(), Items.EGG, Items.SUGAR, CrciItems.VINEGAR.get())) {
             helper.assertTrue(grill.addSeasoning(0, new ItemStack(seasoning), manager),
                     "刷辣酱之后应仍能打鸡蛋、撒糖、加醋：" + seasoning);
         }
         helper.assertTrue(rule.seasoningsReady(grill.seasoningsOf(0)), "四份调料都应被正确计数");
         helper.assertTrue(!grill.addSeasoning(0, new ItemStack(Items.SUGAR), manager), "不得多加调料");
         Item tomatoSauce = BuiltInRegistries.ITEM.get(DdIds.of("farmersdelight", "tomato_sauce"));
-        grill.setFood(1, new ItemStack(ModItems.COLD_NOODLE_SHEET.get()), rule);
+        grill.setFood(1, new ItemStack(CrciItems.COLD_NOODLE_SHEET.get()), rule);
         helper.assertTrue(grill.addSeasoning(1, new ItemStack(tomatoSauce), manager)
-                        && !grill.addSeasoning(1, new ItemStack(ModItems.CHILI_SAUCE.get()), manager)
+                        && !grill.addSeasoning(1, new ItemStack(CrciItems.CHILI_SAUCE.get()), manager)
                         && GrillSeasonings.needsBrush(new ItemStack(tomatoSauce)),
                 "烤冷面的辣椒酱可换成番茄酱，二选一，番茄酱也要用刷子刷");
         helper.succeed();
@@ -375,7 +377,7 @@ public final class GrillGameTests {
         GrillRecipes.Recipe copy = networkCopy(helper, SOURCE_ID, source).rule(SOURCE_ID);
         helper.assertTrue(copy != null && copy.id().equals(SOURCE_ID) && copy.seconds() == 4
                 && copy.result().is(Items.GOLDEN_CARROT) && copy.result().getCount() == 2
-                && copy.input().test(new ItemStack(ModItems.CORN.get()))
+                && copy.input().test(new ItemStack(CrciItems.CORN.get()))
                 && copy.needsSeasoning(List.of(), new ItemStack(Items.SUGAR)),
                 "网络同步必须保留标签、稳定 ID、产物数量和时长");
         //? if >=1.20.5 {
@@ -487,16 +489,16 @@ public final class GrillGameTests {
     public static void grillDefaultSeasoningVisuals(GameTestHelper helper) {
         helper.assertTrue(GrillSeasonings.resolve(GrillVisual.AUTO, Items.EGG).style() == GrillVisual.Style.EGG,
                 "鸡蛋默认应显示为打蛋，而不是撒料");
-        GrillVisual sauce = GrillSeasonings.resolve(GrillVisual.AUTO, ModItems.CHILI_SAUCE.get());
-        GrillVisual vinegar = GrillSeasonings.resolve(GrillVisual.AUTO, ModItems.VINEGAR.get());
+        GrillVisual sauce = GrillSeasonings.resolve(GrillVisual.AUTO, CrciItems.CHILI_SAUCE.get());
+        GrillVisual vinegar = GrillSeasonings.resolve(GrillVisual.AUTO, CrciItems.VINEGAR.get());
         helper.assertTrue(sauce.style() == GrillVisual.Style.BRUSH && sauce.color() == GrillSeasonings.SAUCE_COLOR
                         && vinegar.style() == GrillVisual.Style.BRUSH
-                        && vinegar.color() == (BottleColors.of(ModItems.VINEGAR.get()) & 0xFFFFFF),
+                        && vinegar.color() == (BottleColors.of(CrciItems.VINEGAR.get()) & 0xFFFFFF),
                 "厚酱和调料瓶默认是刷，颜色取酱色 / 瓶里液体的颜色");
         helper.assertTrue(sauce.opacity() == GrillSeasonings.THICK_OPACITY
                         && vinegar.opacity() == GrillSeasonings.THIN_OPACITY
                         && GrillSeasonings.resolve(new GrillVisual(GrillVisual.Style.BRUSH, -1, 0.3F),
-                        ModItems.CHILI_SAUCE.get()).opacity() == 0.3F,
+                        CrciItems.CHILI_SAUCE.get()).opacity() == 0.3F,
                 "厚酱默认稠、瓶装调料默认稀；配方写了 opacity 就照写的来");
         helper.assertTrue(GrillSeasonings.resolve(GrillVisual.AUTO, Items.SUGAR).style() == GrillVisual.Style.SPRINKLE
                         && GrillSeasonings.resolve(new GrillVisual(GrillVisual.Style.BRUSH, 0x123456), Items.SUGAR)
@@ -511,9 +513,9 @@ public final class GrillGameTests {
         helper.setBlock(localPos, ModBlocks.GRILL_CAMPFIRE.get().defaultBlockState());
         GrillBlockEntity grill = (GrillBlockEntity) helper.getLevel().getBlockEntity(helper.absolutePos(localPos));
         RecipeManager manager = helper.getLevel().getRecipeManager();
-        grill.setFood(0, new ItemStack(ModItems.CORN.get()),
+        grill.setFood(0, new ItemStack(CrciItems.CORN.get()),
                 GrillRecipes.byId(manager, DdIds.of(NortheastChinaDelight.MODID, "grill/grilled_corn")));
-        grill.setFood(1, new ItemStack(ModItems.COLD_NOODLE_SHEET.get()),
+        grill.setFood(1, new ItemStack(CrciItems.COLD_NOODLE_SHEET.get()),
                 GrillRecipes.byId(manager, DdIds.of(NortheastChinaDelight.MODID, "grill/grilled_cold_noodles")));
         //? if <1.20.5 {
         Player player = helper.makeMockSurvivalPlayer();
@@ -522,17 +524,17 @@ public final class GrillGameTests {
         *///?}
         // 点在方块正中（算作玉米那一份），刷子在副手、辣酱在主手：应刷到缺辣酱的冷面上，碗还回来
         player.setItemInHand(InteractionHand.OFF_HAND, new ItemStack(Items.BRUSH));
-        player.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(ModItems.CHILI_SAUCE.get()));
+        player.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(CrciItems.CHILI_SAUCE.get()));
         helper.useBlock(localPos, player);
-        helper.assertTrue(grill.seasoningsOf(1).equals(List.of(ModItems.CHILI_SAUCE.get()))
+        helper.assertTrue(grill.seasoningsOf(1).equals(List.of(CrciItems.CHILI_SAUCE.get()))
                         && grill.seasoningsOf(0).isEmpty()
-                        && player.getInventory().countItem(ModItems.CHILI_SAUCE.get()) == 0
+                        && player.getInventory().countItem(CrciItems.CHILI_SAUCE.get()) == 0
                         && player.getInventory().countItem(Items.BOWL) == 1,
                 "副手拿刷子也能刷；辣酱应刷给缺它的那份，用掉后还碗");
         // 手上最后一个鸡蛋：照样打进冷面
         player.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(Items.EGG));
         helper.useBlock(localPos, player);
-        helper.assertTrue(grill.seasoningsOf(1).equals(List.of(ModItems.CHILI_SAUCE.get(), Items.EGG))
+        helper.assertTrue(grill.seasoningsOf(1).equals(List.of(CrciItems.CHILI_SAUCE.get(), Items.EGG))
                         && player.getMainHandItem().isEmpty(),
                 "刷完辣酱后应还能打鸡蛋");
         helper.succeed();
@@ -580,7 +582,7 @@ public final class GrillGameTests {
         RecipeManager manager = helper.getLevel().getRecipeManager();
         GrillRecipes.Recipe rule = GrillRecipes.byId(manager,
                 DdIds.of(NortheastChinaDelight.MODID, "grill/grilled_corn"));
-        grill.setFood(0, new ItemStack(ModItems.CORN.get()), rule);
+        grill.setFood(0, new ItemStack(CrciItems.CORN.get()), rule);
         grill.addSeasoning(0, new ItemStack(Items.SUGAR), manager);
         grill.setProgress(0, GrillCampfireBlock.MAX_PROGRESS - 1);
         helper.succeedWhen(() -> {

@@ -2,7 +2,7 @@
   "type": "northeast_china_delight:pounding",
   "config": {
     "input": {
-      "item": "northeast_china_delight:roasted_peanuts"
+      "item": "chinese_regional_culinary_ingredients:roasted_peanuts"
     },
     "tool": {
       "type": "neoforge:compound",
@@ -22,9 +22,9 @@
       "northeast_china_delight:block/wooden_mortar_peanut_1",
       "northeast_china_delight:block/wooden_mortar_peanut_2"
     ],
-    "finished_liquid": "northeast_china_delight:peanut_butter",
+    "finished_liquid": "chinese_regional_culinary_ingredients:peanut_butter",
     "result": {
-      "item": "northeast_china_delight:peanut_butter",
+      "item": "chinese_regional_culinary_ingredients:peanut_butter",
       "count": 1
     },
     "result_mb": 50,

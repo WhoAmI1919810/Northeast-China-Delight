@@ -1,5 +1,7 @@
 package com.gunmu.northeast_china_delight.loot;
 
+import com.gunmu.chinese_regional_culinary_ingredients.item.CrciItems;
+
 import com.gunmu.northeast_china_delight.NortheastChinaConfig;
 import com.gunmu.northeast_china_delight.item.ModItems;
 import com.mojang.serialization.Codec;
@@ -32,25 +34,25 @@ public class StructureSeedsLootModifier extends LootModifier
     *///?}
 
     private static final Entry[] SEEDS = {
-            new Entry(() -> ModItems.CORN_SEEDS.get(), 8),
-            new Entry(() -> ModItems.SOYBEAN.get(), 8),
-            new Entry(() -> ModItems.NAPA_CABBAGE_SEEDS.get(), 7),
-            new Entry(() -> ModItems.SNOW_MUSTARD_SEEDS.get(), 5),
-            new Entry(() -> ModItems.SNOW_MUSTARD.get(), 4),
-            new Entry(() -> ModItems.CUCUMBER_SEEDS.get(), 7),
-            new Entry(() -> ModItems.GREEN_RADISH_SEEDS.get(), 7),
-            new Entry(() -> ModItems.GREEN_ONION_SEEDS.get(), 7),
-            new Entry(() -> ModItems.BUCKWHEAT.get(), 6),
-            new Entry(() -> ModItems.RED_BEAN.get(), 6),
-            new Entry(() -> ModItems.PEANUT.get(), 6),
-            new Entry(() -> ModItems.SWEET_POTATO.get(), 6),
-            new Entry(() -> ModItems.GREEN_PEPPER_SEEDS.get(), 6),
-            new Entry(() -> ModItems.EGGPLANT_SEEDS.get(), 6),
-            new Entry(() -> ModItems.GREEN_BEANS_SEEDS.get(), 6),
-            new Entry(() -> ModItems.RED_CHILI_SEEDS.get(), 5),
-            new Entry(() -> ModItems.GINSENG_SEEDS.get(), 2),
-            new Entry(() -> ModItems.BELLFLOWER_ROOT.get(), 4),
-            new Entry(() -> ModItems.BELLFLOWER_SEEDS.get(), 4)
+            new Entry(() -> CrciItems.CORN_SEEDS.get(), 8),
+            new Entry(() -> CrciItems.SOYBEAN.get(), 8),
+            new Entry(() -> CrciItems.NAPA_CABBAGE_SEEDS.get(), 7),
+            new Entry(() -> CrciItems.SNOW_MUSTARD_SEEDS.get(), 5),
+            new Entry(() -> CrciItems.SNOW_MUSTARD.get(), 4),
+            new Entry(() -> CrciItems.CUCUMBER_SEEDS.get(), 7),
+            new Entry(() -> CrciItems.GREEN_RADISH_SEEDS.get(), 7),
+            new Entry(() -> CrciItems.GREEN_ONION_SEEDS.get(), 7),
+            new Entry(() -> CrciItems.BUCKWHEAT.get(), 6),
+            new Entry(() -> CrciItems.RED_BEAN.get(), 6),
+            new Entry(() -> CrciItems.PEANUT.get(), 6),
+            new Entry(() -> CrciItems.SWEET_POTATO.get(), 6),
+            new Entry(() -> CrciItems.GREEN_PEPPER_SEEDS.get(), 6),
+            new Entry(() -> CrciItems.EGGPLANT_SEEDS.get(), 6),
+            new Entry(() -> CrciItems.GREEN_BEANS_SEEDS.get(), 6),
+            new Entry(() -> CrciItems.RED_CHILI_SEEDS.get(), 5),
+            new Entry(() -> CrciItems.GINSENG_SEEDS.get(), 2),
+            new Entry(() -> CrciItems.BELLFLOWER_ROOT.get(), 4),
+            new Entry(() -> CrciItems.BELLFLOWER_SEEDS.get(), 4)
     };
 
     public StructureSeedsLootModifier(LootItemCondition[] conditions)

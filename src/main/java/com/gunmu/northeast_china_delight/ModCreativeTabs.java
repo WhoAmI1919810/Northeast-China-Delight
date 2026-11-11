@@ -1,5 +1,6 @@
 package com.gunmu.northeast_china_delight;
 
+import com.gunmu.chinese_regional_culinary_ingredients.item.CrciItems;
 import com.gunmu.northeast_china_delight.item.ModItems;
 import com.gunmu.northeast_china_delight.util.DdIds;
 import net.minecraft.core.registries.Registries;
@@ -39,7 +40,7 @@ public class ModCreativeTabs {
     public static final Supplier<CreativeModeTab> INGREDIENTS_TAB =
             CREATIVE_MODE_TABS.register(INGREDIENTS_TAB_KEY.location().getPath(),
                     () -> CreativeModeTab.builder()
-                            .icon(() -> new ItemStack(ModItems.NAPA_CABBAGE.get()))
+                            .icon(() -> new ItemStack(ModItems.VAT.get()))
                             .title(Component.translatable("itemGroup.northeast_china_delight.ingredients"))
                             .build());
 
@@ -54,7 +55,7 @@ public class ModCreativeTabs {
             CREATIVE_MODE_TABS.register(BLOCKS_TAB_KEY.location().getPath(),
                     () -> CreativeModeTab.builder()
                             .icon(() -> new ItemStack(
-                                    ModItems.STORAGE_BLOCK_ITEMS.get("napa_cabbage_crate").get()))
+                                    CrciItems.STORAGE_BLOCK_ITEMS.get("napa_cabbage_crate").get()))
                             .title(Component.translatable("itemGroup.northeast_china_delight.blocks"))
                             .build());
 

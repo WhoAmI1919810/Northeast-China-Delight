@@ -2,6 +2,6 @@
   "type": "minecraft:crafting_shaped",
   "category": "building",
   "pattern": [ "XXX", "XXX", "XXX" ],
-  "key": { "X": { "item": "northeast_china_delight:wood_ear" } },
-  "result": { "count": 1, "id": "northeast_china_delight:wood_ear_sack" }
+  "key": { "X": { "item": "chinese_regional_culinary_ingredients:wood_ear" } },
+  "result": { "count": 1, "id": "chinese_regional_culinary_ingredients:wood_ear_sack" }
 }

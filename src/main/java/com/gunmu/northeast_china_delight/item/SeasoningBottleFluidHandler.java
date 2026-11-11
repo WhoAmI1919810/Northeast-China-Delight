@@ -33,20 +33,10 @@ public final class SeasoningBottleFluidHandler implements IFluidHandlerItem {
         this.stack = stack;
     }
 
-    /** 这种调料瓶对应的流体；没有对应流体的瓶子（食用油）返回 null，不暴露能力 */
+    /** 东北乐事自有瓶装流体；通用调料瓶由 CRCI 的处理器负责。 */
     @Nullable
     public static Fluid fluidOf(Item item) {
-        if (item == ModItems.SOY_SAUCE.get()) return ModFluids.soySauceSource();
-        if (item == ModItems.VINEGAR.get()) return ModFluids.vinegarSource();
-        if (item == ModItems.WHITE_VINEGAR.get()) return ModFluids.whiteVinegarSource();
-        if (item == ModItems.FISH_SAUCE.get()) return ModFluids.fishSauceSource();
-        if (item == ModItems.SHRIMP_PASTE.get()) return ModFluids.shrimpPasteSource();
         if (item == ModItems.KVASS.get()) return ModFluids.kvassSource();
-        if (item == ModItems.SOUR_WATER.get()) return ModFluids.sourWaterSource();
-        if (item == ModItems.PEANUT_BUTTER.get()) return ModFluids.peanutButterSource();
-        if (item == ModItems.COOKING_OIL.get()) return ModFluids.vegetableOilSource();
-        if (item == ModItems.ANIMAL_OIL.get()) return ModFluids.animalOilSource();
-        if (item == ModItems.CHILI_OIL.get()) return ModFluids.chiliOilSource();
         return null;
     }
 

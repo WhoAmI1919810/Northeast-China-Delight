@@ -35,7 +35,7 @@
     ],
     "finished_model": "northeast_china_delight:block/wooden_mortar_wet_starch_dough",
     "result": {
-      "item": "northeast_china_delight:wet_starch_dough",
+      "item": "chinese_regional_culinary_ingredients:wet_starch_dough",
       "count": 2
     },
     "transition": "sequential"

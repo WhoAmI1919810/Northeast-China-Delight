@@ -8,11 +8,11 @@
   ],
   "key": {
     "X": {
-      "item": "northeast_china_delight:peanut"
+      "item": "chinese_regional_culinary_ingredients:peanut"
     }
   },
   "result": {
     "count": 1,
-    "id": "northeast_china_delight:peanut_sack"
+    "id": "chinese_regional_culinary_ingredients:peanut_sack"
   }
 }

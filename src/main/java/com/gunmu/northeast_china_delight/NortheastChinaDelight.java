@@ -1,5 +1,7 @@
 package com.gunmu.northeast_china_delight;
 
+import com.gunmu.chinese_regional_culinary_ingredients.fluid.CrciFluids;
+
 import com.gunmu.northeast_china_delight.block.GrillCampfireBlock;
 import com.gunmu.northeast_china_delight.block.ModBlockEntities;
 import com.gunmu.northeast_china_delight.block.ModBlocks;
@@ -273,9 +275,6 @@ public class NortheastChinaDelight
     private void onCommonSetup(@NotNull FMLCommonSetupEvent event)
     {
         event.enqueueWork(() -> {
-            var compostables = net.minecraft.world.level.block.ComposterBlock.COMPOSTABLES;
-            ModItems.COMPOSTABLE_SEEDS.forEach(item -> compostables.put(item.get(), 0.3F));
-            ModItems.COMPOSTABLE_CROPS.forEach(item -> compostables.put(item.get(), 0.65F));
             // 水盆倒进炼药锅、空盆从满水的炼药锅里舀水
             com.gunmu.northeast_china_delight.item.BasinCauldronInteractions.register();
         });
@@ -571,42 +570,6 @@ public class NortheastChinaDelight
                 @Override
                 public ResourceLocation getStillTexture()
                 {
-                    return DdIds.of(MODID, "block/soy_sauce_still");
-                }
-
-                @Override
-                public ResourceLocation getFlowingTexture()
-                {
-                    return DdIds.of(MODID, "block/soy_sauce_flow");
-                }
-            }, ModFluids.SOY_SAUCE_TYPE);
-
-            event.registerFluidType(new IClientFluidTypeExtensions()
-            {
-                @Override
-                public ResourceLocation getStillTexture()
-                {
-                    return DdIds.of(MODID, "block/soy_paste_still");
-                }
-
-                @Override
-                public ResourceLocation getFlowingTexture()
-                {
-                    return DdIds.of(MODID, "block/soy_paste_still");
-                }
-
-                @Override
-                public int getTintColor()
-                {
-                    return 0xFFFFFFFF;
-                }
-            }, ModFluids.SOY_PASTE_TYPE);
-
-            event.registerFluidType(new IClientFluidTypeExtensions()
-            {
-                @Override
-                public ResourceLocation getStillTexture()
-                {
                     return DdIds.of(MODID, "block/soy_milk_still");
                 }
 
@@ -616,174 +579,6 @@ public class NortheastChinaDelight
                     return DdIds.of(MODID, "block/soy_milk_flow");
                 }
             }, ModFluids.SOY_MILK_TYPE);
-
-            event.registerFluidType(new IClientFluidTypeExtensions()
-            {
-                @Override
-                public ResourceLocation getStillTexture()
-                {
-                    return DdIds.of(MODID, "block/vinegar_still");
-                }
-
-                @Override
-                public ResourceLocation getFlowingTexture()
-                {
-                    return DdIds.of(MODID, "block/vinegar_flow");
-                }
-            }, ModFluids.VINEGAR_TYPE);
-
-            event.registerFluidType(new IClientFluidTypeExtensions()
-            {
-                @Override
-                public ResourceLocation getStillTexture()
-                {
-                    return DdIds.of(MODID, "block/sour_water_still");
-                }
-
-                @Override
-                public ResourceLocation getFlowingTexture()
-                {
-                    return DdIds.of(MODID, "block/sour_water_flow");
-                }
-            }, ModFluids.SOUR_WATER_TYPE);
-
-            event.registerFluidType(new IClientFluidTypeExtensions()
-            {
-                @Override
-                public ResourceLocation getStillTexture()
-                {
-                    return DdIds.of(MODID, "block/white_vinegar_still");
-                }
-
-                @Override
-                public ResourceLocation getFlowingTexture()
-                {
-                    return DdIds.of(MODID, "block/white_vinegar_flow");
-                }
-            }, ModFluids.WHITE_VINEGAR_TYPE);
-
-            event.registerFluidType(new IClientFluidTypeExtensions()
-            {
-                @Override
-                public ResourceLocation getStillTexture()
-                {
-                    return DdIds.of(MODID, "block/fish_sauce_still");
-                }
-
-                @Override
-                public ResourceLocation getFlowingTexture()
-                {
-                    return DdIds.of(MODID, "block/fish_sauce_flow");
-                }
-            }, ModFluids.FISH_SAUCE_TYPE);
-
-            event.registerFluidType(new IClientFluidTypeExtensions()
-            {
-                @Override
-                public ResourceLocation getStillTexture()
-                {
-                    return DdIds.of(MODID, "block/shrimp_paste_still");
-                }
-
-                @Override
-                public ResourceLocation getFlowingTexture()
-                {
-                    return DdIds.of(MODID, "block/shrimp_paste_still");
-                }
-
-                @Override
-                public int getTintColor()
-                {
-                    return 0xFFFFFFFF;
-                }
-            }, ModFluids.SHRIMP_PASTE_TYPE);
-
-            event.registerFluidType(new IClientFluidTypeExtensions()
-            {
-                @Override
-                public ResourceLocation getStillTexture()
-                {
-                    return DdIds.of(MODID, "block/vegetable_oil_still");
-                }
-
-                @Override
-                public ResourceLocation getFlowingTexture()
-                {
-                    return DdIds.of(MODID, "block/vegetable_oil_flow");
-                }
-            }, ModFluids.VEGETABLE_OIL_TYPE);
-
-            event.registerFluidType(new IClientFluidTypeExtensions()
-            {
-                @Override
-                public ResourceLocation getStillTexture()
-                {
-                    return DdIds.of(MODID, "block/animal_oil_still");
-                }
-
-                @Override
-                public ResourceLocation getFlowingTexture()
-                {
-                    return DdIds.of(MODID, "block/animal_oil_flow");
-                }
-            }, ModFluids.ANIMAL_OIL_TYPE);
-
-            event.registerFluidType(new IClientFluidTypeExtensions()
-            {
-                @Override
-                public ResourceLocation getStillTexture()
-                {
-                    return DdIds.of(MODID, "block/peanut_butter_still");
-                }
-
-                @Override
-                public ResourceLocation getFlowingTexture()
-                {
-                    return DdIds.of(MODID, "block/peanut_butter_still");
-                }
-
-                @Override
-                public int getTintColor()
-                {
-                    return 0xFFFFFFFF;
-                }
-            }, ModFluids.PEANUT_BUTTER_TYPE);
-
-            event.registerFluidType(new IClientFluidTypeExtensions()
-            {
-                @Override
-                public ResourceLocation getStillTexture()
-                {
-                    return DdIds.of(MODID, "block/chili_oil_still");
-                }
-
-                @Override
-                public ResourceLocation getFlowingTexture()
-                {
-                    return DdIds.of(MODID, "block/chili_oil_flow");
-                }
-            }, ModFluids.CHILI_OIL_TYPE);
-
-            event.registerFluidType(new IClientFluidTypeExtensions()
-            {
-                @Override
-                public ResourceLocation getStillTexture()
-                {
-                    return DdIds.of(MODID, "block/chili_sauce_still");
-                }
-
-                @Override
-                public ResourceLocation getFlowingTexture()
-                {
-                    return DdIds.of(MODID, "block/chili_sauce_still");
-                }
-
-                @Override
-                public int getTintColor()
-                {
-                    return 0xFFFFFFFF;
-                }
-            }, ModFluids.CHILI_SAUCE_TYPE);
 
             event.registerFluidType(new IClientFluidTypeExtensions()
             {

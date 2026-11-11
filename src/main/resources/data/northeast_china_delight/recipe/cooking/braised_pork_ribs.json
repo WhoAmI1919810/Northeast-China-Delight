@@ -7,10 +7,10 @@
   "experience": 1.0,
   "ingredients": [
     {
-      "item": "northeast_china_delight:pork_ribs"
+      "item": "chinese_regional_culinary_ingredients:pork_ribs"
     },
     {
-      "item": "northeast_china_delight:pork_ribs"
+      "item": "chinese_regional_culinary_ingredients:pork_ribs"
     },
     {
       "tag": "c:crops/potato"

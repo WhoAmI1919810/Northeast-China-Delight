@@ -8,11 +8,11 @@
   ],
   "key": {
     "X": {
-      "item": "northeast_china_delight:red_chili"
+      "item": "chinese_regional_culinary_ingredients:red_chili"
     }
   },
   "result": {
     "count": 1,
-    "id": "northeast_china_delight:red_chili_crate"
+    "id": "chinese_regional_culinary_ingredients:red_chili_crate"
   }
 }

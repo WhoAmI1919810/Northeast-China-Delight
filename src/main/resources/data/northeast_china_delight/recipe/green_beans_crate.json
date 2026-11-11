@@ -8,11 +8,11 @@
   ],
   "key": {
     "X": {
-      "item": "northeast_china_delight:green_beans"
+      "item": "chinese_regional_culinary_ingredients:green_beans"
     }
   },
   "result": {
     "count": 1,
-    "id": "northeast_china_delight:green_beans_crate"
+    "id": "chinese_regional_culinary_ingredients:green_beans_crate"
   }
 }

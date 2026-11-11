@@ -13,12 +13,12 @@
     {
       "type": "neoforge:single",
       "amount": 250,
-      "fluid": "northeast_china_delight:vinegar"
+      "fluid": "chinese_regional_culinary_ingredients:vinegar"
     }
   ],
   "results": [
     {
-      "id": "northeast_china_delight:vinegar"
+      "id": "chinese_regional_culinary_ingredients:vinegar"
     }
   ]
 }

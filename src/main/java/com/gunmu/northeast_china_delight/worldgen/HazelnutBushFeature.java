@@ -1,6 +1,8 @@
 package com.gunmu.northeast_china_delight.worldgen;
 
-import com.gunmu.northeast_china_delight.block.HazelnutBushBlock;
+import com.gunmu.chinese_regional_culinary_ingredients.block.CrciBlocks;
+
+import com.gunmu.chinese_regional_culinary_ingredients.block.HazelnutBushBlock;
 import com.gunmu.northeast_china_delight.block.ModBlocks;
 import com.mojang.serialization.Codec;
 import net.minecraft.core.BlockPos;
@@ -49,7 +51,7 @@ public class HazelnutBushFeature extends Feature<NoneFeatureConfiguration>
             return false;
         }
 
-        BlockState bush = ModBlocks.HAZELNUT_BUSH.get().defaultBlockState()
+        BlockState bush = CrciBlocks.HAZELNUT_BUSH.get().defaultBlockState()
                 .setValue(HazelnutBushBlock.AGE, HazelnutBushBlock.MAX_AGE)
                 .setValue(HazelnutBushBlock.SNOWY, HazelnutBushBlock.isSnowyAt(level, target));
         if (!bush.canSurvive(level, target))

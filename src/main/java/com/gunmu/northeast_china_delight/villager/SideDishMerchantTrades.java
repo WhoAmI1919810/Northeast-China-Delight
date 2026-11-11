@@ -1,5 +1,7 @@
 package com.gunmu.northeast_china_delight.villager;
 
+import com.gunmu.chinese_regional_culinary_ingredients.item.CrciItems;
+
 import com.gunmu.northeast_china_delight.item.ModItems;
 import com.gunmu.northeast_china_delight.item.SeasoningBottleItem;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
@@ -63,52 +65,52 @@ public final class SideDishMerchantTrades
     private static void populateTrades(Int2ObjectMap<List<VillagerTrades.ItemListing>> trades)
     {
 
-        trades.get(1).add(sell(2, ModItems.SALT.get(), 1, 16, 2));
+        trades.get(1).add(sell(2, CrciItems.SALT.get(), 1, 16, 2));
         trades.get(1).add(sell(3, Items.SUGAR, 1, 16, 2));
-        trades.get(1).add(sell(4, ModItems.TOFU.get(), 1, 16, 2));
-        trades.get(1).add(sellWithUses(ModItems.SOY_SAUCE.get(), 1, 3, 16, 2));
-        trades.get(1).add(buy(ModItems.SOYBEAN.get(), 24, 16, 2));
+        trades.get(1).add(sell(4, CrciItems.TOFU.get(), 1, 16, 2));
+        trades.get(1).add(sellWithUses(CrciItems.SOY_SAUCE.get(), 1, 3, 16, 2));
+        trades.get(1).add(buy(CrciItems.SOYBEAN.get(), 24, 16, 2));
         // 收花生原来在 5 级（经验 30），2026-11-06 用户让挪到 1 级；经验照 1 级的给 2
-        trades.get(1).add(buy(ModItems.PEANUT.get(), 22, 16, 2));
+        trades.get(1).add(buy(CrciItems.PEANUT.get(), 22, 16, 2));
 
-        trades.get(2).add(sell(6, ModItems.DRIED_TOFU.get(), 1, 16, 5));
-        trades.get(2).add(sell(8, ModItems.VERMICELLI.get(), 1, 16, 5));
-        trades.get(2).add(sell(5, ModItems.SOY_PASTE_CHUNK.get(), 1, 16, 5));
-        trades.get(2).add(coldOnly(sellWithUses(ModItems.SOY_PASTE.get(), 2, 4, 12, 5)));
-        trades.get(2).add(buy(ModItems.NAPA_CABBAGE.get(), 18, 16, 5));
+        trades.get(2).add(sell(6, CrciItems.DRIED_TOFU.get(), 1, 16, 5));
+        trades.get(2).add(sell(8, CrciItems.VERMICELLI.get(), 1, 16, 5));
+        trades.get(2).add(sell(5, CrciItems.SOY_PASTE_CHUNK.get(), 1, 16, 5));
+        trades.get(2).add(coldOnly(sellWithUses(CrciItems.SOY_PASTE.get(), 2, 4, 12, 5)));
+        trades.get(2).add(buy(CrciItems.NAPA_CABBAGE.get(), 18, 16, 5));
 
-        trades.get(3).add(sellWithUses(ModItems.VINEGAR.get(), 2, 4, 12, 10));
-        trades.get(3).add(sellWithUses(ModItems.WHITE_VINEGAR.get(), 2, 4, 12, 10));
-        trades.get(3).add(sellWithUses(ModItems.CHILI_SAUCE.get(), 2, 5, 12, 10));
+        trades.get(3).add(sellWithUses(CrciItems.VINEGAR.get(), 2, 4, 12, 10));
+        trades.get(3).add(sellWithUses(CrciItems.WHITE_VINEGAR.get(), 2, 4, 12, 10));
+        trades.get(3).add(sellWithUses(CrciItems.CHILI_SAUCE.get(), 2, 5, 12, 10));
         // 植物油 50 mB（能用 1 次），2026-11-06 用户加；价照醋（一次用量 2 绿宝石）
-        trades.get(3).add(sellWithUses(ModItems.COOKING_OIL.get(), 1, 2, 12, 10));
-        trades.get(3).add(coldOnly(sell(5, ModItems.PICKLED_GREEN_RADISH.get(), 1, 12, 10)));
-        trades.get(3).add(coldOnly(sell(6, ModItems.SOUR_CABBAGE.get(), 1, 12, 10)));
-        trades.get(3).add(sell(6, ModItems.PICKLED_SNOW_MUSTARD.get(), 1, 12, 10));
-        trades.get(3).add(coldOnly(sell(9, ModItems.SPICY_CABBAGE.get(), 1, 12, 10)));
-        trades.get(3).add(buy(ModItems.RED_CHILI.get(), 18, 16, 10));
+        trades.get(3).add(sellWithUses(CrciItems.COOKING_OIL.get(), 1, 2, 12, 10));
+        trades.get(3).add(coldOnly(sell(5, CrciItems.PICKLED_GREEN_RADISH.get(), 1, 12, 10)));
+        trades.get(3).add(coldOnly(sell(6, CrciItems.SOUR_CABBAGE.get(), 1, 12, 10)));
+        trades.get(3).add(sell(6, CrciItems.PICKLED_SNOW_MUSTARD.get(), 1, 12, 10));
+        trades.get(3).add(coldOnly(sell(9, CrciItems.SPICY_CABBAGE.get(), 1, 12, 10)));
+        trades.get(3).add(buy(CrciItems.RED_CHILI.get(), 18, 16, 10));
 
-        trades.get(4).add(sellFull(ModItems.SOY_SAUCE.get(), 8, 12, 15));
-        trades.get(4).add(sellFull(ModItems.CHILI_OIL.get(), 10, 12, 15));
-        trades.get(4).add(sellFull(ModItems.FISH_SAUCE.get(), 9, 12, 15));
-        trades.get(4).add(sell(12, ModItems.LA_PI.get(), 1, 12, 15));
-        trades.get(4).add(sell(10, ModItems.COLD_NOODLE_SHEET.get(), 1, 12, 15));
-        trades.get(4).add(buy(ModItems.CORN.get(), 20, 16, 15));
+        trades.get(4).add(sellFull(CrciItems.SOY_SAUCE.get(), 8, 12, 15));
+        trades.get(4).add(sellFull(CrciItems.CHILI_OIL.get(), 10, 12, 15));
+        trades.get(4).add(sellFull(CrciItems.FISH_SAUCE.get(), 9, 12, 15));
+        trades.get(4).add(sell(12, CrciItems.LA_PI.get(), 1, 12, 15));
+        trades.get(4).add(sell(10, CrciItems.COLD_NOODLE_SHEET.get(), 1, 12, 15));
+        trades.get(4).add(buy(CrciItems.CORN.get(), 20, 16, 15));
 
         trades.get(5).add(cannedYellowPeachTrade());
-        trades.get(5).add(sellFull(ModItems.SHRIMP_PASTE.get(), 12, 12, 30));
-        trades.get(5).add(sellFull(ModItems.ANIMAL_OIL.get(), 10, 12, 30));
-        trades.get(5).add(sell(6, ModItems.SWEET_POTATO_STARCH.get(), 1, 12, 30));
-        trades.get(5).add(sell(4, ModItems.ROASTED_PEANUTS.get(), 1, 12, 30));
-        trades.get(5).add(sell(5, ModItems.BEAN_SPROUTS.get(), 1, 12, 30));
+        trades.get(5).add(sellFull(CrciItems.SHRIMP_PASTE.get(), 12, 12, 30));
+        trades.get(5).add(sellFull(CrciItems.ANIMAL_OIL.get(), 10, 12, 30));
+        trades.get(5).add(sell(6, CrciItems.SWEET_POTATO_STARCH.get(), 1, 12, 30));
+        trades.get(5).add(sell(4, CrciItems.ROASTED_PEANUTS.get(), 1, 12, 30));
+        trades.get(5).add(sell(5, CrciItems.BEAN_SPROUTS.get(), 1, 12, 30));
         trades.get(5).add(sell(14, ModItems.BUCKWHEAT_COLD_NOODLES.get(), 1, 8, 30));
         trades.get(5).add(sell(7, ModItems.CANDIED_PEANUTS.get(), 1, 12, 30));
         trades.get(5).add(sell(9, ModItems.NIAN_DOU_BAO.get(), 1, 12, 30));
         trades.get(5).add(sell(6, ModItems.SOY_MILK.get(), 1, 12, 30));
         trades.get(5).add(sell(8, ModItems.KVASS.get(), 1, 12, 30));
-        trades.get(5).add(sell(2, ModItems.CORN_FLOUR.get(), 1, 12, 30));
-        trades.get(5).add(sell(5, ModItems.WATER_DOUGH.get(), 1, 12, 30));
-        trades.get(5).add(sellFull(ModItems.PEANUT_BUTTER.get(), 8, 12, 30));
+        trades.get(5).add(sell(2, CrciItems.CORN_FLOUR.get(), 1, 12, 30));
+        trades.get(5).add(sell(5, CrciItems.WATER_DOUGH.get(), 1, 12, 30));
+        trades.get(5).add(sellFull(CrciItems.PEANUT_BUTTER.get(), 8, 12, 30));
         trades.get(5).add(sellBetween(8, 10, ModItems.DOG_BAO_PICKLES.get(), 1, 12, 30));
     }
 

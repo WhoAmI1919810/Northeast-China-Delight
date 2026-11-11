@@ -1,6 +1,9 @@
 package com.gunmu.northeast_china_delight.block;
 
+import com.gunmu.chinese_regional_culinary_ingredients.item.CrciItems;
+
 import com.gunmu.northeast_china_delight.NortheastChinaDelight;
+import com.gunmu.chinese_regional_culinary_ingredients.block.CrciBlocks;
 import com.gunmu.northeast_china_delight.compat.displaydelight.DisplayDelightCompat;
 import com.gunmu.northeast_china_delight.fluid.ModFluids;
 import com.gunmu.northeast_china_delight.item.ModItems;
@@ -9,7 +12,6 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.level.block.CampfireBlock;
-import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SlabBlock;
 import net.minecraft.world.level.block.SoundType;
@@ -67,18 +69,7 @@ public class ModBlocks {
         *///?}
     }
 
-    public static final List<String> CRATE_IDS = List.of(
-            "napa_cabbage_crate", "cucumber_crate", "green_radish_crate", "green_onion_crate",
-            "eggplant_crate", "green_pepper_crate", "red_chili_crate", "green_beans_crate",
-            "corn_crate", "sweet_potato_crate", "sour_cabbage_crate", "spicy_cabbage_crate",
-            "pickled_cucumber_crate", "pickled_carrot_crate", "pickled_green_radish_crate", "frozen_pear_crate",
-            "bellflower_crate", "snow_mustard_crate", "pickled_snow_mustard_crate"
-    );
 
-    public static final List<String> SACK_IDS = List.of(
-            "corn_seeds_sack", "buckwheat_sack", "soybean_sack", "red_bean_sack", "peanut_sack",
-            "hazelnut_sack", "hazel_mushroom_sack", "wood_ear_sack", "ginseng_sack"
-    );
 
     /**
      * 盆（大脸盆、水盆、盆装菜、盆装谜之炖菜）：搪瓷盆，敲碎时是灯笼那种金属声；走上去、放下、敲击、摔落照旧是木头声
@@ -87,120 +78,16 @@ public class ModBlocks {
     public static final SoundType BASIN_SOUND = new SoundType(1.0F, 1.0F, SoundEvents.LANTERN_BREAK,
             SoundEvents.WOOD_STEP, SoundEvents.WOOD_PLACE, SoundEvents.WOOD_HIT, SoundEvents.WOOD_FALL);
 
-    public static final Map<String, Supplier<Block>> CRATES = storageBlocks(CRATE_IDS, SoundType.WOOD);
-    public static final Map<String, Supplier<Block>> SACKS = storageBlocks(SACK_IDS, SoundType.WOOL);
 
-    private static Map<String, Supplier<Block>> storageBlocks(List<String> ids, SoundType sound) {
-        Map<String, Supplier<Block>> map = new LinkedHashMap<>();
-        for (String id : ids) {
-            map.put(id, block(id, Block::new,
-                    BlockBehaviour.Properties.of()
-                            .mapColor(MapColor.WOOD)
-                            .strength(1.0F)
-                            .sound(sound)));
-        }
-        return Collections.unmodifiableMap(map);
-    }
-
-    // ===== 作物 =====
-    // 种子用延迟取值的方式传入，避免 ModItems / ModBlocks 之间的类初始化死循环
-
-    public static final Supplier<Block> SOYBEAN_CROP =
-            externalBlock(NortheastChinaDelight.CRCI_MODID, "soybean_crop");
-    public static final Supplier<Block> EGGPLANT_CROP =
-            fruitCrop("eggplant", () -> ModItems.EGGPLANT_SEEDS.get(), () -> ModItems.EGGPLANT.get());
-    public static final Supplier<Block> GREEN_PEPPER_CROP =
-            fruitCrop("green_pepper", () -> ModItems.GREEN_PEPPER_SEEDS.get(), () -> ModItems.GREEN_PEPPER.get());
-    public static final Supplier<Block> CORN_CROP = block(
-            "corn_crop",
-            properties -> new CornCropBlock(properties, () -> ModItems.CORN_SEEDS.get()),
-            cropProperties()
-    );
-    public static final Supplier<Block> CORN_STALK = block(
-            "corn_stalk",
-            CornStalkBlock::new,
-            plantProperties()
-    );
-    public static final Supplier<Block> GREEN_BEANS_CROP =
-            fruitCrop("green_beans", () -> ModItems.GREEN_BEANS_SEEDS.get(), () -> ModItems.GREEN_BEANS.get());
-    public static final Supplier<Block> BUCKWHEAT_CROP =
-            crop("buckwheat", () -> ModItems.BUCKWHEAT.get());
-    public static final Supplier<Block> NAPA_CABBAGE_CROP =
-            cabbageCrop("napa_cabbage", () -> ModItems.NAPA_CABBAGE_SEEDS.get());
-    public static final Supplier<Block> SNOW_MUSTARD_CROP =
-            cabbageCrop("snow_mustard", () -> ModItems.SNOW_MUSTARD_SEEDS.get());
-    public static final Supplier<Block> CUCUMBER_CROP =
-            fruitCrop("cucumber", () -> ModItems.CUCUMBER_SEEDS.get(), () -> ModItems.CUCUMBER.get());
-    public static final Supplier<Block> SWEET_POTATO_CROP =
-            crop("sweet_potato", () -> ModItems.SWEET_POTATO.get());
-    public static final Supplier<Block> RED_CHILI_CROP =
-            fruitCrop("red_chili", () -> ModItems.RED_CHILI_SEEDS.get(), () -> ModItems.RED_CHILI.get());
-    public static final Supplier<Block> PEANUT_CROP =
-            crop("peanut", () -> ModItems.PEANUT.get());
-    public static final Supplier<Block> RED_BEAN_CROP =
-            crop("red_bean", () -> ModItems.RED_BEAN.get());
-    public static final Supplier<Block> GREEN_ONION_CROP =
-            smallCrop("green_onion", () -> ModItems.GREEN_ONION_SEEDS.get());
-    public static final Supplier<Block> GREEN_RADISH_CROP =
-            crop("green_radish", () -> ModItems.GREEN_RADISH_SEEDS.get());
-    public static final Supplier<Block> BELLFLOWER_CROP = block(
-            "bellflower_crop",
-            properties -> new BellflowerCropBlock(properties, () -> ModItems.BELLFLOWER_SEEDS.get()),
-            cropProperties()
-    );
-
-    public static final Supplier<Block> HAZELNUT_BUSH = block(
-            "hazelnut_bush",
-            HazelnutBushBlock::new,
-            BlockBehaviour.Properties.of()
-                    .mapColor(MapColor.PLANT)
-                    .randomTicks()
-                    .noCollission()
-                    .instabreak()
-                    .sound(SoundType.SWEET_BERRY_BUSH)
-                    .pushReaction(PushReaction.DESTROY)
-    );
-
-    public static final Supplier<Block> HAZEL_MUSHROOM = block(
-            "hazel_mushroom",
-            HazelMushroomBlock::new,
-            mushroomProperties()
-    );
-
-    public static final Supplier<Block> HAZEL_MUSHROOM_COLONY = block(
-            "hazel_mushroom_colony",
-            HazelMushroomColonyBlock::new,
-            mushroomProperties()
-    );
-
-    /** 段木木耳：木耳贴在原木侧面种下，四个阶段，成熟后右键收 */
-    public static final Supplier<Block> WOOD_EAR_CROP = block(
-            "wood_ear_crop",
-            WoodEarCropBlock::new,
-            woodEarProperties().randomTicks()
-    );
-
-    /** 野生木耳：树上自己长的一朵，不会长大 */
-    public static final Supplier<Block> WILD_WOOD_EAR = block(
-            "wild_wood_ear",
-            WildWoodEarBlock::new,
-            woodEarProperties()
-    );
-
-    public static final Supplier<Block> GINSENG_CROP = block(
-            "ginseng_crop",
-            GinsengCropBlock::new,
-            plantProperties().randomTicks()
-    );
 
     public static final Supplier<SkewerBlock> CORN_SKEWER = block(
             "corn_skewer",
-            properties -> new SkewerBlock(properties, () -> ModItems.CORN.get()),
+            properties -> new SkewerBlock(properties, () -> CrciItems.CORN.get()),
             skewerProperties()
     );
     public static final Supplier<SkewerBlock> CHILI_SKEWER = block(
             "chili_skewer",
-            properties -> new SkewerBlock(properties, () -> ModItems.RED_CHILI.get()),
+            properties -> new SkewerBlock(properties, () -> CrciItems.RED_CHILI.get()),
             skewerProperties()
     );
 
@@ -723,30 +610,6 @@ public class ModBlocks {
      * NeoForge 的 createLegacyBlock 在没有方块时返回空气，所以删掉注册不会崩。
      */
     private static final boolean FLUIDS_HAVE_NO_BLOCK_FORM = true;
-    private static Supplier<Block> crop(String name, Supplier<? extends ItemLike> seed) {
-        return block(name + "_crop", properties -> new DdCropBlock(properties, seed), cropProperties());
-    }
-
-    /** 已迁到 CRCI 的内容按注册名取，东北乐事拆分分支不再自己注册这些东西。 */
-    private static Supplier<Block> externalBlock(String namespace, String path) {
-        return () -> BuiltInRegistries.BLOCK.get(DdIds.of(namespace, path));
-    }
-
-    private static Supplier<Block> smallCrop(String name, Supplier<? extends ItemLike> seed) {
-        return block(name + "_crop",
-                properties -> new DdSmallCropBlock(properties, seed), cropProperties());
-    }
-
-    private static Supplier<Block> cabbageCrop(String name, Supplier<? extends ItemLike> seed) {
-        return block(name + "_crop",
-                properties -> new DdCabbageCropBlock(properties, seed), cropProperties());
-    }
-
-    private static Supplier<Block> fruitCrop(String name, Supplier<? extends ItemLike> seed,
-                                                  Supplier<? extends ItemLike> fruit) {
-        return block(name + "_crop",
-                properties -> new DdCropBlock(properties, seed, fruit), cropProperties());
-    }
 
     /** 台阶：1.20.1 用 Forge 的 Supplier 构造（那时整块还没注册完，取不到 defaultBlockState） */
     private static Supplier<StairBlock> stairs(String name, Supplier<? extends Block> base, BlockBehaviour.Properties properties) {
@@ -826,45 +689,6 @@ public class ModBlocks {
                 .noCollission()
                 .noOcclusion()
                 .ignitedByLava()
-                .pushReaction(PushReaction.DESTROY);
-    }
-
-    private static BlockBehaviour.Properties cropProperties() {
-        return BlockBehaviour.Properties.of()
-                .mapColor(MapColor.PLANT)
-                .noCollission()
-                .randomTicks()
-                .instabreak()
-                .sound(SoundType.CROP)
-                .pushReaction(PushReaction.DESTROY);
-    }
-
-    private static BlockBehaviour.Properties plantProperties() {
-        return BlockBehaviour.Properties.of()
-                .mapColor(MapColor.PLANT)
-                .noCollission()
-                .instabreak()
-                .sound(SoundType.CROP)
-                .pushReaction(PushReaction.DESTROY);
-    }
-
-    private static BlockBehaviour.Properties woodEarProperties() {
-        return BlockBehaviour.Properties.of()
-                .mapColor(MapColor.COLOR_BROWN)
-                .noCollission()
-                .noOcclusion()
-                .strength(0.2F)
-                .sound(SoundType.FUNGUS)
-                .pushReaction(PushReaction.DESTROY);
-    }
-
-    private static BlockBehaviour.Properties mushroomProperties() {
-        return BlockBehaviour.Properties.of()
-                .mapColor(MapColor.PLANT)
-                .randomTicks()
-                .noCollission()
-                .instabreak()
-                .sound(SoundType.GRASS)
                 .pushReaction(PushReaction.DESTROY);
     }
 

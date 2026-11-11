@@ -8,11 +8,11 @@
   ],
   "key": {
     "X": {
-      "item": "northeast_china_delight:sweet_potato"
+      "item": "chinese_regional_culinary_ingredients:sweet_potato"
     }
   },
   "result": {
     "count": 1,
-    "id": "northeast_china_delight:sweet_potato_crate"
+    "id": "chinese_regional_culinary_ingredients:sweet_potato_crate"
   }
 }

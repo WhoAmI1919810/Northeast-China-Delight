@@ -3,10 +3,10 @@
   "category": "misc",
   "ingredients": [
     {
-      "item": "northeast_china_delight:pork_intestine"
+      "item": "chinese_regional_culinary_ingredients:pork_intestine"
     },
     {
-      "item": "northeast_china_delight:pig_blood"
+      "item": "chinese_regional_culinary_ingredients:pig_blood"
     },
     {
       "tag": "c:crops/rice"
@@ -14,6 +14,6 @@
   ],
   "result": {
     "count": 1,
-    "id": "northeast_china_delight:rice_sausage"
+    "id": "chinese_regional_culinary_ingredients:rice_sausage"
   }
 }

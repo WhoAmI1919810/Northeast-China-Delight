@@ -1,5 +1,9 @@
 package com.gunmu.northeast_china_delight.block;
 
+import com.gunmu.chinese_regional_culinary_ingredients.fluid.CrciFluids;
+
+import com.gunmu.chinese_regional_culinary_ingredients.item.CrciItems;
+
 import com.gunmu.northeast_china_delight.crafting.VatRecipes;
 import com.gunmu.northeast_china_delight.fluid.ModFluids;
 import com.gunmu.northeast_china_delight.item.ModItems;
@@ -161,27 +165,27 @@ public class VatBlockEntity extends BlockEntity implements IFluidHandler {
     }
 
     public int shrimpCount() {
-        return countOf(ModItems.SHRIMP.get());
+        return countOf(CrciItems.SHRIMP.get());
     }
 
     public int soybeanCount() {
-        return countOf(ModItems.SOYBEAN.get());
+        return countOf(CrciItems.SOYBEAN.get());
     }
 
     public int cornKernelCount() {
-        return countOf(ModItems.CORN_SEEDS.get());
+        return countOf(CrciItems.CORN_SEEDS.get());
     }
 
     public int chiliSauceCount() {
-        return countOf(ModItems.CHILI_SAUCE.get());
+        return countOf(CrciItems.CHILI_SAUCE.get());
     }
 
     public int seasoningCount() {
-        return countOf(ModItems.FISH_SAUCE.get()) + countOf(ModItems.SHRIMP_PASTE.get());
+        return countOf(CrciItems.FISH_SAUCE.get()) + countOf(CrciItems.SHRIMP_PASTE.get());
     }
 
     public int residueCount() {
-        return countOf(ModItems.SOY_RESIDUE.get());
+        return countOf(CrciItems.SOY_RESIDUE.get());
     }
 
     public int vinegarGrainCount() {
@@ -279,7 +283,7 @@ public class VatBlockEntity extends BlockEntity implements IFluidHandler {
     }
 
     public int pasteMb() {
-        return this.effectiveProductMb(ModFluids.soyPasteSource(), this.pasteMb);
+        return this.effectiveProductMb(CrciFluids.soyPasteSource(), this.pasteMb);
     }
 
     public int soySauce() {
@@ -287,7 +291,7 @@ public class VatBlockEntity extends BlockEntity implements IFluidHandler {
     }
 
     public int soySauceMb() {
-        return this.effectiveProductMb(ModFluids.soySauceSource(), this.soySauceMb);
+        return this.effectiveProductMb(CrciFluids.soySauceSource(), this.soySauceMb);
     }
 
     public int vinegar() {
@@ -295,7 +299,7 @@ public class VatBlockEntity extends BlockEntity implements IFluidHandler {
     }
 
     public int vinegarMb() {
-        return this.effectiveProductMb(ModFluids.vinegarSource(), this.vinegarMb);
+        return this.effectiveProductMb(CrciFluids.vinegarSource(), this.vinegarMb);
     }
 
     public int sourWater() {
@@ -311,7 +315,7 @@ public class VatBlockEntity extends BlockEntity implements IFluidHandler {
     }
 
     public int whiteVinegarMb() {
-        return this.effectiveProductMb(ModFluids.whiteVinegarSource(), this.whiteVinegarMb);
+        return this.effectiveProductMb(CrciFluids.whiteVinegarSource(), this.whiteVinegarMb);
     }
 
     public int fishSauce() {
@@ -319,7 +323,7 @@ public class VatBlockEntity extends BlockEntity implements IFluidHandler {
     }
 
     public int fishSauceMb() {
-        return this.effectiveProductMb(ModFluids.fishSauceSource(), this.fishSauceMb);
+        return this.effectiveProductMb(CrciFluids.fishSauceSource(), this.fishSauceMb);
     }
 
     public int shrimpPaste() {
@@ -327,7 +331,7 @@ public class VatBlockEntity extends BlockEntity implements IFluidHandler {
     }
 
     public int shrimpPasteMb() {
-        return this.effectiveProductMb(ModFluids.shrimpPasteSource(), this.shrimpPasteMb);
+        return this.effectiveProductMb(CrciFluids.shrimpPasteSource(), this.shrimpPasteMb);
     }
 
     public int kvass() {
@@ -489,7 +493,7 @@ public class VatBlockEntity extends BlockEntity implements IFluidHandler {
         if (mb <= 0 || fluid == null) {
             return;
         }
-        if (fluid.isSame(ModFluids.sourWaterSource())) {
+        if (fluid.isSame(CrciFluids.sourWaterSource())) {
             this.sourWaterMb += mb;
             this.refreshLiquidLevel();
             this.sync();
@@ -513,7 +517,7 @@ public class VatBlockEntity extends BlockEntity implements IFluidHandler {
         if (fluid.isSame(Fluids.WATER)) {
             return this.waterMb;
         }
-        if (fluid.isSame(ModFluids.sourWaterSource())) {
+        if (fluid.isSame(CrciFluids.sourWaterSource())) {
             return this.sourWaterMb;
         }
         return this.effectiveProductMb(fluid, this.legacyProductMb(fluid));
@@ -527,7 +531,7 @@ public class VatBlockEntity extends BlockEntity implements IFluidHandler {
         if (fluid.isSame(Fluids.WATER)) {
             this.waterMb = amount;
             this.refreshLiquidLevel();
-        } else if (fluid.isSame(ModFluids.sourWaterSource())) {
+        } else if (fluid.isSame(CrciFluids.sourWaterSource())) {
             this.sourWaterMb = amount;
             this.refreshLiquidLevel();
         } else if (amount == 0) {
@@ -546,22 +550,22 @@ public class VatBlockEntity extends BlockEntity implements IFluidHandler {
 
     /** 旧存档把每种成品液体分开记账；这里按流体读取对应的旧字段。 */
     private int legacyProductMb(Fluid fluid) {
-        if (fluid.isSame(ModFluids.soyPasteSource())) {
+        if (fluid.isSame(CrciFluids.soyPasteSource())) {
             return this.pasteMb;
         }
-        if (fluid.isSame(ModFluids.soySauceSource())) {
+        if (fluid.isSame(CrciFluids.soySauceSource())) {
             return this.soySauceMb;
         }
-        if (fluid.isSame(ModFluids.vinegarSource())) {
+        if (fluid.isSame(CrciFluids.vinegarSource())) {
             return this.vinegarMb;
         }
-        if (fluid.isSame(ModFluids.whiteVinegarSource())) {
+        if (fluid.isSame(CrciFluids.whiteVinegarSource())) {
             return this.whiteVinegarMb;
         }
-        if (fluid.isSame(ModFluids.fishSauceSource())) {
+        if (fluid.isSame(CrciFluids.fishSauceSource())) {
             return this.fishSauceMb;
         }
-        if (fluid.isSame(ModFluids.shrimpPasteSource())) {
+        if (fluid.isSame(CrciFluids.shrimpPasteSource())) {
             return this.shrimpPasteMb;
         }
         if (fluid.isSame(ModFluids.kvassSource())) {
@@ -577,17 +581,17 @@ public class VatBlockEntity extends BlockEntity implements IFluidHandler {
     }
 
     private void clearLegacyProductMb(Fluid fluid) {
-        if (fluid.isSame(ModFluids.soyPasteSource())) {
+        if (fluid.isSame(CrciFluids.soyPasteSource())) {
             this.pasteMb = 0;
-        } else if (fluid.isSame(ModFluids.soySauceSource())) {
+        } else if (fluid.isSame(CrciFluids.soySauceSource())) {
             this.soySauceMb = 0;
-        } else if (fluid.isSame(ModFluids.vinegarSource())) {
+        } else if (fluid.isSame(CrciFluids.vinegarSource())) {
             this.vinegarMb = 0;
-        } else if (fluid.isSame(ModFluids.whiteVinegarSource())) {
+        } else if (fluid.isSame(CrciFluids.whiteVinegarSource())) {
             this.whiteVinegarMb = 0;
-        } else if (fluid.isSame(ModFluids.fishSauceSource())) {
+        } else if (fluid.isSame(CrciFluids.fishSauceSource())) {
             this.fishSauceMb = 0;
-        } else if (fluid.isSame(ModFluids.shrimpPasteSource())) {
+        } else if (fluid.isSame(CrciFluids.shrimpPasteSource())) {
             this.shrimpPasteMb = 0;
         } else if (fluid.isSame(ModFluids.kvassSource())) {
             this.kvassMb = 0;
@@ -643,7 +647,7 @@ public class VatBlockEntity extends BlockEntity implements IFluidHandler {
             if (stack.isEmpty()) {
                 continue;
             }
-            if (stack.is(ModItems.SOY_PASTE_CHUNK.get())) {
+            if (stack.is(CrciItems.SOY_PASTE_CHUNK.get())) {
                 this.contents.set(i, new ItemStack(VatRecipes.residue()));
             } else if (stack.is(ModTags.FOODS_SALT) || stack.is(ModTags.CROPS_WHEAT)) {
                 this.contents.set(i, ItemStack.EMPTY);
@@ -722,7 +726,7 @@ public class VatBlockEntity extends BlockEntity implements IFluidHandler {
     @Override
     public int getTankCapacity(int tank) {
         Fluid product = VatRecipes.productOf(this);
-        return product != null && product.isSame(ModFluids.sourWaterSource())
+        return product != null && product.isSame(CrciFluids.sourWaterSource())
                 ? VatRecipes.SOUR_WATER_MB : VatRecipes.PRODUCT_CAPACITY_MB;
     }
 
@@ -917,7 +921,7 @@ public class VatBlockEntity extends BlockEntity implements IFluidHandler {
         if (serverSide && this.level != null
                 && this.getBlockState().getValue(Vat.FERMENTED)
                 && (this.kind == VatRecipes.Kind.PASTE || this.kind == VatRecipes.Kind.SOY_SAUCE)
-                && this.countOf(ModItems.SOY_PASTE_CHUNK.get()) > 0) {
+                && this.countOf(CrciItems.SOY_PASTE_CHUNK.get()) > 0) {
             this.finishBrewing();
         }
         this.migrateLegacyProductAccounting();
@@ -958,22 +962,22 @@ public class VatBlockEntity extends BlockEntity implements IFluidHandler {
     @Nullable
     private Fluid firstLegacyProductFluid() {
         if (this.pasteMb > 0) {
-            return ModFluids.soyPasteSource();
+            return CrciFluids.soyPasteSource();
         }
         if (this.soySauceMb > 0) {
-            return ModFluids.soySauceSource();
+            return CrciFluids.soySauceSource();
         }
         if (this.vinegarMb > 0) {
-            return ModFluids.vinegarSource();
+            return CrciFluids.vinegarSource();
         }
         if (this.whiteVinegarMb > 0) {
-            return ModFluids.whiteVinegarSource();
+            return CrciFluids.whiteVinegarSource();
         }
         if (this.fishSauceMb > 0) {
-            return ModFluids.fishSauceSource();
+            return CrciFluids.fishSauceSource();
         }
         if (this.shrimpPasteMb > 0) {
-            return ModFluids.shrimpPasteSource();
+            return CrciFluids.shrimpPasteSource();
         }
         if (this.kvassMb > 0) {
             return ModFluids.kvassSource();

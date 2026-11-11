@@ -3,10 +3,10 @@
   "experience": 0.35,
   "ingredients": [
     {
-      "item": "northeast_china_delight:hazelnut"
+      "item": "chinese_regional_culinary_ingredients:hazelnut"
     },
     {
-      "item": "northeast_china_delight:hazelnut"
+      "item": "chinese_regional_culinary_ingredients:hazelnut"
     },
     {
       "tag": "c:sugar"

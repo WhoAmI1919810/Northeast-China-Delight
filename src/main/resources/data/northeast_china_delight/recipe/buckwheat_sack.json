@@ -8,11 +8,11 @@
   ],
   "key": {
     "X": {
-      "item": "northeast_china_delight:buckwheat"
+      "item": "chinese_regional_culinary_ingredients:buckwheat"
     }
   },
   "result": {
     "count": 1,
-    "id": "northeast_china_delight:buckwheat_sack"
+    "id": "chinese_regional_culinary_ingredients:buckwheat_sack"
   }
 }

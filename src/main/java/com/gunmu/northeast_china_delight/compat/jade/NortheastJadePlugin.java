@@ -2,7 +2,7 @@ package com.gunmu.northeast_china_delight.compat.jade;
 
 import com.gunmu.northeast_china_delight.block.BigStoveBlock;
 import com.gunmu.northeast_china_delight.block.Vat;
-import com.gunmu.northeast_china_delight.block.WoodEarCropBlock;
+import com.gunmu.chinese_regional_culinary_ingredients.block.WoodEarCropBlock;
 import com.gunmu.northeast_china_delight.NortheastChinaDelight;
 import com.gunmu.northeast_china_delight.util.DdIds;
 import net.minecraft.resources.ResourceLocation;

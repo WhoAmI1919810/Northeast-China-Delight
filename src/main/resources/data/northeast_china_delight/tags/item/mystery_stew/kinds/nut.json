@@ -1,8 +1,8 @@
 {
   "values": [
-    "northeast_china_delight:peanut",
-    "northeast_china_delight:roasted_peanuts",
-    "northeast_china_delight:hazelnut",
+    "chinese_regional_culinary_ingredients:peanut",
+    "chinese_regional_culinary_ingredients:roasted_peanuts",
+    "chinese_regional_culinary_ingredients:hazelnut",
     {
       "id": "#c:crops/peanut",
       "required": false

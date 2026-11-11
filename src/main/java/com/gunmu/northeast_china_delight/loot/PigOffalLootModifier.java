@@ -1,5 +1,7 @@
 package com.gunmu.northeast_china_delight.loot;
 
+import com.gunmu.chinese_regional_culinary_ingredients.item.CrciItems;
+
 import com.gunmu.northeast_china_delight.item.ModItems;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
@@ -50,8 +52,8 @@ public class PigOffalLootModifier extends LootModifier {
     private static java.util.Map<Item, Item> getSmokedMap() {
         if (smokedMap == null) {
             smokedMap = new java.util.HashMap<>();
-            smokedMap.put(ModItems.PIG_LIVER.get(), ModItems.SMOKED_PIG_LIVER.get());
-            smokedMap.put(ModItems.PORK_HOCK.get(), ModItems.SMOKED_PORK_HOCK.get());
+            smokedMap.put(CrciItems.PIG_LIVER.get(), CrciItems.SMOKED_PIG_LIVER.get());
+            smokedMap.put(CrciItems.PORK_HOCK.get(), CrciItems.SMOKED_PORK_HOCK.get());
         }
         return smokedMap;
     }
@@ -63,13 +65,13 @@ public class PigOffalLootModifier extends LootModifier {
     @Override
     protected ObjectArrayList<ItemStack> doApply(ObjectArrayList<ItemStack> generatedLoot, LootContext context) {
         List<Item> candidates = new ArrayList<>(List.of(
-                ModItems.PORK_RIBS.get(),
-                ModItems.PORK_INTESTINE.get(),
-                ModItems.PORK_HOCK.get(),
-                ModItems.PIG_BLOOD.get(),
-                ModItems.PIG_LIVER.get(),
-                ModItems.PORK_FAT.get(),
-                ModItems.OIL_EDGE.get()));
+                CrciItems.PORK_RIBS.get(),
+                CrciItems.PORK_INTESTINE.get(),
+                CrciItems.PORK_HOCK.get(),
+                CrciItems.PIG_BLOOD.get(),
+                CrciItems.PIG_LIVER.get(),
+                CrciItems.PORK_FAT.get(),
+                CrciItems.OIL_EDGE.get()));
 
         RandomSource random = context.getRandom();
         // 抢夺附魔加成：每级 +5%

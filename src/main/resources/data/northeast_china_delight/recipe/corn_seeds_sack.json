@@ -8,11 +8,11 @@
   ],
   "key": {
     "X": {
-      "item": "northeast_china_delight:corn_seeds"
+      "item": "chinese_regional_culinary_ingredients:corn_seeds"
     }
   },
   "result": {
     "count": 1,
-    "id": "northeast_china_delight:corn_seeds_sack"
+    "id": "chinese_regional_culinary_ingredients:corn_seeds_sack"
   }
 }

@@ -1,5 +1,7 @@
 package com.gunmu.northeast_china_delight.crafting;
 
+import com.gunmu.chinese_regional_culinary_ingredients.fluid.CrciFluids;
+
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
@@ -68,14 +70,14 @@ public final class VatRecipe {
         @Nullable
         public net.minecraft.world.level.material.Fluid resolve() {
             return switch (this) {
-                case PASTE -> com.gunmu.northeast_china_delight.fluid.ModFluids.soyPasteSource();
-                case SOY_SAUCE -> com.gunmu.northeast_china_delight.fluid.ModFluids.soySauceSource();
-                case VINEGAR -> com.gunmu.northeast_china_delight.fluid.ModFluids.vinegarSource();
-                case WHITE_VINEGAR -> com.gunmu.northeast_china_delight.fluid.ModFluids.whiteVinegarSource();
-                case FISH_SAUCE -> com.gunmu.northeast_china_delight.fluid.ModFluids.fishSauceSource();
-                case SHRIMP_PASTE -> com.gunmu.northeast_china_delight.fluid.ModFluids.shrimpPasteSource();
+                case PASTE -> com.gunmu.chinese_regional_culinary_ingredients.fluid.CrciFluids.soyPasteSource();
+                case SOY_SAUCE -> com.gunmu.chinese_regional_culinary_ingredients.fluid.CrciFluids.soySauceSource();
+                case VINEGAR -> com.gunmu.chinese_regional_culinary_ingredients.fluid.CrciFluids.vinegarSource();
+                case WHITE_VINEGAR -> com.gunmu.chinese_regional_culinary_ingredients.fluid.CrciFluids.whiteVinegarSource();
+                case FISH_SAUCE -> com.gunmu.chinese_regional_culinary_ingredients.fluid.CrciFluids.fishSauceSource();
+                case SHRIMP_PASTE -> com.gunmu.chinese_regional_culinary_ingredients.fluid.CrciFluids.shrimpPasteSource();
                 case KVASS -> com.gunmu.northeast_china_delight.fluid.ModFluids.kvassSource();
-                case SOUR_WATER -> com.gunmu.northeast_china_delight.fluid.ModFluids.sourWaterSource();
+                case SOUR_WATER -> com.gunmu.chinese_regional_culinary_ingredients.fluid.CrciFluids.sourWaterSource();
                 case WATER -> null;
             };
         }
@@ -730,7 +732,7 @@ public final class VatRecipe {
         public Builder waterBecomesSourWater() {
             Liquid old = this.liquid;
             this.liquid = new Liquid(old.waterMin(), old.waterMax(), old.sourWaterMb(),
-                    com.gunmu.northeast_china_delight.fluid.ModFluids.sourWaterSource(),
+                    com.gunmu.chinese_regional_culinary_ingredients.fluid.CrciFluids.sourWaterSource(),
                     VatRecipes.WATER_MB_PER_LEVEL, true,
                     LiquidAfter.CLEAR, LiquidAfter.KEEP,
                     old.servingContainer(), old.servingItem());

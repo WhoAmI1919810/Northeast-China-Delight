@@ -10,7 +10,7 @@
     {
       "type": "neoforge:single",
       "amount": 1000,
-      "fluid": "northeast_china_delight:animal_oil"
+      "fluid": "chinese_regional_culinary_ingredients:animal_oil"
     }
   ],
   "results": [

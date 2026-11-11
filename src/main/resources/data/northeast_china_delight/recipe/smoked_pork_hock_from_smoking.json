@@ -4,10 +4,10 @@
   "cookingtime": 100,
   "experience": 0.35,
   "ingredient": {
-    "item": "northeast_china_delight:pork_hock"
+    "item": "chinese_regional_culinary_ingredients:pork_hock"
   },
   "result": {
     "count": 1,
-    "id": "northeast_china_delight:smoked_pork_hock"
+    "id": "chinese_regional_culinary_ingredients:smoked_pork_hock"
   }
 }

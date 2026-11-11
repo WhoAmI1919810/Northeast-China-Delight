@@ -1,6 +1,6 @@
 {
   "type": "minecraft:crafting_shapeless",
   "category": "misc",
-  "ingredients": [ { "item": "northeast_china_delight:pickled_green_radish_crate" } ],
-  "result": { "count": 9, "id": "northeast_china_delight:pickled_green_radish" }
+  "ingredients": [ { "item": "chinese_regional_culinary_ingredients:pickled_green_radish_crate" } ],
+  "result": { "count": 9, "id": "chinese_regional_culinary_ingredients:pickled_green_radish" }
 }
