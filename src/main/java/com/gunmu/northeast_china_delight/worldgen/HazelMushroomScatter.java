@@ -2,6 +2,9 @@ package com.gunmu.northeast_china_delight.worldgen;
 
 import com.gunmu.chinese_regional_culinary_ingredients.block.CrciBlocks;
 
+import com.gunmu.chinese_regional_culinary_ingredients.item.CrciItems;
+import com.gunmu.chinese_regional_culinary_ingredients.region.CrciAvailability;
+import com.gunmu.chinese_regional_culinary_ingredients.region.CrciUseSite;
 import com.gunmu.northeast_china_delight.block.ModBlocks;
 import net.minecraft.core.BlockPos;
 import net.minecraft.tags.BlockTags;
@@ -91,6 +94,10 @@ final class HazelMushroomScatter
 
     static int scatter(WorldGenLevel level, BlockPos center, int radius, float chance, RandomSource random)
     {
+        if (!CrciAvailability.isAvailable(CrciItems.HAZEL_MUSHROOM.get(), CrciUseSite.WORLDGEN))
+        {
+            return 0;
+        }
         if (chance <= 0.0F)
         {
             return 0;

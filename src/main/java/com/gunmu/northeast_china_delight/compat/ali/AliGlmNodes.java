@@ -1,5 +1,7 @@
 package com.gunmu.northeast_china_delight.compat.ali;
 
+import com.gunmu.chinese_regional_culinary_ingredients.region.CrciAvailability;
+import com.gunmu.chinese_regional_culinary_ingredients.region.CrciUseSite;
 import com.yanny.aci.api.NumberExpr;
 import com.yanny.aci.tooltip.TooltipBuilder;
 import com.yanny.ali.api.IDataNode;
@@ -27,6 +29,10 @@ import java.util.function.Predicate;
  * 物品控件渲染、并且能正常联网传输，我们不需要额外注册控件。</p>
  */
 final class AliGlmNodes {
+    static boolean visible(Item item) {
+        return CrciAvailability.isAvailable(item, CrciUseSite.JEI);
+    }
+
     /** 数量：区间或定值 */
     static NumberExpr count(int min, int max) {
         return min == max ? NumberExpr.constant(min) : NumberExpr.range(min, max);
@@ -48,7 +54,9 @@ final class AliGlmNodes {
         }
 
         for (AliGlmReflection.Entry entry : table.entries()) {
-            operations.add(add(utils, conditions, entry.item(), rollChance * entry.weight() / total, count));
+            if (visible(entry.item())) {
+                operations.add(add(utils, conditions, entry.item(), rollChance * entry.weight() / total, count));
+            }
         }
 
         return operations;
@@ -67,7 +75,9 @@ final class AliGlmNodes {
             }
 
             for (AliGlmReflection.Entry entry : table.entries()) {
-                best.merge(entry.item(), (float) entry.weight() / total, Math::max);
+                if (visible(entry.item())) {
+                    best.merge(entry.item(), (float) entry.weight() / total, Math::max);
+                }
             }
         }
 

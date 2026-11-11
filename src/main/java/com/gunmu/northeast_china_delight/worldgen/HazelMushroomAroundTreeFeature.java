@@ -1,5 +1,8 @@
 package com.gunmu.northeast_china_delight.worldgen;
 
+import com.gunmu.chinese_regional_culinary_ingredients.item.CrciItems;
+import com.gunmu.chinese_regional_culinary_ingredients.region.CrciAvailability;
+import com.gunmu.chinese_regional_culinary_ingredients.region.CrciUseSite;
 import com.mojang.serialization.Codec;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.WorldGenLevel;
@@ -21,6 +24,10 @@ public class HazelMushroomAroundTreeFeature extends Feature<NoneFeatureConfigura
     @Override
     public boolean place(FeaturePlaceContext<NoneFeatureConfiguration> context)
     {
+        if (!CrciAvailability.isAvailable(CrciItems.HAZEL_MUSHROOM.get(), CrciUseSite.WORLDGEN))
+        {
+            return false;
+        }
         WorldGenLevel level = context.level();
         BlockPos origin = context.origin();
 

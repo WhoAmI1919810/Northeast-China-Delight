@@ -4,6 +4,9 @@ import com.gunmu.chinese_regional_culinary_ingredients.block.CrciBlocks;
 
 import com.gunmu.chinese_regional_culinary_ingredients.block.BellflowerCropBlock;
 import com.gunmu.chinese_regional_culinary_ingredients.block.CrciBlockTags;
+import com.gunmu.chinese_regional_culinary_ingredients.item.CrciItems;
+import com.gunmu.chinese_regional_culinary_ingredients.region.CrciAvailability;
+import com.gunmu.chinese_regional_culinary_ingredients.region.CrciUseSite;
 import com.gunmu.northeast_china_delight.block.ModBlocks;
 import com.mojang.serialization.Codec;
 import net.minecraft.core.BlockPos;
@@ -51,6 +54,10 @@ public class BellflowerScatterFeature extends Feature<NoneFeatureConfiguration>
     @Override
     public boolean place(FeaturePlaceContext<NoneFeatureConfiguration> context)
     {
+        if (!CrciAvailability.isAvailable(CrciItems.BELLFLOWER_ROOT.get(), CrciUseSite.WORLDGEN))
+        {
+            return false;
+        }
         WorldGenLevel level = context.level();
         RandomSource random = context.random();
         BlockPos origin = context.origin();
