@@ -164,6 +164,7 @@ import org.slf4j.Logger;
 public class NortheastChinaDelight
 {
     public static final String MODID = "northeast_china_delight";
+    public static final String CRCI_MODID = "chinese_regional_culinary_ingredients";
     private static final Logger LOGGER = LogUtils.getLogger();
 
     //? if <1.20.2 {

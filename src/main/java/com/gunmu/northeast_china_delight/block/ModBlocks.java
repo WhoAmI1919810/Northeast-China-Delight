@@ -4,6 +4,8 @@ import com.gunmu.northeast_china_delight.NortheastChinaDelight;
 import com.gunmu.northeast_china_delight.compat.displaydelight.DisplayDelightCompat;
 import com.gunmu.northeast_china_delight.fluid.ModFluids;
 import com.gunmu.northeast_china_delight.item.ModItems;
+import com.gunmu.northeast_china_delight.util.DdIds;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.level.block.CampfireBlock;
@@ -104,7 +106,7 @@ public class ModBlocks {
     // 种子用延迟取值的方式传入，避免 ModItems / ModBlocks 之间的类初始化死循环
 
     public static final Supplier<Block> SOYBEAN_CROP =
-            crop("soybean", () -> ModItems.SOYBEAN.get());
+            externalBlock(NortheastChinaDelight.CRCI_MODID, "soybean_crop");
     public static final Supplier<Block> EGGPLANT_CROP =
             fruitCrop("eggplant", () -> ModItems.EGGPLANT_SEEDS.get(), () -> ModItems.EGGPLANT.get());
     public static final Supplier<Block> GREEN_PEPPER_CROP =
@@ -724,6 +726,11 @@ public class ModBlocks {
     private static final boolean FLUIDS_HAVE_NO_BLOCK_FORM = true;
     private static Supplier<Block> crop(String name, Supplier<? extends ItemLike> seed) {
         return block(name + "_crop", properties -> new DdCropBlock(properties, seed), cropProperties());
+    }
+
+    /** 已迁到 CRCI 的内容按注册名取，东北乐事拆分分支不再自己注册这些东西。 */
+    private static Supplier<Block> externalBlock(String namespace, String path) {
+        return () -> BuiltInRegistries.BLOCK.get(DdIds.of(namespace, path));
     }
 
     private static Supplier<Block> smallCrop(String name, Supplier<? extends ItemLike> seed) {

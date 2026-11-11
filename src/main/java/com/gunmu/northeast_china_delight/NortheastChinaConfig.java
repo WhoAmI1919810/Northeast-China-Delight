@@ -18,7 +18,7 @@ import net.neoforged.neoforge.common.ModConfigSpec;
 public final class NortheastChinaConfig
 {
     public static final List<String> DEFAULT_VILLAGE_FARM_CROPS = List.of(
-            "northeast_china_delight:soybean",
+            "chinese_regional_culinary_ingredients:soybean",
             "northeast_china_delight:corn_seeds",
             "northeast_china_delight:napa_cabbage_seeds",
             "northeast_china_delight:snow_mustard_seeds",
@@ -161,7 +161,7 @@ public final class NortheastChinaConfig
             "northeast_china_delight:soy_paste",
             "northeast_china_delight:soy_paste_soup",
             "northeast_china_delight:soy_sauce",
-            "northeast_china_delight:soybean",
+            "chinese_regional_culinary_ingredients:soybean",
             "northeast_china_delight:soybean_sack",
             "northeast_china_delight:spicy_beef_soup",
             "northeast_china_delight:steamed_egg_soy_paste",
@@ -229,7 +229,7 @@ public final class NortheastChinaConfig
                         "默认包含全部 16 种农田作物，空列表表示不生成任何本模组农田作物。")
                 .defineListAllowEmpty("village_farm_allowed_crops", DEFAULT_VILLAGE_FARM_CROPS,
                         //? if >=1.20.5 {
-                        () -> "northeast_china_delight:soybean",
+                        () -> "chinese_regional_culinary_ingredients:soybean",
                         //?}
                         NortheastChinaConfig::isItemId);
         builder.pop();
@@ -244,7 +244,7 @@ public final class NortheastChinaConfig
                         "默认包含全部 139 种现有候选，空列表表示不生成任何本模组箱子物品。")
                 .defineListAllowEmpty("allowed_items", DEFAULT_CHEST_LOOT_ITEMS,
                         //? if >=1.20.5 {
-                        () -> "northeast_china_delight:soybean",
+                        () -> "chinese_regional_culinary_ingredients:soybean",
                         //?}
                         NortheastChinaConfig::isItemId);
         builder.pop();
@@ -292,7 +292,8 @@ public final class NortheastChinaConfig
 
     public static boolean isChestLootItemAllowed(ResourceLocation itemId)
     {
-        if (!NortheastChinaDelight.MODID.equals(itemId.getNamespace()))
+        if (!NortheastChinaDelight.MODID.equals(itemId.getNamespace())
+                && !NortheastChinaDelight.CRCI_MODID.equals(itemId.getNamespace()))
         {
             return true;
         }

@@ -7,14 +7,14 @@
           "input_predicate": {
             "block": "minecraft:pumpkin_stem",
             "predicate_type": "northeast_china_delight:village_farm_crop",
-            "crop_item": "northeast_china_delight:soybean",
+            "crop_item": "chinese_regional_culinary_ingredients:soybean",
             "probability": 0.1
           },
           "location_predicate": {
             "predicate_type": "minecraft:always_true"
           },
           "output_state": {
-            "Name": "northeast_china_delight:soybean_crop",
+            "Name": "chinese_regional_culinary_ingredients:soybean_crop",
             "Properties": {
               "age": "7"
             }

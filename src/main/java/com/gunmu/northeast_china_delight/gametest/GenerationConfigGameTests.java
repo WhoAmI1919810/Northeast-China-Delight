@@ -348,7 +348,7 @@ public final class GenerationConfigGameTests {
 
     @GameTest(template = "empty")
     public static void chestWhitelistSelectsOnlyNamedItems(GameTestHelper helper) {
-        withChestConfig(true, List.of("northeast_china_delight:soybean"), () -> {
+        withChestConfig(true, List.of("chinese_regional_culinary_ingredients:soybean"), () -> {
             var loot = sampleLoot();
             new ChestLootConfigModifier(new LootItemCondition[0]).apply(loot, context(helper, "minecraft:chests/simple_dungeon", 3));
             helper.assertTrue(loot.size() == 3 && loot.get(0).is(ModItems.SOYBEAN.get())
@@ -443,7 +443,7 @@ public final class GenerationConfigGameTests {
 
     @GameTest(template = "empty")
     public static void generationSwitchesAreIndependent(GameTestHelper helper) {
-        var soybean = DdIds.parse("northeast_china_delight:soybean");
+        var soybean = DdIds.parse("chinese_regional_culinary_ingredients:soybean");
         withFarmConfig(false, NortheastChinaConfig.DEFAULT_VILLAGE_FARM_CROPS, () ->
                 withChestConfig(true, NortheastChinaConfig.DEFAULT_CHEST_LOOT_ITEMS, () -> {
                     helper.assertTrue(!NortheastChinaConfig.isVillageFarmCropAllowed(soybean)

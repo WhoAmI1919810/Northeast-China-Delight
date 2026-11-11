@@ -2,5 +2,5 @@
   "type": "minecraft:crafting_shapeless",
   "category": "misc",
   "ingredients": [ { "item": "northeast_china_delight:soybean_sack" } ],
-  "result": { "count": 9, "id": "northeast_china_delight:soybean" }
+  "result": { "count": 9, "id": "chinese_regional_culinary_ingredients:soybean" }
 }

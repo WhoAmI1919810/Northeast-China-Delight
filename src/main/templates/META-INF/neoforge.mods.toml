@@ -93,6 +93,14 @@ config="${mod_id}.mixins.json"
     ordering="AFTER"
     side="BOTH"
 
+# 拆分后的东北乐事依赖中国烹饪食材
+[[dependencies.${mod_id}]]
+    modId="chinese_regional_culinary_ingredients"
+    type="required"
+    versionRange="[0,)"
+    ordering="AFTER"
+    side="BOTH"
+
 # 机械动力：可选前置（2026-11-04 起）。装了才有它那套加工配方、鼓风机批量风干、管道抽大缸成品；不装照样能玩
 [[dependencies.${mod_id}]]
     modId="create"
