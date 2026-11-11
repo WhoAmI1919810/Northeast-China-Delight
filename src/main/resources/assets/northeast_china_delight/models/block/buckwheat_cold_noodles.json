@@ -2,7 +2,7 @@
   "credit": "Northeast China Delight dish model",
   "parent": "block/block",
   "render_type": "minecraft:cutout",
-  "textures": {"particle": "chinese_regional_culinary_ingredients:item/buckwheat_cold_noodles", "container": "chinese_regional_culinary_ingredients:block/brass_bowl", "food": "chinese_regional_culinary_ingredients:block/dish/buckwheat_cold_noodles"},
+  "textures": {"particle": "northeast_china_delight:item/buckwheat_cold_noodles", "container": "chinese_regional_culinary_ingredients:block/brass_bowl", "food": "northeast_china_delight:block/dish/buckwheat_cold_noodles"},
   "elements": [
     {"from": [4, 0, 5], "to": [12, 1, 11], "rotation": {"angle": 0, "axis": "y", "origin": [7, 0, 7]}, "faces": {"north": {"uv": [7, 1.5, 11, 2], "texture": "#container"}, "east": {"uv": [7, 2.5, 10, 3], "texture": "#container"}, "south": {"uv": [7, 2, 11, 2.5], "texture": "#container"}, "west": {"uv": [7, 3, 10, 3.5], "texture": "#container"}, "up": {"uv": [0, 0, 4, 3], "texture": "#container"}, "down": {"uv": [0, 3, 4, 6], "texture": "#container"}}},
     {"from": [5, 0, 11], "to": [11, 1, 12], "rotation": {"angle": 0, "axis": "y", "origin": [8, 0.5, 11.5]}, "faces": {"north": {"uv": [7, 3.5, 10, 4], "texture": "#container"}, "east": {"uv": [9, 7.5, 9.5, 8], "texture": "#container"}, "south": {"uv": [7, 4, 10, 4.5], "texture": "#container"}, "west": {"uv": [9.5, 7.5, 10, 8], "texture": "#container"}, "up": {"uv": [7, 4.5, 10, 5], "texture": "#container"}, "down": {"uv": [7, 5, 10, 5.5], "texture": "#container"}}},
