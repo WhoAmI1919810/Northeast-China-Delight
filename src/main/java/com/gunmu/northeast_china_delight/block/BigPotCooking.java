@@ -503,7 +503,8 @@ public final class BigPotCooking {
     }
 
     /** 放上锅盖时由 BigStoveBlock 调：立刻显示「本次烹饪：XX」，并开始 3 秒反悔期 */
-    public static void lidPlaced(BigPotBlockEntity pot, Level level, BlockPos pos, BlockState state, Player player) {
+    public static void lidPlaced(BigPotBlockEntity pot, Level level, BlockPos pos, BlockState state,
+                                 @Nullable Player player) {
         if (level.isClientSide || pot.hasResult() || pot.cooking() != null) {
             return;
         }
@@ -679,8 +680,8 @@ public final class BigPotCooking {
         }
     }
 
-    private static void tell(Player player, Component message) {
-        if (!player.level().isClientSide) {
+    private static void tell(@Nullable Player player, Component message) {
+        if (player != null && !player.level().isClientSide) {
             player.displayClientMessage(message, true);
         }
     }
