@@ -19,12 +19,19 @@ public final class GrillJeiRecipes {
     public static List<GrillJeiRecipe> all(RecipeManager manager) {
         List<GrillJeiRecipe> list = new ArrayList<>();
         for (GrillRecipes.Recipe recipe : GrillRecipes.all(manager)) {
-            List<ItemStack> ingredient = Arrays.stream(recipe.input().getItems())
+            List<ItemStack> ingredient = JeiAvailability.filter(Arrays.stream(recipe.input().getItems())
                     .map(ItemStack::copy)
-                    .toList();
+                    .toList());
+            if (ingredient.isEmpty()) {
+                continue;
+            }
             List<List<ItemStack>> seasonings = recipe.seasonings().stream()
-                    .map(ing -> Arrays.stream(ing.getItems()).map(ItemStack::copy).toList())
+                    .map(ing -> JeiAvailability.filter(Arrays.stream(ing.getItems())
+                            .map(ItemStack::copy).toList()))
                     .toList();
+            if (!JeiAvailability.anyAvailable(seasonings) || !JeiAvailability.available(recipe.result())) {
+                continue;
+            }
             list.add(new GrillJeiRecipe(recipe.id(), ingredient, seasonings, recipe.result().copy(), recipe.seconds()));
         }
         return List.copyOf(list);

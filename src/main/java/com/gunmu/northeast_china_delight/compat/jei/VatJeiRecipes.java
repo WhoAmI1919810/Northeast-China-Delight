@@ -1,7 +1,5 @@
 package com.gunmu.northeast_china_delight.compat.jei;
 
-import com.gunmu.chinese_regional_culinary_ingredients.fluid.CrciFluids;
-
 import com.gunmu.chinese_regional_culinary_ingredients.crafting.VatRecipe;
 import com.gunmu.chinese_regional_culinary_ingredients.crafting.VatRecipes;
 import com.gunmu.chinese_regional_culinary_ingredients.fluid.CrciFluids;
@@ -58,14 +56,18 @@ public final class VatJeiRecipes {
         for (VatRecipe.Slot slot : slots) {
             candidates.add(candidatesOf(slot));
         }
+        if (missingRequiredInput(recipe, candidates) || missingRequiredSeal(recipe)) {
+            return List.of();
+        }
         int splitting = splittingSlot(slots, candidates);
         if (splitting < 0) {
-            return List.of(page(recipe, candidates, null));
+            VatJeiRecipe single = page(recipe, candidates, null);
+            return single == null ? List.of() : List.of(single);
         }
         Map<Item, List<ItemStack>> samplesByProduct = new LinkedHashMap<>();
         for (ItemStack sample : candidates.get(splitting)) {
             ItemStack produced = productOf(slots.get(splitting), sample, 1);
-            if (!produced.isEmpty()) {
+            if (!produced.isEmpty() && JeiAvailability.available(produced)) {
                 samplesByProduct.computeIfAbsent(produced.getItem(), key -> new ArrayList<>()).add(sample);
             }
         }
@@ -74,9 +76,32 @@ public final class VatJeiRecipes {
             List<List<ItemStack>> pageCandidates = new ArrayList<>(candidates);
             pageCandidates.set(splitting, List.copyOf(entry.getValue()));
             ResourceLocation productId = BuiltInRegistries.ITEM.getKey(entry.getKey());
-            pages.add(page(recipe, pageCandidates, productId.getPath()));
+            VatJeiRecipe page = page(recipe, pageCandidates, productId.getPath());
+            if (page != null) {
+                pages.add(page);
+            }
         }
-        return pages.isEmpty() ? List.of(page(recipe, candidates, null)) : List.copyOf(pages);
+        if (!pages.isEmpty()) {
+            return List.copyOf(pages);
+        }
+        VatJeiRecipe fallback = page(recipe, candidates, null);
+        return fallback == null ? List.of() : List.of(fallback);
+    }
+
+    private static boolean missingRequiredInput(VatRecipe recipe, List<List<ItemStack>> candidates) {
+        for (int level : levelsOf(recipe)) {
+            int[] counts = recipe.displayedCounts(level);
+            for (int i = 0; i < counts.length; i++) {
+                if (counts[i] > 0 && candidates.get(i).isEmpty()) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    private static boolean missingRequiredSeal(VatRecipe recipe) {
+        return recipe.seal() != VatRecipe.Seal.NONE && sealOf(recipe).isEmpty();
     }
 
     /**
@@ -96,18 +121,29 @@ public final class VatJeiRecipes {
         List<Item> products = new ArrayList<>();
         for (ItemStack sample : samples) {
             ItemStack produced = productOf(slot, sample, 1);
-            if (!produced.isEmpty() && !products.contains(produced.getItem())) {
+            if (!produced.isEmpty() && JeiAvailability.available(produced)
+                    && !products.contains(produced.getItem())) {
                 products.add(produced.getItem());
             }
         }
         return products;
     }
 
+    @Nullable
     private static VatJeiRecipe page(VatRecipe recipe, List<List<ItemStack>> candidates,
                                      @Nullable String suffix) {
         List<VatJeiRecipe.State> states = new ArrayList<>();
+        boolean hasOutput = false;
         for (int level : levelsOf(recipe)) {
-            states.add(stateOf(recipe, candidates, level));
+            VatJeiRecipe.State state = stateOf(recipe, candidates, level);
+            if (state == null) {
+                continue;
+            }
+            states.add(state);
+            hasOutput |= state.hasResultItem() || state.hasResultFluid();
+        }
+        if (states.isEmpty() || !hasOutput) {
+            return null;
         }
         ResourceLocation id = com.gunmu.northeast_china_delight.util.DdIds.parse(recipe.id());
         if (suffix != null) {
@@ -129,6 +165,7 @@ public final class VatJeiRecipes {
         return levels;
     }
 
+    @Nullable
     private static VatJeiRecipe.State stateOf(VatRecipe recipe, List<List<ItemStack>> candidates,
                                              int level) {
         int[] counts = resolveCounts(recipe, candidates, level);
@@ -171,13 +208,15 @@ public final class VatJeiRecipes {
                 collectionContainersOf(recipe), noteOf(recipe));
     }
 
+
     private static List<ItemStack> collectionContainersOf(VatRecipe recipe) {
         net.minecraft.world.item.Item container = recipe.liquid().servingContainer();
         if (container != null && recipe.liquid().servingItem() != null) {
-            return List.of(new ItemStack(container));
+            return JeiAvailability.available(container) ? List.of(new ItemStack(container)) : List.of();
         }
         VatRecipes.Serving serving = VatRecipes.servingOf(recipe.productFluid());
-        return serving == null ? List.of() : List.of(new ItemStack(serving.container()));
+        return serving == null ? List.of()
+                : JeiAvailability.available(serving.container()) ? List.of(new ItemStack(serving.container())) : List.of();
     }
 
     private static int[] resolveCounts(VatRecipe recipe, List<List<ItemStack>> candidates, int level) {
@@ -194,7 +233,7 @@ public final class VatJeiRecipes {
         List<ItemStack> list = new ArrayList<>();
         for (Item item : BuiltInRegistries.ITEM) {
             ItemStack stack = new ItemStack(item);
-            if (stack.isEmpty() || !slot.matcher().test(stack)) {
+            if (stack.isEmpty() || !JeiAvailability.available(stack) || !slot.matcher().test(stack)) {
                 continue;
             }
             list.add(stack);
@@ -226,7 +265,8 @@ public final class VatJeiRecipes {
         List<ItemStack> products = new ArrayList<>();
         for (ItemStack item : items) {
             ItemStack produced = productOf(slot, item, count);
-            if (produced.isEmpty() || indexOfItem(products, produced) >= 0) {
+            if (produced.isEmpty() || !JeiAvailability.available(produced)
+                    || indexOfItem(products, produced) >= 0) {
                 continue;
             }
             products.add(produced);
@@ -300,7 +340,7 @@ public final class VatJeiRecipes {
         List<ItemStack> list = new ArrayList<>();
         for (Item item : BuiltInRegistries.ITEM) {
             ItemStack stack = new ItemStack(item);
-            if (!stack.isEmpty() && matcher.test(stack)) {
+            if (!stack.isEmpty() && JeiAvailability.available(stack) && matcher.test(stack)) {
                 list.add(stack);
                 if (list.size() >= MAX_CANDIDATES) {
                     break;

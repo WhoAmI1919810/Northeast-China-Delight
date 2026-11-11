@@ -21,12 +21,21 @@ public final class PoundJeiRecipes {
         List<PoundJeiRecipe> list = new ArrayList<>();
         for (PoundingRecipes.Recipe recipe : PoundingRecipes.all(manager)) {
             List<PoundJeiRecipe.Input> inputs = new ArrayList<>();
+            boolean valid = true;
             for (PoundingRecipes.Input input : recipe.inputs()) {
-                List<ItemStack> items = Arrays.stream(input.ingredient().getItems())
+                List<ItemStack> items = JeiAvailability.filter(Arrays.stream(input.ingredient().getItems())
                         .map(ItemStack::copy)
                         .peek(stack -> stack.setCount(input.count()))
-                        .toList();
+                        .toList());
+                if (items.isEmpty()) {
+                    valid = false;
+                    break;
+                }
                 inputs.add(new PoundJeiRecipe.Input(items, input.count()));
+            }
+            if (!valid || (recipe.resultContainer() != null
+                    && !JeiAvailability.available(recipe.resultContainer()))) {
+                continue;
             }
 
             List<ItemStack> tool = Arrays.stream(recipe.tool().getItems())
@@ -41,6 +50,9 @@ public final class PoundJeiRecipes {
             }
             for (PoundingRecipes.Result result : recipe.results()) {
                 ItemStack stack = result.stack().copy();
+                if (!JeiAvailability.available(stack)) {
+                    continue;
+                }
                 stack.setCount(Math.min(result.maxCount(), Math.max(1, stack.getMaxStackSize())));
                 if (recipe.resultMb() > 0) {
                     // 按毫升装的显示成只装了这么多的瓶子，耐久条一看就知道
@@ -50,6 +62,10 @@ public final class PoundJeiRecipes {
                         result.chance(), result.byproduct(), result.pool(), result.weight(),
                         result.pooled() ? poolWeights.getOrDefault(result.pool(), result.weight()) : 0,
                         result.poolChance()));
+            }
+
+            if (outputs.isEmpty()) {
+                continue;
             }
 
             list.add(new PoundJeiRecipe(recipe.id(), List.copyOf(inputs), tool, recipe.poundTimes(),
