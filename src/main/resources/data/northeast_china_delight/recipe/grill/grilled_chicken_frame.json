@@ -1,5 +1,5 @@
 {
-  "type": "northeast_china_delight:grill",
+  "type": "chinese_regional_culinary_ingredients:grill",
   "config": {
     "input": {"item": "chinese_regional_culinary_ingredients:chicken_frame"},
     "seasonings": [

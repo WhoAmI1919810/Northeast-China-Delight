@@ -1,7 +1,7 @@
 package com.gunmu.northeast_china_delight.compat.create;
 
 import com.gunmu.northeast_china_delight.NortheastChinaDelight;
-import com.gunmu.northeast_china_delight.crafting.DryingRecipes;
+import com.gunmu.chinese_regional_culinary_ingredients.crafting.DryingRecipes;
 //? if <1.20.2 || >=1.20.5 {
 import com.simibubi.create.api.registry.CreateRegistries;
 import com.simibubi.create.content.kinetics.fan.EncasedFanBlock;

@@ -2,9 +2,9 @@ package com.gunmu.northeast_china_delight.compat.jei;
 
 import com.gunmu.chinese_regional_culinary_ingredients.fluid.CrciFluids;
 
-import com.gunmu.northeast_china_delight.crafting.VatRecipe;
-import com.gunmu.northeast_china_delight.crafting.VatRecipes;
-import com.gunmu.northeast_china_delight.fluid.ModFluids;
+import com.gunmu.chinese_regional_culinary_ingredients.crafting.VatRecipe;
+import com.gunmu.chinese_regional_culinary_ingredients.crafting.VatRecipes;
+import com.gunmu.chinese_regional_culinary_ingredients.fluid.CrciFluids;
 import com.gunmu.northeast_china_delight.util.DdIds;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
@@ -290,7 +290,7 @@ public final class VatJeiRecipes {
                 continue;
             }
             var state = blockItem.getBlock().defaultBlockState();
-            if (state.is(com.gunmu.northeast_china_delight.block.Vat.PRESS_STONES) && state.isSolid()) {
+            if (state.is(com.gunmu.chinese_regional_culinary_ingredients.block.Vat.PRESS_STONES) && state.isSolid()) {
                 list.add(new ItemStack(item));
             }
         }

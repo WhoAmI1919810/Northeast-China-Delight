@@ -3,7 +3,7 @@
   "pools": [
     {
       "bonus_rolls": 0.0,
-      "entries": [ { "type": "minecraft:item", "name": "northeast_china_delight:soy_milk" } ],
+      "entries": [ { "type": "minecraft:item", "name": "chinese_regional_culinary_ingredients:soy_milk" } ],
       "rolls": 1.0
     }
   ],

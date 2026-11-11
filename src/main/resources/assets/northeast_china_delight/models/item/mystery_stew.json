@@ -3,7 +3,7 @@
   "parent": "builtin/entity",
   "gui_light": "front",
   "textures": {
-    "particle": "northeast_china_delight:item/mystery_stew"
+    "particle": "chinese_regional_culinary_ingredients:item/mystery_stew"
   },
   "display": {
     "gui": {

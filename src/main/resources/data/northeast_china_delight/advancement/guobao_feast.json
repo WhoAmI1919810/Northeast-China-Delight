@@ -1,5 +1,5 @@
 {
-  "parent": "northeast_china_delight:greasy",
+  "parent": "chinese_regional_culinary_ingredients:greasy",
   "display": {"icon": {"id": "northeast_china_delight:new_style_crispy_pork"}, "title": {"translate": "advancements.northeast_china_delight.guobao_feast.title"}, "description": {"translate": "advancements.northeast_china_delight.guobao_feast.description"}, "frame": "challenge", "show_toast": true, "announce_to_chat": true},
   "criteria": {
     "old": {"trigger": "minecraft:inventory_changed", "conditions": {"items": [{"items": ["northeast_china_delight:old_style_crispy_pork"]}]}},

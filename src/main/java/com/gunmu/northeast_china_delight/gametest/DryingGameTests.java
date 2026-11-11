@@ -5,13 +5,13 @@ import com.gunmu.chinese_regional_culinary_ingredients.item.CrciItems;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import com.gunmu.northeast_china_delight.ModTags;
+import com.gunmu.chinese_regional_culinary_ingredients.CrciTags;
 import com.gunmu.northeast_china_delight.NortheastChinaDelight;
 import com.gunmu.northeast_china_delight.compat.create.ModFanProcessingTypes;
 import com.gunmu.northeast_china_delight.compat.jei.DryingJeiRecipes;
-import com.gunmu.northeast_china_delight.crafting.DryingDataRecipe;
-import com.gunmu.northeast_china_delight.crafting.DryingRecipes;
-import com.gunmu.northeast_china_delight.crafting.ModDryingRecipes;
+import com.gunmu.chinese_regional_culinary_ingredients.crafting.DryingDataRecipe;
+import com.gunmu.chinese_regional_culinary_ingredients.crafting.DryingRecipes;
+import com.gunmu.chinese_regional_culinary_ingredients.crafting.ModDryingRecipes;
 import com.gunmu.northeast_china_delight.item.ModItems;
 import com.gunmu.northeast_china_delight.util.DdIds;
 import com.simibubi.create.AllBlocks;
@@ -63,7 +63,7 @@ public final class DryingGameTests {
 
     private static JsonObject fixture() {
         return JsonParser.parseString("""
-                {"type":"northeast_china_delight:drying","config":{
+                {"type":"chinese_regional_culinary_ingredients:drying","config":{
                   "input":[{"item":"minecraft:carrot"},{"item":"minecraft:potato"}],
                   "results":[{"item":"minecraft:golden_carrot","count":2},{"item":"minecraft:bowl"}]
                 }}
@@ -167,7 +167,7 @@ public final class DryingGameTests {
         helper.assertTrue(DryingRecipes.byInput(manager, new ItemStack(Items.CARROT)).results().get(0).getCount() == 3,
                 "同 ID 覆盖必须使用新产物");
         JsonObject disabled = JsonParser.parseString("""
-                {"type":"northeast_china_delight:drying","config":{"disabled":true}}
+                {"type":"chinese_regional_culinary_ingredients:drying","config":{"disabled":true}}
                 """).getAsJsonObject();
         replace(manager, Map.of(SOURCE_ID, decode(SOURCE_ID, disabled)));
         helper.assertTrue(DryingRecipes.byInput(manager, new ItemStack(Items.CARROT)) == null
@@ -196,7 +196,7 @@ public final class DryingGameTests {
     public static void dryingSerializersPreserveTaggedInputAndResults(GameTestHelper helper) {
         JsonObject tagged = fixture();
         JsonObject input = new JsonObject();
-        input.addProperty("tag", ModTags.FOODS_SOY_MILK.location().toString());
+        input.addProperty("tag", CrciTags.FOODS_SOY_MILK.location().toString());
         tagged.getAsJsonObject("config").add("input", input);
         DryingDataRecipe source = decode(SOURCE_ID, tagged);
         DryingRecipes.Recipe synced = networkCopy(helper, source).rule(SOURCE_ID);
@@ -210,7 +210,7 @@ public final class DryingGameTests {
                 "MapCodec 应可往返序列化两个产物");
         //?}
         JsonObject disabled = JsonParser.parseString("""
-                {"type":"northeast_china_delight:drying","config":{"disabled":true}}
+                {"type":"chinese_regional_culinary_ingredients:drying","config":{"disabled":true}}
                 """).getAsJsonObject();
         helper.assertTrue(networkCopy(helper, decode(SOURCE_ID, disabled)).rule(SOURCE_ID) == null,
                 "禁用标记也必须完成网络同步");
@@ -273,7 +273,7 @@ public final class DryingGameTests {
                 pos.getZ() + 0.5, new ItemStack(ModItems.SOY_MILK.get(), 8));
         helper.getLevel().addFreshEntity(entity);
         CompoundTag processing = new CompoundTag();
-        processing.putString("Type", "northeast_china_delight:drying");
+        processing.putString("Type", "chinese_regional_culinary_ingredients:drying");
         processing.putInt("Time", 1);
         CompoundTag createData = new CompoundTag();
         createData.put("Processing", processing);

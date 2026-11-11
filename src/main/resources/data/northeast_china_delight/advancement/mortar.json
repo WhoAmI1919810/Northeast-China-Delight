@@ -2,7 +2,7 @@
   "parent": "northeast_china_delight:root",
   "display": {
     "icon": {
-      "id": "northeast_china_delight:wooden_mortar"
+      "id": "chinese_regional_culinary_ingredients:wooden_mortar"
     },
     "title": {
       "translate": "advancements.northeast_china_delight.mortar.title"
@@ -25,7 +25,7 @@
             "predicate": {
               "block": {
                 "blocks": [
-                  "northeast_china_delight:wooden_mortar"
+                  "chinese_regional_culinary_ingredients:wooden_mortar"
                 ]
               }
             }

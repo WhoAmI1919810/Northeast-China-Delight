@@ -2,7 +2,7 @@
   "credit": "Northeast China Delight big pot ingredient model",
   "parent": "block/block",
   "render_type": "minecraft:cutout",
-  "textures": {"particle": "northeast_china_delight:block/big_pot/hazel_mushroom", "0": "northeast_china_delight:block/big_pot/hazel_mushroom"},
+  "textures": {"particle": "chinese_regional_culinary_ingredients:block/big_pot/hazel_mushroom", "0": "chinese_regional_culinary_ingredients:block/big_pot/hazel_mushroom"},
   "elements": [
     {"from": [6.4811, 0.0939, 6.4547], "to": [6.9974, 1.1265, 6.971], "faces": {"north": {"uv": [0.25, 0.25, 0.5, 0.5], "texture": "#0"}, "east": {"uv": [0.25, 0.25, 0.5, 0.5], "texture": "#0"}, "south": {"uv": [0, 0.25, 0.25, 0.5], "texture": "#0"}, "west": {"uv": [0, 0.25, 0.25, 0.5], "texture": "#0"}, "up": {"uv": [0, 0, 0.25, 0.25], "texture": "#0"}, "down": {"uv": [0.25, 0, 0.5, 0.25], "texture": "#0"}}},
     {"from": [5.9132, 1.1265, 5.8867], "to": [7.5654, 1.4879, 7.5389], "faces": {"north": {"uv": [1.75, 0, 2.25, 0.25], "texture": "#0"}, "east": {"uv": [1.75, 0, 2.25, 0.25], "texture": "#0"}, "south": {"uv": [1.5, 0, 2, 0.25], "texture": "#0"}, "west": {"uv": [2, 0, 2.5, 0.25], "texture": "#0"}, "up": {"uv": [0.75, 0.25, 1.25, 0.75], "texture": "#0"}, "down": {"uv": [4, 0, 4.5, 0.5], "texture": "#0"}}},

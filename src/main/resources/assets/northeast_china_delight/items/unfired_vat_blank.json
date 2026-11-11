@@ -1,6 +1,6 @@
 {
   "model": {
     "type": "minecraft:model",
-    "model": "northeast_china_delight:item/unfired_vat_blank"
+    "model": "chinese_regional_culinary_ingredients:item/unfired_vat_blank"
   }
 }

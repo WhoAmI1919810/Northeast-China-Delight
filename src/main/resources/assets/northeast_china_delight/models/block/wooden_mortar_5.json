@@ -2,8 +2,8 @@
 	"format_version": "1.9.0",
 	"credit": "Made with Blockbench",
 	"texture_size": [64, 64],
-	"textures": { "particle": "northeast_china_delight:block/wooden_mortar_5",
-		"3": "northeast_china_delight:block/wooden_mortar_5"
+	"textures": { "particle": "chinese_regional_culinary_ingredients:block/wooden_mortar_5",
+		"3": "chinese_regional_culinary_ingredients:block/wooden_mortar_5"
 	},
 	"elements": [
 		{

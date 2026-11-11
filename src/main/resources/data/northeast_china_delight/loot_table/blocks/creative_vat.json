@@ -7,7 +7,7 @@
       "entries": [
         {
           "type": "minecraft:item",
-          "name": "northeast_china_delight:creative_vat"
+          "name": "chinese_regional_culinary_ingredients:creative_vat"
         }
       ],
       "conditions": [

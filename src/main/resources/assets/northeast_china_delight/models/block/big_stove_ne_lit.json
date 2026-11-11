@@ -2,11 +2,11 @@
   "parent": "minecraft:block/block",
   "textures": {
     "side": "farmersdelight:block/stove_side",
-    "inner": "northeast_china_delight:block/big_stove_inner",
-    "top": "northeast_china_delight:block/big_stove_top",
-    "iron": "northeast_china_delight:block/big_stove_iron",
-    "ash": "northeast_china_delight:block/big_stove_ash",
-    "embers": "northeast_china_delight:block/big_stove_embers",
+    "inner": "chinese_regional_culinary_ingredients:block/big_stove_inner",
+    "top": "chinese_regional_culinary_ingredients:block/big_stove_top",
+    "iron": "chinese_regional_culinary_ingredients:block/big_stove_iron",
+    "ash": "chinese_regional_culinary_ingredients:block/big_stove_ash",
+    "embers": "chinese_regional_culinary_ingredients:block/big_stove_embers",
     "particle": "farmersdelight:block/stove_side"
   },
   "elements": [

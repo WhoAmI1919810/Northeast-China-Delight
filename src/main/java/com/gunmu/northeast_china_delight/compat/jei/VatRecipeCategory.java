@@ -2,7 +2,7 @@ package com.gunmu.northeast_china_delight.compat.jei;
 
 import com.gunmu.northeast_china_delight.NortheastChinaDelight;
 import com.gunmu.northeast_china_delight.block.ModBlocks;
-import com.gunmu.northeast_china_delight.crafting.VatRecipes;
+import com.gunmu.chinese_regional_culinary_ingredients.crafting.VatRecipes;
 import com.gunmu.northeast_china_delight.item.ModItems;
 import com.gunmu.northeast_china_delight.util.DdIds;
 import com.mojang.blaze3d.vertex.PoseStack;

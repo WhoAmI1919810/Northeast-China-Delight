@@ -2,9 +2,9 @@ package com.gunmu.northeast_china_delight.compat.jei;
 
 import com.gunmu.northeast_china_delight.NortheastChinaDelight;
 import com.gunmu.northeast_china_delight.block.ModBlocks;
-import com.gunmu.northeast_china_delight.block.WoodenMortarBlock;
-import com.gunmu.northeast_china_delight.client.WoodenMortarRenderer;
-import com.gunmu.northeast_china_delight.crafting.PoundingRecipes;
+import com.gunmu.chinese_regional_culinary_ingredients.block.WoodenMortarBlock;
+import com.gunmu.chinese_regional_culinary_ingredients.client.WoodenMortarRenderer;
+import com.gunmu.chinese_regional_culinary_ingredients.crafting.PoundingRecipes;
 import com.gunmu.northeast_china_delight.util.DdIds;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;

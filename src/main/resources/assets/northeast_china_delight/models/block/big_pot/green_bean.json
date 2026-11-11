@@ -2,7 +2,7 @@
   "credit": "Northeast China Delight big pot ingredient model",
   "parent": "block/block",
   "render_type": "minecraft:cutout",
-  "textures": {"particle": "northeast_china_delight:block/big_pot/green_bean", "0": "northeast_china_delight:block/big_pot/green_bean"},
+  "textures": {"particle": "chinese_regional_culinary_ingredients:block/big_pot/green_bean", "0": "chinese_regional_culinary_ingredients:block/big_pot/green_bean"},
   "elements": [
     {"from": [5.8882, 0.0, 5.8603], "to": [6.2635, 0.3754, 6.4501], "rotation": {"angle": 45, "axis": "y", "origin": [6.0758, 0.0, 6.1552]}, "faces": {"north": {"uv": [1.25, 0.25, 1.5, 0.5], "texture": "#0"}, "east": {"uv": [1.75, 0.25, 2, 0.5], "texture": "#0"}, "south": {"uv": [1.5, 0.5, 1.75, 0.75], "texture": "#0"}, "west": {"uv": [1.25, 0.25, 1.5, 0.5], "texture": "#0"}, "up": {"uv": [1, 0.5, 1.25, 0.75], "texture": "#0"}, "down": {"uv": [1.25, 0.75, 1.5, 1], "texture": "#0"}}},
     {"from": [6.3229, 0.0214, 6.0537], "to": [6.9664, 0.6649, 7.3943], "rotation": {"angle": 45, "axis": "y", "origin": [6.6447, 0.0214, 6.724]}, "faces": {"north": {"uv": [0.25, 0.75, 0.5, 1], "texture": "#0"}, "east": {"uv": [0.25, 0.75, 0.5, 1], "texture": "#0"}, "south": {"uv": [0.5, 0.25, 0.75, 0.5], "texture": "#0"}, "west": {"uv": [0.5, 0.25, 0.75, 0.5], "texture": "#0"}, "up": {"uv": [0.25, 0.25, 0.5, 0.5], "texture": "#0"}, "down": {"uv": [0.5, 0.75, 0.75, 1], "texture": "#0"}}},

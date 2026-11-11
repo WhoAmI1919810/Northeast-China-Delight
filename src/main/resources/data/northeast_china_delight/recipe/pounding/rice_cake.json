@@ -1,28 +1,28 @@
 {
-  "type": "northeast_china_delight:pounding",
+  "type": "chinese_regional_culinary_ingredients:pounding",
   "config": {
     "input": {
       "item": "northeast_china_delight:steamed_rice"
     },
     "return_container": {
-      "item": "northeast_china_delight:large_basin"
+      "item": "chinese_regional_culinary_ingredients:large_basin"
     },
     "tool": {
       "type": "neoforge:compound",
       "children": [
-        { "item": "northeast_china_delight:wooden_mallet" },
+        { "item": "chinese_regional_culinary_ingredients:wooden_mallet" },
         { "item": "minecraft:mace" }
       ]
     },
     "pound_times": 4,
     "stage_model_mode": "overlay",
     "stage_models": [
-      "northeast_china_delight:block/wooden_mortar_rice_cake_0",
-      "northeast_china_delight:block/wooden_mortar_rice_cake_1",
-      "northeast_china_delight:block/wooden_mortar_rice_cake_2",
-      "northeast_china_delight:block/wooden_mortar_rice_cake_3"
+      "chinese_regional_culinary_ingredients:block/wooden_mortar_rice_cake_0",
+      "chinese_regional_culinary_ingredients:block/wooden_mortar_rice_cake_1",
+      "chinese_regional_culinary_ingredients:block/wooden_mortar_rice_cake_2",
+      "chinese_regional_culinary_ingredients:block/wooden_mortar_rice_cake_3"
     ],
-    "finished_model": "northeast_china_delight:block/wooden_mortar_rice_cake_done",
+    "finished_model": "chinese_regional_culinary_ingredients:block/wooden_mortar_rice_cake_done",
     "result": {
       "item": "northeast_china_delight:pounded_rice_cake",
       "count": 4

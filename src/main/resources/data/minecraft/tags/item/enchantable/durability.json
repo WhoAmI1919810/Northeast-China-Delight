@@ -1,7 +1,7 @@
 {
   "replace": false,
   "values": [
-    "northeast_china_delight:wooden_mallet",
-    "northeast_china_delight:big_pot_lid"
+    "chinese_regional_culinary_ingredients:wooden_mallet",
+    "chinese_regional_culinary_ingredients:big_pot_lid"
   ]
 }

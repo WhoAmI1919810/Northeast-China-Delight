@@ -1,5 +1,5 @@
 {
-  "parent": "northeast_china_delight:block/wooden_mortar",
+  "parent": "chinese_regional_culinary_ingredients:block/wooden_mortar",
   "display": {
     "gui": {
       "rotation": [30, 225, 0],

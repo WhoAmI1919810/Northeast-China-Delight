@@ -1,10 +1,21 @@
 package com.gunmu.northeast_china_delight.block;
 
+
+import com.gunmu.chinese_regional_culinary_ingredients.block.BasinBlock;
+import com.gunmu.chinese_regional_culinary_ingredients.block.BasinStandBlock;
+import com.gunmu.chinese_regional_culinary_ingredients.block.BigStoveBlock;
+import com.gunmu.chinese_regional_culinary_ingredients.block.DdFeastBlock;
+import com.gunmu.chinese_regional_culinary_ingredients.block.DishBlock;
+import com.gunmu.chinese_regional_culinary_ingredients.block.FacingDecorBlock;
+import com.gunmu.chinese_regional_culinary_ingredients.block.MysteryStewPotBlockEntity;
+import com.gunmu.chinese_regional_culinary_ingredients.block.PlacedDishBlock;
+import com.gunmu.chinese_regional_culinary_ingredients.block.PlatedDishBlock;
 import com.gunmu.chinese_regional_culinary_ingredients.item.CrciItems;
+import com.gunmu.chinese_regional_culinary_ingredients.block.CrciBlocks;
 
 import com.gunmu.northeast_china_delight.NortheastChinaDelight;
-import com.gunmu.northeast_china_delight.compat.displaydelight.DisplayDelightCompat;
-import com.gunmu.northeast_china_delight.fluid.ModFluids;
+import com.gunmu.chinese_regional_culinary_ingredients.compat.displaydelight.DisplayDelightCompat;
+import com.gunmu.chinese_regional_culinary_ingredients.fluid.CrciFluids;
 import com.gunmu.northeast_china_delight.item.ModItems;
 import com.gunmu.northeast_china_delight.util.DdIds;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -90,24 +101,9 @@ public class ModBlocks {
             skewerProperties()
     );
 
-    public static final Supplier<Block> UNFIRED_VAT_BLANK = block(
-            "unfired_vat_blank",
-            Block::new,
-            BlockBehaviour.Properties.of().strength(3.5f)
-    );
-
-    // registerBlock 会自动把注册名绑定为方块的 id（1.21.4 起方块必须带 id）
-    public static final Supplier<Block> VAT = block(
-            "vat",
-            Vat::new,
-            BlockBehaviour.Properties.of().strength(3.5f)
-    );
-
-    public static final Supplier<Block> CREATIVE_VAT = block(
-            "creative_vat",
-            CreativeVat::new,
-            BlockBehaviour.Properties.of().strength(3.5f)
-    );
+    public static final Supplier<Block> UNFIRED_VAT_BLANK = CrciBlocks.UNFIRED_VAT_BLANK;
+    public static final Supplier<Block> VAT = CrciBlocks.VAT;
+    public static final Supplier<Block> CREATIVE_VAT = CrciBlocks.CREATIVE_VAT;
 
     /**
      * 架上烧烤架的营火。
@@ -117,41 +113,9 @@ public class ModBlocks {
      * 这个方块直接继承原版营火，所以点燃、熄灭、伤害、粒子、渲染都和营火一样，
      * 只是多了一个烤架，并且把「放上去烤」的流程换成了本模组的烧烤配方。
      */
-    public static final Supplier<Block> GRILL_CAMPFIRE = block(
-            "grill_campfire",
-            GrillCampfireBlock::new,
-            BlockBehaviour.Properties.of()
-                    .mapColor(MapColor.PODZOL)
-                    .instrument(NoteBlockInstrument.BASS)
-                    .strength(2.0F)
-                    .sound(SoundType.WOOD)
-                    .lightLevel(state -> state.getValue(CampfireBlock.LIT) ? 15 : 0)
-                    .noOcclusion()
-                    .ignitedByLava()
-    );
-
-    public static final Supplier<Block> WOODEN_MORTAR = block(
-            "wooden_mortar",
-            WoodenMortarBlock::new,
-            // 硬度、爆炸抗性照木板；斧子挖得快（data/minecraft/tags/block/mineable/axe.json）
-            BlockBehaviour.Properties.of()
-                    .mapColor(MapColor.WOOD)
-                    .instrument(NoteBlockInstrument.BASS)
-                    .strength(2.0F, 3.0F)
-                    .sound(SoundType.WOOD)
-                    .noOcclusion()
-    );
-
-    public static final Supplier<Block> ANIMAL_OIL_BLOCK = block(
-            "animal_oil_block",
-            AnimalOilBlock::new,
-            BlockBehaviour.Properties.of()
-                    .mapColor(MapColor.COLOR_YELLOW)
-                    .speedFactor(0.4F)
-                    .jumpFactor(0.5F)
-                    .noOcclusion()
-                    .sound(SoundType.HONEY_BLOCK)
-    );
+    public static final Supplier<Block> GRILL_CAMPFIRE = CrciBlocks.GRILL_CAMPFIRE;
+    public static final Supplier<Block> WOODEN_MORTAR = CrciBlocks.WOODEN_MORTAR;
+    public static final Supplier<Block> ANIMAL_OIL_BLOCK = CrciBlocks.ANIMAL_OIL_BLOCK;
 
     // ===== 东北建材（小院用；暂时没有配方，只能从创造模式拿） =====
 
@@ -361,18 +325,7 @@ public class ModBlocks {
      * 数值照原版砖块（农夫乐事的炉灶也是照砖块）；点着亮度 15，超过雪融化的亮度阈值 11，
      * 灶周约 3 格内的雪层会随随机 tick 融化。推不动（推开一格就拼不回去了）。
      */
-    public static final Supplier<Block> BIG_STOVE = block(
-            "big_stove",
-            BigStoveBlock::new,
-            BlockBehaviour.Properties.of()
-                    .mapColor(MapColor.COLOR_RED)
-                    .instrument(NoteBlockInstrument.BASEDRUM)
-                    .requiresCorrectToolForDrops()
-                    .strength(2.0F, 6.0F)
-                    .lightLevel(state -> state.getValue(BigStoveBlock.LIT) ? 15 : 0)
-                    .noOcclusion()
-                    .pushReaction(PushReaction.BLOCK)
-    );
+    public static final Supplier<Block> BIG_STOVE = CrciBlocks.BIG_STOVE;
 
     /** 炕围画：牡丹枝、小山水、回纹，贴在墙面上的一层薄板（见 WallDecorBlock） */
     public static final Supplier<Block> KANG_WALL_FLOWER = kangWall("kang_wall_flower", MapColor.COLOR_CYAN);
@@ -393,17 +346,7 @@ public class ModBlocks {
     );
 
     /** 脸盆架：能放大脸盆 / 水盆（见 BasinStandBlock） */
-    public static final Supplier<Block> BASIN_STAND = block(
-            "basin_stand",
-            BasinStandBlock::new,
-            BlockBehaviour.Properties.of()
-                    .mapColor(MapColor.COLOR_BROWN)
-                    .instrument(NoteBlockInstrument.BASS)
-                    .strength(1.0F)
-                    .sound(SoundType.WOOD)
-                    .noOcclusion()
-                    .ignitedByLava()
-    );
+    public static final Supplier<Block> BASIN_STAND = CrciBlocks.BASIN_STAND;
 
     public static final List<String> DISH_BLOCK_IDS = List.of(
             "new_style_crispy_pork", "orange_crispy_pork", "crispy_pork_strips", "three_fresh_veggies",
@@ -522,12 +465,10 @@ public class ModBlocks {
      * 不影响物品图标 —— 物品模型仍旧走 models/item/large_basin.json 里的 2D 贴图。
      * 拿水桶右键倒满就变成 {@link #WATER_BASIN}（见 {@link BasinBlock}）。
      */
-    public static final Supplier<Block> LARGE_BASIN =
-            block("large_basin", properties -> new BasinBlock(properties, false), basinProperties());
+    public static final Supplier<Block> LARGE_BASIN = CrciBlocks.LARGE_BASIN;
 
     /** 装满水的大脸盆：模型是空盆加一层水面（水面按群系水色染色），空桶右键舀走变回空盆。 */
-    public static final Supplier<Block> WATER_BASIN =
-            block("water_basin", properties -> new BasinBlock(properties, true), basinProperties());
+    public static final Supplier<Block> WATER_BASIN = CrciBlocks.WATER_BASIN;
 
     /** 盆矮，原版会把它算成「不挡路」的方块、流水一冲就掉；forceSolidOn 让水绕着走（和原版栅栏门一样） */
     private static BlockBehaviour.Properties basinProperties() {
@@ -576,14 +517,7 @@ public class ModBlocks {
      * 盆装谜之炖菜：大锅里凑不上配方时煮出来的一盆（2026-11-05 用户）。拿碗盛出来是一碗原版谜之炖菜，
      * 效果存在方块实体里（MysteryStewPotBlockEntity）；方块属性同别的盆装菜
      */
-    public static final Supplier<MysteryStewPotBlock> MYSTERY_STEW_POT =
-            block("mystery_stew_pot", MysteryStewPotBlock::new,
-                    BlockBehaviour.Properties.of()
-                            .mapColor(MapColor.WOOD)
-                            .strength(0.5F)
-                            .sound(BASIN_SOUND)
-                            .noOcclusion()
-                            .forceSolidOn());
+    public static final Supplier<Block> MYSTERY_STEW_POT = () -> CrciBlocks.MYSTERY_STEW_POT.get();
 
     /**
      * 注册一口大盆菜。

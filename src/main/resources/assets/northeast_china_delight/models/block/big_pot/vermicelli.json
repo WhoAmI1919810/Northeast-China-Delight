@@ -2,7 +2,7 @@
   "credit": "Northeast China Delight big pot ingredient model",
   "parent": "block/block",
   "render_type": "minecraft:cutout",
-  "textures": {"particle": "northeast_china_delight:block/big_pot/vermicelli", "0": "northeast_china_delight:block/big_pot/vermicelli"},
+  "textures": {"particle": "chinese_regional_culinary_ingredients:block/big_pot/vermicelli", "0": "chinese_regional_culinary_ingredients:block/big_pot/vermicelli"},
   "elements": [
     {"from": [5.6944, 0.0, 6.3994], "to": [6.9922, 0.2238, 6.65], "faces": {"north": {"uv": [1.75, 0.75, 2, 1], "texture": "#0"}, "east": {"uv": [1.25, 0.75, 1.5, 1], "texture": "#0"}, "south": {"uv": [1.75, 0, 2, 0.25], "texture": "#0"}, "west": {"uv": [1.25, 0.25, 1.5, 0.5], "texture": "#0"}, "up": {"uv": [1.5, 0, 1.75, 0.25], "texture": "#0"}, "down": {"uv": [1.75, 0.25, 2, 0.5], "texture": "#0"}}},
     {"from": [6.8135, 0.0179, 6.1768], "to": [8.1113, 0.2417, 6.4274], "rotation": {"angle": 22.5, "axis": "y", "origin": [7.4625, 0.0179, 6.3021]}, "faces": {"north": {"uv": [1.5, 0.5, 1.75, 0.75], "texture": "#0"}, "east": {"uv": [1.25, 0.5, 1.5, 0.75], "texture": "#0"}, "south": {"uv": [1.25, 0.5, 1.5, 0.75], "texture": "#0"}, "west": {"uv": [1.25, 0.75, 1.5, 1], "texture": "#0"}, "up": {"uv": [1.5, 0.75, 1.75, 1], "texture": "#0"}, "down": {"uv": [1, 0, 1.25, 0.25], "texture": "#0"}}},

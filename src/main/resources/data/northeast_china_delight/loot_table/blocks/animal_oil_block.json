@@ -7,7 +7,7 @@
       "entries": [
         {
           "type": "minecraft:item",
-          "name": "northeast_china_delight:animal_oil_block"
+          "name": "chinese_regional_culinary_ingredients:animal_oil_block"
         }
       ],
       "conditions": [

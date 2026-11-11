@@ -5,8 +5,8 @@
     16
   ],
   "textures": {
-    "skin": "northeast_china_delight:block/wooden_mortar_peanut_skin",
-    "particle": "northeast_china_delight:block/wooden_mortar_peanut_skin"
+    "skin": "chinese_regional_culinary_ingredients:block/wooden_mortar_peanut_skin",
+    "particle": "chinese_regional_culinary_ingredients:block/wooden_mortar_peanut_skin"
   },
   "elements": [
     {

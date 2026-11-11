@@ -5,7 +5,7 @@
     "w": "northeast_china_delight:block/stand_wood",
     "t": "northeast_china_delight:block/hand_towel",
     "m": "northeast_china_delight:block/mirror",
-    "basin": "northeast_china_delight:block/large_basin",
+    "basin": "chinese_regional_culinary_ingredients:block/large_basin",
     "particle": "northeast_china_delight:block/stand_wood",
     "water": "minecraft:block/water_still"
   },

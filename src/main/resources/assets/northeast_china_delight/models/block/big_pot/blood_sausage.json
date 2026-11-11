@@ -2,7 +2,7 @@
   "credit": "Northeast China Delight big pot ingredient model",
   "parent": "block/block",
   "render_type": "minecraft:cutout",
-  "textures": {"particle": "northeast_china_delight:block/big_pot/blood_sausage", "0": "northeast_china_delight:block/big_pot/blood_sausage"},
+  "textures": {"particle": "chinese_regional_culinary_ingredients:block/big_pot/blood_sausage", "0": "chinese_regional_culinary_ingredients:block/big_pot/blood_sausage"},
   "elements": [
     {"from": [5.5216, 0.0, 6.3634], "to": [7.5652, 0.4866, 7.7939], "faces": {"north": {"uv": [1, 0, 1.5, 0.25], "texture": "#0"}, "east": {"uv": [1.25, 0.5, 1.5, 0.75], "texture": "#0"}, "south": {"uv": [1.5, 0.75, 2, 1], "texture": "#0"}, "west": {"uv": [1.5, 0, 1.75, 0.25], "texture": "#0"}, "up": {"uv": [0, 0.5, 0.5, 0.75], "texture": "#0"}, "down": {"uv": [0.25, 0.75, 0.75, 1], "texture": "#0"}}},
     {"from": [5.8282, 0.0, 6.0568], "to": [7.2587, 0.4866, 6.3634], "faces": {"north": {"uv": [1.25, 0, 1.5, 0.25], "texture": "#0"}, "east": {"uv": [1.75, 0.25, 2, 0.5], "texture": "#0"}, "south": {"uv": [1.5, 0.5, 1.75, 0.75], "texture": "#0"}, "west": {"uv": [1, 0.75, 1.25, 1], "texture": "#0"}, "up": {"uv": [0.5, 0.5, 0.75, 0.75], "texture": "#0"}, "down": {"uv": [0, 0.5, 0.25, 0.75], "texture": "#0"}}},

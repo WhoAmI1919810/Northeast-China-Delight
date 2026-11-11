@@ -1,7 +1,0 @@
-{
-  "type": "minecraft:crafting_shapeless",
-  "category": "misc",
-  "ingredients": [ { "item": "chinese_regional_culinary_ingredients:red_chili_crate" } ],
-  "result": { "count": 9, "id": "chinese_regional_culinary_ingredients:red_chili" }
-}
-

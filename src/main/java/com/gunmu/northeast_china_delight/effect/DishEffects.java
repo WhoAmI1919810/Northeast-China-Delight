@@ -1,5 +1,7 @@
 package com.gunmu.northeast_china_delight.effect;
 
+
+import com.gunmu.chinese_regional_culinary_ingredients.effect.CrciMobEffects;
 import com.gunmu.northeast_china_delight.util.DdIds;
 import com.gunmu.northeast_china_delight.util.DdEffects;
 import net.minecraft.core.Holder;
@@ -41,11 +43,11 @@ public final class DishEffects {
                 // 生命提升：大盆菜碗装那一份 II，别的油腻菜 I
                 list.add(new Applied(DdEffects.hold(MobEffects.HEALTH_BOOST), duration, info.feast() ? 1 : 0));
                 list.add(new Applied(DdEffects.hold(MobEffects.DIG_SPEED), duration, 0));
-                list.add(new Applied(DdEffects.hold(ModEffects.GREASY), duration, 1));
+                list.add(new Applied(DdEffects.hold(CrciMobEffects.GREASY), duration, 1));
             }
             case REFRESHING -> {
                 list.add(new Applied(DdEffects.hold(MobEffects.MOVEMENT_SPEED), duration, 0));
-                list.add(new Applied(DdEffects.hold(ModEffects.REFRESHING), duration, 0));
+                list.add(new Applied(DdEffects.hold(CrciMobEffects.REFRESHING), duration, 0));
             }
             case BALANCED -> {
                 // 均衡口味的大盆菜（酸菜海鲜锅、酸菜炖大骨）：生命提升 II + 急迫 I + 滋养 I
@@ -76,13 +78,13 @@ public final class DishEffects {
 
     public static List<Applied> nourishingExtras() {
         List<Applied> list = new ArrayList<>();
-        list.add(new Applied(DdEffects.hold(ModEffects.NOURISHING), 200, 0));
+        list.add(new Applied(DdEffects.hold(CrciMobEffects.NOURISHING), 200, 0));
         return list;
     }
 
     public static List<Applied> warmth(int durationTicks) {
         List<Applied> list = new ArrayList<>();
-        list.add(new Applied(DdEffects.hold(ModEffects.WARMTH), durationTicks, 0));
+        list.add(new Applied(DdEffects.hold(CrciMobEffects.WARMTH), durationTicks, 0));
         return list;
     }
 }

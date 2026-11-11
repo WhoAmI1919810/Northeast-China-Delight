@@ -7,7 +7,7 @@
       "entries": [
         {
           "type": "minecraft:item",
-          "name": "northeast_china_delight:wooden_mortar"
+          "name": "chinese_regional_culinary_ingredients:wooden_mortar"
         }
       ],
       "conditions": [

@@ -5,8 +5,8 @@ import com.gunmu.chinese_regional_culinary_ingredients.item.CrciItems;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.gunmu.northeast_china_delight.NortheastChinaDelight;
-import com.gunmu.northeast_china_delight.crafting.PoundDataRecipe;
-import com.gunmu.northeast_china_delight.crafting.PoundingRecipes;
+import com.gunmu.chinese_regional_culinary_ingredients.crafting.PoundDataRecipe;
+import com.gunmu.chinese_regional_culinary_ingredients.crafting.PoundingRecipes;
 import com.gunmu.northeast_china_delight.item.ModItems;
 import com.gunmu.northeast_china_delight.util.DdIds;
 import net.minecraft.gametest.framework.GameTest;
@@ -43,9 +43,9 @@ public final class PoundGameTests {
         PoundingRecipes.Recipe recipe = decode(
                 "{\"input\":{\"item\":\"farmersdelight:cooked_rice\"},"
                         + "\"return_container\":{\"item\":\"minecraft:bowl\"},"
-                        + "\"tool\":{\"item\":\"northeast_china_delight:wooden_mallet\"},"
+                        + "\"tool\":{\"item\":\"chinese_regional_culinary_ingredients:wooden_mallet\"},"
                         + "\"pound_times\":4,"
-                        + "\"stage_models\":[\"northeast_china_delight:block/wooden_mortar_1\"],"
+                        + "\"stage_models\":[\"chinese_regional_culinary_ingredients:block/wooden_mortar_1\"],"
                         + "\"result\":{\"item\":\"northeast_china_delight:pounded_rice_cake\",\"count\":2},"
                         + "\"transition\":\"sequential\"}",
                 DdIds.of(NortheastChinaDelight.MODID, "pounding/test_legacy"));
@@ -77,11 +77,11 @@ public final class PoundGameTests {
     public static void overlayStageModelsAndFinishedModelDecode(GameTestHelper helper) {
         PoundingRecipes.Recipe recipe = decode(
                 "{\"input\":{\"item\":\"farmersdelight:cooked_rice\"},"
-                        + "\"tool\":{\"item\":\"northeast_china_delight:wooden_mallet\"},"
+                        + "\"tool\":{\"item\":\"chinese_regional_culinary_ingredients:wooden_mallet\"},"
                         + "\"pound_times\":2,\"stage_model_mode\":\"overlay\","
-                        + "\"stage_models\":[\"northeast_china_delight:block/wooden_mortar_rice_cake_0\","
-                        + "\"northeast_china_delight:block/wooden_mortar_rice_cake_1\"],"
-                        + "\"finished_model\":\"northeast_china_delight:block/wooden_mortar_rice_cake_done\","
+                        + "\"stage_models\":[\"chinese_regional_culinary_ingredients:block/wooden_mortar_rice_cake_0\","
+                        + "\"chinese_regional_culinary_ingredients:block/wooden_mortar_rice_cake_1\"],"
+                        + "\"finished_model\":\"chinese_regional_culinary_ingredients:block/wooden_mortar_rice_cake_done\","
                         + "\"result\":{\"item\":\"northeast_china_delight:pounded_rice_cake\",\"count\":2},"
                         + "\"transition\":\"sequential\"}",
                 DdIds.of(NortheastChinaDelight.MODID, "pounding/test_overlay"));
@@ -104,7 +104,7 @@ public final class PoundGameTests {
     public static void resultContainerDecodes(GameTestHelper helper) {
         PoundingRecipes.Recipe recipe = decode(
                 "{\"input\":{\"item\":\"chinese_regional_culinary_ingredients:roasted_peanuts\"},"
-                        + "\"tool\":{\"item\":\"northeast_china_delight:wooden_mallet\"},"
+                        + "\"tool\":{\"item\":\"chinese_regional_culinary_ingredients:wooden_mallet\"},"
                         + "\"pound_times\":3,"
                         + "\"result\":{\"item\":\"chinese_regional_culinary_ingredients:cooking_oil\",\"count\":1},"
                         + "\"result_mb\":50,"
@@ -146,10 +146,10 @@ public final class PoundGameTests {
                         + "{\"ingredient\":{\"item\":\"minecraft:sugar\"},\"count\":2,"
                         + "\"return_container\":{\"item\":\"minecraft:glass_bottle\"}},"
                         + "{\"ingredient\":{\"item\":\"minecraft:egg\"},\"count\":1}],"
-                        + "\"tool\":{\"item\":\"northeast_china_delight:wooden_mallet\"},"
+                        + "\"tool\":{\"item\":\"chinese_regional_culinary_ingredients:wooden_mallet\"},"
                         + "\"pound_times\":2,\"charge_threshold\":0.5,"
-                        + "\"stage_models\":[\"northeast_china_delight:block/wooden_mortar_1\","
-                        + "\"northeast_china_delight:block/wooden_mortar_2\"],"
+                        + "\"stage_models\":[\"chinese_regional_culinary_ingredients:block/wooden_mortar_1\","
+                        + "\"chinese_regional_culinary_ingredients:block/wooden_mortar_2\"],"
                         + "\"results\":["
                         + "{\"item\":\"northeast_china_delight:pounded_rice_cake\",\"count\":2},"
                         + "{\"item\":\"minecraft:sugar\",\"min_count\":1,\"max_count\":3,"
@@ -306,8 +306,8 @@ public final class PoundGameTests {
                         + "{\"water\":true,\"count\":1},"
                         + "{\"ingredient\":{\"item\":\"minecraft:sugar\"},\"count\":1,\"liquid\":\"minecraft:lava\"},"
                         + "{\"ingredient\":{\"item\":\"minecraft:wheat\"},\"count\":1}],"
-                        + "\"tool\":{\"item\":\"northeast_china_delight:wooden_mallet\"},"
-                        + "\"stage_models\":[\"northeast_china_delight:block/wooden_mortar_1\"],"
+                        + "\"tool\":{\"item\":\"chinese_regional_culinary_ingredients:wooden_mallet\"},"
+                        + "\"stage_models\":[\"chinese_regional_culinary_ingredients:block/wooden_mortar_1\"],"
                         + "\"finished_liquid\":\"chinese_regional_culinary_ingredients:vegetable_oil\","
                         + "\"result\":{\"item\":\"minecraft:paper\",\"count\":1}}",
                 DdIds.of(NortheastChinaDelight.MODID, "pounding/test_liquid"));
@@ -338,9 +338,9 @@ public final class PoundGameTests {
         String honey = withHoney ? ",{\"ingredient\":{\"item\":\"minecraft:honey_bottle\"},\"count\":1}" : "";
         return "{\"inputs\":[{\"ingredient\":{\"item\":\"chinese_regional_culinary_ingredients:roasted_peanuts\"},\"count\":1}"
                 + honey + "],"
-                + "\"tool\":{\"item\":\"northeast_china_delight:wooden_mallet\"},"
+                + "\"tool\":{\"item\":\"chinese_regional_culinary_ingredients:wooden_mallet\"},"
                 + "\"pound_times\":3,"
-                + "\"stage_models\":[\"northeast_china_delight:block/wooden_mortar_1\"],"
+                + "\"stage_models\":[\"chinese_regional_culinary_ingredients:block/wooden_mortar_1\"],"
                 + "\"result\":{\"item\":\"minecraft:paper\",\"count\":1},"
                 + "\"transition\":\"sequential\"}";
     }

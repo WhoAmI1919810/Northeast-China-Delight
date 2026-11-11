@@ -5,9 +5,9 @@
     16
   ],
   "textures": {
-    "paste": "northeast_china_delight:block/wooden_mortar_soybean_paste",
-    "crumbs": "northeast_china_delight:block/wooden_mortar_soybean_crumbs",
-    "particle": "northeast_china_delight:block/wooden_mortar_soybean_paste"
+    "paste": "chinese_regional_culinary_ingredients:block/wooden_mortar_soybean_paste",
+    "crumbs": "chinese_regional_culinary_ingredients:block/wooden_mortar_soybean_crumbs",
+    "particle": "chinese_regional_culinary_ingredients:block/wooden_mortar_soybean_paste"
   },
   "elements": [
     {

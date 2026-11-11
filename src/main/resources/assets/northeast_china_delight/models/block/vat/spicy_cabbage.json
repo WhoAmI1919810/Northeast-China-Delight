@@ -2,7 +2,7 @@
   "credit": "Northeast China Delight vat display model",
   "parent": "block/block",
   "render_type": "minecraft:cutout",
-  "textures": {"particle": "northeast_china_delight:block/vat/spicy_cabbage", "0": "northeast_china_delight:block/vat/spicy_cabbage"},
+  "textures": {"particle": "chinese_regional_culinary_ingredients:block/vat/spicy_cabbage", "0": "chinese_regional_culinary_ingredients:block/vat/spicy_cabbage"},
   "elements": [
     {"from": [6.6, 0, 6.6], "to": [9.4, 0.92, 9.4], "faces": {"north": {"uv": [2, 0, 3.5, 0.5], "texture": "#0", "tintindex": 0}, "east": {"uv": [2, 0.5, 3.5, 1], "texture": "#0", "tintindex": 0}, "south": {"uv": [2, 0, 3.5, 0.5], "texture": "#0", "tintindex": 0}, "west": {"uv": [2, 0, 3.5, 0.5], "texture": "#0", "tintindex": 0}, "up": {"uv": [0.5, 0, 2, 1.5], "texture": "#0", "tintindex": 0}, "down": {"texture": "#0", "uv": [0.5, 0, 2, 1.5], "tintindex": 0}}},
     {"from": [5.8, 0.92, 5.8], "to": [10.2, 2.392, 10.2], "faces": {"north": {"uv": [7, 0.5, 9, 1], "texture": "#0", "tintindex": 0}, "east": {"uv": [6.5, 0.5, 8.5, 1], "texture": "#0", "tintindex": 0}, "south": {"uv": [6.5, 0.5, 8.5, 1], "texture": "#0", "tintindex": 0}, "west": {"uv": [6.5, 0.5, 8.5, 1], "texture": "#0", "tintindex": 0}, "up": {"uv": [4.5, 0, 6.5, 2], "texture": "#0", "tintindex": 0}, "down": {"texture": "#0", "uv": [4.5, 0, 6.5, 2], "tintindex": 0}}},

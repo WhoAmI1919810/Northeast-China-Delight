@@ -1,6 +1,6 @@
 package com.gunmu.northeast_china_delight.mixin;
 
-import com.gunmu.northeast_china_delight.item.PotLidItem;
+import com.gunmu.chinese_regional_culinary_ingredients.item.PotLidItem;
 import net.minecraft.world.entity.LivingEntity;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;

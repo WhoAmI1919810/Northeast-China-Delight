@@ -1,7 +1,7 @@
 {
   "variants": {
     "": {
-      "model": "northeast_china_delight:block/unfired_vat_blank"
+      "model": "chinese_regional_culinary_ingredients:block/unfired_vat_blank"
     }
   }
 }

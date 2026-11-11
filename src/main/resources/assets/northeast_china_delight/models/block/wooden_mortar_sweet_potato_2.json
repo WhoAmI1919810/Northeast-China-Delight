@@ -5,9 +5,9 @@
     16
   ],
   "textures": {
-    "slurry": "northeast_china_delight:block/wooden_mortar_starch_slurry",
-    "mash": "northeast_china_delight:block/wooden_mortar_sweet_potato_mash",
-    "particle": "northeast_china_delight:block/wooden_mortar_starch_slurry"
+    "slurry": "chinese_regional_culinary_ingredients:block/wooden_mortar_starch_slurry",
+    "mash": "chinese_regional_culinary_ingredients:block/wooden_mortar_sweet_potato_mash",
+    "particle": "chinese_regional_culinary_ingredients:block/wooden_mortar_starch_slurry"
   },
   "elements": [
     {

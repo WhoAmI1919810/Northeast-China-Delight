@@ -1,6 +1,6 @@
 package com.gunmu.northeast_china_delight.compat.jei;
 
-import com.gunmu.northeast_china_delight.crafting.DryingRecipes;
+import com.gunmu.chinese_regional_culinary_ingredients.crafting.DryingRecipes;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeManager;
 

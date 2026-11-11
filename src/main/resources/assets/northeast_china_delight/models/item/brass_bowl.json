@@ -1,6 +1,6 @@
 {
   "parent": "item/generated",
   "textures": {
-    "layer0": "northeast_china_delight:item/brass_bowl"
+    "layer0": "chinese_regional_culinary_ingredients:item/brass_bowl"
   }
 }

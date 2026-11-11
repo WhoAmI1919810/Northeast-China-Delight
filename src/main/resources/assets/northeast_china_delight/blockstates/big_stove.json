@@ -7,7 +7,7 @@
         "lit": "false"
       },
       "apply": {
-        "model": "northeast_china_delight:block/big_stove_nw"
+        "model": "chinese_regional_culinary_ingredients:block/big_stove_nw"
       }
     },
     {
@@ -17,7 +17,7 @@
         "lit": "true"
       },
       "apply": {
-        "model": "northeast_china_delight:block/big_stove_nw_lit"
+        "model": "chinese_regional_culinary_ingredients:block/big_stove_nw_lit"
       }
     },
     {
@@ -28,7 +28,7 @@
         "pot": "none"
       },
       "apply": {
-        "model": "northeast_china_delight:block/big_stove_fire_tall_nw"
+        "model": "chinese_regional_culinary_ingredients:block/big_stove_fire_tall_nw"
       }
     },
     {
@@ -39,7 +39,7 @@
         "pot": "pot|lid"
       },
       "apply": {
-        "model": "northeast_china_delight:block/big_stove_fire_nw"
+        "model": "chinese_regional_culinary_ingredients:block/big_stove_fire_nw"
       }
     },
     {
@@ -49,7 +49,7 @@
         "pot": "pot|lid"
       },
       "apply": {
-        "model": "northeast_china_delight:block/big_iron_pot_nw"
+        "model": "chinese_regional_culinary_ingredients:block/big_iron_pot_nw"
       }
     },
     {
@@ -59,7 +59,7 @@
         "pot": "lid"
       },
       "apply": {
-        "model": "northeast_china_delight:block/big_pot_lid_nw"
+        "model": "chinese_regional_culinary_ingredients:block/big_pot_lid_nw"
       }
     },
     {
@@ -69,7 +69,7 @@
         "lit": "false"
       },
       "apply": {
-        "model": "northeast_china_delight:block/big_stove_ne"
+        "model": "chinese_regional_culinary_ingredients:block/big_stove_ne"
       }
     },
     {
@@ -79,7 +79,7 @@
         "lit": "true"
       },
       "apply": {
-        "model": "northeast_china_delight:block/big_stove_ne_lit"
+        "model": "chinese_regional_culinary_ingredients:block/big_stove_ne_lit"
       }
     },
     {
@@ -90,7 +90,7 @@
         "pot": "none"
       },
       "apply": {
-        "model": "northeast_china_delight:block/big_stove_fire_tall_ne"
+        "model": "chinese_regional_culinary_ingredients:block/big_stove_fire_tall_ne"
       }
     },
     {
@@ -101,7 +101,7 @@
         "pot": "pot|lid"
       },
       "apply": {
-        "model": "northeast_china_delight:block/big_stove_fire_ne"
+        "model": "chinese_regional_culinary_ingredients:block/big_stove_fire_ne"
       }
     },
     {
@@ -111,7 +111,7 @@
         "pot": "pot|lid"
       },
       "apply": {
-        "model": "northeast_china_delight:block/big_iron_pot_ne"
+        "model": "chinese_regional_culinary_ingredients:block/big_iron_pot_ne"
       }
     },
     {
@@ -121,7 +121,7 @@
         "pot": "lid"
       },
       "apply": {
-        "model": "northeast_china_delight:block/big_pot_lid_ne"
+        "model": "chinese_regional_culinary_ingredients:block/big_pot_lid_ne"
       }
     },
     {
@@ -131,7 +131,7 @@
         "lit": "false"
       },
       "apply": {
-        "model": "northeast_china_delight:block/big_stove_sw"
+        "model": "chinese_regional_culinary_ingredients:block/big_stove_sw"
       }
     },
     {
@@ -141,7 +141,7 @@
         "lit": "true"
       },
       "apply": {
-        "model": "northeast_china_delight:block/big_stove_sw_lit"
+        "model": "chinese_regional_culinary_ingredients:block/big_stove_sw_lit"
       }
     },
     {
@@ -152,7 +152,7 @@
         "pot": "none"
       },
       "apply": {
-        "model": "northeast_china_delight:block/big_stove_fire_tall_sw"
+        "model": "chinese_regional_culinary_ingredients:block/big_stove_fire_tall_sw"
       }
     },
     {
@@ -163,7 +163,7 @@
         "pot": "pot|lid"
       },
       "apply": {
-        "model": "northeast_china_delight:block/big_stove_fire_sw"
+        "model": "chinese_regional_culinary_ingredients:block/big_stove_fire_sw"
       }
     },
     {
@@ -173,7 +173,7 @@
         "pot": "pot|lid"
       },
       "apply": {
-        "model": "northeast_china_delight:block/big_iron_pot_sw"
+        "model": "chinese_regional_culinary_ingredients:block/big_iron_pot_sw"
       }
     },
     {
@@ -183,7 +183,7 @@
         "pot": "lid"
       },
       "apply": {
-        "model": "northeast_china_delight:block/big_pot_lid_sw"
+        "model": "chinese_regional_culinary_ingredients:block/big_pot_lid_sw"
       }
     },
     {
@@ -193,7 +193,7 @@
         "lit": "false"
       },
       "apply": {
-        "model": "northeast_china_delight:block/big_stove_se"
+        "model": "chinese_regional_culinary_ingredients:block/big_stove_se"
       }
     },
     {
@@ -203,7 +203,7 @@
         "lit": "true"
       },
       "apply": {
-        "model": "northeast_china_delight:block/big_stove_se_lit"
+        "model": "chinese_regional_culinary_ingredients:block/big_stove_se_lit"
       }
     },
     {
@@ -214,7 +214,7 @@
         "pot": "none"
       },
       "apply": {
-        "model": "northeast_china_delight:block/big_stove_fire_tall_se"
+        "model": "chinese_regional_culinary_ingredients:block/big_stove_fire_tall_se"
       }
     },
     {
@@ -225,7 +225,7 @@
         "pot": "pot|lid"
       },
       "apply": {
-        "model": "northeast_china_delight:block/big_stove_fire_se"
+        "model": "chinese_regional_culinary_ingredients:block/big_stove_fire_se"
       }
     },
     {
@@ -235,7 +235,7 @@
         "pot": "pot|lid"
       },
       "apply": {
-        "model": "northeast_china_delight:block/big_iron_pot_se"
+        "model": "chinese_regional_culinary_ingredients:block/big_iron_pot_se"
       }
     },
     {
@@ -245,7 +245,7 @@
         "pot": "lid"
       },
       "apply": {
-        "model": "northeast_china_delight:block/big_pot_lid_se"
+        "model": "chinese_regional_culinary_ingredients:block/big_pot_lid_se"
       }
     },
     {
@@ -255,7 +255,7 @@
         "lit": "false"
       },
       "apply": {
-        "model": "northeast_china_delight:block/big_stove_nw",
+        "model": "chinese_regional_culinary_ingredients:block/big_stove_nw",
         "y": 90
       }
     },
@@ -266,7 +266,7 @@
         "lit": "true"
       },
       "apply": {
-        "model": "northeast_china_delight:block/big_stove_nw_lit",
+        "model": "chinese_regional_culinary_ingredients:block/big_stove_nw_lit",
         "y": 90
       }
     },
@@ -278,7 +278,7 @@
         "pot": "none"
       },
       "apply": {
-        "model": "northeast_china_delight:block/big_stove_fire_tall_nw",
+        "model": "chinese_regional_culinary_ingredients:block/big_stove_fire_tall_nw",
         "y": 90
       }
     },
@@ -290,7 +290,7 @@
         "pot": "pot|lid"
       },
       "apply": {
-        "model": "northeast_china_delight:block/big_stove_fire_nw",
+        "model": "chinese_regional_culinary_ingredients:block/big_stove_fire_nw",
         "y": 90
       }
     },
@@ -301,7 +301,7 @@
         "pot": "pot|lid"
       },
       "apply": {
-        "model": "northeast_china_delight:block/big_iron_pot_nw",
+        "model": "chinese_regional_culinary_ingredients:block/big_iron_pot_nw",
         "y": 90
       }
     },
@@ -312,7 +312,7 @@
         "pot": "lid"
       },
       "apply": {
-        "model": "northeast_china_delight:block/big_pot_lid_nw",
+        "model": "chinese_regional_culinary_ingredients:block/big_pot_lid_nw",
         "y": 90
       }
     },
@@ -323,7 +323,7 @@
         "lit": "false"
       },
       "apply": {
-        "model": "northeast_china_delight:block/big_stove_ne",
+        "model": "chinese_regional_culinary_ingredients:block/big_stove_ne",
         "y": 90
       }
     },
@@ -334,7 +334,7 @@
         "lit": "true"
       },
       "apply": {
-        "model": "northeast_china_delight:block/big_stove_ne_lit",
+        "model": "chinese_regional_culinary_ingredients:block/big_stove_ne_lit",
         "y": 90
       }
     },
@@ -346,7 +346,7 @@
         "pot": "none"
       },
       "apply": {
-        "model": "northeast_china_delight:block/big_stove_fire_tall_ne",
+        "model": "chinese_regional_culinary_ingredients:block/big_stove_fire_tall_ne",
         "y": 90
       }
     },
@@ -358,7 +358,7 @@
         "pot": "pot|lid"
       },
       "apply": {
-        "model": "northeast_china_delight:block/big_stove_fire_ne",
+        "model": "chinese_regional_culinary_ingredients:block/big_stove_fire_ne",
         "y": 90
       }
     },
@@ -369,7 +369,7 @@
         "pot": "pot|lid"
       },
       "apply": {
-        "model": "northeast_china_delight:block/big_iron_pot_ne",
+        "model": "chinese_regional_culinary_ingredients:block/big_iron_pot_ne",
         "y": 90
       }
     },
@@ -380,7 +380,7 @@
         "pot": "lid"
       },
       "apply": {
-        "model": "northeast_china_delight:block/big_pot_lid_ne",
+        "model": "chinese_regional_culinary_ingredients:block/big_pot_lid_ne",
         "y": 90
       }
     },
@@ -391,7 +391,7 @@
         "lit": "false"
       },
       "apply": {
-        "model": "northeast_china_delight:block/big_stove_sw",
+        "model": "chinese_regional_culinary_ingredients:block/big_stove_sw",
         "y": 90
       }
     },
@@ -402,7 +402,7 @@
         "lit": "true"
       },
       "apply": {
-        "model": "northeast_china_delight:block/big_stove_sw_lit",
+        "model": "chinese_regional_culinary_ingredients:block/big_stove_sw_lit",
         "y": 90
       }
     },
@@ -414,7 +414,7 @@
         "pot": "none"
       },
       "apply": {
-        "model": "northeast_china_delight:block/big_stove_fire_tall_sw",
+        "model": "chinese_regional_culinary_ingredients:block/big_stove_fire_tall_sw",
         "y": 90
       }
     },
@@ -426,7 +426,7 @@
         "pot": "pot|lid"
       },
       "apply": {
-        "model": "northeast_china_delight:block/big_stove_fire_sw",
+        "model": "chinese_regional_culinary_ingredients:block/big_stove_fire_sw",
         "y": 90
       }
     },
@@ -437,7 +437,7 @@
         "pot": "pot|lid"
       },
       "apply": {
-        "model": "northeast_china_delight:block/big_iron_pot_sw",
+        "model": "chinese_regional_culinary_ingredients:block/big_iron_pot_sw",
         "y": 90
       }
     },
@@ -448,7 +448,7 @@
         "pot": "lid"
       },
       "apply": {
-        "model": "northeast_china_delight:block/big_pot_lid_sw",
+        "model": "chinese_regional_culinary_ingredients:block/big_pot_lid_sw",
         "y": 90
       }
     },
@@ -459,7 +459,7 @@
         "lit": "false"
       },
       "apply": {
-        "model": "northeast_china_delight:block/big_stove_se",
+        "model": "chinese_regional_culinary_ingredients:block/big_stove_se",
         "y": 90
       }
     },
@@ -470,7 +470,7 @@
         "lit": "true"
       },
       "apply": {
-        "model": "northeast_china_delight:block/big_stove_se_lit",
+        "model": "chinese_regional_culinary_ingredients:block/big_stove_se_lit",
         "y": 90
       }
     },
@@ -482,7 +482,7 @@
         "pot": "none"
       },
       "apply": {
-        "model": "northeast_china_delight:block/big_stove_fire_tall_se",
+        "model": "chinese_regional_culinary_ingredients:block/big_stove_fire_tall_se",
         "y": 90
       }
     },
@@ -494,7 +494,7 @@
         "pot": "pot|lid"
       },
       "apply": {
-        "model": "northeast_china_delight:block/big_stove_fire_se",
+        "model": "chinese_regional_culinary_ingredients:block/big_stove_fire_se",
         "y": 90
       }
     },
@@ -505,7 +505,7 @@
         "pot": "pot|lid"
       },
       "apply": {
-        "model": "northeast_china_delight:block/big_iron_pot_se",
+        "model": "chinese_regional_culinary_ingredients:block/big_iron_pot_se",
         "y": 90
       }
     },
@@ -516,7 +516,7 @@
         "pot": "lid"
       },
       "apply": {
-        "model": "northeast_china_delight:block/big_pot_lid_se",
+        "model": "chinese_regional_culinary_ingredients:block/big_pot_lid_se",
         "y": 90
       }
     },
@@ -527,7 +527,7 @@
         "lit": "false"
       },
       "apply": {
-        "model": "northeast_china_delight:block/big_stove_nw",
+        "model": "chinese_regional_culinary_ingredients:block/big_stove_nw",
         "y": 180
       }
     },
@@ -538,7 +538,7 @@
         "lit": "true"
       },
       "apply": {
-        "model": "northeast_china_delight:block/big_stove_nw_lit",
+        "model": "chinese_regional_culinary_ingredients:block/big_stove_nw_lit",
         "y": 180
       }
     },
@@ -550,7 +550,7 @@
         "pot": "none"
       },
       "apply": {
-        "model": "northeast_china_delight:block/big_stove_fire_tall_nw",
+        "model": "chinese_regional_culinary_ingredients:block/big_stove_fire_tall_nw",
         "y": 180
       }
     },
@@ -562,7 +562,7 @@
         "pot": "pot|lid"
       },
       "apply": {
-        "model": "northeast_china_delight:block/big_stove_fire_nw",
+        "model": "chinese_regional_culinary_ingredients:block/big_stove_fire_nw",
         "y": 180
       }
     },
@@ -573,7 +573,7 @@
         "pot": "pot|lid"
       },
       "apply": {
-        "model": "northeast_china_delight:block/big_iron_pot_nw",
+        "model": "chinese_regional_culinary_ingredients:block/big_iron_pot_nw",
         "y": 180
       }
     },
@@ -584,7 +584,7 @@
         "pot": "lid"
       },
       "apply": {
-        "model": "northeast_china_delight:block/big_pot_lid_nw",
+        "model": "chinese_regional_culinary_ingredients:block/big_pot_lid_nw",
         "y": 180
       }
     },
@@ -595,7 +595,7 @@
         "lit": "false"
       },
       "apply": {
-        "model": "northeast_china_delight:block/big_stove_ne",
+        "model": "chinese_regional_culinary_ingredients:block/big_stove_ne",
         "y": 180
       }
     },
@@ -606,7 +606,7 @@
         "lit": "true"
       },
       "apply": {
-        "model": "northeast_china_delight:block/big_stove_ne_lit",
+        "model": "chinese_regional_culinary_ingredients:block/big_stove_ne_lit",
         "y": 180
       }
     },
@@ -618,7 +618,7 @@
         "pot": "none"
       },
       "apply": {
-        "model": "northeast_china_delight:block/big_stove_fire_tall_ne",
+        "model": "chinese_regional_culinary_ingredients:block/big_stove_fire_tall_ne",
         "y": 180
       }
     },
@@ -630,7 +630,7 @@
         "pot": "pot|lid"
       },
       "apply": {
-        "model": "northeast_china_delight:block/big_stove_fire_ne",
+        "model": "chinese_regional_culinary_ingredients:block/big_stove_fire_ne",
         "y": 180
       }
     },
@@ -641,7 +641,7 @@
         "pot": "pot|lid"
       },
       "apply": {
-        "model": "northeast_china_delight:block/big_iron_pot_ne",
+        "model": "chinese_regional_culinary_ingredients:block/big_iron_pot_ne",
         "y": 180
       }
     },
@@ -652,7 +652,7 @@
         "pot": "lid"
       },
       "apply": {
-        "model": "northeast_china_delight:block/big_pot_lid_ne",
+        "model": "chinese_regional_culinary_ingredients:block/big_pot_lid_ne",
         "y": 180
       }
     },
@@ -663,7 +663,7 @@
         "lit": "false"
       },
       "apply": {
-        "model": "northeast_china_delight:block/big_stove_sw",
+        "model": "chinese_regional_culinary_ingredients:block/big_stove_sw",
         "y": 180
       }
     },
@@ -674,7 +674,7 @@
         "lit": "true"
       },
       "apply": {
-        "model": "northeast_china_delight:block/big_stove_sw_lit",
+        "model": "chinese_regional_culinary_ingredients:block/big_stove_sw_lit",
         "y": 180
       }
     },
@@ -686,7 +686,7 @@
         "pot": "none"
       },
       "apply": {
-        "model": "northeast_china_delight:block/big_stove_fire_tall_sw",
+        "model": "chinese_regional_culinary_ingredients:block/big_stove_fire_tall_sw",
         "y": 180
       }
     },
@@ -698,7 +698,7 @@
         "pot": "pot|lid"
       },
       "apply": {
-        "model": "northeast_china_delight:block/big_stove_fire_sw",
+        "model": "chinese_regional_culinary_ingredients:block/big_stove_fire_sw",
         "y": 180
       }
     },
@@ -709,7 +709,7 @@
         "pot": "pot|lid"
       },
       "apply": {
-        "model": "northeast_china_delight:block/big_iron_pot_sw",
+        "model": "chinese_regional_culinary_ingredients:block/big_iron_pot_sw",
         "y": 180
       }
     },
@@ -720,7 +720,7 @@
         "pot": "lid"
       },
       "apply": {
-        "model": "northeast_china_delight:block/big_pot_lid_sw",
+        "model": "chinese_regional_culinary_ingredients:block/big_pot_lid_sw",
         "y": 180
       }
     },
@@ -731,7 +731,7 @@
         "lit": "false"
       },
       "apply": {
-        "model": "northeast_china_delight:block/big_stove_se",
+        "model": "chinese_regional_culinary_ingredients:block/big_stove_se",
         "y": 180
       }
     },
@@ -742,7 +742,7 @@
         "lit": "true"
       },
       "apply": {
-        "model": "northeast_china_delight:block/big_stove_se_lit",
+        "model": "chinese_regional_culinary_ingredients:block/big_stove_se_lit",
         "y": 180
       }
     },
@@ -754,7 +754,7 @@
         "pot": "none"
       },
       "apply": {
-        "model": "northeast_china_delight:block/big_stove_fire_tall_se",
+        "model": "chinese_regional_culinary_ingredients:block/big_stove_fire_tall_se",
         "y": 180
       }
     },
@@ -766,7 +766,7 @@
         "pot": "pot|lid"
       },
       "apply": {
-        "model": "northeast_china_delight:block/big_stove_fire_se",
+        "model": "chinese_regional_culinary_ingredients:block/big_stove_fire_se",
         "y": 180
       }
     },
@@ -777,7 +777,7 @@
         "pot": "pot|lid"
       },
       "apply": {
-        "model": "northeast_china_delight:block/big_iron_pot_se",
+        "model": "chinese_regional_culinary_ingredients:block/big_iron_pot_se",
         "y": 180
       }
     },
@@ -788,7 +788,7 @@
         "pot": "lid"
       },
       "apply": {
-        "model": "northeast_china_delight:block/big_pot_lid_se",
+        "model": "chinese_regional_culinary_ingredients:block/big_pot_lid_se",
         "y": 180
       }
     },
@@ -799,7 +799,7 @@
         "lit": "false"
       },
       "apply": {
-        "model": "northeast_china_delight:block/big_stove_nw",
+        "model": "chinese_regional_culinary_ingredients:block/big_stove_nw",
         "y": 270
       }
     },
@@ -810,7 +810,7 @@
         "lit": "true"
       },
       "apply": {
-        "model": "northeast_china_delight:block/big_stove_nw_lit",
+        "model": "chinese_regional_culinary_ingredients:block/big_stove_nw_lit",
         "y": 270
       }
     },
@@ -822,7 +822,7 @@
         "pot": "none"
       },
       "apply": {
-        "model": "northeast_china_delight:block/big_stove_fire_tall_nw",
+        "model": "chinese_regional_culinary_ingredients:block/big_stove_fire_tall_nw",
         "y": 270
       }
     },
@@ -834,7 +834,7 @@
         "pot": "pot|lid"
       },
       "apply": {
-        "model": "northeast_china_delight:block/big_stove_fire_nw",
+        "model": "chinese_regional_culinary_ingredients:block/big_stove_fire_nw",
         "y": 270
       }
     },
@@ -845,7 +845,7 @@
         "pot": "pot|lid"
       },
       "apply": {
-        "model": "northeast_china_delight:block/big_iron_pot_nw",
+        "model": "chinese_regional_culinary_ingredients:block/big_iron_pot_nw",
         "y": 270
       }
     },
@@ -856,7 +856,7 @@
         "pot": "lid"
       },
       "apply": {
-        "model": "northeast_china_delight:block/big_pot_lid_nw",
+        "model": "chinese_regional_culinary_ingredients:block/big_pot_lid_nw",
         "y": 270
       }
     },
@@ -867,7 +867,7 @@
         "lit": "false"
       },
       "apply": {
-        "model": "northeast_china_delight:block/big_stove_ne",
+        "model": "chinese_regional_culinary_ingredients:block/big_stove_ne",
         "y": 270
       }
     },
@@ -878,7 +878,7 @@
         "lit": "true"
       },
       "apply": {
-        "model": "northeast_china_delight:block/big_stove_ne_lit",
+        "model": "chinese_regional_culinary_ingredients:block/big_stove_ne_lit",
         "y": 270
       }
     },
@@ -890,7 +890,7 @@
         "pot": "none"
       },
       "apply": {
-        "model": "northeast_china_delight:block/big_stove_fire_tall_ne",
+        "model": "chinese_regional_culinary_ingredients:block/big_stove_fire_tall_ne",
         "y": 270
       }
     },
@@ -902,7 +902,7 @@
         "pot": "pot|lid"
       },
       "apply": {
-        "model": "northeast_china_delight:block/big_stove_fire_ne",
+        "model": "chinese_regional_culinary_ingredients:block/big_stove_fire_ne",
         "y": 270
       }
     },
@@ -913,7 +913,7 @@
         "pot": "pot|lid"
       },
       "apply": {
-        "model": "northeast_china_delight:block/big_iron_pot_ne",
+        "model": "chinese_regional_culinary_ingredients:block/big_iron_pot_ne",
         "y": 270
       }
     },
@@ -924,7 +924,7 @@
         "pot": "lid"
       },
       "apply": {
-        "model": "northeast_china_delight:block/big_pot_lid_ne",
+        "model": "chinese_regional_culinary_ingredients:block/big_pot_lid_ne",
         "y": 270
       }
     },
@@ -935,7 +935,7 @@
         "lit": "false"
       },
       "apply": {
-        "model": "northeast_china_delight:block/big_stove_sw",
+        "model": "chinese_regional_culinary_ingredients:block/big_stove_sw",
         "y": 270
       }
     },
@@ -946,7 +946,7 @@
         "lit": "true"
       },
       "apply": {
-        "model": "northeast_china_delight:block/big_stove_sw_lit",
+        "model": "chinese_regional_culinary_ingredients:block/big_stove_sw_lit",
         "y": 270
       }
     },
@@ -958,7 +958,7 @@
         "pot": "none"
       },
       "apply": {
-        "model": "northeast_china_delight:block/big_stove_fire_tall_sw",
+        "model": "chinese_regional_culinary_ingredients:block/big_stove_fire_tall_sw",
         "y": 270
       }
     },
@@ -970,7 +970,7 @@
         "pot": "pot|lid"
       },
       "apply": {
-        "model": "northeast_china_delight:block/big_stove_fire_sw",
+        "model": "chinese_regional_culinary_ingredients:block/big_stove_fire_sw",
         "y": 270
       }
     },
@@ -981,7 +981,7 @@
         "pot": "pot|lid"
       },
       "apply": {
-        "model": "northeast_china_delight:block/big_iron_pot_sw",
+        "model": "chinese_regional_culinary_ingredients:block/big_iron_pot_sw",
         "y": 270
       }
     },
@@ -992,7 +992,7 @@
         "pot": "lid"
       },
       "apply": {
-        "model": "northeast_china_delight:block/big_pot_lid_sw",
+        "model": "chinese_regional_culinary_ingredients:block/big_pot_lid_sw",
         "y": 270
       }
     },
@@ -1003,7 +1003,7 @@
         "lit": "false"
       },
       "apply": {
-        "model": "northeast_china_delight:block/big_stove_se",
+        "model": "chinese_regional_culinary_ingredients:block/big_stove_se",
         "y": 270
       }
     },
@@ -1014,7 +1014,7 @@
         "lit": "true"
       },
       "apply": {
-        "model": "northeast_china_delight:block/big_stove_se_lit",
+        "model": "chinese_regional_culinary_ingredients:block/big_stove_se_lit",
         "y": 270
       }
     },
@@ -1026,7 +1026,7 @@
         "pot": "none"
       },
       "apply": {
-        "model": "northeast_china_delight:block/big_stove_fire_tall_se",
+        "model": "chinese_regional_culinary_ingredients:block/big_stove_fire_tall_se",
         "y": 270
       }
     },
@@ -1038,7 +1038,7 @@
         "pot": "pot|lid"
       },
       "apply": {
-        "model": "northeast_china_delight:block/big_stove_fire_se",
+        "model": "chinese_regional_culinary_ingredients:block/big_stove_fire_se",
         "y": 270
       }
     },
@@ -1049,7 +1049,7 @@
         "pot": "pot|lid"
       },
       "apply": {
-        "model": "northeast_china_delight:block/big_iron_pot_se",
+        "model": "chinese_regional_culinary_ingredients:block/big_iron_pot_se",
         "y": 270
       }
     },
@@ -1060,7 +1060,7 @@
         "pot": "lid"
       },
       "apply": {
-        "model": "northeast_china_delight:block/big_pot_lid_se",
+        "model": "chinese_regional_culinary_ingredients:block/big_pot_lid_se",
         "y": 270
       }
     }

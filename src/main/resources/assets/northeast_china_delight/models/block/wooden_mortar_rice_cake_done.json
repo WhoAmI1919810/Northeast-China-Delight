@@ -6,8 +6,8 @@
 		32
 	],
 	"textures": {
-		"1": "northeast_china_delight:block/wooden_mortar_rice_cake_done",
-		"particle": "northeast_china_delight:block/wooden_mortar_rice_cake_done"
+		"1": "chinese_regional_culinary_ingredients:block/wooden_mortar_rice_cake_done",
+		"particle": "chinese_regional_culinary_ingredients:block/wooden_mortar_rice_cake_done"
 	},
 	"elements": [
 		{

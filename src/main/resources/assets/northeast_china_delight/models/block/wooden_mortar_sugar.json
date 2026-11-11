@@ -5,8 +5,8 @@
     16
   ],
   "textures": {
-    "sugar": "northeast_china_delight:block/wooden_mortar_sugar",
-    "particle": "northeast_china_delight:block/wooden_mortar_sugar"
+    "sugar": "chinese_regional_culinary_ingredients:block/wooden_mortar_sugar",
+    "particle": "chinese_regional_culinary_ingredients:block/wooden_mortar_sugar"
   },
   "elements": [
     {

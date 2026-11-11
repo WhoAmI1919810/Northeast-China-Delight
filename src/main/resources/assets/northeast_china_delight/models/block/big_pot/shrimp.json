@@ -2,7 +2,7 @@
   "credit": "Northeast China Delight big pot ingredient model",
   "parent": "block/block",
   "render_type": "minecraft:cutout",
-  "textures": {"particle": "northeast_china_delight:block/big_pot/shrimp", "0": "northeast_china_delight:block/big_pot/shrimp"},
+  "textures": {"particle": "chinese_regional_culinary_ingredients:block/big_pot/shrimp", "0": "chinese_regional_culinary_ingredients:block/big_pot/shrimp"},
   "elements": [
     {"from": [6.9838, 0.0, 8.6946], "to": [8.6283, 1.3042, 10.1123], "faces": {"north": {"uv": [2.75, 0.75, 3, 1], "texture": "#0"}, "east": {"uv": [2.25, 0.5, 2.5, 0.75], "texture": "#0"}, "south": {"uv": [2, 0.5, 2.25, 0.75], "texture": "#0"}, "west": {"uv": [2.25, 0.5, 2.5, 0.75], "texture": "#0"}, "up": {"uv": [2.25, 0.25, 2.5, 0.5], "texture": "#0"}, "down": {"uv": [2.75, 0.25, 3, 0.5], "texture": "#0"}}},
     {"from": [8.2319, 0.0227, 8.4956], "to": [9.5361, 1.2135, 9.6297], "rotation": {"angle": -45, "axis": "y", "origin": [8.884, 0.0227, 9.0627]}, "faces": {"north": {"uv": [0, 0.25, 0.25, 0.5], "texture": "#0"}, "east": {"uv": [0.25, 0.25, 0.5, 0.5], "texture": "#0"}, "south": {"uv": [0.5, 0.25, 0.75, 0.5], "texture": "#0"}, "west": {"uv": [0.5, 0.5, 0.75, 0.75], "texture": "#0"}, "up": {"uv": [0, 0, 0.25, 0.25], "texture": "#0"}, "down": {"uv": [0.5, 0.25, 0.75, 0.5], "texture": "#0"}}},
