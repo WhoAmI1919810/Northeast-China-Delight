@@ -1,9 +1,0 @@
-{
-  "values": [
-    "chinese_regional_culinary_ingredients:pickled_cucumber",
-    {
-      "id": "croptopia:pickled_cucumber",
-      "required": false
-    }
-  ]
-}
