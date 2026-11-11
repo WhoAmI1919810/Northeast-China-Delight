@@ -202,6 +202,24 @@ public class BigStoveBlock extends Block implements EntityBlock, WorldlyContaine
         return level.getBlockEntity(at) instanceof BigPotBlockEntity pot ? pot : null;
     }
 
+    /** 烹饪信号的 2×2 多格同步：比较器贴着任意一格都要收到刷新通知。 */
+    public static void updateAnalogOutput(Level level, BlockPos pos, BlockState state) {
+        if (level.isClientSide || !(state.getBlock() instanceof BigStoveBlock)) {
+            return;
+        }
+        Direction facing = state.getValue(FACING);
+        BlockPos origin = origin(pos, state);
+        Block block = state.getBlock();
+        for (Part part : Part.values()) {
+            int[] o = part.offset(facing);
+            BlockPos at = origin.offset(o[0], 0, o[1]);
+            BlockState sibling = level.getBlockState(at);
+            if (sibling.is(block) && sibling.getValue(FACING) == facing && sibling.getValue(PART) == part) {
+                level.updateNeighbourForOutputSignal(at, block);
+            }
+        }
+    }
+
     /** 四格一起改（只改还在、而且确实是同一口灶的那几格） */
     private void updateAll(Level level, BlockPos pos, BlockState state, UnaryOperator<BlockState> change) {
         Direction facing = state.getValue(FACING);
@@ -327,16 +345,9 @@ public class BigStoveBlock extends Block implements EntityBlock, WorldlyContaine
         }
         if (held.is(ModItems.BIG_POT_LID.get()) && pot == Pot.POT) {
             if (!level.isClientSide) {
-                updateAll(level, pos, state, s -> s.setValue(POT, Pot.LID));
                 // 锅盖原样存进灶里（耐久、附魔），揭下来还的是同一个
                 ItemStack lid = DdStacks.consumeAndReturn(held, 1, player);
-                BigPotBlockEntity contents = potAt(level, pos, state);
-                if (contents != null) {
-                    contents.putLid(lid);
-                    BigPotCooking.lidPlaced(contents, level, pos, state, player);
-                }
-                level.playSound(null, pos, SoundEvents.WOOD_PLACE, SoundSource.BLOCKS, 1.0F, 1.0F);
-                level.gameEvent(player, GameEvent.BLOCK_CHANGE, pos);
+                placeLid(level, pos, state, lid, player);
             }
             return InteractionResult.sidedSuccess(level.isClientSide);
         }
@@ -372,6 +383,47 @@ public class BigStoveBlock extends Block implements EntityBlock, WorldlyContaine
             }
         }
         return InteractionResult.PASS;
+    }
+
+    /**
+     * 把一枚锅盖装到已经放锅的灶上。玩家右键和机械动力动力臂共用这一条路径，
+     * 避免两边各写一套状态、音效和开始烹饪的逻辑。
+     */
+    private static boolean placeLid(Level level, BlockPos pos, BlockState state, ItemStack lid,
+                                    @Nullable Player player) {
+        if (level.isClientSide || lid.isEmpty() || !(state.getBlock() instanceof BigStoveBlock)
+                || state.getValue(POT) != Pot.POT) {
+            return false;
+        }
+        BigPotBlockEntity contents = potAt(level, pos, state);
+        if (contents == null) {
+            return false;
+        }
+        ((BigStoveBlock) state.getBlock()).updateAll(level, pos, state, s -> s.setValue(POT, Pot.LID));
+        contents.putLid(lid.copyWithCount(1));
+        BigPotCooking.lidPlaced(contents, level, pos, state, player);
+        level.playSound(null, pos, SoundEvents.WOOD_PLACE, SoundSource.BLOCKS, 1.0F, 1.0F);
+        level.gameEvent(player, GameEvent.BLOCK_CHANGE, pos);
+        return true;
+    }
+
+    /**
+     * 机械动力动力臂的插入入口。锅盖不是食材，不能交给普通物品能力；在交互点里截住，
+     * 走与玩家右键相同的 {@link #placeLid} 路径。simulate 只检查能否放，不改状态、不扣物。
+     */
+    public static ItemStack insertLid(Level level, BlockPos pos, BlockState state, ItemStack stack,
+                                      @Nullable Player player, boolean simulate) {
+        if (stack.isEmpty() || !stack.is(ModItems.BIG_POT_LID.get())
+                || !(state.getBlock() instanceof BigStoveBlock) || state.getValue(POT) != Pot.POT
+                || potAt(level, pos, state) == null) {
+            return stack;
+        }
+        ItemStack remainder = stack.copy();
+        remainder.shrink(1);
+        if (simulate || placeLid(level, pos, state, stack, player)) {
+            return remainder;
+        }
+        return stack;
     }
 
     /** 灶里存着的那个锅盖；以前的存档没存（或者灶上的方块实体没了）就给个新的 */
@@ -648,5 +700,16 @@ public class BigStoveBlock extends Block implements EntityBlock, WorldlyContaine
     @Override
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
         builder.add(FACING, PART, LIT, POT);
+    }
+
+    @Override
+    public boolean hasAnalogOutputSignal(BlockState state) {
+        return state.getValue(POT) != Pot.NONE;
+    }
+
+    @Override
+    public int getAnalogOutputSignal(BlockState state, Level level, BlockPos pos) {
+        BigPotBlockEntity pot = potAt(level, pos, state);
+        return pot == null ? 0 : pot.comparatorOutput();
     }
 }

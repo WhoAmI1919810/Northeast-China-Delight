@@ -25,9 +25,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * 准星指大灶（四格哪一格都行，锅的数据在西北那格上，见 {@link BigStoveBlock#potAt}）：投料阶段把食材（图标）和调料（只写名称）
- * 分开显示；盖上锅盖以后（3 秒反悔期、煮着、煮好了还没盛完）显示「本次烹饪得到：菜名」和进度条（百分比；走满了写
- * 「烹饪完成」），不再显示投料和调料。别的（火、锅盖、水、怎么盛）不写。
+ * 准星指大灶（四格哪一格都行，锅的数据在西北那格上，见 {@link BigStoveBlock#potAt}）：投料阶段显示水量，把食材（图标）和
+ * 调料（只写名称）分开显示；盖上锅盖以后（3 秒反悔期、煮着、煮好了还没盛完）显示「本次烹饪得到：菜名」和进度条
+ * （百分比；走满了写「烹饪完成」），不再显示水量、投料和调料。别的（火、锅盖、怎么盛）不写。
  * 进度每秒从服务端同步一次（{@link BigPotBlockEntity#tickCooking}）。
  */
 public enum BigStoveComponentProvider implements IBlockComponentProvider {
@@ -65,6 +65,8 @@ public enum BigStoveComponentProvider implements IBlockComponentProvider {
                         "jade.northeast_china_delight.big_pot.result", currentDish.getHoverName())));
             }
         } else {
+            tooltip.add(helper.text(Component.translatable(
+                    "jade.northeast_china_delight.big_pot.water", pot.liquidMb())));
             List<ItemStack> ingredients = pot.ingredientStacks();
             if (!ingredients.isEmpty()) {
                 List<IElement> line = new ArrayList<>();
@@ -73,7 +75,12 @@ public enum BigStoveComponentProvider implements IBlockComponentProvider {
                     if (i > 0) {
                         line.add(helper.spacer(2, 0));
                     }
-                    line.add(helper.item(ingredients.get(i).copy(), 0.5F));
+                    // 图标后面写「×数量」（2026-11-09 用户：Jade 显示的投入食材要能显示投入的数量）；
+                    // 半大的图标角上那个数字太小看不清，所以图标只画一个，数量单独写成字
+                    ItemStack stack = ingredients.get(i);
+                    line.add(helper.item(stack.copyWithCount(1), 0.5F));
+                    line.add(helper.text(Component.translatable("jade.northeast_china_delight.big_pot.count",
+                            stack.getCount())));
                 }
                 tooltip.add(line);
             }

@@ -101,12 +101,24 @@ public final class MysteryStewEffects {
         //?}
     }
 
-    /** 盛一碗：原版谜之炖菜，带上这些效果 */
+    /**
+     * 盛一碗：原版谜之炖菜，带上这些效果。1.20.1 不能循环调用 {@code SuspiciousStewItem.saveMobEffect}：
+     * 它用 {@code getList("Effects", 9)} 读已有的 compound 列表会得到空表，第二次起会把前面的效果覆盖掉。
+     * 这里一次构造完整的 Effects 列表再写回，字段与原版一致。
+     */
     public static ItemStack bowl(List<Entry> effects) {
         ItemStack stew = new ItemStack(Items.SUSPICIOUS_STEW);
         //? if <1.20.5 {
-        /*for (Entry entry : effects) {
-            SuspiciousStewItem.saveMobEffect(stew, entry.effect().value(), entry.duration());
+        /*ListTag list = new ListTag();
+        for (Entry entry : effects) {
+            CompoundTag effect = new CompoundTag();
+            effect.putInt(SuspiciousStewItem.EFFECT_ID_TAG, MobEffect.getId(entry.effect().value()));
+            net.minecraftforge.common.ForgeHooks.saveMobEffect(effect, "forge:effect_id", entry.effect().value());
+            effect.putInt(SuspiciousStewItem.EFFECT_DURATION_TAG, entry.duration());
+            list.add(effect);
+        }
+        if (!list.isEmpty()) {
+            stew.getOrCreateTag().put(SuspiciousStewItem.EFFECTS_TAG, list);
         }
         *///?} else {
         stew.set(DataComponents.SUSPICIOUS_STEW_EFFECTS, component(effects));

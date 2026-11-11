@@ -17,8 +17,10 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.EnumMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * 谜之炖菜：大锅里的东西凑不上任何一条大锅烹饪配方时，盖上锅盖照样煮，煮出来一锅谜之炖菜，用大脸盆盛
@@ -31,8 +33,10 @@ import java.util.Map;
  *       锅里数量最多的三类给效果（用户：投了 3 个骨头、2 个主食、1 个萝卜，就给抗性提升和饱和、不给夜视；
  *       同日改成最多三种效果）；
  *       个数一样多时，珍稀度加起来高的先（{@link #rarity}：费工 2、难得 3、稀有 5，其余家常 1），再一样就先放进锅的先；</li>
- *   <li>等级无论放多少都是 I（同原版谜之炖菜）；时长：不放调料 4 秒，每多放一种调料加 2 秒（{@link #BASE_TICKS}、{@link #PER_SEASONING_TICKS}）。
- *       饱和例外，固定 {@link #SATURATION_TICKS} 刻（同原版蒲公英炖菜）：饱和每刻都补饥饿值，给 4 秒就是一碗吃满；</li>
+ *   <li>等级无论放多少都是 I（同原版谜之炖菜）；每种效果先按 {@link Kind#initialTicks()} 取初始时长，
+ *       同类每件食材再加 {@link #BASE_TICKS_PER_ITEM} 刻、每多一种不同物品再加 {@link #BASE_TICKS_PER_VARIETY} 刻，
+ *       最后按投入的调料种数乘倍率。饱和例外，固定 {@link #SATURATION_TICKS} 刻（同原版蒲公英炖菜）：
+ *       饱和每刻都补饥饿值，给 4 秒就是一碗吃满；</li>
  *   <li>一锅出一盆（盆里能盛 4 碗），不给经验；效果存在盆装谜之炖菜上（{@link MysteryStewEffects}），
  *       放下的盆、拿碗盛出来的原版谜之炖菜都带着。</li>
  * </ul>
@@ -44,10 +48,10 @@ public final class MysteryStew {
     /** 煮多久：同本模组的大锅烹饪配方（揭着盖 30 秒，盖着锅盖缩短 40%） */
     public static final int COOKING_TIME = 600;
     public static final int LID_COOKING_TIME = COOKING_TIME * (100 - 40) / 100;
-    /** 不放调料时每种效果几刻（4 秒） */
-    public static final int BASE_TICKS = 80;
-    /** 每多放一种调料加几刻（2 秒）；同一种放几份只算一种 */
-    public static final int PER_SEASONING_TICKS = 40;
+    /** 同类每件食材给几刻（0.3 秒） */
+    public static final int BASE_TICKS_PER_ITEM = 6;
+    /** 同类每多一种不同物品再给几刻（0.3 秒） */
+    public static final int BASE_TICKS_PER_VARIETY = 6;
     /** 饱和固定几刻（同原版蒲公英炖菜） */
     public static final int SATURATION_TICKS = 7;
     /** 最多给几种效果：数量最多的三类（2026-11-05 用户从两种改成最多三种） */
@@ -66,35 +70,37 @@ public final class MysteryStew {
      * 先认特别的（毒物、人参、海参、金苹果……），再认笼统的（肉、鱼虾、青菜、主食）——比如河豚在通用的生鱼标签里，但算毒物
      */
     public enum Kind {
-        POISON("poison", "minecraft:poison"),
-        ROTTEN("rotten", "minecraft:hunger"),
-        GINSENG("ginseng", "northeast_china_delight:nourishing"),
-        SEA_CUCUMBER("sea_cucumber", "minecraft:dolphins_grace"),
-        GOLDEN("golden", "minecraft:absorption"),
-        CHORUS("chorus", "minecraft:slow_falling"),
-        OFFAL("offal", "minecraft:health_boost"),
-        BONE("bone", "minecraft:resistance"),
-        FAT("fat", "northeast_china_delight:greasy"),
-        SPICY("spicy", "minecraft:fire_resistance"),
-        PICKLE("pickle", "minecraft:haste"),
-        ROOT("root", "minecraft:night_vision"),
-        ALLIUM("allium", "northeast_china_delight:warmth"),
-        BEAN("bean", "farmersdelight:nourishment"),
-        NUT("nut", "minecraft:luck"),
-        FUNGUS("fungus", "minecraft:regeneration"),
-        EGG("egg", "minecraft:speed"),
-        SEAFOOD("seafood", "minecraft:water_breathing"),
-        MEAT("meat", "minecraft:strength"),
-        FRUIT("fruit", "minecraft:jump_boost"),
-        GREENS("greens", "northeast_china_delight:refreshing"),
-        STAPLE("staple", "minecraft:saturation");
+        POISON("poison", "minecraft:poison", 60),
+        ROTTEN("rotten", "minecraft:hunger", 60),
+        GINSENG("ginseng", "northeast_china_delight:nourishing", 80),
+        SEA_CUCUMBER("sea_cucumber", "minecraft:dolphins_grace", 60),
+        GOLDEN("golden", "minecraft:absorption", 80),
+        CHORUS("chorus", "minecraft:slow_falling", 80),
+        OFFAL("offal", "minecraft:health_boost", 60),
+        BONE("bone", "minecraft:resistance", 60),
+        FAT("fat", "northeast_china_delight:greasy", 90),
+        SPICY("spicy", "minecraft:fire_resistance", 80),
+        PICKLE("pickle", "minecraft:haste", 110),
+        ROOT("root", "minecraft:night_vision", 90),
+        ALLIUM("allium", "northeast_china_delight:warmth", 90),
+        BEAN("bean", "farmersdelight:nourishment", 90),
+        NUT("nut", "minecraft:luck", 80),
+        FUNGUS("fungus", "minecraft:regeneration", 110),
+        EGG("egg", "minecraft:speed", 110),
+        SEAFOOD("seafood", "minecraft:water_breathing", 80),
+        MEAT("meat", "minecraft:strength", 110),
+        FRUIT("fruit", "minecraft:jump_boost", 60),
+        GREENS("greens", "northeast_china_delight:refreshing", 90),
+        STAPLE("staple", "minecraft:saturation", 0);
 
         private final TagKey<Item> tag;
         private final ResourceLocation effect;
+        private final int initialTicks;
 
-        Kind(String name, String effect) {
+        Kind(String name, String effect, int initialTicks) {
             this.tag = modTag("mystery_stew/kinds/" + name);
             this.effect = ResourceLocation.tryParse(effect);
+            this.initialTicks = initialTicks;
         }
 
         public TagKey<Item> tag() {
@@ -103,6 +109,11 @@ public final class MysteryStew {
 
         public ResourceLocation effect() {
             return effect;
+        }
+
+        /** 这类效果的基础初始时长；饱和不用这个值，固定走 {@link #SATURATION_TICKS} */
+        public int initialTicks() {
+            return initialTicks;
         }
     }
 
@@ -171,6 +182,7 @@ public final class MysteryStew {
     public static List<MysteryStewEffects.Entry> effects(List<ItemStack> ingredients, int seasoningKinds) {
         // 每一类：[个数, 珍稀度合计, 最早放进去的是第几样]
         Map<Kind, int[]> tally = new EnumMap<>(Kind.class);
+        Map<Kind, Set<Item>> varieties = new EnumMap<>(Kind.class);
         for (int i = 0; i < ingredients.size(); i++) {
             ItemStack stack = ingredients.get(i);
             Kind kind = kindOf(stack);
@@ -181,22 +193,40 @@ public final class MysteryStew {
             t[0] += stack.getCount();
             t[1] += rarity(stack) * stack.getCount();
             t[2] = Math.min(t[2], i);
+            varieties.computeIfAbsent(kind, ignored -> new HashSet<>()).add(stack.getItem());
         }
         List<Map.Entry<Kind, int[]>> ranked = new ArrayList<>(tally.entrySet());
         ranked.sort(Comparator.<Map.Entry<Kind, int[]>>comparingInt(e -> -e.getValue()[0])
                 .thenComparingInt(e -> -e.getValue()[1])
                 .thenComparingInt(e -> e.getValue()[2]));
-        int duration = BASE_TICKS + PER_SEASONING_TICKS * seasoningKinds;
         List<MysteryStewEffects.Entry> out = new ArrayList<>();
         for (Map.Entry<Kind, int[]> entry : ranked) {
             if (out.size() >= KINDS_GIVEN) {
                 break;
             }
             Kind kind = entry.getKey();
-            int ticks = kind == Kind.STAPLE ? SATURATION_TICKS : duration;
+            int baseTicks = BASE_TICKS_PER_ITEM * entry.getValue()[0]
+                    + BASE_TICKS_PER_VARIETY * varieties.get(kind).size();
+            int ticks = kind == Kind.STAPLE ? SATURATION_TICKS
+                    : scaledTicks(kind.initialTicks() + baseTicks, seasoningKinds);
             // 效果找不到（提供它的模组没装）就跳过这一类，轮到下一类
             DdEffects.holder(kind.effect()).ifPresent(effect -> out.add(new MysteryStewEffects.Entry(effect, ticks)));
         }
         return out;
+    }
+
+    /** 按调料种数乘倍率；结果不是整刻时向下取整 */
+    private static int scaledTicks(int ticks, int seasoningKinds) {
+        int percent;
+        if (seasoningKinds <= 0) {
+            percent = 100;
+        } else if (seasoningKinds == 1) {
+            percent = 140;
+        } else if (seasoningKinds == 2) {
+            percent = 175;
+        } else {
+            percent = 230;
+        }
+        return ticks * percent / 100;
     }
 }
