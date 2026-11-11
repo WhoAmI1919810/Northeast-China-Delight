@@ -169,6 +169,8 @@ configurations {
 
 dependencies {
     def crciJar = files("${rootDir}/libs/chinese_regional_culinary_ingredients-0.1.0+${sc.current.version}.jar")
+    def skipCreateForGameTest = providers.gradleProperty('gameTestWithoutCreate')
+            .map { it.toBoolean() }.getOrElse(false)
     compileOnly crciJar
     localRuntime crciJar
 
@@ -178,7 +180,9 @@ dependencies {
         localRuntime "maven.modrinth:farmers-delight:${farmersdelight_version}"
 
         compileOnly "maven.modrinth:create:${create_version}"
-        localRuntime "maven.modrinth:create:${create_version}"
+        if (!skipCreateForGameTest) {
+            localRuntime "maven.modrinth:create:${create_version}"
+        }
         compileOnly "net.createmod.ponder:Ponder-Forge-${minecraft_version}:${ponder_version}"
         compileOnly "dev.engine-room.flywheel:flywheel-forge-api-${minecraft_version}:${flywheel_version}"
         compileOnly "com.tterrag.registrate:Registrate:${registrate_version}"
