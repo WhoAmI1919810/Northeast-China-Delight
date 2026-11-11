@@ -135,7 +135,14 @@ ext.legacyTransformNode = { Object node, Map env ->
         def map = node as Map
         if (map.get('type') == 'neoforge:compound') {
             env.changed = true
-            return legacyTransformNode(map.get('children') ?: map.get('ingredients'), env)
+            def children = map.get('children') ?: map.get('ingredients')
+            // 1.20.1 没有重锤；带进复合原料会变成 AIR，JEI 会把整条配方判成无效。
+            if (children instanceof List) {
+                children = children.findAll { child ->
+                    !(child instanceof Map && child.get('item') == 'minecraft:mace')
+                }
+            }
+            return legacyTransformNode(children, env)
         }
         if (map.get('type') == 'neoforge:components') {
             def items = map.get('items')

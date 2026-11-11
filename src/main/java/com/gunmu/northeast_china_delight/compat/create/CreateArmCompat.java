@@ -2,11 +2,14 @@ package com.gunmu.northeast_china_delight.compat.create;
 
 import com.gunmu.northeast_china_delight.NortheastChinaDelight;
 import com.gunmu.northeast_china_delight.block.BigStoveBlock;
+import com.gunmu.northeast_china_delight.item.ModItems;
 import com.gunmu.northeast_china_delight.util.DdIds;
 import com.simibubi.create.content.kinetics.mechanicalArm.AllArmInteractionPointTypes;
+import com.simibubi.create.content.kinetics.mechanicalArm.ArmBlockEntity;
 import com.simibubi.create.content.kinetics.mechanicalArm.ArmInteractionPoint;
 import com.simibubi.create.content.kinetics.mechanicalArm.ArmInteractionPointType;
 import net.minecraft.core.BlockPos;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
@@ -85,6 +88,24 @@ public final class CreateArmCompat {
         private BigPotPoint(ArmInteractionPointType type, Level level, BlockPos pos, BlockState state) {
             super(type, level, pos, state);
         }
+
+        //? if <1.20.2 {
+        /*@Override
+        public ItemStack insert(ItemStack stack, boolean simulate) {
+            if (stack.is(ModItems.BIG_POT_LID.get())) {
+                return BigStoveBlock.insertLid(level, pos, level.getBlockState(pos), stack, null, simulate);
+            }
+            return super.insert(stack, simulate);
+        }
+        *///?} else {
+        @Override
+        public ItemStack insert(ArmBlockEntity arm, ItemStack stack, boolean simulate) {
+            if (stack.is(ModItems.BIG_POT_LID.get())) {
+                return BigStoveBlock.insertLid(level, pos, level.getBlockState(pos), stack, null, simulate);
+            }
+            return super.insert(arm, stack, simulate);
+        }
+        //?}
 
         @Override
         protected Vec3 getInteractionPositionVector() {
