@@ -10,7 +10,6 @@
     "CookingPotBlockEntityMixin",
     "PowderSnowBlockMixin",
     "RepairItemRecipeMixin",
-    "SideDishMerchantTradeMixin",
     "VillagerOutfitDiscountMixin",
     "LivingEntityLidSoundMixin"
   ],
