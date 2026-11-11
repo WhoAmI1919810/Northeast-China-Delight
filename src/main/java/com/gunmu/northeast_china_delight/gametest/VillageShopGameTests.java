@@ -1,6 +1,7 @@
 package com.gunmu.northeast_china_delight.gametest;
 
 import com.gunmu.chinese_regional_culinary_ingredients.worldgen.UniqueShopPoolElement;
+import com.gunmu.chinese_regional_culinary_ingredients.trade.CrciVillagerProfessions;
 import com.gunmu.northeast_china_delight.NortheastChinaDelight;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
@@ -9,9 +10,11 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.TagKey;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.levelgen.structure.pools.StructureTemplatePool;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplate;
+import net.minecraft.world.entity.ai.village.poi.PoiType;
 import net.neoforged.fml.ModList;
 //? if <1.20.2 {
 /*import net.minecraftforge.gametest.GameTestHolder;
@@ -61,6 +64,19 @@ public final class VillageShopGameTests {
             }
             helper.assertTrue(hasCreateBlock, "Create 版副食店资源包未覆盖结构: " + id);
         }
+        helper.succeed();
+    }
+
+    @GameTest(template = "empty")
+    public static void sideDishJobSiteIsAcquirableWithRegionalProfile(GameTestHelper helper) {
+        var registry = helper.getLevel().registryAccess().registryOrThrow(Registries.POINT_OF_INTEREST_TYPE);
+        TagKey<PoiType> tag = TagKey.create(Registries.POINT_OF_INTEREST_TYPE,
+                id("minecraft", "acquirable_job_site"));
+        boolean acquirable = registry.getTag(tag)
+                .map(values -> values.stream().anyMatch(holder ->
+                        holder.value() == CrciVillagerProfessions.SIDE_DISH_POI.get()))
+                .orElse(false);
+        helper.assertTrue(acquirable, "地区档案启用副食店时，副食商工作站必须可被村民认领");
         helper.succeed();
     }
 
