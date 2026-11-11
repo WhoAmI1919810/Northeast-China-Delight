@@ -1,6 +1,8 @@
 package com.gunmu.northeast_china_delight.compat.ali;
 
+import com.gunmu.chinese_regional_culinary_ingredients.ChineseRegionalCulinaryIngredients;
 import com.gunmu.chinese_regional_culinary_ingredients.item.CrciItems;
+import com.gunmu.chinese_regional_culinary_ingredients.trade.CrciTradeRegistry;
 
 import com.gunmu.northeast_china_delight.NortheastChinaConfig;
 import com.gunmu.northeast_china_delight.NortheastChinaDelight;
@@ -13,7 +15,6 @@ import com.gunmu.northeast_china_delight.loot.PigOffalLootModifier;
 import com.gunmu.northeast_china_delight.loot.StructureSeedsLootModifier;
 import com.gunmu.northeast_china_delight.loot.VillageSeedsLootModifier;
 import com.gunmu.northeast_china_delight.util.DdIds;
-import com.gunmu.northeast_china_delight.villager.SideDishMerchantTrades;
 import com.yanny.aci.api.NumberExpr;
 import com.yanny.ali.api.AliEntrypoint;
 import com.yanny.ali.api.IOperation;
@@ -66,15 +67,15 @@ public final class AliGlmPlugin implements IGlobalLootModifierPlugin {
     }
 
     /**
-     * 副食商是 Java 里动态注册的职业，ALI 无法从原版交易表自动发现；这里把同一份候选表交给 ALI。
-     * 1–4 级随机展示 2 条，5 级还会由 Mixin 保底补入黄桃罐头，所以展示 3 条。
+     * 副食商由 CRCI 注册，ALI 无法从原版交易表自动发现；这里把同一份可用交易快照交给 ALI。
+     * 1–4 级随机展示 2 条，5 级有保底黄桃罐头，所以展示 3 条。
      */
     @Override
     public void registerServer(IServerRegistry registry) {
         registry.registerTrades(
-                DdIds.of(NortheastChinaDelight.MODID, "side_dish_merchant"),
+                DdIds.of(ChineseRegionalCulinaryIngredients.MODID, "side_dish_merchant"),
                 EntityType.VILLAGER,
-                SideDishMerchantTrades::tradeListingArrays,
+                () -> CrciTradeRegistry.listingArrays("side_dish"),
                 level -> new TradeLevelInfo(NumberExpr.constant(level >= 5 ? 3.0 : 2.0)));
     }
 

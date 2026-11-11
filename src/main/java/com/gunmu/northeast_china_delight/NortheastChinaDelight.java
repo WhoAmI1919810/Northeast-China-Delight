@@ -24,14 +24,8 @@ import com.gunmu.northeast_china_delight.item.ModSounds;
 import com.gunmu.chinese_regional_culinary_ingredients.item.PotLidItem;
 import com.gunmu.northeast_china_delight.loot.ModLootModifiers;
 import com.gunmu.northeast_china_delight.util.DdIds;
-import com.gunmu.northeast_china_delight.villager.ModButcherTrades;
 import com.gunmu.northeast_china_delight.villager.ModCartographerTrades;
-import com.gunmu.northeast_china_delight.villager.ModFarmerTrades;
-import com.gunmu.northeast_china_delight.villager.ModFishermanTrades;
 import com.gunmu.northeast_china_delight.villager.ModToolsmithTrades;
-import com.gunmu.northeast_china_delight.villager.ModVillagerProfessions;
-import com.gunmu.northeast_china_delight.villager.ModWandererTrades;
-import com.gunmu.northeast_china_delight.villager.SideDishMerchantTrades;
 import com.gunmu.northeast_china_delight.worldgen.ModWorldGen;
 import com.mojang.logging.LogUtils;
 import net.minecraft.client.Minecraft;
@@ -184,7 +178,6 @@ public class NortheastChinaDelight
             // 村庄副食店换成带机械动力方块的那一套（模组自带的数据包，见 CreateVillageShops）
             modEventBus.addListener(CreateVillageShops::onAddPackFinders);
         }
-        ModVillagerProfessions.register(modEventBus);
         ModMapDecorations.register(modEventBus);
         ModWorldGen.register(modEventBus);
         // 老存档兼容：1.21.1 带海水标记的水桶要能读出来
@@ -219,15 +212,9 @@ public class NortheastChinaDelight
         MinecraftForge.EVENT_BUS.register(DishEffectEvents.class);
         // 木耳（给原木去皮）与人参（空手刨土）的钩子
         MinecraftForge.EVENT_BUS.register(ModGameplayEvents.class);
-        // 副食商的交易表（每次数据包重载时重新填一遍）
-        MinecraftForge.EVENT_BUS.addListener(SideDishMerchantTrades::addTrades);
-        // 原版各职业的交易表：农民 / 屠夫 / 渔夫 / 工具匠 / 制图师 / 流浪商人
-        MinecraftForge.EVENT_BUS.addListener(ModFarmerTrades::addTrades);
-        MinecraftForge.EVENT_BUS.addListener(ModButcherTrades::addTrades);
-        MinecraftForge.EVENT_BUS.addListener(ModFishermanTrades::addTrades);
+        // 食物相关职业由 CRCI 的数据驱动交易池统一注册；这里只保留东北自己的非食物职业。
         MinecraftForge.EVENT_BUS.addListener(ModToolsmithTrades::addTrades);
         MinecraftForge.EVENT_BUS.addListener(ModCartographerTrades::addTrades);
-        MinecraftForge.EVENT_BUS.addListener(ModWandererTrades::addTrades);
         // 木锅盖当盾牌：挡三成伤害，穿齐四件套全挡
         MinecraftForge.EVENT_BUS.addListener(PotLidItem::onShieldBlock);
         // 「东北行头」四件套：木槌一棒子敲懵（缓慢 + 多击退）
@@ -237,13 +224,9 @@ public class NortheastChinaDelight
         NeoForge.EVENT_BUS.register(this);
         NeoForge.EVENT_BUS.register(DishEffectEvents.class);
         NeoForge.EVENT_BUS.register(ModGameplayEvents.class);
-        NeoForge.EVENT_BUS.addListener(SideDishMerchantTrades::addTrades);
-        NeoForge.EVENT_BUS.addListener(ModFarmerTrades::addTrades);
-        NeoForge.EVENT_BUS.addListener(ModButcherTrades::addTrades);
-        NeoForge.EVENT_BUS.addListener(ModFishermanTrades::addTrades);
+        // 食物相关职业由 CRCI 的数据驱动交易池统一注册；这里只保留东北自己的非食物职业。
         NeoForge.EVENT_BUS.addListener(ModToolsmithTrades::addTrades);
         NeoForge.EVENT_BUS.addListener(ModCartographerTrades::addTrades);
-        NeoForge.EVENT_BUS.addListener(ModWandererTrades::addTrades);
         NeoForge.EVENT_BUS.addListener(PotLidItem::onShieldBlock);
         NeoForge.EVENT_BUS.addListener(com.gunmu.northeast_china_delight.item.NortheastOutfit::onLivingDamage);
         NeoForge.EVENT_BUS.addListener(com.gunmu.northeast_china_delight.item.NortheastOutfit::onKnockBack);

@@ -11,7 +11,6 @@
     "PowderSnowBlockMixin",
     "RepairItemRecipeMixin",
     "SoundEngineMixin",
-    "SideDishMerchantTradeMixin",
     "VillagerOutfitDiscountMixin",
     "LivingEntityLidSoundMixin"
   ],

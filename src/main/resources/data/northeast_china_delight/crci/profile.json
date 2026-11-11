@@ -307,11 +307,208 @@
     }
   ],
   "trades": {
-    "farmer": [],
+    "farmer": [
+      {
+        "id": "northeast_china_delight:farmer/grilled_corn",
+        "level": 5,
+        "cost_a": { "item": "minecraft:emerald", "count": 6 },
+        "result": "northeast_china_delight:grilled_corn",
+        "max_uses": 12,
+        "xp": 30
+      },
+      {
+        "id": "northeast_china_delight:farmer/baked_sweet_potato",
+        "level": 5,
+        "cost_a": { "item": "minecraft:emerald", "count": 3 },
+        "result": "northeast_china_delight:baked_sweet_potato",
+        "max_uses": 12,
+        "xp": 30
+      },
+      {
+        "id": "northeast_china_delight:farmer/three_fresh_veggies",
+        "level": 5,
+        "cost_a": { "item": "minecraft:emerald", "count": 6 },
+        "result": "northeast_china_delight:three_fresh_veggies",
+        "max_uses": 12,
+        "xp": 30
+      },
+      {
+        "id": "northeast_china_delight:farmer/dip_veggie_platter",
+        "level": 5,
+        "cost_a": { "item": "minecraft:emerald", "count": 4 },
+        "result": "northeast_china_delight:dip_veggie_platter",
+        "max_uses": 12,
+        "xp": 30
+      },
+      {
+        "id": "northeast_china_delight:farmer/tiger_salad",
+        "level": 5,
+        "cost_a": { "item": "minecraft:emerald", "count": 5 },
+        "result": "northeast_china_delight:tiger_salad",
+        "max_uses": 12,
+        "xp": 30
+      },
+      {
+        "id": "northeast_china_delight:farmer/harvest_stew_bowl",
+        "level": 5,
+        "cost_a": { "item": "minecraft:emerald", "count": 10 },
+        "result": "northeast_china_delight:harvest_stew_bowl",
+        "max_uses": 8,
+        "xp": 30
+      }
+    ],
     "wanderer": [],
-    "side_dish": [],
-    "butcher": [],
-    "fisherman": []
+    "side_dish": [
+      {
+        "id": "northeast_china_delight:side_dish/buckwheat_cold_noodles",
+        "level": 5,
+        "cost_a": { "item": "minecraft:emerald", "count": 14 },
+        "result": "northeast_china_delight:buckwheat_cold_noodles",
+        "max_uses": 8,
+        "xp": 30
+      },
+      {
+        "id": "northeast_china_delight:side_dish/candied_peanuts",
+        "level": 5,
+        "cost_a": { "item": "minecraft:emerald", "count": 7 },
+        "result": "northeast_china_delight:candied_peanuts",
+        "max_uses": 12,
+        "xp": 30
+      },
+      {
+        "id": "northeast_china_delight:side_dish/sticky_bean_bun",
+        "level": 5,
+        "cost_a": { "item": "minecraft:emerald", "count": 9 },
+        "result": "northeast_china_delight:sticky_bean_bun",
+        "max_uses": 12,
+        "xp": 30
+      },
+      {
+        "id": "northeast_china_delight:side_dish/dog_bao_pickles",
+        "level": 5,
+        "cost_a": { "item": "minecraft:emerald", "min_count": 8, "max_count": 10 },
+        "result": "northeast_china_delight:dog_bao_pickles",
+        "max_uses": 12,
+        "xp": 30
+      },
+      {
+        "id": "northeast_china_delight:side_dish/canned_yellow_peach",
+        "level": 5,
+        "cost_a": { "item": "minecraft:emerald", "min_count": 10, "max_count": 12 },
+        "result": "northeast_china_delight:canned_yellow_peach",
+        "max_uses": 12,
+        "xp": 30,
+        "guaranteed": true
+      }
+    ],
+    "butcher": [
+      {
+        "id": "northeast_china_delight:butcher/grilled_chicken_frame",
+        "level": 4,
+        "cost_a": { "item": "minecraft:emerald", "count": 8 },
+        "result": "northeast_china_delight:grilled_chicken_frame",
+        "max_uses": 12,
+        "xp": 15
+      },
+      {
+        "id": "northeast_china_delight:butcher/grilled_oil_edge",
+        "level": 4,
+        "cost_a": { "item": "minecraft:emerald", "count": 9 },
+        "result": "northeast_china_delight:grilled_oil_edge",
+        "max_uses": 12,
+        "xp": 15
+      },
+      {
+        "id": "northeast_china_delight:butcher/braised_pork_ribs",
+        "level": 5,
+        "cost_a": { "item": "minecraft:emerald", "count": 14 },
+        "result": "northeast_china_delight:braised_pork_ribs",
+        "max_uses": 12,
+        "xp": 30
+      },
+      {
+        "id": "northeast_china_delight:butcher/chicken_mushroom_stew_bowl",
+        "level": 5,
+        "cost_a": { "item": "minecraft:emerald", "count": 16 },
+        "result": "northeast_china_delight:chicken_mushroom_stew_bowl",
+        "max_uses": 8,
+        "xp": 30
+      },
+      {
+        "id": "northeast_china_delight:butcher/pork_vermicelli_stew_bowl",
+        "level": 5,
+        "cost_a": { "item": "minecraft:emerald", "count": 12 },
+        "result": "northeast_china_delight:pork_vermicelli_stew_bowl",
+        "max_uses": 8,
+        "xp": 30
+      },
+      {
+        "id": "northeast_china_delight:butcher/smoked_meat_platter",
+        "level": 5,
+        "cost_a": { "item": "minecraft:emerald", "count": 13 },
+        "result": "northeast_china_delight:smoked_meat_platter",
+        "max_uses": 8,
+        "xp": 30
+      },
+      {
+        "id": "northeast_china_delight:butcher/old_style_crispy_pork",
+        "level": 5,
+        "cost_a": { "item": "minecraft:emerald", "count": 15 },
+        "result": "northeast_china_delight:old_style_crispy_pork",
+        "max_uses": 8,
+        "xp": 30
+      },
+      {
+        "id": "northeast_china_delight:butcher/new_style_crispy_pork",
+        "level": 5,
+        "cost_a": { "item": "minecraft:emerald", "count": 16 },
+        "result": "northeast_china_delight:new_style_crispy_pork",
+        "max_uses": 8,
+        "xp": 30
+      },
+      {
+        "id": "northeast_china_delight:butcher/orange_crispy_pork",
+        "level": 5,
+        "cost_a": { "item": "minecraft:emerald", "count": 17 },
+        "result": "northeast_china_delight:orange_crispy_pork",
+        "max_uses": 8,
+        "xp": 30
+      },
+      {
+        "id": "northeast_china_delight:butcher/crispy_pork_strips",
+        "level": 5,
+        "cost_a": { "item": "minecraft:emerald", "count": 13 },
+        "result": "northeast_china_delight:crispy_pork_strips",
+        "max_uses": 8,
+        "xp": 30
+      }
+    ],
+    "fisherman": [
+      {
+        "id": "northeast_china_delight:fisherman/salted_fish_flatbread",
+        "level": 5,
+        "cost_a": { "item": "minecraft:emerald", "count": 8 },
+        "result": "northeast_china_delight:salted_fish_flatbread",
+        "max_uses": 12,
+        "xp": 30
+      },
+      {
+        "id": "northeast_china_delight:fisherman/braised_sea_cucumber_scallion",
+        "level": 5,
+        "cost_a": { "item": "minecraft:emerald", "count": 18 },
+        "result": "northeast_china_delight:braised_sea_cucumber_scallion",
+        "max_uses": 8,
+        "xp": 30
+      },
+      {
+        "id": "northeast_china_delight:fisherman/sauerkraut_seafood_stew",
+        "level": 5,
+        "cost_a": { "item": "minecraft:emerald", "count": 15 },
+        "result": "northeast_china_delight:sauerkraut_seafood_stew",
+        "max_uses": 8,
+        "xp": 30
+      }
+    ]
   },
   "side_dish_shop": true
 }

@@ -422,7 +422,6 @@
   "message.northeast_china_delight.vat.bottle_full": "这瓶调料还是满的",
   "message.northeast_china_delight.vat.bottle_mismatch": "缸里的液体和这个瓶子对不上",
   "message.northeast_china_delight.vat.bottle_empty": "缸里已经没有能装的液体了",
-  "entity.minecraft.villager.northeast_china_delight.side_dish_merchant": "副食商",
   "filled_map.northeast_yard": "小院地图",
   "tooltip.northeast_china_delight.ginseng": "长得极慢，只长在寒冷、附近有雪的地方，头顶有树荫时长得快一倍；空手刨开它脚下的土才能挖出人参",
   "block.northeast_china_delight.corn_skewer": "玉米串",

@@ -396,7 +396,6 @@
   "message.northeast_china_delight.vat.bottle_full": "This bottle is already full",
   "message.northeast_china_delight.vat.bottle_mismatch": "The vat doesn't hold that kind of liquid",
   "message.northeast_china_delight.vat.bottle_empty": "The vat has nothing left to pour",
-  "entity.minecraft.villager.northeast_china_delight.side_dish_merchant": "Side Dish Merchant",
   "filled_map.northeast_yard": "Yard Map",
   "tooltip.northeast_china_delight.ginseng": "Grows very slowly in cold spots near snow, twice as fast under leaves; dig the soil under it bare-handed to get the root",
   "block.northeast_china_delight.harvest_stew_pot": "Da Feng Shou (Harvest Stew)",
