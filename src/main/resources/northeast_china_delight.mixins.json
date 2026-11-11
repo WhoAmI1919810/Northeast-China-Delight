@@ -15,7 +15,8 @@
     "LivingEntityLidSoundMixin"
   ],
   "client": [
-    "LoomScreenMixin"
+    "LoomScreenMixin",
+    "ClientRecipeBookFilterMixin"
   ],
   "injectors": {
     "defaultRequire": 1

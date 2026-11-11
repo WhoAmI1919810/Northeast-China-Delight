@@ -3,6 +3,9 @@ package com.gunmu.northeast_china_delight.worldgen;
 import com.gunmu.chinese_regional_culinary_ingredients.block.CrciBlocks;
 
 import com.gunmu.chinese_regional_culinary_ingredients.block.GinsengCropBlock;
+import com.gunmu.chinese_regional_culinary_ingredients.item.CrciItems;
+import com.gunmu.chinese_regional_culinary_ingredients.region.CrciAvailability;
+import com.gunmu.chinese_regional_culinary_ingredients.region.CrciUseSite;
 import com.gunmu.northeast_china_delight.block.ModBlocks;
 import com.mojang.serialization.Codec;
 import net.minecraft.core.BlockPos;
@@ -30,6 +33,10 @@ public class GinsengPatchFeature extends Feature<NoneFeatureConfiguration>
     @Override
     public boolean place(FeaturePlaceContext<NoneFeatureConfiguration> context)
     {
+        if (!CrciAvailability.isAvailable(CrciItems.GINSENG.get(), CrciUseSite.WORLDGEN))
+        {
+            return false;
+        }
         WorldGenLevel level = context.level();
         BlockPos origin = context.origin();
         int chunkX = SectionPos.blockToSectionCoord(origin.getX());
@@ -85,4 +92,3 @@ public class GinsengPatchFeature extends Feature<NoneFeatureConfiguration>
         return worldSeed ^ ((long) regionChunkX * 341873128712L) ^ ((long) regionChunkZ * 132897987541L);
     }
 }
-

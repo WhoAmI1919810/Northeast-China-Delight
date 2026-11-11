@@ -2,6 +2,8 @@ package com.gunmu.northeast_china_delight.compat.ali;
 
 import com.gunmu.chinese_regional_culinary_ingredients.ChineseRegionalCulinaryIngredients;
 import com.gunmu.chinese_regional_culinary_ingredients.item.CrciItems;
+import com.gunmu.chinese_regional_culinary_ingredients.region.CrciAvailability;
+import com.gunmu.chinese_regional_culinary_ingredients.region.CrciUseSite;
 import com.gunmu.chinese_regional_culinary_ingredients.trade.CrciTradeRegistry;
 
 import com.gunmu.northeast_china_delight.NortheastChinaConfig;
@@ -87,11 +89,15 @@ public final class AliGlmPlugin implements IGlobalLootModifierPlugin {
             float chance = PigOffalLootModifier.BASE_CHANCE;
 
             for (Item item : AliGlmData.pigOffalItems()) {
-                operations.add(AliGlmNodes.add(utils, conditions, item, chance, one));
+                if (AliGlmNodes.visible(item)) {
+                    operations.add(AliGlmNodes.add(utils, conditions, item, chance, one));
+                }
             }
 
             for (Item[] pair : AliGlmData.pigOffalSmoked()) {
-                operations.add(AliGlmNodes.replace(utils, conditions, pair[0], pair[1], chance, one));
+                if (AliGlmNodes.visible(pair[0]) && AliGlmNodes.visible(pair[1])) {
+                    operations.add(AliGlmNodes.replace(utils, conditions, pair[0], pair[1], chance, one));
+                }
             }
 
             return operations;
@@ -139,14 +145,14 @@ public final class AliGlmPlugin implements IGlobalLootModifierPlugin {
 
             float processed = AliGlmData.VILLAGE_SEEDS_PROCESSED / AliGlmData.VILLAGE_PROCESSED_TOTAL;
 
-            operations.add(AliGlmNodes.add(utils, conditions, CrciItems.CORN_FLOUR.get(),
-                    processed * AliGlmData.VILLAGE_PROCESSED_CORN_FLOUR, AliGlmNodes.count(1, 3)));
-            operations.add(AliGlmNodes.add(utils, conditions, CrciItems.WATER_DOUGH.get(),
-                    processed * AliGlmData.VILLAGE_PROCESSED_WATER_DOUGH, AliGlmNodes.count(1, 3)));
-            operations.add(AliGlmNodes.add(utils, conditions, CrciItems.PEANUT_BUTTER.get(),
-                    processed * AliGlmData.VILLAGE_PROCESSED_PEANUT_BUTTER, AliGlmNodes.count(1, 1)));
-            operations.add(AliGlmNodes.add(utils, conditions, CrciItems.PICKLED_SNOW_MUSTARD.get(),
-                    processed * AliGlmData.VILLAGE_PROCESSED_PICKLED_SNOW_MUSTARD, AliGlmNodes.count(1, 2)));
+            addIfVisible(operations, utils, conditions, CrciItems.CORN_FLOUR.get(),
+                    processed * AliGlmData.VILLAGE_PROCESSED_CORN_FLOUR, AliGlmNodes.count(1, 3));
+            addIfVisible(operations, utils, conditions, CrciItems.WATER_DOUGH.get(),
+                    processed * AliGlmData.VILLAGE_PROCESSED_WATER_DOUGH, AliGlmNodes.count(1, 3));
+            addIfVisible(operations, utils, conditions, CrciItems.PEANUT_BUTTER.get(),
+                    processed * AliGlmData.VILLAGE_PROCESSED_PEANUT_BUTTER, AliGlmNodes.count(1, 1));
+            addIfVisible(operations, utils, conditions, CrciItems.PICKLED_SNOW_MUSTARD.get(),
+                    processed * AliGlmData.VILLAGE_PROCESSED_PICKLED_SNOW_MUSTARD, AliGlmNodes.count(1, 2));
 
             return operations;
         }));
@@ -162,8 +168,11 @@ public final class AliGlmPlugin implements IGlobalLootModifierPlugin {
                 return List.of();
             }
 
-            return List.of(AliGlmNodes.remove(stack -> !NortheastChinaConfig.isChestLootItemAllowed(
-                    BuiltInRegistries.ITEM.getKey(stack.getItem()))));
+            return List.of(AliGlmNodes.remove(stack -> {
+                var id = BuiltInRegistries.ITEM.getKey(stack.getItem());
+                return id == null || !NortheastChinaConfig.isChestLootItemAllowed(id)
+                        || !CrciAvailability.isAvailable(stack, CrciUseSite.LOOT);
+            }));
         }));
     }
 
@@ -185,6 +194,13 @@ public final class AliGlmPlugin implements IGlobalLootModifierPlugin {
         }
 
         return operations;
+    }
+
+    private static void addIfVisible(List<IOperation> operations, IServerUtils utils,
+                                     List<LootItemCondition> conditions, Item item, float chance, NumberExpr count) {
+        if (AliGlmNodes.visible(item)) {
+            operations.add(AliGlmNodes.add(utils, conditions, item, chance, count));
+        }
     }
 
     private static IPageLootModifier page(IServerUtils utils, Object modifier, Function<List<LootItemCondition>, List<IOperation>> builder) {

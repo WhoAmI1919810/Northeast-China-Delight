@@ -1,5 +1,7 @@
 package com.gunmu.northeast_china_delight.loot;
 
+import com.gunmu.chinese_regional_culinary_ingredients.region.CrciAvailability;
+import com.gunmu.chinese_regional_culinary_ingredients.region.CrciUseSite;
 import com.gunmu.northeast_china_delight.NortheastChinaConfig;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.MapCodec;
@@ -55,16 +57,20 @@ public final class ChestLootConfigModifier extends LootModifier {
                 .getLootTable(ResourceKey.create(Registries.LOOT_TABLE, context.getQueriedLootTableId()));
         //?}
         if (table.getParamSet() == LootContextParamSets.CHEST) {
-            generatedLoot.removeIf(stack -> !NortheastChinaConfig.isChestLootItemAllowed(
-                    BuiltInRegistries.ITEM.getKey(stack.getItem())));
+            generatedLoot.removeIf(stack -> !allowed(stack));
         }
         return generatedLoot;
     }
 
     public static void addIfAllowed(ObjectArrayList<ItemStack> generatedLoot, ItemStack stack) {
-        if (!stack.isEmpty() && NortheastChinaConfig.isChestLootItemAllowed(
-                BuiltInRegistries.ITEM.getKey(stack.getItem()))) {
+        if (!stack.isEmpty() && allowed(stack)) {
             generatedLoot.add(stack);
         }
+    }
+
+    private static boolean allowed(ItemStack stack) {
+        var id = BuiltInRegistries.ITEM.getKey(stack.getItem());
+        return id != null && NortheastChinaConfig.isChestLootItemAllowed(id)
+                && CrciAvailability.isAvailable(stack, CrciUseSite.LOOT);
     }
 }
