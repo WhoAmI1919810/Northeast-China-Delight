@@ -10,7 +10,7 @@
     "hidden": false
   },
   "criteria": {
-    "smelted": {"trigger": "minecraft:recipe_crafted", "conditions": {"recipe_id": "northeast_china_delight:vat_from_smelting"}},
+    "smelted": {"trigger": "minecraft:recipe_crafted", "conditions": {"recipe_id": "chinese_regional_culinary_ingredients:vat_from_smelting"}},
     "vat": {"trigger": "minecraft:inventory_changed", "conditions": {"items": [{"items": ["chinese_regional_culinary_ingredients:vat"]}]}}
   },
   "requirements": [["smelted", "vat"]]
