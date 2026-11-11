@@ -1,6 +1,10 @@
 package com.gunmu.northeast_china_delight.gametest;
 
 import com.gunmu.chinese_regional_culinary_ingredients.item.CrciItems;
+import com.gunmu.chinese_regional_culinary_ingredients.region.CrciAvailability;
+import com.gunmu.chinese_regional_culinary_ingredients.region.CrciUseSite;
+import com.gunmu.chinese_regional_culinary_ingredients.worldgen.CrciFarmRegistry;
+import com.gunmu.chinese_regional_culinary_ingredients.worldgen.RegionalFarmCropProcessor;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -58,6 +62,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
@@ -67,7 +72,9 @@ import java.util.Set;
 public final class GenerationConfigGameTests {
     private static final List<String> FARM_LISTS = List.of("minecraft:farm_plains", "minecraft:farm_taiga",
             "minecraft:farm_snowy", "minecraft:farm_savanna", "minecraft:farm_desert",
-            "northeast_china_delight:farm_taiga_small");
+            "chinese_regional_culinary_ingredients:farm_taiga_small");
+    private static final List<String> FARM_POOLS = List.of("plains", "taiga", "snowy", "savanna", "desert",
+            "taiga_small");
     private static final List<String> COURTYARD_TABLES = List.of(
             "northeast_china_delight:chests/courtyard_kitchen",
             "northeast_china_delight:chests/courtyard_house",
@@ -88,51 +95,6 @@ public final class GenerationConfigGameTests {
             return JsonParser.parseReader(reader).getAsJsonObject();
         } catch (IOException exception) {
             throw new IllegalStateException("无法读取测试资源：" + path, exception);
-        }
-    }
-
-    private static List<JsonObject> farmRules() {
-        List<JsonObject> rules = new ArrayList<>();
-        for (String listId : FARM_LISTS) {
-            var id = DdIds.parse(listId);
-            var json = resource(id.getNamespace() + "/worldgen/processor_list/" + id.getPath() + ".json");
-            for (var processor : json.getAsJsonArray("processors")) {
-                for (var rule : processor.getAsJsonObject().getAsJsonArray("rules")) {
-                    var value = rule.getAsJsonObject();
-                    if (value.getAsJsonObject("output_state").get("Name").getAsString()
-                            .startsWith(NortheastChinaDelight.MODID + ":")) {
-                        rules.add(value);
-                    }
-                }
-            }
-        }
-        return rules;
-    }
-
-    private static RuleTest predicate(JsonObject rule, boolean certain) {
-        var input = rule.getAsJsonObject("input_predicate").deepCopy();
-        if (certain) {
-            input.addProperty("probability", 1.0F);
-        }
-        return RuleTest.CODEC.parse(JsonOps.INSTANCE, input).result()
-                .orElseThrow(() -> new IllegalStateException("农田规则无法解码：" + input));
-    }
-
-    private static Block inputBlock(JsonObject rule) {
-        return BuiltInRegistries.BLOCK.get(DdIds.parse(
-                rule.getAsJsonObject("input_predicate").get("block").getAsString()));
-    }
-
-    private static void withFarmConfig(boolean enabled, List<String> crops, Runnable checks) {
-        boolean previousEnabled = NortheastChinaConfig.VILLAGE_FARM_CROPS_ENABLED.get();
-        var previousCrops = NortheastChinaConfig.VILLAGE_FARM_ALLOWED_CROPS.get();
-        NortheastChinaConfig.VILLAGE_FARM_CROPS_ENABLED.set(enabled);
-        NortheastChinaConfig.VILLAGE_FARM_ALLOWED_CROPS.set(crops);
-        try {
-            checks.run();
-        } finally {
-            NortheastChinaConfig.VILLAGE_FARM_CROPS_ENABLED.set(previousEnabled);
-            NortheastChinaConfig.VILLAGE_FARM_ALLOWED_CROPS.set(previousCrops);
         }
     }
 
@@ -177,7 +139,9 @@ public final class GenerationConfigGameTests {
     }
 
     private static boolean ownItem(ItemStack stack) {
-        return BuiltInRegistries.ITEM.getKey(stack.getItem()).getNamespace().equals(NortheastChinaDelight.MODID);
+        String namespace = BuiltInRegistries.ITEM.getKey(stack.getItem()).getNamespace();
+        return namespace.equals(NortheastChinaDelight.MODID)
+                || namespace.equals("chinese_regional_culinary_ingredients");
     }
 
     private static ObjectArrayList<ItemStack> sampleLoot() {
@@ -194,106 +158,82 @@ public final class GenerationConfigGameTests {
     }
 
     @GameTest(template = "empty")
-    public static void farmDefaultRuleProbabilityUnchanged(GameTestHelper helper) {
-        withFarmConfig(true, NortheastChinaConfig.DEFAULT_VILLAGE_FARM_CROPS, () -> {
-            for (var rule : farmRules()) {
-                var configured = predicate(rule, false);
-                var original = new RandomBlockMatchTest(inputBlock(rule),
-                        rule.getAsJsonObject("input_predicate").get("probability").getAsFloat());
-                var configuredRandom = RandomSource.create(731);
-                var originalRandom = RandomSource.create(731);
-                for (int sample = 0; sample < 128; sample++) {
-                    var state = sample % 3 == 0 ? Blocks.STONE.defaultBlockState() : inputBlock(rule).defaultBlockState();
-                    helper.assertTrue(configured.test(state, configuredRandom) == original.test(state, originalRandom),
-                            "默认配置不得改变农田原有概率或随机数消耗");
-                }
-            }
-        });
+    public static void farmProcessorsKeepMigratedReplacementChances(GameTestHelper helper) {
+        Map<String, Float> expected = Map.of(
+                "plains", 0.3352F,
+                "taiga", 0.367F,
+                "snowy", 0.4596F,
+                "savanna", 0.2262F,
+                "desert", 0.2256F,
+                "taiga_small", 0.4686F);
+        for (String listId : FARM_LISTS) {
+            var processors = helper.getLevel().registryAccess().registryOrThrow(Registries.PROCESSOR_LIST)
+                    .get(DdIds.parse(listId));
+            helper.assertTrue(processors != null, "农田处理器必须成功加载：" + listId);
+            var regional = processors.list().stream()
+                    .filter(processor -> processor instanceof RegionalFarmCropProcessor)
+                    .map(processor -> (RegionalFarmCropProcessor) processor)
+                    .findFirst().orElseThrow();
+            String pool = regional.pool();
+            helper.assertTrue(expected.containsKey(pool), "未知的农田气候池：" + pool);
+            helper.assertTrue(Math.abs(regional.replacementChance() - expected.get(pool)) < 0.0001F,
+                    "迁移后必须保持原有总替换概率：" + listId);
+        }
         helper.succeed();
     }
 
     @GameTest(template = "empty")
     public static void farmDefaultsCoverEveryClimate(GameTestHelper helper) {
-        Set<String> seen = new HashSet<>();
-        var rules = farmRules();
-        helper.assertTrue(rules.size() == 33, "六份处理器应覆盖 33 条本模组作物规则");
-        for (var rule : rules) {
-            String crop = rule.getAsJsonObject("input_predicate").get("crop_item").getAsString();
-            seen.add(crop);
-            helper.assertTrue(BuiltInRegistries.ITEM.containsKey(DdIds.parse(crop)), "播种物品必须已注册：" + crop);
-            var decoded = predicate(rule, false);
-            var encoded = RuleTest.CODEC.encodeStart(JsonOps.INSTANCE, decoded).result().orElseThrow();
-            helper.assertTrue(encoded.getAsJsonObject().get("crop_item").getAsString().equals(crop),
-                    "农田自定义规则必须能通过注册表双向编解码");
+        for (String pool : FARM_POOLS) {
+            var entries = CrciFarmRegistry.entries(pool);
+            helper.assertTrue(!entries.isEmpty(), "每个气候池都必须有已启用的默认作物：" + pool);
+            for (var entry : entries) {
+                helper.assertTrue(BuiltInRegistries.ITEM.containsKey(entry.seed()),
+                        "农田作物种子必须已注册：" + entry.seed());
+                helper.assertTrue(!entry.state().isAir(), "农田作物状态不能是空气：" + entry.seed());
+            }
         }
-        helper.assertTrue(seen.equals(Set.copyOf(NortheastChinaConfig.DEFAULT_VILLAGE_FARM_CROPS)),
-                "默认允许列表必须包含全部 16 种农田作物");
         helper.succeed();
     }
 
     @GameTest(template = "empty")
     public static void farmDisabledPreservesOtherProcessors(GameTestHelper helper) {
-        withFarmConfig(false, NortheastChinaConfig.DEFAULT_VILLAGE_FARM_CROPS, () -> {
-            int retainedReplacements = 0;
-            for (String listId : FARM_LISTS) {
-                var processors = helper.getLevel().registryAccess().registryOrThrow(Registries.PROCESSOR_LIST)
-                        .get(DdIds.parse(listId));
-                helper.assertTrue(processors != null, "农田处理器必须成功加载：" + listId);
-                Block source = listId.endsWith("farm_taiga_small") ? Blocks.PUMPKIN_STEM : Blocks.WHEAT;
-                for (int sample = 0; sample < 128; sample++) {
-                    var pos = helper.absolutePos(new BlockPos(sample % 16, 2, sample / 16));
-                    var original = new StructureTemplate.StructureBlockInfo(BlockPos.ZERO, source.defaultBlockState(), null);
-                    var result = new StructureTemplate.StructureBlockInfo(pos, source.defaultBlockState(), null);
-                    for (var processor : processors.list()) {
-                        result = processor.processBlock(helper.getLevel(), BlockPos.ZERO, pos, original, result,
-                                new StructurePlaceSettings());
-                    }
-                    helper.assertTrue(result != null && !BuiltInRegistries.BLOCK.getKey(result.state().getBlock())
-                            .getNamespace().equals(NortheastChinaDelight.MODID), "关闭后不得替换成本模组作物");
-                    if (!result.state().is(source)) {
-                        retainedReplacements++;
-                    }
-                }
+        for (String listId : FARM_LISTS) {
+            var processors = helper.getLevel().registryAccess().registryOrThrow(Registries.PROCESSOR_LIST)
+                    .get(DdIds.parse(listId));
+            helper.assertTrue(processors != null && !processors.list().isEmpty(),
+                    "农田处理器必须成功加载：" + listId);
+            boolean hasRegional = processors.list().stream()
+                    .anyMatch(processor -> processor instanceof RegionalFarmCropProcessor);
+            helper.assertTrue(hasRegional, "处理器列表必须包含 CRCI 地区作物处理器：" + listId);
+            if (!listId.endsWith("farm_taiga_small")) {
+                boolean hasVanilla = processors.list().stream().anyMatch(processor -> processor instanceof RuleProcessor);
+                helper.assertTrue(hasVanilla, "原版气候农田必须保留原有胡萝卜/马铃薯/甜菜规则：" + listId);
             }
-            helper.assertTrue(retainedReplacements > 0, "关闭本模组后原版/农夫乐事的替换应仍生效");
-            Block foreignCrop = BuiltInRegistries.BLOCK.stream().filter(block -> block instanceof CropBlock
-                    && BuiltInRegistries.BLOCK.getKey(block).getNamespace().equals("farmersdelight"))
-                    .findFirst().orElseThrow();
-            var configured = predicate(farmRules().get(0), true);
-            var pipeline = new RuleProcessor(List.of(
-                    new ProcessorRule(configured, AlwaysTrueTest.INSTANCE, Blocks.STONE.defaultBlockState()),
-                    new ProcessorRule(new BlockMatchTest(Blocks.WHEAT), AlwaysTrueTest.INSTANCE, foreignCrop.defaultBlockState())));
-            var info = new StructureTemplate.StructureBlockInfo(helper.absolutePos(BlockPos.ZERO), Blocks.WHEAT.defaultBlockState(), null);
-            var result = pipeline.processBlock(helper.getLevel(), BlockPos.ZERO, info.pos(), info, info, new StructurePlaceSettings());
-            helper.assertTrue(result != null && result.state().is(foreignCrop), "关闭时必须让后续其他模组规则继续匹配");
-        });
+        }
         helper.succeed();
     }
 
     @GameTest(template = "empty")
     public static void farmEmptyListBlocksAllCrops(GameTestHelper helper) {
-        withFarmConfig(true, List.of(), () -> {
-            for (var rule : farmRules()) {
-                var random = RandomSource.create(917);
-                helper.assertTrue(!predicate(rule, true).test(inputBlock(rule).defaultBlockState(), random),
-                        "空列表不得生成本模组农田作物");
-                helper.assertTrue(random.nextInt() == RandomSource.create(917).nextInt(),
-                        "跳过的农田规则不得消耗其他模组使用的随机数");
-            }
-        });
+        var processor = new RegionalFarmCropProcessor("missing_pool", 1.0F);
+        var settings = new StructurePlaceSettings();
+        settings.setRandom(RandomSource.create(917));
+        var info = new StructureTemplate.StructureBlockInfo(BlockPos.ZERO, Blocks.WHEAT.defaultBlockState(), null);
+        var result = processor.processBlock(helper.getLevel(), BlockPos.ZERO, info.pos(), info, info, settings);
+        helper.assertTrue(result != null && result.state().is(Blocks.WHEAT),
+                "池为空时不得替换原版小麦，也不得抛错");
         helper.succeed();
     }
 
     @GameTest(template = "empty")
     public static void farmWhitelistSelectsOnlyNamedCrops(GameTestHelper helper) {
-        String allowed = "chinese_regional_culinary_ingredients:green_radish_seeds";
-        withFarmConfig(true, List.of(allowed, "northeast_china_delight:not_registered"), () -> {
-            for (var rule : farmRules()) {
-                boolean expected = rule.getAsJsonObject("input_predicate").get("crop_item").getAsString().equals(allowed);
-                helper.assertTrue(predicate(rule, true).test(inputBlock(rule).defaultBlockState(), RandomSource.create(11)) == expected,
-                        "所有气候应只保留允许列表中的作物，未知 ID 安全无效");
+        for (String pool : FARM_POOLS) {
+            for (var entry : CrciFarmRegistry.entries(pool)) {
+                helper.assertTrue(CrciAvailability.isIdAvailable(entry.seed(), CrciUseSite.FARM),
+                        "农田池不得包含未启用种子：" + entry.seed());
             }
-        });
+        }
         helper.succeed();
     }
 
@@ -368,7 +308,7 @@ public final class GenerationConfigGameTests {
         var targets = List.of("corn_seeds", "corn_seeds", "pork_ribs", "shrimp");
         for (int index = 0; index < modifiers.size(); index++) {
             var modifier = modifiers.get(index);
-            String allowed = NortheastChinaDelight.MODID + ":" + targets.get(index);
+            String allowed = "chinese_regional_culinary_ingredients:" + targets.get(index);
             withChestConfig(true, List.of(allowed), () -> {
                 int kept = 0;
                 var seeds = RandomSource.create(591);
@@ -446,19 +386,4 @@ public final class GenerationConfigGameTests {
         helper.succeed();
     }
 
-    @GameTest(template = "empty")
-    public static void generationSwitchesAreIndependent(GameTestHelper helper) {
-        var soybean = DdIds.parse("chinese_regional_culinary_ingredients:soybean");
-        withFarmConfig(false, NortheastChinaConfig.DEFAULT_VILLAGE_FARM_CROPS, () ->
-                withChestConfig(true, NortheastChinaConfig.DEFAULT_CHEST_LOOT_ITEMS, () -> {
-                    helper.assertTrue(!NortheastChinaConfig.isVillageFarmCropAllowed(soybean)
-                            && NortheastChinaConfig.isChestLootItemAllowed(soybean), "关闭农田不应关闭箱子");
-                }));
-        withFarmConfig(true, NortheastChinaConfig.DEFAULT_VILLAGE_FARM_CROPS, () ->
-                withChestConfig(false, NortheastChinaConfig.DEFAULT_CHEST_LOOT_ITEMS, () -> {
-                    helper.assertTrue(NortheastChinaConfig.isVillageFarmCropAllowed(soybean)
-                            && !NortheastChinaConfig.isChestLootItemAllowed(soybean), "关闭箱子不应关闭农田");
-                }));
-        helper.succeed();
-    }
 }

@@ -319,7 +319,9 @@ public final class ModGameplayEvents
         }
         ResourceLocation itemId = BuiltInRegistries.ITEM.getKey(stack.getItem());
         String id = itemId.getPath();
-        var dishBlock = itemId.getNamespace().equals(NortheastChinaDelight.MODID)
+        String namespace = itemId.getNamespace();
+        var dishBlock = (namespace.equals(NortheastChinaDelight.MODID)
+                || namespace.equals("chinese_regional_culinary_ingredients"))
                 ? ModBlocks.DISH_BLOCKS.get(id) : null;
         if (dishBlock == null)
         {

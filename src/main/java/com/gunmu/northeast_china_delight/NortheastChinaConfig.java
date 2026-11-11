@@ -17,24 +17,6 @@ import net.minecraftforge.common.ForgeConfigSpec;
  */
 public final class NortheastChinaConfig
 {
-    public static final List<String> DEFAULT_VILLAGE_FARM_CROPS = List.of(
-            "chinese_regional_culinary_ingredients:soybean",
-            "chinese_regional_culinary_ingredients:corn_seeds",
-            "chinese_regional_culinary_ingredients:napa_cabbage_seeds",
-            "chinese_regional_culinary_ingredients:snow_mustard_seeds",
-            "chinese_regional_culinary_ingredients:cucumber_seeds",
-            "chinese_regional_culinary_ingredients:green_onion_seeds",
-            "chinese_regional_culinary_ingredients:green_radish_seeds",
-            "chinese_regional_culinary_ingredients:eggplant_seeds",
-            "chinese_regional_culinary_ingredients:green_beans_seeds",
-            "chinese_regional_culinary_ingredients:buckwheat",
-            "chinese_regional_culinary_ingredients:red_bean",
-            "chinese_regional_culinary_ingredients:peanut",
-            "chinese_regional_culinary_ingredients:sweet_potato",
-            "chinese_regional_culinary_ingredients:green_pepper_seeds",
-            "chinese_regional_culinary_ingredients:red_chili_seeds",
-            "chinese_regional_culinary_ingredients:bellflower_seeds");
-
     public static final List<String> DEFAULT_CHEST_LOOT_ITEMS = List.of(
             "chinese_regional_culinary_ingredients:animal_oil",
             "chinese_regional_culinary_ingredients:bellflower_root",
@@ -183,8 +165,6 @@ public final class NortheastChinaConfig
     public static final ForgeConfigSpec.BooleanValue YARD_PARTS_ENABLED;
     public static final ForgeConfigSpec.DoubleValue WILD_WOOD_EAR_OAK_CHANCE;
     public static final ForgeConfigSpec.DoubleValue WILD_WOOD_EAR_FOREST_CHANCE;
-    public static final ForgeConfigSpec.BooleanValue VILLAGE_FARM_CROPS_ENABLED;
-    public static final ForgeConfigSpec.ConfigValue<List<? extends String>> VILLAGE_FARM_ALLOWED_CROPS;
     public static final ForgeConfigSpec.BooleanValue CHEST_LOOT_ENABLED;
     public static final ForgeConfigSpec.ConfigValue<List<? extends String>> CHEST_LOOT_ALLOWED_ITEMS;
     //?} else {
@@ -194,8 +174,6 @@ public final class NortheastChinaConfig
     public static final ModConfigSpec.BooleanValue YARD_PARTS_ENABLED;
     public static final ModConfigSpec.DoubleValue WILD_WOOD_EAR_OAK_CHANCE;
     public static final ModConfigSpec.DoubleValue WILD_WOOD_EAR_FOREST_CHANCE;
-    public static final ModConfigSpec.BooleanValue VILLAGE_FARM_CROPS_ENABLED;
-    public static final ModConfigSpec.ConfigValue<List<? extends String>> VILLAGE_FARM_ALLOWED_CROPS;
     public static final ModConfigSpec.BooleanValue CHEST_LOOT_ENABLED;
     public static final ModConfigSpec.ConfigValue<List<? extends String>> CHEST_LOOT_ALLOWED_ITEMS;
     *///?}
@@ -221,18 +199,6 @@ public final class NortheastChinaConfig
                 .comment("野生木耳在黑森林深色橡木、白桦林 / 原始桦木林白桦上的生成概率，取值 0~1；0 表示不生成。",
                         "只影响新生成区块；已生成区块不会回溯。")
                 .defineInRange("wild_wood_ear_forest_chance", 0.07D, 0.0D, 1.0D);
-        VILLAGE_FARM_CROPS_ENABLED = builder
-                .comment("允许在新生成的村庄农田中，把一部分原版作物替换为本模组作物。",
-                        "设为 false 时不替换，不影响原版及其他模组的规则。")
-                .define("village_farm_crops_enabled", true);
-        VILLAGE_FARM_ALLOWED_CROPS = builder
-                .comment("村庄农田允许生成的作物，填写播种物品的完整注册 ID。",
-                        "默认包含全部 16 种农田作物，空列表表示不生成任何本模组农田作物。")
-                .defineListAllowEmpty("village_farm_allowed_crops", DEFAULT_VILLAGE_FARM_CROPS,
-                        //? if >=1.20.5 {
-                        /*() -> "chinese_regional_culinary_ingredients:soybean",*/
-                        //?}
-                        NortheastChinaConfig::isItemId);
         builder.pop();
 
         builder.comment("箱子战利品").push("chest_loot");
@@ -277,13 +243,6 @@ public final class NortheastChinaConfig
     public static float wildWoodEarForestChance()
     {
         return SPEC.isLoaded() ? WILD_WOOD_EAR_FOREST_CHANCE.get().floatValue() : 0.07F;
-    }
-
-    public static boolean isVillageFarmCropAllowed(ResourceLocation cropItem)
-    {
-        return (!SPEC.isLoaded() || VILLAGE_FARM_CROPS_ENABLED.get())
-                && (SPEC.isLoaded() ? VILLAGE_FARM_ALLOWED_CROPS.get() : DEFAULT_VILLAGE_FARM_CROPS)
-                .contains(cropItem.toString());
     }
 
     public static boolean isChestLootEnabled()

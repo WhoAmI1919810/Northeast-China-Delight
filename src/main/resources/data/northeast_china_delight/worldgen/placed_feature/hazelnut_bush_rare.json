@@ -1,6 +1,6 @@
 {
   "__说明": "较少的针叶林地带：每区块 1/24 概率试一次",
-  "feature": "chinese_regional_culinary_ingredients:hazelnut_bush",
+  "feature": "northeast_china_delight:hazelnut_bush",
   "placement": [
     {
       "type": "minecraft:rarity_filter",
