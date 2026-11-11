@@ -7,6 +7,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.gunmu.chinese_regional_culinary_ingredients.CrciTags;
 import com.gunmu.northeast_china_delight.NortheastChinaDelight;
+import com.gunmu.northeast_china_delight.compat.OptionalMods;
 import com.gunmu.northeast_china_delight.compat.create.ModFanProcessingTypes;
 import com.gunmu.northeast_china_delight.compat.jei.DryingJeiRecipes;
 import com.gunmu.chinese_regional_culinary_ingredients.crafting.DryingDataRecipe;
@@ -268,6 +269,10 @@ public final class DryingGameTests {
 
     @GameTest(template = "empty")
     public static void dryingFanProcessesEntityStackAndReturnsBowls(GameTestHelper helper) {
+        if (!OptionalMods.create()) {
+            helper.succeed();
+            return;
+        }
         BlockPos pos = helper.absolutePos(new BlockPos(1, 2, 1));
         ItemEntity entity = new ItemEntity(helper.getLevel(), pos.getX() + 0.5, pos.getY() + 0.5,
                 pos.getZ() + 0.5, new ItemStack(ModItems.SOY_MILK.get(), 8));
@@ -290,6 +295,10 @@ public final class DryingGameTests {
 
     @GameTest(template = "empty")
     public static void dryingDoesNotReplaceOtherFanProcessingTypes(GameTestHelper helper) {
+        if (!OptionalMods.create()) {
+            helper.succeed();
+            return;
+        }
         BlockPos fanPos = new BlockPos(1, 2, 1);
         BlockPos front = fanPos.east();
         helper.setBlock(fanPos, AllBlocks.ENCASED_FAN.getDefaultState()
