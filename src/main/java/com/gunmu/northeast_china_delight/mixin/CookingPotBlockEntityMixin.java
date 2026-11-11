@@ -6,7 +6,7 @@ import com.gunmu.chinese_regional_culinary_ingredients.item.CrciItems;
 
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
-import com.gunmu.northeast_china_delight.item.SeasoningBottleItem;
+import com.gunmu.chinese_regional_culinary_ingredients.item.SeasoningBottleItem;
 import com.gunmu.northeast_china_delight.item.ModItems;
 //? if >=1.20.2 {
 /*import net.minecraft.world.item.crafting.RecipeHolder;

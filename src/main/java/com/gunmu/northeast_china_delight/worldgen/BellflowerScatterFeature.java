@@ -111,7 +111,7 @@ public class BellflowerScatterFeature extends Feature<NoneFeatureConfiguration>
         {
             BlockPos pos = cursor.set(origin.getX(), origin.getY() - step, origin.getZ()).immutable();
             BlockState state = level.getBlockState(pos);
-            if (state.is(ModBlockTags.BELLFLOWER_PLANTABLE_ON))
+            if (isWildSoil(state))
             {
                 return pos;
             }

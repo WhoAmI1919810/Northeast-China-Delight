@@ -137,7 +137,7 @@ import net.minecraftforge.client.extensions.common.IClientFluidTypeExtensions;
 /*import net.neoforged.neoforge.client.extensions.common.IClientFluidTypeExtensions;
 *///?}
 //? if >=1.20.5 {
-import com.gunmu.chinese_regional_culinary_ingredients.client.DdFeastItemRenderer;
+/*import com.gunmu.chinese_regional_culinary_ingredients.client.DdFeastItemRenderer;
 import com.gunmu.chinese_regional_culinary_ingredients.client.WoodenMalletItemRenderer;
 import com.gunmu.northeast_china_delight.client.LyricsHudOverlay;
 import net.minecraft.client.resources.model.ModelResourceLocation;
@@ -326,6 +326,7 @@ public class NortheastChinaDelight
          * 自动分流，那边交给下面的 ClientForgeEvents（Bus.FORGE）单独接。</p>
          */
         //? if >=1.20.2 {
+        /*
         @SubscribeEvent
         public static void onRenderGui(net.neoforged.neoforge.client.event.RenderGuiEvent.Post event)
         {
@@ -334,7 +335,7 @@ public class NortheastChinaDelight
                     event.getGuiGraphics().guiHeight());
         }
 
-        /** 脸盆架的镜子照出镜子前面的活物（client/MirrorReflections）；1.20.1 在下面的 ClientForgeEvents 里接 */
+        // 脸盆架的镜子照出镜子前面的活物（client/MirrorReflections）；1.20.1 在下面的 ClientForgeEvents 里接
         @SubscribeEvent
         public static void onRenderLevelStage(net.neoforged.neoforge.client.event.RenderLevelStageEvent event)
         {
@@ -346,7 +347,7 @@ public class NortheastChinaDelight
                         event.getCamera(), event.getFrustum(), event.getPartialTick().getGameTimeDeltaPartialTick(false));
             }
         }
-        //?}
+        *///?}
 
         @SubscribeEvent
         public static void onRegisterRenderers(EntityRenderersEvent.RegisterRenderers event)

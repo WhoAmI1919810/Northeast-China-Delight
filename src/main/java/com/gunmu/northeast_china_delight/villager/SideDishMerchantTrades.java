@@ -3,7 +3,7 @@ package com.gunmu.northeast_china_delight.villager;
 import com.gunmu.chinese_regional_culinary_ingredients.item.CrciItems;
 
 import com.gunmu.northeast_china_delight.item.ModItems;
-import com.gunmu.northeast_china_delight.item.SeasoningBottleItem;
+import com.gunmu.chinese_regional_culinary_ingredients.item.SeasoningBottleItem;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import net.minecraft.world.entity.npc.Villager;

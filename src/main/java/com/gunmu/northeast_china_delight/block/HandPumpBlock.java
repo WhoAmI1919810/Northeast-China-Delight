@@ -11,7 +11,7 @@ import com.gunmu.chinese_regional_culinary_ingredients.block.PlacedDishBlock;
 import com.gunmu.chinese_regional_culinary_ingredients.block.Vat;
 import com.gunmu.chinese_regional_culinary_ingredients.block.WoodenMortarBlock;
 import com.gunmu.northeast_china_delight.item.ModItems;
-import com.gunmu.northeast_china_delight.item.SeasoningBottleItem;
+import com.gunmu.chinese_regional_culinary_ingredients.item.SeasoningBottleItem;
 import com.gunmu.northeast_china_delight.compat.OptionalMods;
 import com.gunmu.northeast_china_delight.compat.create.CreateHandPumpCompat;
 import net.minecraft.core.BlockPos;

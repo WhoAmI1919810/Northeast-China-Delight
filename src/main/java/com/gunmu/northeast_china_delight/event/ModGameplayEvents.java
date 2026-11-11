@@ -19,7 +19,7 @@ import com.gunmu.chinese_regional_culinary_ingredients.compat.displaydelight.Dis
 import com.gunmu.chinese_regional_culinary_ingredients.block.WoodenMortarBlock;
 import com.gunmu.chinese_regional_culinary_ingredients.effect.CrciMobEffects;
 import com.gunmu.northeast_china_delight.item.ModItems;
-import com.gunmu.northeast_china_delight.item.SeasoningBottleItem;
+import com.gunmu.chinese_regional_culinary_ingredients.item.SeasoningBottleItem;
 import com.gunmu.northeast_china_delight.util.DdEffects;
 import com.gunmu.northeast_china_delight.util.DdIds;
 import com.gunmu.northeast_china_delight.worldgen.CourtyardPiece;
