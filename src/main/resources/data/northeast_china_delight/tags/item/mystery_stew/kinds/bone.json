@@ -1,9 +1,10 @@
 {
   "values": [
-    "northeast_china_delight:pork_ribs",
-    "northeast_china_delight:pork_hock",
-    "northeast_china_delight:smoked_pork_hock",
-    "northeast_china_delight:chicken_frame",
+    "chinese_regional_culinary_ingredients:pork_ribs",
+    "chinese_regional_culinary_ingredients:pork_hock",
+    "chinese_regional_culinary_ingredients:smoked_pork_hock",
+    "chinese_regional_culinary_ingredients:chicken_frame",
     "minecraft:bone"
   ]
 }
+

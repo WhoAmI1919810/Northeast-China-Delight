@@ -24,14 +24,14 @@
           "input_predicate": {
             "block": "minecraft:wheat",
             "predicate_type": "northeast_china_delight:village_farm_crop",
-            "crop_item": "northeast_china_delight:buckwheat",
+            "crop_item": "chinese_regional_culinary_ingredients:buckwheat",
             "probability": 0.08
           },
           "location_predicate": {
             "predicate_type": "minecraft:always_true"
           },
           "output_state": {
-            "Name": "northeast_china_delight:buckwheat_crop",
+            "Name": "chinese_regional_culinary_ingredients:buckwheat_crop",
             "Properties": {
               "age": "7"
             }
@@ -41,14 +41,14 @@
           "input_predicate": {
             "block": "minecraft:wheat",
             "predicate_type": "northeast_china_delight:village_farm_crop",
-            "crop_item": "northeast_china_delight:napa_cabbage_seeds",
+            "crop_item": "chinese_regional_culinary_ingredients:napa_cabbage_seeds",
             "probability": 0.08
           },
           "location_predicate": {
             "predicate_type": "minecraft:always_true"
           },
           "output_state": {
-            "Name": "northeast_china_delight:napa_cabbage_crop",
+            "Name": "chinese_regional_culinary_ingredients:napa_cabbage_crop",
             "Properties": {
               "age": "7"
             }
@@ -58,14 +58,14 @@
           "input_predicate": {
             "block": "minecraft:wheat",
             "predicate_type": "northeast_china_delight:village_farm_crop",
-            "crop_item": "northeast_china_delight:snow_mustard_seeds",
+            "crop_item": "chinese_regional_culinary_ingredients:snow_mustard_seeds",
             "probability": 0.06
           },
           "location_predicate": {
             "predicate_type": "minecraft:always_true"
           },
           "output_state": {
-            "Name": "northeast_china_delight:snow_mustard_crop",
+            "Name": "chinese_regional_culinary_ingredients:snow_mustard_crop",
             "Properties": {
               "age": "7"
             }
@@ -75,14 +75,14 @@
           "input_predicate": {
             "block": "minecraft:wheat",
             "predicate_type": "northeast_china_delight:village_farm_crop",
-            "crop_item": "northeast_china_delight:bellflower_seeds",
+            "crop_item": "chinese_regional_culinary_ingredients:bellflower_seeds",
             "probability": 0.06
           },
           "location_predicate": {
             "predicate_type": "minecraft:always_true"
           },
           "output_state": {
-            "Name": "northeast_china_delight:bellflower_crop",
+            "Name": "chinese_regional_culinary_ingredients:bellflower_crop",
             "Properties": {
               "age": "7"
             }
@@ -92,14 +92,14 @@
           "input_predicate": {
             "block": "minecraft:wheat",
             "predicate_type": "northeast_china_delight:village_farm_crop",
-            "crop_item": "northeast_china_delight:green_radish_seeds",
+            "crop_item": "chinese_regional_culinary_ingredients:green_radish_seeds",
             "probability": 0.08
           },
           "location_predicate": {
             "predicate_type": "minecraft:always_true"
           },
           "output_state": {
-            "Name": "northeast_china_delight:green_radish_crop",
+            "Name": "chinese_regional_culinary_ingredients:green_radish_crop",
             "Properties": {
               "age": "7"
             }
@@ -141,3 +141,4 @@
     }
   ]
 }
+

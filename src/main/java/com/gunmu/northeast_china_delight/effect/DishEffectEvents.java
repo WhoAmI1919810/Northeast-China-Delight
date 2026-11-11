@@ -2,7 +2,7 @@ package com.gunmu.northeast_china_delight.effect;
 
 import com.gunmu.northeast_china_delight.item.ModItems;
 import com.gunmu.northeast_china_delight.item.MysteryStewEffects;
-import com.gunmu.northeast_china_delight.item.SeasoningBottleItem;
+import com.gunmu.chinese_regional_culinary_ingredients.item.SeasoningBottleItem;
 import com.gunmu.northeast_china_delight.util.DdIds;
 import com.gunmu.northeast_china_delight.util.DdAttributes;
 import com.gunmu.northeast_china_delight.util.DdEffects;
@@ -342,3 +342,4 @@ public class DishEffectEvents {
         return biome.value().getBaseTemperature() <= COLD_TEMPERATURE;
     }
 }
+

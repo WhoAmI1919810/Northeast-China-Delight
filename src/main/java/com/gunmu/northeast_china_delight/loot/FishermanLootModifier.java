@@ -1,5 +1,7 @@
 package com.gunmu.northeast_china_delight.loot;
 
+import com.gunmu.chinese_regional_culinary_ingredients.item.CrciItems;
+
 import com.gunmu.northeast_china_delight.NortheastChinaConfig;
 import com.gunmu.northeast_china_delight.item.ModItems;
 import com.mojang.serialization.Codec;
@@ -39,14 +41,14 @@ public class FishermanLootModifier extends LootModifier
 
     /** 生鲜水产 */
     private static final Entry[] RAW = {
-            new Entry(() -> ModItems.SHRIMP.get(), 9),
-            new Entry(() -> ModItems.OYSTER.get(), 8),
-            new Entry(() -> ModItems.HAIRTAIL.get(), 6),
-            new Entry(() -> ModItems.SEA_CUCUMBER.get(), 5)
+            new Entry(() -> CrciItems.SHRIMP.get(), 9),
+            new Entry(() -> CrciItems.OYSTER.get(), 8),
+            new Entry(() -> CrciItems.HAIRTAIL.get(), 6),
+            new Entry(() -> CrciItems.SEA_CUCUMBER.get(), 5)
     };
 
     private static final Entry[] DISH = {
-            new Entry(() -> ModItems.SALTED_FISH.get(), 8),
+            new Entry(() -> CrciItems.SALTED_FISH.get(), 8),
             new Entry(() -> ModItems.XIAN_YU_BING_ZI.get(), 6),
             new Entry(() -> ModItems.CONG_SHAO_HAI_SHEN.get(), 4),
             new Entry(() -> ModItems.SUAN_CAI_HAI_XIAN_GUO.get(), 4)

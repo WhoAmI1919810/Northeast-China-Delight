@@ -1,5 +1,5 @@
 {
-  "parent": "northeast_china_delight:ginseng",
+  "parent": "chinese_regional_culinary_ingredients:ginseng",
   "display": {
     "icon": {
       "id": "minecraft:emerald"
@@ -23,7 +23,7 @@
         },
         "item": {
           "items": [
-            "northeast_china_delight:ginseng"
+            "chinese_regional_culinary_ingredients:ginseng"
           ]
         }
       }

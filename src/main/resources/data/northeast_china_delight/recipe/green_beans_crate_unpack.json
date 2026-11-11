@@ -1,6 +1,7 @@
 {
   "type": "minecraft:crafting_shapeless",
   "category": "misc",
-  "ingredients": [ { "item": "northeast_china_delight:green_beans_crate" } ],
-  "result": { "count": 9, "id": "northeast_china_delight:green_beans" }
+  "ingredients": [ { "item": "chinese_regional_culinary_ingredients:green_beans_crate" } ],
+  "result": { "count": 9, "id": "chinese_regional_culinary_ingredients:green_beans" }
 }
+

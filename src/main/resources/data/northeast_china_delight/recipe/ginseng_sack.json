@@ -8,11 +8,12 @@
   ],
   "key": {
     "X": {
-      "item": "northeast_china_delight:ginseng"
+      "item": "chinese_regional_culinary_ingredients:ginseng"
     }
   },
   "result": {
     "count": 1,
-    "id": "northeast_china_delight:ginseng_sack"
+    "id": "chinese_regional_culinary_ingredients:ginseng_sack"
   }
 }
+

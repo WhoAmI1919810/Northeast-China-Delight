@@ -8,11 +8,12 @@
   ],
   "key": {
     "X": {
-      "item": "northeast_china_delight:hazel_mushroom"
+      "item": "chinese_regional_culinary_ingredients:hazel_mushroom"
     }
   },
   "result": {
     "count": 1,
-    "id": "northeast_china_delight:hazel_mushroom_sack"
+    "id": "chinese_regional_culinary_ingredients:hazel_mushroom_sack"
   }
 }
+

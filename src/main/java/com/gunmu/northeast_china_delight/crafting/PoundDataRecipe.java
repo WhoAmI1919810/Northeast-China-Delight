@@ -6,7 +6,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import com.google.gson.JsonParser;
 import com.gunmu.northeast_china_delight.NortheastChinaDelight;
-import com.gunmu.northeast_china_delight.item.SeasoningBottleItem;
+import com.gunmu.chinese_regional_culinary_ingredients.item.SeasoningBottleItem;
 import com.gunmu.northeast_china_delight.util.DdIds;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
@@ -547,3 +547,4 @@ public final class PoundDataRecipe implements Recipe<
         //?}
     }
 }
+

@@ -1,10 +1,14 @@
 package com.gunmu.northeast_china_delight.event;
 
+import com.gunmu.chinese_regional_culinary_ingredients.block.CrciBlocks;
+
+import com.gunmu.chinese_regional_culinary_ingredients.item.CrciItems;
+
 import com.gunmu.northeast_china_delight.NortheastChinaDelight;
 import com.gunmu.northeast_china_delight.advancement.ModAdvancements;
 import com.gunmu.northeast_china_delight.block.BigStoveBlock;
 import com.gunmu.northeast_china_delight.block.FacingDecorBlock;
-import com.gunmu.northeast_china_delight.block.GinsengCropBlock;
+import com.gunmu.chinese_regional_culinary_ingredients.block.GinsengCropBlock;
 import com.gunmu.northeast_china_delight.block.ModBlockTags;
 import com.gunmu.northeast_china_delight.block.ModBlocks;
 import com.gunmu.northeast_china_delight.block.PlacedDishBlock;
@@ -13,7 +17,7 @@ import com.gunmu.northeast_china_delight.compat.displaydelight.DisplayDelightCom
 import com.gunmu.northeast_china_delight.block.WoodenMortarBlock;
 import com.gunmu.northeast_china_delight.effect.ModEffects;
 import com.gunmu.northeast_china_delight.item.ModItems;
-import com.gunmu.northeast_china_delight.item.SeasoningBottleItem;
+import com.gunmu.chinese_regional_culinary_ingredients.item.SeasoningBottleItem;
 import com.gunmu.northeast_china_delight.util.DdEffects;
 import com.gunmu.northeast_china_delight.util.DdIds;
 import com.gunmu.northeast_china_delight.worldgen.CourtyardPiece;
@@ -508,14 +512,14 @@ public final class ModGameplayEvents
         }
         BlockPos plantPos = event.getPos().above();
         BlockState plant = level.getBlockState(plantPos);
-        if (!plant.is(ModBlocks.GINSENG_CROP.get())
+        if (!plant.is(CrciBlocks.GINSENG_CROP.get())
                 || plant.getValue(GinsengCropBlock.AGE) < GinsengCropBlock.MAX_AGE)
         {
             return;
         }
         level.removeBlock(plantPos, false);
-        Block.popResource(level, plantPos, new ItemStack(ModItems.GINSENG.get()));
-        Block.popResource(level, plantPos, new ItemStack(ModItems.GINSENG_SEEDS.get(), 1 + level.random.nextInt(2)));
+        Block.popResource(level, plantPos, new ItemStack(CrciItems.GINSENG.get()));
+        Block.popResource(level, plantPos, new ItemStack(CrciItems.GINSENG_SEEDS.get(), 1 + level.random.nextInt(2)));
     }
 
     /**
@@ -528,11 +532,11 @@ public final class ModGameplayEvents
     public static void onFurnaceFuel(FurnaceFuelBurnTimeEvent event)
     {
         ItemStack stack = event.getItemStack();
-        if (stack.is(ModItems.CORN_STALK.get()))
+        if (stack.is(CrciItems.CORN_STALK.get()))
         {
             event.setBurnTime(200);
         }
-        else if (stack.is(ModItems.ANIMAL_OIL.get()))
+        else if (stack.is(CrciItems.ANIMAL_OIL.get()))
         {
             // 熔炉烧掉的是一剂（50 mB）：剩下的瓶子留在燃料槽接着烧，一满瓶共 5 × 160 = 800，4 瓶 = 一块动物油块
             event.setBurnTime(160);
@@ -544,3 +548,4 @@ public final class ModGameplayEvents
     }
     *///?}
 }
+

@@ -1,5 +1,9 @@
 package com.gunmu.northeast_china_delight.crafting;
 
+import com.gunmu.chinese_regional_culinary_ingredients.fluid.CrciFluids;
+
+import com.gunmu.chinese_regional_culinary_ingredients.item.CrciItems;
+
 import com.gunmu.northeast_china_delight.item.ModItems;
 import com.gunmu.northeast_china_delight.ModTags;
 import com.gunmu.northeast_china_delight.block.VatBlockEntity;
@@ -113,11 +117,11 @@ public final class VatRecipes {
     public static Map<Item, Item> pickles() {
         if (pickles == null) {
             Map<Item, Item> map = new HashMap<>();
-            map.put(ModItems.NAPA_CABBAGE.get(), ModItems.SOUR_CABBAGE.get());
-            map.put(ModItems.SNOW_MUSTARD.get(), ModItems.PICKLED_SNOW_MUSTARD.get());
-            map.put(ModItems.CUCUMBER.get(), ModItems.PICKLED_CUCUMBER.get());
-            map.put(Items.CARROT, ModItems.PICKLED_CARROT.get());
-            map.put(ModItems.GREEN_RADISH.get(), ModItems.PICKLED_GREEN_RADISH.get());
+            map.put(CrciItems.NAPA_CABBAGE.get(), CrciItems.SOUR_CABBAGE.get());
+            map.put(CrciItems.SNOW_MUSTARD.get(), CrciItems.PICKLED_SNOW_MUSTARD.get());
+            map.put(CrciItems.CUCUMBER.get(), CrciItems.PICKLED_CUCUMBER.get());
+            map.put(Items.CARROT, CrciItems.PICKLED_CARROT.get());
+            map.put(CrciItems.GREEN_RADISH.get(), CrciItems.PICKLED_GREEN_RADISH.get());
             pickles = Map.copyOf(map);
         }
         return pickles;
@@ -143,11 +147,11 @@ public final class VatRecipes {
         if (result != null) {
             return new ItemStack(result);
         }
-        if (stack.is(ModTags.CROPS_SNOW_MUSTARD)) return new ItemStack(ModItems.PICKLED_SNOW_MUSTARD.get());
-        if (stack.is(ModTags.CROPS_CUCUMBER)) return new ItemStack(ModItems.PICKLED_CUCUMBER.get());
-        if (stack.is(ModTags.CROPS_CARROT)) return new ItemStack(ModItems.PICKLED_CARROT.get());
-        if (stack.is(ModTags.CROPS_RADISH)) return new ItemStack(ModItems.PICKLED_GREEN_RADISH.get());
-        return new ItemStack(ModItems.SOUR_CABBAGE.get());
+        if (stack.is(ModTags.CROPS_SNOW_MUSTARD)) return new ItemStack(CrciItems.PICKLED_SNOW_MUSTARD.get());
+        if (stack.is(ModTags.CROPS_CUCUMBER)) return new ItemStack(CrciItems.PICKLED_CUCUMBER.get());
+        if (stack.is(ModTags.CROPS_CARROT)) return new ItemStack(CrciItems.PICKLED_CARROT.get());
+        if (stack.is(ModTags.CROPS_RADISH)) return new ItemStack(CrciItems.PICKLED_GREEN_RADISH.get());
+        return new ItemStack(CrciItems.SOUR_CABBAGE.get());
     }
 
     public static boolean isMeatInput(ItemStack stack) {
@@ -160,11 +164,11 @@ public final class VatRecipes {
     }
 
     public static Item meatResult() {
-        return ModItems.SALTED_PORK.get();
+        return CrciItems.SALTED_PORK.get();
     }
 
     public static Item saltedFishResult() {
-        return ModItems.SALTED_FISH.get();
+        return CrciItems.SALTED_FISH.get();
     }
 
     public static boolean isCornKernels(ItemStack stack) {
@@ -198,7 +202,7 @@ public final class VatRecipes {
     }
 
     public static Item residue() {
-        return ModItems.SOY_RESIDUE.get();
+        return CrciItems.SOY_RESIDUE.get();
     }
 
     public static List<VatRecipe> all(@Nullable net.minecraft.world.level.Level level) {
@@ -266,39 +270,39 @@ public final class VatRecipes {
     }
 
     public static Item vinegarResult() {
-        return ModItems.VINEGAR.get();
+        return CrciItems.VINEGAR.get();
     }
 
     public static Item sourWaterResult() {
-        return ModItems.SOUR_WATER.get();
+        return CrciItems.SOUR_WATER.get();
     }
 
     public static Item whiteVinegarResult() {
-        return ModItems.WHITE_VINEGAR.get();
+        return CrciItems.WHITE_VINEGAR.get();
     }
 
     public static Item fishSauceResult() {
-        return ModItems.FISH_SAUCE.get();
+        return CrciItems.FISH_SAUCE.get();
     }
 
     public static Item shrimpPasteResult() {
-        return ModItems.SHRIMP_PASTE.get();
+        return CrciItems.SHRIMP_PASTE.get();
     }
 
     public static Item spicyCabbage() {
-        return ModItems.SPICY_CABBAGE.get();
+        return CrciItems.SPICY_CABBAGE.get();
     }
 
     public static Item chiliSauce() {
-        return ModItems.CHILI_SAUCE.get();
+        return CrciItems.CHILI_SAUCE.get();
     }
 
     public static Item beanSprouts() {
-        return ModItems.BEAN_SPROUTS.get();
+        return CrciItems.BEAN_SPROUTS.get();
     }
 
     public static Item sourCornKernels() {
-        return ModItems.SOUR_CORN_KERNELS.get();
+        return CrciItems.SOUR_CORN_KERNELS.get();
     }
 
     public static Item kvassBread() {
@@ -405,29 +409,29 @@ public final class VatRecipes {
         if (fluid == null) {
             return null;
         }
-        if (fluid.isSame(com.gunmu.northeast_china_delight.fluid.ModFluids.soyPasteSource())) {
-            return new Serving(Items.BOWL, ModItems.SOY_PASTE.get());
+        if (fluid.isSame(com.gunmu.chinese_regional_culinary_ingredients.fluid.CrciFluids.soyPasteSource())) {
+            return new Serving(Items.BOWL, CrciItems.SOY_PASTE.get());
         }
-        if (fluid.isSame(com.gunmu.northeast_china_delight.fluid.ModFluids.soySauceSource())) {
-            return new Serving(Items.GLASS_BOTTLE, ModItems.SOY_SAUCE.get());
+        if (fluid.isSame(com.gunmu.chinese_regional_culinary_ingredients.fluid.CrciFluids.soySauceSource())) {
+            return new Serving(Items.GLASS_BOTTLE, CrciItems.SOY_SAUCE.get());
         }
-        if (fluid.isSame(com.gunmu.northeast_china_delight.fluid.ModFluids.vinegarSource())) {
-            return new Serving(Items.GLASS_BOTTLE, ModItems.VINEGAR.get());
+        if (fluid.isSame(com.gunmu.chinese_regional_culinary_ingredients.fluid.CrciFluids.vinegarSource())) {
+            return new Serving(Items.GLASS_BOTTLE, CrciItems.VINEGAR.get());
         }
-        if (fluid.isSame(com.gunmu.northeast_china_delight.fluid.ModFluids.whiteVinegarSource())) {
-            return new Serving(Items.GLASS_BOTTLE, ModItems.WHITE_VINEGAR.get());
+        if (fluid.isSame(com.gunmu.chinese_regional_culinary_ingredients.fluid.CrciFluids.whiteVinegarSource())) {
+            return new Serving(Items.GLASS_BOTTLE, CrciItems.WHITE_VINEGAR.get());
         }
-        if (fluid.isSame(com.gunmu.northeast_china_delight.fluid.ModFluids.fishSauceSource())) {
-            return new Serving(Items.GLASS_BOTTLE, ModItems.FISH_SAUCE.get());
+        if (fluid.isSame(com.gunmu.chinese_regional_culinary_ingredients.fluid.CrciFluids.fishSauceSource())) {
+            return new Serving(Items.GLASS_BOTTLE, CrciItems.FISH_SAUCE.get());
         }
-        if (fluid.isSame(com.gunmu.northeast_china_delight.fluid.ModFluids.shrimpPasteSource())) {
-            return new Serving(Items.GLASS_BOTTLE, ModItems.SHRIMP_PASTE.get());
+        if (fluid.isSame(com.gunmu.chinese_regional_culinary_ingredients.fluid.CrciFluids.shrimpPasteSource())) {
+            return new Serving(Items.GLASS_BOTTLE, CrciItems.SHRIMP_PASTE.get());
         }
         if (fluid.isSame(com.gunmu.northeast_china_delight.fluid.ModFluids.kvassSource())) {
             return new Serving(Items.GLASS_BOTTLE, ModItems.KVASS.get());
         }
-        if (fluid.isSame(com.gunmu.northeast_china_delight.fluid.ModFluids.sourWaterSource())) {
-            return new Serving(Items.GLASS_BOTTLE, ModItems.SOUR_WATER.get());
+        if (fluid.isSame(com.gunmu.chinese_regional_culinary_ingredients.fluid.CrciFluids.sourWaterSource())) {
+            return new Serving(Items.GLASS_BOTTLE, CrciItems.SOUR_WATER.get());
         }
         return null;
     }
@@ -447,7 +451,7 @@ public final class VatRecipes {
             return recipe.productFluid();
         }
         if (vat.sourWaterMb() > 0 && (vat.kind() == Kind.PICKLE || vat.kind() == Kind.SPICY_PICKLE)) {
-            return com.gunmu.northeast_china_delight.fluid.ModFluids.sourWaterSource();
+            return com.gunmu.chinese_regional_culinary_ingredients.fluid.CrciFluids.sourWaterSource();
         }
         return legacyProduct(vat);
     }
@@ -455,12 +459,12 @@ public final class VatRecipes {
     /** 旧存档里各液体还分字段记，按字段里有没有量认出现在是哪种 */
     @Nullable
     private static net.minecraft.world.level.material.Fluid legacyProduct(VatBlockEntity vat) {
-        if (vat.pasteMb() > 0) return com.gunmu.northeast_china_delight.fluid.ModFluids.soyPasteSource();
-        if (vat.soySauceMb() > 0) return com.gunmu.northeast_china_delight.fluid.ModFluids.soySauceSource();
-        if (vat.vinegarMb() > 0) return com.gunmu.northeast_china_delight.fluid.ModFluids.vinegarSource();
-        if (vat.whiteVinegarMb() > 0) return com.gunmu.northeast_china_delight.fluid.ModFluids.whiteVinegarSource();
-        if (vat.fishSauceMb() > 0) return com.gunmu.northeast_china_delight.fluid.ModFluids.fishSauceSource();
-        if (vat.shrimpPasteMb() > 0) return com.gunmu.northeast_china_delight.fluid.ModFluids.shrimpPasteSource();
+        if (vat.pasteMb() > 0) return com.gunmu.chinese_regional_culinary_ingredients.fluid.CrciFluids.soyPasteSource();
+        if (vat.soySauceMb() > 0) return com.gunmu.chinese_regional_culinary_ingredients.fluid.CrciFluids.soySauceSource();
+        if (vat.vinegarMb() > 0) return com.gunmu.chinese_regional_culinary_ingredients.fluid.CrciFluids.vinegarSource();
+        if (vat.whiteVinegarMb() > 0) return com.gunmu.chinese_regional_culinary_ingredients.fluid.CrciFluids.whiteVinegarSource();
+        if (vat.fishSauceMb() > 0) return com.gunmu.chinese_regional_culinary_ingredients.fluid.CrciFluids.fishSauceSource();
+        if (vat.shrimpPasteMb() > 0) return com.gunmu.chinese_regional_culinary_ingredients.fluid.CrciFluids.shrimpPasteSource();
         if (vat.kvassMb() > 0) return com.gunmu.northeast_china_delight.fluid.ModFluids.kvassSource();
         return null;
     }

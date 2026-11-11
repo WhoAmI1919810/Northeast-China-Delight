@@ -3,7 +3,7 @@ package com.gunmu.northeast_china_delight.block;
 import com.gunmu.northeast_china_delight.crafting.GrillRecipes;
 import com.gunmu.northeast_china_delight.item.GrillSeasonings;
 import com.gunmu.northeast_china_delight.item.ModItems;
-import com.gunmu.northeast_china_delight.item.SeasoningBottleItem;
+import com.gunmu.chinese_regional_culinary_ingredients.item.SeasoningBottleItem;
 import com.gunmu.northeast_china_delight.util.DdPlayers;
 import com.gunmu.northeast_china_delight.util.DdStacks;
 import com.mojang.serialization.MapCodec;
@@ -482,3 +482,4 @@ public class GrillCampfireBlock extends CampfireBlock {
         player.displayClientMessage(Component.translatable(translationKey, args), true);
     }
 }
+

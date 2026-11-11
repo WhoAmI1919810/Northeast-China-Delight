@@ -6,7 +6,7 @@
       "tag": "c:crops/rice"
     },
     {
-      "item": "northeast_china_delight:roasted_peanuts"
+      "item": "chinese_regional_culinary_ingredients:roasted_peanuts"
     },
     {
       "tag": "c:sugar"
@@ -18,3 +18,4 @@
     "id": "northeast_china_delight:peanut_songpyeon"
   }
 }
+

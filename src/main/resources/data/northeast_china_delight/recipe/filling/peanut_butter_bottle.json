@@ -13,12 +13,13 @@
     {
       "type": "neoforge:single",
       "amount": 250,
-      "fluid": "northeast_china_delight:peanut_butter"
+      "fluid": "chinese_regional_culinary_ingredients:peanut_butter"
     }
   ],
   "results": [
     {
-      "id": "northeast_china_delight:peanut_butter"
+      "id": "chinese_regional_culinary_ingredients:peanut_butter"
     }
   ]
 }
+

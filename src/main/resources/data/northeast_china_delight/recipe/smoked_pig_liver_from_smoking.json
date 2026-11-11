@@ -4,10 +4,11 @@
   "cookingtime": 100,
   "experience": 0.35,
   "ingredient": {
-    "item": "northeast_china_delight:pig_liver"
+    "item": "chinese_regional_culinary_ingredients:pig_liver"
   },
   "result": {
     "count": 1,
-    "id": "northeast_china_delight:smoked_pig_liver"
+    "id": "chinese_regional_culinary_ingredients:smoked_pig_liver"
   }
 }
+

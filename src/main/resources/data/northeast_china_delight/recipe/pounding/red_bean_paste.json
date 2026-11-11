@@ -38,9 +38,10 @@
     ],
     "finished_model": "northeast_china_delight:block/wooden_mortar_red_bean_paste",
     "result": {
-      "item": "northeast_china_delight:red_bean_paste",
+      "item": "chinese_regional_culinary_ingredients:red_bean_paste",
       "count": 2
     },
     "transition": "sequential"
   }
 }
+

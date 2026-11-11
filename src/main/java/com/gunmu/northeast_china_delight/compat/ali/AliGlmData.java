@@ -1,5 +1,7 @@
 package com.gunmu.northeast_china_delight.compat.ali;
 
+import com.gunmu.chinese_regional_culinary_ingredients.item.CrciItems;
+
 import com.gunmu.northeast_china_delight.item.ModItems;
 import net.minecraft.world.item.Item;
 
@@ -47,20 +49,20 @@ final class AliGlmData {
      */
     static List<Item> pigOffalItems() {
         return List.of(
-                ModItems.PORK_RIBS.get(),
-                ModItems.PORK_INTESTINE.get(),
-                ModItems.PORK_HOCK.get(),
-                ModItems.PIG_BLOOD.get(),
-                ModItems.PIG_LIVER.get(),
-                ModItems.PORK_FAT.get(),
-                ModItems.OIL_EDGE.get());
+                CrciItems.PORK_RIBS.get(),
+                CrciItems.PORK_INTESTINE.get(),
+                CrciItems.PORK_HOCK.get(),
+                CrciItems.PIG_BLOOD.get(),
+                CrciItems.PIG_LIVER.get(),
+                CrciItems.PORK_FAT.get(),
+                CrciItems.OIL_EDGE.get());
     }
 
     /** {@code PigOffalLootModifier.getSmokedMap}：着火的猪把这些换成熏制版 */
     static List<Item[]> pigOffalSmoked() {
         return List.of(
-                new Item[]{ModItems.PORK_HOCK.get(), ModItems.SMOKED_PORK_HOCK.get()},
-                new Item[]{ModItems.PIG_LIVER.get(), ModItems.SMOKED_PIG_LIVER.get()});
+                new Item[]{CrciItems.PORK_HOCK.get(), CrciItems.SMOKED_PORK_HOCK.get()},
+                new Item[]{CrciItems.PIG_LIVER.get(), CrciItems.SMOKED_PIG_LIVER.get()});
     }
 
     private AliGlmData() {}

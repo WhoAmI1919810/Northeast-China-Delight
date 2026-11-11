@@ -1,12 +1,12 @@
 {
   "values": [
-    "northeast_china_delight:napa_cabbage",
-    "northeast_china_delight:cucumber",
-    "northeast_china_delight:green_pepper",
-    "northeast_china_delight:green_beans",
-    "northeast_china_delight:eggplant",
-    "northeast_china_delight:snow_mustard",
-    "northeast_china_delight:bean_sprouts",
+    "chinese_regional_culinary_ingredients:napa_cabbage",
+    "chinese_regional_culinary_ingredients:cucumber",
+    "chinese_regional_culinary_ingredients:green_pepper",
+    "chinese_regional_culinary_ingredients:green_beans",
+    "chinese_regional_culinary_ingredients:eggplant",
+    "chinese_regional_culinary_ingredients:snow_mustard",
+    "chinese_regional_culinary_ingredients:bean_sprouts",
     {
       "id": "farmersdelight:cabbage",
       "required": false
@@ -69,3 +69,4 @@
     }
   ]
 }
+

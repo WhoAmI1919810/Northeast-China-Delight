@@ -3,7 +3,7 @@ package com.gunmu.northeast_china_delight.block;
 import com.gunmu.northeast_china_delight.advancement.ModAdvancements;
 import com.gunmu.northeast_china_delight.crafting.PoundingRecipes;
 import com.gunmu.northeast_china_delight.item.ModItems;
-import com.gunmu.northeast_china_delight.item.SeasoningBottleItem;
+import com.gunmu.chinese_regional_culinary_ingredients.item.SeasoningBottleItem;
 import com.gunmu.northeast_china_delight.util.DdStacks;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.core.BlockPos;
@@ -698,3 +698,4 @@ public class WoodenMortarBlock extends BaseEntityBlock {
         builder.add(FACING, STATE, MALLET, MALLET_FACING);
     }
 }
+

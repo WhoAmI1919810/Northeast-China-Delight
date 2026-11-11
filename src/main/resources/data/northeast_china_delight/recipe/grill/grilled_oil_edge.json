@@ -1,7 +1,7 @@
 {
   "type": "northeast_china_delight:grill",
   "config": {
-    "input": {"item": "northeast_china_delight:oil_edge"},
+    "input": {"item": "chinese_regional_culinary_ingredients:oil_edge"},
     "seasonings": [
       {"tag": "c:foods/seasonings/salt"},
       {"tag": "c:foods/seasonings/chili_oil"}
@@ -10,3 +10,4 @@
     "seconds": 25
   }
 }
+

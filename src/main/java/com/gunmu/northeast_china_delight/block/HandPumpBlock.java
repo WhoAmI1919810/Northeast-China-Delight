@@ -1,7 +1,7 @@
 package com.gunmu.northeast_china_delight.block;
 
 import com.gunmu.northeast_china_delight.item.ModItems;
-import com.gunmu.northeast_china_delight.item.SeasoningBottleItem;
+import com.gunmu.chinese_regional_culinary_ingredients.item.SeasoningBottleItem;
 import com.gunmu.northeast_china_delight.compat.OptionalMods;
 import com.gunmu.northeast_china_delight.compat.create.CreateHandPumpCompat;
 import net.minecraft.core.BlockPos;
@@ -383,3 +383,4 @@ public class HandPumpBlock extends FacingDecorBlock {
         //?}
     }
 }
+

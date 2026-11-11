@@ -4,7 +4,7 @@ import com.gunmu.northeast_china_delight.block.ModBlocks;
 import com.gunmu.northeast_china_delight.crafting.GrillRecipes;
 import com.gunmu.northeast_china_delight.client.GrillRackGeometry;
 import com.gunmu.northeast_china_delight.item.GrillSeasonings;
-import com.gunmu.northeast_china_delight.item.SeasoningBottleItem;
+import com.gunmu.chinese_regional_culinary_ingredients.item.SeasoningBottleItem;
 import com.gunmu.northeast_china_delight.NortheastChinaDelight;
 import com.gunmu.northeast_china_delight.util.DdIds;
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -337,3 +337,4 @@ public class GrillRecipeCategory implements IRecipeCategory<GrillJeiRecipe> {
 
     //?}
 }
+

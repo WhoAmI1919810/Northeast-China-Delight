@@ -9,12 +9,12 @@
   "heat_requirement": "heated",
   "ingredients": [
     {
-      "item": "northeast_china_delight:pork_ribs"
+      "item": "chinese_regional_culinary_ingredients:pork_ribs"
     },
     {
       "type": "neoforge:single",
       "amount": 50,
-      "fluid": "northeast_china_delight:soy_sauce"
+      "fluid": "chinese_regional_culinary_ingredients:soy_sauce"
     }
   ],
   "results": [
@@ -23,3 +23,4 @@
     }
   ]
 }
+

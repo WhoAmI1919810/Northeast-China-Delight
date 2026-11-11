@@ -1,6 +1,6 @@
 {
   "__说明": "常见地带（森林、白桦林、繁花森林、黑森林）：每区块 1/6 概率试一次",
-  "feature": "northeast_china_delight:hazelnut_bush",
+  "feature": "chinese_regional_culinary_ingredients:hazelnut_bush",
   "placement": [
     {
       "type": "minecraft:rarity_filter",
@@ -18,3 +18,4 @@
     }
   ]
 }
+

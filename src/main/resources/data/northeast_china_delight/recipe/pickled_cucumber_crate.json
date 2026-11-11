@@ -8,11 +8,12 @@
   ],
   "key": {
     "X": {
-      "item": "northeast_china_delight:pickled_cucumber"
+      "item": "chinese_regional_culinary_ingredients:pickled_cucumber"
     }
   },
   "result": {
     "count": 1,
-    "id": "northeast_china_delight:pickled_cucumber_crate"
+    "id": "chinese_regional_culinary_ingredients:pickled_cucumber_crate"
   }
 }
+

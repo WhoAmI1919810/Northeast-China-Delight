@@ -8,15 +8,16 @@
   "type": "create:mixing",
   "ingredients": [
     {
-      "item": "northeast_china_delight:sour_corn_kernels"
+      "item": "chinese_regional_culinary_ingredients:sour_corn_kernels"
     },
     {
-      "item": "northeast_china_delight:sour_corn_kernels"
+      "item": "chinese_regional_culinary_ingredients:sour_corn_kernels"
     }
   ],
   "results": [
     {
-      "id": "northeast_china_delight:sour_dough"
+      "id": "chinese_regional_culinary_ingredients:sour_dough"
     }
   ]
 }
+

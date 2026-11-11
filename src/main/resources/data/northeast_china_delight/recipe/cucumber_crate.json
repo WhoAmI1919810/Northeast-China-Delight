@@ -8,11 +8,12 @@
   ],
   "key": {
     "X": {
-      "item": "northeast_china_delight:cucumber"
+      "item": "chinese_regional_culinary_ingredients:cucumber"
     }
   },
   "result": {
     "count": 1,
-    "id": "northeast_china_delight:cucumber_crate"
+    "id": "chinese_regional_culinary_ingredients:cucumber_crate"
   }
 }
+

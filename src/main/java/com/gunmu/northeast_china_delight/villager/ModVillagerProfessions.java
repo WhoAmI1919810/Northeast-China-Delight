@@ -1,5 +1,7 @@
 package com.gunmu.northeast_china_delight.villager;
 
+import com.gunmu.chinese_regional_culinary_ingredients.item.CrciItems;
+
 import com.google.common.collect.ImmutableSet;
 import com.gunmu.northeast_china_delight.NortheastChinaDelight;
 import com.gunmu.northeast_china_delight.block.ModBlocks;
@@ -44,9 +46,9 @@ public class ModVillagerProfessions
                     holder -> holder.unwrapKey().map(key -> key.location().equals(VAT_POI_ID)).orElse(false),
                     holder -> holder.unwrapKey().map(key -> key.location().equals(VAT_POI_ID)).orElse(false),
                     ImmutableSet.of(
-                            ModItems.SALT.get(),
-                            ModItems.SOYBEAN.get(),
-                            ModItems.NAPA_CABBAGE.get()),
+                            CrciItems.SALT.get(),
+                            CrciItems.SOYBEAN.get(),
+                            CrciItems.NAPA_CABBAGE.get()),
                     ImmutableSet.of(),
                     SoundEvents.VILLAGER_WORK_FARMER));
 

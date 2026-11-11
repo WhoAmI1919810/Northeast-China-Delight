@@ -1,6 +1,6 @@
 package com.gunmu.northeast_china_delight.crafting;
 
-import com.gunmu.northeast_china_delight.item.SeasoningBottleItem;
+import com.gunmu.chinese_regional_culinary_ingredients.item.SeasoningBottleItem;
 import net.minecraft.core.NonNullList;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -91,3 +91,4 @@ public class WholeBottleShapelessRecipe extends ShapelessRecipe {
         //?}
     }
 }
+

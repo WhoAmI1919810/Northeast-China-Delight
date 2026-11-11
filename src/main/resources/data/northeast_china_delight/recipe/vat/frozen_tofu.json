@@ -24,7 +24,7 @@
           "min": 1,
           "max": 6
         },
-        "result": "northeast_china_delight:frozen_tofu"
+        "result": "chinese_regional_culinary_ingredients:frozen_tofu"
       }
     ],
     "required_seal_item": {
@@ -34,13 +34,13 @@
     "display_models": [
       {
         "ingredient": {
-          "item": "northeast_china_delight:frozen_tofu"
+          "item": "chinese_regional_culinary_ingredients:frozen_tofu"
         },
         "model": "northeast_china_delight:block/vat/frozen_tofu"
       },
       {
         "ingredient": {
-          "item": "northeast_china_delight:tofu"
+          "item": "chinese_regional_culinary_ingredients:tofu"
         },
         "model": "northeast_china_delight:block/vat/tofu"
       },
@@ -53,3 +53,4 @@
     ]
   }
 }
+

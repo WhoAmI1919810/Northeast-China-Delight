@@ -1,10 +1,12 @@
 package com.gunmu.northeast_china_delight.block;
 
+import com.gunmu.chinese_regional_culinary_ingredients.item.CrciItems;
+
 import com.gunmu.northeast_china_delight.crafting.VatBrewing;
 import com.gunmu.northeast_china_delight.crafting.VatRecipe;
 import com.gunmu.northeast_china_delight.crafting.VatRecipes;
 import com.gunmu.northeast_china_delight.item.ModItems;
-import com.gunmu.northeast_china_delight.item.SeasoningBottleItem;
+import com.gunmu.chinese_regional_culinary_ingredients.item.SeasoningBottleItem;
 import com.gunmu.northeast_china_delight.NortheastChinaDelight;
 import com.gunmu.northeast_china_delight.util.DdIds;
 import net.minecraft.core.BlockPos;
@@ -170,7 +172,7 @@ public class Vat extends Block implements EntityBlock {
             return false;
         }
         VatRecipe.Counts counts = VatBrewing.counts(vat, null);
-        ItemStack salt = new ItemStack(ModItems.SALT.get());
+        ItemStack salt = new ItemStack(CrciItems.SALT.get());
         for (int i = 0; i < recipe.slots().size(); i++) {
             if (!recipe.accepts(i, salt)) {
                 continue;
@@ -369,7 +371,7 @@ public class Vat extends Block implements EntityBlock {
             return InteractionResult.PASS;
         }
 
-        if (stack.is(ModItems.SOUR_WATER.get()) && canPourSourWater(vat, state)) {
+        if (stack.is(CrciItems.SOUR_WATER.get()) && canPourSourWater(vat, state)) {
             if (vat.kind() == VatRecipes.Kind.NONE) {
                 vat.setKind(VatRecipes.Kind.PICKLE);
             }

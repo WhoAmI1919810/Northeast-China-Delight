@@ -1,8 +1,10 @@
 package com.gunmu.northeast_china_delight.mixin;
 
+import com.gunmu.chinese_regional_culinary_ingredients.item.CrciItems;
+
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
-import com.gunmu.northeast_china_delight.item.SeasoningBottleItem;
+import com.gunmu.chinese_regional_culinary_ingredients.item.SeasoningBottleItem;
 import com.gunmu.northeast_china_delight.item.ModItems;
 //? if >=1.20.2 {
 import net.minecraft.world.item.crafting.RecipeHolder;
@@ -113,7 +115,7 @@ public abstract class CookingPotBlockEntityMixin {
             at = @At(value = "INVOKE", target = "Lnet/minecraft/world/item/ItemStack;shrink(I)V", remap = true))
     private void northeast$useOneDose(ItemStack stack, int amount, Operation<Void> original) {
         if (!SeasoningBottleItem.isBottle(stack)) {
-            boolean soyPaste = stack.is(ModItems.SOY_PASTE.get());
+            boolean soyPaste = stack.is(CrciItems.SOY_PASTE.get());
             original.call(stack, amount);
             if (soyPaste) {
                 ((CookingPotBlockEntityInvoker) this).northeast$ejectIngredientRemainder(new ItemStack(Items.BOWL));
@@ -150,16 +152,16 @@ public abstract class CookingPotBlockEntityMixin {
         }
         Level level = pot.getLevel();
         //? if <1.20.2 {
-        /*if (level == null || !recipe.getResultItem(level.registryAccess()).is(ModItems.ANIMAL_OIL.get())) {
+        /*if (level == null || !recipe.getResultItem(level.registryAccess()).is(CrciItems.ANIMAL_OIL.get())) {
             return;
         }
         *///?} else {
-        if (level == null || !recipe.value().getResultItem(level.registryAccess()).is(ModItems.ANIMAL_OIL.get())) {
+        if (level == null || !recipe.value().getResultItem(level.registryAccess()).is(CrciItems.ANIMAL_OIL.get())) {
             return;
         }
         //?}
 
-        ItemStack cracklings = new ItemStack(ModItems.CRACKLINGS.get());
+        ItemStack cracklings = new ItemStack(CrciItems.CRACKLINGS.get());
         ItemStackHandler inventory = pot.getInventory();
         for (int slot = 0; slot < CookingPotBlockEntity.MEAL_DISPLAY_SLOT && !cracklings.isEmpty(); slot++) {
             cracklings = inventory.insertItem(slot, cracklings, false);
@@ -169,3 +171,4 @@ public abstract class CookingPotBlockEntityMixin {
         }
     }
 }
+

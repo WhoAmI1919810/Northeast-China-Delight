@@ -1,8 +1,12 @@
 package com.gunmu.northeast_china_delight.gametest;
 
+import com.gunmu.chinese_regional_culinary_ingredients.block.CrciBlocks;
+
+import com.gunmu.chinese_regional_culinary_ingredients.item.CrciItems;
+
 import com.gunmu.northeast_china_delight.NortheastChinaDelight;
-import com.gunmu.northeast_china_delight.block.HazelnutBushBlock;
-import com.gunmu.northeast_china_delight.block.GinsengCropBlock;
+import com.gunmu.chinese_regional_culinary_ingredients.block.HazelnutBushBlock;
+import com.gunmu.chinese_regional_culinary_ingredients.block.GinsengCropBlock;
 import com.gunmu.northeast_china_delight.block.ModBlockTags;
 import com.gunmu.northeast_china_delight.block.ModBlocks;
 import com.gunmu.northeast_china_delight.item.ModItems;
@@ -71,11 +75,11 @@ public final class PlantingGameTests
         level.setBlockAndUpdate(snowPos, Blocks.SNOW.defaultBlockState());
 
         Player player = mockPlayer(helper, GameType.SURVIVAL);
-        placeOn(level, player, ModItems.HAZELNUT.get(), snowPos);
+        placeOn(level, player, CrciItems.HAZELNUT.get(), snowPos);
 
         helper.assertTrue(level.getBlockState(ground).is(Blocks.GRASS_BLOCK),
                 "榛子丛下面那格应该还是草方块");
-        helper.assertTrue(level.getBlockState(snowPos).is(ModBlocks.HAZELNUT_BUSH.get()),
+        helper.assertTrue(level.getBlockState(snowPos).is(CrciBlocks.HAZELNUT_BUSH.get()),
                 "榛子丛应该和雪片占同一格");
         helper.assertTrue(level.getBlockState(snowPos).getValue(HazelnutBushBlock.SNOWY),
                 "这样种出来的榛子丛应该是覆雪形态（自带雪面）");
@@ -90,8 +94,8 @@ public final class PlantingGameTests
         BlockPos plant = ground.above();
         level.setBlockAndUpdate(ground, Blocks.GRASS_BLOCK.defaultBlockState());
         Player player = mockPlayer(helper, GameType.SURVIVAL);
-        placeOn(level, player, ModItems.HAZELNUT.get(), plant);
-        helper.assertTrue(level.getBlockState(plant).is(ModBlocks.HAZELNUT_BUSH.get()),
+        placeOn(level, player, CrciItems.HAZELNUT.get(), plant);
+        helper.assertTrue(level.getBlockState(plant).is(CrciBlocks.HAZELNUT_BUSH.get()),
                 "榛子丛应该能种在裸土上");
         helper.assertFalse(level.getBlockState(plant).getValue(HazelnutBushBlock.SNOWY),
                 "裸土上的榛子丛不应该覆雪");
@@ -118,16 +122,16 @@ public final class PlantingGameTests
         }
         level.setBlockAndUpdate(ground.offset(4, 0, 0), Blocks.SNOW.defaultBlockState());
         Player player = mockPlayer(helper, GameType.SURVIVAL);
-        placeOn(level, player, ModItems.GINSENG_SEEDS.get(), plant);
-        helper.assertTrue(level.getBlockState(plant).is(ModBlocks.GINSENG_CROP.get()),
+        placeOn(level, player, CrciItems.GINSENG_SEEDS.get(), plant);
+        helper.assertTrue(level.getBlockState(plant).is(CrciBlocks.GINSENG_CROP.get()),
                 "人参放下的瞬间就没有留下，当前=" + level.getBlockState(plant)
                         + "，下方=" + level.getBlockState(plant.below())
                         + "，下方在可种植标签=" + level.getBlockState(plant.below()).is(ModBlockTags.GINSENG_PLANTABLE_ON)
                         + "，群系温度=" + level.getBiome(plant).value().getBaseTemperature()
-                        + "，能否存活=" + ModBlocks.GINSENG_CROP.get().defaultBlockState()
+                        + "，能否存活=" + CrciBlocks.GINSENG_CROP.get().defaultBlockState()
                         .canSurvive(level, plant));
         helper.runAfterDelay(2, () -> {
-            helper.assertTrue(level.getBlockState(plant).is(ModBlocks.GINSENG_CROP.get()),
+            helper.assertTrue(level.getBlockState(plant).is(CrciBlocks.GINSENG_CROP.get()),
                     "人参应该能种下并在方块更新后继续存活");
             helper.assertFalse(level.getBlockState(plant).getValue(GinsengCropBlock.SNOWY),
                     "裸土上的人参不应该覆雪");
@@ -146,12 +150,12 @@ public final class PlantingGameTests
         level.setBlockAndUpdate(plant, Blocks.SNOW.defaultBlockState());
         addGinsengShade(level, plant);
         Player player = mockPlayer(helper, GameType.SURVIVAL);
-        placeOn(level, player, ModItems.GINSENG_SEEDS.get(), plant);
-        helper.assertTrue(level.getBlockState(plant).is(ModBlocks.GINSENG_CROP.get())
+        placeOn(level, player, CrciItems.GINSENG_SEEDS.get(), plant);
+        helper.assertTrue(level.getBlockState(plant).is(CrciBlocks.GINSENG_CROP.get())
                         && level.getBlockState(plant).getValue(GinsengCropBlock.SNOWY),
                 "参籽应该能把一层雪替换成覆雪人参");
         helper.runAfterDelay(2, () -> {
-            helper.assertTrue(level.getBlockState(plant).is(ModBlocks.GINSENG_CROP.get()),
+            helper.assertTrue(level.getBlockState(plant).is(CrciBlocks.GINSENG_CROP.get()),
                     "雪层上的人参在方块更新后应该继续存活");
             helper.succeed();
         });
@@ -169,12 +173,12 @@ public final class PlantingGameTests
         level.setBlockAndUpdate(snow, Blocks.SNOW_BLOCK.defaultBlockState());
         addGinsengShade(level, plant);
         Player player = mockPlayer(helper, GameType.SURVIVAL);
-        placeOn(level, player, ModItems.GINSENG_SEEDS.get(), plant);
-        helper.assertTrue(level.getBlockState(plant).is(ModBlocks.GINSENG_CROP.get())
+        placeOn(level, player, CrciItems.GINSENG_SEEDS.get(), plant);
+        helper.assertTrue(level.getBlockState(plant).is(CrciBlocks.GINSENG_CROP.get())
                         && level.getBlockState(plant).getValue(GinsengCropBlock.SNOWY),
                 "参籽应该能种在雪块上并显示覆雪形态");
         helper.runAfterDelay(2, () -> {
-            helper.assertTrue(level.getBlockState(plant).is(ModBlocks.GINSENG_CROP.get()),
+            helper.assertTrue(level.getBlockState(plant).is(CrciBlocks.GINSENG_CROP.get()),
                     "雪块上的人参在方块更新后应该继续存活");
             helper.succeed();
         });
@@ -190,8 +194,8 @@ public final class PlantingGameTests
         level.setBlockAndUpdate(ground, Blocks.GRASS_BLOCK.defaultBlockState());
         addGinsengShade(level, plant);
         Player player = mockPlayer(helper, GameType.SURVIVAL);
-        placeOn(level, player, ModItems.GINSENG_SEEDS.get(), plant);
-        helper.assertFalse(level.getBlockState(plant).is(ModBlocks.GINSENG_CROP.get()),
+        placeOn(level, player, CrciItems.GINSENG_SEEDS.get(), plant);
+        helper.assertFalse(level.getBlockState(plant).is(CrciBlocks.GINSENG_CROP.get()),
                 "附近没有雪时不应种下参籽");
         helper.succeed();
     }
@@ -204,8 +208,8 @@ public final class PlantingGameTests
         BlockPos plant = ground.above();
         level.setBlockAndUpdate(ground, Blocks.FARMLAND.defaultBlockState());
         Player player = mockPlayer(helper, GameType.SURVIVAL);
-        placeOn(level, player, ModItems.BELLFLOWER_SEEDS.get(), ground);
-        helper.assertTrue(level.getBlockState(plant).is(ModBlocks.BELLFLOWER_CROP.get()),
+        placeOn(level, player, CrciItems.BELLFLOWER_SEEDS.get(), ground);
+        helper.assertTrue(level.getBlockState(plant).is(CrciBlocks.BELLFLOWER_CROP.get()),
                 "桔梗种子应该能种在耕地上");
         helper.succeed();
     }
@@ -218,8 +222,8 @@ public final class PlantingGameTests
         BlockPos plant = ground.above();
         level.setBlockAndUpdate(ground, Blocks.DIRT.defaultBlockState());
         Player player = mockPlayer(helper, GameType.SURVIVAL);
-        placeOn(level, player, ModItems.BELLFLOWER_SEEDS.get(), ground);
-        helper.assertFalse(level.getBlockState(plant).is(ModBlocks.BELLFLOWER_CROP.get()),
+        placeOn(level, player, CrciItems.BELLFLOWER_SEEDS.get(), ground);
+        helper.assertFalse(level.getBlockState(plant).is(CrciBlocks.BELLFLOWER_CROP.get()),
                 "桔梗种子不应绕过耕地直接种在泥土上；野生植株由世界生成放置");
         helper.succeed();
     }
@@ -246,11 +250,11 @@ public final class PlantingGameTests
         level.setBlockAndUpdate(ground, Blocks.GRASS_BLOCK.defaultBlockState());
         level.setBlockAndUpdate(plant, Blocks.SNOW.defaultBlockState());
         Player player = mockPlayer(helper, GameType.SURVIVAL);
-        placeOn(level, player, ModItems.GINSENG_SEEDS.get(), plant);
-        helper.assertTrue(level.getBlockState(plant).is(ModBlocks.GINSENG_CROP.get()),
+        placeOn(level, player, CrciItems.GINSENG_SEEDS.get(), plant);
+        helper.assertTrue(level.getBlockState(plant).is(CrciBlocks.GINSENG_CROP.get()),
                 "头顶没有树叶也应该能种下参籽");
         helper.runAfterDelay(2, () -> {
-            helper.assertTrue(level.getBlockState(plant).is(ModBlocks.GINSENG_CROP.get()),
+            helper.assertTrue(level.getBlockState(plant).is(CrciBlocks.GINSENG_CROP.get()),
                     "没有树荫的人参在方块更新后应该继续存活");
             helper.succeed();
         });
@@ -264,7 +268,7 @@ public final class PlantingGameTests
         BlockPos ground = helper.absolutePos(new BlockPos(1, 1, 1));
         BlockPos plant = ground.above();
         level.setBlockAndUpdate(ground, Blocks.GRASS_BLOCK.defaultBlockState());
-        level.setBlockAndUpdate(plant, ModBlocks.GINSENG_CROP.get().defaultBlockState());
+        level.setBlockAndUpdate(plant, CrciBlocks.GINSENG_CROP.get().defaultBlockState());
         helper.assertTrue(GinsengCropBlock.growthStep(level, plant) == 1, "头顶没有树叶时一次长 1 个阶段");
         BlockPos high = plant.above(GinsengCropBlock.SHADE_HEIGHT);
         BlockPos tooHigh = high.above();
@@ -301,3 +305,4 @@ public final class PlantingGameTests
                 "测试群系应该已经切成寒冷群系");
     }
 }
+

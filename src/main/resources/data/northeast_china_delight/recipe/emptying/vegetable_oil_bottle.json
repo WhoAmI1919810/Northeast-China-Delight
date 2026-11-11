@@ -9,7 +9,7 @@
   "ingredients": [
     {
       "type": "neoforge:components",
-      "items": "northeast_china_delight:cooking_oil",
+      "items": "chinese_regional_culinary_ingredients:cooking_oil",
       "components": {
         "minecraft:damage": 0
       },
@@ -22,7 +22,8 @@
     },
     {
       "amount": 250,
-      "id": "northeast_china_delight:vegetable_oil"
+      "id": "chinese_regional_culinary_ingredients:vegetable_oil"
     }
   ]
 }
+

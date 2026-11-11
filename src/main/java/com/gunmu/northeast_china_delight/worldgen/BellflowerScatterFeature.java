@@ -1,6 +1,8 @@
 package com.gunmu.northeast_china_delight.worldgen;
 
-import com.gunmu.northeast_china_delight.block.BellflowerCropBlock;
+import com.gunmu.chinese_regional_culinary_ingredients.block.CrciBlocks;
+
+import com.gunmu.chinese_regional_culinary_ingredients.block.BellflowerCropBlock;
 import com.gunmu.northeast_china_delight.block.ModBlockTags;
 import com.gunmu.northeast_china_delight.block.ModBlocks;
 import com.mojang.serialization.Codec;
@@ -98,7 +100,7 @@ public class BellflowerScatterFeature extends Feature<NoneFeatureConfiguration>
             return false;
         }
 
-        BlockState bellflower = ModBlocks.BELLFLOWER_CROP.get().defaultBlockState()
+        BlockState bellflower = CrciBlocks.BELLFLOWER_CROP.get().defaultBlockState()
                 .setValue(BellflowerCropBlock.AGE, BellflowerCropBlock.MAX_AGE);
         if (!BellflowerCropBlock.canWildSurvive(level, plantPos))
         {
@@ -223,7 +225,7 @@ public class BellflowerScatterFeature extends Feature<NoneFeatureConfiguration>
         for (BlockPos pos : BlockPos.betweenClosed(
                 plantPos.offset(-4, -4, -4), plantPos.offset(4, 4, 4)))
         {
-            if (level.getBlockState(pos).is(ModBlocks.BELLFLOWER_CROP.get()))
+            if (level.getBlockState(pos).is(CrciBlocks.BELLFLOWER_CROP.get()))
             {
                 return true;
             }
@@ -236,7 +238,7 @@ public class BellflowerScatterFeature extends Feature<NoneFeatureConfiguration>
         for (BlockPos pos : BlockPos.betweenClosed(
                 plantPos.offset(-8, -3, -8), plantPos.offset(8, 3, 8)))
         {
-            if (level.getBlockState(pos).is(ModBlocks.HAZELNUT_BUSH.get()))
+            if (level.getBlockState(pos).is(CrciBlocks.HAZELNUT_BUSH.get()))
             {
                 return true;
             }
@@ -280,3 +282,4 @@ public class BellflowerScatterFeature extends Feature<NoneFeatureConfiguration>
                 + (water ? 1 : 0) + (richSoil ? 1 : 0);
     }
 }
+

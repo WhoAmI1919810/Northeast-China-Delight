@@ -6,7 +6,7 @@
       "tag": "c:foods/seasonings/soy_sauce"
     },
     {
-      "item": "northeast_china_delight:pork_ribs"
+      "item": "chinese_regional_culinary_ingredients:pork_ribs"
     }
   ],
   "recipe_book_tab": "meals",
@@ -15,3 +15,4 @@
     "id": "northeast_china_delight:braised_pork_bone_sauce"
   }
 }
+

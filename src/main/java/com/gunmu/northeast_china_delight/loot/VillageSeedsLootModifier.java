@@ -1,5 +1,7 @@
 package com.gunmu.northeast_china_delight.loot;
 
+import com.gunmu.chinese_regional_culinary_ingredients.item.CrciItems;
+
 import com.gunmu.northeast_china_delight.NortheastChinaConfig;
 import com.gunmu.northeast_china_delight.item.ModItems;
 import com.mojang.serialization.Codec;
@@ -50,25 +52,25 @@ public class VillageSeedsLootModifier extends LootModifier
 
     /** 平原/热带草原/针叶林村庄的种子池 */
     private static final Entry[] TEMPERATE = {
-            new Entry(() -> ModItems.CORN_SEEDS.get(), 8),
-            new Entry(() -> ModItems.SOYBEAN.get(), 8),
-            new Entry(() -> ModItems.NAPA_CABBAGE_SEEDS.get(), 7),
-            new Entry(() -> ModItems.SNOW_MUSTARD_SEEDS.get(), 5),
-            new Entry(() -> ModItems.SNOW_MUSTARD.get(), 4),
-            new Entry(() -> ModItems.CUCUMBER_SEEDS.get(), 7),
-            new Entry(() -> ModItems.GREEN_RADISH_SEEDS.get(), 7),
-            new Entry(() -> ModItems.GREEN_ONION_SEEDS.get(), 7),
-            new Entry(() -> ModItems.BUCKWHEAT.get(), 6),
-            new Entry(() -> ModItems.RED_BEAN.get(), 6),
-            new Entry(() -> ModItems.PEANUT.get(), 6),
-            new Entry(() -> ModItems.SWEET_POTATO.get(), 5),
-            new Entry(() -> ModItems.GREEN_PEPPER_SEEDS.get(), 6),
-            new Entry(() -> ModItems.EGGPLANT_SEEDS.get(), 6),
-            new Entry(() -> ModItems.GREEN_BEANS_SEEDS.get(), 6),
-            new Entry(() -> ModItems.RED_CHILI_SEEDS.get(), 5),
-            new Entry(() -> ModItems.GINSENG_SEEDS.get(), 2),
-            new Entry(() -> ModItems.BELLFLOWER_ROOT.get(), 4),
-            new Entry(() -> ModItems.BELLFLOWER_SEEDS.get(), 4)
+            new Entry(() -> CrciItems.CORN_SEEDS.get(), 8),
+            new Entry(() -> CrciItems.SOYBEAN.get(), 8),
+            new Entry(() -> CrciItems.NAPA_CABBAGE_SEEDS.get(), 7),
+            new Entry(() -> CrciItems.SNOW_MUSTARD_SEEDS.get(), 5),
+            new Entry(() -> CrciItems.SNOW_MUSTARD.get(), 4),
+            new Entry(() -> CrciItems.CUCUMBER_SEEDS.get(), 7),
+            new Entry(() -> CrciItems.GREEN_RADISH_SEEDS.get(), 7),
+            new Entry(() -> CrciItems.GREEN_ONION_SEEDS.get(), 7),
+            new Entry(() -> CrciItems.BUCKWHEAT.get(), 6),
+            new Entry(() -> CrciItems.RED_BEAN.get(), 6),
+            new Entry(() -> CrciItems.PEANUT.get(), 6),
+            new Entry(() -> CrciItems.SWEET_POTATO.get(), 5),
+            new Entry(() -> CrciItems.GREEN_PEPPER_SEEDS.get(), 6),
+            new Entry(() -> CrciItems.EGGPLANT_SEEDS.get(), 6),
+            new Entry(() -> CrciItems.GREEN_BEANS_SEEDS.get(), 6),
+            new Entry(() -> CrciItems.RED_CHILI_SEEDS.get(), 5),
+            new Entry(() -> CrciItems.GINSENG_SEEDS.get(), 2),
+            new Entry(() -> CrciItems.BELLFLOWER_ROOT.get(), 4),
+            new Entry(() -> CrciItems.BELLFLOWER_SEEDS.get(), 4)
     };
 
     public VillageSeedsLootModifier(LootItemCondition[] conditions)
@@ -118,17 +120,17 @@ public class VillageSeedsLootModifier extends LootModifier
         int roll = random.nextInt(14);
         if (roll < 5)
         {
-            return new ItemStack(ModItems.CORN_FLOUR.get(), 1 + random.nextInt(3));
+            return new ItemStack(CrciItems.CORN_FLOUR.get(), 1 + random.nextInt(3));
         }
         if (roll < 9)
         {
-            return new ItemStack(ModItems.WATER_DOUGH.get(), 1 + random.nextInt(3));
+            return new ItemStack(CrciItems.WATER_DOUGH.get(), 1 + random.nextInt(3));
         }
         if (roll < 12)
         {
-            return new ItemStack(ModItems.PEANUT_BUTTER.get());
+            return new ItemStack(CrciItems.PEANUT_BUTTER.get());
         }
-        return new ItemStack(ModItems.PICKLED_SNOW_MUSTARD.get(), 1 + random.nextInt(2));
+        return new ItemStack(CrciItems.PICKLED_SNOW_MUSTARD.get(), 1 + random.nextInt(2));
     }
 
     private static ItemStack roll(net.minecraft.util.RandomSource random, Entry[] table)

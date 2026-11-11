@@ -4,7 +4,7 @@
     "inputs": [
       {
         "ingredient": {
-          "item": "northeast_china_delight:roasted_peanuts"
+          "item": "chinese_regional_culinary_ingredients:roasted_peanuts"
         },
         "count": 1,
         "model": "northeast_china_delight:block/wooden_mortar_peanut_0"
@@ -47,3 +47,4 @@
     "transition": "sequential"
   }
 }
+

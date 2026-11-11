@@ -4,10 +4,11 @@
   "cookingtime": 100,
   "experience": 0.1,
   "ingredient": {
-    "item": "northeast_china_delight:wet_starch_dough"
+    "item": "chinese_regional_culinary_ingredients:wet_starch_dough"
   },
   "result": {
     "count": 1,
-    "id": "northeast_china_delight:sweet_potato_starch"
+    "id": "chinese_regional_culinary_ingredients:sweet_potato_starch"
   }
 }
+

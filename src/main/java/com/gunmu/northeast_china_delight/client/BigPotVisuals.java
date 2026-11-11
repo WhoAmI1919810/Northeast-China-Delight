@@ -1,5 +1,7 @@
 package com.gunmu.northeast_china_delight.client;
 
+import com.gunmu.chinese_regional_culinary_ingredients.item.CrciItems;
+
 import com.gunmu.northeast_china_delight.ModTags;
 import com.gunmu.northeast_china_delight.NortheastChinaDelight;
 import com.gunmu.northeast_china_delight.block.BigPotBlockEntity;
@@ -264,14 +266,14 @@ public final class BigPotVisuals {
     private static List<IngredientModel> ingredientModels() {
         if (ingredientModels == null) {
             List<IngredientModel> list = new ArrayList<>();
-            item(list, ModItems.PORK_RIBS.get(), "pork_ribs");
-            item(list, ModItems.PORK_INTESTINE.get(), "pork_intestine");
-            item(list, ModItems.BLOOD_SAUSAGE.get(), "blood_sausage");
-            item(list, ModItems.FROZEN_TOFU.get(), "frozen_tofu");
-            item(list, ModItems.HAZEL_MUSHROOM.get(), "hazel_mushroom");
+            item(list, CrciItems.PORK_RIBS.get(), "pork_ribs");
+            item(list, CrciItems.PORK_INTESTINE.get(), "pork_intestine");
+            item(list, CrciItems.BLOOD_SAUSAGE.get(), "blood_sausage");
+            item(list, CrciItems.FROZEN_TOFU.get(), "frozen_tofu");
+            item(list, CrciItems.HAZEL_MUSHROOM.get(), "hazel_mushroom");
             item(list, Items.CHICKEN, "chicken");
             // 整条生鱼（2026-11-06，得莫利炖鱼）：照鲤鱼做的，鳕鱼、鲑鱼都画这一条；带鱼又细又长、银白，套这条不像，照旧画成平放的物品
-            list.add(new IngredientModel(stack -> stack.is(ModTags.FOODS_RAW_FISH) && !stack.is(ModItems.HAIRTAIL.get()),
+            list.add(new IngredientModel(stack -> stack.is(ModTags.FOODS_RAW_FISH) && !stack.is(CrciItems.HAIRTAIL.get()),
                     "raw_fish"));
             tag(list, ModTags.FOODS_RAW_PORK, "raw_pork");
             tag(list, ModTags.FOODS_RAW_BEEF, "raw_beef");

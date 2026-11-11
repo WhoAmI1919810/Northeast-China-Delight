@@ -1,5 +1,7 @@
 package com.gunmu.northeast_china_delight.gametest;
 
+import com.gunmu.chinese_regional_culinary_ingredients.item.CrciItems;
+
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.gunmu.northeast_china_delight.NortheastChinaConfig;
@@ -177,8 +179,8 @@ public final class GenerationConfigGameTests {
     }
 
     private static ObjectArrayList<ItemStack> sampleLoot() {
-        return new ObjectArrayList<>(List.of(new ItemStack(ModItems.SOYBEAN.get()),
-                new ItemStack(ModItems.SALT.get()), new ItemStack(Items.WHEAT),
+        return new ObjectArrayList<>(List.of(new ItemStack(CrciItems.SOYBEAN.get()),
+                new ItemStack(CrciItems.SALT.get()), new ItemStack(Items.WHEAT),
                 new ItemStack(BuiltInRegistries.ITEM.get(DdIds.parse("farmersdelight:cabbage")))));
     }
 
@@ -282,7 +284,7 @@ public final class GenerationConfigGameTests {
 
     @GameTest(template = "empty")
     public static void farmWhitelistSelectsOnlyNamedCrops(GameTestHelper helper) {
-        String allowed = "northeast_china_delight:green_radish_seeds";
+        String allowed = "chinese_regional_culinary_ingredients:green_radish_seeds";
         withFarmConfig(true, List.of(allowed, "northeast_china_delight:not_registered"), () -> {
             for (var rule : farmRules()) {
                 boolean expected = rule.getAsJsonObject("input_predicate").get("crop_item").getAsString().equals(allowed);
@@ -351,8 +353,8 @@ public final class GenerationConfigGameTests {
         withChestConfig(true, List.of("chinese_regional_culinary_ingredients:soybean"), () -> {
             var loot = sampleLoot();
             new ChestLootConfigModifier(new LootItemCondition[0]).apply(loot, context(helper, "minecraft:chests/simple_dungeon", 3));
-            helper.assertTrue(loot.size() == 3 && loot.get(0).is(ModItems.SOYBEAN.get())
-                    && loot.stream().noneMatch(stack -> stack.is(ModItems.SALT.get())), "箱子必须按物品 ID 筛选");
+            helper.assertTrue(loot.size() == 3 && loot.get(0).is(CrciItems.SOYBEAN.get())
+                    && loot.stream().noneMatch(stack -> stack.is(CrciItems.SALT.get())), "箱子必须按物品 ID 筛选");
         });
         helper.succeed();
     }

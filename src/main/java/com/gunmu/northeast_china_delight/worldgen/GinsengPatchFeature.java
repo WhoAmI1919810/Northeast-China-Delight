@@ -1,6 +1,8 @@
 package com.gunmu.northeast_china_delight.worldgen;
 
-import com.gunmu.northeast_china_delight.block.GinsengCropBlock;
+import com.gunmu.chinese_regional_culinary_ingredients.block.CrciBlocks;
+
+import com.gunmu.chinese_regional_culinary_ingredients.block.GinsengCropBlock;
 import com.gunmu.northeast_china_delight.block.ModBlocks;
 import com.mojang.serialization.Codec;
 import net.minecraft.core.BlockPos;
@@ -65,7 +67,7 @@ public class GinsengPatchFeature extends Feature<NoneFeatureConfiguration>
             {
                 continue;
             }
-            BlockState ginseng = ModBlocks.GINSENG_CROP.get().defaultBlockState()
+            BlockState ginseng = CrciBlocks.GINSENG_CROP.get().defaultBlockState()
                     .setValue(GinsengCropBlock.AGE, GinsengCropBlock.MAX_AGE)
                     .setValue(GinsengCropBlock.SNOWY, GinsengCropBlock.isSnowyAt(level, plantPos));
             if (!ginseng.canSurvive(level, plantPos))
@@ -83,3 +85,4 @@ public class GinsengPatchFeature extends Feature<NoneFeatureConfiguration>
         return worldSeed ^ ((long) regionChunkX * 341873128712L) ^ ((long) regionChunkZ * 132897987541L);
     }
 }
+

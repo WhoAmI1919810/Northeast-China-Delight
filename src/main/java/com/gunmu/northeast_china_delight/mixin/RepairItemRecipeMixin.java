@@ -1,6 +1,6 @@
 package com.gunmu.northeast_china_delight.mixin;
 
-import com.gunmu.northeast_china_delight.item.SeasoningBottleItem;
+import com.gunmu.chinese_regional_culinary_ingredients.item.SeasoningBottleItem;
 import net.minecraft.world.item.crafting.RepairItemRecipe;
 import net.minecraft.world.level.Level;
 //? if <1.20.5 {
@@ -42,3 +42,4 @@ public abstract class RepairItemRecipeMixin {
         }
     }
 }
+

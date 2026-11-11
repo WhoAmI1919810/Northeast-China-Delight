@@ -17,16 +17,6 @@ public final class BottleColors {
     private static final Map<Item, Integer> COLORS = new LinkedHashMap<>();
 
     static {
-        put(ModItems.SOY_SAUCE, 0x3E2410);
-        put(ModItems.VINEGAR, 0x6B3A16);
-        put(ModItems.SOUR_WATER, 0xC9C09A);
-        put(ModItems.WHITE_VINEGAR, 0xE4DCC2);
-        put(ModItems.FISH_SAUCE, 0x6B4416);
-        put(ModItems.SHRIMP_PASTE, 0x8A4A34);
-        put(ModItems.CHILI_OIL, 0xF26B0F);
-        put(ModItems.PEANUT_BUTTER, 0xC9A05A);
-        put(ModItems.COOKING_OIL, 0xAA7E10);
-        put(ModItems.ANIMAL_OIL, 0xEBD98F);
         put(ModItems.KVASS, 0xA05A1E);
     }
 
@@ -44,7 +34,10 @@ public final class BottleColors {
      * 看起来就像空瓶子 —— 原版药水那边也是用 FastColor.ARGB32.opaque(...) 强制不透明的。
      */
     public static int of(Item item) {
-        return 0xFF000000 | COLORS.getOrDefault(item, 0xFFFFFF);
+        Integer color = COLORS.get(item);
+        return color != null
+                ? 0xFF000000 | color
+                : com.gunmu.chinese_regional_culinary_ingredients.item.BottleColors.of(item);
     }
 
     private static void put(Supplier<? extends Item> item, int color) {

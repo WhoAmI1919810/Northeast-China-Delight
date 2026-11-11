@@ -2,6 +2,7 @@
   "type": "minecraft:crafting_shaped",
   "category": "building",
   "pattern": [ "XXX", "XXX", "XXX" ],
-  "key": { "X": { "item": "northeast_china_delight:hazelnut" } },
-  "result": { "count": 1, "id": "northeast_china_delight:hazelnut_sack" }
+  "key": { "X": { "item": "chinese_regional_culinary_ingredients:hazelnut" } },
+  "result": { "count": 1, "id": "chinese_regional_culinary_ingredients:hazelnut_sack" }
 }
+

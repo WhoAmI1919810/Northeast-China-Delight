@@ -1,5 +1,9 @@
 package com.gunmu.northeast_china_delight.gametest;
 
+import com.gunmu.chinese_regional_culinary_ingredients.fluid.CrciFluids;
+
+import com.gunmu.chinese_regional_culinary_ingredients.item.CrciItems;
+
 import com.gunmu.northeast_china_delight.block.ModBlocks;
 import com.gunmu.northeast_china_delight.block.VatBlockEntity;
 import com.gunmu.northeast_china_delight.compat.jei.VatJeiRecipe;
@@ -75,17 +79,17 @@ public final class VatGameTests {
 
     @GameTest(template = "empty")
     public static void vatFinishedBeanSproutsCanBeTakenWithEmptyHand(GameTestHelper helper) {
-        assertFinishedItemCanBeTaken(helper, VatRecipes.Kind.BEAN_SPROUTS, ModItems.BEAN_SPROUTS.get());
+        assertFinishedItemCanBeTaken(helper, VatRecipes.Kind.BEAN_SPROUTS, CrciItems.BEAN_SPROUTS.get());
     }
 
     @GameTest(template = "empty")
     public static void vatFinishedSourCornCanBeTakenWithEmptyHand(GameTestHelper helper) {
-        assertFinishedItemCanBeTaken(helper, VatRecipes.Kind.SOUR_CORN, ModItems.SOUR_CORN_KERNELS.get());
+        assertFinishedItemCanBeTaken(helper, VatRecipes.Kind.SOUR_CORN, CrciItems.SOUR_CORN_KERNELS.get());
     }
 
     @GameTest(template = "empty")
     public static void vatFinishedSourCabbageCanBeTakenWithEmptyHand(GameTestHelper helper) {
-        assertFinishedItemCanBeTaken(helper, VatRecipes.Kind.PICKLE, ModItems.SOUR_CABBAGE.get());
+        assertFinishedItemCanBeTaken(helper, VatRecipes.Kind.PICKLE, CrciItems.SOUR_CABBAGE.get());
     }
 
     @GameTest(template = "empty")
@@ -95,17 +99,17 @@ public final class VatGameTests {
             helper.fail("Missing canvas rug for vat collection test");
         }
         VatBlockEntity vat = finishedVat(helper, VatRecipes.Kind.BEAN_SPROUTS);
-        vat.addContent(new ItemStack(ModItems.BEAN_SPROUTS.get()));
+        vat.addContent(new ItemStack(CrciItems.BEAN_SPROUTS.get()));
         vat.setCover(new ItemStack(rug));
         Player player = mockPlayer(helper, GameType.SURVIVAL);
         click(helper, player, ItemStack.EMPTY);
         if (vat.isCovered() || player.getInventory().countItem(rug) != 1
-                || vat.countOf(ModItems.BEAN_SPROUTS.get()) != 1) {
+                || vat.countOf(CrciItems.BEAN_SPROUTS.get()) != 1) {
             helper.fail("First finished-vat click should return the rug before collecting food");
         }
         click(helper, player, ItemStack.EMPTY);
-        if (vat.countOf(ModItems.BEAN_SPROUTS.get()) != 0
-                || player.getInventory().countItem(ModItems.BEAN_SPROUTS.get()) != 1) {
+        if (vat.countOf(CrciItems.BEAN_SPROUTS.get()) != 0
+                || player.getInventory().countItem(CrciItems.BEAN_SPROUTS.get()) != 1) {
             helper.fail("Finished food should be collectible after removing the rug");
         }
         helper.succeed();
@@ -114,13 +118,13 @@ public final class VatGameTests {
     @GameTest(template = "empty")
     public static void vatFinishedSoyResidueCanBeTakenBeforeLiquid(GameTestHelper helper) {
         VatBlockEntity vat = finishedVat(helper, VatRecipes.Kind.PASTE);
-        vat.addContent(new ItemStack(ModItems.SOY_RESIDUE.get()));
-        vat.setProductMb(com.gunmu.northeast_china_delight.fluid.ModFluids.soyPasteSource(), VatRecipes.SERVING_MB);
+        vat.addContent(new ItemStack(CrciItems.SOY_RESIDUE.get()));
+        vat.setProductMb(com.gunmu.chinese_regional_culinary_ingredients.fluid.CrciFluids.soyPasteSource(), VatRecipes.SERVING_MB);
         Player player = mockPlayer(helper, GameType.SURVIVAL);
         click(helper, player, ItemStack.EMPTY);
-        if (vat.countOf(ModItems.SOY_RESIDUE.get()) != 0
-                || player.getInventory().countItem(ModItems.SOY_RESIDUE.get()) != 1
-                || vat.productMb(com.gunmu.northeast_china_delight.fluid.ModFluids.soyPasteSource()) != VatRecipes.SERVING_MB) {
+        if (vat.countOf(CrciItems.SOY_RESIDUE.get()) != 0
+                || player.getInventory().countItem(CrciItems.SOY_RESIDUE.get()) != 1
+                || vat.productMb(com.gunmu.chinese_regional_culinary_ingredients.fluid.CrciFluids.soyPasteSource()) != VatRecipes.SERVING_MB) {
             helper.fail("Solid residue should be collectible without draining the liquid first");
         }
         helper.succeed();
@@ -128,14 +132,14 @@ public final class VatGameTests {
 
     @GameTest(template = "empty")
     public static void vatFinishedPicklesCanBeTakenBeforeSourWater(GameTestHelper helper) {
-        Item cabbage = ModItems.NAPA_CABBAGE.get();
+        Item cabbage = CrciItems.NAPA_CABBAGE.get();
         VatBlockEntity vat = finishedVat(helper, VatRecipes.Kind.PICKLE);
         vat.addContent(new ItemStack(cabbage));
-        vat.setProductMb(com.gunmu.northeast_china_delight.fluid.ModFluids.sourWaterSource(), VatRecipes.WATER_MB_PER_LEVEL);
+        vat.setProductMb(com.gunmu.chinese_regional_culinary_ingredients.fluid.CrciFluids.sourWaterSource(), VatRecipes.WATER_MB_PER_LEVEL);
         Player player = mockPlayer(helper, GameType.SURVIVAL);
         click(helper, player, ItemStack.EMPTY);
-        if (vat.countOf(cabbage) != 0 || player.getInventory().countItem(ModItems.SOUR_CABBAGE.get()) != 1
-                || vat.productMb(com.gunmu.northeast_china_delight.fluid.ModFluids.sourWaterSource()) != VatRecipes.WATER_MB_PER_LEVEL) {
+        if (vat.countOf(cabbage) != 0 || player.getInventory().countItem(CrciItems.SOUR_CABBAGE.get()) != 1
+                || vat.productMb(com.gunmu.chinese_regional_culinary_ingredients.fluid.CrciFluids.sourWaterSource()) != VatRecipes.WATER_MB_PER_LEVEL) {
             helper.fail("Finished cabbage should convert on collection without losing the sour water");
         }
         helper.succeed();
@@ -250,7 +254,7 @@ public final class VatGameTests {
         return JsonParser.parseString("""
                 {"kind":"BEAN_SPROUTS","seal":"NONE","seconds":30,"liquid":{},
                  "slots":[{"ingredient":{"item":"minecraft:wheat"},"fate":"CONVERT",
-                   "bounds":{"type":"exact","count":1},"result":"northeast_china_delight:bean_sprouts"}]}
+                   "bounds":{"type":"exact","count":1},"result":"chinese_regional_culinary_ingredients:bean_sprouts"}]}
                 """).getAsJsonObject();
     }
 
@@ -309,7 +313,7 @@ public final class VatGameTests {
     @GameTest(template = "empty")
     public static void vatPickleProducesThreeBucketsOfSourWater(GameTestHelper helper) {
         VatRecipe recipe = VatRecipes.recipeOf(VatRecipes.Kind.PICKLE, helper.getLevel());
-        if (recipe == null || recipe.liquid().product() != com.gunmu.northeast_china_delight.fluid.ModFluids.sourWaterSource()
+        if (recipe == null || recipe.liquid().product() != com.gunmu.chinese_regional_culinary_ingredients.fluid.CrciFluids.sourWaterSource()
                 || recipe.productMbFor(3) != 3 * VatRecipes.WATER_MB_PER_LEVEL) {
             helper.fail("Missing or invalid sour water recipe: " + VatRecipes.Kind.PICKLE);
         }
@@ -362,10 +366,10 @@ public final class VatGameTests {
     @GameTest(template = "empty")
     public static void vatSpicyPickleUsesOnlyItsFamilyTag(GameTestHelper helper) {
         VatRecipe recipe = VatRecipes.recipeOf(VatRecipes.Kind.SPICY_PICKLE, helper.getLevel());
-        if (recipe == null || !recipe.accepts(0, new ItemStack(ModItems.NAPA_CABBAGE.get()))) {
+        if (recipe == null || !recipe.accepts(0, new ItemStack(CrciItems.NAPA_CABBAGE.get()))) {
             helper.fail("辣味泡菜族没有接受大白菜");
         }
-        for (Item item : List.of(ModItems.CUCUMBER.get(), Items.CARROT, ModItems.GREEN_RADISH.get())) {
+        for (Item item : List.of(CrciItems.CUCUMBER.get(), Items.CARROT, CrciItems.GREEN_RADISH.get())) {
             if (recipe.accepts(0, new ItemStack(item))) {
                 helper.fail("辣味泡菜族不应接受普通泡菜原料：" + BuiltInRegistries.ITEM.getKey(item));
             }
@@ -381,18 +385,18 @@ public final class VatGameTests {
                    "fate":"KEEP","bounds":{"type":"exact","count":1},
                    "converter":{"type":"mapped","entries":[
                      {"ingredient":{"tag":"c:crops/napa_cabbage"},
-                      "result":"northeast_china_delight:spicy_cabbage"}]}}]}
+                      "result":"chinese_regional_culinary_ingredients:spicy_cabbage"}]}}]}
                 """).getAsJsonObject();
         VatRecipe recipe = roundTripVerbRecipe(helper, config);
         if (recipe == null || recipe.slots().get(0).converter() == null) {
             helper.fail("映射换算没有通过配方同步");
         }
         VatRecipe.Converter converter = recipe.slots().get(0).converter();
-        if (!converter.apply(new ItemStack(ModItems.NAPA_CABBAGE.get()))
-                .is(ModItems.SPICY_CABBAGE.get())) {
+        if (!converter.apply(new ItemStack(CrciItems.NAPA_CABBAGE.get()))
+                .is(CrciItems.SPICY_CABBAGE.get())) {
             helper.fail("大白菜没有按映射转成辣白菜");
         }
-        ItemStack cucumber = new ItemStack(ModItems.CUCUMBER.get());
+        ItemStack cucumber = new ItemStack(CrciItems.CUCUMBER.get());
         if (!converter.apply(cucumber).is(cucumber.getItem())) {
             helper.fail("未命中映射的输入应原样返还");
         }
@@ -405,12 +409,12 @@ public final class VatGameTests {
             vat.addWater(VatRecipes.WATER_MB_PER_LEVEL);
         }
         for (int i = 0; i < 2; i++) {
-            vat.addContent(new ItemStack(ModItems.NAPA_CABBAGE.get()));
+            vat.addContent(new ItemStack(CrciItems.NAPA_CABBAGE.get()));
         }
-        vat.addContent(new ItemStack(ModItems.SALT.get()));
+        vat.addContent(new ItemStack(CrciItems.SALT.get()));
         if (spicy) {
-            vat.addContent(new ItemStack(ModItems.CHILI_SAUCE.get()));
-            vat.addContent(new ItemStack(ModItems.FISH_SAUCE.get()));
+            vat.addContent(new ItemStack(CrciItems.CHILI_SAUCE.get()));
+            vat.addContent(new ItemStack(CrciItems.FISH_SAUCE.get()));
         }
         vat.setPress(new ItemStack(Items.STONE));
 
@@ -422,7 +426,7 @@ public final class VatGameTests {
         }
         VatBrewing.complete(helper.getLevel(), helper.absolutePos(AT), vat, recipe);
         ItemStack result = VatBrewing.takeOne(vat, new ArrayList<>());
-        Item expected = spicy ? ModItems.SPICY_CABBAGE.get() : ModItems.SOUR_CABBAGE.get();
+        Item expected = spicy ? CrciItems.SPICY_CABBAGE.get() : CrciItems.SOUR_CABBAGE.get();
         boolean liquidOk = spicy ? vat.sourWaterMb() == 0 && vat.waterLayers() == 0
                 : vat.sourWaterMb() >= VatRecipes.WATER_MB_PER_LEVEL;
         if (!result.is(expected) || !liquidOk) {
@@ -435,12 +439,12 @@ public final class VatGameTests {
     private static void assertSpicyPickleBatch(GameTestHelper helper, int cabbages, int salt) {
         VatBlockEntity vat = placeVat(helper);
         for (int i = 0; i < cabbages; i++) {
-            vat.addContent(new ItemStack(ModItems.NAPA_CABBAGE.get()));
+            vat.addContent(new ItemStack(CrciItems.NAPA_CABBAGE.get()));
         }
         for (int i = 0; i < salt; i++) {
-            vat.addContent(new ItemStack(ModItems.SALT.get()));
+            vat.addContent(new ItemStack(CrciItems.SALT.get()));
         }
-        vat.addContent(new ItemStack(ModItems.CHILI_SAUCE.get()));
+        vat.addContent(new ItemStack(CrciItems.CHILI_SAUCE.get()));
         vat.setPress(new ItemStack(Items.STONE));
 
         VatRecipe recipe = VatBrewing.ready(vat);
@@ -452,7 +456,7 @@ public final class VatGameTests {
         int produced = 0;
         for (int i = 0; i < cabbages; i++) {
             ItemStack result = VatBrewing.takeOne(vat, new ArrayList<>());
-            if (!result.is(ModItems.SPICY_CABBAGE.get())) {
+            if (!result.is(CrciItems.SPICY_CABBAGE.get())) {
                 helper.fail("辣白菜 " + cabbages + " 棵批次取出失败，结果 "
                         + BuiltInRegistries.ITEM.getKey(result.getItem()));
             }
@@ -470,10 +474,10 @@ public final class VatGameTests {
         VatBlockEntity vat = placeVat(helper);
         vat.setRecipe(VatRecipe.of(VatRecipes.Kind.SPICY_PICKLE,
                 "northeast_china_delight:vat/disabled_for_test").build());
-        vat.addContent(new ItemStack(ModItems.CHILI_SAUCE.get()));
+        vat.addContent(new ItemStack(CrciItems.CHILI_SAUCE.get()));
         List<ItemStack> refunds = new ArrayList<>();
         ItemStack taken = VatBrewing.takeOne(vat, refunds);
-        if (!taken.is(ModItems.CHILI_SAUCE.get()) || !refunds.isEmpty()) {
+        if (!taken.is(CrciItems.CHILI_SAUCE.get()) || !refunds.isEmpty()) {
             helper.fail("Disabled vat recipe should return raw inputs rather than absorb them");
         }
         helper.succeed();
@@ -485,10 +489,10 @@ public final class VatGameTests {
         VatBlockEntity vat = placeVat(helper);
         vat.setRecipe(VatRecipe.of(VatRecipes.Kind.SPICY_PICKLE,
                 "northeast_china_delight:vat/disabled_for_test").build());
-        vat.addContent(new ItemStack(ModItems.CHILI_SAUCE.get()));
+        vat.addContent(new ItemStack(CrciItems.CHILI_SAUCE.get()));
         helper.getLevel().setBlock(vat.getBlockPos(), vat.getBlockState().setValue(Vat.PROGRESS, 1), 3);
         click(helper, player, ItemStack.EMPTY);
-        if (vat.countOf(ModItems.CHILI_SAUCE.get()) != 0 || vat.recipeId() != null) {
+        if (vat.countOf(CrciItems.CHILI_SAUCE.get()) != 0 || vat.recipeId() != null) {
             helper.fail("An unfinished disabled vat recipe must return its inputs on an empty-hand click");
         }
         helper.succeed();
@@ -499,10 +503,10 @@ public final class VatGameTests {
         VatBlockEntity vat = placeVat(helper);
         vat.addWater(3 * VatRecipes.WATER_MB_PER_LEVEL);
         for (int index = 0; index < VatRecipes.PASTE_CHUNKS; index++) {
-            vat.addContent(new ItemStack(ModItems.SOY_PASTE_CHUNK.get()));
+            vat.addContent(new ItemStack(CrciItems.SOY_PASTE_CHUNK.get()));
         }
         for (int index = 0; index < VatRecipes.PASTE_SALT; index++) {
-            vat.addContent(new ItemStack(ModItems.SALT.get()));
+            vat.addContent(new ItemStack(CrciItems.SALT.get()));
         }
         vat.setCover(new ItemStack(Items.WHITE_CARPET));
         vat.setRecipe(VatRecipe.of(VatRecipes.Kind.PASTE,
@@ -537,9 +541,9 @@ public final class VatGameTests {
         helper.getLevel().setBlock(vat.getBlockPos(), vat.getBlockState().setValue(Vat.FERMENTED, true), 3);
         vat.setRecipe(VatRecipe.of(VatRecipes.Kind.VINEGAR,
                 "northeast_china_delight:vat/disabled_for_test")
-                .product(com.gunmu.northeast_china_delight.fluid.ModFluids.whiteVinegarSource(), VatRecipes.SERVING_MB, false).build());
-        vat.setProductMb(com.gunmu.northeast_china_delight.fluid.ModFluids.whiteVinegarSource(), VatRecipes.SERVING_MB);
-        if (vat.getFluidInTank(0).getFluid() != ModFluids.whiteVinegarSource()) {
+                .product(com.gunmu.chinese_regional_culinary_ingredients.fluid.CrciFluids.whiteVinegarSource(), VatRecipes.SERVING_MB, false).build());
+        vat.setProductMb(com.gunmu.chinese_regional_culinary_ingredients.fluid.CrciFluids.whiteVinegarSource(), VatRecipes.SERVING_MB);
+        if (vat.getFluidInTank(0).getFluid() != CrciFluids.whiteVinegarSource()) {
             helper.fail("Disabled vat recipe should keep its brewed fluid accessible");
         }
         helper.succeed();
@@ -570,7 +574,7 @@ public final class VatGameTests {
                   "liquid":{"water_min":1,"water_max":1,"water_after":"CLEAR"},
                   "slots":[{"ingredient":{"item":"chinese_regional_culinary_ingredients:soybean"},
                     "bounds":{"type":"exact","count":1},"fate":"CONVERT",
-                    "result":"northeast_china_delight:bean_sprouts"}]
+                    "result":"chinese_regional_culinary_ingredients:bean_sprouts"}]
                 }}
                 """).getAsJsonObject();
         //? if <1.20.5 {
@@ -643,8 +647,8 @@ public final class VatGameTests {
     public static void vatJeiPicklePagesKeepAllIngredients(GameTestHelper helper) {
         VatRecipe pickle = VatRecipes.recipeOf(VatRecipes.Kind.PICKLE, helper.getLevel());
         VatRecipe spicyPickle = VatRecipes.recipeOf(VatRecipes.Kind.SPICY_PICKLE, helper.getLevel());
-        VatJeiRecipe sourPage = pageProducing(VatJeiRecipes.pagesFor(pickle), ModItems.SOUR_CABBAGE.get());
-        VatJeiRecipe spicyPage = pageProducing(VatJeiRecipes.pagesFor(spicyPickle), ModItems.SPICY_CABBAGE.get());
+        VatJeiRecipe sourPage = pageProducing(VatJeiRecipes.pagesFor(pickle), CrciItems.SOUR_CABBAGE.get());
+        VatJeiRecipe spicyPage = pageProducing(VatJeiRecipes.pagesFor(spicyPickle), CrciItems.SPICY_CABBAGE.get());
         if (sourPage == null || spicyPage == null) {
             helper.fail("JEI 缺少酸菜或辣白菜页面");
         }
@@ -713,10 +717,10 @@ public final class VatGameTests {
 
         vat.addWater(3 * VatRecipes.WATER_MB_PER_LEVEL);
         for (int i = 0; i < VatRecipes.PASTE_CHUNKS; i++) {
-            vat.addContent(new ItemStack(ModItems.SOY_PASTE_CHUNK.get()));
+            vat.addContent(new ItemStack(CrciItems.SOY_PASTE_CHUNK.get()));
         }
         for (int i = 0; i < VatRecipes.PASTE_SALT; i++) {
-            vat.addContent(new ItemStack(ModItems.SALT.get()));
+            vat.addContent(new ItemStack(CrciItems.SALT.get()));
         }
         vat.setKind(VatRecipes.Kind.PASTE);
         vat.setCover(new ItemStack(Items.WHITE_CARPET));
@@ -724,10 +728,10 @@ public final class VatGameTests {
         if (vat.residueCount() != VatRecipes.RESIDUE_COUNT) {
             helper.fail("大酱酿完缸里应该有 " + VatRecipes.RESIDUE_COUNT + " 份酱渣，实际 " + vat.residueCount());
         }
-        vat.setProductMb(com.gunmu.northeast_china_delight.fluid.ModFluids.soyPasteSource(), 0);
+        vat.setProductMb(com.gunmu.chinese_regional_culinary_ingredients.fluid.CrciFluids.soyPasteSource(), 0);
         vat.takeCover();
 
-        if (VatBrewing.forInsert(vat, new ItemStack(ModItems.CORN_SEEDS.get())) == null) {
+        if (VatBrewing.forInsert(vat, new ItemStack(CrciItems.CORN_SEEDS.get())) == null) {
             helper.fail("酿完大酱的缸加不进谷物：二次发酵被 forInsert 挡掉了");
         }
 
@@ -736,7 +740,7 @@ public final class VatGameTests {
             click(helper, player, new ItemStack(Items.WATER_BUCKET));
         }
         for (int i = 0; i < VatRecipes.VINEGAR_GRAIN_COUNT; i++) {
-            click(helper, player, new ItemStack(ModItems.CORN_SEEDS.get()));
+            click(helper, player, new ItemStack(CrciItems.CORN_SEEDS.get()));
         }
         Item cloth = clothRug();
         if (cloth == null) {
@@ -766,10 +770,10 @@ public final class VatGameTests {
 
         vat.addWater(3 * VatRecipes.WATER_MB_PER_LEVEL);
         for (int i = 0; i < VatRecipes.PASTE_CHUNKS; i++) {
-            vat.addContent(new ItemStack(ModItems.SOY_PASTE_CHUNK.get()));
+            vat.addContent(new ItemStack(CrciItems.SOY_PASTE_CHUNK.get()));
         }
         for (int i = 0; i < VatRecipes.PASTE_SALT; i++) {
-            vat.addContent(new ItemStack(ModItems.SALT.get()));
+            vat.addContent(new ItemStack(CrciItems.SALT.get()));
         }
         vat.addContent(new ItemStack(Items.WHEAT));
         vat.setKind(VatRecipes.Kind.SOY_SAUCE);
@@ -778,7 +782,7 @@ public final class VatGameTests {
         if (vat.residueCount() != VatRecipes.RESIDUE_COUNT) {
             helper.fail("酱油酿完酱渣数量不对");
         }
-        vat.setProductMb(com.gunmu.northeast_china_delight.fluid.ModFluids.soySauceSource(), 0);
+        vat.setProductMb(com.gunmu.chinese_regional_culinary_ingredients.fluid.CrciFluids.soySauceSource(), 0);
         vat.takeCover();
         for (int i = 0; i < 3; i++) {
             click(helper, player, new ItemStack(Items.WATER_BUCKET));
@@ -787,7 +791,7 @@ public final class VatGameTests {
             helper.fail("酱油酱渣缸未能续满三层水");
         }
         for (int i = 0; i < VatRecipes.VINEGAR_GRAIN_COUNT - 1; i++) {
-            click(helper, player, new ItemStack(ModItems.CORN_SEEDS.get()));
+            click(helper, player, new ItemStack(CrciItems.CORN_SEEDS.get()));
         }
         Item cloth = clothRug();
         if (cloth == null) {
@@ -799,7 +803,7 @@ public final class VatGameTests {
             helper.fail("谷物未齐时，不应盖上醋的粗布毯");
         }
 
-        click(helper, player, new ItemStack(ModItems.CORN_SEEDS.get()));
+        click(helper, player, new ItemStack(CrciItems.CORN_SEEDS.get()));
         click(helper, player, new ItemStack(cloth));
         VatRecipe vinegarRecipe = VatBrewing.ready(vat);
         if (!vat.isCovered() || !vat.cover().is(cloth) || vat.kind() != VatRecipes.Kind.VINEGAR
@@ -823,7 +827,7 @@ public final class VatGameTests {
         if (vat.waterLayers() != 0 || vat.soySauceMb() == 0 || vat.residueCount() != VatRecipes.RESIDUE_COUNT) {
             helper.fail("酱油没取完时不应续水，也不应拿走酱渣");
         }
-        vat.setProductMb(com.gunmu.northeast_china_delight.fluid.ModFluids.soySauceSource(), VatRecipes.SERVING_MB);
+        vat.setProductMb(com.gunmu.chinese_regional_culinary_ingredients.fluid.CrciFluids.soySauceSource(), VatRecipes.SERVING_MB);
         click(helper, player, new ItemStack(Items.GLASS_BOTTLE));
         click(helper, player, new ItemStack(Items.GLASS_BOTTLE));
         click(helper, player, new ItemStack(Items.DIRT));
@@ -835,12 +839,12 @@ public final class VatGameTests {
         if (vat.residueCount() != VatRecipes.RESIDUE_COUNT - 1) {
             helper.fail("空手仍应能逐份取出酱渣");
         }
-        vat.addContent(new ItemStack(ModItems.SOY_RESIDUE.get()));
+        vat.addContent(new ItemStack(CrciItems.SOY_RESIDUE.get()));
         for (int i = 0; i < 3; i++) {
             click(helper, player, new ItemStack(Items.WATER_BUCKET));
         }
         for (int i = 0; i < VatRecipes.VINEGAR_GRAIN_COUNT; i++) {
-            click(helper, player, new ItemStack(ModItems.CORN_SEEDS.get()));
+            click(helper, player, new ItemStack(CrciItems.CORN_SEEDS.get()));
         }
         Item cloth = clothRug();
         if (cloth == null) {
@@ -870,7 +874,7 @@ public final class VatGameTests {
         if (vat.brewedMb() <= 0 || !vat.hasBottledProduct()) {
             helper.fail("酱油完成后应记录在新成品槽里");
         }
-        if (VatBrewing.forInsert(vat, new ItemStack(ModItems.CORN_SEEDS.get())) != null
+        if (VatBrewing.forInsert(vat, new ItemStack(CrciItems.CORN_SEEDS.get())) != null
                 || VatBrewing.ready(vat) != null) {
             helper.fail("成品液体没取完时不应接下一条配方");
         }
@@ -886,8 +890,8 @@ public final class VatGameTests {
             }
         }
 
-        vat.setProductMb(ModFluids.soySauceSource(), 0);
-        if (VatBrewing.forInsert(vat, new ItemStack(ModItems.CORN_SEEDS.get())) == null) {
+        vat.setProductMb(CrciFluids.soySauceSource(), 0);
+        if (VatBrewing.forInsert(vat, new ItemStack(CrciItems.CORN_SEEDS.get())) == null) {
             helper.fail("成品取完后酱渣应能接上醋的配方");
         }
         helper.succeed();
@@ -905,7 +909,7 @@ public final class VatGameTests {
             return;
         }
 
-        vat.addContent(new ItemStack(ModItems.SOYBEAN.get()));
+        vat.addContent(new ItemStack(CrciItems.SOYBEAN.get()));
         click(helper, player, new ItemStack(Items.WATER_BUCKET));
         click(helper, player, new ItemStack(cloth));
         VatRecipe recipe = VatBrewing.ready(vat);
@@ -933,7 +937,7 @@ public final class VatGameTests {
             return;
         }
 
-        vat.addContent(new ItemStack(ModItems.SOYBEAN.get()));
+        vat.addContent(new ItemStack(CrciItems.SOYBEAN.get()));
         vat.setKind(VatRecipes.Kind.BEAN_SPROUTS);
         vat.setCover(new ItemStack(cloth));
         vat.addWater(2 * VatRecipes.WATER_MB_PER_LEVEL);
@@ -952,10 +956,10 @@ public final class VatGameTests {
     private static void finishSoySauce(GameTestHelper helper, ServerLevel level, BlockPos pos, VatBlockEntity vat) {
         vat.addWater(3 * VatRecipes.WATER_MB_PER_LEVEL);
         for (int i = 0; i < VatRecipes.PASTE_CHUNKS; i++) {
-            vat.addContent(new ItemStack(ModItems.SOY_PASTE_CHUNK.get()));
+            vat.addContent(new ItemStack(CrciItems.SOY_PASTE_CHUNK.get()));
         }
         for (int i = 0; i < VatRecipes.PASTE_SALT; i++) {
-            vat.addContent(new ItemStack(ModItems.SALT.get()));
+            vat.addContent(new ItemStack(CrciItems.SALT.get()));
         }
         vat.addContent(new ItemStack(Items.WHEAT));
         vat.setKind(VatRecipes.Kind.SOY_SAUCE);
@@ -975,10 +979,10 @@ public final class VatGameTests {
 
         vat.addWater(3 * VatRecipes.WATER_MB_PER_LEVEL);
         for (int i = 0; i < 6; i++) {
-            vat.addContent(new ItemStack(ModItems.NAPA_CABBAGE.get()));
+            vat.addContent(new ItemStack(CrciItems.NAPA_CABBAGE.get()));
         }
         for (int i = 0; i < 3; i++) {
-            vat.addContent(new ItemStack(ModItems.SALT.get()));
+            vat.addContent(new ItemStack(CrciItems.SALT.get()));
         }
         vat.setKind(VatRecipes.Kind.PICKLE);
         VatBrewing.complete(level, pos, vat, VatRecipes.recipeOf(VatRecipes.Kind.PICKLE, level));
@@ -992,12 +996,12 @@ public final class VatGameTests {
             helper.fail("菜没取干净，还剩 " + vat.contents().size() + " 份");
         }
 
-        if (VatBrewing.forInsert(vat, new ItemStack(ModItems.CORN_SEEDS.get())) == null) {
+        if (VatBrewing.forInsert(vat, new ItemStack(CrciItems.CORN_SEEDS.get())) == null) {
             helper.fail("泡菜缸里的酸引水加不进谷物：二次发酵被挡掉了");
         }
 
         for (int i = 0; i < VatRecipes.VINEGAR_GRAIN_COUNT; i++) {
-            click(helper, player, new ItemStack(ModItems.CORN_SEEDS.get()));
+            click(helper, player, new ItemStack(CrciItems.CORN_SEEDS.get()));
         }
         Item cloth = clothRug();
         if (cloth == null) {
@@ -1022,10 +1026,10 @@ public final class VatGameTests {
         BlockPos pos = helper.absolutePos(AT);
 
         for (int i = 0; i < VatRecipes.PASTE_CHUNKS; i++) {
-            vat.addContent(new ItemStack(ModItems.SOY_PASTE_CHUNK.get()));
+            vat.addContent(new ItemStack(CrciItems.SOY_PASTE_CHUNK.get()));
         }
         for (int i = 0; i < VatRecipes.PASTE_SALT; i++) {
-            vat.addContent(new ItemStack(ModItems.SALT.get()));
+            vat.addContent(new ItemStack(CrciItems.SALT.get()));
         }
         vat.setKind(VatRecipes.Kind.PASTE);
         click(helper, player, new ItemStack(Items.WHITE_CARPET));
@@ -1046,7 +1050,7 @@ public final class VatGameTests {
     public static void coverComesBackBeforeFermented(GameTestHelper helper) {
         Player player = mockPlayer(helper, GameType.CREATIVE);
         VatBlockEntity vat = placeVat(helper);
-        vat.addContent(new ItemStack(ModItems.SOY_PASTE_CHUNK.get()));
+        vat.addContent(new ItemStack(CrciItems.SOY_PASTE_CHUNK.get()));
         vat.setKind(VatRecipes.Kind.PASTE);
         vat.setCover(new ItemStack(Items.WHITE_CARPET));
 
@@ -1065,9 +1069,9 @@ public final class VatGameTests {
         BlockPos pos = helper.absolutePos(AT);
         vat.addWater(VatRecipes.WATER_MB_PER_LEVEL);
         for (int i = 0; i < 2; i++) {
-            vat.addContent(new ItemStack(ModItems.NAPA_CABBAGE.get()));
+            vat.addContent(new ItemStack(CrciItems.NAPA_CABBAGE.get()));
         }
-        vat.addContent(new ItemStack(ModItems.SALT.get()));
+        vat.addContent(new ItemStack(CrciItems.SALT.get()));
         vat.setPress(new ItemStack(Items.STONE));
         VatBrewing.complete(level, pos, vat, VatRecipes.recipeOf(VatRecipes.Kind.PICKLE, level));
 
@@ -1081,11 +1085,11 @@ public final class VatGameTests {
         for (int i = 0; i < 3; i++) {
             click(helper, player, ItemStack.EMPTY);
         }
-        if (player.getInventory().countItem(ModItems.SOUR_CABBAGE.get()) != 2
+        if (player.getInventory().countItem(CrciItems.SOUR_CABBAGE.get()) != 2
                 || vat.kind() != VatRecipes.Kind.NONE) {
             helper.fail("抽空酸引水后应能先取下石头、再取出两颗酸菜，取完缸复位"
-                    + "（酸菜=" + player.getInventory().countItem(ModItems.SOUR_CABBAGE.get())
-                    + " 大白菜=" + player.getInventory().countItem(ModItems.NAPA_CABBAGE.get())
+                    + "（酸菜=" + player.getInventory().countItem(CrciItems.SOUR_CABBAGE.get())
+                    + " 大白菜=" + player.getInventory().countItem(CrciItems.NAPA_CABBAGE.get())
                     + " kind=" + vat.kind()
                     + " press=" + vat.press()
                     + " contents=" + vat.contentSnapshot() + "）");
@@ -1110,7 +1114,7 @@ public final class VatGameTests {
         if (vat.isPressed() || player.getInventory().countItem(Items.STONE) != 1) {
             helper.fail("复位后的空缸，空手右键应能取回压缸石");
         }
-        if (VatBrewing.forInsert(vat, new ItemStack(ModItems.SOY_PASTE_CHUNK.get())) == null) {
+        if (VatBrewing.forInsert(vat, new ItemStack(CrciItems.SOY_PASTE_CHUNK.get())) == null) {
             helper.fail("复位后的空缸应能投别的配方的料");
         }
         helper.succeed();
@@ -1145,10 +1149,10 @@ public final class VatGameTests {
         BlockPos pos = helper.absolutePos(AT);
         vat.addWater(3 * VatRecipes.WATER_MB_PER_LEVEL);
         for (int i = 0; i < VatRecipes.PASTE_CHUNKS; i++) {
-            vat.addContent(new ItemStack(ModItems.SOY_PASTE_CHUNK.get()));
+            vat.addContent(new ItemStack(CrciItems.SOY_PASTE_CHUNK.get()));
         }
         for (int i = 0; i < VatRecipes.PASTE_SALT; i++) {
-            vat.addContent(new ItemStack(ModItems.SALT.get()));
+            vat.addContent(new ItemStack(CrciItems.SALT.get()));
         }
         click(helper, player, new ItemStack(Items.WHITE_CARPET));
         VatRecipe paste = VatRecipes.recipeOf(VatRecipes.Kind.PASTE, level);
@@ -1183,11 +1187,11 @@ public final class VatGameTests {
             vat.addContent(new ItemStack(Items.COD));
         }
         for (int i = 0; i < 2; i++) {
-            vat.addContent(new ItemStack(ModItems.SALT.get()));
+            vat.addContent(new ItemStack(CrciItems.SALT.get()));
         }
         helper.destroyBlock(AT);
         helper.assertItemEntityCountIs(Items.COD, AT, 2.0, VatRecipes.FISH_SAUCE_FISH);
-        helper.assertItemEntityNotPresent(ModItems.SALT.get(), AT, 2.0);
+        helper.assertItemEntityNotPresent(CrciItems.SALT.get(), AT, 2.0);
         helper.succeed();
     }
 
@@ -1196,12 +1200,12 @@ public final class VatGameTests {
     public static void pouredSourWaterCanBeBottledBack(GameTestHelper helper) {
         Player player = mockPlayer(helper, GameType.SURVIVAL);
         VatBlockEntity vat = placeVat(helper);
-        click(helper, player, new ItemStack(ModItems.SOUR_WATER.get()));
+        click(helper, player, new ItemStack(CrciItems.SOUR_WATER.get()));
         if (vat.sourWaterMb() != VatRecipes.SERVING_MB) {
             helper.fail("空缸应能倒进一瓶酸引水");
         }
         click(helper, player, new ItemStack(Items.GLASS_BOTTLE));
-        if (vat.sourWaterMb() != 0 || player.getInventory().countItem(ModItems.SOUR_WATER.get()) != 1
+        if (vat.sourWaterMb() != 0 || player.getInventory().countItem(CrciItems.SOUR_WATER.get()) != 1
                 || vat.kind() != VatRecipes.Kind.NONE) {
             helper.fail("没开工的缸里的酸引水应能用玻璃瓶装回来，装空后缸复位");
         }
@@ -1213,7 +1217,7 @@ public final class VatGameTests {
             vat.addContent(new ItemStack(Items.COD));
         }
         for (int i = 0; i < VatRecipes.FISH_SAUCE_SALT; i++) {
-            vat.addContent(new ItemStack(ModItems.SALT.get()));
+            vat.addContent(new ItemStack(CrciItems.SALT.get()));
         }
         vat.setPress(new ItemStack(Items.STONE));
         VatBrewing.complete(level, pos, vat, VatRecipes.recipeOf(VatRecipes.Kind.FISH_SAUCE, level));

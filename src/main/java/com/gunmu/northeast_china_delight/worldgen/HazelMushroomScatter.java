@@ -1,5 +1,7 @@
 package com.gunmu.northeast_china_delight.worldgen;
 
+import com.gunmu.chinese_regional_culinary_ingredients.block.CrciBlocks;
+
 import com.gunmu.northeast_china_delight.block.ModBlocks;
 import net.minecraft.core.BlockPos;
 import net.minecraft.tags.BlockTags;
@@ -93,7 +95,7 @@ final class HazelMushroomScatter
         {
             return 0;
         }
-        BlockState mushroom = ModBlocks.HAZEL_MUSHROOM.get().defaultBlockState();
+        BlockState mushroom = CrciBlocks.HAZEL_MUSHROOM.get().defaultBlockState();
         int placed = 0;
         for (int dx = -radius; dx <= radius; dx++)
         {

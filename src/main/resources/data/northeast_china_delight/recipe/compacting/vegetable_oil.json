@@ -8,13 +8,14 @@
   "type": "create:compacting",
   "ingredients": [
     {
-      "item": "northeast_china_delight:roasted_peanuts"
+      "item": "chinese_regional_culinary_ingredients:roasted_peanuts"
     }
   ],
   "results": [
     {
       "amount": 50,
-      "id": "northeast_china_delight:vegetable_oil"
+      "id": "chinese_regional_culinary_ingredients:vegetable_oil"
     }
   ]
 }
+

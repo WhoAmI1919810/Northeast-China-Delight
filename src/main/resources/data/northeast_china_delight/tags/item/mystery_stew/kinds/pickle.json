@@ -1,11 +1,11 @@
 {
   "values": [
-    "northeast_china_delight:sour_cabbage",
-    "northeast_china_delight:pickled_snow_mustard",
-    "northeast_china_delight:pickled_cucumber",
-    "northeast_china_delight:pickled_carrot",
-    "northeast_china_delight:pickled_green_radish",
-    "northeast_china_delight:sour_corn_kernels",
+    "chinese_regional_culinary_ingredients:sour_cabbage",
+    "chinese_regional_culinary_ingredients:pickled_snow_mustard",
+    "chinese_regional_culinary_ingredients:pickled_cucumber",
+    "chinese_regional_culinary_ingredients:pickled_carrot",
+    "chinese_regional_culinary_ingredients:pickled_green_radish",
+    "chinese_regional_culinary_ingredients:sour_corn_kernels",
     {
       "id": "#c:foods/pickles",
       "required": false
@@ -16,3 +16,4 @@
     }
   ]
 }
+

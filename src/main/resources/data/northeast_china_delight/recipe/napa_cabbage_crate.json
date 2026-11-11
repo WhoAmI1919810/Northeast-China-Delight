@@ -8,11 +8,12 @@
   ],
   "key": {
     "X": {
-      "item": "northeast_china_delight:napa_cabbage"
+      "item": "chinese_regional_culinary_ingredients:napa_cabbage"
     }
   },
   "result": {
     "count": 1,
-    "id": "northeast_china_delight:napa_cabbage_crate"
+    "id": "chinese_regional_culinary_ingredients:napa_cabbage_crate"
   }
 }
+

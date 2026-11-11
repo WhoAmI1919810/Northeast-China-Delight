@@ -7,7 +7,7 @@
   "experience": 1.0,
   "ingredients": [
     {
-      "item": "northeast_china_delight:buckwheat_noodles"
+      "item": "chinese_regional_culinary_ingredients:buckwheat_noodles"
     },
     {
       "tag": "c:foods/seasonings/vinegar"
@@ -31,3 +31,4 @@
     "id": "northeast_china_delight:buckwheat_cold_noodles"
   }
 }
+

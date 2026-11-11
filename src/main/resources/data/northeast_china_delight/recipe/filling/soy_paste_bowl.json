@@ -13,12 +13,13 @@
     {
       "type": "neoforge:single",
       "amount": 250,
-      "fluid": "northeast_china_delight:soy_paste"
+      "fluid": "chinese_regional_culinary_ingredients:soy_paste"
     }
   ],
   "results": [
     {
-      "id": "northeast_china_delight:soy_paste"
+      "id": "chinese_regional_culinary_ingredients:soy_paste"
     }
   ]
 }
+

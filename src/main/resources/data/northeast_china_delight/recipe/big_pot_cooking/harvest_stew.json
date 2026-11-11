@@ -7,7 +7,7 @@
     },
     "ingredients": [
       {
-        "item": "northeast_china_delight:pork_ribs"
+        "item": "chinese_regional_culinary_ingredients:pork_ribs"
       },
       {
         "tag": "c:crops/green_bean"
@@ -48,3 +48,4 @@
     "experience": 1.0
   }
 }
+

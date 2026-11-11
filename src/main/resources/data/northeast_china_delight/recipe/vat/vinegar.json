@@ -12,13 +12,13 @@
       "water_min": 3,
       "water_max": 3,
       "water_after": "CLEAR",
-      "product": "northeast_china_delight:vinegar",
+      "product": "chinese_regional_culinary_ingredients:vinegar",
       "product_mb": 2500
     },
     "slots": [
       {
         "ingredient": {
-          "item": "northeast_china_delight:soy_residue"
+          "item": "chinese_regional_culinary_ingredients:soy_residue"
         },
         "fate": "CONSUME",
         "bounds": {
@@ -46,13 +46,13 @@
     "display_models": [
       {
         "ingredient": {
-          "item": "northeast_china_delight:soy_residue"
+          "item": "chinese_regional_culinary_ingredients:soy_residue"
         },
         "model": "northeast_china_delight:block/vat/soy_residue"
       },
       {
         "ingredient": {
-          "item": "northeast_china_delight:corn_seeds"
+          "item": "chinese_regional_culinary_ingredients:corn_seeds"
         },
         "model": "northeast_china_delight:block/vat/corn_seeds"
       },
@@ -64,7 +64,7 @@
       },
       {
         "ingredient": {
-          "item": "northeast_china_delight:buckwheat"
+          "item": "chinese_regional_culinary_ingredients:buckwheat"
         },
         "model": "northeast_china_delight:block/vat/buckwheat"
       },
@@ -77,3 +77,4 @@
     ]
   }
 }
+

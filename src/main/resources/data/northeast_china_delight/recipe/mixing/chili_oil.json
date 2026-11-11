@@ -11,7 +11,7 @@
     {
       "type": "neoforge:single",
       "amount": 250,
-      "fluid": "northeast_china_delight:vegetable_oil"
+      "fluid": "chinese_regional_culinary_ingredients:vegetable_oil"
     },
     {
       "tag": "c:crops/chile_pepper"
@@ -23,7 +23,8 @@
   "results": [
     {
       "amount": 250,
-      "id": "northeast_china_delight:chili_oil"
+      "id": "chinese_regional_culinary_ingredients:chili_oil"
     }
   ]
 }
+

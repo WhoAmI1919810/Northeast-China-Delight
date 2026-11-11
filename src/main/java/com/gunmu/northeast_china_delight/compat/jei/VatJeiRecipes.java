@@ -1,5 +1,7 @@
 package com.gunmu.northeast_china_delight.compat.jei;
 
+import com.gunmu.chinese_regional_culinary_ingredients.fluid.CrciFluids;
+
 import com.gunmu.northeast_china_delight.crafting.VatRecipe;
 import com.gunmu.northeast_china_delight.crafting.VatRecipes;
 import com.gunmu.northeast_china_delight.fluid.ModFluids;
@@ -154,7 +156,7 @@ public final class VatJeiRecipes {
 
         VatRecipe.Liquid liquid = recipe.liquid();
         Fluid base = liquid.waterMin() > 0 ? Fluids.WATER
-                : liquid.sourWaterMb() > 0 ? ModFluids.SOUR_WATER.get() : null;
+                : liquid.sourWaterMb() > 0 ? CrciFluids.SOUR_WATER.get() : null;
         long baseMb = liquid.waterMin() > 0 ? level * ONE_LAYER : liquid.sourWaterMb();
         Fluid product = liquid.product();
         long productMb = product == null ? 0 : recipe.productMbFor(level);

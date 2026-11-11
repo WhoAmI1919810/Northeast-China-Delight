@@ -1,9 +1,9 @@
 {
   "values": {
-    "northeast_china_delight:corn_stalk": {
+    "chinese_regional_culinary_ingredients:corn_stalk": {
       "burn_time": 200
     },
-    "northeast_china_delight:animal_oil": {
+    "chinese_regional_culinary_ingredients:animal_oil": {
       "burn_time": 160
     },
     "northeast_china_delight:animal_oil_block": {
@@ -11,3 +11,4 @@
     }
   }
 }
+

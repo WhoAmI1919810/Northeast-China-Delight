@@ -7,14 +7,14 @@
           "input_predicate": {
             "block": "minecraft:wheat",
             "predicate_type": "northeast_china_delight:village_farm_crop",
-            "crop_item": "northeast_china_delight:red_bean",
+            "crop_item": "chinese_regional_culinary_ingredients:red_bean",
             "probability": 0.05
           },
           "location_predicate": {
             "predicate_type": "minecraft:always_true"
           },
           "output_state": {
-            "Name": "northeast_china_delight:red_bean_crop",
+            "Name": "chinese_regional_culinary_ingredients:red_bean_crop",
             "Properties": {
               "age": "7"
             }
@@ -24,14 +24,14 @@
           "input_predicate": {
             "block": "minecraft:wheat",
             "predicate_type": "northeast_china_delight:village_farm_crop",
-            "crop_item": "northeast_china_delight:peanut",
+            "crop_item": "chinese_regional_culinary_ingredients:peanut",
             "probability": 0.05
           },
           "location_predicate": {
             "predicate_type": "minecraft:always_true"
           },
           "output_state": {
-            "Name": "northeast_china_delight:peanut_crop",
+            "Name": "chinese_regional_culinary_ingredients:peanut_crop",
             "Properties": {
               "age": "7"
             }
@@ -41,14 +41,14 @@
           "input_predicate": {
             "block": "minecraft:wheat",
             "predicate_type": "northeast_china_delight:village_farm_crop",
-            "crop_item": "northeast_china_delight:sweet_potato",
+            "crop_item": "chinese_regional_culinary_ingredients:sweet_potato",
             "probability": 0.05
           },
           "location_predicate": {
             "predicate_type": "minecraft:always_true"
           },
           "output_state": {
-            "Name": "northeast_china_delight:sweet_potato_crop",
+            "Name": "chinese_regional_culinary_ingredients:sweet_potato_crop",
             "Properties": {
               "age": "7"
             }
@@ -58,14 +58,14 @@
           "input_predicate": {
             "block": "minecraft:wheat",
             "predicate_type": "northeast_china_delight:village_farm_crop",
-            "crop_item": "northeast_china_delight:green_pepper_seeds",
+            "crop_item": "chinese_regional_culinary_ingredients:green_pepper_seeds",
             "probability": 0.05
           },
           "location_predicate": {
             "predicate_type": "minecraft:always_true"
           },
           "output_state": {
-            "Name": "northeast_china_delight:green_pepper_crop",
+            "Name": "chinese_regional_culinary_ingredients:green_pepper_crop",
             "Properties": {
               "age": "7"
             }
@@ -75,14 +75,14 @@
           "input_predicate": {
             "block": "minecraft:wheat",
             "predicate_type": "northeast_china_delight:village_farm_crop",
-            "crop_item": "northeast_china_delight:red_chili_seeds",
+            "crop_item": "chinese_regional_culinary_ingredients:red_chili_seeds",
             "probability": 0.05
           },
           "location_predicate": {
             "predicate_type": "minecraft:always_true"
           },
           "output_state": {
-            "Name": "northeast_china_delight:red_chili_crop",
+            "Name": "chinese_regional_culinary_ingredients:red_chili_crop",
             "Properties": {
               "age": "7"
             }
@@ -108,3 +108,4 @@
     }
   ]
 }
+

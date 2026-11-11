@@ -1,10 +1,11 @@
 {
   "values": [
-    "northeast_china_delight:pig_liver",
-    "northeast_china_delight:smoked_pig_liver",
-    "northeast_china_delight:pig_blood",
-    "northeast_china_delight:pork_intestine",
-    "northeast_china_delight:blood_sausage",
-    "northeast_china_delight:rice_sausage"
+    "chinese_regional_culinary_ingredients:pig_liver",
+    "chinese_regional_culinary_ingredients:smoked_pig_liver",
+    "chinese_regional_culinary_ingredients:pig_blood",
+    "chinese_regional_culinary_ingredients:pork_intestine",
+    "chinese_regional_culinary_ingredients:blood_sausage",
+    "chinese_regional_culinary_ingredients:rice_sausage"
   ]
 }
+

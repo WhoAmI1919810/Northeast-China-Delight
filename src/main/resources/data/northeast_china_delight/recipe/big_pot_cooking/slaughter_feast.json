@@ -13,19 +13,19 @@
         "tag": "c:foods/sauerkraut"
       },
       {
-        "item": "northeast_china_delight:frozen_tofu"
+        "item": "chinese_regional_culinary_ingredients:frozen_tofu"
       },
       {
-        "item": "northeast_china_delight:blood_sausage"
+        "item": "chinese_regional_culinary_ingredients:blood_sausage"
       },
       {
-        "item": "northeast_china_delight:pork_ribs"
+        "item": "chinese_regional_culinary_ingredients:pork_ribs"
       },
       {
         "tag": "c:foods/raw_pork"
       },
       {
-        "item": "northeast_china_delight:pork_intestine"
+        "item": "chinese_regional_culinary_ingredients:pork_intestine"
       }
     ],
     "seasonings": [
@@ -51,3 +51,4 @@
     "experience": 1.0
   }
 }
+

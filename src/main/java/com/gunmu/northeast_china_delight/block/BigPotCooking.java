@@ -1,10 +1,12 @@
 package com.gunmu.northeast_china_delight.block;
 
+import com.gunmu.chinese_regional_culinary_ingredients.item.CrciItems;
+
 import com.gunmu.northeast_china_delight.crafting.BigPotRecipe;
 import com.gunmu.northeast_china_delight.crafting.BigPotRecipes;
 import com.gunmu.northeast_china_delight.crafting.MysteryStew;
 import com.gunmu.northeast_china_delight.item.ModItems;
-import com.gunmu.northeast_china_delight.item.SeasoningBottleItem;
+import com.gunmu.chinese_regional_culinary_ingredients.item.SeasoningBottleItem;
 import com.gunmu.northeast_china_delight.particle.ModParticles;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -233,7 +235,7 @@ public final class BigPotCooking {
         if (held.hasCraftingRemainingItem()) {
             return held.getCraftingRemainingItem();
         }
-        return held.is(ModItems.SOY_PASTE.get()) ? new ItemStack(Items.BOWL) : ItemStack.EMPTY;
+        return held.is(CrciItems.SOY_PASTE.get()) ? new ItemStack(Items.BOWL) : ItemStack.EMPTY;
     }
 
     /** 瓶装调料至少要剩完整的一份；盐、碗装调料等一个物品本身就是一份 */
@@ -683,3 +685,4 @@ public final class BigPotCooking {
         }
     }
 }
+

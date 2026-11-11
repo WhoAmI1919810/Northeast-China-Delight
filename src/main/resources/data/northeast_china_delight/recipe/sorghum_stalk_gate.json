@@ -6,7 +6,7 @@
       "item": "northeast_china_delight:sorghum_stalk_fence"
     },
     "B": {
-      "item": "northeast_china_delight:corn_stalk"
+      "item": "chinese_regional_culinary_ingredients:corn_stalk"
     }
   },
   "pattern": [
@@ -18,3 +18,4 @@
     "id": "northeast_china_delight:sorghum_stalk_gate"
   }
 }
+

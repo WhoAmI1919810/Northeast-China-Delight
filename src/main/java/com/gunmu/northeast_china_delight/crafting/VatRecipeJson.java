@@ -358,7 +358,7 @@ public final class VatRecipeJson {
     }
 
     /**
-     * 产物液体。新配方直接写流体 id（{@code "northeast_china_delight:soy_sauce"}），
+     * 产物液体。新配方直接写流体 id（{@code "chinese_regional_culinary_ingredients:soy_sauce"}），
      * 旧数据包里写的是枚举名（{@code "SOY_SAUCE"}），两种都认：没有冒号的按旧枚举名翻译，
      * 带冒号的按流体 id 去注册表里找。清水不是成品液体，写了也算错。
      */

@@ -1,9 +1,10 @@
 {
   "values": [
-    "northeast_china_delight:ginseng",
+    "chinese_regional_culinary_ingredients:ginseng",
     {
       "id": "#c:crops/ginseng",
       "required": false
     }
   ]
 }
+

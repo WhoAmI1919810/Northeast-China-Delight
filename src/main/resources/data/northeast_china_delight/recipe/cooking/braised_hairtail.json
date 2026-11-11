@@ -7,10 +7,10 @@
   "experience": 1.0,
   "ingredients": [
     {
-      "item": "northeast_china_delight:hairtail"
+      "item": "chinese_regional_culinary_ingredients:hairtail"
     },
     {
-      "item": "northeast_china_delight:hairtail"
+      "item": "chinese_regional_culinary_ingredients:hairtail"
     },
     {
       "tag": "c:foods/seasonings/soy_sauce"
@@ -25,3 +25,4 @@
     "id": "northeast_china_delight:braised_hairtail"
   }
 }
+

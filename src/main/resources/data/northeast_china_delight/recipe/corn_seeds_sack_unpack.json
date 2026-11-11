@@ -1,6 +1,7 @@
 {
   "type": "minecraft:crafting_shapeless",
   "category": "misc",
-  "ingredients": [ { "item": "northeast_china_delight:corn_seeds_sack" } ],
-  "result": { "count": 9, "id": "northeast_china_delight:corn_seeds" }
+  "ingredients": [ { "item": "chinese_regional_culinary_ingredients:corn_seeds_sack" } ],
+  "result": { "count": 9, "id": "chinese_regional_culinary_ingredients:corn_seeds" }
 }
+

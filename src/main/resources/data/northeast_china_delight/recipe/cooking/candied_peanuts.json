@@ -6,10 +6,10 @@
       "tag": "c:sugar"
     },
     {
-      "item": "northeast_china_delight:roasted_peanuts"
+      "item": "chinese_regional_culinary_ingredients:roasted_peanuts"
     },
     {
-      "item": "northeast_china_delight:roasted_peanuts"
+      "item": "chinese_regional_culinary_ingredients:roasted_peanuts"
     }
   ],
   "recipe_book_tab": "misc",
@@ -18,3 +18,4 @@
     "id": "northeast_china_delight:candied_peanuts"
   }
 }
+

@@ -8,11 +8,12 @@
   ],
   "key": {
     "X": {
-      "item": "northeast_china_delight:bellflower_root"
+      "item": "chinese_regional_culinary_ingredients:bellflower_root"
     }
   },
   "result": {
     "count": 1,
-    "id": "northeast_china_delight:bellflower_crate"
+    "id": "chinese_regional_culinary_ingredients:bellflower_crate"
   }
 }
+

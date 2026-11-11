@@ -3,9 +3,7 @@ package com.gunmu.northeast_china_delight.item;
 import com.gunmu.northeast_china_delight.block.ModBlocks;
 import com.gunmu.northeast_china_delight.NortheastChinaDelight;
 import com.gunmu.northeast_china_delight.util.DdIds;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.DyeColor;
@@ -21,7 +19,6 @@ import net.minecraft.world.item.JukeboxSong;
 //?}
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.item.Items;
-import net.minecraft.world.item.ItemNameBlockItem;
 import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.ItemLike;
@@ -63,48 +60,8 @@ public class ModItems {
     public static final TagKey<Item> DEEP_FRIED_DISHES = TagKey.create(Registries.ITEM,
             DdIds.of(NortheastChinaDelight.MODID, "deep_fried_dishes"));
 
-    public static final Supplier<Item> SOYBEAN = externalItem(NortheastChinaDelight.CRCI_MODID, "soybean");
-    public static final Supplier<Item> EGGPLANT = food("eggplant", 2, 0.3F);
-    public static final Supplier<Item> GREEN_PEPPER = food("green_pepper", 2, 0.3F);
-    public static final Supplier<Item> CORN = food("corn", 3, 0.4F);
-    public static final Supplier<Item> GREEN_BEANS = food("green_beans", 1, 0.3F);
-    public static final Supplier<Item> BUCKWHEAT = selfSeeding("buckwheat", () -> ModBlocks.BUCKWHEAT_CROP.get());
-    public static final Supplier<Item> NAPA_CABBAGE = food("napa_cabbage", 2, 0.4F);
-    public static final Supplier<Item> SNOW_MUSTARD = food("snow_mustard", 2, 0.4F);
-    public static final Supplier<Item> CUCUMBER = food("cucumber", 2, 0.4F);
-    public static final Supplier<Item> SWEET_POTATO = selfSeedingFood("sweet_potato", () -> ModBlocks.SWEET_POTATO_CROP.get(), 2, 0.3F);
-    public static final Supplier<Item> PEANUT = selfSeedingFood("peanut", () -> ModBlocks.PEANUT_CROP.get(), 1, 0.3F);
-    public static final Supplier<Item> RED_BEAN = selfSeeding("red_bean", () -> ModBlocks.RED_BEAN_CROP.get());
-    public static final Supplier<Item> RED_CHILI = food("red_chili", 1, 0.3F);
-    public static final Supplier<Item> GREEN_ONION = food("green_onion", 1, 0.3F);
-    public static final Supplier<Item> GREEN_RADISH = food("green_radish", 2, 0.4F);
-    public static final Supplier<Item> BELLFLOWER_ROOT = food("bellflower_root", 2, 0.3F);
-    public static final Supplier<Item> SHRIMP = food("shrimp", 2, 0.1F);
-    public static final Supplier<Item> SPICY_CABBAGE = food("spicy_cabbage", 4, 0.5F);
 
-    public static final Supplier<Item> EGGPLANT_SEEDS = seeds("eggplant_seeds", () -> ModBlocks.EGGPLANT_CROP.get());
-    public static final Supplier<Item> GREEN_PEPPER_SEEDS = seeds("green_pepper_seeds", () -> ModBlocks.GREEN_PEPPER_CROP.get());
-    public static final Supplier<Item> CORN_SEEDS = seeds("corn_seeds", () -> ModBlocks.CORN_CROP.get());
-    public static final Supplier<Item> GREEN_BEANS_SEEDS = seeds("green_beans_seeds", () -> ModBlocks.GREEN_BEANS_CROP.get());
-    public static final Supplier<Item> NAPA_CABBAGE_SEEDS = seeds("napa_cabbage_seeds", () -> ModBlocks.NAPA_CABBAGE_CROP.get());
-    public static final Supplier<Item> SNOW_MUSTARD_SEEDS = seeds("snow_mustard_seeds", () -> ModBlocks.SNOW_MUSTARD_CROP.get());
-    public static final Supplier<Item> CUCUMBER_SEEDS = seeds("cucumber_seeds", () -> ModBlocks.CUCUMBER_CROP.get());
-    public static final Supplier<Item> RED_CHILI_SEEDS = seeds("red_chili_seeds", () -> ModBlocks.RED_CHILI_CROP.get());
-    public static final Supplier<Item> GREEN_ONION_SEEDS = seeds("green_onion_seeds", () -> ModBlocks.GREEN_ONION_CROP.get());
-    public static final Supplier<Item> GREEN_RADISH_SEEDS = seeds("green_radish_seeds", () -> ModBlocks.GREEN_RADISH_CROP.get());
-    public static final Supplier<Item> GINSENG_SEEDS = seeds("ginseng_seeds", () -> ModBlocks.GINSENG_CROP.get());
-    public static final Supplier<Item> BELLFLOWER_SEEDS = regItem(
-            "bellflower_seeds",
-            properties -> new BellflowerSeedItem(ModBlocks.BELLFLOWER_CROP.get(), properties),
-            new Item.Properties());
 
-    public static final Supplier<Item> SOUR_CABBAGE = food("sour_cabbage", 3, 0.4F);
-    public static final Supplier<Item> PICKLED_SNOW_MUSTARD = food("pickled_snow_mustard", 3, 0.4F);
-    public static final Supplier<Item> SOY_PASTE = plain("soy_paste");
-    public static final Supplier<Item> SOY_PASTE_CHUNK = simple("soy_paste_chunk");
-    public static final Supplier<Item> SOY_RESIDUE = simple("soy_residue");
-    public static final Supplier<Item> CORN_STALK = simple("corn_stalk");
-    public static final Supplier<Item> SALT = simple("salt");
     /**
      * 海水桶：3.2.2 起不再使用（制盐改用水盆），没有任何获取方式，只留着让老存档里的海水桶不丢。
      * 用起来就是一只普通水桶（倒水、倒完剩空桶）；不进创造物品栏，JEI 里也隐藏（见 NortheastJeiPlugin）。
@@ -112,19 +69,6 @@ public class ModItems {
     public static final Supplier<Item> SEA_WATER_BUCKET = regItem("sea_water_bucket",
             properties -> new BucketItem(Fluids.WATER, properties),
             new Item.Properties().stacksTo(1).craftRemainder(Items.BUCKET));
-    public static final Supplier<Item> SALTED_PORK = food("salted_pork", 5, 0.5F);
-    public static final Supplier<Item> SALTED_FISH = food("salted_fish", 4, 0.4F);
-    public static final Supplier<Item> PICKLED_CUCUMBER = food("pickled_cucumber", 3, 0.4F);
-    public static final Supplier<Item> PICKLED_CARROT = food("pickled_carrot", 3, 0.4F);
-    public static final Supplier<Item> PICKLED_GREEN_RADISH = food("pickled_green_radish", 3, 0.4F);
-    public static final Supplier<Item> WATER_DOUGH = simple("sour_dough");
-    public static final Supplier<Item> BUCKWHEAT_NOODLES = plain("buckwheat_noodles");
-    public static final Supplier<Item> DRIED_TOFU = food("dried_tofu", 3, 0.4F);
-    public static final Supplier<Item> TOFU = food("tofu", 3, 0.4F);
-    public static final Supplier<Item> FROZEN_TOFU = food("frozen_tofu", 3, 0.4F);
-    public static final Supplier<Item> COOKING_OIL = bottled("cooking_oil");
-    public static final Supplier<Item> CHILI_OIL = bottled("chili_oil");
-    public static final Supplier<Item> ANIMAL_OIL = bottled("animal_oil");
     /** 格瓦斯：不饿也能喝，随时能喝（2026-11-04 用户：像药水一样） */
     public static final Supplier<Item> KVASS = regItem("kvass", DdDrinkItem::new, new Item.Properties()
             .craftRemainder(Items.GLASS_BOTTLE)
@@ -139,23 +83,9 @@ public class ModItems {
             new Item.Properties()
                     .craftRemainder(Items.GLASS_BOTTLE)
                     .food(foodReturning(statsWithSaturationPoints(7, 3.0F), Items.GLASS_BOTTLE)));
-    public static final Supplier<Item> PEANUT_BUTTER = bottled("peanut_butter");
-    public static final Supplier<Item> ROASTED_PEANUTS = food("roasted_peanuts", 4, 0.5F);
     /** 豆沙：红豆 + 糖在木臼里舂 4 下出 2 份；能直接吃，比用它做的菜（红豆松饼 3 / 0.3 起）都低 */
-    public static final Supplier<Item> RED_BEAN_PASTE = food("red_bean_paste", 2, 0.2F);
-    public static final Supplier<Item> CHILI_SAUCE = seasoningBowl("chili_sauce");
-    public static final Supplier<Item> BEAN_SPROUTS = food("bean_sprouts", 2, 0.3F);
-    public static final Supplier<Item> SOUR_CORN_KERNELS = food("sour_corn_kernels", 3, 0.4F);
-    public static final Supplier<Item> SWEET_POTATO_STARCH = simple("sweet_potato_starch");
     /** 湿粉团：木臼里 1 个红薯加一份水（一桶 / 一盆 / 一瓶）舂出 2 个，放烟熏炉熏干成淀粉（2026-11-05 用户：要批量烟熏，不要批量熔炼） */
-    public static final Supplier<Item> WET_STARCH_DOUGH = simple("wet_starch_dough");
-    public static final Supplier<Item> VERMICELLI = plain("vermicelli");
-    public static final Supplier<Item> CORN_FLOUR = plain("corn_flour");
-    public static final Supplier<Item> LA_PI = plain("mung_bean_sheet");
-    public static final Supplier<Item> CRACKLINGS = food("cracklings", 4, 0.6F);
-    public static final Supplier<Item> COLD_NOODLE_SHEET = food("cold_noodle_sheet", 2, 0.3F);
     public static final Supplier<Item> BAKED_SWEET_POTATO = food("baked_sweet_potato", 5, 0.6F);
-    public static final Supplier<Item> SOUL_CABBAGE = food("spirit_cabbage", 4, 0.5F);
 
     /**
      * 大脸盆：空盆能放在地上（方块见 {@link ModBlocks#LARGE_BASIN}），也能扣头上（见 {@link LargeBasinItem}）。
@@ -185,42 +115,10 @@ public class ModItems {
             malletProperties()
     );
 
-    public static final Supplier<Item> HAZELNUT = selfSeedingFood("hazelnut", () -> ModBlocks.HAZELNUT_BUSH.get(), 2, 0.3F);
-    public static final Supplier<Item> HAZEL_MUSHROOM = selfSeeding("hazel_mushroom", () -> ModBlocks.HAZEL_MUSHROOM.get());
-    public static final Supplier<Item> HAZEL_MUSHROOM_COLONY = regItem(
-            "hazel_mushroom_colony",
-            properties -> new HazelMushroomColonyItem(ModBlocks.HAZEL_MUSHROOM_COLONY.get(), properties),
-            new Item.Properties());
     /** 木耳本身就是「种子」：对着带皮的橡木 / 白桦 / 深色橡木侧面右键种下段木木耳 */
-    public static final Supplier<Item> WOOD_EAR = selfSeeding("wood_ear", ModBlocks.WOOD_EAR_CROP);
-    public static final Supplier<Item> GINSENG = plain("ginseng");
-    public static final Supplier<Item> FROZEN_PEAR = food("frozen_pear", 4, 0.4F);
-    public static final Supplier<Item> HAIRTAIL = food("hairtail", 2, 0.1F);
-    public static final Supplier<Item> OYSTER = food("oyster", 2, 0.2F);
-    public static final Supplier<Item> SEA_CUCUMBER = food("sea_cucumber", 2, 0.2F);
-    public static final Supplier<Item> CHICKEN_FRAME = food("chicken_frame", 2, 0.3F);
 
-    public static final Supplier<Item> PORK_RIBS = food("pork_ribs", 3, 0.3F);
-    public static final Supplier<Item> PORK_INTESTINE = food("pork_intestine", 2, 0.2F);
-    public static final Supplier<Item> PORK_HOCK = food("pork_hock", 3, 0.3F);
-    public static final Supplier<Item> PIG_BLOOD = food("pig_blood", 1, 0.1F);
-    public static final Supplier<Item> PIG_LIVER = food("pig_liver", 2, 0.2F);
-    public static final Supplier<Item> PORK_FAT = food("pork_fat", 2, 0.4F);
-    public static final Supplier<Item> OIL_EDGE = food("oil_edge", 2, 0.3F);
-    public static final Supplier<Item> RAW_SAUSAGE = food("raw_sausage", 3, 0.3F);
-    public static final Supplier<Item> BLOOD_SAUSAGE = food("blood_sausage", 4, 0.5F);
-    public static final Supplier<Item> RICE_SAUSAGE = food("rice_sausage", 4, 0.5F);
-    public static final Supplier<Item> RED_SAUSAGE = food("red_sausage", 5, 0.6F);
-    public static final Supplier<Item> SMOKED_PORK_HOCK = food("smoked_pork_hock", 6, 0.7F);
-    public static final Supplier<Item> SMOKED_PIG_LIVER = food("smoked_pig_liver", 5, 0.5F);
-    public static final Supplier<Item> SOY_SAUCE = bottled("soy_sauce");
     public static final Supplier<Item> BRAISED_PORK_HOCK = bowlFood("braised_pork_hock", 9, 0.8F);
     public static final Supplier<Item> BRAISED_PORK_STRIPS = bowlFood("braised_pork_strips", 8, 0.7F);
-    public static final Supplier<Item> VINEGAR = bottled("vinegar");
-    public static final Supplier<Item> SOUR_WATER = bottledLiquid("sour_water");
-    public static final Supplier<Item> WHITE_VINEGAR = bottled("white_vinegar");
-    public static final Supplier<Item> FISH_SAUCE = bottled("fish_sauce");
-    public static final Supplier<Item> SHRIMP_PASTE = bottled("shrimp_paste");
 
     public static final Supplier<Item> SOY_MILK = bowlFood("soy_milk", 4, 0.4F);
     public static final Supplier<Item> OLD_STYLE_GUO_BAO_ROU =
@@ -453,57 +351,9 @@ public class ModItems {
     );
 
     public static final List<Supplier<? extends Item>> INGREDIENT_TAB_ITEMS = List.of(
-            EGGPLANT_SEEDS, GREEN_PEPPER_SEEDS, CORN_SEEDS, GREEN_BEANS_SEEDS,
-            NAPA_CABBAGE_SEEDS, SNOW_MUSTARD_SEEDS, CUCUMBER_SEEDS, RED_CHILI_SEEDS, GREEN_ONION_SEEDS, GREEN_RADISH_SEEDS,
-            GINSENG_SEEDS, BELLFLOWER_SEEDS,
-            NAPA_CABBAGE, SNOW_MUSTARD, CUCUMBER, EGGPLANT, GREEN_PEPPER, GREEN_ONION, RED_CHILI,
-            GREEN_BEANS, CORN, SWEET_POTATO, GREEN_RADISH, BELLFLOWER_ROOT,
-            PEANUT, RED_BEAN, BUCKWHEAT,
-            HAZELNUT, HAZEL_MUSHROOM, HAZEL_MUSHROOM_COLONY, WOOD_EAR, GINSENG,
-            FROZEN_PEAR,
-            PORK_RIBS, PORK_INTESTINE, PORK_HOCK, PIG_BLOOD, PIG_LIVER, PORK_FAT, OIL_EDGE, CHICKEN_FRAME,
-            SHRIMP, HAIRTAIL, OYSTER, SEA_CUCUMBER,
-            RAW_SAUSAGE, BLOOD_SAUSAGE, RICE_SAUSAGE, RED_SAUSAGE,
-            SMOKED_PORK_HOCK, SMOKED_PIG_LIVER,
-            SOUR_CABBAGE, PICKLED_SNOW_MUSTARD, SPICY_CABBAGE, PICKLED_CUCUMBER, PICKLED_CARROT, PICKLED_GREEN_RADISH,
-            SALTED_PORK, SALTED_FISH,
-            SALT, SOY_PASTE, CHILI_SAUCE, SOY_SAUCE, VINEGAR, SOUR_WATER, WHITE_VINEGAR,
-            FISH_SAUCE, SHRIMP_PASTE, CHILI_OIL, PEANUT_BUTTER, COOKING_OIL, ANIMAL_OIL,
-            SOY_PASTE_CHUNK, SOY_RESIDUE,
-            WATER_DOUGH, BUCKWHEAT_NOODLES, DRIED_TOFU, TOFU, FROZEN_TOFU, WET_STARCH_DOUGH, SWEET_POTATO_STARCH,
-            VERMICELLI, LA_PI, CORN_FLOUR, CRACKLINGS, COLD_NOODLE_SHEET, BEAN_SPROUTS, SOUR_CORN_KERNELS, ROASTED_PEANUTS, RED_BEAN_PASTE,
-            CORN_STALK,
-            LARGE_BASIN, WATER_BASIN, BRASS_BOWL, WOODEN_MALLET, BIG_IRON_POT, BIG_POT_LID, FLORAL_JACKET, ANIMAL_OIL_BLOCK_ITEM,
-            UNFIRED_VAT_BLANK, MUSIC_DISC_NORTHEAST
+            LARGE_BASIN, WATER_BASIN, BRASS_BOWL, WOODEN_MALLET, BIG_IRON_POT, BIG_POT_LID,
+            FLORAL_JACKET, ANIMAL_OIL_BLOCK_ITEM, UNFIRED_VAT_BLANK, MUSIC_DISC_NORTHEAST
     );
-
-    /** 堆肥桶：纯种子类物品，按原版种子档 0.3。 */
-    public static final List<Supplier<? extends Item>> COMPOSTABLE_SEEDS = List.of(
-            EGGPLANT_SEEDS, GREEN_PEPPER_SEEDS, CORN_SEEDS, GREEN_BEANS_SEEDS,
-            NAPA_CABBAGE_SEEDS, SNOW_MUSTARD_SEEDS, CUCUMBER_SEEDS, RED_CHILI_SEEDS,
-            GREEN_ONION_SEEDS, GREEN_RADISH_SEEDS, GINSENG_SEEDS, BELLFLOWER_SEEDS
-    );
-
-    /** 堆肥桶：作物本体及兼作种子的作物，按原版作物档 0.65。 */
-    public static final List<Supplier<? extends Item>> COMPOSTABLE_CROPS = List.of(
-            EGGPLANT, GREEN_PEPPER, CORN, GREEN_BEANS, BUCKWHEAT,
-            NAPA_CABBAGE, SNOW_MUSTARD, CUCUMBER, SWEET_POTATO, PEANUT, RED_BEAN,
-            RED_CHILI, GREEN_ONION, GREEN_RADISH, BELLFLOWER_ROOT, GINSENG,
-            HAZELNUT, HAZEL_MUSHROOM, HAZEL_MUSHROOM_COLONY, WOOD_EAR, CORN_STALK
-    );
-
-    public static final Map<String, Supplier<Item>> STORAGE_BLOCK_ITEMS = storageBlockItems();
-
-    private static Map<String, Supplier<Item>> storageBlockItems() {
-        Map<String, Supplier<Item>> map = new LinkedHashMap<>();
-        for (var entry : ModBlocks.CRATES.entrySet()) {
-            map.put(entry.getKey(), blockItem(entry.getKey(), entry.getValue()));
-        }
-        for (var entry : ModBlocks.SACKS.entrySet()) {
-            map.put(entry.getKey(), blockItem(entry.getKey(), entry.getValue()));
-        }
-        return Collections.unmodifiableMap(map);
-    }
 
     private static Supplier<Item> blockItem(String id, Supplier<? extends Block> block) {
         return regItem(id, properties -> new BlockItem(block.get(), properties), new Item.Properties());
@@ -552,7 +402,6 @@ public class ModItems {
         list.add(GRILL_RACK);
         list.add(CORN_SKEWER);
         list.add(CHILI_SKEWER);
-        list.addAll(STORAGE_BLOCK_ITEMS.values());
         list.addAll(BUILDING_BLOCK_ITEMS);
         list.addAll(GINGHAM_TABLECLOTH_ITEMS.values());
         return List.copyOf(list);
@@ -606,80 +455,13 @@ public class ModItems {
         return regItem(id, Item::new, new Item.Properties());
     }
 
-    private static Supplier<Item> bottled(String id) {
-        return regItem(id, SeasoningBottleItem::new, new Item.Properties()
-                .craftRemainder(Items.GLASS_BOTTLE)
-                .durability(SeasoningBottleItem.CAPACITY_MB));
-    }
 
-    private static Supplier<Item> bottledFood(String id) {
-        return regItem(id, SeasoningBottleItem::new,
-                new Item.Properties()
-                        .craftRemainder(Items.GLASS_BOTTLE)
-                        .food(steakFood().build())
-                        .durability(SeasoningBottleItem.CAPACITY_MB));
-    }
 
-    private static Supplier<Item> bottledFood(String id, int nutrition, float saturation) {
-        return regItem(id, SeasoningBottleItem::new,
-                new Item.Properties()
-                        .craftRemainder(Items.GLASS_BOTTLE)
-                        .food(stats(nutrition, saturation).build())
-                        .durability(SeasoningBottleItem.CAPACITY_MB));
-    }
 
-    private static Supplier<Item> bottledDrink(String id) {
-        return regItem(id, DdDrinkItem::new, new Item.Properties()
-                .craftRemainder(Items.GLASS_BOTTLE)
-                .food(foodReturning(steakFood(), Items.GLASS_BOTTLE)));
-    }
 
-    private static Supplier<Item> bottledDrink(String id, int nutrition, float saturation) {
-        return regItem(id, DdDrinkItem::new, new Item.Properties()
-                .craftRemainder(Items.GLASS_BOTTLE)
-                .food(foodReturning(stats(nutrition, saturation), Items.GLASS_BOTTLE)));
-    }
 
-    private static Supplier<Item> bottledLiquid(String id) {
-        return regItem(id, Item::new, new Item.Properties()
-                .craftRemainder(Items.GLASS_BOTTLE));
-    }
 
-    private static Supplier<Item> seasoningBowl(String id) {
-        return regItem(id, Item::new, new Item.Properties()
-                .craftRemainder(Items.BOWL));
-    }
 
-    private static Supplier<Item> selfSeeding(String id, Supplier<? extends Block> crop) {
-        return regItem(id,
-                properties -> new ItemNameBlockItem(crop.get(), properties),
-                new Item.Properties());
-    }
-
-    /** 已迁到 CRCI 的内容按注册名取，东北乐事拆分分支不再自己注册这些东西。 */
-    private static Supplier<Item> externalItem(String namespace, String path) {
-        return () -> BuiltInRegistries.ITEM.get(DdIds.of(namespace, path));
-    }
-
-    /** 单纯注册一个普通物品（不能吃）：调料、加工品原料用 */
-    private static Supplier<Item> plain(String id) {
-        return regItem(id, Item::new, new Item.Properties());
-    }
-    private static Supplier<Item> selfSeedingFood(String id, Supplier<? extends Block> crop,
-                                                      int nutrition, float saturation) {
-        return regItem(id,
-                properties -> new ItemNameBlockItem(crop.get(), properties),
-                new Item.Properties().food(stats(nutrition, saturation).build()));
-    }
-
-    /**
-     * 种子物品：右键种下对应的作物方块。
-     * 用 ItemNameBlockItem 而不是普通 BlockItem —— 否则物品名会用方块的翻译键，
-     * 显示成「大豆」而不是「大豆种子」。
-     */
-    private static Supplier<Item> seeds(String id, Supplier<? extends Block> crop) {
-        return regItem(id, properties -> new ItemNameBlockItem(crop.get(), properties), new Item.Properties());
-    }
 
     private static Supplier<Item> food(String id) {
         return regItem(id, Item::new, new Item.Properties().food(steakFood().build()));

@@ -9,7 +9,7 @@
   "ingredients": [
     {
       "type": "neoforge:components",
-      "items": "northeast_china_delight:soy_sauce",
+      "items": "chinese_regional_culinary_ingredients:soy_sauce",
       "components": {
         "minecraft:damage": 0
       },
@@ -22,7 +22,8 @@
     },
     {
       "amount": 250,
-      "id": "northeast_china_delight:soy_sauce"
+      "id": "chinese_regional_culinary_ingredients:soy_sauce"
     }
   ]
 }
+

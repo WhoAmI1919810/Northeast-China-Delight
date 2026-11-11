@@ -1,10 +1,11 @@
 {
   "values": [
-    "northeast_china_delight:ginseng",
-    "northeast_china_delight:sea_cucumber",
-    "northeast_china_delight:blood_sausage",
-    "northeast_china_delight:rice_sausage",
+    "chinese_regional_culinary_ingredients:ginseng",
+    "chinese_regional_culinary_ingredients:sea_cucumber",
+    "chinese_regional_culinary_ingredients:blood_sausage",
+    "chinese_regional_culinary_ingredients:rice_sausage",
     "minecraft:golden_apple",
     "minecraft:enchanted_golden_apple"
   ]
 }
+

@@ -16,11 +16,11 @@
         "tag": "c:foods/vermicelli"
       },
       {
-        "item": "northeast_china_delight:pork_ribs",
+        "item": "chinese_regional_culinary_ingredients:pork_ribs",
         "count": 2
       },
       {
-        "item": "northeast_china_delight:frozen_tofu"
+        "item": "chinese_regional_culinary_ingredients:frozen_tofu"
       },
       {
         "tag": "c:crops/napa_cabbage"
@@ -52,3 +52,4 @@
     "experience": 1.0
   }
 }
+

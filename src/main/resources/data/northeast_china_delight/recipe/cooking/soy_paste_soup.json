@@ -7,7 +7,7 @@
   "experience": 0.35,
   "ingredients": [
     {
-      "item": "northeast_china_delight:soy_paste"
+      "item": "chinese_regional_culinary_ingredients:soy_paste"
     },
     {
       "item": "minecraft:water_bucket"
@@ -22,3 +22,4 @@
     "id": "northeast_china_delight:soy_paste_soup"
   }
 }
+

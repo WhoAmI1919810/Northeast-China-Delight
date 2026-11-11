@@ -1,11 +1,11 @@
 {
   "values": [
     "chinese_regional_culinary_ingredients:soybean",
-    "northeast_china_delight:red_bean",
-    "northeast_china_delight:tofu",
-    "northeast_china_delight:dried_tofu",
-    "northeast_china_delight:frozen_tofu",
-    "northeast_china_delight:red_bean_paste",
+    "chinese_regional_culinary_ingredients:red_bean",
+    "chinese_regional_culinary_ingredients:tofu",
+    "chinese_regional_culinary_ingredients:dried_tofu",
+    "chinese_regional_culinary_ingredients:frozen_tofu",
+    "chinese_regional_culinary_ingredients:red_bean_paste",
     {
       "id": "#c:crops/soybean",
       "required": false
@@ -32,3 +32,4 @@
     }
   ]
 }
+

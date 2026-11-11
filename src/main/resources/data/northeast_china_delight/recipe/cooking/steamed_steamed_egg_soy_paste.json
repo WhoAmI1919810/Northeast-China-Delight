@@ -13,7 +13,7 @@
       "tag": "c:eggs"
     },
     {
-      "item": "northeast_china_delight:soy_paste"
+      "item": "chinese_regional_culinary_ingredients:soy_paste"
     }
   ],
   "recipe_book_tab": "meals",
@@ -22,3 +22,4 @@
     "id": "northeast_china_delight:steamed_egg_soy_paste"
   }
 }
+

@@ -23,7 +23,7 @@
           "type": "exact",
           "count": 3
         },
-        "result": "northeast_china_delight:salted_fish"
+        "result": "chinese_regional_culinary_ingredients:salted_fish"
       },
       {
         "ingredient": {
@@ -43,7 +43,7 @@
     "display_models": [
       {
         "ingredient": {
-          "item": "northeast_china_delight:salted_fish"
+          "item": "chinese_regional_culinary_ingredients:salted_fish"
         },
         "model": "northeast_china_delight:block/vat/salted_fish"
       },
@@ -61,7 +61,7 @@
       },
       {
         "ingredient": {
-          "item": "northeast_china_delight:hairtail"
+          "item": "chinese_regional_culinary_ingredients:hairtail"
         },
         "model": "northeast_china_delight:block/vat/hairtail"
       },
@@ -74,3 +74,4 @@
     ]
   }
 }
+

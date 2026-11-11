@@ -1,5 +1,7 @@
 package com.gunmu.northeast_china_delight.gametest;
 
+import com.gunmu.chinese_regional_culinary_ingredients.item.CrciItems;
+
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.gunmu.northeast_china_delight.NortheastChinaDelight;
@@ -101,23 +103,23 @@ public final class PoundGameTests {
     @GameTest(template = "empty")
     public static void resultContainerDecodes(GameTestHelper helper) {
         PoundingRecipes.Recipe recipe = decode(
-                "{\"input\":{\"item\":\"northeast_china_delight:roasted_peanuts\"},"
+                "{\"input\":{\"item\":\"chinese_regional_culinary_ingredients:roasted_peanuts\"},"
                         + "\"tool\":{\"item\":\"northeast_china_delight:wooden_mallet\"},"
                         + "\"pound_times\":3,"
-                        + "\"result\":{\"item\":\"northeast_china_delight:cooking_oil\",\"count\":1},"
+                        + "\"result\":{\"item\":\"chinese_regional_culinary_ingredients:cooking_oil\",\"count\":1},"
                         + "\"result_mb\":50,"
                         + "\"result_container\":{\"item\":\"minecraft:glass_bottle\"}}",
                 DdIds.of(NortheastChinaDelight.MODID, "pounding/test_result_container"));
         if (recipe == null || recipe.resultContainer() == null
                 || !recipe.resultContainer().is(Items.GLASS_BOTTLE) || recipe.resultContainer().getCount() != 1
-                || recipe.resultMb() != 50 || !recipe.liquidProduct().is(ModItems.COOKING_OIL.get())) {
+                || recipe.resultMb() != 50 || !recipe.liquidProduct().is(CrciItems.COOKING_OIL.get())) {
             helper.fail("result_container / result_mb should decode to 50 mB of cooking oil in a glass bottle");
             return;
         }
         boolean rejected = false;
         try {
-            decode("{\"input\":{\"item\":\"northeast_china_delight:roasted_peanuts\"},"
-                            + "\"result\":{\"item\":\"northeast_china_delight:cooking_oil\",\"count\":1},"
+            decode("{\"input\":{\"item\":\"chinese_regional_culinary_ingredients:roasted_peanuts\"},"
+                            + "\"result\":{\"item\":\"chinese_regional_culinary_ingredients:cooking_oil\",\"count\":1},"
                             + "\"result_mb\":50}",
                     DdIds.of(NortheastChinaDelight.MODID, "pounding/test_mb_without_container"));
         } catch (RuntimeException expected) {
@@ -268,7 +270,7 @@ public final class PoundGameTests {
             return;
         }
         List<PoundingRecipes.Recipe> recipes = List.of(withHoney, peanutOnly);
-        ItemStack peanut = new ItemStack(ModItems.ROASTED_PEANUTS.get());
+        ItemStack peanut = new ItemStack(CrciItems.ROASTED_PEANUTS.get());
         ItemStack honey = new ItemStack(Items.HONEY_BOTTLE);
 
         PoundingRecipes.Fit onlyPeanut = PoundingRecipes.choose(recipes, List.of(peanut));
@@ -306,7 +308,7 @@ public final class PoundGameTests {
                         + "{\"ingredient\":{\"item\":\"minecraft:wheat\"},\"count\":1}],"
                         + "\"tool\":{\"item\":\"northeast_china_delight:wooden_mallet\"},"
                         + "\"stage_models\":[\"northeast_china_delight:block/wooden_mortar_1\"],"
-                        + "\"finished_liquid\":\"northeast_china_delight:vegetable_oil\","
+                        + "\"finished_liquid\":\"chinese_regional_culinary_ingredients:vegetable_oil\","
                         + "\"result\":{\"item\":\"minecraft:paper\",\"count\":1}}",
                 DdIds.of(NortheastChinaDelight.MODID, "pounding/test_liquid"));
         if (recipe == null) {
@@ -334,7 +336,7 @@ public final class PoundGameTests {
 
     private static String sharedPeanutJson(boolean withHoney) {
         String honey = withHoney ? ",{\"ingredient\":{\"item\":\"minecraft:honey_bottle\"},\"count\":1}" : "";
-        return "{\"inputs\":[{\"ingredient\":{\"item\":\"northeast_china_delight:roasted_peanuts\"},\"count\":1}"
+        return "{\"inputs\":[{\"ingredient\":{\"item\":\"chinese_regional_culinary_ingredients:roasted_peanuts\"},\"count\":1}"
                 + honey + "],"
                 + "\"tool\":{\"item\":\"northeast_china_delight:wooden_mallet\"},"
                 + "\"pound_times\":3,"

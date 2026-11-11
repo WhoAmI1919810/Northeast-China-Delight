@@ -3,7 +3,7 @@
   "category": "misc",
   "ingredients": [
     {
-      "item": "northeast_china_delight:pickled_cucumber"
+      "item": "chinese_regional_culinary_ingredients:pickled_cucumber"
     },
     {
       "tag": "c:foods/kimchi"
@@ -20,3 +20,4 @@
     "id": "northeast_china_delight:stuffed_cucumber_pickle"
   }
 }
+

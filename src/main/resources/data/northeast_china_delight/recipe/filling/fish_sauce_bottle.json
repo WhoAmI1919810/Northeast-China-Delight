@@ -13,12 +13,13 @@
     {
       "type": "neoforge:single",
       "amount": 250,
-      "fluid": "northeast_china_delight:fish_sauce"
+      "fluid": "chinese_regional_culinary_ingredients:fish_sauce"
     }
   ],
   "results": [
     {
-      "id": "northeast_china_delight:fish_sauce"
+      "id": "chinese_regional_culinary_ingredients:fish_sauce"
     }
   ]
 }
+

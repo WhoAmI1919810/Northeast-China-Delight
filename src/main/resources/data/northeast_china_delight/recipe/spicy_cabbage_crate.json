@@ -8,11 +8,12 @@
   ],
   "key": {
     "X": {
-      "item": "northeast_china_delight:spicy_cabbage"
+      "item": "chinese_regional_culinary_ingredients:spicy_cabbage"
     }
   },
   "result": {
     "count": 1,
-    "id": "northeast_china_delight:spicy_cabbage_crate"
+    "id": "chinese_regional_culinary_ingredients:spicy_cabbage_crate"
   }
 }
+

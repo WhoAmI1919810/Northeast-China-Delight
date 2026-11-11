@@ -6,7 +6,7 @@
       "item": "minecraft:bowl"
     },
     {
-      "item": "northeast_china_delight:mung_bean_sheet"
+      "item": "chinese_regional_culinary_ingredients:mung_bean_sheet"
     },
     {
       "tag": "c:foods/seasonings/peanut_butter"
@@ -23,3 +23,4 @@
     "id": "northeast_china_delight:mung_bean_sheet_salad"
   }
 }
+

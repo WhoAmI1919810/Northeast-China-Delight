@@ -26,7 +26,7 @@
               "ingredient": {
                 "tag": "c:crops/napa_cabbage"
               },
-              "result": "northeast_china_delight:spicy_cabbage"
+              "result": "chinese_regional_culinary_ingredients:spicy_cabbage"
             }
           ]
         }
@@ -45,7 +45,7 @@
       },
       {
         "ingredient": {
-          "item": "northeast_china_delight:chili_sauce"
+          "item": "chinese_regional_culinary_ingredients:chili_sauce"
         },
         "fate": "ABSORB",
         "bounds": {
@@ -82,13 +82,13 @@
     "display_models": [
       {
         "ingredient": {
-          "item": "northeast_china_delight:spicy_cabbage"
+          "item": "chinese_regional_culinary_ingredients:spicy_cabbage"
         },
         "model": "northeast_china_delight:block/vat/spicy_cabbage"
       },
       {
         "ingredient": {
-          "item": "northeast_china_delight:napa_cabbage"
+          "item": "chinese_regional_culinary_ingredients:napa_cabbage"
         },
         "model": "northeast_china_delight:block/vat/napa_cabbage"
       },
@@ -101,3 +101,4 @@
     ]
   }
 }
+

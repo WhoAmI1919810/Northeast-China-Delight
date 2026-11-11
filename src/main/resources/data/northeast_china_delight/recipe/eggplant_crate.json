@@ -8,11 +8,12 @@
   ],
   "key": {
     "X": {
-      "item": "northeast_china_delight:eggplant"
+      "item": "chinese_regional_culinary_ingredients:eggplant"
     }
   },
   "result": {
     "count": 1,
-    "id": "northeast_china_delight:eggplant_crate"
+    "id": "chinese_regional_culinary_ingredients:eggplant_crate"
   }
 }
+

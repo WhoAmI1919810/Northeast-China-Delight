@@ -1,7 +1,7 @@
 {
   "values": [
-    "northeast_china_delight:green_radish",
-    "northeast_china_delight:bellflower_root",
+    "chinese_regional_culinary_ingredients:green_radish",
+    "chinese_regional_culinary_ingredients:bellflower_root",
     "minecraft:carrot",
     "minecraft:golden_carrot",
     "minecraft:beetroot",
@@ -23,3 +23,4 @@
     }
   ]
 }
+

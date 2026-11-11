@@ -3,7 +3,7 @@
   "category": "misc",
   "ingredients": [
     {
-      "item": "northeast_china_delight:pork_intestine"
+      "item": "chinese_regional_culinary_ingredients:pork_intestine"
     },
     {
       "tag": "c:foods/raw_pork"
@@ -11,6 +11,7 @@
   ],
   "result": {
     "count": 1,
-    "id": "northeast_china_delight:raw_sausage"
+    "id": "chinese_regional_culinary_ingredients:raw_sausage"
   }
 }
+

@@ -8,11 +8,12 @@
   ],
   "key": {
     "X": {
-      "item": "northeast_china_delight:green_pepper"
+      "item": "chinese_regional_culinary_ingredients:green_pepper"
     }
   },
   "result": {
     "count": 1,
-    "id": "northeast_china_delight:green_pepper_crate"
+    "id": "chinese_regional_culinary_ingredients:green_pepper_crate"
   }
 }
+

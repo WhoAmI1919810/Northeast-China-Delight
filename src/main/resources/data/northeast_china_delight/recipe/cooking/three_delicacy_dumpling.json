@@ -12,7 +12,7 @@
       "tag": "c:foods/shrimp"
     },
     {
-      "item": "northeast_china_delight:wood_ear"
+      "item": "chinese_regional_culinary_ingredients:wood_ear"
     },
     {
       "tag": "c:foods/dough/wheat"
@@ -24,3 +24,4 @@
     "id": "northeast_china_delight:three_delicacy_dumpling"
   }
 }
+

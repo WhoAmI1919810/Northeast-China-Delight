@@ -12,7 +12,7 @@
       "water_min": 1,
       "water_max": 3,
       "water_after": "CLEAR",
-      "product": "northeast_china_delight:sour_water",
+      "product": "chinese_regional_culinary_ingredients:sour_water",
       "product_mb": 1000,
       "product_per_layer": true
     },
@@ -50,37 +50,37 @@
     "display_models": [
       {
         "ingredient": {
-          "item": "northeast_china_delight:sour_cabbage"
+          "item": "chinese_regional_culinary_ingredients:sour_cabbage"
         },
         "model": "northeast_china_delight:block/vat/sour_cabbage"
       },
       {
         "ingredient": {
-          "item": "northeast_china_delight:pickled_snow_mustard"
+          "item": "chinese_regional_culinary_ingredients:pickled_snow_mustard"
         },
         "model": "northeast_china_delight:block/vat/pickled_snow_mustard"
       },
       {
         "ingredient": {
-          "item": "northeast_china_delight:pickled_cucumber"
+          "item": "chinese_regional_culinary_ingredients:pickled_cucumber"
         },
         "model": "northeast_china_delight:block/vat/pickled_cucumber"
       },
       {
         "ingredient": {
-          "item": "northeast_china_delight:pickled_carrot"
+          "item": "chinese_regional_culinary_ingredients:pickled_carrot"
         },
         "model": "northeast_china_delight:block/vat/pickled_carrot"
       },
       {
         "ingredient": {
-          "item": "northeast_china_delight:pickled_green_radish"
+          "item": "chinese_regional_culinary_ingredients:pickled_green_radish"
         },
         "model": "northeast_china_delight:block/vat/pickled_green_radish"
       },
       {
         "ingredient": {
-          "item": "northeast_china_delight:napa_cabbage"
+          "item": "chinese_regional_culinary_ingredients:napa_cabbage"
         },
         "model": "northeast_china_delight:block/vat/napa_cabbage"
       },
@@ -92,13 +92,13 @@
       },
       {
         "ingredient": {
-          "item": "northeast_china_delight:snow_mustard"
+          "item": "chinese_regional_culinary_ingredients:snow_mustard"
         },
         "model": "northeast_china_delight:block/vat/snow_mustard"
       },
       {
         "ingredient": {
-          "item": "northeast_china_delight:cucumber"
+          "item": "chinese_regional_culinary_ingredients:cucumber"
         },
         "model": "northeast_china_delight:block/vat/cucumber"
       },
@@ -110,7 +110,7 @@
       },
       {
         "ingredient": {
-          "item": "northeast_china_delight:green_radish"
+          "item": "chinese_regional_culinary_ingredients:green_radish"
         },
         "model": "northeast_china_delight:block/vat/green_radish"
       },
@@ -141,3 +141,4 @@
     ]
   }
 }
+

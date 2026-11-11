@@ -8,10 +8,10 @@
   "type": "create:compacting",
   "ingredients": [
     {
-      "item": "northeast_china_delight:roasted_peanuts"
+      "item": "chinese_regional_culinary_ingredients:roasted_peanuts"
     },
     {
-      "item": "northeast_china_delight:roasted_peanuts"
+      "item": "chinese_regional_culinary_ingredients:roasted_peanuts"
     },
     {
       "type": "neoforge:single",
@@ -26,3 +26,4 @@
     }
   ]
 }
+
