@@ -2,6 +2,8 @@ package com.gunmu.northeast_china_delight.gametest;
 
 import com.gunmu.chinese_regional_culinary_ingredients.item.CrciItems;
 import com.gunmu.chinese_regional_culinary_ingredients.region.CrciAvailability;
+import com.gunmu.chinese_regional_culinary_ingredients.region.CrciRegionProfile;
+import com.gunmu.chinese_regional_culinary_ingredients.region.CrciRegionProfiles;
 import com.gunmu.chinese_regional_culinary_ingredients.region.CrciUseSite;
 import com.gunmu.chinese_regional_culinary_ingredients.worldgen.CrciFarmRegistry;
 import com.gunmu.chinese_regional_culinary_ingredients.worldgen.RegionalFarmCropProcessor;
@@ -14,6 +16,8 @@ import com.gunmu.northeast_china_delight.item.ModItems;
 import com.gunmu.northeast_china_delight.loot.ButcherLootModifier;
 import com.gunmu.northeast_china_delight.loot.ChestLootConfigModifier;
 import com.gunmu.northeast_china_delight.loot.FishermanLootModifier;
+import com.gunmu.northeast_china_delight.loot.NortheastFishingLootModifier;
+import com.gunmu.northeast_china_delight.loot.PigOffalLootModifier;
 import com.gunmu.northeast_china_delight.loot.StructureSeedsLootModifier;
 import com.gunmu.northeast_china_delight.loot.VillageSeedsLootModifier;
 import com.gunmu.northeast_china_delight.util.DdIds;
@@ -376,6 +380,46 @@ public final class GenerationConfigGameTests {
                 helper.assertTrue(loot.size() == 4, "不得影响实体、方块或钓鱼掉落：" + tableId);
             }
         });
+        helper.succeed();
+    }
+
+    @GameTest(template = "empty")
+    public static void naturalDropsRespectEnabledIngredients(GameTestHelper helper) {
+        CrciRegionProfiles.Snapshot previous = CrciRegionProfiles.snapshot();
+        helper.setBlock(BlockPos.ZERO, Blocks.WATER);
+        try {
+            JsonObject profileJson = JsonParser.parseString("""
+                    {
+                      "schema": 1,
+                      "owner": "chinese_regional_culinary_ingredients",
+                      "enabled_content": [
+                        "chinese_regional_culinary_ingredients:soybean"
+                      ]
+                    }
+                    """).getAsJsonObject();
+            CrciRegionProfile profile = CrciRegionProfile.parse(
+                    DdIds.parse("chinese_regional_culinary_ingredients:profile"), profileJson).orElseThrow();
+            CrciRegionProfiles.replace(List.of(profile), List.of());
+
+            var pigOffal = new PigOffalLootModifier(new LootItemCondition[0]);
+            for (int sample = 0; sample < 64; sample++) {
+                var loot = pigOffal.apply(new ObjectArrayList<>(), context(helper, "minecraft:entities/pig", 1000 + sample));
+                helper.assertTrue(loot.isEmpty(), "Disabled pig offal must not drop");
+            }
+
+            var fishing = new NortheastFishingLootModifier(new LootItemCondition[0]);
+            for (int sample = 0; sample < 64; sample++) {
+                var loot = new ObjectArrayList<ItemStack>();
+                loot.add(new ItemStack(Items.COD));
+                fishing.apply(loot, context(helper, "minecraft:gameplay/fishing", 2000 + sample));
+                helper.assertTrue(loot.stream().noneMatch(stack ->
+                                BuiltInRegistries.ITEM.getKey(stack.getItem()).getNamespace()
+                                        .equals("chinese_regional_culinary_ingredients")),
+                        "Disabled fishing ingredients must not drop");
+            }
+        } finally {
+            CrciRegionProfiles.replace(previous.profiles(), previous.trades());
+        }
         helper.succeed();
     }
 

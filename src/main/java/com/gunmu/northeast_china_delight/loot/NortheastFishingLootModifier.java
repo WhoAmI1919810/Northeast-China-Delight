@@ -1,6 +1,7 @@
 package com.gunmu.northeast_china_delight.loot;
 
 import com.gunmu.chinese_regional_culinary_ingredients.item.CrciItems;
+import com.gunmu.chinese_regional_culinary_ingredients.region.CrciAvailability;
 
 import com.gunmu.northeast_china_delight.item.ModItems;
 import com.mojang.serialization.Codec;
@@ -121,7 +122,11 @@ public class NortheastFishingLootModifier extends LootModifier
         {
             table = GENERAL;
         }
-        generatedLoot.set(fishIndex, roll(context, table));
+        ItemStack replacement = roll(context, table);
+        if (!replacement.isEmpty())
+        {
+            generatedLoot.set(fishIndex, replacement);
+        }
         return generatedLoot;
     }
 
@@ -130,18 +135,29 @@ public class NortheastFishingLootModifier extends LootModifier
         int total = 0;
         for (Entry entry : table)
         {
-            total += entry.weight;
+            if (CrciAvailability.isContentEnabled(entry.item.get().asItem()))
+            {
+                total += entry.weight;
+            }
+        }
+        if (total <= 0)
+        {
+            return ItemStack.EMPTY;
         }
         int roll = context.getRandom().nextInt(total);
         for (Entry entry : table)
         {
+            if (!CrciAvailability.isContentEnabled(entry.item.get().asItem()))
+            {
+                continue;
+            }
             roll -= entry.weight;
             if (roll < 0)
             {
                 return new ItemStack(entry.item.get());
             }
         }
-        return new ItemStack(Items.COD);
+        return ItemStack.EMPTY;
     }
 
     private static boolean isRiverNearOcean(ServerLevel level, BlockPos surface)
