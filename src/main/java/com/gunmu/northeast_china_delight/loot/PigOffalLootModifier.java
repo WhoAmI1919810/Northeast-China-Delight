@@ -1,6 +1,7 @@
 package com.gunmu.northeast_china_delight.loot;
 
 import com.gunmu.chinese_regional_culinary_ingredients.item.CrciItems;
+import com.gunmu.chinese_regional_culinary_ingredients.region.CrciAvailability;
 
 import com.gunmu.northeast_china_delight.item.ModItems;
 import com.mojang.serialization.Codec;
@@ -80,6 +81,7 @@ public class PigOffalLootModifier extends LootModifier {
         // 着火的猪：换成熏制版本
         var thisEntity = context.getParamOrNull(net.minecraft.world.level.storage.loot.parameters.LootContextParams.THIS_ENTITY);
         boolean onFire = thisEntity != null && thisEntity.isOnFire();
+        candidates.removeIf(item -> !CrciAvailability.isContentEnabled(dropFor(item, onFire)));
 
         // 打乱顺序，保证不同副产物随机出
         for (int i = candidates.size() - 1; i > 0; i--) {
@@ -95,12 +97,16 @@ public class PigOffalLootModifier extends LootModifier {
                 break;
             }
             if (random.nextFloat() < chance) {
-                Item drop = onFire ? getSmokedMap().getOrDefault(item, item) : item;
+                Item drop = dropFor(item, onFire);
                 generatedLoot.add(new ItemStack(drop));
                 kinds++;
             }
         }
         return generatedLoot;
+    }
+
+    private static Item dropFor(Item item, boolean onFire) {
+        return onFire ? getSmokedMap().getOrDefault(item, item) : item;
     }
 
     /** 获取攻击者的抢夺附魔等级 */
