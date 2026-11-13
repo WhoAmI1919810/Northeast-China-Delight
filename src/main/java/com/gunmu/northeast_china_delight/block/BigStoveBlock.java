@@ -1,5 +1,6 @@
 package com.gunmu.northeast_china_delight.block;
 
+import com.gunmu.northeast_china_delight.advancement.ModAdvancements;
 import com.gunmu.northeast_china_delight.item.ModItems;
 import com.gunmu.northeast_china_delight.util.DdIds;
 import com.gunmu.northeast_china_delight.util.DdStacks;
@@ -11,6 +12,7 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.RandomSource;
 import net.minecraft.util.StringRepresentable;
 import net.minecraft.world.InteractionHand;
@@ -340,6 +342,9 @@ public class BigStoveBlock extends Block implements EntityBlock, WorldlyContaine
                 DdStacks.consume(held, 1, player);
                 level.playSound(null, pos, SoundEvents.NETHERITE_BLOCK_PLACE, SoundSource.BLOCKS, 1.0F, 0.8F);
                 level.gameEvent(player, GameEvent.BLOCK_CHANGE, pos);
+                if (player instanceof ServerPlayer serverPlayer) {
+                    ModAdvancements.award(serverPlayer, ModAdvancements.STOKE_STOVE, "stoke");
+                }
             }
             return InteractionResult.sidedSuccess(level.isClientSide);
         }

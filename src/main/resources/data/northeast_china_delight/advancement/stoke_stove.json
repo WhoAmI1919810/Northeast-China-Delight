@@ -1,0 +1,5 @@
+{
+  "parent": "northeast_china_delight:root",
+  "display": {"icon": {"id": "northeast_china_delight:big_iron_pot"}, "title": {"translate": "advancements.northeast_china_delight.stoke_stove.title"}, "description": {"translate": "advancements.northeast_china_delight.stoke_stove.description"}, "frame": "task", "show_toast": true, "announce_to_chat": true},
+  "criteria": {"stoke": {"trigger": "minecraft:impossible"}}
+}

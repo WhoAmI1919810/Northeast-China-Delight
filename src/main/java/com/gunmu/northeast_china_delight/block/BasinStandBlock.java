@@ -1,10 +1,12 @@
 package com.gunmu.northeast_china_delight.block;
 
+import com.gunmu.northeast_china_delight.advancement.ModAdvancements;
 import com.gunmu.northeast_china_delight.item.ModItems;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.stats.Stats;
@@ -130,6 +132,9 @@ public class BasinStandBlock extends FacingDecorBlock implements EntityBlock {
      */
     private static InteractionResult wash(BlockState state, Level level, BlockPos pos, Player player) {
         if (level instanceof ServerLevel server) {
+            if (player instanceof ServerPlayer serverPlayer) {
+                ModAdvancements.award(serverPlayer, ModAdvancements.WASH_FACE, "wash");
+            }
             double x = pos.getX() + 0.5;
             double y = pos.getY() + 0.75;
             double z = pos.getZ() + 0.5;
