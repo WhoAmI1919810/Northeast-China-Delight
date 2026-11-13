@@ -52,6 +52,8 @@ public class BigPotBlockEntity extends BlockEntity {
     private List<ItemStack> merged;
     @Nullable
     private ResourceLocation cooking;
+    /** 这一锅谜之炖菜煮好时是否满足「三种效果 + 三种调料」挑战；盛出时发放进度 */
+    private boolean challengeMysteryStew;
     /** 盖上锅盖后还要等几刻才真正开煮；这 3 秒里揭盖可以反悔。0 = 不在等待 */
     private int startDelay;
     /** 煮了多少：按不盖锅盖的时长算的刻数（盖着锅盖每刻多走一些，见 {@link #tickCooking}） */
@@ -318,6 +320,16 @@ public class BigPotBlockEntity extends BlockEntity {
         return container;
     }
 
+    /** 取走挑战标记：盛出第一份时发一次进度，之后不再重复 */
+    public boolean takeChallengeMysteryStew() {
+        boolean challenge = challengeMysteryStew;
+        if (challenge) {
+            challengeMysteryStew = false;
+            setChanged();
+        }
+        return challenge;
+    }
+
     /** 本次烹饪的成品（等待、烹饪、煮好没盛完都算）；Jade 用它显示菜名 */
     public ItemStack displayDish() {
         return displayDish;
@@ -479,7 +491,7 @@ public class BigPotBlockEntity extends BlockEntity {
     /**
      * 煮好了：料清空、液体全没了（水都煮进菜里，2026-11-03 用户：煮完锅里不该再有水位），锅里换成一锅菜
      */
-    public void finish(ItemStack dish, ItemStack serveWith, float xpPerServing) {
+    public void finish(ItemStack dish, ItemStack serveWith, float xpPerServing, boolean challengeMysteryStew) {
         layers.clear();
         liquidMb = 0;
         liquid = Fluids.EMPTY;
@@ -488,6 +500,7 @@ public class BigPotBlockEntity extends BlockEntity {
         container = serveWith.isEmpty() ? ItemStack.EMPTY : serveWith.copyWithCount(1);
         displayDish = dish.copyWithCount(1);
         experience = xpPerServing;
+        this.challengeMysteryStew = challengeMysteryStew;
         finishedAt = level != null ? level.getGameTime() : 0;
         cooking = null;
         startDelay = 0;
@@ -509,6 +522,7 @@ public class BigPotBlockEntity extends BlockEntity {
             container = ItemStack.EMPTY;
             servings = 0;
             displayDish = ItemStack.EMPTY;
+            challengeMysteryStew = false;
         }
         sync();
         return dish;
@@ -544,6 +558,7 @@ public class BigPotBlockEntity extends BlockEntity {
         servings = 0;
         displayDish = ItemStack.EMPTY;
         finishedAt = -1;
+        challengeMysteryStew = false;
         changed();
     }
 
@@ -621,6 +636,9 @@ public class BigPotBlockEntity extends BlockEntity {
             ItemStack.CODEC.encodeStart(ops, result).result().ifPresent(saved -> tag.put("Result", saved));
             tag.putInt("Servings", servings);
             tag.putFloat("Experience", experience);
+            if (challengeMysteryStew) {
+                tag.putBoolean("ChallengeMysteryStew", true);
+            }
             if (finishedAt >= 0) {
                 tag.putLong("FinishedAt", finishedAt);
             }
@@ -699,6 +717,7 @@ public class BigPotBlockEntity extends BlockEntity {
                 ? ItemStack.CODEC.parse(ops, tag.get("Result")).result().orElse(ItemStack.EMPTY)
                 : ItemStack.EMPTY;
         servings = result.isEmpty() ? 0 : tag.getInt("Servings");
+        challengeMysteryStew = !result.isEmpty() && tag.getBoolean("ChallengeMysteryStew");
         experience = tag.getFloat("Experience");
         finishedAt = !result.isEmpty() && tag.contains("FinishedAt") ? tag.getLong("FinishedAt") : -1;
         container = tag.contains("Container")

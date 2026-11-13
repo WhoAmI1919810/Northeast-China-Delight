@@ -1,0 +1,5 @@
+{
+  "parent": "northeast_china_delight:large_basin",
+  "display": {"icon": {"id": "northeast_china_delight:hand_pump"}, "title": {"translate": "advancements.northeast_china_delight.pump_water.title"}, "description": {"translate": "advancements.northeast_china_delight.pump_water.description"}, "frame": "task", "show_toast": true, "announce_to_chat": true},
+  "criteria": {"pump": {"trigger": "minecraft:impossible"}}
+}

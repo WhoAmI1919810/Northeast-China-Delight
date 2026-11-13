@@ -1,5 +1,5 @@
 {
-  "parent": "northeast_china_delight:visit_all_yards",
+  "parent": "northeast_china_delight:northeast_yard",
   "display": {
     "icon": {
       "id": "northeast_china_delight:music_disc_northeast"
@@ -10,7 +10,7 @@
     "description": {
       "translate": "advancements.northeast_china_delight.home_voice.description"
     },
-    "frame": "challenge",
+    "frame": "goal",
     "show_toast": true,
     "announce_to_chat": true,
     "hidden": false

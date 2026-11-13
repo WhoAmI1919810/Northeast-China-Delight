@@ -32,6 +32,14 @@ public final class ModAdvancements
     public static final ResourceLocation MACE_POUND = id("mace_pound");
     /** 挨户串门——所有种类的东北小院都进过一遍（判据一条对一个院子模板） */
     public static final ResourceLocation VISIT_ALL_YARDS = id("visit_all_yards");
+    /** 支锅起灶——在大灶上放一口大铁锅 */
+    public static final ResourceLocation STOKE_STOVE = id("stoke_stove");
+    /** 要不还是下点挂面……？——煮出三种效果、三种调料的谜之炖菜并盛出 */
+    public static final ResourceLocation MYSTERY_STEW_FEAST = id("mystery_stew_feast");
+    /** 压水井取水——从压水井里接到水 */
+    public static final ResourceLocation PUMP_WATER = id("pump_water");
+    /** 洗把脸——在放好水盆的脸盆架上洗脸 */
+    public static final ResourceLocation WASH_FACE = id("wash_face");
 
     private ModAdvancements()
     {

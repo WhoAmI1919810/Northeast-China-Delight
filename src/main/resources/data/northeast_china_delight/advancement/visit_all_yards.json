@@ -1,5 +1,5 @@
 {
-  "parent": "northeast_china_delight:northeast_yard",
+  "parent": "northeast_china_delight:home_voice",
   "display": {
     "icon": {
       "id": "northeast_china_delight:corn_skewer"
@@ -24,6 +24,12 @@
     },
     "livestock": {
       "trigger": "minecraft:impossible"
+    },
+    "tiled_house": {
+      "trigger": "minecraft:impossible"
+    },
+    "long_house": {
+      "trigger": "minecraft:impossible"
     }
   },
   "requirements": [
@@ -35,6 +41,12 @@
     ],
     [
       "livestock"
+    ],
+    [
+      "tiled_house"
+    ],
+    [
+      "long_house"
     ]
   ]
 }

@@ -1,0 +1,5 @@
+{
+  "parent": "northeast_china_delight:stoke_stove",
+  "display": {"icon": {"id": "northeast_china_delight:mystery_stew"}, "title": {"translate": "advancements.northeast_china_delight.mystery_stew_feast.title"}, "description": {"translate": "advancements.northeast_china_delight.mystery_stew_feast.description"}, "frame": "challenge", "show_toast": true, "announce_to_chat": true, "hidden": true},
+  "criteria": {"cook": {"trigger": "minecraft:impossible"}}
+}

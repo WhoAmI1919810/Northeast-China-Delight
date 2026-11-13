@@ -1,9 +1,11 @@
 package com.gunmu.northeast_china_delight.block;
 
+import com.gunmu.northeast_china_delight.advancement.ModAdvancements;
 import com.gunmu.northeast_china_delight.crafting.BigPotRecipe;
 import com.gunmu.northeast_china_delight.crafting.BigPotRecipes;
 import com.gunmu.northeast_china_delight.crafting.MysteryStew;
 import com.gunmu.northeast_china_delight.item.ModItems;
+import com.gunmu.northeast_china_delight.item.MysteryStewEffects;
 import com.gunmu.northeast_china_delight.item.SeasoningBottleItem;
 import com.gunmu.northeast_china_delight.particle.ModParticles;
 import net.minecraft.core.BlockPos;
@@ -12,6 +14,7 @@ import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
@@ -475,7 +478,11 @@ public final class BigPotCooking {
             return;
         }
         float surface = BigPotBlockEntity.liquidSurfaceY(Math.max(pot.liquidMb(), BUCKET_MB));
-        pot.finish(plan.result(), plan.container(), plan.experience());
+        boolean challengeMysteryStew = plan.id().equals(MysteryStew.ID)
+                && plan.result().is(ModItems.MYSTERY_STEW.get())
+                && pot.seasoningKinds() >= 3
+                && MysteryStewEffects.read(plan.result()).size() >= MysteryStew.KINDS_GIVEN;
+        pot.finish(plan.result(), plan.container(), plan.experience(), challengeMysteryStew);
         level.playSound(null, pos, SoundEvents.BREWING_STAND_BREW, SoundSource.BLOCKS, 1.0F, 0.8F);
         // 煮好了：像骨粉催熟那样冒一阵绿色粒子
         if (level instanceof ServerLevel server) {
@@ -648,12 +655,16 @@ public final class BigPotCooking {
     }
 
     private static void serve(BigPotBlockEntity pot, Level level, BlockPos pos, BlockState state, Player player) {
+        boolean challengeMysteryStew = pot.takeChallengeMysteryStew();
         float experience = pot.experience();
         ItemStack dish = pot.serve();
         if (dish.isEmpty()) {
             return;
         }
         give(player, dish);
+        if (challengeMysteryStew && dish.is(ModItems.MYSTERY_STEW.get()) && player instanceof ServerPlayer serverPlayer) {
+            ModAdvancements.award(serverPlayer, ModAdvancements.MYSTERY_STEW_FEAST, "cook");
+        }
         level.playSound(null, pos, SoundEvents.BUCKET_FILL, SoundSource.BLOCKS, 0.8F, 1.2F);
         if (experience > 0.0F && level instanceof ServerLevel server) {
             int xp = Mth.floor(experience);

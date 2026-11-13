@@ -1,0 +1,5 @@
+{
+  "parent": "northeast_china_delight:refreshing",
+  "display": {"icon": {"id": "northeast_china_delight:baked_sweet_potato"}, "title": {"translate": "advancements.northeast_china_delight.sweet_taste.title"}, "description": {"translate": "advancements.northeast_china_delight.sweet_taste.description"}, "frame": "task", "show_toast": true, "announce_to_chat": true},
+  "criteria": {"eat": {"trigger": "minecraft:consume_item", "conditions": {"item": {"items": ["northeast_china_delight:red_bean_paste", "northeast_china_delight:candied_sweet_potato", "northeast_china_delight:candied_peanuts", "northeast_china_delight:canned_yellow_peach", "northeast_china_delight:corn_fritter", "northeast_china_delight:hazelnut_sugar_fire_bun", "northeast_china_delight:peanut_cake", "northeast_china_delight:peanut_songpyeon", "northeast_china_delight:red_bean_songpyeon", "northeast_china_delight:snowy_bean_paste", "northeast_china_delight:sticky_bean_bun", "northeast_china_delight:frozen_pear", "northeast_china_delight:baked_sweet_potato"]}}}}
+}
