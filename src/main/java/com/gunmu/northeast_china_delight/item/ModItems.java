@@ -589,6 +589,22 @@ public class ModItems {
             XIAO_JI_DUN_MO_GU, SUAN_CAI_HAI_XIAN_GUO, DE_MO_LI_DUN_YU, PEN_MI_FAN, MYSTERY_STEW
     );
 
+    /** Items that intentionally stay out of the creative tab. */
+    public static final List<Supplier<? extends Item>> HIDDEN_CREATIVE_ITEMS =
+            List.of(SEA_WATER_BUCKET, CREATIVE_VAT, SOUL_CABBAGE);
+
+    /** One creative tab for the whole regional mod. */
+    public static final List<Supplier<? extends Item>> CREATIVE_TAB_ITEMS = buildCreativeTab();
+
+    private static List<Supplier<? extends Item>> buildCreativeTab() {
+        List<Supplier<? extends Item>> items = new ArrayList<>();
+        items.addAll(INGREDIENT_TAB_ITEMS);
+        items.addAll(DISH_TAB_ITEMS);
+        items.addAll(BLOCK_TAB_ITEMS);
+        items.removeAll(HIDDEN_CREATIVE_ITEMS);
+        return List.copyOf(items);
+    }
+
     private static <I extends Item> Supplier<I> regItem(String id,
                                                         Function<Item.Properties, ? extends I> factory,
                                                         Item.Properties properties) {

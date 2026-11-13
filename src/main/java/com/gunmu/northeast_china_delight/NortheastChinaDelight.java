@@ -284,15 +284,7 @@ public class NortheastChinaDelight
     {
         if (event.getTabKey().equals(ModCreativeTabs.INGREDIENTS_TAB_KEY))
         {
-            ModItems.INGREDIENT_TAB_ITEMS.forEach(item -> event.accept(item.get()));
-        }
-        else if (event.getTabKey().equals(ModCreativeTabs.DISHES_TAB_KEY))
-        {
-            ModItems.DISH_TAB_ITEMS.forEach(item -> event.accept(item.get()));
-        }
-        else if (event.getTabKey().equals(ModCreativeTabs.BLOCKS_TAB_KEY))
-        {
-            ModItems.BLOCK_TAB_ITEMS.forEach(item -> event.accept(item.get()));
+            ModItems.CREATIVE_TAB_ITEMS.forEach(item -> event.accept(item.get()));
         }
     }
 
