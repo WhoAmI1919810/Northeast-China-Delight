@@ -46,7 +46,8 @@ public final class CreativeTabGameTests {
         helper.assertTrue(ingredients.contains(ModItems.SOYBEAN.get()), "大豆应在食材与杂项栏");
         helper.assertTrue(ingredients.contains(ModItems.MUSIC_DISC_NORTHEAST.get()), "唱片应在食材与杂项栏");
         helper.assertTrue(dishes.contains(ModItems.NEW_STYLE_GUO_BAO_ROU.get()), "锅包肉应在菜肴栏");
-        helper.assertTrue(dishes.contains(ModItems.MYSTERY_STEW.get()), "盆装谜之炖菜应在菜肴栏");
+        helper.assertFalse(dishes.contains(ModItems.MYSTERY_STEW.get()), "盆装谜之炖菜不得出现在菜肴创造栏");
+        helper.assertFalse(all.contains(ModItems.MYSTERY_STEW.get()), "盆装谜之炖菜必须保持隐藏");
         helper.assertTrue(blocks.contains(ModItems.PAPER_CUT.get()), "窗花应在方块与建材栏");
         helper.assertFalse(all.contains(ModItems.SEA_WATER_BUCKET.get()), "海水桶必须保持隐藏");
         helper.assertFalse(all.contains(ModItems.CREATIVE_VAT.get()), "创造大缸必须保持隐藏");
@@ -57,6 +58,8 @@ public final class CreativeTabGameTests {
                 "创造大缸必须登记在隐藏集合中");
         helper.assertTrue(ModItems.HIDDEN_CREATIVE_ITEMS.contains(ModItems.SOUL_CABBAGE),
                 "灵魂酸菜必须登记在隐藏集合中");
+        helper.assertTrue(ModItems.HIDDEN_CREATIVE_ITEMS.contains(ModItems.MYSTERY_STEW),
+                "盆装谜之炖菜必须登记在隐藏集合中");
         helper.succeed();
     }
 }

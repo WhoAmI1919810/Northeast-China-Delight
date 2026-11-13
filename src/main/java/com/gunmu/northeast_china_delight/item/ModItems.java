@@ -586,12 +586,12 @@ public class ModItems {
             DA_JIANG_TANG, SHEN_JI_TANG, BUCKWHEAT_COLD_NOODLES, DOG_BAO_PICKLES, BIBIMBAP,
             DI_GUO_JI, DI_GUO_PAI_GU, SHA_ZHU_CAI, DA_FENG_SHOU,
             SUAN_CAI_DUN_GU_TOU, ZHU_ROU_DUN_FEN_TIAO,
-            XIAO_JI_DUN_MO_GU, SUAN_CAI_HAI_XIAN_GUO, DE_MO_LI_DUN_YU, PEN_MI_FAN, MYSTERY_STEW
+            XIAO_JI_DUN_MO_GU, SUAN_CAI_HAI_XIAN_GUO, DE_MO_LI_DUN_YU, PEN_MI_FAN
     );
 
     /** Items that intentionally stay out of the creative tab. */
     public static final List<Supplier<? extends Item>> HIDDEN_CREATIVE_ITEMS =
-            List.of(SEA_WATER_BUCKET, CREATIVE_VAT, SOUL_CABBAGE);
+            List.of(SEA_WATER_BUCKET, CREATIVE_VAT, SOUL_CABBAGE, MYSTERY_STEW);
 
     private static <I extends Item> Supplier<I> regItem(String id,
                                                         Function<Item.Properties, ? extends I> factory,
