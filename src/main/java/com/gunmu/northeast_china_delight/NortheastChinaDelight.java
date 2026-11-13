@@ -9,6 +9,7 @@ import com.gunmu.chinese_regional_culinary_ingredients.item.CrciItems;
 import com.gunmu.chinese_regional_culinary_ingredients.block.CrciBlockEntities;
 import com.gunmu.chinese_regional_culinary_ingredients.block.CrciBlocks;
 import com.gunmu.chinese_regional_culinary_ingredients.block.GrillCampfireBlock;
+import com.gunmu.northeast_china_delight.advancement.NortheastProgressHooks;
 import com.gunmu.northeast_china_delight.block.ModBlocks;
 import com.gunmu.northeast_china_delight.compat.OptionalMods;
 import com.gunmu.northeast_china_delight.compat.create.CreateArmCompat;
@@ -179,6 +180,7 @@ public class NortheastChinaDelight
         ModWorldGen.register(modEventBus);
         // 老存档兼容：1.21.1 带海水标记的水桶要能读出来
         LegacySeaWater.register(modEventBus);
+        NortheastProgressHooks.register();
         //? if <1.20.2 {
         if (net.minecraftforge.fml.loading.FMLEnvironment.dist.isClient()
                 && net.minecraftforge.fml.ModList.get().isLoaded("jei")) {
@@ -234,15 +236,7 @@ public class NortheastChinaDelight
     {
         if (event.getTabKey().equals(ModCreativeTabs.INGREDIENTS_TAB_KEY))
         {
-            ModItems.INGREDIENT_TAB_ITEMS.forEach(item -> event.accept(item.get()));
-        }
-        else if (event.getTabKey().equals(ModCreativeTabs.DISHES_TAB_KEY))
-        {
-            ModItems.DISH_TAB_ITEMS.forEach(item -> event.accept(item.get()));
-        }
-        else if (event.getTabKey().equals(ModCreativeTabs.BLOCKS_TAB_KEY))
-        {
-            ModItems.BLOCK_TAB_ITEMS.forEach(item -> event.accept(item.get()));
+            ModItems.CREATIVE_TAB_ITEMS.forEach(item -> event.accept(item.get()));
         }
     }
 

@@ -1,5 +1,5 @@
 {
-  "parent": "northeast_china_delight:greasy",
+  "parent": "northeast_china_delight:guobao_feast",
   "display": {
     "icon": {
       "id": "minecraft:potion",
@@ -20,40 +20,31 @@
     "announce_to_chat": true
   },
   "criteria": {
-    "greasy": {
+    "greasy_combo": {
       "trigger": "minecraft:effects_changed",
       "conditions": {
         "effects": {
-          "chinese_regional_culinary_ingredients:greasy": {}
+          "chinese_regional_culinary_ingredients:greasy": {},
+          "chinese_regional_culinary_ingredients:warmth": {},
+          "chinese_regional_culinary_ingredients:nourishing": {}
         }
       }
     },
-    "refreshing": {
+    "refreshing_combo": {
       "trigger": "minecraft:effects_changed",
       "conditions": {
         "effects": {
-          "chinese_regional_culinary_ingredients:refreshing": {}
-        }
-      }
-    },
-    "warmth": {
-      "trigger": "minecraft:effects_changed",
-      "conditions": {
-        "effects": {
-          "chinese_regional_culinary_ingredients:warmth": {}
+          "chinese_regional_culinary_ingredients:refreshing": {},
+          "chinese_regional_culinary_ingredients:warmth": {},
+          "chinese_regional_culinary_ingredients:nourishing": {}
         }
       }
     }
   },
   "requirements": [
     [
-      "greasy"
-    ],
-    [
-      "refreshing"
-    ],
-    [
-      "warmth"
+      "greasy_combo",
+      "refreshing_combo"
     ]
   ]
 }

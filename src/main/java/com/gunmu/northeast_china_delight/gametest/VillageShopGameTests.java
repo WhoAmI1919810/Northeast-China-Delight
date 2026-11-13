@@ -3,6 +3,7 @@ package com.gunmu.northeast_china_delight.gametest;
 import com.gunmu.chinese_regional_culinary_ingredients.worldgen.UniqueShopPoolElement;
 import com.gunmu.chinese_regional_culinary_ingredients.trade.CrciVillagerProfessions;
 import com.gunmu.northeast_china_delight.NortheastChinaDelight;
+import com.gunmu.northeast_china_delight.compat.OptionalMods;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
@@ -15,7 +16,6 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.levelgen.structure.pools.StructureTemplatePool;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplate;
 import net.minecraft.world.entity.ai.village.poi.PoiType;
-import net.minecraftforge.fml.ModList;
 //? if <1.20.2 {
 import net.minecraftforge.gametest.GameTestHolder;
 import net.minecraftforge.gametest.PrefixGameTestTemplate;
@@ -44,7 +44,7 @@ public final class VillageShopGameTests {
 
     @GameTest(template = "empty")
     public static void createShopStructuresOverrideBasePack(GameTestHelper helper) {
-        if (!ModList.get().isLoaded("create")) {
+        if (!OptionalMods.create()) {
             helper.succeed();
             return;
         }

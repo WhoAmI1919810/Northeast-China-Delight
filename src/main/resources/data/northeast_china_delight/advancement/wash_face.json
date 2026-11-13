@@ -1,0 +1,5 @@
+{
+  "parent": "northeast_china_delight:pump_water",
+  "display": {"icon": {"id": "chinese_regional_culinary_ingredients:water_basin"}, "title": {"translate": "advancements.northeast_china_delight.wash_face.title"}, "description": {"translate": "advancements.northeast_china_delight.wash_face.description"}, "frame": "task", "show_toast": true, "announce_to_chat": true},
+  "criteria": {"wash": {"trigger": "minecraft:impossible"}}
+}

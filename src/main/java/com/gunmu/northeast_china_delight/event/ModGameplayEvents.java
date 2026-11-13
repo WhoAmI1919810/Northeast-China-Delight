@@ -201,7 +201,7 @@ public final class ModGameplayEvents
      * 「挨户串门」的驱动：进过所有种类的东北小院之后发进度。
      *
      * <p>这件事光靠数据包做不到：{@code minecraft:location} 触发器只知道「玩家站在哪个结构里」，
-     * 而菜园、四合院、牲口院三种院子共用同一个结构 id，分不出站的是哪一种。所以这里每秒查一次
+     * 而所有东北小院模板共用同一个结构 id，分不出站的是哪一种。所以这里每秒查一次
      * 玩家脚下的小院 —— 结构里的每个 {@link CourtyardPiece} 记着自己用的是哪个 NBT 模板，
      * 找到罩住玩家的那一块，把模板名换算成判据名（{@link ModAdvancements#yardCriterion}）
      * 判给玩家；判据一览见 {@code data/northeast_china_delight/advancement/visit_all_yards.json}，
