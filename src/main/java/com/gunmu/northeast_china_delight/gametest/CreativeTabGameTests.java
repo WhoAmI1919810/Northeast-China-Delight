@@ -33,7 +33,10 @@ public final class CreativeTabGameTests {
         helper.assertTrue(creative.contains(ModItems.NEW_STYLE_GUO_BAO_ROU.get()), "菜肴必须并入主创造栏");
         helper.assertTrue(creative.contains(ModItems.PAPER_CUT.get()), "方块和建材必须并入主创造栏");
         helper.assertTrue(creative.contains(ModItems.MUSIC_DISC_NORTHEAST.get()), "唱片必须并入主创造栏");
+        helper.assertFalse(creative.contains(ModItems.MYSTERY_STEW.get()), "盆装谜之炖菜不得出现在创造栏");
         helper.assertFalse(creative.contains(ModItems.SEA_WATER_BUCKET.get()), "海水桶必须保持隐藏");
+        helper.assertTrue(ModItems.HIDDEN_CREATIVE_ITEMS.contains(ModItems.MYSTERY_STEW),
+                "盆装谜之炖菜必须登记在隐藏集合中");
         helper.assertTrue(ModItems.HIDDEN_CREATIVE_ITEMS.contains(ModItems.SEA_WATER_BUCKET),
                 "海水桶必须登记在隐藏集合中");
         helper.succeed();
