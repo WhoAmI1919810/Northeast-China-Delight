@@ -3,6 +3,7 @@ package com.gunmu.northeast_china_delight.gametest;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.mojang.authlib.GameProfile;
 import com.gunmu.northeast_china_delight.NortheastChinaDelight;
 import com.gunmu.northeast_china_delight.advancement.ModAdvancements;
 import com.gunmu.northeast_china_delight.block.BigPotBlockEntity;
@@ -18,12 +19,14 @@ import com.gunmu.northeast_china_delight.util.DdEffects;
 import com.gunmu.northeast_china_delight.util.DdIds;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.advancements.Advancement;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
@@ -41,12 +44,19 @@ import net.minecraftforge.gametest.GameTestHolder;
 import net.minecraftforge.gametest.PrefixGameTestTemplate;
 
 import java.util.List;
+import java.util.UUID;
 
 @GameTestHolder(NortheastChinaDelight.MODID)
 @PrefixGameTestTemplate(false)
 public final class MysteryStewGameTests {
 
     private MysteryStewGameTests() {
+    }
+
+    private static ServerPlayer serverPlayer(GameTestHelper helper) {
+        ServerLevel level = helper.getLevel();
+        return new ServerPlayer(level.getServer(), level,
+                new GameProfile(UUID.randomUUID(), "test-mock-player"));
     }
 
     @GameTest(template = "empty")
@@ -62,7 +72,7 @@ public final class MysteryStewGameTests {
     @GameTest(template = "empty")
     public static void challengeMysteryStewSetsFlagAndServesBasin(GameTestHelper helper) {
         ServerLevel level = helper.getLevel();
-        Player player = helper.makeMockPlayer();
+        ServerPlayer player = serverPlayer(helper);
         BlockPos ground = helper.absolutePos(new BlockPos(1, 1, 1));
         BlockPos target = ground.above();
         level.setBlockAndUpdate(ground, Blocks.STONE.defaultBlockState());
@@ -106,6 +116,11 @@ public final class MysteryStewGameTests {
                 "玩家应拿到盆装谜之炖菜");
         helper.assertTrue(!pot.saveWithFullMetadata().getBoolean("ChallengeMysteryStew"),
                 "盛出后挑战标记应清除");
+        Advancement advancement = level.getServer().getAdvancements()
+                .getAdvancement(ModAdvancements.MYSTERY_STEW_FEAST);
+        helper.assertTrue(advancement != null, "应能加载谜之炖菜挑战进度");
+        helper.assertTrue(player.getAdvancements().getOrStartProgress(advancement).isDone(),
+                "挑战锅盛出后应完成谜之炖菜挑战进度");
         helper.succeed();
     }
 

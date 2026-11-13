@@ -661,8 +661,9 @@ public final class BigPotCooking {
         if (dish.isEmpty()) {
             return;
         }
+        boolean challengeMysteryStewServed = challengeMysteryStew && dish.is(ModItems.MYSTERY_STEW.get());
         give(player, dish);
-        if (challengeMysteryStew && dish.is(ModItems.MYSTERY_STEW.get()) && player instanceof ServerPlayer serverPlayer) {
+        if (challengeMysteryStewServed && player instanceof ServerPlayer serverPlayer) {
             ModAdvancements.award(serverPlayer, ModAdvancements.MYSTERY_STEW_FEAST, "cook");
         }
         level.playSound(null, pos, SoundEvents.BUCKET_FILL, SoundSource.BLOCKS, 0.8F, 1.2F);
