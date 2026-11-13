@@ -10,13 +10,13 @@
     "CookingPotBlockEntityMixin",
     "PowderSnowBlockMixin",
     "RepairItemRecipeMixin",
-    "SoundEngineMixin",
     "SideDishMerchantTradeMixin",
     "VillagerOutfitDiscountMixin",
     "LivingEntityLidSoundMixin"
   ],
   "client": [
-    "LoomScreenMixin"
+    "LoomScreenMixin",
+    "SoundEngineMixin"
   ],
   "injectors": {
     "defaultRequire": 1

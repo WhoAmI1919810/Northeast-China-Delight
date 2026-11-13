@@ -1,5 +1,8 @@
 package com.gunmu.northeast_china_delight.gametest;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import com.gunmu.northeast_china_delight.NortheastChinaDelight;
 import com.gunmu.northeast_china_delight.block.MysteryStewPotBlockEntity;
 import com.gunmu.northeast_china_delight.block.ModBlocks;
@@ -8,6 +11,7 @@ import com.gunmu.northeast_china_delight.effect.ModEffects;
 import com.gunmu.northeast_china_delight.item.MysteryStewEffects;
 import com.gunmu.northeast_china_delight.item.ModItems;
 import com.gunmu.northeast_china_delight.util.DdEffects;
+import com.gunmu.northeast_china_delight.util.DdIds;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.gametest.framework.GameTest;
@@ -175,6 +179,62 @@ public final class MysteryStewGameTests {
         assertInitialTicks(helper, MysteryStew.Kind.MEAT, 110);
         assertInitialTicks(helper, MysteryStew.Kind.STAPLE, 0);
         helper.succeed();
+    }
+
+    @GameTest(template = "empty")
+    public static void threeEffectsRequiresGreasyOrRefreshingWithWarmthAndNourishing(GameTestHelper helper) {
+        var resource = helper.getLevel().getServer().getResourceManager()
+                .getResource(DdIds.of(NortheastChinaDelight.MODID, advancementPath("three_effects.json")));
+        helper.assertTrue(resource.isPresent(), "应能加载三效合一进度");
+        try (var reader = resource.get().openAsReader()) {
+            JsonObject root = JsonParser.parseReader(reader).getAsJsonObject();
+            JsonObject criteria = root.getAsJsonObject("criteria");
+            assertEffectCombo(helper, criteria, "greasy_combo", "greasy");
+            assertEffectCombo(helper, criteria, "refreshing_combo", "refreshing");
+            JsonArray requirements = root.getAsJsonArray("requirements");
+            helper.assertTrue(requirements.size() == 1, "三效合一应只有一组 OR 需求");
+            JsonArray group = requirements.get(0).getAsJsonArray();
+            helper.assertTrue(group.size() == 2, "OR 组应包含两个组合");
+            helper.assertTrue(contains(group, "greasy_combo") && contains(group, "refreshing_combo"),
+                    "OR 组应是 greasy_combo 或 refreshing_combo");
+        } catch (Exception e) {
+            helper.fail("读取三效合一进度失败：" + e);
+            return;
+        }
+        helper.succeed();
+    }
+
+    private static String advancementPath(String name) {
+        //? if <1.20.5 {
+        /*return "advancements/" + name;
+        *///?} else {
+        return "advancement/" + name;
+        //?}
+    }
+
+    private static void assertEffectCombo(GameTestHelper helper, JsonObject criteria,
+                                          String criterion, String flavor) {
+        JsonObject combo = criteria.getAsJsonObject(criterion);
+        helper.assertTrue(combo != null, "缺少判据 " + criterion);
+        helper.assertTrue("minecraft:effects_changed".equals(combo.get("trigger").getAsString()),
+                criterion + " 应使用 effects_changed");
+        JsonObject effects = combo.getAsJsonObject("conditions").getAsJsonObject("effects");
+        helper.assertTrue(effects.has("northeast_china_delight:" + flavor),
+                criterion + " 缺少 " + flavor);
+        helper.assertTrue(effects.has("northeast_china_delight:warmth"),
+                criterion + " 缺少 warmth");
+        helper.assertTrue(effects.has("northeast_china_delight:nourishing"),
+                criterion + " 缺少 nourishing");
+        helper.assertTrue(effects.size() == 3, criterion + " 应恰好包含三种效果");
+    }
+
+    private static boolean contains(JsonArray array, String value) {
+        for (var element : array) {
+            if (value.equals(element.getAsString())) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private static void assertFormulaDuration(GameTestHelper helper, String stage,

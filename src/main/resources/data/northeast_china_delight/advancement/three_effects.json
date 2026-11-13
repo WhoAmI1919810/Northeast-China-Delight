@@ -20,40 +20,31 @@
     "announce_to_chat": true
   },
   "criteria": {
-    "greasy": {
+    "greasy_combo": {
       "trigger": "minecraft:effects_changed",
       "conditions": {
         "effects": {
-          "northeast_china_delight:greasy": {}
+          "northeast_china_delight:greasy": {},
+          "northeast_china_delight:warmth": {},
+          "northeast_china_delight:nourishing": {}
         }
       }
     },
-    "refreshing": {
+    "refreshing_combo": {
       "trigger": "minecraft:effects_changed",
       "conditions": {
         "effects": {
-          "northeast_china_delight:refreshing": {}
-        }
-      }
-    },
-    "warmth": {
-      "trigger": "minecraft:effects_changed",
-      "conditions": {
-        "effects": {
-          "northeast_china_delight:warmth": {}
+          "northeast_china_delight:refreshing": {},
+          "northeast_china_delight:warmth": {},
+          "northeast_china_delight:nourishing": {}
         }
       }
     }
   },
   "requirements": [
     [
-      "greasy"
-    ],
-    [
-      "refreshing"
-    ],
-    [
-      "warmth"
+      "greasy_combo",
+      "refreshing_combo"
     ]
   ]
 }

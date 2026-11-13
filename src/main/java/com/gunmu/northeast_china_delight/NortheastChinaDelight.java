@@ -371,7 +371,6 @@ public class NortheastChinaDelight
         public static void onClientSetup(FMLClientSetupEvent event)
         {
             LOGGER.info("da dong bei shi wo di jia xiang ~");
-            LOGGER.info("MINECRAFT NAME >> {}", Minecraft.getInstance().getUser().getName());
             // 木锅盖举起来挡的时候换一个手里的模型（同原版盾牌的 blocking 属性，见 models/item/big_pot_lid.json 的 overrides）
             event.enqueueWork(() -> net.minecraft.client.renderer.item.ItemProperties.register(
                     ModItems.BIG_POT_LID.get(), DdIds.of("minecraft", "blocking"),
