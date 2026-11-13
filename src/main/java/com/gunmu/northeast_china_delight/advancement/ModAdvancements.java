@@ -38,7 +38,7 @@ public final class ModAdvancements
     public static final ResourceLocation MYSTERY_STEW_FEAST = id("mystery_stew_feast");
     /** 压水井取水——从压水井里接到水 */
     public static final ResourceLocation PUMP_WATER = id("pump_water");
-    /** 洗把脸——在放好水盆的脸盆架上洗脸 */
+    /** 神清气爽——在放好水盆的脸盆架上洗脸 */
     public static final ResourceLocation WASH_FACE = id("wash_face");
 
     private ModAdvancements()

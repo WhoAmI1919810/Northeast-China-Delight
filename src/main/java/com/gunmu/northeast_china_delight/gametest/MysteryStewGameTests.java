@@ -1,6 +1,13 @@
 package com.gunmu.northeast_china_delight.gametest;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import com.gunmu.northeast_china_delight.NortheastChinaDelight;
+import com.gunmu.northeast_china_delight.advancement.ModAdvancements;
+import com.gunmu.northeast_china_delight.block.BigPotBlockEntity;
+import com.gunmu.northeast_china_delight.block.BigPotCooking;
+import com.gunmu.northeast_china_delight.block.BigStoveBlock;
 import com.gunmu.northeast_china_delight.block.MysteryStewPotBlockEntity;
 import com.gunmu.northeast_china_delight.block.ModBlocks;
 import com.gunmu.northeast_china_delight.crafting.MysteryStew;
@@ -8,6 +15,7 @@ import com.gunmu.northeast_china_delight.effect.ModEffects;
 import com.gunmu.northeast_china_delight.item.MysteryStewEffects;
 import com.gunmu.northeast_china_delight.item.ModItems;
 import com.gunmu.northeast_china_delight.util.DdEffects;
+import com.gunmu.northeast_china_delight.util.DdIds;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.gametest.framework.GameTest;
@@ -24,6 +32,8 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
@@ -37,6 +47,89 @@ import java.util.List;
 public final class MysteryStewGameTests {
 
     private MysteryStewGameTests() {
+    }
+
+    @GameTest(template = "empty")
+    public static void mysteryStewFeastAdvancementIsWiredToCookCriterion(GameTestHelper helper) {
+        var advancement = helper.getLevel().getServer().getAdvancements()
+                .getAdvancement(ModAdvancements.MYSTERY_STEW_FEAST);
+        helper.assertTrue(advancement != null, "应能加载谜之炖菜挑战进度");
+        helper.assertTrue(advancement.getCriteria().containsKey("cook"),
+                "谜之炖菜挑战进度应包含 cook 判据");
+        helper.succeed();
+    }
+
+    @GameTest(template = "empty")
+    public static void challengeMysteryStewSetsFlagAndServesBasin(GameTestHelper helper) {
+        ServerLevel level = helper.getLevel();
+        Player player = helper.makeMockPlayer();
+        BlockPos ground = helper.absolutePos(new BlockPos(1, 1, 1));
+        BlockPos target = ground.above();
+        level.setBlockAndUpdate(ground, Blocks.STONE.defaultBlockState());
+        BlockState stove = ModBlocks.BIG_STOVE.get().defaultBlockState()
+                .setValue(BigStoveBlock.FACING, Direction.NORTH)
+                .setValue(BigStoveBlock.PART, BigStoveBlock.Part.NW)
+                .setValue(BigStoveBlock.LIT, true)
+                .setValue(BigStoveBlock.POT, BigStoveBlock.Pot.POT);
+        level.setBlockAndUpdate(target, stove);
+        helper.assertTrue(level.getBlockEntity(target) instanceof BigPotBlockEntity,
+                "大灶西北角应有大锅方块实体");
+        BigPotBlockEntity pot = (BigPotBlockEntity) level.getBlockEntity(target);
+
+        pot.addLiquid(Fluids.WATER, 1000);
+        pot.push(new ItemStack(Items.BEEF), false);
+        pot.push(new ItemStack(Items.CARROT), false);
+        pot.push(new ItemStack(Items.APPLE), false);
+        pot.push(new ItemStack(ModItems.SALT.get()), true);
+        pot.push(new ItemStack(ModItems.SOY_SAUCE.get()), true);
+        pot.push(new ItemStack(ModItems.VINEGAR.get()), true);
+        List<MysteryStewEffects.Entry> effects =
+                MysteryStew.effects(pot.ingredientStacks(), pot.seasoningKinds());
+        helper.assertTrue(effects.size() == MysteryStew.KINDS_GIVEN,
+                "挑战锅应算出三种效果，实际为 " + describe(effects));
+        helper.assertTrue(pot.seasoningKinds() == 3, "挑战锅应有三类调料，实际为 " + pot.seasoningKinds());
+
+        pot.beginCooking(MysteryStew.ID, MysteryStew.COOKING_TIME, 0, MysteryStew.cook(pot));
+        pot.tickCooking(MysteryStew.COOKING_TIME - 1);
+        BigPotCooking.serverTick(level, target, level.getBlockState(target), pot);
+        helper.assertTrue(pot.hasResult() && pot.result().is(ModItems.MYSTERY_STEW.get()),
+                "这锅应煮成盆装谜之炖菜");
+        helper.assertTrue(pot.saveWithFullMetadata().getBoolean("ChallengeMysteryStew"),
+                "这锅应设置挑战标记");
+
+        ItemStack basin = new ItemStack(ModItems.LARGE_BASIN.get());
+        player.setItemInHand(InteractionHand.MAIN_HAND, basin);
+        BigPotCooking.onUse(pot, basin, level.getBlockState(target), level, target, player,
+                InteractionHand.MAIN_HAND);
+        helper.assertTrue(player.getInventory().items.stream()
+                        .anyMatch(stack -> stack.is(ModItems.MYSTERY_STEW.get())),
+                "玩家应拿到盆装谜之炖菜");
+        helper.assertTrue(!pot.saveWithFullMetadata().getBoolean("ChallengeMysteryStew"),
+                "盛出后挑战标记应清除");
+        helper.succeed();
+    }
+
+    @GameTest(template = "empty")
+    public static void threeEffectsRequiresGreasyOrRefreshingWithWarmthAndNourishing(GameTestHelper helper) {
+        var resource = helper.getLevel().getServer().getResourceManager()
+                .getResource(DdIds.of(NortheastChinaDelight.MODID, advancementPath("three_effects.json")));
+        helper.assertTrue(resource.isPresent(), "应能加载三效合一进度");
+        try (var reader = resource.get().openAsReader()) {
+            JsonObject root = JsonParser.parseReader(reader).getAsJsonObject();
+            JsonObject criteria = root.getAsJsonObject("criteria");
+            assertEffectCombo(helper, criteria, "greasy_combo", "greasy");
+            assertEffectCombo(helper, criteria, "refreshing_combo", "refreshing");
+            JsonArray requirements = root.getAsJsonArray("requirements");
+            helper.assertTrue(requirements.size() == 1, "三效合一应只有一组 OR 需求");
+            JsonArray group = requirements.get(0).getAsJsonArray();
+            helper.assertTrue(group.size() == 2, "OR 组应包含两个组合");
+            helper.assertTrue(contains(group, "greasy_combo") && contains(group, "refreshing_combo"),
+                    "OR 组应是 greasy_combo 或 refreshing_combo");
+        } catch (Exception e) {
+            helper.fail("读取三效合一进度失败：" + e);
+            return;
+        }
+        helper.succeed();
     }
 
     @GameTest(template = "empty")
@@ -167,6 +260,39 @@ public final class MysteryStewGameTests {
     private static void assertInitialTicks(GameTestHelper helper, MysteryStew.Kind kind, int expected) {
         helper.assertTrue(kind.initialTicks() == expected,
                 kind + " 初始时长应为 " + expected + " 刻，实际为 " + kind.initialTicks());
+    }
+
+    private static String advancementPath(String name) {
+        //? if <1.20.5 {
+        return "advancements/" + name;
+        //?} else {
+        /*return "advancement/" + name;
+        *///?}
+    }
+
+    private static void assertEffectCombo(GameTestHelper helper, JsonObject criteria,
+                                          String criterion, String flavor) {
+        JsonObject combo = criteria.getAsJsonObject(criterion);
+        helper.assertTrue(combo != null, "缺少判据 " + criterion);
+        helper.assertTrue("minecraft:effects_changed".equals(combo.get("trigger").getAsString()),
+                criterion + " 应使用 effects_changed");
+        JsonObject effects = combo.getAsJsonObject("conditions").getAsJsonObject("effects");
+        helper.assertTrue(effects.has("northeast_china_delight:" + flavor),
+                criterion + " 缺少 " + flavor);
+        helper.assertTrue(effects.has("northeast_china_delight:warmth"),
+                criterion + " 缺少 warmth");
+        helper.assertTrue(effects.has("northeast_china_delight:nourishing"),
+                criterion + " 缺少 nourishing");
+        helper.assertTrue(effects.size() == 3, criterion + " 应恰好包含三种效果");
+    }
+
+    private static boolean contains(JsonArray array, String value) {
+        for (var element : array) {
+            if (value.equals(element.getAsString())) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private static List<MysteryStewEffects.Entry> mixedEffects() {

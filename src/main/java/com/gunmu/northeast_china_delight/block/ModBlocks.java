@@ -714,13 +714,6 @@ public class ModBlocks {
                         .forceSolidOn());
     }
 
-    /**
-     * 调料液体不再有方块形态（2026-09-24 用户要求）：
-     * 它们只作为真正的流体存在 —— 大缸、管道、机械动力储罐、玻璃瓶都能用，
-     * 但没法被倒到地上变成液体方块。
-     * NeoForge 的 createLegacyBlock 在没有方块时返回空气，所以删掉注册不会崩。
-     */
-    private static final boolean FLUIDS_HAVE_NO_BLOCK_FORM = true;
     private static Supplier<Block> crop(String name, Supplier<? extends ItemLike> seed) {
         return block(name + "_crop", properties -> new DdCropBlock(properties, seed), cropProperties());
     }
