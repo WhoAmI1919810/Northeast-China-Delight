@@ -3,7 +3,12 @@ package com.gunmu.northeast_china_delight.gametest;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.mojang.authlib.GameProfile;
 import com.gunmu.northeast_china_delight.NortheastChinaDelight;
+import com.gunmu.northeast_china_delight.advancement.ModAdvancements;
+import com.gunmu.northeast_china_delight.block.BigPotBlockEntity;
+import com.gunmu.northeast_china_delight.block.BigPotCooking;
+import com.gunmu.northeast_china_delight.block.BigStoveBlock;
 import com.gunmu.northeast_china_delight.block.MysteryStewPotBlockEntity;
 import com.gunmu.northeast_china_delight.block.ModBlocks;
 import com.gunmu.northeast_china_delight.crafting.MysteryStew;
@@ -20,6 +25,10 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
+//? if >=1.20.2 {
+import net.minecraft.server.level.ClientInformation;
+//?}
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
@@ -29,6 +38,7 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.GameType;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
@@ -41,6 +51,7 @@ import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
 //?}
 
 import java.util.List;
+import java.util.UUID;
 
 @GameTestHolder(NortheastChinaDelight.MODID)
 @PrefixGameTestTemplate(false)
@@ -55,6 +66,92 @@ public final class MysteryStewGameTests {
         *///?} else {
         return helper.makeMockPlayer(GameType.CREATIVE);
         //?}
+    }
+
+    private static ServerPlayer serverPlayer(GameTestHelper helper) {
+        ServerLevel level = helper.getLevel();
+        //? if >=1.20.2 {
+        return new ServerPlayer(level.getServer(), level,
+                new GameProfile(UUID.randomUUID(), "test-mock-player"), ClientInformation.createDefault());
+        //?} else {
+        /*return new ServerPlayer(level.getServer(), level,
+                new GameProfile(UUID.randomUUID(), "test-mock-player"));
+        *///?}
+    }
+
+    @GameTest(template = "empty")
+    public static void challengeMysteryStewAwardsFeastWhenServed(GameTestHelper helper) {
+        ServerLevel level = helper.getLevel();
+        ServerPlayer player = serverPlayer(helper);
+        BlockPos ground = helper.absolutePos(new BlockPos(1, 1, 1));
+        BlockPos target = ground.above();
+        level.setBlockAndUpdate(ground, Blocks.STONE.defaultBlockState());
+        level.setBlockAndUpdate(target, ModBlocks.BIG_STOVE.get().defaultBlockState()
+                .setValue(BigStoveBlock.FACING, Direction.NORTH)
+                .setValue(BigStoveBlock.PART, BigStoveBlock.Part.NW)
+                .setValue(BigStoveBlock.LIT, true)
+                .setValue(BigStoveBlock.POT, BigStoveBlock.Pot.POT));
+        helper.assertTrue(level.getBlockEntity(target) instanceof BigPotBlockEntity,
+                "大灶西北角应有大锅方块实体");
+        BigPotBlockEntity pot = (BigPotBlockEntity) level.getBlockEntity(target);
+
+        pot.addLiquid(Fluids.WATER, 1000);
+        pot.push(new ItemStack(Items.BEEF), false);
+        pot.push(new ItemStack(Items.CARROT), false);
+        pot.push(new ItemStack(Items.APPLE), false);
+        pot.push(new ItemStack(ModItems.SALT.get()), true);
+        pot.push(new ItemStack(ModItems.SOY_SAUCE.get()), true);
+        pot.push(new ItemStack(ModItems.VINEGAR.get()), true);
+        List<MysteryStewEffects.Entry> effects =
+                MysteryStew.effects(pot.ingredientStacks(), pot.seasoningKinds());
+        helper.assertTrue(effects.size() == MysteryStew.KINDS_GIVEN,
+                "挑战锅应算出三种效果，实际为 " + describe(effects));
+        helper.assertTrue(pot.seasoningKinds() == 3, "挑战锅应有三类调料，实际为 " + pot.seasoningKinds());
+
+        pot.beginCooking(MysteryStew.ID, MysteryStew.COOKING_TIME, 0, MysteryStew.cook(pot));
+        pot.tickCooking(MysteryStew.COOKING_TIME - 1);
+        BigPotCooking.serverTick(level, target, level.getBlockState(target), pot);
+        helper.assertTrue(pot.hasResult() && pot.result().is(ModItems.MYSTERY_STEW.get()),
+                "这锅应煮成盆装谜之炖菜");
+        //? if <1.20.5 {
+        /*helper.assertTrue(pot.saveWithFullMetadata().getBoolean("ChallengeMysteryStew"),
+                "这锅应设置挑战标记");
+        *///?} else {
+        helper.assertTrue(pot.saveWithFullMetadata(level.registryAccess()).getBoolean("ChallengeMysteryStew"),
+                "这锅应设置挑战标记");
+        //?}
+
+        ItemStack basin = new ItemStack(ModItems.LARGE_BASIN.get());
+        player.setItemInHand(InteractionHand.MAIN_HAND, basin);
+        BigPotCooking.onUse(pot, basin, level.getBlockState(target), level, target, player,
+                InteractionHand.MAIN_HAND);
+        helper.assertTrue(player.getInventory().items.stream()
+                        .anyMatch(stack -> stack.is(ModItems.MYSTERY_STEW.get())),
+                "玩家应拿到盆装谜之炖菜");
+        //? if <1.20.5 {
+        /*helper.assertTrue(!pot.saveWithFullMetadata().getBoolean("ChallengeMysteryStew"),
+                "盛出时应取走挑战标记");
+        *///?} else {
+        helper.assertTrue(!pot.saveWithFullMetadata(level.registryAccess()).getBoolean("ChallengeMysteryStew"),
+                "盛出时应取走挑战标记");
+        //?}
+        helper.assertTrue(player.getServer() != null, "测试玩家应绑定服务器");
+        //? if <1.20.2 {
+        /*var advancement = level.getServer().getAdvancements()
+                .getAdvancement(ModAdvancements.MYSTERY_STEW_FEAST);
+        *///?} else {
+        var advancement = level.getServer().getAdvancements()
+                .get(ModAdvancements.MYSTERY_STEW_FEAST);
+        //?}
+        helper.assertTrue(advancement != null, "应能加载谜之炖菜挑战进度");
+        //? if <1.20.2 {
+        /*helper.assertTrue(advancement.getCriteria().containsKey("cook"), "挑战进度应有 cook 判据");
+        *///?} else {
+        helper.assertTrue(advancement.value().criteria().containsKey("cook"), "挑战进度应有 cook 判据");
+        //?}
+        helper.assertTrue(player.getAdvancements().getOrStartProgress(advancement).isDone(),
+                "挑战锅盛出后应完成谜之炖菜挑战进度");
+        helper.succeed();
     }
 
     @GameTest(template = "empty")
