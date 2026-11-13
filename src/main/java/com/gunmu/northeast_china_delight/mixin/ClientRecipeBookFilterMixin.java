@@ -19,6 +19,7 @@ public abstract class ClientRecipeBookFilterMixin {
     //? if >=1.20.5 {
     @ModifyVariable(method = "setupCollections", at = @At("HEAD"), argsOnly = true)
     private Iterable<RecipeHolder<?>> northeast$filterRecipes(Iterable<RecipeHolder<?>> recipes,
+                                                               Iterable<RecipeHolder<?>> targetRecipes,
                                                                RegistryAccess registries) {
         List<RecipeHolder<?>> visible = new ArrayList<>();
         for (RecipeHolder<?> holder : recipes) {

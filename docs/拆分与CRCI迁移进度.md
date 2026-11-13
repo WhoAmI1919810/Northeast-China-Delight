@@ -63,7 +63,7 @@
 - 对东北乐事引用 CRCI 的 120 个物品/方块引用、1 个标签引用、1 个配方 ID 引用全部存在。
 - 92 个跨 jar 模型/贴图引用全部存在。
 - 30 个 1.21.1 进度、29 个 1.20.1 进度的父节点全部可解析。
-- 三个仓库工作区均已清理并推送。
+- 2026-11-12 当时三仓工作区已清理并推送；2026-11-13 的收尾改动尚未提交，见下方。
 
 ## 内容治理与兼容（已完成）
 
@@ -148,6 +148,22 @@
 - 店内装饰陶罐改为带战利品表的木桶，使用 `chinese_regional_culinary_ingredients:chests/side_dish_shop`。
 - 东北乐事已删除 10 份房屋池覆盖、15 份旧副食店 NBT、内置机械动力副食店数据包和 `CreateVillageShops` 注册代码。
 - CRCI 双版本构建通过；1.20.1 转换处理 10 个内置资源包结构 NBT，东北乐事 1.21.1 构建通过。
+
+## 2026-11-13 收尾同步
+
+- 将旧模组 `three_effects` 的组合判据同步到两个拆分分支：`greasy + warmth + nourishing` 或
+  `refreshing + warmth + nourishing` 同时存在才解锁；效果 ID 使用 CRCI 命名空间。
+- `进度设计.md` 与 `回归测试表.md` 补充组合判据说明和 ADV-08。
+- 修复 CRCI 1.20.1 `LegacyNortheastAliases` 的流体类型取值：Forge 侧改为
+  `ForgeRegistries.FLUID_TYPES.get().getValue(...)`。
+- 创造栏统一：CRCI 移除 `equipment` 页；东北乐事只保留一个「东北乐事」创造页，海水桶、创造大缸和灵魂酸菜保持隐藏；
+  新增 `CreativeTabGameTests` / `CrciCreativeTabGameTests` 校验单栏、无重复和隐藏项。
+- 拆分版 `VillageShopGameTests` 改走 `OptionalMods.create()`，移除对版本专属 `ModList` 的直接引用，
+  修复 Stonecutter 1.20.1 转换后的编译失败。
+- 1.20.1 三张窗花贴图同步为最新版。
+- 构建验证：CRCI 1.21.1 / 1.20.1、东北乐事 split 1.21.1 / 1.20.1 均 `BUILD SUCCESSFUL`；
+  CRCI 新 jar 已同步到两个拆分仓库的 `libs/`。
+- 当前工作区仍有未提交的收尾改动；提交前需按仓库分别确认，不能把「已清理并推送」当作现状。
 
 ## 约定
 

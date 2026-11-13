@@ -10,6 +10,7 @@ import com.gunmu.chinese_regional_culinary_ingredients.block.FacingDecorBlock;
 import com.gunmu.chinese_regional_culinary_ingredients.block.PlacedDishBlock;
 import com.gunmu.chinese_regional_culinary_ingredients.block.Vat;
 import com.gunmu.chinese_regional_culinary_ingredients.block.WoodenMortarBlock;
+import com.gunmu.northeast_china_delight.advancement.ModAdvancements;
 import com.gunmu.northeast_china_delight.item.ModItems;
 import com.gunmu.chinese_regional_culinary_ingredients.item.SeasoningBottleItem;
 import com.gunmu.northeast_china_delight.compat.OptionalMods;
@@ -18,6 +19,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.stats.Stats;
@@ -249,6 +251,7 @@ public class HandPumpBlock extends FacingDecorBlock {
             player.awardStat(Stats.ITEM_USED.get(used));
             level.playSound(null, pos, SoundEvents.BUCKET_FILL, SoundSource.BLOCKS, 1.0F, 1.0F);
             level.gameEvent(player, GameEvent.FLUID_PICKUP, pos);
+            awardPumpWater(player);
         }
         return InteractionResult.sidedSuccess(level.isClientSide);
     }
@@ -277,6 +280,9 @@ public class HandPumpBlock extends FacingDecorBlock {
         }
         BlockPos target = pourInto(server, pos, facing, by);
         if (target != null) {
+            if (by instanceof ServerPlayer serverPlayer) {
+                awardPumpWater(serverPlayer);
+            }
             stream(server, pos, facing, target);
             return;
         }
@@ -286,6 +292,12 @@ public class HandPumpBlock extends FacingDecorBlock {
         server.sendParticles(ParticleTypes.SPLASH, x, y - 0.05, z, 18, 0.05, 0.03, 0.05, 0.12);
         server.sendParticles(ParticleTypes.FALLING_WATER, x, y, z, 6, 0.03, 0.0, 0.03, 0.0);
         server.playSound(null, pos, SoundEvents.BUCKET_EMPTY, SoundSource.BLOCKS, 0.5F, 1.2F);
+    }
+
+    private static void awardPumpWater(Player player) {
+        if (player instanceof ServerPlayer serverPlayer) {
+            ModAdvancements.award(serverPlayer, ModAdvancements.PUMP_WATER, "pump");
+        }
     }
 
     /** 先给出水嘴正前方的空大脸盆装水，否则往出水嘴前下方那一格倒水。倒进去了返回接水的那格，没倒进去返回 null */
