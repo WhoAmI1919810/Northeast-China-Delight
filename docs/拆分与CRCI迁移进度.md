@@ -202,6 +202,7 @@
 - 新增 `chinese_regional_culinary_ingredients:block/big_pot/dish/mystery_stew`，删除东北乐事旧路径下的重复模型。
 - `BigPotVisuals#dishModel` 对任何命名空间的缺失锅中模型都记录一次明确警告，不再只检查 CRCI 命名空间。
 - `CrciClientEvents` 在 `ModelEvent.BakingCompleted` 后逐个检查所有大锅成品模型是否烘焙成功、是否还有对应物品，并输出汇总日志。
+- 同类审计：大盆菜物品栏图标也按物品命名空间动态查模型，现同样在烘焙后逐项检查；拆分版移除 `mystery_stew_icon` 和客户端扩展的重复注册。
 - 新增 `BigPotModelGameTests`：从实际加载的大锅配方反查成品模型，覆盖 10 道东北菜，并单独断言迁移到 CRCI 的谜之炖菜模型；模型资源通过模组文件路径校验，不依赖服务端 `ResourceManager` 的 `assets`（服务端本就不加载客户端模型目录）。
 
 验证：
