@@ -24,7 +24,7 @@ public final class ModParticles {
             DeferredRegister.create(Registries.PARTICLE_TYPE, NortheastChinaDelight.MODID);
 
     /**
-     * 大铁锅汤面上冒的泡（2026-11-05 用户：煮到六成以上、刚煮好时汤面上冒 bubble 粒子）：原版气泡（bubble）的样子，
+     * 大铁锅汤面上冒的泡：原版气泡（bubble）的样子，
      * 但原版那个离了水当场就没了，锅里的汤不是真的水，所以另做一个，冒一会儿破掉（client/PotBubbleParticle）。
      * 原版 SimpleParticleType 的构造器是 protected，开个匿名子类
      */

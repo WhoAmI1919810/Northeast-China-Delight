@@ -85,8 +85,7 @@ public class WoodenMalletItemRenderer extends BlockEntityWithoutLevelRenderer
     {
         boolean gui = displayContext == ItemDisplayContext.GUI;
         // 附魔光效得自己贴：自定义渲染器不走 ItemRenderer 那条路，要用 getFoilBufferDirect 的双写 buffer（Glint 层 + 模型层），否则附了魔也没有光
-        // 物品栏用原版物品栏那种（translucentCullBlockSheet）：translucentItemSheet 在「极佳」里画到掉落物专用的画面上，物品栏里看不到
-        // （2026-11-06 用户：极佳下木槌物品栏没贴图）；手里、地上照旧
+        // 物品栏使用 translucentCullBlockSheet：translucentItemSheet 在「极佳」下会画到掉落物画面，物品栏中不可见；手持和地面照旧。
         VertexConsumer consumer = ItemRenderer.getFoilBufferDirect(
                 buffer, gui ? Sheets.translucentCullBlockSheet() : Sheets.translucentItemSheet(), true, stack.hasFoil());
         Minecraft.getInstance().getBlockRenderer().getModelRenderer().renderModel(

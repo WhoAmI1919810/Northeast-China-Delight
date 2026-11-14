@@ -64,7 +64,7 @@ import java.util.function.UnaryOperator;
  *   <li>打火石 / 火焰弹点火，锹灭火（{@link #LIT}，四格一起改；点着亮度 15，可融化灶周积雪）。算农夫乐事的热源（标签里），
  *       点着时上面的厨锅照样能加热。</li>
  *   <li>拆掉任意一格：这一格掉一个农夫乐事炉灶，剩下三格变回炉灶（朝向、点没点着照旧），锅和锅盖掉出来。</li>
- *   <li>东西直接掉进锅里（2026-11-05 用户）：落在锅口的掉落物（{@link #stepOn}）、从上面往下送的漏斗和投掷器
+ *   <li>东西直接掉进锅里：落在锅口的掉落物（{@link #stepOn}）、从上面往下送的漏斗和投掷器
  *       （{@link #getContainer}），收什么见 {@link BigPotCooking#dropIn}。</li>
  * </ul>
  *
@@ -237,7 +237,7 @@ public class BigStoveBlock extends Block implements EntityBlock, WorldlyContaine
     }
 
     /**
-     * 大灶头顶不许有农夫乐事厨锅（2026-11-07 用户：「当炉灶变成大灶时，上面就不能放置厨锅」）。右键大灶顶面放厨锅在
+     * 大灶头顶不允许放置农夫乐事厨锅。右键大灶顶面放厨锅在
      * ModGameplayEvents#onCookingPotOnBigStove 里直接拦了，可从旁边方块的侧面点、用命令放，厨锅照样会落到大灶上，
      * 而大灶在农夫乐事的热源标签里，放上去就能加热做菜。所以头顶一出现厨锅（放方块会通知下面这格），下一刻把它连内容物震下来。
      * 排到下一刻再拆，不在厨锅自己放下的过程中途拆，免得农夫乐事放完方块再去碰已经没了的方块实体。
@@ -455,7 +455,7 @@ public class BigStoveBlock extends Block implements EntityBlock, WorldlyContaine
         }
         if (isFakePlayer(player)) {
             // 机械动力的机械手（Deployer）等假玩家空手右键：盛菜（上面 onEmptyHand）照常，揭盖、拿锅不行。
-            // 2026-11-08 用户报机械手把锅取出来了：机械手投完手里的料、手空了照样右键，以前就走到这里把锅盖、锅拿走
+            // 假玩家投完物品后仍会空手右键，不能让它揭盖或拿走锅。
             return InteractionResult.PASS;
         }
         if (!level.isClientSide) {
@@ -490,7 +490,7 @@ public class BigStoveBlock extends Block implements EntityBlock, WorldlyContaine
     private static final double MOUTH_RADIUS = 0.8;
 
     /**
-     * 掉落物落在锅口里就进锅（2026-11-05 用户，收什么见 {@link BigPotCooking#dropIn}）：一堆能收几个收几个，
+     * 掉落物落在锅口里就进锅（收什么见 {@link BigPotCooking#dropIn}）：一堆能收几个收几个，
      * 收不进的留在灶上；停在灶上的掉落物原版每 4 刻还会挪一下、再调到这里，锅里有了水、腾出地方就接着收。
      * 落在锅外的四个角上不收。返还的空桶、空盆、调料瓶、碗先送进大灶相邻库存，送不进才从锅口外沿弹出。
      */
@@ -531,7 +531,7 @@ public class BigStoveBlock extends Block implements EntityBlock, WorldlyContaine
     }
 
     /**
-     * 漏斗、投掷器从上面往锅里送（2026-11-05 用户：漏斗、投掷器等送来的也收）：灶上有锅时，灶就是一个只能从顶上
+     * 漏斗、投掷器从上面往锅里送：灶上有锅时，灶就是一个只能从顶上
      * 放进去的「箱子」，同原版堆肥桶。原版漏斗、投掷器找送去哪时认这个（Forge、NeoForge 都是没有物品能力才问这里，
      * 大灶没有物品能力；NeoForge 只给原版堆肥桶套了物品能力，机械动力的漏斗这类按物品能力找的不认）。
      * 收什么同掉落物（{@link BigPotCooking#dropIn}）；收不进的留在漏斗、投掷器里，等锅里腾出地方（同往满了的箱子里送）。

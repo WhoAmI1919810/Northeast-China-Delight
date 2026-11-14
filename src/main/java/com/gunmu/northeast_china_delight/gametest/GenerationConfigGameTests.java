@@ -71,7 +71,7 @@ public final class GenerationConfigGameTests {
             "northeast_china_delight:chests/courtyard_house",
             "northeast_china_delight:chests/courtyard_granary",
             "northeast_china_delight:chests/courtyard_disc",
-            // 厨房表每格先按权重挑一张子表再抽（2026-11-06）：子表里的物品同样要在默认名单里
+            // 厨房表每格先按权重挑一张子表再抽：子表里的物品同样要在默认名单里
             "northeast_china_delight:chests/courtyard_kitchen_staples",
             "northeast_china_delight:chests/courtyard_kitchen_desserts",
             "northeast_china_delight:chests/courtyard_kitchen_dishes",

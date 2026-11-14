@@ -127,7 +127,7 @@ public class BasinStandBlock extends FacingDecorBlock implements EntityBlock {
 
     /**
      * 洗脸：每次空手右键都出水花；玩家冷却好了才给 3 秒生命恢复 I，所有脸盆架共用该冷却。
-     * 一盆水洗三次（2026-11-07 用户）：方块实体记已经洗过几次，用过 {@link BasinStandBlockEntity#USES_BEFORE_EMPTY} 次以后
+     * 一盆水可洗三次：方块实体记录已用次数，达到 {@link BasinStandBlockEntity#USES_BEFORE_EMPTY} 次后
      * 再洗一次照常出水花、给效果，然后水盆变空盆（次数跟着清零，见 {@link BasinStandBlockEntity#setBlockState}）。
      */
     private static InteractionResult wash(BlockState state, Level level, BlockPos pos, Player player) {

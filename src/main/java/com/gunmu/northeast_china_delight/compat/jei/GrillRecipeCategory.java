@@ -146,7 +146,7 @@ public class GrillRecipeCategory implements IRecipeCategory<GrillJeiRecipe> {
         withSlotBackground(builder.addSlot(RecipeIngredientRole.INPUT, INPUT_X, INPUT_Y)
                 .addItemStacks(recipe.ingredient()), this.guiHelper);
 
-        // 调料格不管用几样都画满 MAX_SEASONINGS 格，没用的空着（用户嫌格子忽多忽少难看）
+        // 调料格不管用几样都画满 MAX_SEASONINGS 格，没用的空着
         List<List<ItemStack>> seasonings = recipe.seasonings();
         for (int i = 0; i < MAX_SEASONINGS; i++) {
             int x = SEASONING_X + i * STEP;

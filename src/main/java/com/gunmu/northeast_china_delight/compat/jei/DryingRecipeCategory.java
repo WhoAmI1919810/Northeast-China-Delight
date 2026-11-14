@@ -102,7 +102,7 @@ public class DryingRecipeCategory implements IRecipeCategory<DryingJeiRecipe> {
 
             blitWidget(graphics, LARROW_U, LARROW_V, LARROW_W, LARROW_H, ARROW_X, ARROW_Y);
             // 阴影垫在风扇底下：风扇方块是从 FAN_Y 往上画的（底面落在 FAN_Y 上下几像素），阴影顶边比 FAN_Y 高 4 像素，
-            // 同 Create 原版（阴影 y 29、风扇 y 33）。以前是 FAN_Y + 14，悬在风扇下面、压到箭头（2026-11-05 用户：往上挪）
+            // 同 Create 原版（阴影 y 29、风扇 y 33）。以前是 FAN_Y + 14，悬在风扇下面、压到箭头
             blitWidget(graphics, SHADOW_U, SHADOW_V, SHADOW_W, SHADOW_H,
                     FAN_VCX - SHADOW_W / 2, FAN_Y - 4);
 

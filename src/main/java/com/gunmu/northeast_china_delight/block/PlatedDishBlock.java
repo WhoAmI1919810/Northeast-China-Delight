@@ -18,7 +18,7 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 
 /**
  * 无器具菜肴的方块：摆在展示乐事的餐盘 / 小餐盘上（模型里自带那块盘子）。
- * 潜行空手右键把菜拿回来、盘子留在原地（2026-11-05 起要潜行，同别的菜收回）；拆掉时菜和盘子一起掉。
+ * 潜行空手右键把菜拿回来、盘子留在原地；拆掉时菜和盘子一起掉。
  */
 public class PlatedDishBlock extends PlacedDishBlock
 {

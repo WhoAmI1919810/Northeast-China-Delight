@@ -50,7 +50,7 @@ import net.neoforged.neoforge.client.model.data.ModelData;
  * 以前整个用 {@code renderModel} 画，它不做面明暗，侧面都跟顶面一样亮，一装料木臼就比旁边亮一截。</p>
  *
  * <p>倒进去的液体（配方 {@code inputs.liquid}，开舂之前）和舂出来的液体（{@code finished_liquid}）不走模型，
- * 按流体贴图直接画一层液面，见 {@link #renderLiquid}（2026-11-06 用户）。</p>
+ * 按流体贴图直接画一层液面，见 {@link #renderLiquid}。</p>
  */
 public class WoodenMortarRenderer implements BlockEntityRenderer<WoodenMortarBlockEntity> {
 
@@ -115,11 +115,11 @@ public class WoodenMortarRenderer implements BlockEntityRenderer<WoodenMortarBlo
     }
 
     /**
-     * 料还没放齐（臼还是空臼的样子，方块模型照常画）：放进去了的那几样各画各的模型（配方 inputs 里的 model，
-     * 2026-11-05 用户：红薯和水得都放进去才有模型）。没写 model 的、不是 overlay 的配方什么都不多画。
+     * 料还没放齐（臼还是空臼的样子，方块模型照常画）：放进去了的那几样各画各的模型（配方 inputs 里的 model）。
+     * 没写 model 的、不是 overlay 的配方什么都不多画。
      *
      * <p>只在还没舂过（进度 0）时画：取成品时服务端清空方块实体、把臼改回空臼是同一刻的事，客户端却先收到「改回空臼」、
-     * 后收到「清空」，中间那一下方块实体里还留着放进去的料，不拦就闪回放料那一步（同日用户报）。
+     * 后收到「清空」，中间那一下方块实体里还留着放进去的料，不拦就闪回放料那一步。
      * 舂过的那份旧数据进度一定大于 0；放最后一样料时进度是 0，照画，和接下来放齐那一步一个样，不闪。</p>
      */
     private static void renderDeposited(WoodenMortarBlockEntity mortar, Level level, BlockState state, PoseStack pose,
@@ -166,7 +166,7 @@ public class WoodenMortarRenderer implements BlockEntityRenderer<WoodenMortarBlo
             {4, 2, 12, 3}, {3, 3, 13, 4}, {2, 4, 14, 12}, {3, 12, 13, 13}, {4, 13, 12, 14}};
 
     /**
-     * 画一层液面（2026-11-06 用户：配方写明哪样是液体，直接画对应的液面）。流体按它自己的静止贴图和颜色（水按群系水色，
+     * 画一层液面。流体按它自己的静止贴图和颜色（水按群系水色，
      * 同原版炼药锅；JEI 里没有世界时用原版默认水色）；只给了贴图的按贴图和 color。用实体半透明的固定缓冲，
      * 液面下的花生、红薯块隔着液面看得见（同大锅、大缸，见 BigPotRenderer#renderLiquid）
      */

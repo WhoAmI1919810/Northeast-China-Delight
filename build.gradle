@@ -55,9 +55,7 @@ tasks.withType(JavaCompile).configureEach {
 }
 
 if (sc.current.version.compareTo('1.20.2') < 0) {
-    // 1.20.1（Forge 47.1）：legacyforge 插件
-    // 生产环境里 Minecraft 的名字是 SRG，mixin 必须靠 refmap 重映射才能找到目标；
-    // mixin { } 是 legacyforge 提供的扩展，负责生成 refmap 并打包进 jar
+    // 1.20.1（Forge 47.1）：legacyforge 负责生成并打包 mixin refmap。
     mixin {
         add(sourceSets.main, "${mod_id}.refmap.json")
         config "${mod_id}.mixins.json"
@@ -155,10 +153,7 @@ if (sc.current.version.compareTo('1.20.2') < 0) {
     }
 }
 
-// mods / dependencies / 其他配置不变
-// （注意：mods { sourceSet(main) } 已经在上面对应的版本分支里登记过一次，
-//  这里不能再登记一遍 —— ModDevGradle 会因为「Duplicate source set 'main'」
-//  在 :1.21.1:runClient 查询 modFolders 时直接报错）
+// mods { sourceSet(main) } 已在版本分支登记，不能重复登记，否则 ModDevGradle 会报 Duplicate source set。
 
 configurations {
     if (sc.current.version.compareTo('1.20.5') < 0) {
@@ -320,8 +315,7 @@ publishing {
 
 ['lib', 'libs'].each { folder ->
     def copyJar = tasks.register("copyJarTo${folder.capitalize()}", Copy) {
-        // 1.20.x 节点（legacyforge）里 `jar` 产出的是「开发名」的包，能进游戏的是 reobfJar 的结果；
-        // 只复制 jar 的话 lib/、libs/ 拿到的是没法用的 dev 包（2026-10-09 实测踩到）。
+        // legacyforge 的 jar 是开发名包，发布目录必须使用重映射后的 reobfJar。
         def packaged = tasks.findByName('reobfJar') != null ? tasks.named('reobfJar') : tasks.named('jar')
         dependsOn packaged
         from packaged.flatMap { it.archiveFile }

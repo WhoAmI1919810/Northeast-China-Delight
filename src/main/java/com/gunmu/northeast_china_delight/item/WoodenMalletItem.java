@@ -19,8 +19,7 @@ import net.minecraft.world.item.component.ItemAttributeModifiers;
  * 木槌：木臼「舂捣」用的工具（配方里的 {@code tool}），本身也是一把钝器。
  *
  * <ul>
- *   <li>耐久 {@link #DURABILITY}，可附魔（耐久 / 经验修补 / 消失诅咒），不能堆叠；舂捣一下、打中生物一下都掉 1 点
- *       （打生物掉耐久 2026-11-04 用户要的，同原版的剑）；</li>
+ *   <li>耐久 {@link #DURABILITY}，可附魔（耐久 / 经验修补 / 消失诅咒），不能堆叠；舂捣一下、打中生物一下都掉 1 点耐久；</li>
  *   <li>攻击伤害 5 点、攻击速度 1.0 —— 工具提示显示的是「玩家基础值 + 修饰符」的合计，
  *       所以修饰符必须挂原版的 {@code base_attack_damage} / {@code base_attack_speed} id，
  *       自己另起 id 的话，提示只会显示 +4 / -3.0 这种增量；</li>

@@ -22,7 +22,7 @@ import java.util.Map;
  * 木臼「舂捣」配方的规则核心。
  *
  * <p>装料可以分多次右键完成；每放一样都按臼里全部的料重挑配方（{@link #choose}），正好凑齐某条就可以开舂，
- * 开舂那一下才定是哪条（2026-11-06 用户：几条配方共用一样料时，先放哪样都行）。加工满后按 {@link Result}
+ * 开舂那一下才最终确定配方，因此多条配方共用原料时投入顺序不受限制。加工满后按 {@link Result}
  * 逐项掷概率和数量，结果在最后一次敲击时快照进方块实体，之后重载数据包不会重掷。
  */
 public final class PoundingRecipes {
@@ -70,9 +70,9 @@ public final class PoundingRecipes {
     }
 
     /**
-     * 一份水：水桶、水盆或一瓶水（配方 inputs 里写 {@code {"water": true}}，2026-11-05 舂湿粉团）。原料在这里用代码拼，不写进 JSON：
+     * 一份水：水桶、水盆或一瓶水（配方 inputs 里写 {@code {"water": true}}）。原料在这里用代码拼，不写进 JSON：
      * 认水瓶得看药水瓶上的「水」，这种带组件的原料（neoforge:components）里的物品列表要有注册表才解析得了，
-     * 舂捣配方是用普通 JsonOps 解析的，写进 JSON 整条配方加载不上（JEI 里看不到配方，用户报了两次）
+     * 舂捣配方使用普通 JsonOps 解析，写进 JSON 会导致整条配方加载失败。
      */
     public static Ingredient water() {
         Ingredient containers = Ingredient.of(Items.WATER_BUCKET, ModItems.WATER_BASIN.get());
@@ -90,8 +90,7 @@ public final class PoundingRecipes {
     }
 
     /**
-     * 臼里的一层液体（2026-11-06 用户：「木臼的配方格式里最好写明白，哪些投料是用于放入液体，这样直接渲染相应液面」）。
-     * 不再给每种液体单做一层模型，渲染器按这里画液面（{@code WoodenMortarRenderer#renderLiquid}，形状同以前那层水 / 油）：
+     * 臼里的一层液体。渲染器按这里的定义绘制液面（{@code WoodenMortarRenderer#renderLiquid}）：
      * <ul>
      *   <li>{@code fluid}：按这种流体自己的静止贴图和颜色画；水按群系水色、半透明，同原版炼药锅；</li>
      *   <li>{@code texture}：直接给贴图（{@code color} 是 ARGB 染色，-1 不染）。两样都写时流体在就用流体，不在（没装那个模组）
@@ -112,8 +111,8 @@ public final class PoundingRecipes {
     /**
      * 一种投入物需要多少份，以及每消耗一份返还什么容器（不写就按 {@link #leftover} 还）。
      *
-     * @param model 料还没放齐时，这一样放进去了臼里画的模型（overlay，同 stage_models；2026-11-05 用户：红薯和水得都放进去才有模型，
-     *              要各加载各的）。几样都放了就几个一起画；放齐以后照常画 stage_models 的第一个。null = 放齐前不画
+     * @param model 料还没放齐时，这一样放进去了臼里画的模型（overlay，同 stage_models）。
+     *              多种原料各画各的；放齐以后画 stage_models 的第一个。null = 放齐前不画
      * @param liquid 这一样是倒进臼里的液体（配方写 {@code liquid}；{@code "water": true} 不写也算水）：放进去以后、
      *               开舂之前画这层液面，敲过第一下就归 stage_models 管
      */
@@ -139,7 +138,7 @@ public final class PoundingRecipes {
 
         /**
          * 投进去的一份用完剩下的容器：配方写了 {@code return_container} 就还它；没写就看这样东西自己剩什么
-         * （2026-11-05 加：湿粉团的水可以是一桶、一盆或一瓶，各还各的）——药水瓶（水瓶）还空玻璃瓶，
+         * ——药水瓶（水瓶）还空玻璃瓶，
          * 有合成剩余物的还剩余物（水桶 → 空桶、水盆 → 空大脸盆），别的什么都不还
          */
         public ItemStack leftover(ItemStack inserted) {
@@ -431,9 +430,8 @@ public final class PoundingRecipes {
     /**
      * 臼里的料按某条配方分好格：{@code slots} 和配方 inputs 一一对应；{@code complete} = 每格都正好凑齐。
      *
-     * <p>2026-11-06 用户：「臼应该在玩家捶打时，才检查匹配哪一项配方」。放料时不再一放第一样就认死一条配方
-     * （以前熟花生一放进去就凑齐了花生酱，想加蜂蜜做别的已经来不及），而是每放一样都按臼里全部的料重新挑，
-     * 开舂那一下再挑一遍才算数，见 {@code WoodenMortarBlock#pound}。</p>
+     * <p>放料阶段每投入一样都按臼里的全部材料重挑配方，开舂时再挑一遍才算数，
+     * 见 {@code WoodenMortarBlock#pound}。</p>
      */
     public record Fit(Recipe recipe, List<ItemStack> slots, boolean complete) {
     }
@@ -514,7 +512,7 @@ public final class PoundingRecipes {
 
     /**
      * 这一下右键该往臼里放几个手里的东西：放得下的每条配方各自还能再收几个，取最少的那个；一条都收不下返回 0。
-     * 几条配方要的数不一样时就一个一个放，好停在要得少的那条上；只有一条用得上时一下放够（同以前）。
+     * 几条配方需求不同时逐个放，便于停在需求较少的那条；只有一条可用时一次放够。
      */
     public static int room(RecipeManager manager, List<ItemStack> contents, ItemStack held) {
         return room(all(manager), contents, held);

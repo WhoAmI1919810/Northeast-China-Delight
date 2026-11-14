@@ -6,7 +6,7 @@ import net.minecraft.world.level.block.state.BlockState;
 
 /**
  * 大灶除西北那格以外三格上的方块实体，不存任何数据，只为在 1.20.1（Forge）上挂物品能力：
- * Forge 的能力只能挂在方块实体上，机械动力 1.20.1 的溜槽也是先找下面那格的方块实体再要能力（2026-11-08，见 {@link BigPotItemHandler}）。
+ * Forge 的能力只能挂在方块实体上，机械动力 1.20.1 的溜槽也是先找下面那格的方块实体再要能力。
  * 1.20.2 起能力按方块注册，这三格不放方块实体（{@link BigStoveBlock#newBlockEntity}）。
  */
 public class BigStovePartBlockEntity extends BlockEntity {

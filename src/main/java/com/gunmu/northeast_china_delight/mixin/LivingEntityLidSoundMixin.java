@@ -8,7 +8,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 /**
- * 举着木锅盖时不放原版盾牌的声音（2026-11-05 用户：格挡换成木头破坏中的声音、碎裂换成木头被破坏的声音，
+ * 举着木锅盖时不放原版盾牌的声音（格挡换成木头破坏中的声音、碎裂换成木头被破坏的声音，
  * 木头的声音由服务端放，见 {@link PotLidItem}）。
  *
  * <p>原版这两声是服务端发实体事件、客户端在 LivingEntity#handleEntityEvent 里放的：29 = 举盾挡住（shield.block），

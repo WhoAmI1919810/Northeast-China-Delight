@@ -68,7 +68,7 @@ public final class SideDishMerchantTrades
         trades.get(1).add(sell(4, ModItems.TOFU.get(), 1, 16, 2));
         trades.get(1).add(sellWithUses(ModItems.SOY_SAUCE.get(), 1, 3, 16, 2));
         trades.get(1).add(buy(ModItems.SOYBEAN.get(), 24, 16, 2));
-        // 收花生原来在 5 级（经验 30），2026-11-06 用户让挪到 1 级；经验照 1 级的给 2
+        // 收花生放在 1 级，经验按 1 级交易给 2。
         trades.get(1).add(buy(ModItems.PEANUT.get(), 22, 16, 2));
 
         trades.get(2).add(sell(6, ModItems.DRIED_TOFU.get(), 1, 16, 5));
@@ -80,7 +80,7 @@ public final class SideDishMerchantTrades
         trades.get(3).add(sellWithUses(ModItems.VINEGAR.get(), 2, 4, 12, 10));
         trades.get(3).add(sellWithUses(ModItems.WHITE_VINEGAR.get(), 2, 4, 12, 10));
         trades.get(3).add(sellWithUses(ModItems.CHILI_SAUCE.get(), 2, 5, 12, 10));
-        // 植物油 50 mB（能用 1 次），2026-11-06 用户加；价照醋（一次用量 2 绿宝石）
+        // 植物油 50 mB（能用 1 次）；价格参照醋，一次用量 2 绿宝石。
         trades.get(3).add(sellWithUses(ModItems.COOKING_OIL.get(), 1, 2, 12, 10));
         trades.get(3).add(coldOnly(sell(5, ModItems.PICKLED_GREEN_RADISH.get(), 1, 12, 10)));
         trades.get(3).add(coldOnly(sell(6, ModItems.SOUR_CABBAGE.get(), 1, 12, 10)));

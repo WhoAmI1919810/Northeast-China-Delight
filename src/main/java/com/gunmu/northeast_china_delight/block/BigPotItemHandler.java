@@ -11,7 +11,7 @@ import net.neoforged.neoforge.items.IItemHandler;
 //?}
 
 /**
- * 大灶从上面送料的物品能力（2026-11-08 用户报：机械动力的溜槽没法把物品投入大铁锅）。
+ * 大灶从上面送料的物品能力。
  *
  * <p>原版漏斗认的是 {@link BigStoveBlock#getContainer}（WorldlyContainerHolder），可机械动力的溜槽、漏斗口只认加载器的物品能力，
  * NeoForge 也只替原版堆肥桶做了转换，所以以前溜槽眼里大灶是块实心方块。这里把同一套规矩包成物品能力：

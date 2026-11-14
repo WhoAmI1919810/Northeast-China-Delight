@@ -32,8 +32,7 @@ import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
 //?}
 
 /**
- * 菜肴方块形态的规矩：不潜行右键 = 吃（不摆）、潜行右键 = 摆成方块
- * （2026-11-04 起菜肴一定能摆成方块，配置里那个开关去掉了）。
+ * 菜肴方块形态的规矩：不潜行右键 = 吃（不摆）、潜行右键 = 摆成方块。
  */
 @GameTestHolder(NortheastChinaDelight.MODID)
 @PrefixGameTestTemplate(false)

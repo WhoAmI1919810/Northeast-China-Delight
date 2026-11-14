@@ -23,7 +23,7 @@ import net.minecraft.world.phys.shapes.VoxelShape;
  * <p>{@link #FACING} 指屋外那一面：糊纸窗的纸糊在这一面（东北"窗户纸糊在外"），另一面露出窗棂。
  * 放的时候屋外那面朝着放窗的人，站在屋外砌墙装窗，纸就在外面。</p>
  *
- * <p>几扇同一种、同一朝向的窗拼在一起连成一整扇（2026-11-03 用户：拼在一起不显示中间的格子）：{@link #LEFT} / {@link #RIGHT} /
+ * <p>几扇同一种、同一朝向的窗拼在一起连成一整扇：{@link #LEFT} / {@link #RIGHT} /
  * {@link #UP} / {@link #DOWN} 记那一边挨着没有，挨着的那一边不画外框、补上窗纸 / 玻璃，窗棂接过去
  * （模型见 work/tools/ne_building/window_connect.py）。左右是朝北放时模型的西边 / 东边，也就是朝向逆时针 / 顺时针那一边。</p>
  */

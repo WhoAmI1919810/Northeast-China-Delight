@@ -43,20 +43,8 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * JEI 里的「大锅烹饪」分类，照用户给的示意图（main 目录下的 铁锅JEI示意.png，2026-11-03 用户改过一版）排：
- *
- * <ul>
- *   <li>左边是生着火、放着锅的大灶（游戏里的方块模型），配方要液体就在锅里画一层液面，和锅里实际的画法一样
- *       （{@code client/BigPotRenderer#renderLiquid}），只是不按调料染：JEI 里是刚倒进去的清水，水就是普通的蓝；
- *       灶的右下角挨着农夫乐事的篝火小图标；</li>
- *   <li>上面一排 3 格调料，比下面 2×3 格食材往左错开一格半；</li>
- *   <li>右上角两行：秒表「10秒」、经验球「0.35点经验」（直接写出来，图标见 work/tools/big_stove/jei_icons.py）；</li>
- *   <li>箭头指向右边的大成品格（数量 = 一锅盛几份），按烹饪时间一遍遍走满（烹饪进度）；箭头下面是盛菜用的容器，
- *       右边一把勺子勾向成品；</li>
- *   <li>锅盖缩短时间（{@code lid_speedup}）在 JEI 里不显示；</li>
- *   <li>鼠标移到锅上出一个框：要什么液体、要多少（2026-11-06 用户，{@link #getTooltipStrings}）；</li>
- *   <li>3 格调料、6 格食材、容器格不管配方用没用都画出来，没用的空着（用户嫌格子忽多忽少难看）。</li>
- * </ul>
+ * JEI 的「大锅烹饪」分类：左侧显示大灶和锅内液体，上方 3 格调料，中间 2×3 格食材，
+ * 右侧显示成品、容器与烹饪进度。未使用的槽位也保持显示，避免不同配方的页面布局跳动。
  */
 public class BigPotRecipeCategory implements IRecipeCategory<BigPotJeiRecipe> {
 
@@ -79,10 +67,7 @@ public class BigPotRecipeCategory implements IRecipeCategory<BigPotJeiRecipe> {
     private static final int SEASONING_SLOTS = 3;
     private static final int INGREDIENT_SLOTS = 6;
     private static final int ARROW_X = 120;
-    /**
-     * 箭头那块图 17 行高，最下面一行是 JEI 底色；画在容器格之后，原来放 34 时最下面那行（y 50）正好压掉容器格边框的上沿
-     * （2026-11-04 用户截图：左下角盆的格子缺上边框），往上挪一格
-     */
+    /** 箭头图底部带一行 JEI 底色，上移一格以免压住容器格的上边框。 */
     private static final int ARROW_Y = 33;
     private static final int CONTAINER_X = 124;
     private static final int CONTAINER_Y = 51;
@@ -109,11 +94,7 @@ public class BigPotRecipeCategory implements IRecipeCategory<BigPotJeiRecipe> {
     private static final double POT_HALF_WIDTH = 15.0;
     private static final double POT_HALF_HEIGHT = 8.0;
 
-    /**
-     * 篝火、箭头（灰底 + 白色走满）、秒表、经验球、勺子都直接用农夫乐事厨锅那页的图（2026-11-03 用户：照参考图用农夫乐事的图案）。
-     * 位置照农夫乐事 CookingRecipeCategory：界面贴图 176,0 篝火 17×15、176,15 白箭头 24×17、176,32 秒表 8×11、176,43 经验球 9×9；
-     * JEI 背景图 60,9 灰箭头 24×17、82,40 勺子 9×14。这些图块自带一圈和 JEI 底色一样的灰（#C6C6C6），所以篝火先画、锅灶压在上面。
-     */
+    /** 图标沿用农夫乐事厨锅分类；图块自带 JEI 底色，因此篝火先画、锅灶后画。 */
     private static final ResourceLocation FD_GUI = DdIds.of("farmersdelight", "textures/gui/cooking_pot.png");
     private static final ResourceLocation FD_JEI = DdIds.of("farmersdelight", "textures/gui/jei/cooking_pot.png");
 
@@ -232,10 +213,7 @@ public class BigPotRecipeCategory implements IRecipeCategory<BigPotJeiRecipe> {
         }
     }
 
-    /**
-     * 鼠标移到锅上：一个框写锅里要什么液体、要多少（2026-11-06 用户）。用 getTooltipStrings 而不是新的 getTooltip：
-     * 两版 JEI 都有它，新版的 getTooltip 默认也是调它。
-     */
+    /** 鼠标悬停在锅口时显示所需液体和数量；沿用两版 JEI 都支持的 getTooltipStrings。 */
     @Override
     public List<Component> getTooltipStrings(BigPotJeiRecipe recipe, IRecipeSlotsView view,
                                              double mouseX, double mouseY) {
@@ -373,7 +351,7 @@ public class BigPotRecipeCategory implements IRecipeCategory<BigPotJeiRecipe> {
             pose.popPose();
         }
         if (liquid != null) {
-            // JEI 里画的是刚倒进去的清水（流体本来的颜色，水是普通的蓝），不按调料染（2026-11-03 用户）
+            // JEI 显示未调色的原始液体颜色。
             BigPotRenderer.renderLiquid(pose, buffers, liquid, BigPotVisuals.liquidY(recipe.liquidMb()),
                     BigPotVisuals.liquidColor(liquid, List.of()), LightTexture.FULL_BRIGHT, OverlayTexture.NO_OVERLAY);
         }

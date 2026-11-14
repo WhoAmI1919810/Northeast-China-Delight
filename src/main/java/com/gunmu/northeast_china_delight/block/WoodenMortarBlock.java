@@ -54,7 +54,7 @@ import java.util.List;
  * <ul>
  *   <li>空臼（STATE 0）手持木槌右键 → 把木槌搁在臼上（{@link #MALLET}），再空手右键取回</li>
  *   <li>空臼（STATE 0）手持配方投入物右键 → 逐次投入；臼里的料正好凑齐某条配方就转到它的装料状态，
- *       还没开舂前能接着放、改凑别的配方（2026-11-06，见 {@link #deposit}）</li>
+ *       还没开舂前能接着放、改凑别的配方（见 {@link #deposit}）</li>
  *   <li>还没开舂时空手右键 → 臼里的料全退回来；倒进去时还过空容器的（水桶、蜂蜜瓶、盆装米饭……）
  *       要从背包里收回同样多的空容器，见 {@link #takeBack}</li>
  *   <li>装料 / 加工中（filled..done-1）左键敲击 → 加工一次，切模型；每敲一下扣木槌 1 点耐久。
@@ -228,10 +228,7 @@ public class WoodenMortarBlock extends BaseEntityBlock {
     }
 
     /**
-     * 放一样料（2026-11-06 改：开舂之前随时能接着放，每放一样都按臼里全部的料重挑配方）。
-     *
-     * <p>以前一放第一样东西就认死一条配方：熟花生一放进去就凑齐了花生酱，想再加蜂蜜做别的来不及。
-     * 用户：「臼应该在玩家捶打时，才检查匹配哪一项配方」。现在：</p>
+     * 放一样料。开舂之前可以继续投入，每放一样都按臼里的全部材料重挑配方：
      * <ul>
      *   <li>手里这样东西只要还有哪条配方装得下（连同臼里已有的料）就让放，放几个见 {@link PoundingRecipes#room}；</li>
      *   <li>放完按 {@link PoundingRecipes#choose} 挑：正好凑齐某条就显示它装好料的样子（可以开舂了），
@@ -297,7 +294,7 @@ public class WoodenMortarBlock extends BaseEntityBlock {
     }
 
     /**
-     * 压水井往空臼里放一份水（2026-11-06 用户：压水井出水嘴前下方一格是空的木臼就放 1 份水进去，{@link HandPumpBlock}）。
+     * 压水井往空臼里放一份水（{@link HandPumpBlock}）。
      * 只认真空臼：没放料、没搁木槌、没开舂；还得有配方收水（默认是红薯湿粉团）。记成一桶水，和拿水桶放的一样，
      * 退料时照样要一个空桶。倒水声由压水井出。只在服务端调。
      */
@@ -448,7 +445,7 @@ public class WoodenMortarBlock extends BaseEntityBlock {
     }
 
     /**
-     * 退料（2026-11-06，用户要的「放进去的料能取出来」）：还没开舂，臼里的料原样退回，臼回到空臼。
+     * 退料：还没开舂时，臼里的料原样退回，臼回到空臼。
      *
      * <p>倒进去的时候已经把空容器还给玩家了（{@link #leftover}：空桶、空瓶、空盆、配方写的 return_container），
      * 原样退满桶就白多一个桶。所以有这种料就得从背包里收回同样多的空容器才退；
@@ -557,7 +554,7 @@ public class WoodenMortarBlock extends BaseEntityBlock {
         PoundingRecipes.Recipe recipe = mortar.resolve(level);
         // recipe == null：空臼，或者原配方被数据包删掉 / 禁用了（旧料等空手右键退还，不趁机换配方）
         if (recipe != null && !mortar.started()) {
-            // 开舂这一下才定配方（2026-11-06 用户）：按臼里现有的料再挑一遍，放料时挑的只是显示用的
+            // 开舂这一下才最终定配方；放料阶段挑中的配方只用于显示。
             PoundingRecipes.Fit fit = PoundingRecipes.choose(level.getRecipeManager(), mortar.depositedStacks());
             if (fit == null || !fit.complete()) {
                 return false;

@@ -253,7 +253,7 @@ public final class PoundGameTests {
     }
 
     /**
-     * 2026-11-06 用户：「臼应该在玩家捶打时，才检查匹配哪一项配方」。两条配方共用熟花生：只放熟花生凑的是前一条，
+     *「臼应该在玩家捶打时，才检查匹配哪一项配方」。两条配方共用熟花生：只放熟花生凑的是前一条，
      * 再放蜂蜜就改凑后一条，先放哪样都行；凑齐的那条再多放一样就放不进。
      * 后一条的 id 故意排在前面（同优先级按 id 排）：以前一放熟花生就会被它认死，前一条再也做不出来。
      */
@@ -294,7 +294,7 @@ public final class PoundGameTests {
         helper.succeed();
     }
 
-    /** 2026-11-06：配方写明哪样投料是液体（liquid），成品是液体写 finished_liquid；一份水不写 liquid 也算水 */
+    /**：配方写明哪样投料是液体（liquid），成品是液体写 finished_liquid；一份水不写 liquid 也算水 */
     @GameTest(template = "empty")
     public static void liquidFieldsDecode(GameTestHelper helper) {
         PoundingRecipes.Recipe recipe = decode(

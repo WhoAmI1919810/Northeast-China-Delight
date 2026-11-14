@@ -11,11 +11,10 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * 菜肴的"口味"表：决定吃完给什么状态效果、持续多久。持续时长按食材数算：每种食材 10 秒。不在表里的食物不给任何效果。
+ * 菜肴口味表：决定食用后的状态效果和持续时间。
  *
- * <p>{@code put} 里的数是配方里的食材种数：同一种算一种；盐、酱油、大酱、糖、醋、各种油、辣酱、番茄酱、虾酱、鱼露、
- * 花生酱、淀粉这类调料不算，水和碗、盆等容器也不算。再写一个数的是直接指定的时长（刻）：烤鸡架、格瓦斯本来就单独指定；
- * 其余写了时长的，是食材数按上面的规矩改过以后，游戏里的效果时长暂时保持原样（原来的表连调料一起数）。</p>
+ * <p>{@code put} 中的整数是食材种数，默认每种 10 秒；调料、水和容器不计入。需要特殊时长时直接写刻数。
+ * 不在表中的食物不给状态效果。</p>
  */
 public final class DishFlavors {
 
@@ -44,13 +43,13 @@ public final class DishFlavors {
     /**
      * 油腻菜里只有这几道给缓慢：配方里的食材多于 3 种（同一种算一种；盐、酱油、大酱、糖、醋、油、辣酱、番茄酱这类调料不算）。
      * 其余油腻菜照常给生命提升、急迫和油腻，只是不拖慢脚步。
-     * 大盆菜的碗装那一份不在这里：2026-11-03 用户给的效果表里没有缓慢（见 {@link #FEAST_BOWLS}）。
+     * 大盆菜碗装份不在这里，见 {@link #FEAST_BOWLS}。
      */
     private static final Set<String> SLOWING_GREASY = Set.of("smoked_meat_platter");
 
     /**
      * 大盆菜（大锅烹饪、大脸盆盛）盛出来的碗装那一份：都是 90 秒，生命提升 II + 急迫 I，再加油腻 II（油腻口味）
-     * 或滋养 I（均衡口味），见 {@link DishEffects#of}。别的菜的生命提升只给 I（2026-11-03 用户定的）。
+     * 或滋养 I（均衡口味），见 {@link DishEffects#of}；普通菜的生命提升只给 I。
      */
     private static final Set<String> FEAST_BOWLS = Set.of(
             "harvest_stew_bowl", "slaughter_feast_bowl", "sauerkraut_seafood_stew_bowl", "sauerkraut_bone_stew_bowl",
@@ -65,7 +64,7 @@ public final class DishFlavors {
             Map.entry("seafood_tofu_soup", 0),
             Map.entry("snow_mustard_tofu_stew", 0),
             Map.entry("sea_cucumber_tofu_soup", 0),
-            Map.entry("sauerkraut_seafood_stew_bowl", 0),   // 原来写的是盆（吃不了），碗装那碗一直没暖身（2026-11-06 用户让改）
+            Map.entry("sauerkraut_seafood_stew_bowl", 0),
             Map.entry("spicy_beef_soup", 0),
             Map.entry("kimchi_tofu_soup", 0),
             Map.entry("ginseng_chicken_soup", 0),
@@ -133,13 +132,11 @@ public final class DishFlavors {
         put(map, Flavor.GREASY, 1, 1000, "candied_sweet_potato");
         put(map, Flavor.GREASY, 1, 800, "dry_fried_hairtail");
         put(map, Flavor.GREASY, 1, 800, "braised_hairtail");
-        // 榛子糖火烧不给效果了，只管饱（2026-11-06 用户，同花生糕）；原来是油腻 2 种、1000 刻
         put(map, Flavor.GREASY, 1, 1000, "corn_fritter");
         put(map, Flavor.GREASY, 1, 1000, "potato_pancake");
         put(map, Flavor.GREASY, 3, "three_fresh_veggies");
         put(map, Flavor.GREASY, 2, 600, "sticky_bean_bun");
-        // 大盆菜：效果挂在碗装的那一份上（盆本身是方块物品，不能吃、没有效果）。2026-11-03 配方扩到 6 种食材，
-        // 效果照用户的表统一 90 秒；大丰收、猪肉炖粉条、小鸡炖蘑菇从均衡改成油腻
+        // 大盆菜的效果挂在碗装份上；盆方块本身不可食用。
         put(map, Flavor.GREASY, 6, FEAST_TICKS, "harvest_stew_bowl");
         put(map, Flavor.GREASY, 6, FEAST_TICKS, "slaughter_feast_bowl");
         put(map, Flavor.GREASY, 6, FEAST_TICKS, "ground_pot_chicken_bowl");
@@ -148,14 +145,12 @@ public final class DishFlavors {
         put(map, Flavor.GREASY, 6, FEAST_TICKS, "chicken_mushroom_stew_bowl");
         put(map, Flavor.BALANCED, 6, FEAST_TICKS, "sauerkraut_seafood_stew_bowl");
         put(map, Flavor.BALANCED, 6, FEAST_TICKS, "sauerkraut_bone_stew_bowl");
-        // 得莫利炖鱼 2026-11-06 改成盆装菜，碗装那一碗照大盆菜给；口味照旧均衡（鱼炖豆腐粉条，不算油腻）
         put(map, Flavor.BALANCED, 6, FEAST_TICKS, "demoli_fish_stew_bowl");
         put(map, Flavor.GREASY, 2, "salted_fish_flatbread");
         put(map, Flavor.GREASY, 2, 800, "kimchi_pancake");
         put(map, Flavor.GREASY, 2, 1000, "snowy_bean_paste");
         put(map, Flavor.GREASY, 1, 400, "candied_peanuts");
         put(map, Flavor.GREASY, 1, 600, "grilled_oil_edge");
-        // 烤冷面照烤油边给油腻那套（2026-11-06 用户：给得多一些，和烤油边之类的看齐），时长照旧 1000 刻；原来是均衡、只给滋养
         put(map, Flavor.GREASY, 2, 1000, "grilled_cold_noodles");
         put(map, Flavor.GREASY, 1, 200, "grilled_chicken_frame");
 
@@ -191,7 +186,6 @@ public final class DishFlavors {
         put(map, Flavor.BALANCED, 2, 600, "shrimp_paste_tofu_stew");
         put(map, Flavor.BALANCED, 3, 800, "seafood_tofu_soup");
         put(map, Flavor.BALANCED, 2, "snow_mustard_tofu_stew");
-        // 土豆焖茄子（2026-11-07）：马铃薯、茄子、大葱 3 种（大酱是调料不算），30 秒；焖的不过油，不算油腻
         put(map, Flavor.BALANCED, 3, "braised_eggplant_potato");
         put(map, Flavor.BALANCED, 5, "three_delicacy_dumpling");
         put(map, Flavor.BALANCED, 4, 600, "sauerkraut_crackling_dumpling");

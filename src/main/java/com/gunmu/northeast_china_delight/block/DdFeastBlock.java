@@ -35,7 +35,7 @@ import java.util.function.Supplier;
 /**
  * 「一大盆菜」的方块形式 —— 做法照农夫乐事的 {@code FeastBlock}（牧羊人派、填馅南瓜那套）。
  * 放法同碗装菜、盘装菜（{@link PlacedDishBlock}）：直接右键放下（{@code item/DdFeastItem}），放在哪都行，朝向放的人，
- * 潜行空手右键收回（2026-11-05 用户）。
+ * 潜行空手右键收回。
  */
 public class DdFeastBlock extends Block {
 
@@ -189,8 +189,7 @@ public class DdFeastBlock extends Block {
     }
     //?}
 
-    // 放在哪都行、底下的方块拆了也不掉，同碗装菜、盘装菜（DishBlock）。以前要放在实心面上、底下没了就碎（和蛋糕一样），
-    // 2026-11-05 用户：盆装菜的放置逻辑和碗装菜、盘装菜统一
+    // 放在哪都行、底下的方块拆了也不掉，与碗装菜、盘装菜一致。
 
     @Override
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {

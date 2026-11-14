@@ -9,7 +9,7 @@ import java.util.List;
 
 /**
  * JEI 里的一条「舂捣」配方，保留全部输入、产物和阶段模型信息。
- * {@code liquid}：配方里倒进臼里的液体，木臼图上放齐那一步要画的液面（见 PoundingRecipes.Liquid，2026-11-06）
+ * {@code liquid}：配方里倒进臼里的液体，木臼图上放齐那一步要画的液面
  */
 public record PoundJeiRecipe(ResourceLocation id, List<Input> inputs, List<ItemStack> tool,
                              int poundTimes, float chargeThreshold, List<Output> outputs,

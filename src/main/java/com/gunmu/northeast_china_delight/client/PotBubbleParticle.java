@@ -10,7 +10,7 @@ import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.core.particles.SimpleParticleType;
 
 /**
- * 大铁锅汤面上的泡（particle/ModParticles#POT_BUBBLE，2026-11-05 用户）：贴图就是原版气泡（particles/pot_bubble.json 指向
+ * 大铁锅汤面上的泡：贴图就是原版气泡（particles/pot_bubble.json 指向
  * minecraft:bubble），大小同原版气泡那一档往大挑一点（锅有两格宽）。贴着汤面待半秒到一秒多、轻轻晃一下，
  * 到时候破掉，原地冒一个原版的 bubble_pop（破泡那几帧）。
  *

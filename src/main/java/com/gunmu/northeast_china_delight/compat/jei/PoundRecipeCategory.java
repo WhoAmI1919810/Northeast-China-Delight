@@ -41,7 +41,7 @@ import net.neoforged.neoforge.client.model.data.ModelData;
 /**
  * JEI 里的「舂捣」分类。左边逐项列出输入（数量直接写在物品角标上），中间是配方第一阶段模型，
  * 右上工具、次数与蓄力阈值，右边列出全部产物。概率、随机数量范围和副产物标记走槽位 tooltip。
- * 输入、产物两边至少画 2×2 格，多了按整行往下加；工具格、容器格也总是画出来。用不上的格子空着（用户嫌格子忽多忽少难看）。
+ * 输入、产物两边至少画 2×2 格，多了按整行往下加；工具格、容器格也总是画出来。用不上的格子空着。
  */
 public class PoundRecipeCategory implements IRecipeCategory<PoundJeiRecipe> {
 

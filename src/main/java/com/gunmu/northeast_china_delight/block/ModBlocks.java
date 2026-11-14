@@ -80,7 +80,7 @@ public class ModBlocks {
 
     /**
      * 盆（大脸盆、水盆、盆装菜、盆装谜之炖菜）：搪瓷盆，敲碎时是灯笼那种金属声；走上去、放下、敲击、摔落照旧是木头声
-     * （2026-11-05 用户：盆的破坏音效改为灯笼的）。要放在用到它的方块前面，静态字段按顺序初始化。
+     * 要放在用到它的方块前面，静态字段按顺序初始化。
      */
     public static final SoundType BASIN_SOUND = new SoundType(1.0F, 1.0F, SoundEvents.LANTERN_BREAK,
             SoundEvents.WOOD_STEP, SoundEvents.WOOD_PLACE, SoundEvents.WOOD_HIT, SoundEvents.WOOD_FALL);
@@ -320,11 +320,11 @@ public class ModBlocks {
             block("cotton_door_curtain", DoorCurtainBlock::new, curtainProperties(MapColor.COLOR_BLUE));
     public static final Supplier<Block> FLORAL_DOOR_CURTAIN =
             block("floral_door_curtain", DoorCurtainBlock::new, curtainProperties(MapColor.COLOR_RED));
-    /** 军绿棉门帘：上部开一扇透明塑料窗（2026-11-06 用户），织布机里用绿色染料染普通门帘得到 */
+    /** 军绿棉门帘：上部开一扇透明塑料窗，织布机里用绿色染料染普通门帘得到。 */
     public static final Supplier<Block> ARMY_GREEN_DOOR_CURTAIN =
             block("army_green_door_curtain", DoorCurtainBlock::new, curtainProperties(MapColor.COLOR_GREEN));
 
-    /** 格子桌布：16 种染料色，id 是「<颜色>_gingham_tablecloth」（2026-11-04，村庄副食店的柜台上铺的；见 GinghamTableclothBlock） */
+    /** 格子桌布：16 种染料色，id 为「<颜色>_gingham_tablecloth」，用于村庄副食店柜台；见 GinghamTableclothBlock。 */
     public static final Map<DyeColor, Supplier<Block>> GINGHAM_TABLECLOTHS = ginghamTablecloths();
 
     private static Map<DyeColor, Supplier<Block>> ginghamTablecloths() {
@@ -339,8 +339,6 @@ public class ModBlocks {
         }
         return Collections.unmodifiableMap(map);
     }
-
-    // ===== 东北建材第二批（2026-11-02；同样先不加配方） =====
 
     /**
      * 彩钢瓦：只做房盖，没有整块 —— 平屋顶（台阶形）、斜屋顶（楼梯形），红 / 蓝 / 绿三色。
@@ -437,8 +435,6 @@ public class ModBlocks {
                     .noOcclusion()
                     .pushReaction(PushReaction.DESTROY)
     );
-
-    // ===== 东北建材第三批（2026-11-03；同样先不加配方） =====
 
     /**
      * 障子柴门：和障子一样高的一扇门，旁边的障子自己接上来（见 ScreenGateBlock）。
@@ -676,16 +672,16 @@ public class ModBlocks {
             feastBlock("chicken_mushroom_stew", () -> ModItems.XIAO_JI_DUN_MO_GU_BOWL.get());
     public static final Supplier<Block> SUAN_CAI_HAI_XIAN_GUO_POT =
             feastBlock("sauerkraut_seafood_stew", () -> ModItems.SUAN_CAI_HAI_XIAN_GUO_BOWL.get());
-    /** 盆装得莫利炖鱼（2026-11-06 从碗装菜改成盆装菜） */
+    /** 盆装得莫利炖鱼。 */
     public static final Supplier<Block> DE_MO_LI_DUN_YU_POT =
             feastBlock("demoli_fish_stew", () -> ModItems.DE_MO_LI_DUN_YU_BOWL.get());
-    /** 盆装米饭：一盆盛 4 碗农夫乐事的米饭（2026-11-03） */
+    /** 盆装米饭：一盆盛 4 碗农夫乐事的米饭。 */
     public static final Supplier<Block> PEN_MI_FAN_POT =
             feastBlock("steamed_rice", () -> net.minecraft.core.registries.BuiltInRegistries.ITEM.get(
                     com.gunmu.northeast_china_delight.util.DdIds.of("farmersdelight", "cooked_rice")));
 
     /**
-     * 盆装谜之炖菜：大锅里凑不上配方时煮出来的一盆（2026-11-05 用户）。拿碗盛出来是一碗原版谜之炖菜，
+     * 盆装谜之炖菜：大锅里凑不上配方时煮出来的一盆。拿碗盛出来是一碗原版谜之炖菜，
      * 效果存在方块实体里（MysteryStewPotBlockEntity）；方块属性同别的盆装菜
      */
     public static final Supplier<MysteryStewPotBlock> MYSTERY_STEW_POT =
@@ -700,8 +696,7 @@ public class ModBlocks {
     /**
      * 注册一口大盆菜。
      *
-     * 注意第二个参数必须传「取一份给什么」—— 之前漏了它，方块里的 servingItem 一直是 null，
-     * 结果拿着碗右键毫无反应。
+     * 第二个参数必须传每份盛出的物品，否则方块无法用碗盛取。
      * forceSolidOn 同大脸盆：盆矮，不加的话流水一冲就掉。
      */
     private static Supplier<Block> feastBlock(String name, Supplier<? extends net.minecraft.world.item.Item> serving) {

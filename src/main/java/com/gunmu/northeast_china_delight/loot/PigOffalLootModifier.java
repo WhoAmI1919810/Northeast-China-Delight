@@ -30,7 +30,7 @@ import java.util.List;
  */
 public class PigOffalLootModifier extends LootModifier {
 
-    /** 基础概率（无抢夺）：2026-11-02 从 10% 上调到 20% */
+    /** 基础概率（无抢夺）：从 10% 上调到 20% */
     public static final float BASE_CHANCE = 0.2F;
     /** 每级抢夺增加的概率 */
     public static final float LOOTING_BONUS = 0.05F;

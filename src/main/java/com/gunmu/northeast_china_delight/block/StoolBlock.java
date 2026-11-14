@@ -29,7 +29,7 @@ import net.minecraft.world.phys.shapes.VoxelShape;
  * 小板凳：右键坐上去（潜行右键不坐，留给放方块），潜行起身。一张板凳只能坐一个人。
  * 坐的时候骑的是一个看不见的 {@link SeatEntity}。
  *
- * <p>{@link #FACING} 是放的人面朝的方向：长的那条边横在人面前（2026-11-03 用户：放置所对的方向是长边）。
+ * <p>{@link #FACING} 是放的人面朝的方向：长的那条边横在人面前。
  * 模型朝北放时长边沿 x（x 3..13、z 4..12），东西向放时转 90°。</p>
  */
 public class StoolBlock extends DishBlock {

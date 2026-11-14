@@ -48,36 +48,24 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * 大铁锅做菜（大锅烹饪，配方见 {@link BigPotRecipe}）。不做界面，全靠右键：
+ * 大铁锅烹饪流程（配方见 {@link BigPotRecipe}）。没有界面，交互全部走右键或物流输入：
  *
  * <ul>
- *   <li>水桶 / 水盆右键：往锅里倒 1000 mB 水；空桶 / 空盆右键：舀走 1000 mB 水。舀干了倒进去的调料也跟着没了，
- *       调料放错了就把水舀走再倒回来（舀出来的是清水，调料不还）；</li>
- *   <li>拿着某条配方用得上的食材、调料右键：放一个进锅（瓶装、碗装的调料退回瓶子 / 碗）。配方用不上、但谜之炖菜认的食材调料
- *       也能放（{@link MysteryStew#accepts}：原版胡萝卜、农夫乐事番茄洋葱、醋……）。锅里得先有水；
- *       食材最多放用得最多的那条配方那么多个、调料同理（{@link BigPotRecipes#maxIngredients} / {@link BigPotRecipes#maxSeasonings}）；</li>
- *   <li>食材和调料互不相干（2026-11-03 用户）：潜行空手右键随时拿出一个食材补救（最后放进去的先出来，隔着调料也照拿）；
- *       调料倒进去就拿不出来，放错了只能把水舀干重来；锅里只剩调料时右键没反应、不出提示；</li>
- *   <li>灶点着、锅里正好凑成一条配方、盖上锅盖后先等 3 秒再开始煮（每刻 {@link #serverTick}）；这 3 秒内揭盖会取消本次烹饪。
- *       开煮以后揭开盖照常煮，盖着时按配方的 {@code lid_speedup} 走得快，中途盖上只让剩下的变快。
- *       开始煮以后锅里的东西就不能动了：不能放、不能拿、不能舀水（右键没反应、不出提示），只能等煮好（2026-11-03 用户）；
- *       也不能倒水（2026-11-06 配方的水量有了上限，多倒一桶会凑不上）；</li>
- *   <li>凑不上任何配方、锅里有水有食材，盖上锅盖照样煮，煮出一锅谜之炖菜（同日用户，{@link MysteryStew}）：
- *       用大脸盆盛出一盆，效果按锅里数量最多的两类食材定；</li>
- *   <li>煮好了：料和液体都没了，锅里是一锅菜（配方 result 的 count 就是份数），
- *       拿配方写的容器右键盛一份（没写容器就空手盛），每份给配方的经验。拆灶时没盛完的菜不掉，只掉锅。</li>
+ *   <li>水桶 / 水盆注入或舀出 1000 mB 水；舀干时锅里的调料一并消失。</li>
+ *   <li>配方食材、调料以及谜之炖菜认可的额外食材都能投入。锅里必须先有水，数量上限取所有可用配方中的最大值；
+ *       潜行空手可取出最后放入的食材，调料不可取出。</li>
+ *   <li>灶点燃、配方齐全并盖上锅盖后等待 3 秒开煮；等待期间揭盖可取消。开煮后输入锁定，只能等待完成；
+ *       锅盖按配方的 {@code lid_speedup} 加速剩余进度。</li>
+ *   <li>没有匹配配方时煮成谜之炖菜（{@link MysteryStew}），按数量最多的两类食材决定效果。</li>
+ *   <li>完成后按配方容器盛出，每份给予对应经验；拆灶时未盛完的菜不返还。</li>
  * </ul>
  *
  * <p>往锅里放东西、盛菜都得先揭锅盖（盖着盖时右键只会揭盖，见 {@link BigStoveBlock}）。</p>
  *
- * <p>东西也能直接掉进锅里（2026-11-05 用户，{@link #dropIn}）：落在锅口的掉落物、从上面往下送的漏斗和投掷器。
- * 水桶、水盆倒水后还出空桶、空盆；食材和所有配方认的调料都收，瓶装调料一次只扣完整的一份 50 mB。
+ * <p>锅口掉落物、上方漏斗和投掷器也可直接输入（{@link #dropIn}）。瓶装调料一次只扣完整的一份 50 mB，
  * 收不进的留在灶上，都不出提示；返还的瓶、碗先送进贴着大灶的库存，送不进才从锅口外沿蹦出来。</p>
  *
- * <p>粒子：放料、倒水溅水花；煮着时冒白雾，煮到六成以上汤面上冒泡（{@link ModParticles#POT_BUBBLE}，
- * 客户端每刻，{@link #clientTick}）；煮好时冒一阵绿色粒子（像骨粉催熟），之后接着冒泡、越来越少，
- * 盛过一份就不冒；一锅谜之炖菜往上飘效果粒子（{@link MysteryStewPotBlock#effectParticle}）；
- * 煮着或煮好时揭锅盖冒一股白雾（{@link #lidLifted}）。</p>
+ * <p>粒子表现集中在 {@link #clientTick}、{@link #splash} 和 {@link #lidLifted}。</p>
  */
 public final class BigPotCooking {
 
@@ -114,7 +102,7 @@ public final class BigPotCooking {
         // 倒水 / 舀水：水桶、水盆一次 1000 mB
         if (isWater(held)) {
             if (pot.cooking() != null) {
-                // 煮着不让倒水，不出提示：配方的水量有范围（2026-11-06），多倒一桶就凑不上、改煮谜之炖菜了
+                // 烹饪期间禁止倒水，避免超过配方水量上限。
                 return InteractionResult.sidedSuccess(level.isClientSide);
             }
             if (!canPour(pot)) {
@@ -140,7 +128,7 @@ public final class BigPotCooking {
         if ((bucket || held.is(ModItems.LARGE_BASIN.get()))
                 && pot.liquid().isSame(Fluids.WATER) && pot.liquidMb() >= BUCKET_MB) {
             if (pot.cooking() != null) {
-                // 煮着不让舀，也不出提示（2026-11-03 用户：开始烹饪后不给任何文案）
+                // 烹饪开始后禁止舀水，也不显示提示。
                 return InteractionResult.sidedSuccess(level.isClientSide);
             }
             if (!level.isClientSide) {
@@ -225,9 +213,8 @@ public final class BigPotCooking {
     }
 
     /**
-     * 放进锅里以后还回来的容器：登记了合成剩余物的照还（瓶装调料还玻璃瓶、辣椒酱还碗）。
-     * 大酱是一碗酱，但没登记合成剩余物——蘸酱菜是拿这碗酱直接合成的，酱碗就是菜的碗，登记了合成时会白多一个碗；
-     * 下锅时在这里单独还碗（2026-11-06 用户：得莫利炖鱼的盐换成大酱，投入酱要返回碗）
+     * 放进锅里以后返还的容器。大酱没有登记合成剩余物，以免蘸酱菜合成时多返还一个碗，
+     * 因此下锅时在这里单独还碗。
      */
     private static ItemStack remainderOf(ItemStack held) {
         if (SeasoningBottleItem.isBottle(held)) {
@@ -270,7 +257,7 @@ public final class BigPotCooking {
     // ---------------------------------------------------------------- 掉进锅里
 
     /**
-     * 掉进锅里一个（2026-11-05 用户）：落在锅口的掉落物（{@link BigStoveBlock#stepOn}）、从上面往下送的漏斗和投掷器
+     * 掉进锅里一个：落在锅口的掉落物（{@link BigStoveBlock#stepOn}）、从上面往下送的漏斗和投掷器
      * （{@link BigStoveBlock#getContainer}）都走这里，只在服务端调。
      *
      * <ul>
@@ -278,7 +265,7 @@ public final class BigPotCooking {
      *       50 mB，不足一份不收；碗装调料一个算一份，返还一个碗；非调料且带合成剩余物的物品不收；</li>
      *   <li>别的规矩同右键：灶上得是揭开盖的锅、锅里不能是煮好的菜；放料得锅里先有水、没在煮、没放满；
      *       倒水煮着也能倒（同右键，多出来的水不影响凑配方）；</li>
-     *   <li>都不出提示（用户：收不进就掉在灶上，放进去也不弹提示）。</li>
+     *   <li>收不进时留在灶上，不显示提示。</li>
      * </ul>
      *
      * @param simulate 只问收不收，不动锅
@@ -469,8 +456,7 @@ public final class BigPotCooking {
             pot.beginCooking(plan.id(), plan.total(), 0, plan.result());
             return;
         }
-        // 进度按不盖锅盖的时长算；盖着锅盖每刻多走「不盖盖时长 / 盖盖时长」，中途盖上只让剩下的变快
-        // （以前盖上就换成缩短后的总时长、煮过的刻数不变，进度一下放大 1.67 倍，2026-11-03 用户报）
+        // 进度按不盖锅盖的时长累计；盖盖倍率只作用于剩余时间，避免中途盖盖导致进度跳变。
         pot.setCookTotal(plan.total());
         pot.tickCooking(lid ? plan.total() / (float) plan.lidTotal() : 1.0F);
         // 煮着时的冒泡、白雾在客户端画（clientTick，看锅里同步过去的 cooking 和每秒一次的进度）
@@ -534,7 +520,7 @@ public final class BigPotCooking {
                                float experience) {
     }
 
-    /** 煮到几成开始在汤面上冒泡（2026-11-05 用户：烹饪进度超过 60%） */
+    /** 汤面开始冒泡的烹饪进度。 */
     private static final float BUBBLE_FROM = 0.6F;
     /** 冒泡时每刻冒一个的几率 */
     private static final float BUBBLE_CHANCE = 0.5F;
@@ -546,10 +532,10 @@ public final class BigPotCooking {
     /**
      * 客户端每刻（灶上有锅时，点没点着都跑，见 {@link BigStoveBlock#getTicker}）。盖着盖看不见锅里，只在煮着时从锅盖边上偶尔漏一点白雾。
      * <ul>
-     *   <li>煮着（点着火、cooking 同步过来了）：往上飘白雾；煮到六成以上汤面上冒泡（{@link #BUBBLE_FROM}，2026-11-05 用户）。
+     *   <li>煮着（点着火、cooking 同步过来了）：往上飘白雾；煮到六成以上汤面上冒泡（{@link #BUBBLE_FROM}）。
      *       进度每秒同步一次，所以最多晚一秒才开始冒；</li>
-     *   <li>煮好了：接着冒泡，一分钟里越冒越少直到不冒（{@link #BUBBLE_FADE_TICKS}），盛过一份就不冒了（同日用户）；
-     *       是一锅谜之炖菜就往上飘效果粒子（同日用户，{@link MysteryStewPotBlock#effectParticle}）。</li>
+     *   <li>煮好了：接着冒泡，一分钟里越冒越少直到不冒（{@link #BUBBLE_FADE_TICKS}），盛过一份就不冒了；
+     *       是一锅谜之炖菜就往上飘效果粒子（{@link MysteryStewPotBlock#effectParticle}）。</li>
      * </ul>
      */
     public static void clientTick(Level level, BlockPos pos, BlockState state, BigPotBlockEntity pot) {

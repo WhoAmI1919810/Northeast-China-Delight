@@ -385,7 +385,7 @@ public final class PoundDataRecipe implements Recipe<
     /**
      * 这里按普通 JsonOps 解析，没有注册表上下文：原料里凡是 HolderSet 写法的字段（比如 neoforge:components 的 items）
      * 都解析不了——没有注册表时 HolderSetCodec 只认直接写出来的元素，物品 id 解出来是注册表引用，写成字符串、列表都报错，
-     * 整条配方加载不上（2026-11-05 湿粉团的水瓶栽了两次）。要认带组件的东西就在代码里拼原料，比如一份水用 {@code "water": true}
+     * 整条配方加载不上。要认带组件的东西就在代码里拼原料，比如一份水用 {@code "water": true}
      */
     private static Ingredient decodeIngredient(JsonObject config, String field) {
         JsonElement element = config.get(field);

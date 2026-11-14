@@ -80,7 +80,7 @@ public class LargeBasinItem extends ItemNameBlockItem implements Equipable
     }
 
     /**
-     * 右键方块直接放下盆（2026-11-05 用户：空盆、水盆、盆装菜能直接右键放下；以前要潜行）。地上的盆潜行空手右键收回，见 {@code BasinBlock}。
+     * 右键方块直接放下盆。地上的盆潜行空手右键收回，见 {@code BasinBlock}。
      * 视线上先碰到的是水源（隔着水点到了水底的方块）就返回 PASS，客户端接着调 {@link #use} 去舀水
      */
     @Override

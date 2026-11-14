@@ -51,8 +51,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * 大缸。内容物（蔬菜、肉、盐、酱块）、压缸石、蒙缸地毯都记在 {@link VatBlockEntity} 里，会按实际物品渲染在缸内，不需要打开界面就能看见里面有什么。这里只负
- * 责交互流程；具体数值与规则见 {@link VatRecipes}。
+ * 大缸。内容物、压缸石和蒙缸地毯存放在 {@link VatBlockEntity} 中，并按实际物品渲染在缸内。
+ * 本类只处理交互流程，配方规则见 {@link VatRecipes}。
  */
 public class Vat extends Block implements EntityBlock {
 
@@ -227,11 +227,8 @@ public class Vat extends Block implements EntityBlock {
         return true;
     }
 
-    /** 现在能不能再往缸里倒一桶水 */
     /**
-     * 压水井往缸里倒一层水（2026-11-06 用户：压水井出水嘴前下方一格是大缸就水位 +1，{@link HandPumpBlock}）。
-     * 规矩同拿水桶右键：压着石头不收，满了、有酸引水、配方丢了不收；倒完同样重算腌制状态、看能不能开工。
-     * 倒水声由压水井出。只在服务端调。
+     * 压水井往缸里注一层水，规则同水桶右键；只在服务端调用，声音由压水井播放。
      */
     public boolean pumpWater(BlockState state, Level level, BlockPos pos) {
         VatBlockEntity vat = vatAt(level, pos);
@@ -336,7 +333,7 @@ public class Vat extends Block implements EntityBlock {
             return returnRemovedRecipe(level, pos, state, vat, player);
         }
 
-        // 水桶、水盆都是一层水（1000 mB），倒完还空桶 / 空大脸盆（水盆 2026-11-06 用户：「让大缸也认水盆」）
+        // 水桶和水盆都注一层水（1000 mB），并返还空容器。
         boolean waterBasin = stack.is(ModItems.WATER_BASIN.get());
         if ((stack.is(Items.WATER_BUCKET) || waterBasin) && canAddWater(vat)) {
             if (!level.isClientSide) {
@@ -357,7 +354,7 @@ public class Vat extends Block implements EntityBlock {
             return InteractionResult.sidedSuccess(level.isClientSide());
         }
 
-        // 客户端不做预测改动：一切判定与改动都在服务端做（和以前的写法一致）
+        // 客户端不做预测改动，所有判定与修改都在服务端执行。
         if (level.isClientSide) {
             if (keepLeftovers(vat, stack)) {
                 return InteractionResult.sidedSuccess(true);

@@ -30,22 +30,19 @@ import net.neoforged.neoforge.event.entity.living.LivingShieldBlockEvent;
 //?}
 
 /**
- * 木锅盖：盖在大灶的大铁锅上（见 BigStoveBlock），也能拿在手里当盾牌（2026-11-04 用户：锅盖起到盾牌的作用；
- * 2026-11-05 用户：正常情况下能格挡 30% 伤害，四件套集齐时能和盾牌一样）。
+ * 木锅盖：可盖在大灶的铁锅上（见 BigStoveBlock），也可拿在手里当盾牌。
  *
  * <p>右键举起来，和原版盾牌一样：举满 5 刻才算挡着、只挡正面来的攻击、斧子能把它打下来；
  * 但挡住的只有三成伤害（{@link #BLOCKED_FRACTION}），其余七成照样挨（{@link #onShieldBlock}）；
  * 穿齐「东北行头」四件套就和盾牌一样全挡（{@link NortheastOutfit#LID_BLOCKED_FRACTION}）。
  * 潜行点物品栏里的锅盖会进副手（{@link Equipable}，同原版盾牌）。</p>
  *
- * <p>耐久（同日用户改的，2026-11-05 下调到 64）：{@link #DURABILITY}；每挡一下掉 1 点，被斧子劈中（原版判定能打掉盾牌的那一下）
+ * <p>耐久为 {@link #DURABILITY}；每挡一下掉 1 点，被斧子劈中（原版判定能打掉盾牌的那一下）
  * 掉最大耐久的六成（{@link #AXE_WEAR}），并且像盾牌一样 5 秒内举不起来。耐久、经验修补能附（附魔书上铁砧；
  * 同原版盾牌，附魔台上附不了），见 data/minecraft/tags/item/enchantable/durability.json。
  * 盖在锅上时大灶把这一个锅盖原样存着（耐久、附魔、改的名字都在），揭下来、拆灶还回来的就是它（BigPotBlockEntity#putLid）。</p>
  *
- * <p>声音（2026-11-05 用户）：挡住一下放挖木头时那种「笃」（{@link #playBlockSound}，用户：格挡的音效换为木头的破坏中的音效）；
- * 被斧子打掉放僵尸撞木门的「门：晃动」，耐久用完碎掉放僵尸撞破木门的「门：毁坏」（{@link #playDoorSound}，同日用户改的，
- * 之前是木头被破坏的声音）。都从服务端放、附近的人都听得见。原版盾牌的这几声不放：挡住、被打掉的声音是客户端收到实体事件时放的，
+ * <p>格挡、被斧击落和破损音效都从服务端播放。原版盾牌音效由客户端实体事件播放，
  * 由 mixin/LivingEntityLidSoundMixin 拦掉（看 {@link #blocksWithLid}）；碎掉时原版的「物品损坏」声音连同碎片
  * 走的是另一个实体事件，扣耐久改用 {@link DdStacks#hurtAndBreakSilently} 不发它，碎片自己冒。</p>
  *
@@ -57,7 +54,7 @@ public class PotLidItem extends Item implements Equipable {
 
     /** 挡下的伤害比例：挡三成（穿齐「东北行头」四件套时全挡，见 {@link NortheastOutfit}） */
     public static final float BLOCKED_FRACTION = 0.3F;
-    /** 耐久 64（2026-11-05 用户从 168 下调） */
+    /** 锅盖耐久。 */
     public static final int DURABILITY = 64;
     /** 被斧子劈中掉的耐久：最大耐久的六成（四舍五入，64 → 38） */
     private static final float AXE_WEAR = 0.6F;
@@ -150,8 +147,7 @@ public class PotLidItem extends Item implements Equipable {
     //?}
 
     /**
-     * 穿齐四件套全挡，不然只挡三成。以前穿齐时挡住还「铛」一声（农夫乐事平底锅的金属声），盖过了木头的声音，
-     * 2026-11-05 用户说听不出格挡声换了，去掉了：格挡只放木头挖掘中的声音（{@link #playBlockSound}）
+     * 穿齐四件套时全挡，否则只挡三成。
      */
     private static float blockedFraction(LivingEntity blocker) {
         return NortheastOutfit.isComplete(blocker) ? NortheastOutfit.LID_BLOCKED_FRACTION : BLOCKED_FRACTION;
@@ -188,8 +184,7 @@ public class PotLidItem extends Item implements Equipable {
     }
 
     /**
-     * 挡住一下：挖木头时那种「笃」（原版 block.wood.hit），服务端放，附近的人都听得见。
-     * 曾经同一声叠 3 遍放大（同日用户嫌小声），用户改了斧子、碎掉的声音以后说不用叠了，放一遍
+     * 格挡时播放一次木头命中音效，由服务端广播给附近玩家。
      */
     private static void playBlockSound(LivingEntity blocker) {
         if (blocker.level().isClientSide()) {

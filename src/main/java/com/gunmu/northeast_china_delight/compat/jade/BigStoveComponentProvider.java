@@ -75,7 +75,7 @@ public enum BigStoveComponentProvider implements IBlockComponentProvider {
                     if (i > 0) {
                         line.add(helper.spacer(2, 0));
                     }
-                    // 图标后面写「×数量」（2026-11-09 用户：Jade 显示的投入食材要能显示投入的数量）；
+                    // 图标后面写「×数量」；
                     // 半大的图标角上那个数字太小看不清，所以图标只画一个，数量单独写成字
                     ItemStack stack = ingredients.get(i);
                     line.add(helper.item(stack.copyWithCount(1), 0.5F));
