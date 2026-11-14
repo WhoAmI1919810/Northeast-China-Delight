@@ -330,7 +330,7 @@ public class NortheastChinaDelight
         }
 
         /**
-         * 大脸盆、水盆与 8 道大盆菜的物品栏图标是单独一份 2D 模型（models/item/*_icon.json）。
+         * 大脸盆、水盆与东北大盆菜的物品栏图标是单独一份 2D 模型（models/item/*_icon.json）。
          * 它们不挂在任何方块/物品的默认模型路径上，得先在这里登记才会被烘焙，
          * 渲染时再由 LargeBasinItemRenderer / DdFeastItemRenderer 从 ModelManager 取回。
          */
@@ -347,7 +347,6 @@ public class NortheastChinaDelight
             registerItemIcon(event, "chicken_mushroom_stew_icon");
             registerItemIcon(event, "demoli_fish_stew_icon");
             registerItemIcon(event, "steamed_rice_icon");
-            registerItemIcon(event, "mystery_stew_icon");
             registerAllBlockModels(event);
         }
 
@@ -411,7 +410,8 @@ public class NortheastChinaDelight
         /*@SubscribeEvent
         public static void onRegisterClientExtensions(RegisterClientExtensionsEvent event)
         {
-            // 11 道大盆菜（含盆装米饭、盆装谜之炖菜）：物品栏画贴图、手/地面画方块，分流在 DdFeastItemRenderer 里
+            // 东北大盆菜：物品栏画贴图、手/地面画方块，分流在 DdFeastItemRenderer 里。
+            // 盆装谜之炖菜已归 CRCI，由 CRCI 自己注册客户端扩展和图标。
             event.registerItem(DdFeastItemRenderer.CLIENT_EXTENSION,
                     ModItems.SUAN_CAI_DUN_GU_TOU.get(),
                     ModItems.DI_GUO_JI.get(),
@@ -422,8 +422,7 @@ public class NortheastChinaDelight
                     ModItems.SUAN_CAI_HAI_XIAN_GUO.get(),
                     ModItems.XIAO_JI_DUN_MO_GU.get(),
                     ModItems.DE_MO_LI_DUN_YU.get(),
-                    ModItems.PEN_MI_FAN.get(),
-                    ModItems.MYSTERY_STEW.get());
+                    ModItems.PEN_MI_FAN.get());
 
         }
         *///?}
