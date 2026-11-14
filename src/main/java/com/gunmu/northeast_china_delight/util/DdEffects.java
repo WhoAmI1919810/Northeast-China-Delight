@@ -62,7 +62,7 @@ public final class DdEffects {
     }
 
     /**
-     * 「环境」效果：粒子是半透明的（同信标给的效果），图标框也是信标那种。暖气片给的温暖用这个（2026-11-03 用户要半透明粒子）
+     * 「环境」效果：粒子是半透明的（同信标给的效果），图标框也是信标那种。暖气片给的温暖用这个
      */
     public static MobEffectInstance ambientInstance(Holder<MobEffect> effect, int durationTicks, int amplifier) {
         //? if <1.20.5 {

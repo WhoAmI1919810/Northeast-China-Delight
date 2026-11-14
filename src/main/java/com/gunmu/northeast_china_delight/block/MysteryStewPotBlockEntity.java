@@ -10,7 +10,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import java.util.List;
 
 /**
- * 放下的盆装谜之炖菜：存着这一盆给什么效果（2026-11-05 用户：盆装谜之炖菜里要存给予的状态效果，包括方块形态）。
+ * 放下的盆装谜之炖菜：保存这一盆给予的状态效果，方块形态与物品形态共用同一份数据。
  * 放下时从物品上抄过来（{@link MysteryStewPotBlock#setPlacedBy}），拿碗盛一碗就照这个给一碗原版谜之炖菜，
  * 满盆敲下来掉的盆装谜之炖菜也带着它（{@link MysteryStewPotBlock#getDrops}）。客户端用不着，不同步。
  */

@@ -38,7 +38,7 @@ import java.util.List;
  * }
  * </pre>
  *
- * <p>{@code amount} 写数字是正好这么多毫升（默认 1000）；写对象是一个范围（2026-11-06 用户：「液体的量允许有范围」），
+ * <p>{@code amount} 写数字是正好这么多毫升（默认 1000）；写对象是一个范围，
  * {@code min} 大于等于、{@code max} 小于等于、{@code more_than} 大于、{@code less_than} 小于，至少写一个，
  * 例如 {@code {"min": 1000, "max": 2000}}。以前数字是「至少这么多」，倒多了水也照样凑得上。</p>
  *

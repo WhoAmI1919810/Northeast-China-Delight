@@ -44,15 +44,14 @@ import java.util.Comparator;
 import java.util.List;
 
 /**
- * 脸盆架上的小镜子照出镜子前面的活物（2026-11-06 用户：尝试让脸盆架做只反射活物的效果；镜子的贴图也要保留，显示一种光滑的材质）。
+ * 脸盆架上的小镜子只反射镜前的活物，镜面贴图同时作为半透明光泽层保留。
  *
  * <p>只照活物（玩家、村民、动物、怪），不照方块：镜面底下还是原来那张镜子贴图，活物左右颠倒地映在上面，
  * 再盖一层半透明的镜子贴图，像隔着一层光滑的玻璃。不用方块实体：客户端每半秒扫一遍身边的脸盆架记下位置，
  * 老存档里早就放着的、结构里生成的脸盆架也都照得出来。</p>
  *
- * <p>在「半透明方块画完」那一步（RenderLevelStageEvent AFTER_TRANSLUCENT_BLOCKS）画。放着水盆的脸盆架整个模型在半透明那一层，
- * 镜子到这时才画上；以前在「方块实体画完」时画，倒影画完后写回的深度比镜面靠前一点，后来画的镜子过不了深度测试，
- * 放了水盆就看不见镜子、透出后面的墙和窗（2026-11-06 用户报）。对离得近、看得见、人站在镜子正面的几面镜子：</p>
+ * <p>在 {@code RenderLevelStageEvent.AFTER_TRANSLUCENT_BLOCKS} 阶段绘制，保证水盆后的镜面不会被深度测试遮掉。
+ * 对距离近、可见且位于镜子正面的镜面：</p>
  * <ol>
  *   <li>模板缓冲把镜面没被挡住的那块圈出来（写 1）；</li>
  *   <li>这块的深度清到最远（glDepthRange(1, 1)）；</li>
@@ -60,14 +59,13 @@ import java.util.List;
  *       对称一下三角形绕向反了，画的时候把正面改成顺时针；</li>
  *   <li>每个活物上盖一层镜子贴图（同方块一样用光照贴图、乘朝向的面亮度，和模型里那片镜子一个颜色）：
  *       离镜子 {@link #CLEAR_DISTANCE} 格以内盖 {@link #GLOSS}，像隔着一层光滑的玻璃；再远越盖越实，
- *       到 {@link #FADE_DISTANCE} 格完全盖住、和不照一样，走近时倒影慢慢浮出来，不会突然冒出来
- *       （2026-11-06 用户：玩家越远照到的越不清晰，和完全不显示衔接一下，3 格以内最清晰）。
+ *       到 {@link #FADE_DISTANCE} 格完全盖住、和不照一样，走近时倒影慢慢浮出来，不会突然冒出来。
  *       人离镜子 {@link #CAMERA_CLEAR_DISTANCE}..{@link #MAX_DISTANCE} 格之间也照这样整体淡掉；</li>
  *   <li>这块的深度改回镜面本身的深度，后面画的粒子等镜子照样挡得住（画完活物要重新打开深度测试，原版画实体会把它关掉）；
  *       「极佳」里放着水盆的，没照到活物的地方深度写在镜面稍后，让半透明层里的镜子合成时盖上来。</li>
  * </ol>
  *
- * <p>只在图像品质「高品质」「极佳」里照，「流畅」里不照，镜子就是原来那张贴图（用户 2026-11-06）。
+ * <p>只在图像品质「高品质」「极佳」里照，「流畅」里只显示原镜面贴图。
  * 主画面原来没有模板缓冲，客户端初始化时开（{@link #enableStencil}）。开着光影包（Iris / Oculus）时不画：
  * 光影包用自己的画面，模板那一套对不上，会画乱。</p>
  */
@@ -129,7 +127,7 @@ public final class MirrorReflections {
     public static void render(PoseStack poseStack, Camera camera, Frustum frustum, float partialTick) {
         Minecraft mc = Minecraft.getInstance();
         ClientLevel level = mc.level;
-        // 图像品质「流畅」时不照（2026-11-06 用户：只在高品质和极佳里反光，流畅里就和没有一样）
+        // 图像品质「流畅」时不绘制倒影。
         if (level == null || mc.options.graphicsMode().get() == GraphicsStatus.FAST
                 || !mc.getMainRenderTarget().isStencilEnabled() || shaderPackInUse()) {
             return;
@@ -220,9 +218,7 @@ public final class MirrorReflections {
         drawEntities(mirror, seen, poseStack, cam, partialTick);
         GL11.glFrontFace(GL11.GL_CCW);
         RenderSystem.disableCull();
-        // 原版画完一批实体会把深度测试关掉（RenderStateShard.DepthTestStateShard 的 clearRenderState）。
-        // 深度测试关着的时候 OpenGL 根本不写深度，第 5 步写回镜面深度就白写了：镜子那块深度停在「最远」，
-        // 后画的粒子、玉米串辣椒串从镜子后面透出来（2026-11-06 用户报），这里重新打开
+        // 原版实体渲染结束时会关闭深度测试；若不恢复，后续粒子会穿透镜面。
         RenderSystem.enableDepthTest();
 
         // 4. 每个活物上盖一层镜子贴图：近的薄（光滑的镜面），远的厚，到头完全盖住

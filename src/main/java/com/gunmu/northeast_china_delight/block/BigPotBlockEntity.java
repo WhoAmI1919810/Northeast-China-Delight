@@ -30,8 +30,8 @@ import java.util.List;
  * <ul>
  *   <li>液体：一种流体 + 毫升数（水桶 / 水盆一次倒 1000 mB，最多 {@link #LIQUID_CAPACITY}）；</li>
  *   <li>料：食材、调料（有哪条配方把它写在调料里的，盐也算）按放进去的顺序摞成一层层，和最上面那层一样就摞上去。
- *       食材和调料互不相干（2026-11-03 用户）：食材随时能拿出来补救，最后放进去的先出来（中间隔着调料也照拿）；
- *       调料倒进去就拿不出来，只有把锅里的液体全舀走时跟着没了；拆灶时只掉食材，调料不掉（盐也不掉）；</li>
+ *       食材可以随时取出，最后放进去的先出来；调料不可单独取出，只会在舀干液体时一并消失。
+ *       拆灶时只掉食材，调料不掉（盐也不掉）。</li>
  *   <li>正在煮哪条配方、煮了多少（按不盖锅盖的时长算，盖着盖走得快）；</li>
  *   <li>煮好的菜、还剩几份、得用什么盛、每盛一份给多少经验（拆灶时没盛完的就没了），什么时候煮好的（冒泡用）。</li>
  * </ul>
@@ -71,13 +71,12 @@ public class BigPotBlockEntity extends BlockEntity {
     /** 本次要做成的菜；等待、烹饪、煮好没盛完时都给 Jade 显示「本次烹饪：XX」 */
     private ItemStack displayDish = ItemStack.EMPTY;
     /**
-     * 这一锅什么时候煮好的（游戏刻）：煮好以后汤面上接着冒泡、越冒越少，盛过一份就不冒了（2026-11-05 用户，
-     * 见 BigPotCooking#clientTick），所以盛第一份时改回 -1。-1 = 不冒（没煮好、盛过了、以前的存档）
+     * 这一锅煮好的游戏刻，用于决定汤面冒泡的衰减；盛过第一份后改回 -1。-1 表示不冒泡。
      */
     private long finishedAt = -1;
     /**
-     * 盖在锅上的那个木锅盖，原样存着（耐久、附魔、改的名字都在；2026-11-04 锅盖有了耐久，用户问大锅能不能保存锅盖的耐久）。
-     * 揭下来、拆灶时还回去的就是它；以前的存档里没有（空），由 BigStoveBlock 给个新的
+     * 盖在锅上的木锅盖，完整保存耐久、附魔和自定义名称；揭下或拆灶时原样返还。
+     * 旧存档没有该字段时为空，由 BigStoveBlock 补一个新的。
      */
     private ItemStack lid = ItemStack.EMPTY;
 
@@ -362,8 +361,7 @@ public class BigPotBlockEntity extends BlockEntity {
     }
 
     /**
-     * 舀走液体：够量才舀。舀干了，倒进去的调料跟着水一起没了（舀出来的是清水，调料不还）：
-     * 调料放错了就把水舀走再倒回来，等于换一锅清水（2026-11-03 用户）
+     * 舀走液体：够量才舀。液体舀干时调料一并清除，舀出的始终是清水。
      */
     public boolean removeLiquid(int mb) {
         if (liquidMb < mb) {
@@ -473,9 +471,8 @@ public class BigPotBlockEntity extends BlockEntity {
     }
 
     /**
-     * 煮一刻，进度走 rate（揭着盖 1；盖着锅盖 = 不盖盖时长 / 盖盖时长）。中途盖上只是剩下的走得快，
-     * 已经煮过的不跟着放大（2026-11-03 用户：以前一半多盖上锅盖就直接好了）。
-     * 2026-11-05 起得盖上锅盖才开煮，开煮以后揭盖照常走（见 BigPotCooking#serverTick）
+     * 推进一刻烹饪进度。rate 为 1 表示揭盖速度，盖盖时为“不盖盖时长 / 盖盖时长”；
+     * 中途盖盖只加速剩余进度，不回算已经完成的部分。
      */
     public void tickCooking(float rate) {
         cookProgress += rate;
@@ -489,7 +486,7 @@ public class BigPotBlockEntity extends BlockEntity {
     }
 
     /**
-     * 煮好了：料清空、液体全没了（水都煮进菜里，2026-11-03 用户：煮完锅里不该再有水位），锅里换成一锅菜
+     * 完成烹饪：清空食材与液体，把结果和盛装方式写入锅中。
      */
     public void finish(ItemStack dish, ItemStack serveWith, float xpPerServing, boolean challengeMysteryStew) {
         layers.clear();
@@ -539,7 +536,7 @@ public class BigPotBlockEntity extends BlockEntity {
 
     /**
      * 灶被拆时：只有还没煮的食材掉在 pos；液体没了，调料跟着没（盐也不掉）；煮好没盛完的菜也没了，
-     * 不会掉出盆装菜（2026-11-03 用户：煮好以后打掉锅应该只掉锅）
+     * 不会掉出盆装菜。
      */
     public void dropContents(Level level, BlockPos pos) {
         for (Layer layer : layers) {

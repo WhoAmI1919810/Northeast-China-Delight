@@ -24,8 +24,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * 画大铁锅里的东西。盖着锅盖也照画（被锅盖挡着看不见）：不然一盖一揭锅里的东西就一闪没了又冒出来
- * （2026-11-03 用户说的）；锅里的东西最高都不过锅盖底面。
+ * 绘制大铁锅内容物。盖着锅盖时仍继续绘制，避免揭盖瞬间内容物闪烁；所有内容物都不超过锅盖底面。
  *
  * <ul>
  *   <li>没煮好：液面（流体颜色，倒进去的调料按份数往调料的颜色染）+ 放进去的食材，按 {@link BigPotVisuals} 的六个格子摆；</li>
@@ -186,9 +185,7 @@ public class BigPotRenderer implements BlockEntityRenderer<BigPotBlockEntity> {
         float green = ((argb >> 8) & 0xFF) / 255.0F;
         float blue = (argb & 0xFF) / 255.0F;
         float alpha = ((argb >>> 24) & 0xFF) / 255.0F;
-        // 用实体半透明的固定缓冲：原版在方块实体之后、半透明地形之后才画它，锅里的食材（cutoutBlockSheet）先画好了，
-        // 隔着水能看见。以前用 RenderType.translucent()（方块实体里不是固定缓冲，会被提前画掉、写进深度），
-        // 水面下的食材在深度测试里全输给水面，一点都看不见（2026-11-03 用户：水面下的食材显示不出来）
+        // 使用实体半透明的固定缓冲，保证水面在食材之后绘制，水下内容不会被深度测试遮掉。
         VertexConsumer consumer = buffer.getBuffer(Sheets.translucentCullBlockSheet());
         float y = yPx / 16.0F;
         for (int[] row : BigPotVisuals.surfaceRows(yPx)) {

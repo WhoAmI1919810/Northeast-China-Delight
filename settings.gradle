@@ -8,8 +8,7 @@ pluginManagement {
 }
 
 plugins {
-    // foojay 用来给 toolchain 自动下载 JDK；在 Gradle 9.2 上会触发
-    // JvmVendorSpec IBM_SEMERU 崩溃，暂时禁用，改用本机已有的 JDK21
+    // 离线构建统一使用本机 JDK21，不启用 toolchain 自动下载。
     // id 'org.gradle.toolchains.foojay-resolver-convention' version '0.10.0'
     id 'dev.kikugie.stonecutter' version '0.9.8'
 }

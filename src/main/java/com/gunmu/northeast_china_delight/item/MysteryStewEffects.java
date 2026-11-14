@@ -21,7 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * 谜之炖菜给的效果怎么存（2026-11-05 用户：盆装谜之炖菜里要存给予的状态效果，包括方块形态；拿碗盛出来是原版的谜之炖菜，只是效果不同）。
+ * 谜之炖菜效果的读取、写入，以及盆装方块与碗装物品之间的转换。
  *
  * <ul>
  *   <li>盆装谜之炖菜（物品）：1.21.1 直接挂原版谜之炖菜同一个组件 {@code minecraft:suspicious_stew_effects}；

@@ -28,14 +28,14 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 
 /**
- * 盆装谜之炖菜放下来的那一盆（2026-11-05 用户）：和别的盆装菜一样拿碗盛、能盛 4 碗、盛完剩个空大脸盆（{@link DdFeastBlock}），
+ * 放下的盆装谜之炖菜：和别的盆装菜一样用碗盛，可盛 4 碗，盛完剩空大脸盆（{@link DdFeastBlock}），
  * 只是盛出来的是一碗原版的谜之炖菜，效果照这一盆存的给（{@link MysteryStewPotBlockEntity}）。
  *
- * <p>彩蛋（2026-11-05 用户）：放在灵魂营火的烧烤架上（底下那格是 {@link GrillCampfireBlock}，{@code soul} 为真）时，
- * 盆里变成一只蓝色章鱼（{@link #OCTOPUS}，模型 block/mystery_stew_pot_octopus_servings*，用户画的）。
+ * <p>彩蛋：放在灵魂营火的烧烤架上（底下那格是 {@link GrillCampfireBlock}，{@code soul} 为真）时，
+ * 盆里变成一只蓝色章鱼（{@link #OCTOPUS}，模型 block/mystery_stew_pot_octopus_servings*）。
  * 底下换了就变回来；只是样子，盛出来的碗装谜之炖菜、收回的盆装谜之炖菜都不受影响。</p>
  *
- * <p>盆里往上飘效果粒子（2026-11-05 用户：形状和玩家身上有状态效果时的粒子一样，颜色取自两种谜之炖菜的颜色），
+ * <p>盆里向上飘效果粒子，形状同玩家身上的状态效果粒子，颜色取自两种谜之炖菜贴图，
  * 见 {@link #effectParticle}；锅里煮好的一锅也飘（BigPotCooking#clientTick）。</p>
  *
  * <p>不重写 codec()，理由同 {@link AnimalOilBlock}：父类 {@link DdFeastBlock} 的 codec() 写死了自己的类型。</p>
@@ -46,14 +46,14 @@ public class MysteryStewPotBlock extends DdFeastBlock implements EntityBlock {
     public static final BooleanProperty OCTOPUS = BooleanProperty.create("octopus");
 
     /**
-     * 效果粒子的颜色，都取自用户画的贴图：正常的一盆是蓝汤和紫、绿、深蓝的料块（mystery_stew_pot.png），
+     * 效果粒子颜色取自贴图：正常的一盆是蓝汤和紫、绿、深蓝的料块（mystery_stew_pot.png），
      * 章鱼那盆是章鱼身上的几种蓝和蓝汤（mystery_stew_pot_octopus.png）
      */
     private static final int[] COLORS = {0x4f90b8, 0x963696, 0x72ae33, 0x2b316d};
     private static final int[] OCTOPUS_COLORS = {0x37479c, 0x263898, 0x2b316d, 0x4f90b8};
     /** 盆里每刻往上飘一个效果粒子的几率 */
     private static final float EFFECT_CHANCE = 0.2F;
-    /** 汤面多高（像素），按还剩几份（用户模型里汤那一层的顶面：剩 1 份 2.25 …… 满盆 4；0 份时方块已经变回空盆） */
+    /** 汤面高度（像素），按剩余份数取值；0 份时方块已经变回空盆。 */
     private static final float[] SURFACE_Y = {2.25F, 2.25F, 3.25F, 3.5F, 4.0F};
 
     public MysteryStewPotBlock(BlockBehaviour.Properties properties) {

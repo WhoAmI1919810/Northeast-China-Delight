@@ -4,7 +4,7 @@ main 分支为 1.21.1（NeoForge）开发主线；1.20.1（Forge）版本线见 
 
 ## 当前最新版本
 
-已发布：**4.0.1**
+当前版本：**4.0.2**
 
 - Minecraft 1.21.1：NeoForge 21.1
 - Minecraft 1.20.1：Forge 47.1

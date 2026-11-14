@@ -303,7 +303,7 @@ public class NortheastChinaDelight
         //?} else {
         /*event.registerBlockEntity(Capabilities.FluidHandler.BLOCK, ModBlockEntities.VAT.get(),
                 (vat, side) -> vat);
-        // 大灶从上面送料（机械动力溜槽、漏斗口这类认物品能力的），四格都认、只认上面，见 BigPotItemHandler（2026-11-08）
+        // 大灶从上面接收物品能力输入，四格都认、只认上面，见 BigPotItemHandler。
         event.registerBlock(Capabilities.ItemHandler.BLOCK,
                 (level, pos, state, blockEntity, side) -> side == null || side == net.minecraft.core.Direction.UP
                         ? new com.gunmu.northeast_china_delight.block.BigPotItemHandler(level, pos) : null,
@@ -515,8 +515,8 @@ public class NortheastChinaDelight
         }
 
         /**
-         * 格子桌布的方块模型包一层（client/TableclothSkirtModel）：垂下来的布边伸出格子，原版平面光照取旁边那一格的光，
-         * 旁边放了不透光的方块布边就全黑（2026-11-05 用户截图）；包一层后布边取桌布自己这一格的光
+         * 格子桌布的方块模型包一层（client/TableclothSkirtModel）：原版平面光照会让垂下的布边取到相邻格，
+         * 旁边是不透光方块时整条边发黑；包一层后布边使用桌布所在格的光。
          */
         @SubscribeEvent
         public static void onModifyBakingResult(ModelEvent.ModifyBakingResult event)

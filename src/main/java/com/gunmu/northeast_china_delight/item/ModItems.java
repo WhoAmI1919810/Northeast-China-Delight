@@ -124,7 +124,7 @@ public class ModItems {
     public static final Supplier<Item> COOKING_OIL = bottled("cooking_oil");
     public static final Supplier<Item> CHILI_OIL = bottled("chili_oil");
     public static final Supplier<Item> ANIMAL_OIL = bottled("animal_oil");
-    /** 格瓦斯：不饿也能喝，随时能喝（2026-11-04 用户：像药水一样） */
+    /** 格瓦斯：不饿也能喝，返还玻璃瓶。 */
     public static final Supplier<Item> KVASS = regItem("kvass", DdDrinkItem::new, new Item.Properties()
             .craftRemainder(Items.GLASS_BOTTLE)
             .food(foodReturning(alwaysEdible(stats(2, 0.25F)), Items.GLASS_BOTTLE)));
@@ -146,7 +146,7 @@ public class ModItems {
     public static final Supplier<Item> BEAN_SPROUTS = food("bean_sprouts", 2, 0.3F);
     public static final Supplier<Item> SOUR_CORN_KERNELS = food("sour_corn_kernels", 3, 0.4F);
     public static final Supplier<Item> SWEET_POTATO_STARCH = simple("sweet_potato_starch");
-    /** 湿粉团：木臼里 1 个红薯加一份水（一桶 / 一盆 / 一瓶）舂出 2 个，放烟熏炉熏干成淀粉（2026-11-05 用户：要批量烟熏，不要批量熔炼） */
+    /** 湿粉团：木臼里 1 个红薯加一份水舂出 2 个，烟熏后成淀粉。 */
     public static final Supplier<Item> WET_STARCH_DOUGH = simple("wet_starch_dough");
     public static final Supplier<Item> VERMICELLI = plain("vermicelli");
     public static final Supplier<Item> CORN_FLOUR = plain("corn_flour");
@@ -226,7 +226,7 @@ public class ModItems {
             dishBowl("old_style_crispy_pork", () -> ModBlocks.OLD_STYLE_GUO_BAO_ROU.get(), 9, 0.7F);
     public static final Supplier<Item> NEW_STYLE_GUO_BAO_ROU = bowlFood("new_style_crispy_pork", 9, 0.7F);
     public static final Supplier<Item> DI_SAN_XIAN = bowlFood("three_fresh_veggies", 8, 0.6F);
-    /** 土豆焖茄子（2026-11-07 用户）：马铃薯 + 茄子 + 大葱 + 大酱，厨锅碗装；比地三鲜少过一道油，饱食度低一点 */
+    /** 土豆焖茄子：马铃薯、茄子、大葱、大酱，厨锅碗装。 */
     public static final Supplier<Item> TU_DOU_MEN_QIE_ZI = bowlFood("braised_eggplant_potato", 7, 0.6F);
     public static final Supplier<Item> JIAN_JIAO_GAN_DOU_FU = bowlFood("pepper_dried_tofu", 7, 0.5F);
     public static final Supplier<Item> SUAN_CAI_DUN_GU_TOU = feastItem("sauerkraut_bone_stew", () -> ModBlocks.SUAN_CAI_DUN_GU_TOU_POT.get());
@@ -277,11 +277,11 @@ public class ModItems {
     public static final Supplier<Item> NIAN_DOU_BAO = food("sticky_bean_bun", 7, 0.6F);
     public static final Supplier<Item> HONG_DOU_SONG_BING = food("red_bean_songpyeon", 3, 0.3F);
     public static final Supplier<Item> HUA_SHENG_SONG_BING = food("peanut_songpyeon", 3, 0.3F);
-    /** 打糕：木臼里一盆米饭（4 碗）舂出 4 个，每个按一碗农夫乐事米饭算，饥饿值 6；饱和度系数照旧 0.5（2026-11-05 用户） */
+    /** 打糕：4 碗米饭在木臼中舂出 4 个，每个按一碗米饭计算饥饿值。 */
     public static final Supplier<Item> DA_GAO = food("pounded_rice_cake", 6, 0.5F);
     /**
-     * 花生糕（辽宁兴城特产）：熟花生 + 蜂蜜在木臼里舂 4 下出 2 块（2026-11-06 用户）。两样料的小点心，只管饱、不给效果
-     * （用户：只有两种调料的点心给生命提升太夸张），所以不进 DishFlavors；无器具，摆展示乐事的小餐盘
+     * 花生糕（辽宁兴城特产）：熟花生加蜂蜜在木臼里舂 4 下出 2 块。
+     * 只用两种原料的小点心只恢复饥饿值，不进入 DishFlavors；无容器，可摆在小餐盘上。
      */
     public static final Supplier<Item> PEANUT_CAKE = food("peanut_cake", 4, 0.5F);
     /**
@@ -314,8 +314,8 @@ public class ModItems {
     public static final Supplier<Item> BRAISED_HAIRTAIL = bowlFood("braised_hairtail", 8, 0.6F);
     public static final Supplier<Item> DA_JIANG_TANG = brassBowlFood("soy_paste_soup", 6, 0.5F);
     /**
-     * 盆装得莫利炖鱼（2026-11-06 从碗装菜改成盆装菜）。名字同别的盆装菜：盆 = 菜名、碗 = 菜名_bowl
-     * （用户：这道菜的用量就是大盆菜的，名字要统一）；原来那碗占的 demoli_fish_stew 给了盆，老存档里的碗读出来是一盆
+     * 盆装得莫利炖鱼。盆使用菜名、碗使用 {@code 菜名_bowl}；
+     * 旧存档中占用 {@code demoli_fish_stew} 的碗会按盆读取。
      */
     public static final Supplier<Item> DE_MO_LI_DUN_YU = feastItem("demoli_fish_stew", () -> ModBlocks.DE_MO_LI_DUN_YU_POT.get());
     public static final Supplier<Item> DE_MO_LI_DUN_YU_BOWL = bowlFood("demoli_fish_stew_bowl", 11, 0.8F);
@@ -330,7 +330,7 @@ public class ModItems {
     /** 盆装米饭：大锅里 4 份大米煮好用大脸盆盛，拿碗盛出来是农夫乐事的米饭 */
     public static final Supplier<Item> PEN_MI_FAN = feastItem("steamed_rice", () -> ModBlocks.PEN_MI_FAN_POT.get());
     /**
-     * 盆装谜之炖菜：大锅里凑不上配方时煮出来的（2026-11-05），效果存在物品上（MysteryStewEffects），拿碗盛出来是一碗原版谜之炖菜；
+     * 盆装谜之炖菜：大锅里凑不上配方时煮成，效果存在物品上（MysteryStewEffects），拿碗盛出来是一碗原版谜之炖菜；
      * 创造模式的提示框里列效果（effect/DishEffectEvents#onItemTooltip）
      */
     public static final Supplier<Item> MYSTERY_STEW = feastItem("mystery_stew", () -> ModBlocks.MYSTERY_STEW_POT.get());

@@ -22,12 +22,11 @@ import java.util.Map;
 import java.util.WeakHashMap;
 
 /**
- * 「东北行头」四件套：头戴大脸盆、身穿大花袄、主手木槌、副手木锅盖（2026-11-04 用户定的三条套装效果）。
+ * 「东北行头」四件套：头戴大脸盆、身穿大花袄、主手木槌、副手木锅盖。
  * 穿齐了才有，少一件都不算：
  * <ul>
- *   <li>锅盖真挡事：举锅盖挡下的伤害从三成变成全挡，和盾牌一样（{@link #LID_BLOCKED_FRACTION}，2026-11-05 用户），
- *       见 {@link PotLidItem#onShieldBlock}。以前挡住时还「铛」一声（农夫乐事平底锅的金属声），同日用户要锅盖格挡的声音换成
- *       木头的，「铛」去掉了，挡住的声音见 PotLidItem；</li>
+ *   <li>锅盖真挡事：举锅盖挡下的伤害从三成变成全挡，和盾牌一样，见 {@link PotLidItem#onShieldBlock}；
+ *       格挡与碎裂音效使用木质音效，不再使用农夫乐事平底锅的金属声；</li>
  *   <li>一棒子敲懵：木槌近身打中的东西多被击退一截（相当于击退 I）、缓慢 II 两秒，见 {@link #onLivingDamage} / {@link #onKnockBack}；</li>
  *   <li>自家人：找村民换东西便宜一点（每条交易的第一样要价少 15%，至少少 1 个；村庄英雄 I 是 30%），
  *       见 {@link #applyVillagerDiscount}，由 mixin/VillagerOutfitDiscountMixin 在原版算完声望、村庄英雄折扣之后调用。

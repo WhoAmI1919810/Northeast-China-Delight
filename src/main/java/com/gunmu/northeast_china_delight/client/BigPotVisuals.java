@@ -33,10 +33,9 @@ import java.util.function.Predicate;
  *   <li>食材模型：{@code northeast_china_delight:block/big_pot/<名字>}，底面中心 (8, 0, 8)，生成时已经等比缩放到
  *       正好装进半径 3、高 2.8 像素的圆柱，原样画；没有模型的东西（别的模组的食材）画成平躺的物品。
  *       成品：{@code block/big_pot/dish/<成品物品名>}，坐标已经是锅里的，最高不过锅盖底面。</li>
- *   <li>七个格子：锅底正中一份，外面一圈六份。圈上相邻两份、圈和正中都隔开两个圆柱半径，锅壁也刚好够宽，谁都碰不到谁
- *       （2026-11-03 用户说食材穿模后这样排；查法见 work/tools/big_pot_contents/fitcheck.py）。
- *       同一样放了好几个，每份占一格（{@link #pieces}）。外圈的顶比 1000 mB 的水面高 1.7 像素、正中那份刚露出水面
- *       （第一版泡得太深，用户说放进去看不见）。</li>
+ *   <li>七个格子：锅底正中一份，外面一圈六份。圈上相邻两份、圈和正中都隔开两个圆柱半径，锅壁也刚好够宽，互不穿模。
+ *       同一样放了好几个时每份占一格（{@link #pieces}）。外圈顶部比 1000 mB 水面高 1.7 像素，正中那份刚露出水面，
+ *       避免食材完全没入液体。</li>
  * </ul>
  */
 public final class BigPotVisuals {
@@ -53,9 +52,8 @@ public final class BigPotVisuals {
             {6.0F, 30, 12.4F}, {6.0F, 90, 12.4F}, {6.0F, 150, 12.4F},
             {6.0F, 210, 12.4F}, {6.0F, 270, 12.4F}, {6.0F, 330, 12.4F}};
     /**
-     * 锅里没水时的底面高度（2026-11-04 用户：放了水和食材、再用盆把水舀走，食材就浮空了）：上面那几个高度是有水时浮在水里的
-     * （第一版贴着锅底，泡在水里看不见），水舀走了就沉下去——正中那份落在锅底顶面 10，外圈落在 y 12 那一级台阶上
-     * （按每种食材的实际形状算过，几乎都正好搭在这一级上；再低就插进锅壁）。和 layout.py 的 SLOTS_DRY 一样
+     * 锅里没水时的底面高度。有水时食材按液体高度浮起，水舀走后沉到锅底：
+     * 正中落在 10，外圈落在 y 12 的台阶上，再低会插入锅壁。
      */
     private static final float DRY_CENTER_Y = 10.0F;
     private static final float DRY_RING_Y = 12.0F;
@@ -63,7 +61,7 @@ public final class BigPotVisuals {
 
     /**
      * 摊开在锅底的（生大米）：不占格子，在锅底均匀铺一层，每份厚 {@link #SPREAD_STEP} 像素，最多算 {@link #SPREAD_MAX} 份
-     * （2026-11-03 用户：生米放进锅里应该是摊开的，先水后米，米均匀铺在锅底）。和 layout.py 的 SPREAD 一样
+     * （先水后米时均匀铺在锅底）。
      */
     private static final float FLOOR = 10.0F;
     private static final float SPREAD_STEP = 0.4F;
@@ -270,7 +268,7 @@ public final class BigPotVisuals {
             item(list, ModItems.FROZEN_TOFU.get(), "frozen_tofu");
             item(list, ModItems.HAZEL_MUSHROOM.get(), "hazel_mushroom");
             item(list, Items.CHICKEN, "chicken");
-            // 整条生鱼（2026-11-06，得莫利炖鱼）：照鲤鱼做的，鳕鱼、鲑鱼都画这一条；带鱼又细又长、银白，套这条不像，照旧画成平放的物品
+            // 生鱼共用整条鱼模型；带鱼细长银白，不套该模型，仍按平放物品绘制。
             list.add(new IngredientModel(stack -> stack.is(ModTags.FOODS_RAW_FISH) && !stack.is(ModItems.HAIRTAIL.get()),
                     "raw_fish"));
             tag(list, ModTags.FOODS_RAW_PORK, "raw_pork");

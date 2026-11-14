@@ -116,7 +116,7 @@ public class DishEffectEvents {
             event.getToolTip().add(Component.translatable("tooltip.northeast_china_delight.grill_rack")
                     .withStyle(ChatFormatting.GRAY));
         }
-        // 海水桶：只为旧存档留着，还能拿去厨锅煮盐（2026-11-04 用户）
+        // 海水桶：只为旧存档留着，还能拿去厨锅煮盐
         if (stack.is(ModItems.SEA_WATER_BUCKET.get())) {
             event.getToolTip().add(Component.translatable("tooltip.northeast_china_delight.sea_water_bucket")
                     .withStyle(ChatFormatting.GRAY));
@@ -168,8 +168,8 @@ public class DishEffectEvents {
 
     /**
      * 谜之炖菜（盆装谜之炖菜、拿碗盛出来的原版谜之炖菜）：只给创造模式的玩家看效果，同样写在「食用后获得：」下面。
-     * 原版只在创造模式物品栏的物品列表里列效果（TooltipFlag#isCreative），拿到自己背包里就看不见了
-     * （2026-11-05 用户：创造模式里看不到盛出来的炖菜的效果），所以这里按玩家是不是创造模式。
+     * 原版只在创造模式物品栏的物品列表里列效果（TooltipFlag#isCreative），拿到自己背包里就看不见了，
+     * 因此这里按玩家是否处于创造模式判断。
      * 返回 true 表示是谜之炖菜（别的提示不用再看）
      */
     private static boolean appendMysteryStew(ItemTooltipEvent event) {

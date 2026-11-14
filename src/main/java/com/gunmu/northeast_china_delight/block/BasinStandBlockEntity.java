@@ -6,13 +6,10 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 
 /**
- * 脸盆架的方块实体。
+ * 脸盆架方块实体：记录当前水盆可继续使用的次数，见 {@link BasinStandBlock}。
  *
- * <p>治疗冷却存在玩家的持久数据里，由所有脸盆架共享，不在这里。</p>
- *
- * <p>这里记架上这盆水被洗过几次脸（2026-11-07 用户：「给脸盆架加一个字段，记录当上面有水盆时，被玩家右键使用过几次。
- * 当字段=2时，如果玩家再使用，正常使用一次，并将上面的水盆变成空脸盆」），见 {@link BasinStandBlock}。
- * 架上的盆一不是水盆（拿走、舀干、换成空盆），次数就清零：新倒满的一盆水从 0 数起，不管是谁倒的（压水井也一样）。</p>
+ * <p>治疗冷却保存在玩家持久数据中，由所有脸盆架共享。架上不再是水盆时使用次数清零；
+ * 重新装满的一盆水从 0 开始计数，与倒水来源无关。</p>
  */
 public class BasinStandBlockEntity extends BlockEntity {
 

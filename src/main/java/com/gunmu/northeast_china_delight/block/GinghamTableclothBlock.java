@@ -17,7 +17,7 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
 /**
- * 格子桌布（2026-11-04；村庄副食店柜台上铺的，替掉机械动力的桌布，16 种染料色）。
+ * 格子桌布。
  *
  * <p>像地毯一样铺在方块顶上（碰撞箱就是地毯那 1 像素），哪边没挨着别的格子桌布，模型就在那边往下垂一截布边、
  * 盖住下面那块的上沿；挨着的桌布连成一整块，中间不垂边（{@link #NORTH} 等四个属性记那一边挨着没有，
@@ -32,7 +32,7 @@ public class GinghamTableclothBlock extends CarpetBlock {
     public static final BooleanProperty EAST = BlockStateProperties.EAST;
     public static final BooleanProperty SOUTH = BlockStateProperties.SOUTH;
     public static final BooleanProperty WEST = BlockStateProperties.WEST;
-    /** 和模型一样 0.5 像素厚（2026-11-04 用户：桌布太厚，调到和炕画一样）；原版地毯是 1 像素 */
+    /** 和模型一样 0.5 像素厚；原版地毯是 1 像素 */
     private static final VoxelShape SHAPE = Block.box(0.0, 0.0, 0.0, 16.0, 0.5, 16.0);
 
     public GinghamTableclothBlock(Properties properties) {

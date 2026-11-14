@@ -113,7 +113,7 @@ public class LargeBasinItemRenderer extends BlockEntityWithoutLevelRenderer
         if (displayContext == ItemDisplayContext.GUI)
         {
             // 物品栏 / 配方书 / JEI：普通 2D 贴图，跟没有自定义渲染器的物品一模一样（GUI 里原版给的就是满亮）。
-            // 物品栏用原版物品栏那种（translucentCullBlockSheet）：translucentItemSheet 在「极佳」里画到掉落物专用的画面上，物品栏里看不到（2026-11-06 用户：极佳下这几样物品栏没贴图）
+            // 物品栏用原版物品栏那种（translucentCullBlockSheet）：translucentItemSheet 在「极佳」里画到掉落物专用的画面上，物品栏里看不到
             Minecraft.getInstance().getBlockRenderer().getModelRenderer().renderModel(
                     poseStack.last(),
                     buffer.getBuffer(Sheets.translucentCullBlockSheet()),

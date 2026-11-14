@@ -122,8 +122,8 @@ public class NortheastJeiPlugin implements IModPlugin {
         // 窗花不是合成出来的：一手红纸一手剪刀右键剪，贴在糊纸窗上
         registration.addItemStackInfo(new ItemStack(ModItems.PAPER_CUT.get()),
                 Component.translatable("jei.northeast_china_delight.info.paper_cut"));
-        // 大灶是摆出来的，不是合成的：大铁锅、农夫乐事炉灶和锅盖共用一页（2026-11-06 用户把锅盖也放进来）；
-        // 锅盖另有自己一页（2026-11-05 用户拆开）
+        // 大灶是摆出来的，不是合成的：大铁锅、农夫乐事炉灶和锅盖共用一页；
+        // 锅盖另有自己一页
         registration.addItemStackInfo(java.util.List.of(new ItemStack(ModItems.BIG_IRON_POT.get()),
                         new ItemStack(net.minecraft.core.registries.BuiltInRegistries.ITEM.get(
                                 com.gunmu.northeast_china_delight.util.DdIds.of("farmersdelight", "stove"))),
@@ -131,12 +131,12 @@ public class NortheastJeiPlugin implements IModPlugin {
                 Component.translatable("jei.northeast_china_delight.info.big_stove"));
         registration.addItemStackInfo(new ItemStack(ModItems.BIG_POT_LID.get()),
                 Component.translatable("jei.northeast_china_delight.info.big_pot_lid"));
-        // 东北四件套（NortheastOutfit）单开一页，文案是用户原话（2026-11-06）
+        // 东北四件套（NortheastOutfit）单开一页
         registration.addItemStackInfo(java.util.List.of(new ItemStack(ModItems.LARGE_BASIN.get()),
                         new ItemStack(ModItems.FLORAL_JACKET.get()), new ItemStack(ModItems.WOODEN_MALLET.get()),
                         new ItemStack(ModItems.BIG_POT_LID.get())),
                 Component.translatable("jei.northeast_china_delight.info.northeast_outfit"));
-        // 压水井能给容器装水（2026-11-05 用户：脸盆架那页意义不明，换成压水井）
+        // 压水井能给容器装水
         registration.addItemStackInfo(new ItemStack(ModBlocks.HAND_PUMP.get()),
                 Component.translatable("jei.northeast_china_delight.info.hand_pump"));
         // 谜之炖菜不是配方煮的：大锅里凑不上配方时盖上锅盖煮出来
@@ -152,7 +152,7 @@ public class NortheastJeiPlugin implements IModPlugin {
                         new ItemStack(ModItems.OIL_EDGE.get()),
                         new ItemStack(ModItems.SMOKED_PORK_HOCK.get()), new ItemStack(ModItems.SMOKED_PIG_LIVER.get())),
                 Component.translatable("jei.northeast_china_delight.info.pig_offal"));
-        // 冻梨、黄桃罐头共用一页（2026-11-05 用户）：平时只能买（冻梨农民卖，黄桃罐头副食商卖）；
+        // 冻梨、黄桃罐头共用一页：平时只能买（冻梨农民卖，黄桃罐头副食商卖）；
         // 第二句告诉没装果园乐事的人，装了就能用它的梨、桃子自己做（大缸冻梨、厨锅黄桃罐头），所以不管装没装都显示
         registration.addItemStackInfo(java.util.List.of(new ItemStack(ModItems.FROZEN_PEAR.get()),
                         new ItemStack(ModItems.CANNED_YELLOW_PEACH.get())),
