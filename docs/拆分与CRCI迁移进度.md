@@ -181,6 +181,35 @@
 - 拆分版在东北乐事主创造栏与 CRCI 共享创造栏同时隐藏 `mystery_stew`，两边 GameTest 均增加隐藏断言。
 - 新结构中的共通内容 ID 已改写回 CRCI；东北专属菜肴、建材、结构与小院战利品表保持东北命名空间。
 
+## 大锅成品模型命名空间修复（2026-11-14）
+
+用户实测：新拆分版用大铁锅烹饪完成后，锅里不显示对应菜品的盘中模型。排查结论不是模型文件没打进 jar，而是拆分后的模型命名空间归属错误。
+
+- 大锅渲染器按“成品物品命名空间 + `block/big_pot/dish/成品路径`”查找锅中模型。
+- `chinese_regional_culinary_ingredients:mystery_stew` 已随物品迁入 CRCI，但它的锅中模型仍在
+  `northeast_china_delight:block/big_pot/dish/mystery_stew`，运行时查找的是
+  `chinese_regional_culinary_ingredients:block/big_pot/dish/mystery_stew`，因此返回缺失模型并退化为平放物品。
+- 其余 10 道东北菜的成品物品和盘中模型都在 `northeast_china_delight`，没有该问题。
+
+归属规则：
+
+- 东北菜、盆装菜的盘中模型归拆分后的东北乐事。
+- 物品本体迁到哪个命名空间，依赖物品 ID 查找的模型就必须跟到同一个命名空间；「谜之炖菜」因此归 CRCI。
+- 大锅锅体、通用食材模型、渲染器和模型烘焙注册器仍归 CRCI。
+
+修复与防回归：
+
+- 新增 `chinese_regional_culinary_ingredients:block/big_pot/dish/mystery_stew`，删除东北乐事旧路径下的重复模型。
+- `BigPotVisuals#dishModel` 对任何命名空间的缺失锅中模型都记录一次明确警告，不再只检查 CRCI 命名空间。
+- `CrciClientEvents` 在 `ModelEvent.BakingCompleted` 后逐个检查所有大锅成品模型是否烘焙成功、是否还有对应物品，并输出汇总日志。
+- 新增 `BigPotModelGameTests`：从实际加载的大锅配方反查成品模型，覆盖 10 道东北菜，并单独断言迁移到 CRCI 的谜之炖菜模型；模型资源通过模组文件路径校验，不依赖服务端 `ResourceManager` 的 `assets`（服务端本就不加载客户端模型目录）。
+
+验证：
+
+- CRCI 双版本构建通过，新 jar 已同步到两个拆分版 `libs/`。
+- 拆分版 1.21.1 GameTest 126/126 通过。
+- 拆分版 1.20.1 GameTest 126/126 通过；开发环境必须使用 `-PcrciDevJar=.../versions/1.20.1/build/devlibs/chinese_regional_culinary_ingredients-0.1.0+1.20.1.jar`，不能直接用发布用的 `libs` 重混淆包跑开发 GameTest。
+
 ## 约定
 
 - 不向 C 盘写入任何内容。
