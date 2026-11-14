@@ -9,7 +9,11 @@ import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.Resource;
+//? if <1.20.2 {
+/*import net.minecraftforge.fml.ModList;
+*///?} else {
 import net.neoforged.fml.ModList;
+//?}
 //? if <1.20.2 {
 /*import net.minecraftforge.gametest.GameTestHolder;
 import net.minecraftforge.gametest.PrefixGameTestTemplate;
