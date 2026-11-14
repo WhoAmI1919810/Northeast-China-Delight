@@ -8,12 +8,14 @@ import com.mojang.math.Axis;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.LevelRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.Sheets;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.core.BlockPos;
+import net.minecraft.world.inventory.InventoryMenu;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -129,10 +131,27 @@ public class BigPotRenderer implements BlockEntityRenderer<BigPotBlockEntity> {
                 pose.mulPose(Axis.XP.rotationDegrees(90.0F));
                 pose.scale(0.375F, 0.375F, 0.375F);
                 Minecraft.getInstance().getItemRenderer().renderStatic(stack, ItemDisplayContext.FIXED, light,
-                        overlay, pose, buffer, level, i);
+                        overlay, pose, noCullItemBuffer(buffer), level, i);
             }
             pose.popPose();
         }
+    }
+
+    /**
+     * 无专用模型的食材走原版物品渲染时，把会剔除背面的方块/物品图集缓冲换成无剔除版本，
+     * 让原模型已有的面在背面也能被光栅化；附魔光效等其它类型原样透传。
+     */
+    private static MultiBufferSource noCullItemBuffer(MultiBufferSource buffer) {
+        return renderType -> {
+            RenderType target = renderType;
+            if (renderType == Sheets.cutoutBlockSheet()) {
+                target = RenderType.entityCutoutNoCull(InventoryMenu.BLOCK_ATLAS);
+            } else if (renderType == Sheets.translucentItemSheet()
+                    || renderType == Sheets.translucentCullBlockSheet()) {
+                target = RenderType.entityTranslucent(InventoryMenu.BLOCK_ATLAS);
+            }
+            return buffer.getBuffer(target);
+        };
     }
 
     /** 用实体式的方块图集缓冲画（按面的法线分明暗，同大缸里的展示模型） */
