@@ -28,6 +28,6 @@ jobs:
         uses: gradle/actions/setup-gradle@v4
 
       - name: Build with Gradle
-        # 不指定项目路径时，Gradle 会对所有版本节点各执行一次 build。
+        # 该分支只负责 1.21.1；1.20.1 由独立分支构建，避免两个节点争用共享 libs 输出。
         # Stonecutter 0.9.8 在 Gradle 9.2 上的配置缓存兼容性不稳，显式关闭。
-        run: ./gradlew build --no-configuration-cache
+        run: ./gradlew :1.21.1:build --no-configuration-cache
