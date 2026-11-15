@@ -47,6 +47,10 @@ public final class ModBlockTags
     public static final TagKey<Block> BELLFLOWER_PLANTABLE_ON =
             TagKey.create(Registries.BLOCK,
                     DdIds.of(NortheastChinaDelight.MODID, "bellflower_plantable_on"));
+    /** 能作为枕头睡眠条件中“被子方块”的方块。 */
+    public static final TagKey<Block> QUILTS =
+            TagKey.create(Registries.BLOCK,
+                    DdIds.of(NortheastChinaDelight.MODID, "quilts"));
 
     private ModBlockTags()
     {

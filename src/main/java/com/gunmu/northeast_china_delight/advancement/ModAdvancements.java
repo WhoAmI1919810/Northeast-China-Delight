@@ -44,6 +44,8 @@ public final class ModAdvancements
     public static final ResourceLocation PUMP_WATER = id("pump_water");
     /** 神清气爽——在放好水盆的脸盆架上洗脸 */
     public static final ResourceLocation WASH_FACE = id("wash_face");
+    /** 睡舒坦了——在寒冷群系里枕着枕头、挨着暖气片睡一觉 */
+    public static final ResourceLocation COZY_SLEEP = id("cozy_sleep");
 
     private ModAdvancements()
     {

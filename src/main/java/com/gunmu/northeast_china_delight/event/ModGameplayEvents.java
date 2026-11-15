@@ -94,6 +94,11 @@ import net.neoforged.neoforge.event.entity.living.LivingChangeTargetEvent;
 *///?} else {
 import net.neoforged.neoforge.event.tick.ServerTickEvent;
 //?}
+//? if <1.20.2 {
+/*import net.minecraftforge.event.entity.player.PlayerWakeUpEvent;
+*///?} else {
+import net.neoforged.neoforge.event.entity.player.PlayerWakeUpEvent;
+//?}
 
 /**
  * 三个和小玩法有关的钩子：
@@ -112,7 +117,8 @@ public final class ModGameplayEvents
 
     public static final int RADIATOR_CHECK_INTERVAL = 80;
     public static final int RADIATOR_DURATION_TICKS = 220;
-    public static final double RADIATOR_RANGE = 5.0D;
+    public static final int RADIATOR_SCAN_RADIUS = 5;
+    public static final double RADIATOR_RANGE = RADIATOR_SCAN_RADIUS;
 
     /** 小院群落的注册名，见 data/northeast_china_delight/worldgen/structure/northeast_yard.json */
     private static final ResourceLocation YARD_STRUCTURE =
@@ -120,6 +126,15 @@ public final class ModGameplayEvents
 
     private ModGameplayEvents()
     {
+    }
+
+    @SubscribeEvent
+    public static void onPlayerWakeUp(PlayerWakeUpEvent event)
+    {
+        if (event.getEntity() instanceof ServerPlayer player)
+        {
+            SleepComfort.applyAfterWakeUp(player);
+        }
     }
 
     /**
@@ -274,7 +289,9 @@ public final class ModGameplayEvents
         Vec3 eye = player.getEyePosition();
         Vec3 target = player.getBoundingBox().getCenter();
         double maxDistanceSqr = RADIATOR_RANGE * RADIATOR_RANGE;
-        for (BlockPos pos : BlockPos.betweenClosed(center.offset(-5, -5, -5), center.offset(5, 5, 5))) {
+        int radius = RADIATOR_SCAN_RADIUS;
+        for (BlockPos pos : BlockPos.betweenClosed(
+                center.offset(-radius, -radius, -radius), center.offset(radius, radius, radius))) {
             BlockState state = level.getBlockState(pos);
             if (!state.is(ModBlocks.RADIATOR.get())) {
                 continue;
