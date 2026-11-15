@@ -344,15 +344,15 @@ public class ModBlocks {
      * 斜屋顶的「底座」用同色的平屋顶（原版楼梯要一个基础方块来借爆炸抗性、踩踏这些行为）。
      */
     public static final Supplier<SlabBlock> RED_STEEL_ROOF_SLAB =
-            block("red_steel_roof_slab", SlabBlock::new, steelRoofProperties(MapColor.COLOR_RED));
+            block("red_steel_roof_slab", SlabBlock::new, steelRoofSlabProperties(MapColor.COLOR_RED));
     public static final Supplier<StairBlock> RED_STEEL_ROOF_STAIRS =
             stairs("red_steel_roof_stairs", RED_STEEL_ROOF_SLAB, steelRoofProperties(MapColor.COLOR_RED));
     public static final Supplier<SlabBlock> BLUE_STEEL_ROOF_SLAB =
-            block("blue_steel_roof_slab", SlabBlock::new, steelRoofProperties(MapColor.COLOR_BLUE));
+            block("blue_steel_roof_slab", SlabBlock::new, steelRoofSlabProperties(MapColor.COLOR_BLUE));
     public static final Supplier<StairBlock> BLUE_STEEL_ROOF_STAIRS =
             stairs("blue_steel_roof_stairs", BLUE_STEEL_ROOF_SLAB, steelRoofProperties(MapColor.COLOR_BLUE));
     public static final Supplier<SlabBlock> GREEN_STEEL_ROOF_SLAB =
-            block("green_steel_roof_slab", SlabBlock::new, steelRoofProperties(MapColor.COLOR_GREEN));
+            block("green_steel_roof_slab", SlabBlock::new, steelRoofSlabProperties(MapColor.COLOR_GREEN));
     public static final Supplier<StairBlock> GREEN_STEEL_ROOF_STAIRS =
             stairs("green_steel_roof_stairs", GREEN_STEEL_ROOF_SLAB, steelRoofProperties(MapColor.COLOR_GREEN));
 
@@ -761,6 +761,11 @@ public class ModBlocks {
                 .noOcclusion()
                 .ignitedByLava()
                 .pushReaction(PushReaction.DESTROY);
+    }
+
+    /** 平屋顶只做屋面：所有台阶状态都禁止自然刷怪；斜屋顶保持原行为。 */
+    private static BlockBehaviour.Properties steelRoofSlabProperties(MapColor color) {
+        return steelRoofProperties(color).isValidSpawn((state, level, pos, entityType) -> false);
     }
 
     private static BlockBehaviour.Properties steelRoofProperties(MapColor color) {

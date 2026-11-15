@@ -11,6 +11,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -37,19 +38,44 @@ public final class SleepComfortGameTests
     {
     }
 
+    private static final class TestServerPlayer extends ServerPlayer
+    {
+        private TestServerPlayer(ServerLevel level, GameProfile profile)
+        {
+            super(level.getServer(), level, profile);
+        }
+
+        @Override
+        protected void onEffectAdded(MobEffectInstance effectInstance, net.minecraft.world.entity.Entity source)
+        {
+        }
+
+        @Override
+        protected void onEffectUpdated(MobEffectInstance effectInstance, boolean forced,
+                                       net.minecraft.world.entity.Entity source)
+        {
+        }
+    }
+
     private static ServerPlayer serverPlayer(GameTestHelper helper)
     {
         ServerLevel level = helper.getLevel();
         //? if <1.20.2 {
-        ServerPlayer player = new ServerPlayer(level.getServer(), level,
+        ServerPlayer player = new TestServerPlayer(level,
                 new GameProfile(UUID.randomUUID(), "sleep-comfort-test-player"));
         //?} else {
-        /*ServerPlayer player = new ServerPlayer(level.getServer(), level,
-                new GameProfile(UUID.randomUUID(), "sleep-comfort-test-player"),
-                net.minecraft.server.level.ClientInformation.createDefault());
+        /*ServerPlayer player = new TestServerPlayer(level,
+                new GameProfile(UUID.randomUUID(), "sleep-comfort-test-player"));
         *///?}
-        player.setGameMode(GameType.CREATIVE);
+        CompoundTag gameTypes = new CompoundTag();
+        gameTypes.putInt("playerGameType", GameType.CREATIVE.getId());
+        player.loadGameTypes(gameTypes);
         return player;
+    }
+
+    private static void presetRespawn(ServerPlayer player, BlockPos pos)
+    {
+        player.setRespawnPosition(player.serverLevel().dimension(), pos, 0.0F, false, false);
     }
 
     private static void setBiome(GameTestHelper helper, BlockPos center, String biome)
@@ -69,6 +95,10 @@ public final class SleepComfortGameTests
         level.setBlockAndUpdate(head.below(), Blocks.STONE.defaultBlockState());
         level.setBlockAndUpdate(foot.above(), Blocks.AIR.defaultBlockState());
         level.setBlockAndUpdate(head.above(), Blocks.AIR.defaultBlockState());
+        for (Direction direction : Direction.Plane.HORIZONTAL)
+        {
+            level.setBlockAndUpdate(foot.above().relative(direction), Blocks.AIR.defaultBlockState());
+        }
         level.setBlockAndUpdate(foot, Blocks.RED_BED.defaultBlockState()
                 .setValue(BedBlock.FACING, facing).setValue(BedBlock.PART, BedPart.FOOT));
         level.setBlockAndUpdate(head, Blocks.RED_BED.defaultBlockState()
@@ -90,8 +120,9 @@ public final class SleepComfortGameTests
         player.moveTo(foot.getX() + 0.5, foot.getY(), foot.getZ() + 0.5, 0.0F, 0.0F);
         level.setDayTime(18000L);
         level.updateSkyBrightness();
-        player.startSleepInBed(foot);
-        helper.assertTrue(player.isSleeping(), "测试玩家应能在床上入睡");
+        presetRespawn(player, foot);
+        player.startSleeping(foot);
+        helper.assertTrue(player.isSleeping(), "测试玩家应能进入睡眠状态");
         return player;
     }
 
@@ -103,7 +134,7 @@ public final class SleepComfortGameTests
         placeRadiator(level, foot.east(3));
         ServerPlayer player = sleepOnBed(helper, foot, Direction.NORTH);
 
-        player.stopSleepInBed(true, false);
+        SleepComfort.applyAfterWakeUp(player);
 
         MobEffectInstance regeneration = player.getEffect(MobEffects.REGENERATION);
         helper.assertTrue(regeneration != null, "寒夜里挨着暖气片睡床应获得生命恢复");
@@ -118,6 +149,7 @@ public final class SleepComfortGameTests
         helper.assertTrue(advancement != null, "应加载睡舒坦了进度");
         helper.assertTrue(!player.getAdvancements().getOrStartProgress(advancement).isDone(),
                 "只有枕头睡觉才发睡舒坦了进度");
+        helper.succeed();
     }
 
     @GameTest(template = "empty")
@@ -129,16 +161,22 @@ public final class SleepComfortGameTests
         level.setBlockAndUpdate(pillow.below(), Blocks.WHITE_WOOL.defaultBlockState());
         level.setBlockAndUpdate(pillow, ModBlocks.PILLOW.get().defaultBlockState()
                 .setValue(FacingDecorBlock.FACING, Direction.NORTH));
+        level.setBlockAndUpdate(pillow.above(), Blocks.AIR.defaultBlockState());
+        for (Direction direction : Direction.Plane.HORIZONTAL)
+        {
+            level.setBlockAndUpdate(pillow.above().relative(direction), Blocks.AIR.defaultBlockState());
+        }
         placeRadiator(level, pillow.west(4));
 
         ServerPlayer player = serverPlayer(helper);
         player.moveTo(pillow.getX() + 0.5, pillow.getY(), pillow.getZ() + 0.5, 0.0F, 0.0F);
         level.setDayTime(18000L);
         level.updateSkyBrightness();
-        player.startSleepInBed(pillow);
-        helper.assertTrue(player.isSleeping(), "测试玩家应能在枕头上入睡");
+        presetRespawn(player, pillow);
+        player.startSleeping(pillow);
+        helper.assertTrue(player.isSleeping(), "测试玩家应能进入睡眠状态");
 
-        player.stopSleepInBed(true, false);
+        SleepComfort.applyAfterWakeUp(player);
 
         MobEffectInstance regeneration = player.getEffect(MobEffects.REGENERATION);
         helper.assertTrue(regeneration != null, "寒夜里挨着暖气片睡枕头应获得生命恢复");
@@ -168,6 +206,7 @@ public final class SleepComfortGameTests
                         .filter(ModAdvancements.COZY_SLEEP::equals).isPresent(),
                 "家乡之声应以睡舒坦了为前置");
         *///?}
+        helper.succeed();
     }
 
     @GameTest(template = "empty")
@@ -185,6 +224,7 @@ public final class SleepComfortGameTests
         warmPlayer.moveTo(foot.getX() + 0.5, foot.getY(), foot.getZ() + 0.5, 0.0F, 0.0F);
         level.setDayTime(18000L);
         level.updateSkyBrightness();
+        presetRespawn(warmPlayer, foot);
         warmPlayer.startSleepInBed(foot);
         warmPlayer.stopSleepInBed(true, false);
         helper.assertTrue(warmPlayer.getEffect(MobEffects.REGENERATION) == null,
@@ -194,6 +234,7 @@ public final class SleepComfortGameTests
         level.setBlockAndUpdate(foot.east(3), Blocks.AIR.defaultBlockState());
         ServerPlayer noRadiatorPlayer = serverPlayer(helper);
         noRadiatorPlayer.moveTo(foot.getX() + 0.5, foot.getY(), foot.getZ() + 0.5, 0.0F, 0.0F);
+        presetRespawn(noRadiatorPlayer, foot);
         noRadiatorPlayer.startSleepInBed(foot);
         noRadiatorPlayer.stopSleepInBed(true, false);
         helper.assertTrue(noRadiatorPlayer.getEffect(MobEffects.REGENERATION) == null,
@@ -203,6 +244,7 @@ public final class SleepComfortGameTests
         placeRadiator(level, foot.east(3));
         ServerPlayer blockedPlayer = serverPlayer(helper);
         blockedPlayer.moveTo(foot.getX() + 0.5, foot.getY(), foot.getZ() + 0.5, 0.0F, 0.0F);
+        presetRespawn(blockedPlayer, foot);
         blockedPlayer.startSleepInBed(foot);
         helper.assertTrue(blockedPlayer.isSleeping(), "封闭房间里的床仍可入睡");
         helper.assertTrue(!SleepComfort.hasReachableRadiator(level, blockedPlayer.blockPosition()),
@@ -210,6 +252,30 @@ public final class SleepComfortGameTests
         blockedPlayer.stopSleepInBed(true, false);
         helper.assertTrue(blockedPlayer.getEffect(MobEffects.REGENERATION) == null,
                 "暖气片与床之间没有通路时不应获得生命恢复");
+        helper.succeed();
+    }
+
+    @GameTest(template = "empty")
+    public static void radiatorRangeIncludesNineBlocksButNotTen(GameTestHelper helper)
+    {
+        ServerLevel level = helper.getLevel();
+        BlockPos playerPos = helper.absolutePos(new BlockPos(4, 3, 4));
+
+        BlockPos eightBlocksAway = playerPos.east(8);
+        placeRadiator(level, eightBlocksAway);
+        helper.assertTrue(SleepComfort.hasReachableRadiator(level, playerPos),
+                "8 格内的暖气片应有效");
+        level.setBlockAndUpdate(eightBlocksAway, Blocks.AIR.defaultBlockState());
+
+        BlockPos nineBlocksAway = playerPos.east(9);
+        placeRadiator(level, nineBlocksAway);
+        helper.assertTrue(SleepComfort.hasReachableRadiator(level, playerPos),
+                "9 格边界上的暖气片应有效");
+        level.setBlockAndUpdate(nineBlocksAway, Blocks.AIR.defaultBlockState());
+
+        placeRadiator(level, playerPos.east(10));
+        helper.assertTrue(!SleepComfort.hasReachableRadiator(level, playerPos),
+                "10 格外的暖气片不应有效");
         helper.succeed();
     }
 
