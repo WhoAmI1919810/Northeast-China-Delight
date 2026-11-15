@@ -135,23 +135,38 @@ public class BigPotRenderer implements BlockEntityRenderer<BigPotBlockEntity> {
             }
             pose.popPose();
         }
+        //? if <1.20.2 {
+        flushNoCullItems(buffer);
+        //?}
     }
 
     /**
-     * 无专用模型的食材走原版物品渲染时，把会剔除背面的方块/物品图集缓冲换成无剔除版本，
-     * 让原模型已有的面在背面也能被光栅化；附魔光效等其它类型原样透传。
+     * 物品模型是单面的；只把普通物品面片换成不剔除背面，几何仍由原版 ItemRenderer 生成。
+     * 附魔光效等其它通道必须保留原缓冲：ItemRenderer 会把两个不同的 RenderType 合到一个缓冲，
+     * 若这里把它们映射成同一个类型，会触发 Duplicate delegates。
      */
     private static MultiBufferSource noCullItemBuffer(MultiBufferSource buffer) {
+        RenderType cutout = RenderType.entityCutoutNoCull(InventoryMenu.BLOCK_ATLAS);
+        RenderType translucent = RenderType.entityTranslucent(InventoryMenu.BLOCK_ATLAS);
         return renderType -> {
-            RenderType target = renderType;
             if (renderType == Sheets.cutoutBlockSheet()) {
-                target = RenderType.entityCutoutNoCull(InventoryMenu.BLOCK_ATLAS);
-            } else if (renderType == Sheets.translucentItemSheet()
-                    || renderType == Sheets.translucentCullBlockSheet()) {
-                target = RenderType.entityTranslucent(InventoryMenu.BLOCK_ATLAS);
+                return buffer.getBuffer(cutout);
             }
-            return buffer.getBuffer(target);
+            if (renderType == Sheets.translucentItemSheet()
+                    || renderType == Sheets.translucentCullBlockSheet()) {
+                return buffer.getBuffer(translucent);
+            }
+            return buffer.getBuffer(renderType);
         };
+    }
+
+    // 1.20.1 的方块实体阶段只结算固定的几种 RenderType；无剔除物品缓冲是新类型，
+    // 不主动结算就会整批留在 BufferSource 里，表现为无模型食材完全不显示。
+    private static void flushNoCullItems(MultiBufferSource buffer) {
+        if (buffer instanceof MultiBufferSource.BufferSource buffers) {
+            buffers.endBatch(RenderType.entityCutoutNoCull(InventoryMenu.BLOCK_ATLAS));
+            buffers.endBatch(RenderType.entityTranslucent(InventoryMenu.BLOCK_ATLAS));
+        }
     }
 
     /** 用实体式的方块图集缓冲画（按面的法线分明暗，同大缸里的展示模型） */
