@@ -39,6 +39,11 @@ public final class PillowSleepGameTests
                 new GameProfile(UUID.randomUUID(), "pillow-test-player"), ClientInformation.createDefault());
     }
 
+    private static void presetRespawn(ServerPlayer player, BlockPos pos)
+    {
+        player.setRespawnPosition(player.serverLevel().dimension(), pos, 0.0F, false, false);
+    }
+
     private static BlockState pillow(Direction facing)
     {
         return ModBlocks.PILLOW.get().defaultBlockState().setValue(FacingDecorBlock.FACING, facing);
@@ -156,6 +161,7 @@ public final class PillowSleepGameTests
             helper.assertTrue(!player.isSleeping(), "附近没有被子时不应入睡");
             level.setBlockAndUpdate(quiltPos, ModBlocks.FOLDED_QUILT.get().defaultBlockState());
 
+            presetRespawn(player, pos);
             usePillow(level, pos, player);
             helper.assertTrue(player.isSleeping(), "完整布局且夜晚时应该入睡");
             helper.assertTrue(player.getSleepingPos().orElse(null).equals(pos),
@@ -195,6 +201,7 @@ public final class PillowSleepGameTests
 
             player.moveTo(pos.getX() + 0.5, pos.getY(), pos.getZ() + 2.5, 0.0F, 0.0F);
             setTime(level, 18000L);
+            presetRespawn(player, pos);
             usePillow(level, pos, player);
 
             helper.assertTrue(player.isSleeping(), "羊毛向西铺时应该回退到相对方向并入睡");

@@ -117,7 +117,7 @@ public final class ModGameplayEvents
 
     public static final int RADIATOR_CHECK_INTERVAL = 80;
     public static final int RADIATOR_DURATION_TICKS = 220;
-    public static final int RADIATOR_SCAN_RADIUS = 5;
+    public static final int RADIATOR_SCAN_RADIUS = 9;
     public static final double RADIATOR_RANGE = RADIATOR_SCAN_RADIUS;
 
     /** 小院群落的注册名，见 data/northeast_china_delight/worldgen/structure/northeast_yard.json */

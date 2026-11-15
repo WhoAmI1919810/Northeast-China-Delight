@@ -30,6 +30,12 @@
     },
     "long_house": {
       "trigger": "minecraft:impossible"
+    },
+    "brick_green_roof": {
+      "trigger": "minecraft:impossible"
+    },
+    "manchu_thatch": {
+      "trigger": "minecraft:impossible"
     }
   },
   "requirements": [
@@ -47,6 +53,12 @@
     ],
     [
       "long_house"
+    ],
+    [
+      "brick_green_roof"
+    ],
+    [
+      "manchu_thatch"
     ]
   ]
 }
