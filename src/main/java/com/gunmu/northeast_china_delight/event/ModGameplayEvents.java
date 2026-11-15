@@ -100,6 +100,11 @@ import net.neoforged.neoforge.event.entity.living.LivingChangeTargetEvent;
 *///?} else {
 import net.neoforged.neoforge.event.tick.ServerTickEvent;
 //?}
+//? if <1.20.2 {
+/*import net.minecraftforge.event.entity.player.PlayerWakeUpEvent;
+*///?} else {
+import net.neoforged.neoforge.event.entity.player.PlayerWakeUpEvent;
+//?}
 
 /**
  * 三个和小玩法有关的钩子：
@@ -118,7 +123,8 @@ public final class ModGameplayEvents
 
     public static final int RADIATOR_CHECK_INTERVAL = 80;
     public static final int RADIATOR_DURATION_TICKS = 220;
-    public static final double RADIATOR_RANGE = 5.0D;
+    public static final int RADIATOR_SCAN_RADIUS = 9;
+    public static final double RADIATOR_RANGE = RADIATOR_SCAN_RADIUS;
 
     /** 小院群落的注册名，见 data/northeast_china_delight/worldgen/structure/northeast_yard.json */
     private static final ResourceLocation YARD_STRUCTURE =
@@ -126,6 +132,15 @@ public final class ModGameplayEvents
 
     private ModGameplayEvents()
     {
+    }
+
+    @SubscribeEvent
+    public static void onPlayerWakeUp(PlayerWakeUpEvent event)
+    {
+        if (event.getEntity() instanceof ServerPlayer player)
+        {
+            SleepComfort.applyAfterWakeUp(player);
+        }
     }
 
     /**
@@ -264,7 +279,7 @@ public final class ModGameplayEvents
             return;
         }
         for (ServerPlayer player : server.getPlayerList().getPlayers()) {
-            if (hasVisibleRadiator(player)) {
+            if (grantsRadiatorWarmth(player)) {
                 // 环境效果：粒子半透明（同信标）
                 MobEffectInstance warmth = DdEffects.ambientInstance(
                         DdEffects.hold(CrciMobEffects.WARMTH), RADIATOR_DURATION_TICKS, 0);
@@ -273,14 +288,23 @@ public final class ModGameplayEvents
         }
     }
 
-    private static boolean hasVisibleRadiator(ServerPlayer player)
+    public static boolean grantsRadiatorWarmth(ServerPlayer player)
+    {
+        return SleepComfort.isRadiatorTemperatureSuitable(player.serverLevel(), player.blockPosition())
+                && hasVisibleRadiator(player);
+    }
+
+    /** 玩家周围 9 格内是否有正面朝向、且能直接看到的暖气片。 */
+    public static boolean hasVisibleRadiator(ServerPlayer player)
     {
         ServerLevel level = player.serverLevel();
         BlockPos center = player.blockPosition();
         Vec3 eye = player.getEyePosition();
         Vec3 target = player.getBoundingBox().getCenter();
         double maxDistanceSqr = RADIATOR_RANGE * RADIATOR_RANGE;
-        for (BlockPos pos : BlockPos.betweenClosed(center.offset(-5, -5, -5), center.offset(5, 5, 5))) {
+        int radius = RADIATOR_SCAN_RADIUS;
+        for (BlockPos pos : BlockPos.betweenClosed(
+                center.offset(-radius, -radius, -radius), center.offset(radius, radius, radius))) {
             BlockState state = level.getBlockState(pos);
             if (!state.is(ModBlocks.RADIATOR.get())) {
                 continue;

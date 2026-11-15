@@ -12,7 +12,8 @@
     "RepairItemRecipeMixin",
     "SoundEngineMixin",
     "VillagerOutfitDiscountMixin",
-    "LivingEntityLidSoundMixin"
+    "LivingEntityLidSoundMixin",
+    "ServerPlayerPillowSleepMixin"
   ],
   "client": [
     "LoomScreenMixin",
