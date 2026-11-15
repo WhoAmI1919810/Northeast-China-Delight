@@ -4,6 +4,7 @@ import com.gunmu.northeast_china_delight.NortheastChinaDelight;
 import com.gunmu.northeast_china_delight.advancement.ModAdvancements;
 import com.gunmu.northeast_china_delight.block.FacingDecorBlock;
 import com.gunmu.northeast_china_delight.block.ModBlocks;
+import com.gunmu.northeast_china_delight.event.ModGameplayEvents;
 import com.gunmu.northeast_china_delight.event.SleepComfort;
 import com.gunmu.northeast_china_delight.util.DdIds;
 import com.mojang.authlib.GameProfile;
@@ -16,10 +17,14 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.GameType;
 import net.minecraft.world.level.block.BedBlock;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.properties.BedPart;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.HitResult;
+import net.minecraft.world.phys.Vec3;
 //? if <1.20.2 {
 import net.minecraftforge.gametest.GameTestHolder;
 import net.minecraftforge.gametest.PrefixGameTestTemplate;
@@ -217,7 +222,7 @@ public final class SleepComfortGameTests
         placeBed(level, foot, Direction.NORTH);
 
         setBiome(helper, foot, "minecraft:plains");
-        helper.assertTrue(level.getBiome(foot).value().getBaseTemperature() > SleepComfort.MAX_COLD_TEMPERATURE,
+        helper.assertTrue(level.getBiome(foot).value().getBaseTemperature() > SleepComfort.MAX_RADIATOR_TEMPERATURE,
                 "温暖群系测试前提应成立");
         placeRadiator(level, foot.east(3));
         ServerPlayer warmPlayer = serverPlayer(helper);
@@ -276,6 +281,67 @@ public final class SleepComfortGameTests
         placeRadiator(level, playerPos.east(10));
         helper.assertTrue(!SleepComfort.hasReachableRadiator(level, playerPos),
                 "10 格外的暖气片不应有效");
+        helper.succeed();
+    }
+
+    @GameTest(template = "empty")
+    public static void radiatorTemperatureBoundaryIncludesTaigaButNotPlains(GameTestHelper helper)
+    {
+        ServerLevel level = helper.getLevel();
+        BlockPos pos = helper.absolutePos(new BlockPos(4, 3, 4));
+
+        setBiome(helper, pos, "minecraft:old_growth_pine_taiga");
+        helper.assertTrue(SleepComfort.isRadiatorTemperatureSuitable(level, pos),
+                "基础温度 0.3 的群系应满足暖气片温度条件");
+
+        setBiome(helper, pos, "minecraft:taiga");
+        helper.assertTrue(SleepComfort.isRadiatorTemperatureSuitable(level, pos),
+                "基础温度 0.25 的针叶林应满足暖气片温度条件");
+
+        setBiome(helper, pos, "minecraft:plains");
+        helper.assertTrue(!SleepComfort.isRadiatorTemperatureSuitable(level, pos),
+                "基础温度高于 0.3 的群系不应满足暖气片温度条件");
+        helper.succeed();
+    }
+
+    @GameTest(template = "empty")
+    public static void radiatorWarmthRequiresSuitableClimateAndVisibleRadiator(GameTestHelper helper)
+    {
+        ServerLevel level = helper.getLevel();
+        BlockPos playerPos = helper.absolutePos(new BlockPos(4, 3, 4));
+        BlockPos radiatorPos = playerPos.east(1);
+        placeRadiator(level, radiatorPos);
+
+        ServerPlayer player = serverPlayer(helper);
+        player.moveTo(playerPos.getX() + 0.5, playerPos.getY(), playerPos.getZ() + 0.5, 0.0F, 0.0F);
+
+        setBiome(helper, playerPos, "minecraft:old_growth_pine_taiga");
+        helper.assertTrue(level.getBlockState(radiatorPos).is(ModBlocks.RADIATOR.get()), "暖气片应已放置");
+        helper.assertTrue(SleepComfort.isRadiatorTemperatureSuitable(level, playerPos),
+                "测试群系温度应满足暖气片条件");
+        Vec3 source = Vec3.atCenterOf(radiatorPos).add(-0.51D, 0.0D, 0.0D);
+        Vec3 target = player.getBoundingBox().getCenter();
+        HitResult hit = level.clip(new ClipContext(source, target,
+                ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, player));
+        String hitInfo = hit instanceof BlockHitResult blockHit
+                ? blockHit.getBlockPos() + " " + level.getBlockState(blockHit.getBlockPos())
+                : hit.getLocation().toString();
+        helper.assertTrue(hit.getType() == HitResult.Type.MISS,
+                "视线应无遮挡，实际命中 " + hit.getType() + " 于 " + hitInfo);
+        helper.assertTrue(ModGameplayEvents.hasVisibleRadiator(player),
+                "玩家与暖气片之间应无遮挡，位置 " + player.blockPosition()
+                        + "，眼睛 " + player.getEyePosition() + "，暖气片 " + radiatorPos);
+        helper.assertTrue(ModGameplayEvents.grantsRadiatorWarmth(player),
+                "基础温度 0.3 且看得见暖气片时应获得温暖效果");
+
+        setBiome(helper, playerPos, "minecraft:plains");
+        helper.assertTrue(!ModGameplayEvents.grantsRadiatorWarmth(player),
+                "温暖群系里不应持续获得暖气片温暖效果");
+
+        setBiome(helper, playerPos, "minecraft:snowy_taiga");
+        level.setBlockAndUpdate(radiatorPos, Blocks.AIR.defaultBlockState());
+        helper.assertTrue(!ModGameplayEvents.grantsRadiatorWarmth(player),
+                "附近没有暖气片时不应获得温暖效果");
         helper.succeed();
     }
 

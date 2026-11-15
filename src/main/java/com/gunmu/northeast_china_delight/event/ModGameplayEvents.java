@@ -254,7 +254,7 @@ public final class ModGameplayEvents
             return;
         }
         for (ServerPlayer player : server.getPlayerList().getPlayers()) {
-            if (hasVisibleRadiator(player)) {
+            if (grantsRadiatorWarmth(player)) {
                 // 环境效果：粒子半透明（同信标）
                 MobEffectInstance warmth = DdEffects.ambientInstance(
                         DdEffects.hold(ModEffects.WARMTH), RADIATOR_DURATION_TICKS, 0);
@@ -263,7 +263,14 @@ public final class ModGameplayEvents
         }
     }
 
-    private static boolean hasVisibleRadiator(ServerPlayer player)
+    public static boolean grantsRadiatorWarmth(ServerPlayer player)
+    {
+        return SleepComfort.isRadiatorTemperatureSuitable(player.serverLevel(), player.blockPosition())
+                && hasVisibleRadiator(player);
+    }
+
+    /** 玩家周围 9 格内是否有正面朝向、且能直接看到的暖气片。 */
+    public static boolean hasVisibleRadiator(ServerPlayer player)
     {
         ServerLevel level = player.serverLevel();
         BlockPos center = player.blockPosition();

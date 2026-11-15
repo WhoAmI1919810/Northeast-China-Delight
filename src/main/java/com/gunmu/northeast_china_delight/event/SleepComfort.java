@@ -27,7 +27,7 @@ import java.util.Set;
  */
 public final class SleepComfort
 {
-    public static final float MAX_COLD_TEMPERATURE = 0.2F;
+    public static final float MAX_RADIATOR_TEMPERATURE = 0.3F;
     public static final int BED_REGENERATION_TICKS = 6 * 20;
     public static final int PILLOW_REGENERATION_TICKS = 12 * 20;
 
@@ -54,7 +54,7 @@ public final class SleepComfort
 
         ServerLevel level = player.serverLevel();
         BlockPos playerPos = player.blockPosition();
-        if (!isColdEnough(level, playerPos) || !hasReachableRadiator(level, playerPos))
+        if (!isRadiatorTemperatureSuitable(level, playerPos) || !hasReachableRadiator(level, playerPos))
         {
             return;
         }
@@ -74,9 +74,9 @@ public final class SleepComfort
         }
     }
 
-    public static boolean isColdEnough(Level level, BlockPos pos)
+    public static boolean isRadiatorTemperatureSuitable(Level level, BlockPos pos)
     {
-        return level.getBiome(pos).value().getBaseTemperature() <= MAX_COLD_TEMPERATURE;
+        return level.getBiome(pos).value().getBaseTemperature() <= MAX_RADIATOR_TEMPERATURE;
     }
 
     public static boolean hasReachableRadiator(Level level, BlockPos playerPos)

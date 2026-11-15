@@ -41,7 +41,7 @@ import java.util.Optional;
  *                    标签写法见 data/northeast_china_delight/tags/worldgen/biome/has_northeast_yard.json）
  *   templates     —— 参与抽签的院子 NBT 列表，加一个新院子就往数组里加一行
  *   origin_chance —— 群体总开关，0.0~1.0，越小越稀有
- *   walk_chance   —— 第一户继续长新院的概率（默认 0.80，之后每户 -15%，最低 20%）
+ *   walk_chance   —— 第二户之后继续长新院的概率（默认 0.80，之后每户 -15%，最低 20%）
  *   step_min/max  —— 游走距离范围（默认 20~50 格）
  *   max_houses    —— 一个群落最多几户（默认不限，游走概率自己兜底）
  *   min_gap       —— 两个院子的最小间隔（格子数），防止院子叠在一起
@@ -52,10 +52,10 @@ import java.util.Optional;
  * {@code spacing}（每多少区块试一次）和 {@code separation}（同格内最小间隔），
  * 这两个数越小越密。
  *
- * <p>生成规则（按需求实现）：每个院子在东西南北四个方向上各自掷一次，
- * 每个方向 20~50 格内随机取一个距离，按 {@code walk_chance} 决定是否再生成一个院子；
- * 群落内优先把配置里的院子模板各放一次，避免随机抽样长期漏掉某一种；
- * 新院子重复同样的过程，直到掷不中、位置不合法、不是寒冷群系，或者到达 20 户上限。
+ * <p>生成规则：第一座严格按群系、坡度、水面、门口和村庄避让选址；第一座成功后
+ * 无条件寻找第二座，第二座只要求干燥、地形支撑和与第一座不重叠，并且必须换一种模板。
+ * 找不到合格的第二座时整簇不生成，避免留下独户。第三座起从东西南北四个方向按
+ * {@code walk_chance} 梯度继续扩展；群落内优先抽尚未出现的模板，让七种院子尽快露面。
  * 单个 placement 区域最多尝试三个候选点：原候选区块内一次，失败后在周围 ±3 区块内
  * 各再补一次；三次都失败才放弃这个区域。
  */
@@ -109,11 +109,17 @@ public class NortheastCourtyardStructure extends Structure
     public static final float WALK_CHANCE_STEP = 0.15F;
     public static final float WALK_CHANCE_MIN = 0.20F;
     public static final int WATER_CLEARANCE = 15;
+    public static final int SECOND_YARD_DISTANCE_SAMPLES = 8;
     private static final int MAX_CANDIDATE_ATTEMPTS = 3;
     private static final int LOCAL_CANDIDATE_RADIUS_CHUNKS = 3;
+    private static final int SECOND_YARD_MIN_LOWER_TOLERANCE = 2;
 
     private static final List<Direction> HORIZONTALS =
             List.of(Direction.EAST, Direction.WEST, Direction.NORTH, Direction.SOUTH);
+    private static final int[][] SECOND_YARD_STEPS = {
+            {1, 0}, {-1, 0}, {0, 1}, {0, -1},
+            {1, 1}, {1, -1}, {-1, 1}, {-1, -1}
+    };
 
     public static final MapCodec<NortheastCourtyardStructure> CODEC = RecordCodecBuilder.mapCodec(instance -> instance.group(
             settingsCodec(instance),
@@ -249,6 +255,10 @@ public class NortheastCourtyardStructure extends Structure
 
     private List<Yard> growCluster(GenerationContext context, WorldgenRandom random, int startX, int startZ)
     {
+        if (this.maxHouses < 2)
+        {
+            return List.of();
+        }
         List<Yard> yards = new ArrayList<>();
         Map<String, StructureTemplate> sizes = new HashMap<>();
         List<String> unplacedTemplates = new ArrayList<>(this.templates);
@@ -260,8 +270,16 @@ public class NortheastCourtyardStructure extends Structure
         }
         yards.add(first);
         unplacedTemplates.remove(first.template());
+        Yard second = this.makeSecondYard(context, random, sizes, first);
+        if (second == null)
+        {
+            return List.of();
+        }
+        yards.add(second);
+        unplacedTemplates.remove(second.template());
         ArrayDeque<Yard> queue = new ArrayDeque<>();
         queue.add(first);
+        queue.add(second);
 
         while (!queue.isEmpty())
         {
@@ -272,55 +290,21 @@ public class NortheastCourtyardStructure extends Structure
                 {
                     return yards;
                 }
-                if (unplacedTemplates.isEmpty()
-                        && random.nextFloat() >= this.walkChanceFor(yards))
+                if (random.nextFloat() >= this.walkChanceFor(yards))
                 {
                     continue;
                 }
                 int distance = this.stepMin + random.nextInt(this.stepMax - this.stepMin + 1);
                 String template = this.pickTemplate(random, unplacedTemplates);
-                int x;
-                int z;
-                if ("center".equals(this.stepMeasure))
-                {
-                    x = current.pos().getX() + direction.getStepX() * distance;
-                    z = current.pos().getZ() + direction.getStepZ() * distance;
-                }
-                else
-                {
-                    StructureTemplate currentSize = sizes.get(current.template());
-                    StructureTemplate nextSize = sizes.computeIfAbsent(template,
-                            id -> context.structureTemplateManager().getOrCreate(DdIds.parse(id)));
-                    int lateral = LATERAL_JITTER > 0
-                            ? random.nextInt(LATERAL_JITTER * 2 + 1) - LATERAL_JITTER : 0;
-                    int stepX = direction.getStepX();
-                    int stepZ = direction.getStepZ();
-                    if (stepX > 0)
-                    {
-                        x = current.pos().getX() + currentSize.getSize().getX() + distance;
-                    }
-                    else if (stepX < 0)
-                    {
-                        x = current.pos().getX() - nextSize.getSize().getX() - distance;
-                    }
-                    else
-                    {
-                        x = current.pos().getX() + lateral;
-                    }
-                    if (stepZ > 0)
-                    {
-                        z = current.pos().getZ() + currentSize.getSize().getZ() + distance;
-                    }
-                    else if (stepZ < 0)
-                    {
-                        z = current.pos().getZ() - nextSize.getSize().getZ() - distance;
-                    }
-                    else
-                    {
-                        z = current.pos().getZ() + lateral;
-                    }
-                }
-                Yard candidate = this.tryMakeYard(context, random, sizes, template, x, z);
+                StructureTemplate currentSize = sizes.computeIfAbsent(current.template(),
+                        id -> context.structureTemplateManager().getOrCreate(DdIds.parse(id)));
+                StructureTemplate nextSize = sizes.computeIfAbsent(template,
+                        id -> context.structureTemplateManager().getOrCreate(DdIds.parse(id)));
+                int lateral = LATERAL_JITTER > 0
+                        ? random.nextInt(LATERAL_JITTER * 2 + 1) - LATERAL_JITTER : 0;
+                int[] next = this.stepPosition(current, currentSize, nextSize,
+                        direction.getStepX(), direction.getStepZ(), distance, lateral);
+                Yard candidate = this.tryMakeYard(context, random, sizes, template, next[0], next[1]);
                 if (candidate == null || this.overlaps(candidate, yards, sizes))
                 {
                     continue;
@@ -333,6 +317,166 @@ public class NortheastCourtyardStructure extends Structure
         return yards;
     }
 
+    /**
+     * 第一座成功后再找第二座：优先保证群落不是独户，因此不掷游走概率。
+     * 第二座只保留干燥、地形支撑、世界高度和院落不重叠这几项硬条件。
+     */
+    private Yard makeSecondYard(GenerationContext context, WorldgenRandom random,
+                                Map<String, StructureTemplate> sizes, Yard first)
+    {
+        List<String> alternatives = secondTemplatePool(this.templates, first.template());
+        if (alternatives.isEmpty())
+        {
+            return null;
+        }
+        List<String> candidates = new ArrayList<>(alternatives);
+        for (int index = candidates.size() - 1; index > 0; index--)
+        {
+            int swap = random.nextInt(index + 1);
+            String template = candidates.get(index);
+            candidates.set(index, candidates.get(swap));
+            candidates.set(swap, template);
+        }
+        StructureTemplate firstSize = sizes.computeIfAbsent(first.template(),
+                id -> context.structureTemplateManager().getOrCreate(DdIds.parse(id)));
+        int startDirection = random.nextInt(SECOND_YARD_STEPS.length);
+        int distanceSpan = this.stepMax - this.stepMin;
+        for (String template : candidates)
+        {
+            StructureTemplate secondSize = sizes.computeIfAbsent(template,
+                    id -> context.structureTemplateManager().getOrCreate(DdIds.parse(id)));
+            for (int directionIndex = 0; directionIndex < SECOND_YARD_STEPS.length; directionIndex++)
+            {
+                int[] step = SECOND_YARD_STEPS[(startDirection + directionIndex) % SECOND_YARD_STEPS.length];
+                for (int sample = 0; sample < SECOND_YARD_DISTANCE_SAMPLES; sample++)
+                {
+                    int distance = this.stepMin + (SECOND_YARD_DISTANCE_SAMPLES == 1 ? 0
+                            : Math.round((float) distanceSpan * sample / (SECOND_YARD_DISTANCE_SAMPLES - 1)));
+                    int lateral = step[0] == 0 || step[1] == 0
+                            ? random.nextInt(LATERAL_JITTER * 2 + 1) - LATERAL_JITTER : 0;
+                    int[] next = this.stepPosition(first, firstSize, secondSize,
+                            step[0], step[1], distance, lateral);
+                    Yard candidate = this.tryMakeSecondYard(context, random, sizes, template, next[0], next[1]);
+                    if (candidate != null && !this.overlaps(candidate, List.of(first), sizes))
+                    {
+                        return candidate;
+                    }
+                }
+            }
+        }
+        return null;
+    }
+
+    private Yard tryMakeSecondYard(GenerationContext context, WorldgenRandom random,
+                                   Map<String, StructureTemplate> sizes, String template, int x, int z)
+    {
+        int surface = context.chunkGenerator().getBaseHeight(x, z, Heightmap.Types.WORLD_SURFACE_WG,
+                context.heightAccessor(), context.randomState());
+        int floor = context.chunkGenerator().getBaseHeight(x, z, Heightmap.Types.OCEAN_FLOOR_WG,
+                context.heightAccessor(), context.randomState());
+        int minY = context.heightAccessor().getMinBuildHeight();
+        int maxY = context.heightAccessor().getMaxBuildHeight();
+        if (!isSecondYardTerrainSuitable(surface, floor, minY, maxY))
+        {
+            return null;
+        }
+        StructureTemplate size = sizes.computeIfAbsent(template,
+                id -> context.structureTemplateManager().getOrCreate(DdIds.parse(id)));
+        if (!this.secondYardFootprintOk(context, size, x, z, surface, minY, maxY))
+        {
+            return null;
+        }
+        Holder<Biome> biome = context.biomeSource().getNoiseBiome(
+                QuartPos.fromBlock(x), QuartPos.fromBlock(surface), QuartPos.fromBlock(z),
+                context.randomState().sampler());
+        boolean blackSoil = this.blackSoilChance > 0.0F && random.nextFloat() < this.blackSoilChance;
+        boolean snowy = biome.value().getPrecipitationAt(new BlockPos(x, surface, z))
+                == net.minecraft.world.level.biome.Biome.Precipitation.SNOW;
+        int sink = snowy ? 2 : 1;
+        BlockPos pos = new BlockPos(x, surface - GROUND_LAYER_IN_TEMPLATE - sink + YARD_RAISE, z);
+        return new Yard(template, pos, Rotation.NONE, blackSoil);
+    }
+
+    private boolean secondYardFootprintOk(GenerationContext context, StructureTemplate size,
+                                          int x, int z, int anchorSurface, int minY, int maxY)
+    {
+        int sizeX = size.getSize().getX();
+        int sizeZ = size.getSize().getZ();
+        int[] offsetsX = {0, sizeX / 4, sizeX / 2, sizeX * 3 / 4, sizeX - 1};
+        int[] offsetsZ = {0, sizeZ / 4, sizeZ / 2, sizeZ * 3 / 4, sizeZ - 1};
+        for (int offsetX : offsetsX)
+        {
+            for (int offsetZ : offsetsZ)
+            {
+                int sampleX = x + offsetX;
+                int sampleZ = z + offsetZ;
+                int surface = context.chunkGenerator().getBaseHeight(sampleX, sampleZ,
+                        Heightmap.Types.WORLD_SURFACE_WG, context.heightAccessor(), context.randomState());
+                int floor = context.chunkGenerator().getBaseHeight(sampleX, sampleZ,
+                        Heightmap.Types.OCEAN_FLOOR_WG, context.heightAccessor(), context.randomState());
+                if (!isSecondYardTerrainSuitable(surface, floor, minY, maxY)
+                        || !isSecondYardFootprintHeightSuitable(anchorSurface, surface, this.maxSlope))
+                {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    private int[] stepPosition(Yard current, StructureTemplate currentSize, StructureTemplate nextSize,
+                               int stepX, int stepZ, int distance, int lateral)
+    {
+        if ("center".equals(this.stepMeasure))
+        {
+            return new int[]{
+                    current.pos().getX() + stepX * distance,
+                    current.pos().getZ() + stepZ * distance
+            };
+        }
+        int currentMinX = footprintMinX(current.pos().getX(), currentSize.getSize().getX(), current.rotation());
+        int currentMinZ = footprintMinZ(current.pos().getZ(), currentSize.getSize().getZ(), current.rotation());
+        int x = gapStepOrigin(currentMinX, currentSize.getSize().getX(), nextSize.getSize().getX(),
+                stepX, distance, lateral);
+        int z = gapStepOrigin(currentMinZ, currentSize.getSize().getZ(), nextSize.getSize().getZ(),
+                stepZ, distance, lateral);
+        return new int[]{x, z};
+    }
+
+    static int gapStepOrigin(int currentMin, int currentSize, int nextSize, int step, int distance, int lateral)
+    {
+        if (step > 0)
+        {
+            return currentMin + currentSize + distance;
+        }
+        if (step < 0)
+        {
+            return currentMin - nextSize - distance;
+        }
+        return currentMin + lateral;
+    }
+
+    static List<String> secondTemplatePool(List<String> templates, String firstTemplate)
+    {
+        return templates.stream()
+                .filter(template -> !template.equals(firstTemplate))
+                .distinct()
+                .toList();
+    }
+
+    static boolean isSecondYardTerrainSuitable(int surface, int floor, int minY, int maxY)
+    {
+        return surface == floor && surface >= minY + 12 && surface <= maxY - 32;
+    }
+
+    static boolean isSecondYardFootprintHeightSuitable(int anchorSurface, int sampleSurface, int maxSlope)
+    {
+        int lowerTolerance = Math.max(SECOND_YARD_MIN_LOWER_TOLERANCE, maxSlope);
+        int upperTolerance = Math.max(1, maxSlope / 2);
+        return sampleSurface >= anchorSurface - lowerTolerance
+                && sampleSurface <= anchorSurface + upperTolerance;
+    }
+
     /** 从尚未出现的模板里抽；所有模板都出现过以后恢复全池随机。 */
     private String pickTemplate(WorldgenRandom random, List<String> unplacedTemplates)
     {
@@ -342,7 +486,12 @@ public class NortheastCourtyardStructure extends Structure
 
     private float walkChanceFor(List<Yard> placed)
     {
-        float chance = this.walkChance - WALK_CHANCE_STEP * Math.max(0, placed.size() - 1);
+        return walkChanceFor(placed.size(), this.walkChance);
+    }
+
+    static float walkChanceFor(int placedCount, float baseChance)
+    {
+        float chance = baseChance - WALK_CHANCE_STEP * Math.max(0, placedCount - 1);
         return Math.max(WALK_CHANCE_MIN, chance);
     }
 
@@ -535,21 +684,33 @@ public class NortheastCourtyardStructure extends Structure
         StructureTemplate a = sizes.get(candidate.template());
         int aw = a.getSize().getX();
         int ad = a.getSize().getZ();
+        int aMinX = footprintMinX(candidate.pos().getX(), aw, candidate.rotation());
+        int aMinZ = footprintMinZ(candidate.pos().getZ(), ad, candidate.rotation());
         for (Yard other : yards)
         {
             StructureTemplate b = sizes.get(other.template());
             int bw = b.getSize().getX();
             int bd = b.getSize().getZ();
-            int overlapX = Math.min(candidate.pos().getX() + aw, other.pos().getX() + bw)
-                    - Math.max(candidate.pos().getX(), other.pos().getX());
-            int overlapZ = Math.min(candidate.pos().getZ() + ad, other.pos().getZ() + bd)
-                    - Math.max(candidate.pos().getZ(), other.pos().getZ());
+            int bMinX = footprintMinX(other.pos().getX(), bw, other.rotation());
+            int bMinZ = footprintMinZ(other.pos().getZ(), bd, other.rotation());
+            int overlapX = Math.min(aMinX + aw, bMinX + bw) - Math.max(aMinX, bMinX);
+            int overlapZ = Math.min(aMinZ + ad, bMinZ + bd) - Math.max(aMinZ, bMinZ);
             if (overlapX > -this.minGap && overlapZ > -this.minGap)
             {
                 return true;
             }
         }
         return false;
+    }
+
+    static int footprintMinX(int originX, int sizeX, Rotation rotation)
+    {
+        return rotation == Rotation.CLOCKWISE_180 ? originX - sizeX + 1 : originX;
+    }
+
+    static int footprintMinZ(int originZ, int sizeZ, Rotation rotation)
+    {
+        return rotation == Rotation.CLOCKWISE_180 ? originZ - sizeZ + 1 : originZ;
     }
 
     private boolean tooCloseToAvoidedStructures(GenerationContext context, String template, int x, int z)
