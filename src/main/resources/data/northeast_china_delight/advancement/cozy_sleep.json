@@ -1,0 +1,23 @@
+{
+  "parent": "northeast_china_delight:northeast_yard",
+  "display": {
+    "icon": {
+      "id": "northeast_china_delight:folded_quilt"
+    },
+    "title": {
+      "translate": "advancements.northeast_china_delight.cozy_sleep.title"
+    },
+    "description": {
+      "translate": "advancements.northeast_china_delight.cozy_sleep.description"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "sleep": {
+      "trigger": "minecraft:impossible"
+    }
+  }
+}

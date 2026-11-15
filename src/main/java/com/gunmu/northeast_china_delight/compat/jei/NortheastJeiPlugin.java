@@ -161,6 +161,19 @@ public class NortheastJeiPlugin implements IModPlugin {
         Component bellflowerInfo = Component.translatable("jei.northeast_china_delight.info.bellflower");
         registration.addItemStackInfo(new ItemStack(ModItems.BELLFLOWER_ROOT.get()), bellflowerInfo);
         registration.addItemStackInfo(new ItemStack(ModItems.BELLFLOWER_SEEDS.get()), bellflowerInfo);
+        java.util.List<ItemStack> sleepOnWool = new java.util.ArrayList<>();
+        sleepOnWool.add(new ItemStack(ModBlocks.FOLDED_QUILT.get()));
+        sleepOnWool.add(new ItemStack(ModBlocks.PILLOW.get()));
+        for (var item : BuiltInRegistries.ITEM) {
+            ItemStack stack = new ItemStack(item);
+            if (stack.is(net.minecraft.tags.ItemTags.WOOL)) {
+                sleepOnWool.add(stack);
+            }
+        }
+        registration.addItemStackInfo(sleepOnWool,
+                Component.translatable("jei.northeast_china_delight.info.sleep_on_wool"));
+        registration.addItemStackInfo(new ItemStack(ModBlocks.RADIATOR.get()),
+                Component.translatable("jei.northeast_china_delight.info.radiator"));
     }
 
     @Override

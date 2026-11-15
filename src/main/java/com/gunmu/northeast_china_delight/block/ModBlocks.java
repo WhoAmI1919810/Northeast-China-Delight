@@ -392,7 +392,7 @@ public class ModBlocks {
     /** 枕头：白布枕头，两头绣花的枕头顶 */
     public static final Supplier<Block> PILLOW = block(
             "pillow",
-            properties -> new FacingDecorBlock(properties, Block.box(2, 0, 2, 14, 4.5, 14), false),
+            SleepingPillowBlock::new,
             beddingProperties(MapColor.WOOL)
     );
 
