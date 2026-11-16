@@ -4,12 +4,15 @@ import com.gunmu.northeast_china_delight.NortheastChinaDelight;
 import net.minecraft.core.BlockPos;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.NoiseColumn;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.WorldgenRandom;
+import net.minecraft.world.level.levelgen.structure.pieces.StructurePieceSerializationContext;
+import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplateManager;
 //? if <1.20.2 {
 import net.minecraftforge.gametest.GameTestHolder;
 import net.minecraftforge.gametest.PrefixGameTestTemplate;
@@ -36,6 +39,38 @@ public final class NortheastCourtyardStructureGameTests
     {
         helper.assertTrue(CourtyardPiece.settings(Rotation.NONE).getKnownShape(),
                 "小院模板必须按已知形状放置，避免世界生成阶段作物被光照形状更新删除");
+        helper.succeed();
+    }
+
+    @GameTest(template = "empty")
+    public static void courtyardRotationSurvivesSerializationAndLegacyReload(GameTestHelper helper)
+    {
+        StructureTemplateManager templates = helper.getLevel().getStructureManager();
+        BlockPos pos = new BlockPos(128, 64, -96);
+        String template = NortheastCourtyardStructure.DEFAULT_TEMPLATES.get(0);
+        CourtyardPiece original = new CourtyardPiece(templates, template, pos, Rotation.CLOCKWISE_180);
+        CompoundTag tag = original.createTag(
+                StructurePieceSerializationContext.fromLevel(helper.getLevel()));
+        helper.assertTrue(tag.getString("Rotation").equals(Rotation.CLOCKWISE_180.name()),
+                "存档必须写入小院旋转字段");
+        CourtyardPiece restored = new CourtyardPiece(templates, tag);
+
+        helper.assertTrue(restored.getRotation() == Rotation.CLOCKWISE_180,
+                "小院旋转必须随结构件一起保存");
+        helper.assertTrue(restored.getBoundingBox().equals(original.getBoundingBox()),
+                "读档后的院子包围盒必须与生成时一致");
+
+        tag.remove("Rotation");
+        CourtyardPiece legacy = new CourtyardPiece(templates, tag);
+        helper.assertTrue(legacy.getRotation() == Rotation.CLOCKWISE_180,
+                "旧存档应能从包围盒恢复 180° 旋转");
+
+        CourtyardPiece unrotated = new CourtyardPiece(templates, template, pos, Rotation.NONE);
+        CompoundTag unrotatedTag = unrotated.createTag(
+                StructurePieceSerializationContext.fromLevel(helper.getLevel()));
+        unrotatedTag.remove("Rotation");
+        helper.assertTrue(new CourtyardPiece(templates, unrotatedTag).getRotation() == Rotation.NONE,
+                "未旋转的旧存档不能误判为 180°");
         helper.succeed();
     }
 
