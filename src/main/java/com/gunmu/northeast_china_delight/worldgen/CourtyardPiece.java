@@ -28,12 +28,15 @@ public class CourtyardPiece extends TemplateStructurePiece
                 id -> settings(Rotation.NONE));
     }
 
-    private static StructurePlaceSettings settings(Rotation rotation)
+    static StructurePlaceSettings settings(Rotation rotation)
     {
+        // 模板 NBT 已保存最终方块状态。世界生成阶段光照尚未点亮，若再执行 updateShape，
+        // 普通 CropBlock 会因亮度不足被替换成空气；原版拼图结构同样使用 knownShape 跳过这次刷新。
         return new StructurePlaceSettings()
                 .setRotation(rotation)
                 .setMirror(Mirror.NONE)
-                .setIgnoreEntities(false);
+                .setIgnoreEntities(false)
+                .setKnownShape(true);
     }
 
     @Override
