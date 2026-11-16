@@ -54,6 +54,7 @@ import java.util.Optional;
  *
  * <p>生成规则：第一座严格按群系、坡度、水面、门口和村庄避让选址；第一座成功后
  * 无条件寻找第二座，第二座只要求干燥、地形支撑和与第一座不重叠，并且必须换一种模板。
+ * 两座都会对完整院落边界逐格检查地表高差，避免清场件把低处填成露出数格的无意义土台。
  * 找不到合格的第二座时整簇不生成，避免留下独户。第三座起从东西南北四个方向按
  * {@code walk_chance} 梯度继续扩展；第三座起每座都从完整模板池独立抽取，允许重复。
  * 第一座院子的可行朝向确定院群主门向；后续院子在门口地形允许时优先沿用主门向，
@@ -113,9 +114,14 @@ public class NortheastCourtyardStructure extends Structure
     public static final float WALK_CHANCE_MIN = 0.20F;
     public static final int WATER_CLEARANCE = 15;
     public static final int SECOND_YARD_DISTANCE_SAMPLES = 8;
+    public static final int YARD_FOOTPRINT_DROP_LIMIT = 2;
+    public static final int YARD_FOOTPRINT_RISE_LIMIT = 1;
+    public static final int SECOND_YARD_FOOTPRINT_DROP_LIMIT = 3;
+    public static final int SECOND_YARD_FOOTPRINT_RISE_LIMIT = 2;
     private static final int MAX_CANDIDATE_ATTEMPTS = 3;
     private static final int LOCAL_CANDIDATE_RADIUS_CHUNKS = 3;
-    private static final int SECOND_YARD_MIN_LOWER_TOLERANCE = 2;
+    private static final int FOOTPRINT_INTERIOR_SAMPLE_STEP = 2;
+    private static final int WATER_CLEARANCE_SAMPLE_STEP = 4;
 
     private static final List<Direction> HORIZONTALS =
             List.of(Direction.EAST, Direction.WEST, Direction.NORTH, Direction.SOUTH);
@@ -395,7 +401,10 @@ public class NortheastCourtyardStructure extends Structure
         }
         StructureTemplate size = sizes.computeIfAbsent(template,
                 id -> context.structureTemplateManager().getOrCreate(DdIds.parse(id)));
-        if (!this.secondYardFootprintOk(context, size, x, z, surface, minY, maxY))
+        if (!this.footprintTerrainOk(context, size, x, z, surface, minY, maxY,
+                Math.min(this.maxSlope, SECOND_YARD_FOOTPRINT_DROP_LIMIT),
+                Math.min(Math.max(1, this.maxSlope / 2), SECOND_YARD_FOOTPRINT_RISE_LIMIT),
+                false))
         {
             return null;
         }
@@ -414,33 +423,6 @@ public class NortheastCourtyardStructure extends Structure
         }
         BlockPos placedPos = templateOrigin(footprintMin, size.getSize().getX(), size.getSize().getZ(), rotation);
         return new Yard(template, placedPos, rotation, blackSoil);
-    }
-
-    private boolean secondYardFootprintOk(GenerationContext context, StructureTemplate size,
-                                          int x, int z, int anchorSurface, int minY, int maxY)
-    {
-        int sizeX = size.getSize().getX();
-        int sizeZ = size.getSize().getZ();
-        int[] offsetsX = {0, sizeX / 4, sizeX / 2, sizeX * 3 / 4, sizeX - 1};
-        int[] offsetsZ = {0, sizeZ / 4, sizeZ / 2, sizeZ * 3 / 4, sizeZ - 1};
-        for (int offsetX : offsetsX)
-        {
-            for (int offsetZ : offsetsZ)
-            {
-                int sampleX = x + offsetX;
-                int sampleZ = z + offsetZ;
-                int surface = context.chunkGenerator().getBaseHeight(sampleX, sampleZ,
-                        Heightmap.Types.WORLD_SURFACE_WG, context.heightAccessor(), context.randomState());
-                int floor = context.chunkGenerator().getBaseHeight(sampleX, sampleZ,
-                        Heightmap.Types.OCEAN_FLOOR_WG, context.heightAccessor(), context.randomState());
-                if (!isSecondYardTerrainSuitable(surface, floor, minY, maxY)
-                        || !isSecondYardFootprintHeightSuitable(anchorSurface, surface, this.maxSlope))
-                {
-                    return false;
-                }
-            }
-        }
-        return true;
     }
 
     private int[] stepPosition(Yard current, StructureTemplate currentSize, StructureTemplate nextSize,
@@ -494,10 +476,15 @@ public class NortheastCourtyardStructure extends Structure
 
     static boolean isSecondYardFootprintHeightSuitable(int anchorSurface, int sampleSurface, int maxSlope)
     {
-        int lowerTolerance = Math.max(SECOND_YARD_MIN_LOWER_TOLERANCE, maxSlope);
-        int upperTolerance = Math.max(1, maxSlope / 2);
-        return sampleSurface >= anchorSurface - lowerTolerance
-                && sampleSurface <= anchorSurface + upperTolerance;
+        int lowerTolerance = Math.min(maxSlope, SECOND_YARD_FOOTPRINT_DROP_LIMIT);
+        int upperTolerance = Math.min(Math.max(1, maxSlope / 2), SECOND_YARD_FOOTPRINT_RISE_LIMIT);
+        return isFootprintHeightSuitable(anchorSurface, sampleSurface, lowerTolerance, upperTolerance);
+    }
+
+    static boolean isFootprintHeightSuitable(int anchorSurface, int sampleSurface,
+                                             int dropLimit, int riseLimit)
+    {
+        return sampleSurface >= anchorSurface - dropLimit && sampleSurface <= anchorSurface + riseLimit;
     }
 
     /** 从完整模板池中均匀抽取。 */
@@ -556,11 +543,12 @@ public class NortheastCourtyardStructure extends Structure
         {
             return null;
         }
-        if (!this.footprintOk(context, template, x, z, surface))
-        {
-            return null;
-        }
-        if (!this.waterFarEnough(context, template, x, z))
+        StructureTemplate templateSize = sizes.computeIfAbsent(template,
+                id -> context.structureTemplateManager().getOrCreate(DdIds.parse(id)));
+        if (!this.footprintTerrainOk(context, templateSize, x, z, surface, minY, maxY,
+                Math.min(this.maxSlope, YARD_FOOTPRINT_DROP_LIMIT),
+                Math.min(Math.max(1, this.maxSlope / 2), YARD_FOOTPRINT_RISE_LIMIT),
+                true))
         {
             return null;
         }
@@ -568,8 +556,6 @@ public class NortheastCourtyardStructure extends Structure
         {
             return null;
         }
-        StructureTemplate templateSize = sizes.computeIfAbsent(template,
-                id -> context.structureTemplateManager().getOrCreate(DdIds.parse(id)));
         boolean blackSoil = this.blackSoilChance > 0.0F && random.nextFloat() < this.blackSoilChance;
         // 院子的草地比外边地面高 YARD_RAISE 格。雪原的高度图会把雪层也算进去，
         // 所以下雪的地方仍多压一格作为高度图补偿；YARD_RAISE 再统一抬高院面。
@@ -770,43 +756,53 @@ public class NortheastCourtyardStructure extends Structure
         return (high - low) <= this.maxSlope && Math.abs(surface - (high + low) / 2) <= this.maxSlope + 4;
     }
 
-    /**
-     * 院子整块地的地形检查：四个角 + 中心的地表高度都不能高过院子地面（否则院子被山埋住），
-     * 也不能低太多（否则院子悬在崖边）。
-     */
-    private boolean footprintOk(GenerationContext context, String template, int x, int z, int surface)
+    private boolean footprintTerrainOk(GenerationContext context, StructureTemplate template,
+                                       int x, int z, int anchorSurface, int minY, int maxY,
+                                       int dropLimit, int riseLimit, boolean checkWaterClearance)
     {
-        StructureTemplate t = context.structureTemplateManager().getOrCreate(DdIds.parse(template));
-        int sizeX = t.getSize().getX();
-        int sizeZ = t.getSize().getZ();
-        int[][] probes = {
-                {x, z}, {x + sizeX - 1, z}, {x, z + sizeZ - 1}, {x + sizeX - 1, z + sizeZ - 1},
-                {x + sizeX / 2, z + sizeZ / 2}
-        };
-        for (int[] probe : probes)
+        int sizeX = template.getSize().getX();
+        int sizeZ = template.getSize().getZ();
+        for (int dx = 0; dx < sizeX; dx++)
         {
-            int h = context.chunkGenerator().getBaseHeight(probe[0], probe[1], Heightmap.Types.WORLD_SURFACE_WG,
-                    context.heightAccessor(), context.randomState());
-            if (h > surface + 1 || h < surface - 5)
+            boolean borderX = dx == 0 || dx == sizeX - 1;
+            for (int dz = 0; dz < sizeZ; dz++)
             {
-                return false;
+                boolean borderZ = dz == 0 || dz == sizeZ - 1;
+                if (!borderX && !borderZ
+                        && (dx % FOOTPRINT_INTERIOR_SAMPLE_STEP != 0
+                        || dz % FOOTPRINT_INTERIOR_SAMPLE_STEP != 0))
+                {
+                    continue;
+                }
+                int sampleX = x + dx;
+                int sampleZ = z + dz;
+                int surface = context.chunkGenerator().getBaseHeight(sampleX, sampleZ,
+                        Heightmap.Types.WORLD_SURFACE_WG, context.heightAccessor(), context.randomState());
+                int floor = context.chunkGenerator().getBaseHeight(sampleX, sampleZ,
+                        Heightmap.Types.OCEAN_FLOOR_WG, context.heightAccessor(), context.randomState());
+                if (!isSecondYardTerrainSuitable(surface, floor, minY, maxY)
+                        || !isFootprintHeightSuitable(anchorSurface, surface, dropLimit, riseLimit))
+                {
+                    return false;
+                }
             }
         }
-        return true;
+        return !checkWaterClearance || this.waterFarEnough(context, sizeX, sizeZ, x, z);
     }
 
-    private boolean waterFarEnough(GenerationContext context, String template, int x, int z)
+    private boolean waterFarEnough(GenerationContext context, int sizeX, int sizeZ, int x, int z)
     {
-        StructureTemplate t = context.structureTemplateManager().getOrCreate(DdIds.parse(template));
-        int half = Math.max(t.getSize().getX(), t.getSize().getZ()) / 2;
-        int reach = half + WATER_CLEARANCE;
-        for (int dx = -reach; dx <= reach; dx += 4)
+        int minX = x - WATER_CLEARANCE;
+        int maxX = x + sizeX - 1 + WATER_CLEARANCE;
+        int minZ = z - WATER_CLEARANCE;
+        int maxZ = z + sizeZ - 1 + WATER_CLEARANCE;
+        for (int sampleX = minX; sampleX <= maxX; sampleX += WATER_CLEARANCE_SAMPLE_STEP)
         {
-            for (int dz = -reach; dz <= reach; dz += 4)
+            for (int sampleZ = minZ; sampleZ <= maxZ; sampleZ += WATER_CLEARANCE_SAMPLE_STEP)
             {
-                int surface = context.chunkGenerator().getBaseHeight(x + dx, z + dz,
+                int surface = context.chunkGenerator().getBaseHeight(sampleX, sampleZ,
                         Heightmap.Types.WORLD_SURFACE_WG, context.heightAccessor(), context.randomState());
-                int floor = context.chunkGenerator().getBaseHeight(x + dx, z + dz,
+                int floor = context.chunkGenerator().getBaseHeight(sampleX, sampleZ,
                         Heightmap.Types.OCEAN_FLOOR_WG, context.heightAccessor(), context.randomState());
                 if (surface != floor)
                 {
