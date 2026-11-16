@@ -15,6 +15,8 @@ import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemp
 
 public class CourtyardPiece extends TemplateStructurePiece
 {
+    private static final String ROTATION_TAG = "Rotation";
+
     public CourtyardPiece(StructureTemplateManager templateManager, String templateId, BlockPos pos, Rotation rotation)
     {
         super(ModWorldGen.COURTYARD_PIECE.get(), 0, templateManager,
@@ -25,7 +27,29 @@ public class CourtyardPiece extends TemplateStructurePiece
     public CourtyardPiece(StructureTemplateManager templateManager, CompoundTag tag)
     {
         super(ModWorldGen.COURTYARD_PIECE.get(), tag, templateManager,
-                id -> settings(Rotation.NONE));
+                id -> settings(rotationFromTag(tag)));
+    }
+
+    static Rotation rotationFromTag(CompoundTag tag)
+    {
+        String saved = tag.getString(ROTATION_TAG);
+        for (Rotation rotation : Rotation.values())
+        {
+            if (rotation.name().equals(saved))
+            {
+                return rotation;
+            }
+        }
+
+        // 旧存档没有 Rotation 字段；180° 小院的包围盒从模板原点向负方向展开。
+        int[] bounds = tag.getIntArray("BB");
+        if (bounds.length == 6
+                && bounds[0] < tag.getInt("TPX")
+                && bounds[2] < tag.getInt("TPZ"))
+        {
+            return Rotation.CLOCKWISE_180;
+        }
+        return Rotation.NONE;
     }
 
     static StructurePlaceSettings settings(Rotation rotation)
@@ -43,6 +67,7 @@ public class CourtyardPiece extends TemplateStructurePiece
     protected void addAdditionalSaveData(StructurePieceSerializationContext context, CompoundTag tag)
     {
         super.addAdditionalSaveData(context, tag);
+        tag.putString(ROTATION_TAG, this.getRotation().name());
     }
 
     @Override
