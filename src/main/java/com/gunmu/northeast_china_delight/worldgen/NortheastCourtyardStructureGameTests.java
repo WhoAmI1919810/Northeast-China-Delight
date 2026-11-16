@@ -23,6 +23,14 @@ public final class NortheastCourtyardStructureGameTests
     }
 
     @GameTest(template = "empty")
+    public static void courtyardPlacementUsesKnownShapeToKeepCrops(GameTestHelper helper)
+    {
+        helper.assertTrue(CourtyardPiece.settings(Rotation.NONE).getKnownShape(),
+                "小院模板必须按已知形状放置，避免世界生成阶段作物被光照形状更新删除");
+        helper.succeed();
+    }
+
+    @GameTest(template = "empty")
     public static void secondYardAlwaysUsesADifferentTemplate(GameTestHelper helper)
     {
         for (String first : NortheastCourtyardStructure.DEFAULT_TEMPLATES)
