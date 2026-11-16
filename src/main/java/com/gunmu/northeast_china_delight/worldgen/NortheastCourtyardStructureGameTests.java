@@ -3,7 +3,9 @@ package com.gunmu.northeast_china_delight.worldgen;
 import com.gunmu.northeast_china_delight.NortheastChinaDelight;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.block.Rotation;
+import net.minecraft.world.level.levelgen.WorldgenRandom;
 //? if <1.20.2 {
 /*import net.minecraftforge.gametest.GameTestHolder;
 import net.minecraftforge.gametest.PrefixGameTestTemplate;
@@ -12,7 +14,9 @@ import net.neoforged.neoforge.gametest.GameTestHolder;
 import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
 //?}
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @GameTestHolder(NortheastChinaDelight.MODID)
 @PrefixGameTestTemplate(false)
@@ -43,6 +47,21 @@ public final class NortheastCourtyardStructureGameTests
         }
         helper.assertTrue(NortheastCourtyardStructure.secondTemplatePool(List.of("only", "only"), "only").isEmpty(),
                 "只有一个模板时无法满足第二座换模板的要求");
+        helper.succeed();
+    }
+
+    @GameTest(template = "empty")
+    public static void laterYardsDrawFromTheCompleteTemplatePool(GameTestHelper helper)
+    {
+        List<String> templates = List.of("first", "second", "third", "fourth");
+        WorldgenRandom random = new WorldgenRandom(RandomSource.create(20261116L));
+        Set<String> seen = new HashSet<>();
+        for (int attempt = 0; attempt < 128; attempt++)
+        {
+            seen.add(NortheastCourtyardStructure.pickTemplate(random, templates));
+        }
+        helper.assertTrue(seen.size() == templates.size(),
+                "第三座起应能重复抽到前面的模板，候选池必须是完整模板列表");
         helper.succeed();
     }
 

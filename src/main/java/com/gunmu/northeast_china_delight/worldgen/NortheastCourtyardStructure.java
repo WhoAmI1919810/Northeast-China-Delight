@@ -55,7 +55,7 @@ import java.util.Optional;
  * <p>生成规则：第一座严格按群系、坡度、水面、门口和村庄避让选址；第一座成功后
  * 无条件寻找第二座，第二座只要求干燥、地形支撑和与第一座不重叠，并且必须换一种模板。
  * 找不到合格的第二座时整簇不生成，避免留下独户。第三座起从东西南北四个方向按
- * {@code walk_chance} 梯度继续扩展；群落内优先抽尚未出现的模板，让七种院子尽快露面。
+ * {@code walk_chance} 梯度继续扩展；第三座起每座都从完整模板池独立抽取，允许重复。
  * 单个 placement 区域最多尝试三个候选点：原候选区块内一次，失败后在周围 ±3 区块内
  * 各再补一次；三次都失败才放弃这个区域。
  */
@@ -261,22 +261,19 @@ public class NortheastCourtyardStructure extends Structure
         }
         List<Yard> yards = new ArrayList<>();
         Map<String, StructureTemplate> sizes = new HashMap<>();
-        List<String> unplacedTemplates = new ArrayList<>(this.templates);
         Yard first = this.tryMakeYard(context, random, sizes,
-                this.pickTemplate(random, unplacedTemplates), startX, startZ);
+                this.pickTemplate(random), startX, startZ);
         if (first == null)
         {
             return List.of();
         }
         yards.add(first);
-        unplacedTemplates.remove(first.template());
         Yard second = this.makeSecondYard(context, random, sizes, first);
         if (second == null)
         {
             return List.of();
         }
         yards.add(second);
-        unplacedTemplates.remove(second.template());
         ArrayDeque<Yard> queue = new ArrayDeque<>();
         queue.add(first);
         queue.add(second);
@@ -295,7 +292,7 @@ public class NortheastCourtyardStructure extends Structure
                     continue;
                 }
                 int distance = this.stepMin + random.nextInt(this.stepMax - this.stepMin + 1);
-                String template = this.pickTemplate(random, unplacedTemplates);
+                String template = this.pickTemplate(random);
                 StructureTemplate currentSize = sizes.computeIfAbsent(current.template(),
                         id -> context.structureTemplateManager().getOrCreate(DdIds.parse(id)));
                 StructureTemplate nextSize = sizes.computeIfAbsent(template,
@@ -310,7 +307,6 @@ public class NortheastCourtyardStructure extends Structure
                     continue;
                 }
                 yards.add(candidate);
-                unplacedTemplates.remove(candidate.template());
                 queue.add(candidate);
             }
         }
@@ -477,11 +473,15 @@ public class NortheastCourtyardStructure extends Structure
                 && sampleSurface <= anchorSurface + upperTolerance;
     }
 
-    /** 从尚未出现的模板里抽；所有模板都出现过以后恢复全池随机。 */
-    private String pickTemplate(WorldgenRandom random, List<String> unplacedTemplates)
+    /** 从完整模板池中均匀抽取。 */
+    private String pickTemplate(WorldgenRandom random)
     {
-        List<String> pool = unplacedTemplates.isEmpty() ? this.templates : unplacedTemplates;
-        return pool.get(random.nextInt(pool.size()));
+        return pickTemplate(random, this.templates);
+    }
+
+    static String pickTemplate(WorldgenRandom random, List<String> templates)
+    {
+        return templates.get(random.nextInt(templates.size()));
     }
 
     private float walkChanceFor(List<Yard> placed)
