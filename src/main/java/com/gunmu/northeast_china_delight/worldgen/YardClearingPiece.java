@@ -102,6 +102,7 @@ public class YardClearingPiece extends StructurePiece
         int minY = level.getMinBuildHeight();
         int maxY = level.getMaxBuildHeight() - 1;
         int yardTop = Math.min(maxY, this.groundY + this.clearAbove);
+        int gateCenterX = this.yardMinX + (this.yardMaxX - this.yardMinX + 1) / 2;
         BlockPos.MutableBlockPos cursor = new BlockPos.MutableBlockPos();
         for (int x = minX; x <= maxX; x++)
         {
@@ -126,8 +127,8 @@ public class YardClearingPiece extends StructurePiece
                         && x <= this.yardMaxX + FOUNDATION_MARGIN
                         && z >= this.yardMinZ - FOUNDATION_MARGIN
                         && z <= this.yardMaxZ + FOUNDATION_MARGIN;
-                boolean inGatePath = x >= (this.yardMinX + this.yardMaxX) / 2 - GATE_PATH_HALF_WIDTH
-                        && x <= (this.yardMinX + this.yardMaxX) / 2 + GATE_PATH_HALF_WIDTH
+                boolean inGatePath = x >= gateCenterX - GATE_PATH_HALF_WIDTH
+                        && x <= gateCenterX + GATE_PATH_HALF_WIDTH
                         && (this.gateDir > 0
                         ? (z >= this.yardMaxZ && z <= this.yardMaxZ + GATE_PATH_LENGTH)
                         : (z <= this.yardMinZ && z >= this.yardMinZ - GATE_PATH_LENGTH));
@@ -145,8 +146,7 @@ public class YardClearingPiece extends StructurePiece
                     {
                         cursor.set(x, y, z);
                         BlockState here = level.getBlockState(cursor);
-                        if (here.isAir() || isVegetation(here) || isIce(here)
-                                || !here.getFluidState().isEmpty())
+                        if (shouldFillFoundation(here))
                         {
                             level.setBlock(cursor, Blocks.DIRT.defaultBlockState(), 2);
                         }
@@ -178,6 +178,12 @@ public class YardClearingPiece extends StructurePiece
                 }
             }
         }
+    }
+
+    static boolean shouldFillFoundation(BlockState state)
+    {
+        return state.getFluidState().isEmpty() && !isIce(state)
+                && (state.isAir() || isVegetation(state));
     }
 
     private static boolean isIce(BlockState state)

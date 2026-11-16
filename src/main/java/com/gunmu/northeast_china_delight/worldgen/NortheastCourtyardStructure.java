@@ -13,8 +13,11 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.level.block.Rotation;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.biome.Biome;
+import net.minecraft.world.level.chunk.BlockColumn;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.level.levelgen.WorldgenRandom;
 import net.minecraft.world.level.levelgen.structure.Structure;
@@ -26,10 +29,12 @@ import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemp
 
 import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.function.BiPredicate;
 
 /**
  * 东北小院：一次生成一整个「小院群落」。
@@ -52,15 +57,19 @@ import java.util.Optional;
  * {@code spacing}（每多少区块试一次）和 {@code separation}（同格内最小间隔），
  * 这两个数越小越密。
  *
- * <p>生成规则：第一座严格按群系、坡度、水面、门口和村庄避让选址；第一座成功后
- * 无条件寻找第二座，第二座只要求干燥、地形支撑和与第一座不重叠，并且必须换一种模板。
- * 两座都会对完整院落边界逐格检查地表高差，避免清场件把低处填成露出数格的无意义土台。
+ * <p>生成规则：第一座严格按群系、水面、门口和村庄避让选址；第一座成功后
+ * 无条件寻找第二座，第二座只要求干燥、地形支撑、门前通道不临水和与第一座不重叠，
+ * 并且必须换一种模板。
+ * 两座都会逐格检查实际会填地的院落 footprint（含 1 格基础外扩）和所选门向的
+ * 8 格门前通道：水、冰和流体一格都不允许；院面高度按 footprint 中位地表落位，
+ * 采样高度低/高各超过 3 格才拒绝，
+ * 避免清场件把低处填成露出数格的无意义土台。
  * 找不到合格的第二座时整簇不生成，避免留下独户。第三座起从东西南北四个方向按
  * {@code walk_chance} 梯度继续扩展；第三座起每座都从完整模板池独立抽取，允许重复。
  * 第一座院子的可行朝向确定院群主门向；后续院子在门口地形允许时优先沿用主门向，
  * 主门向不可通行或门前会撞已有院子时自动反向。第二座不会仅因门向不同而失败。
- * 单个 placement 区域最多尝试三个候选点：原候选区块内一次，失败后在周围 ±3 区块内
- * 各再补一次；三次都失败才放弃这个区域。
+ * 单个 placement 区域最多尝试五个候选点：原候选区块内一次，失败后在周围 ±3 区块内
+ * 再补四次；五次都失败才放弃这个区域。
  */
 public class NortheastCourtyardStructure extends Structure
 {
@@ -86,7 +95,6 @@ public class NortheastCourtyardStructure extends Structure
     public static final int GROUND_LAYER_IN_TEMPLATE = TEMPLATE_BASE_Y;
     public static final int YARD_RAISE = 1;
     public static final int LATERAL_JITTER = 6;
-    public static final int GATE_CHECK_WIDTH = 18;
     public static final int MAX_GATE_SLOPE = 4;
     private static final float CLUSTER_FACING_CHANCE = 0.8F;
     public static final float BLACK_SOIL_DENSITY = 0.12F;
@@ -112,16 +120,13 @@ public class NortheastCourtyardStructure extends Structure
     }
     public static final float WALK_CHANCE_STEP = 0.15F;
     public static final float WALK_CHANCE_MIN = 0.20F;
-    public static final int WATER_CLEARANCE = 15;
     public static final int SECOND_YARD_DISTANCE_SAMPLES = 8;
-    public static final int YARD_FOOTPRINT_DROP_LIMIT = 2;
-    public static final int YARD_FOOTPRINT_RISE_LIMIT = 1;
-    public static final int SECOND_YARD_FOOTPRINT_DROP_LIMIT = 3;
-    public static final int SECOND_YARD_FOOTPRINT_RISE_LIMIT = 2;
-    private static final int MAX_CANDIDATE_ATTEMPTS = 3;
+    public static final int YARD_FOOTPRINT_DROP_LIMIT = 3;
+    public static final int YARD_FOOTPRINT_RISE_LIMIT = 3;
+    public static final int SECOND_YARD_FOOTPRINT_RELIEF_LIMIT = 6;
+    private static final int MAX_CANDIDATE_ATTEMPTS = 5;
     private static final int LOCAL_CANDIDATE_RADIUS_CHUNKS = 3;
     private static final int FOOTPRINT_INTERIOR_SAMPLE_STEP = 2;
-    private static final int WATER_CLEARANCE_SAMPLE_STEP = 4;
 
     private static final List<Direction> HORIZONTALS =
             List.of(Direction.EAST, Direction.WEST, Direction.NORTH, Direction.SOUTH);
@@ -336,7 +341,7 @@ public class NortheastCourtyardStructure extends Structure
 
     /**
      * 第一座成功后再找第二座：优先保证群落不是独户，因此不掷游走概率。
-     * 第二座只保留干燥、地形支撑、世界高度和院落不重叠这几项硬条件。
+     * 第二座只保留干燥、地形支撑、完整高差、门前通道不临水和院落不重叠这几项硬条件。
      */
     private Yard makeSecondYard(GenerationContext context, WorldgenRandom random,
                                 Map<String, StructureTemplate> sizes, Yard first)
@@ -389,35 +394,38 @@ public class NortheastCourtyardStructure extends Structure
                                    Map<String, StructureTemplate> sizes, String template,
                                    int x, int z, Yard first)
     {
-        int surface = context.chunkGenerator().getBaseHeight(x, z, Heightmap.Types.WORLD_SURFACE_WG,
-                context.heightAccessor(), context.randomState());
-        int floor = context.chunkGenerator().getBaseHeight(x, z, Heightmap.Types.OCEAN_FLOOR_WG,
-                context.heightAccessor(), context.randomState());
-        int minY = context.heightAccessor().getMinBuildHeight();
-        int maxY = context.heightAccessor().getMaxBuildHeight();
-        if (!isSecondYardTerrainSuitable(surface, floor, minY, maxY))
+        Optional<TerrainProbe> anchor = probeTerrain(context, x, z);
+        if (anchor.isEmpty() || anchor.get().wet())
         {
             return null;
         }
         StructureTemplate size = sizes.computeIfAbsent(template,
                 id -> context.structureTemplateManager().getOrCreate(DdIds.parse(id)));
-        if (!this.footprintTerrainOk(context, size, x, z, surface, minY, maxY,
-                Math.min(this.maxSlope, SECOND_YARD_FOOTPRINT_DROP_LIMIT),
-                Math.min(Math.max(1, this.maxSlope / 2), SECOND_YARD_FOOTPRINT_RISE_LIMIT),
-                false))
+        Optional<FootprintTerrain> footprint = this.footprintTerrain(context, size, x, z);
+        if (footprint.isEmpty()
+                || !isFootprintReliefSuitable(footprint.get().minGroundY(),
+                footprint.get().maxGroundY(),
+                Math.min(this.maxSlope, SECOND_YARD_FOOTPRINT_RELIEF_LIMIT)))
         {
             return null;
         }
-        Holder<Biome> biome = context.biomeSource().getNoiseBiome(
-                QuartPos.fromBlock(x), QuartPos.fromBlock(surface), QuartPos.fromBlock(z),
-                context.randomState().sampler());
+        int groundY = footprint.get().medianGroundY();
+        int surface = groundY + 1;
+        if (!isTerrainHeightWithinBounds(surface,
+                context.heightAccessor().getMinBuildHeight(),
+                context.heightAccessor().getMaxBuildHeight()))
+        {
+            return null;
+        }
         boolean blackSoil = this.blackSoilChance > 0.0F && random.nextFloat() < this.blackSoilChance;
-        boolean snowy = biome.value().getPrecipitationAt(new BlockPos(x, surface, z))
-                == net.minecraft.world.level.biome.Biome.Precipitation.SNOW;
-        int sink = snowy ? 2 : 1;
-        BlockPos footprintMin = new BlockPos(x, surface - GROUND_LAYER_IN_TEMPLATE - sink + YARD_RAISE, z);
-        Rotation rotation = this.pickSecondRotation(size, footprintMin, first, sizes, random);
+        BlockPos footprintMin = new BlockPos(x,
+                surface - GROUND_LAYER_IN_TEMPLATE - 1 + YARD_RAISE, z);
+        Rotation rotation = this.pickSecondRotation(context, size, footprintMin, first, sizes, random, surface);
         if (rotation == null)
+        {
+            return null;
+        }
+        if (!this.foundationWaterClear(context, size, x, z))
         {
             return null;
         }
@@ -469,22 +477,9 @@ public class NortheastCourtyardStructure extends Structure
                 .toList();
     }
 
-    static boolean isSecondYardTerrainSuitable(int surface, int floor, int minY, int maxY)
+    static boolean isTerrainHeightWithinBounds(int surface, int minY, int maxY)
     {
-        return surface == floor && surface >= minY + 12 && surface <= maxY - 32;
-    }
-
-    static boolean isSecondYardFootprintHeightSuitable(int anchorSurface, int sampleSurface, int maxSlope)
-    {
-        int lowerTolerance = Math.min(maxSlope, SECOND_YARD_FOOTPRINT_DROP_LIMIT);
-        int upperTolerance = Math.min(Math.max(1, maxSlope / 2), SECOND_YARD_FOOTPRINT_RISE_LIMIT);
-        return isFootprintHeightSuitable(anchorSurface, sampleSurface, lowerTolerance, upperTolerance);
-    }
-
-    static boolean isFootprintHeightSuitable(int anchorSurface, int sampleSurface,
-                                             int dropLimit, int riseLimit)
-    {
-        return sampleSurface >= anchorSurface - dropLimit && sampleSurface <= anchorSurface + riseLimit;
+        return surface >= minY + 12 && surface <= maxY - 32;
     }
 
     /** 从完整模板池中均匀抽取。 */
@@ -513,22 +508,20 @@ public class NortheastCourtyardStructure extends Structure
                             Map<String, StructureTemplate> sizes, String template, int x, int z,
                             Rotation preferred, List<Yard> existingYards)
     {
-        int surface = context.chunkGenerator().getBaseHeight(x, z, Heightmap.Types.WORLD_SURFACE_WG,
-                context.heightAccessor(), context.randomState());
-        int floor = context.chunkGenerator().getBaseHeight(x, z, Heightmap.Types.OCEAN_FLOOR_WG,
-                context.heightAccessor(), context.randomState());
-        if (surface != floor)
+        Optional<TerrainProbe> anchor = probeTerrain(context, x, z);
+        if (anchor.isEmpty() || anchor.get().wet())
         {
             return null;
         }
+        int anchorSurface = anchor.get().groundY() + 1;
         int minY = context.heightAccessor().getMinBuildHeight();
         int maxY = context.heightAccessor().getMaxBuildHeight();
-        if (surface < minY + 12 || surface > maxY - 32)
+        if (!isTerrainHeightWithinBounds(anchorSurface, minY, maxY))
         {
             return null;
         }
         Holder<Biome> biome = context.biomeSource().getNoiseBiome(
-                QuartPos.fromBlock(x), QuartPos.fromBlock(surface), QuartPos.fromBlock(z),
+                QuartPos.fromBlock(x), QuartPos.fromBlock(anchorSurface), QuartPos.fromBlock(z),
                 context.randomState().sampler());
         if (!context.validBiome().test(biome))
         {
@@ -539,16 +532,22 @@ public class NortheastCourtyardStructure extends Structure
         {
             return null;
         }
-        if (!this.slopeOk(context, x, z, surface))
+        StructureTemplate templateSize = sizes.computeIfAbsent(template,
+                id -> context.structureTemplateManager().getOrCreate(DdIds.parse(id)));
+        Optional<FootprintTerrain> footprint = this.footprintTerrain(context, templateSize, x, z);
+        if (footprint.isEmpty())
         {
             return null;
         }
-        StructureTemplate templateSize = sizes.computeIfAbsent(template,
-                id -> context.structureTemplateManager().getOrCreate(DdIds.parse(id)));
-        if (!this.footprintTerrainOk(context, templateSize, x, z, surface, minY, maxY,
+        int groundY = footprint.get().medianGroundY();
+        if (!isFootprintHeightSuitable(groundY, footprint.get().minGroundY(), footprint.get().maxGroundY(),
                 Math.min(this.maxSlope, YARD_FOOTPRINT_DROP_LIMIT),
-                Math.min(Math.max(1, this.maxSlope / 2), YARD_FOOTPRINT_RISE_LIMIT),
-                true))
+                Math.min(this.maxSlope, YARD_FOOTPRINT_RISE_LIMIT)))
+        {
+            return null;
+        }
+        int surface = groundY + 1;
+        if (!isTerrainHeightWithinBounds(surface, minY, maxY))
         {
             return null;
         }
@@ -557,15 +556,15 @@ public class NortheastCourtyardStructure extends Structure
             return null;
         }
         boolean blackSoil = this.blackSoilChance > 0.0F && random.nextFloat() < this.blackSoilChance;
-        // 院子的草地比外边地面高 YARD_RAISE 格。雪原的高度图会把雪层也算进去，
-        // 所以下雪的地方仍多压一格作为高度图补偿；YARD_RAISE 再统一抬高院面。
-        boolean snowy = biome.value().getPrecipitationAt(new BlockPos(x, surface, z))
-                == net.minecraft.world.level.biome.Biome.Precipitation.SNOW;
-        int sink = snowy ? 2 : 1;
-        BlockPos footprintMin = new BlockPos(x, surface - GROUND_LAYER_IN_TEMPLATE - sink + YARD_RAISE, z);
+        BlockPos footprintMin = new BlockPos(x,
+                surface - GROUND_LAYER_IN_TEMPLATE - 1 + YARD_RAISE, z);
         Rotation rotation = this.pickRotation(context, templateSize, footprintMin, surface,
                 random, preferred, existingYards, sizes);
         if (rotation == null)
+        {
+            return null;
+        }
+        if (!this.foundationWaterClear(context, templateSize, x, z))
         {
             return null;
         }
@@ -588,10 +587,9 @@ public class NortheastCourtyardStructure extends Structure
         }
         int sizeX = template.getSize().getX();
         int sizeZ = template.getSize().getZ();
-        boolean noneGateOk = this.gateCheckDepth <= 0
-                || this.gateFrontOk(context, template, footprintMin, Rotation.NONE, surface);
-        boolean flippedGateOk = this.gateCheckDepth <= 0
-                || this.gateFrontOk(context, template, footprintMin, Rotation.CLOCKWISE_180, surface);
+        boolean noneGateOk = this.gatePathOk(context, template, footprintMin, Rotation.NONE, surface, true);
+        boolean flippedGateOk = this.gatePathOk(context, template, footprintMin, Rotation.CLOCKWISE_180,
+                surface, true);
         boolean noneFrontageClear = !this.gateApronBlocked(footprintMin, sizeX, sizeZ,
                 Rotation.NONE, existingYards, sizes);
         boolean flippedFrontageClear = !this.gateApronBlocked(footprintMin, sizeX, sizeZ,
@@ -600,8 +598,9 @@ public class NortheastCourtyardStructure extends Structure
                 noneFrontageClear, flippedFrontageClear, random.nextFloat());
     }
 
-    private Rotation pickSecondRotation(StructureTemplate template, BlockPos footprintMin, Yard first,
-                                        Map<String, StructureTemplate> sizes, WorldgenRandom random)
+    private Rotation pickSecondRotation(GenerationContext context, StructureTemplate template, BlockPos footprintMin,
+                                        Yard first, Map<String, StructureTemplate> sizes, WorldgenRandom random,
+                                        int surface)
     {
         if (!this.allowFlip)
         {
@@ -609,11 +608,14 @@ public class NortheastCourtyardStructure extends Structure
         }
         int sizeX = template.getSize().getX();
         int sizeZ = template.getSize().getZ();
+        boolean noneGateOk = this.gatePathOk(context, template, footprintMin, Rotation.NONE, surface, false);
+        boolean flippedGateOk = this.gatePathOk(context, template, footprintMin, Rotation.CLOCKWISE_180,
+                surface, false);
         boolean noneFrontageClear = !this.gateApronBlocked(footprintMin, sizeX, sizeZ,
                 Rotation.NONE, List.of(first), sizes);
         boolean flippedFrontageClear = !this.gateApronBlocked(footprintMin, sizeX, sizeZ,
                 Rotation.CLOCKWISE_180, List.of(first), sizes);
-        return chooseRotation(first.rotation(), true, true,
+        return chooseRotation(first.rotation(), noneGateOk, flippedGateOk,
                 noneFrontageClear, flippedFrontageClear, random.nextFloat());
     }
 
@@ -651,7 +653,12 @@ public class NortheastCourtyardStructure extends Structure
 
     static int gateCenterX(BlockPos footprintMin, int sizeX)
     {
-        return footprintMin.getX() + sizeX / 2;
+        return gateCenterX(footprintMin.getX(), sizeX);
+    }
+
+    static int gateCenterX(int minX, int sizeX)
+    {
+        return minX + sizeX / 2;
     }
 
     static int gateEdgeZ(BlockPos footprintMin, int sizeZ, Rotation rotation)
@@ -708,30 +715,47 @@ public class NortheastCourtyardStructure extends Structure
         return false;
     }
 
-    /** 门口前方那块地能不能走人 */
-    private boolean gateFrontOk(GenerationContext context, StructureTemplate template, BlockPos footprintMin,
-                                Rotation rotation, int yardSurface)
+    /**
+     * 只检查实际会被清场件填成地基的门前通道。
+     * 水面严格限定在 8 格填地通道内；gate_check_depth 只用于额外的通行高度检查。
+     */
+    private boolean gatePathOk(GenerationContext context, StructureTemplate template, BlockPos footprintMin,
+                               Rotation rotation, int yardSurface, boolean checkHeight)
     {
         int sizeX = template.getSize().getX();
         int sizeZ = template.getSize().getZ();
-        int centerX = gateCenterX(footprintMin, sizeX);
-        int edgeZ = gateEdgeZ(footprintMin, sizeZ, rotation);
-        int step = gateStep(rotation);
-        for (int dx = -GATE_CHECK_WIDTH / 2; dx <= GATE_CHECK_WIDTH / 2; dx += 2)
+        boolean waterClear = gatePathPasses(footprintMin.getX(), footprintMin.getZ(), sizeX, sizeZ,
+                gateStep(rotation),
+                (x, z) -> {
+                    Optional<TerrainProbe> probe = probeTerrain(context, x, z);
+                    return dryGround(probe);
+                }, YardClearingPiece.GATE_PATH_LENGTH);
+        if (!waterClear || !checkHeight)
         {
-            for (int dz = 2; dz <= this.gateCheckDepth; dz += 2)
+            return waterClear;
+        }
+        int heightDepth = Math.max(YardClearingPiece.GATE_PATH_LENGTH, this.gateCheckDepth);
+        return gatePathPasses(footprintMin.getX(), footprintMin.getZ(), sizeX, sizeZ, gateStep(rotation),
+                (x, z) -> {
+                    Optional<TerrainProbe> probe = probeTerrain(context, x, z);
+                    return dryGround(probe)
+                            && Math.abs(probe.get().groundY() + 1 - yardSurface) <= MAX_GATE_SLOPE;
+                }, heightDepth);
+    }
+
+    static boolean gatePathPasses(int minX, int minZ, int sizeX, int sizeZ, int gateDir,
+                                  BiPredicate<Integer, Integer> passable, int depth)
+    {
+        int centerX = gateCenterX(minX, sizeX);
+        int edgeZ = gateDir > 0 ? minZ + sizeZ - 1 : minZ;
+        for (int dz = 1; dz <= depth; dz++)
+        {
+            int z = edgeZ + gateDir * dz;
+            int halfWidth = dz <= YardClearingPiece.GATE_PATH_LENGTH
+                    ? YardClearingPiece.GATE_PATH_HALF_WIDTH : 0;
+            for (int dx = -halfWidth; dx <= halfWidth; dx++)
             {
-                int x = centerX + dx;
-                int z = edgeZ + step * dz;
-                int surface = context.chunkGenerator().getBaseHeight(x, z, Heightmap.Types.WORLD_SURFACE_WG,
-                        context.heightAccessor(), context.randomState());
-                int floor = context.chunkGenerator().getBaseHeight(x, z, Heightmap.Types.OCEAN_FLOOR_WG,
-                        context.heightAccessor(), context.randomState());
-                if (surface != floor)
-                {
-                    return false;
-                }
-                if (Math.abs(surface - yardSurface) > MAX_GATE_SLOPE)
+                if (!passable.test(centerX + dx, z))
                 {
                     return false;
                 }
@@ -740,77 +764,130 @@ public class NortheastCourtyardStructure extends Structure
         return true;
     }
 
-    private boolean slopeOk(GenerationContext context, int x, int z, int surface)
-    {
-        int reach = 8;
-        int a = context.chunkGenerator().getBaseHeight(x - reach, z - reach, Heightmap.Types.WORLD_SURFACE_WG,
-                context.heightAccessor(), context.randomState());
-        int b = context.chunkGenerator().getBaseHeight(x + reach, z + reach, Heightmap.Types.WORLD_SURFACE_WG,
-                context.heightAccessor(), context.randomState());
-        int c = context.chunkGenerator().getBaseHeight(x - reach, z + reach, Heightmap.Types.WORLD_SURFACE_WG,
-                context.heightAccessor(), context.randomState());
-        int d = context.chunkGenerator().getBaseHeight(x + reach, z - reach, Heightmap.Types.WORLD_SURFACE_WG,
-                context.heightAccessor(), context.randomState());
-        int high = Math.max(Math.max(a, b), Math.max(c, d));
-        int low = Math.min(Math.min(a, b), Math.min(c, d));
-        return (high - low) <= this.maxSlope && Math.abs(surface - (high + low) / 2) <= this.maxSlope + 4;
-    }
-
-    private boolean footprintTerrainOk(GenerationContext context, StructureTemplate template,
-                                       int x, int z, int anchorSurface, int minY, int maxY,
-                                       int dropLimit, int riseLimit, boolean checkWaterClearance)
+    private Optional<FootprintTerrain> footprintTerrain(GenerationContext context, StructureTemplate template,
+                                                        int x, int z)
     {
         int sizeX = template.getSize().getX();
         int sizeZ = template.getSize().getZ();
-        for (int dx = 0; dx < sizeX; dx++)
+        int margin = YardClearingPiece.FOUNDATION_MARGIN;
+        int minDx = -margin;
+        int maxDx = sizeX - 1 + margin;
+        int minDz = -margin;
+        int maxDz = sizeZ - 1 + margin;
+        int[] heights = new int[(maxDx - minDx + 1) * (maxDz - minDz + 1)];
+        int count = 0;
+        for (int dx = minDx; dx <= maxDx; dx++)
         {
-            boolean borderX = dx == 0 || dx == sizeX - 1;
-            for (int dz = 0; dz < sizeZ; dz++)
+            boolean borderX = dx == minDx || dx == maxDx;
+            for (int dz = minDz; dz <= maxDz; dz++)
             {
-                boolean borderZ = dz == 0 || dz == sizeZ - 1;
+                boolean borderZ = dz == minDz || dz == maxDz;
                 if (!borderX && !borderZ
                         && (dx % FOOTPRINT_INTERIOR_SAMPLE_STEP != 0
                         || dz % FOOTPRINT_INTERIOR_SAMPLE_STEP != 0))
                 {
                     continue;
                 }
-                int sampleX = x + dx;
-                int sampleZ = z + dz;
-                int surface = context.chunkGenerator().getBaseHeight(sampleX, sampleZ,
-                        Heightmap.Types.WORLD_SURFACE_WG, context.heightAccessor(), context.randomState());
-                int floor = context.chunkGenerator().getBaseHeight(sampleX, sampleZ,
-                        Heightmap.Types.OCEAN_FLOOR_WG, context.heightAccessor(), context.randomState());
-                if (!isSecondYardTerrainSuitable(surface, floor, minY, maxY)
-                        || !isFootprintHeightSuitable(anchorSurface, surface, dropLimit, riseLimit))
+                Optional<TerrainProbe> probe = probeTerrain(context, x + dx, z + dz);
+                if (!dryGround(probe))
                 {
-                    return false;
+                    return Optional.empty();
                 }
+                heights[count++] = probe.get().groundY();
             }
         }
-        return !checkWaterClearance || this.waterFarEnough(context, sizeX, sizeZ, x, z);
+        if (count == 0)
+        {
+            return Optional.empty();
+        }
+        Arrays.sort(heights, 0, count);
+        return Optional.of(new FootprintTerrain(heights[0], heights[count - 1], heights[count / 2]));
     }
 
-    private boolean waterFarEnough(GenerationContext context, int sizeX, int sizeZ, int x, int z)
+    /** 填地范围必须逐格无水；内部采样只用于高度，不能拿来代替临水判定。 */
+    private boolean foundationWaterClear(GenerationContext context, StructureTemplate template, int x, int z)
     {
-        int minX = x - WATER_CLEARANCE;
-        int maxX = x + sizeX - 1 + WATER_CLEARANCE;
-        int minZ = z - WATER_CLEARANCE;
-        int maxZ = z + sizeZ - 1 + WATER_CLEARANCE;
-        for (int sampleX = minX; sampleX <= maxX; sampleX += WATER_CLEARANCE_SAMPLE_STEP)
+        return footprintColumnsPass(template.getSize().getX(), template.getSize().getZ(),
+                YardClearingPiece.FOUNDATION_MARGIN,
+                (dx, dz) -> dryGround(probeTerrain(context, x + dx, z + dz)));
+    }
+
+    static boolean footprintColumnsPass(int sizeX, int sizeZ, int margin,
+                                        BiPredicate<Integer, Integer> passable)
+    {
+        int min = -margin;
+        int maxX = sizeX - 1 + margin;
+        int maxZ = sizeZ - 1 + margin;
+        for (int dx = min; dx <= maxX; dx++)
         {
-            for (int sampleZ = minZ; sampleZ <= maxZ; sampleZ += WATER_CLEARANCE_SAMPLE_STEP)
+            for (int dz = min; dz <= maxZ; dz++)
             {
-                int surface = context.chunkGenerator().getBaseHeight(sampleX, sampleZ,
-                        Heightmap.Types.WORLD_SURFACE_WG, context.heightAccessor(), context.randomState());
-                int floor = context.chunkGenerator().getBaseHeight(sampleX, sampleZ,
-                        Heightmap.Types.OCEAN_FLOOR_WG, context.heightAccessor(), context.randomState());
-                if (surface != floor)
+                if (!passable.test(dx, dz))
                 {
                     return false;
                 }
             }
         }
         return true;
+    }
+
+    static boolean isFootprintHeightSuitable(int referenceY, int minGroundY, int maxGroundY,
+                                             int dropLimit, int riseLimit)
+    {
+        return minGroundY >= referenceY - dropLimit && maxGroundY <= referenceY + riseLimit;
+    }
+
+    static boolean isFootprintReliefSuitable(int minGroundY, int maxGroundY, int reliefLimit)
+    {
+        return maxGroundY >= minGroundY && maxGroundY - minGroundY <= reliefLimit;
+    }
+
+    private static Optional<TerrainProbe> probeTerrain(GenerationContext context, int x, int z)
+    {
+        BlockColumn column = context.chunkGenerator().getBaseColumn(x, z,
+                context.heightAccessor(), context.randomState());
+        if (column == null)
+        {
+            return Optional.empty();
+        }
+        return inspectTerrainColumn(column, context.heightAccessor().getMinBuildHeight(),
+                context.heightAccessor().getMaxBuildHeight() - 1);
+    }
+
+    static Optional<TerrainProbe> inspectTerrainColumn(BlockColumn column, int minY, int maxY)
+    {
+        for (int y = maxY; y >= minY; y--)
+        {
+            BlockState state = column.getBlock(y);
+            if (isFluidOrIce(state))
+            {
+                return Optional.of(new TerrainProbe(y, true));
+            }
+            if (state.isAir() || isTerrainDecoration(state))
+            {
+                continue;
+            }
+            return Optional.of(new TerrainProbe(y, false));
+        }
+        return Optional.empty();
+    }
+
+    private static boolean dryGround(Optional<TerrainProbe> probe)
+    {
+        return probe.isPresent() && !probe.get().wet();
+    }
+
+    private static boolean isFluidOrIce(BlockState state)
+    {
+        return !state.getFluidState().isEmpty()
+                || state.is(Blocks.ICE) || state.is(Blocks.PACKED_ICE)
+                || state.is(Blocks.BLUE_ICE) || state.is(Blocks.FROSTED_ICE);
+    }
+
+    private static boolean isTerrainDecoration(BlockState state)
+    {
+        return state.is(Blocks.SNOW) || state.is(Blocks.SNOW_BLOCK)
+                || state.is(Blocks.POWDER_SNOW) || YardClearingPiece.isVegetation(state);
     }
 
     private boolean overlaps(Yard candidate, List<Yard> yards, Map<String, StructureTemplate> sizes)
@@ -939,6 +1016,14 @@ public class NortheastCourtyardStructure extends Structure
     }
 
     public record Yard(String template, BlockPos pos, Rotation rotation, boolean blackSoil)
+    {
+    }
+
+    record TerrainProbe(int groundY, boolean wet)
+    {
+    }
+
+    record FootprintTerrain(int minGroundY, int maxGroundY, int medianGroundY)
     {
     }
 }

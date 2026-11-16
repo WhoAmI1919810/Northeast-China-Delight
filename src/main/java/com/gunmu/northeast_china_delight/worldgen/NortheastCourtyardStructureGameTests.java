@@ -5,7 +5,10 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.util.RandomSource;
+import net.minecraft.world.level.NoiseColumn;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.Rotation;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.levelgen.WorldgenRandom;
 //? if <1.20.2 {
 /*import net.minecraftforge.gametest.GameTestHolder;
@@ -16,6 +19,7 @@ import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
 //?}
 
 import java.util.HashSet;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 
@@ -67,65 +71,148 @@ public final class NortheastCourtyardStructureGameTests
     }
 
     @GameTest(template = "empty")
-    public static void secondYardAcceptsDryLandButRejectsWaterAndWorldEdges(GameTestHelper helper)
+    public static void terrainBoundsKeepYardsAwayFromWorldEdges(GameTestHelper helper)
     {
         int minY = -64;
         int maxY = 320;
-        helper.assertTrue(NortheastCourtyardStructure.isSecondYardTerrainSuitable(64, 64, minY, maxY),
-                "地表与海床高度一致时应视为干燥陆地");
-        helper.assertTrue(!NortheastCourtyardStructure.isSecondYardTerrainSuitable(63, 64, minY, maxY),
-                "地表高于海床说明水面上方，第二座不得落在水里");
-        helper.assertTrue(NortheastCourtyardStructure.isSecondYardTerrainSuitable(minY + 12, minY + 12, minY, maxY),
+        helper.assertTrue(NortheastCourtyardStructure.isTerrainHeightWithinBounds(64, minY, maxY),
+                "普通地表高度应允许生成");
+        helper.assertTrue(NortheastCourtyardStructure.isTerrainHeightWithinBounds(minY + 12, minY, maxY),
                 "刚好高于世界底部安全线的位置应允许生成");
-        helper.assertTrue(!NortheastCourtyardStructure.isSecondYardTerrainSuitable(minY + 11, minY + 11, minY, maxY),
+        helper.assertTrue(!NortheastCourtyardStructure.isTerrainHeightWithinBounds(minY + 11, minY, maxY),
                 "过低的位置应视为浮空或世界边缘并拒绝");
-        helper.assertTrue(NortheastCourtyardStructure.isSecondYardTerrainSuitable(maxY - 32, maxY - 32, minY, maxY),
+        helper.assertTrue(NortheastCourtyardStructure.isTerrainHeightWithinBounds(maxY - 32, minY, maxY),
                 "刚好低于世界顶部安全线的位置应允许生成");
-        helper.assertTrue(!NortheastCourtyardStructure.isSecondYardTerrainSuitable(maxY - 31, maxY - 31, minY, maxY),
+        helper.assertTrue(!NortheastCourtyardStructure.isTerrainHeightWithinBounds(maxY - 31, minY, maxY),
                 "过高的位置应视为浮空或世界边缘并拒绝");
         helper.succeed();
     }
 
     @GameTest(template = "empty")
-    public static void secondYardFootprintRejectsBuriedAndFloatingSamples(GameTestHelper helper)
+    public static void terrainProbeIgnoresSnowAndTreesButRejectsFluidsAndIce(GameTestHelper helper)
     {
-        int anchor = 64;
-        int maxSlope = 6;
-        helper.assertTrue(NortheastCourtyardStructure.isSecondYardFootprintHeightSuitable(
-                anchor, anchor - 3, maxSlope), "第二座允许院内局部低 3 格");
-        helper.assertTrue(!NortheastCourtyardStructure.isSecondYardFootprintHeightSuitable(
-                anchor, anchor - 4, maxSlope), "低差超过 3 格会形成整块高台，必须拒绝");
-        helper.assertTrue(NortheastCourtyardStructure.isSecondYardFootprintHeightSuitable(
-                anchor, anchor + 2, maxSlope), "第二座允许院内局部高 2 格");
-        helper.assertTrue(!NortheastCourtyardStructure.isSecondYardFootprintHeightSuitable(
-                anchor, anchor + 3, maxSlope), "高差超过 2 格应视为会被地形埋住");
+        int minY = -64;
+        int maxY = 100;
+        NoiseColumn snowyForest = solidColumn(minY, maxY, 60, Blocks.GRASS_BLOCK.defaultBlockState());
+        snowyForest.setBlock(61, Blocks.SNOW.defaultBlockState());
+        snowyForest.setBlock(62, Blocks.OAK_LEAVES.defaultBlockState());
+        snowyForest.setBlock(63, Blocks.OAK_LOG.defaultBlockState());
+        helper.assertTrue(NortheastCourtyardStructure.inspectTerrainColumn(snowyForest, minY, maxY)
+                        .filter(probe -> probe.groundY() == 60 && !probe.wet()).isPresent(),
+                "雪层与树冠不能抬高或污染干燥地表判定");
+
+        NoiseColumn water = solidColumn(minY, maxY, 60, Blocks.GRAVEL.defaultBlockState());
+        water.setBlock(61, Blocks.WATER.defaultBlockState());
+        water.setBlock(62, Blocks.WATER.defaultBlockState());
+        helper.assertTrue(NortheastCourtyardStructure.inspectTerrainColumn(water, minY, maxY)
+                        .filter(NortheastCourtyardStructure.TerrainProbe::wet).isPresent(),
+                "河流或湖面即使高度相同也必须判为湿区");
+
+        for (BlockState ice : List.of(Blocks.ICE.defaultBlockState(), Blocks.PACKED_ICE.defaultBlockState(),
+                Blocks.BLUE_ICE.defaultBlockState(), Blocks.FROSTED_ICE.defaultBlockState()))
+        {
+            NoiseColumn frozen = solidColumn(minY, maxY, 60, Blocks.GRAVEL.defaultBlockState());
+            frozen.setBlock(61, Blocks.WATER.defaultBlockState());
+            frozen.setBlock(62, ice);
+            helper.assertTrue(NortheastCourtyardStructure.inspectTerrainColumn(frozen, minY, maxY)
+                            .filter(NortheastCourtyardStructure.TerrainProbe::wet).isPresent(),
+                    "结冰水面不能绕过湿区判定：" + ice);
+        }
         helper.succeed();
     }
 
     @GameTest(template = "empty")
-    public static void firstYardFootprintRejectsTerraceEdges(GameTestHelper helper)
+    public static void gatePathWaterCheckMatchesTheAreaClearingActuallyFills(GameTestHelper helper)
     {
-        int anchor = 64;
+        int minX = 100;
+        int minZ = 200;
+        int sizeX = 34;
+        int sizeZ = 20;
+        int centerX = 100 + 34 / 2;
+        int southPathEnd = minZ + sizeZ - 1 + YardClearingPiece.GATE_PATH_LENGTH;
+        int northPathEnd = minZ - YardClearingPiece.GATE_PATH_LENGTH;
+        helper.assertTrue(!NortheastCourtyardStructure.gatePathPasses(minX, minZ, sizeX, sizeZ, 1,
+                        (x, z) -> !(x == centerX && z == southPathEnd),
+                        YardClearingPiece.GATE_PATH_LENGTH),
+                "南门通道内出现水时必须否决候选");
+        helper.assertTrue(NortheastCourtyardStructure.gatePathPasses(minX, minZ, sizeX, sizeZ, 1,
+                        (x, z) -> !(x == centerX && z == southPathEnd + 1),
+                        YardClearingPiece.GATE_PATH_LENGTH),
+                "门前通道之外一格的水不属于清场填地范围，不得因此误拒整块院址");
+        helper.assertTrue(!NortheastCourtyardStructure.gatePathPasses(minX, minZ, sizeX, sizeZ, -1,
+                        (x, z) -> !(x == centerX && z == northPathEnd),
+                        YardClearingPiece.GATE_PATH_LENGTH),
+                "北门通道也必须按实际清场范围检查水");
+        helper.succeed();
+    }
+
+    @GameTest(template = "empty")
+    public static void foundationWaterScanCoversEveryColumnIncludingInterior(GameTestHelper helper)
+    {
+        int sizeX = 34;
+        int sizeZ = 20;
+        int margin = YardClearingPiece.FOUNDATION_MARGIN;
+        Set<Long> visited = new HashSet<>();
+        helper.assertTrue(NortheastCourtyardStructure.footprintColumnsPass(sizeX, sizeZ, margin,
+                        (dx, dz) -> visited.add(cellKey(dx, dz))),
+                "干燥的完整 footprint 应通过逐格检查");
+        helper.assertTrue(visited.size() == (sizeX + margin * 2) * (sizeZ + margin * 2),
+                "临水检查必须覆盖 footprint 外扩后的每一格，不能再按 2 格采样");
+        helper.assertTrue(visited.contains(cellKey(-margin, -margin))
+                        && visited.contains(cellKey(sizeX - 1 + margin, sizeZ - 1 + margin)),
+                "外扩后的四个边界都必须纳入检查");
+        helper.assertTrue(!visited.contains(cellKey(-margin - 1, 0))
+                        && !visited.contains(cellKey(sizeX + margin, 0)),
+                "检查不得越过实际填地范围继续扩张");
+
+        int holeX = 11;
+        int holeZ = 7;
+        helper.assertTrue(!NortheastCourtyardStructure.footprintColumnsPass(sizeX, sizeZ, margin,
+                        (dx, dz) -> dx != holeX || dz != holeZ),
+                "footprint 内部任意一格水都必须否决候选，包括旧采样步长会跳过的奇数坐标");
+        helper.succeed();
+    }
+
+    @GameTest(template = "empty")
+    public static void foundationFillNeverReplacesWaterOrIce(GameTestHelper helper)
+    {
+        helper.assertTrue(YardClearingPiece.shouldFillFoundation(Blocks.AIR.defaultBlockState()),
+                "地基应填补空气");
+        helper.assertTrue(YardClearingPiece.shouldFillFoundation(Blocks.OAK_LEAVES.defaultBlockState()),
+                "地基应清掉植被后填补");
+        helper.assertTrue(!YardClearingPiece.shouldFillFoundation(Blocks.WATER.defaultBlockState()),
+                "水绝不能在地基填充时被换成泥土");
+        helper.assertTrue(!YardClearingPiece.shouldFillFoundation(Blocks.ICE.defaultBlockState()),
+                "冰绝不能在地基填充时被换成泥土");
+        helper.assertTrue(!YardClearingPiece.shouldFillFoundation(Blocks.BLUE_ICE.defaultBlockState()),
+                "蓝冰同样不能被填成泥土");
+        helper.succeed();
+    }
+
+    @GameTest(template = "empty")
+    public static void footprintHeightAllowsGentleSlopeButRejectsBuriedWalls(GameTestHelper helper)
+    {
         helper.assertTrue(NortheastCourtyardStructure.isFootprintHeightSuitable(
-                anchor, anchor - NortheastCourtyardStructure.YARD_FOOTPRINT_DROP_LIMIT,
-                NortheastCourtyardStructure.YARD_FOOTPRINT_DROP_LIMIT,
-                NortheastCourtyardStructure.YARD_FOOTPRINT_RISE_LIMIT),
-                "第一座允许院内低 2 格");
+                        64, 61, 67,
+                        NortheastCourtyardStructure.YARD_FOOTPRINT_DROP_LIMIT,
+                        NortheastCourtyardStructure.YARD_FOOTPRINT_RISE_LIMIT),
+                "中位落位后，低三格、高三格的缓坡不应否决整个院落");
         helper.assertTrue(!NortheastCourtyardStructure.isFootprintHeightSuitable(
-                anchor, anchor - NortheastCourtyardStructure.YARD_FOOTPRINT_DROP_LIMIT - 1,
-                NortheastCourtyardStructure.YARD_FOOTPRINT_DROP_LIMIT,
-                NortheastCourtyardStructure.YARD_FOOTPRINT_RISE_LIMIT),
-                "第一座不得再靠清场件填出三层以上的土台");
-        helper.assertTrue(NortheastCourtyardStructure.isFootprintHeightSuitable(
-                anchor, anchor + NortheastCourtyardStructure.YARD_FOOTPRINT_RISE_LIMIT,
-                NortheastCourtyardStructure.YARD_FOOTPRINT_DROP_LIMIT,
-                NortheastCourtyardStructure.YARD_FOOTPRINT_RISE_LIMIT),
-                "第一座允许院内高 1 格");
+                        64, 60, 64,
+                        NortheastCourtyardStructure.YARD_FOOTPRINT_DROP_LIMIT,
+                        NortheastCourtyardStructure.YARD_FOOTPRINT_RISE_LIMIT),
+                "低处超过三格会在院前形成高台，必须拒绝");
         helper.assertTrue(!NortheastCourtyardStructure.isFootprintHeightSuitable(
-                anchor, anchor + NortheastCourtyardStructure.YARD_FOOTPRINT_RISE_LIMIT + 1,
-                NortheastCourtyardStructure.YARD_FOOTPRINT_DROP_LIMIT,
-                NortheastCourtyardStructure.YARD_FOOTPRINT_RISE_LIMIT),
-                "更高的地形会埋住院落，必须拒绝");
+                        64, 64, 68,
+                        NortheastCourtyardStructure.YARD_FOOTPRINT_DROP_LIMIT,
+                        NortheastCourtyardStructure.YARD_FOOTPRINT_RISE_LIMIT),
+                "高处超过三格会埋住院墙，必须拒绝");
+        helper.assertTrue(NortheastCourtyardStructure.isFootprintReliefSuitable(
+                        60, 66, NortheastCourtyardStructure.SECOND_YARD_FOOTPRINT_RELIEF_LIMIT),
+                "第二座允许六格以内的整体起伏");
+        helper.assertTrue(!NortheastCourtyardStructure.isFootprintReliefSuitable(
+                        60, 67, NortheastCourtyardStructure.SECOND_YARD_FOOTPRINT_RELIEF_LIMIT),
+                "第二座整体起伏超过六格仍应另找落点");
         helper.succeed();
     }
 
@@ -266,5 +353,22 @@ public final class NortheastCourtyardStructureGameTests
     {
         float actual = NortheastCourtyardStructure.walkChanceFor(placedCount, 0.80F);
         helper.assertTrue(Math.abs(actual - expected) < 0.0001F, message + "，实际 " + actual);
+    }
+
+    private static long cellKey(int x, int z)
+    {
+        return ((long) x << 32) ^ (z & 0xFFFFFFFFL);
+    }
+
+    private static NoiseColumn solidColumn(int minY, int maxY, int groundY, BlockState ground)
+    {
+        BlockState[] states = new BlockState[maxY - minY + 1];
+        Arrays.fill(states, Blocks.AIR.defaultBlockState());
+        for (int y = minY; y < groundY; y++)
+        {
+            states[y - minY] = Blocks.STONE.defaultBlockState();
+        }
+        states[groundY - minY] = ground;
+        return new NoiseColumn(minY, states);
     }
 }
