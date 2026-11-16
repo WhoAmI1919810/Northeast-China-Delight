@@ -92,13 +92,40 @@ public final class NortheastCourtyardStructureGameTests
         int anchor = 64;
         int maxSlope = 6;
         helper.assertTrue(NortheastCourtyardStructure.isSecondYardFootprintHeightSuitable(
-                anchor, anchor - 6, maxSlope), "低于锚点 6 格以内应仍视为有地形支撑");
+                anchor, anchor - 3, maxSlope), "第二座允许院内局部低 3 格");
         helper.assertTrue(!NortheastCourtyardStructure.isSecondYardFootprintHeightSuitable(
-                anchor, anchor - 7, maxSlope), "低于锚点过多应视为悬空");
+                anchor, anchor - 4, maxSlope), "低差超过 3 格会形成整块高台，必须拒绝");
         helper.assertTrue(NortheastCourtyardStructure.isSecondYardFootprintHeightSuitable(
-                anchor, anchor + 3, maxSlope), "高于锚点 3 格以内应允许");
+                anchor, anchor + 2, maxSlope), "第二座允许院内局部高 2 格");
         helper.assertTrue(!NortheastCourtyardStructure.isSecondYardFootprintHeightSuitable(
-                anchor, anchor + 4, maxSlope), "高于锚点过多应视为被地形埋住");
+                anchor, anchor + 3, maxSlope), "高差超过 2 格应视为会被地形埋住");
+        helper.succeed();
+    }
+
+    @GameTest(template = "empty")
+    public static void firstYardFootprintRejectsTerraceEdges(GameTestHelper helper)
+    {
+        int anchor = 64;
+        helper.assertTrue(NortheastCourtyardStructure.isFootprintHeightSuitable(
+                anchor, anchor - NortheastCourtyardStructure.YARD_FOOTPRINT_DROP_LIMIT,
+                NortheastCourtyardStructure.YARD_FOOTPRINT_DROP_LIMIT,
+                NortheastCourtyardStructure.YARD_FOOTPRINT_RISE_LIMIT),
+                "第一座允许院内低 2 格");
+        helper.assertTrue(!NortheastCourtyardStructure.isFootprintHeightSuitable(
+                anchor, anchor - NortheastCourtyardStructure.YARD_FOOTPRINT_DROP_LIMIT - 1,
+                NortheastCourtyardStructure.YARD_FOOTPRINT_DROP_LIMIT,
+                NortheastCourtyardStructure.YARD_FOOTPRINT_RISE_LIMIT),
+                "第一座不得再靠清场件填出三层以上的土台");
+        helper.assertTrue(NortheastCourtyardStructure.isFootprintHeightSuitable(
+                anchor, anchor + NortheastCourtyardStructure.YARD_FOOTPRINT_RISE_LIMIT,
+                NortheastCourtyardStructure.YARD_FOOTPRINT_DROP_LIMIT,
+                NortheastCourtyardStructure.YARD_FOOTPRINT_RISE_LIMIT),
+                "第一座允许院内高 1 格");
+        helper.assertTrue(!NortheastCourtyardStructure.isFootprintHeightSuitable(
+                anchor, anchor + NortheastCourtyardStructure.YARD_FOOTPRINT_RISE_LIMIT + 1,
+                NortheastCourtyardStructure.YARD_FOOTPRINT_DROP_LIMIT,
+                NortheastCourtyardStructure.YARD_FOOTPRINT_RISE_LIMIT),
+                "更高的地形会埋住院落，必须拒绝");
         helper.succeed();
     }
 
