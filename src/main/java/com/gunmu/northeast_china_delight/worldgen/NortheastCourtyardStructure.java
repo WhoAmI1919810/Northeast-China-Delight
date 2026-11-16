@@ -56,6 +56,8 @@ import java.util.Optional;
  * 无条件寻找第二座，第二座只要求干燥、地形支撑和与第一座不重叠，并且必须换一种模板。
  * 找不到合格的第二座时整簇不生成，避免留下独户。第三座起从东西南北四个方向按
  * {@code walk_chance} 梯度继续扩展；第三座起每座都从完整模板池独立抽取，允许重复。
+ * 第一座院子的可行朝向确定院群主门向；后续院子在门口地形允许时优先沿用主门向，
+ * 主门向不可通行或门前会撞已有院子时自动反向。第二座不会仅因门向不同而失败。
  * 单个 placement 区域最多尝试三个候选点：原候选区块内一次，失败后在周围 ±3 区块内
  * 各再补一次；三次都失败才放弃这个区域。
  */
@@ -85,6 +87,7 @@ public class NortheastCourtyardStructure extends Structure
     public static final int LATERAL_JITTER = 6;
     public static final int GATE_CHECK_WIDTH = 18;
     public static final int MAX_GATE_SLOPE = 4;
+    private static final float CLUSTER_FACING_CHANCE = 0.8F;
     public static final float BLACK_SOIL_DENSITY = 0.12F;
     public static final float BIOME_SOIL_DENSITY = 0.25F;
 
@@ -225,8 +228,14 @@ public class NortheastCourtyardStructure extends Structure
                 }
                 StructureTemplate template = context.structureTemplateManager()
                         .getOrCreate(DdIds.parse(yard.template()));
-                builder.addPiece(new YardClearingPiece(yard.pos(),
-                        template.getSize().getX(), template.getSize().getZ(),
+                int sizeX = template.getSize().getX();
+                int sizeZ = template.getSize().getZ();
+                BlockPos clearingOrigin = new BlockPos(
+                        footprintMinX(yard.pos().getX(), sizeX, yard.rotation()),
+                        yard.pos().getY(),
+                        footprintMinZ(yard.pos().getZ(), sizeZ, yard.rotation()));
+                builder.addPiece(new YardClearingPiece(clearingOrigin,
+                        sizeX, sizeZ,
                         yard.pos().getY() + GROUND_LAYER_IN_TEMPLATE,
                         this.clearRadius, this.clearAbove,
                         yard.rotation() == Rotation.CLOCKWISE_180 ? -1 : 1));
@@ -239,8 +248,12 @@ public class NortheastCourtyardStructure extends Structure
                         yard.template(), yard.pos(), yard.rotation()));
                 if (yard.blackSoil() && this.blackSoilRadius > 0)
                 {
-                    BlockPos center = yard.pos().offset(
-                            yardTemplate.getSize().getX() / 2, 0, yardTemplate.getSize().getZ() / 2);
+                    int sizeX = yardTemplate.getSize().getX();
+                    int sizeZ = yardTemplate.getSize().getZ();
+                    BlockPos center = new BlockPos(
+                            footprintMinX(yard.pos().getX(), sizeX, yard.rotation()) + sizeX / 2,
+                            yard.pos().getY(),
+                            footprintMinZ(yard.pos().getZ(), sizeZ, yard.rotation()) + sizeZ / 2);
                     builder.addPiece(new BlackSoilPiece(center, this.blackSoilRadius, BLACK_SOIL_DENSITY));
                     builder.addPiece(new BiomeRichSoilPiece(center, this.blackSoilRadius * 4, BIOME_SOIL_DENSITY));
                 }
@@ -262,12 +275,13 @@ public class NortheastCourtyardStructure extends Structure
         List<Yard> yards = new ArrayList<>();
         Map<String, StructureTemplate> sizes = new HashMap<>();
         Yard first = this.tryMakeYard(context, random, sizes,
-                this.pickTemplate(random), startX, startZ);
+                this.pickTemplate(random), startX, startZ, null, List.of());
         if (first == null)
         {
             return List.of();
         }
         yards.add(first);
+        Rotation preferred = first.rotation();
         Yard second = this.makeSecondYard(context, random, sizes, first);
         if (second == null)
         {
@@ -301,7 +315,8 @@ public class NortheastCourtyardStructure extends Structure
                         ? random.nextInt(LATERAL_JITTER * 2 + 1) - LATERAL_JITTER : 0;
                 int[] next = this.stepPosition(current, currentSize, nextSize,
                         direction.getStepX(), direction.getStepZ(), distance, lateral);
-                Yard candidate = this.tryMakeYard(context, random, sizes, template, next[0], next[1]);
+                Yard candidate = this.tryMakeYard(context, random, sizes, template,
+                        next[0], next[1], preferred, yards);
                 if (candidate == null || this.overlaps(candidate, yards, sizes))
                 {
                     continue;
@@ -352,7 +367,8 @@ public class NortheastCourtyardStructure extends Structure
                             ? random.nextInt(LATERAL_JITTER * 2 + 1) - LATERAL_JITTER : 0;
                     int[] next = this.stepPosition(first, firstSize, secondSize,
                             step[0], step[1], distance, lateral);
-                    Yard candidate = this.tryMakeSecondYard(context, random, sizes, template, next[0], next[1]);
+                    Yard candidate = this.tryMakeSecondYard(context, random, sizes, template,
+                            next[0], next[1], first);
                     if (candidate != null && !this.overlaps(candidate, List.of(first), sizes))
                     {
                         return candidate;
@@ -364,7 +380,8 @@ public class NortheastCourtyardStructure extends Structure
     }
 
     private Yard tryMakeSecondYard(GenerationContext context, WorldgenRandom random,
-                                   Map<String, StructureTemplate> sizes, String template, int x, int z)
+                                   Map<String, StructureTemplate> sizes, String template,
+                                   int x, int z, Yard first)
     {
         int surface = context.chunkGenerator().getBaseHeight(x, z, Heightmap.Types.WORLD_SURFACE_WG,
                 context.heightAccessor(), context.randomState());
@@ -389,8 +406,14 @@ public class NortheastCourtyardStructure extends Structure
         boolean snowy = biome.value().getPrecipitationAt(new BlockPos(x, surface, z))
                 == net.minecraft.world.level.biome.Biome.Precipitation.SNOW;
         int sink = snowy ? 2 : 1;
-        BlockPos pos = new BlockPos(x, surface - GROUND_LAYER_IN_TEMPLATE - sink + YARD_RAISE, z);
-        return new Yard(template, pos, Rotation.NONE, blackSoil);
+        BlockPos footprintMin = new BlockPos(x, surface - GROUND_LAYER_IN_TEMPLATE - sink + YARD_RAISE, z);
+        Rotation rotation = this.pickSecondRotation(size, footprintMin, first, sizes, random);
+        if (rotation == null)
+        {
+            return null;
+        }
+        BlockPos placedPos = templateOrigin(footprintMin, size.getSize().getX(), size.getSize().getZ(), rotation);
+        return new Yard(template, placedPos, rotation, blackSoil);
     }
 
     private boolean secondYardFootprintOk(GenerationContext context, StructureTemplate size,
@@ -425,9 +448,13 @@ public class NortheastCourtyardStructure extends Structure
     {
         if ("center".equals(this.stepMeasure))
         {
+            int currentCenterX = footprintMinX(current.pos().getX(),
+                    currentSize.getSize().getX(), current.rotation()) + currentSize.getSize().getX() / 2;
+            int currentCenterZ = footprintMinZ(current.pos().getZ(),
+                    currentSize.getSize().getZ(), current.rotation()) + currentSize.getSize().getZ() / 2;
             return new int[]{
-                    current.pos().getX() + stepX * distance,
-                    current.pos().getZ() + stepZ * distance
+                    currentCenterX + stepX * distance,
+                    currentCenterZ + stepZ * distance
             };
         }
         int currentMinX = footprintMinX(current.pos().getX(), currentSize.getSize().getX(), current.rotation());
@@ -496,7 +523,8 @@ public class NortheastCourtyardStructure extends Structure
     }
 
     private Yard tryMakeYard(GenerationContext context, WorldgenRandom random,
-                            Map<String, StructureTemplate> sizes, String template, int x, int z)
+                            Map<String, StructureTemplate> sizes, String template, int x, int z,
+                            Rotation preferred, List<Yard> existingYards)
     {
         int surface = context.chunkGenerator().getBaseHeight(x, z, Heightmap.Types.WORLD_SURFACE_WG,
                 context.heightAccessor(), context.randomState());
@@ -540,59 +568,169 @@ public class NortheastCourtyardStructure extends Structure
         {
             return null;
         }
-        sizes.computeIfAbsent(template, id -> context.structureTemplateManager().getOrCreate(DdIds.parse(id)));
+        StructureTemplate templateSize = sizes.computeIfAbsent(template,
+                id -> context.structureTemplateManager().getOrCreate(DdIds.parse(id)));
         boolean blackSoil = this.blackSoilChance > 0.0F && random.nextFloat() < this.blackSoilChance;
         // 院子的草地比外边地面高 YARD_RAISE 格。雪原的高度图会把雪层也算进去，
         // 所以下雪的地方仍多压一格作为高度图补偿；YARD_RAISE 再统一抬高院面。
         boolean snowy = biome.value().getPrecipitationAt(new BlockPos(x, surface, z))
                 == net.minecraft.world.level.biome.Biome.Precipitation.SNOW;
         int sink = snowy ? 2 : 1;
-        BlockPos pos = new BlockPos(x, surface - GROUND_LAYER_IN_TEMPLATE - sink + YARD_RAISE, z);
-        Rotation rotation = this.pickRotation(context, template, pos, surface, random);
+        BlockPos footprintMin = new BlockPos(x, surface - GROUND_LAYER_IN_TEMPLATE - sink + YARD_RAISE, z);
+        Rotation rotation = this.pickRotation(context, templateSize, footprintMin, surface,
+                random, preferred, existingYards, sizes);
         if (rotation == null)
         {
             return null;
         }
-        return new Yard(template, pos, rotation, blackSoil);
+        BlockPos placedPos = templateOrigin(footprintMin, templateSize.getSize().getX(),
+                templateSize.getSize().getZ(), rotation);
+        return new Yard(template, placedPos, rotation, blackSoil);
     }
 
     /**
-     * 挑院子朝向：南向（NONE）和北向（CLOCKWISE_180）里选一个门口能走人的。
-     * 门口前方一段距离内不能是水面，地形高差也不能太大（悬崖、石壁都算不合格）。
-     * 两个方向都不行就返回 null —— 这一支游走到此为止。
+     * 挑院子朝向：先淘汰门口地形不可通行的方向，再尽量服从院群主门向。
+     * 主门向只是偏好；门口会被已有院子挡住时允许反向。
      */
-    private Rotation pickRotation(GenerationContext context, String template, BlockPos pos,
-                                  int surface, WorldgenRandom random)
+    private Rotation pickRotation(GenerationContext context, StructureTemplate template, BlockPos footprintMin,
+                                  int surface, WorldgenRandom random, Rotation preferred,
+                                  List<Yard> existingYards, Map<String, StructureTemplate> sizes)
     {
-        boolean[] preferFlip = {random.nextBoolean()};
-        Rotation first = (this.allowFlip && preferFlip[0]) ? Rotation.CLOCKWISE_180 : Rotation.NONE;
-        Rotation second = first == Rotation.NONE ? Rotation.CLOCKWISE_180 : Rotation.NONE;
-        if (!this.allowFlip || this.gateCheckDepth <= 0)
+        if (!this.allowFlip)
         {
-            return first;
+            return Rotation.NONE;
         }
-        if (this.gateFrontOk(context, template, pos, first, surface))
+        int sizeX = template.getSize().getX();
+        int sizeZ = template.getSize().getZ();
+        boolean noneGateOk = this.gateCheckDepth <= 0
+                || this.gateFrontOk(context, template, footprintMin, Rotation.NONE, surface);
+        boolean flippedGateOk = this.gateCheckDepth <= 0
+                || this.gateFrontOk(context, template, footprintMin, Rotation.CLOCKWISE_180, surface);
+        boolean noneFrontageClear = !this.gateApronBlocked(footprintMin, sizeX, sizeZ,
+                Rotation.NONE, existingYards, sizes);
+        boolean flippedFrontageClear = !this.gateApronBlocked(footprintMin, sizeX, sizeZ,
+                Rotation.CLOCKWISE_180, existingYards, sizes);
+        return chooseRotation(preferred, noneGateOk, flippedGateOk,
+                noneFrontageClear, flippedFrontageClear, random.nextFloat());
+    }
+
+    private Rotation pickSecondRotation(StructureTemplate template, BlockPos footprintMin, Yard first,
+                                        Map<String, StructureTemplate> sizes, WorldgenRandom random)
+    {
+        if (!this.allowFlip)
         {
-            return first;
+            return Rotation.NONE;
         }
-        if (this.gateFrontOk(context, template, pos, second, surface))
+        int sizeX = template.getSize().getX();
+        int sizeZ = template.getSize().getZ();
+        boolean noneFrontageClear = !this.gateApronBlocked(footprintMin, sizeX, sizeZ,
+                Rotation.NONE, List.of(first), sizes);
+        boolean flippedFrontageClear = !this.gateApronBlocked(footprintMin, sizeX, sizeZ,
+                Rotation.CLOCKWISE_180, List.of(first), sizes);
+        return chooseRotation(first.rotation(), true, true,
+                noneFrontageClear, flippedFrontageClear, random.nextFloat());
+    }
+
+    static Rotation chooseRotation(Rotation preferred, boolean noneGateOk, boolean flippedGateOk,
+                                   boolean noneFrontageClear, boolean flippedFrontageClear, float roll)
+    {
+        boolean noneUsable = noneGateOk && noneFrontageClear;
+        boolean flippedUsable = flippedGateOk && flippedFrontageClear;
+        if (!noneUsable && !flippedUsable)
         {
-            return second;
+            return null;
         }
-        return null;
+        if (noneUsable != flippedUsable)
+        {
+            return noneUsable ? Rotation.NONE : Rotation.CLOCKWISE_180;
+        }
+        if (preferred == Rotation.CLOCKWISE_180)
+        {
+            return roll < CLUSTER_FACING_CHANCE ? Rotation.CLOCKWISE_180 : Rotation.NONE;
+        }
+        if (preferred == Rotation.NONE)
+        {
+            return roll < CLUSTER_FACING_CHANCE ? Rotation.NONE : Rotation.CLOCKWISE_180;
+        }
+        return roll < 0.5F ? Rotation.NONE : Rotation.CLOCKWISE_180;
+    }
+
+    /** 选区统一使用院子包围盒最小角；180 度模板原点在包围盒的对角。 */
+    static BlockPos templateOrigin(BlockPos footprintMin, int sizeX, int sizeZ, Rotation rotation)
+    {
+        return rotation == Rotation.CLOCKWISE_180
+                ? footprintMin.offset(sizeX - 1, 0, sizeZ - 1)
+                : footprintMin;
+    }
+
+    static int gateCenterX(BlockPos footprintMin, int sizeX)
+    {
+        return footprintMin.getX() + sizeX / 2;
+    }
+
+    static int gateEdgeZ(BlockPos footprintMin, int sizeZ, Rotation rotation)
+    {
+        return rotation == Rotation.CLOCKWISE_180
+                ? footprintMin.getZ()
+                : footprintMin.getZ() + sizeZ - 1;
+    }
+
+    static int gateStep(Rotation rotation)
+    {
+        return rotation == Rotation.CLOCKWISE_180 ? -1 : 1;
+    }
+
+    static boolean rectanglesOverlap(int aMinX, int aMinZ, int aMaxX, int aMaxZ,
+                                     int bMinX, int bMinZ, int bMaxX, int bMaxZ)
+    {
+        return aMinX <= bMaxX && aMaxX >= bMinX && aMinZ <= bMaxZ && aMaxZ >= bMinZ;
+    }
+
+    private boolean gateApronBlocked(BlockPos footprintMin, int sizeX, int sizeZ, Rotation rotation,
+                                     List<Yard> yards, Map<String, StructureTemplate> sizes)
+    {
+        if (yards.isEmpty())
+        {
+            return false;
+        }
+        int centerX = gateCenterX(footprintMin, sizeX);
+        int edgeZ = gateEdgeZ(footprintMin, sizeZ, rotation);
+        int step = gateStep(rotation);
+        int apronMinX = centerX - YardClearingPiece.GATE_PATH_HALF_WIDTH;
+        int apronMaxX = centerX + YardClearingPiece.GATE_PATH_HALF_WIDTH;
+        int apronNearZ = edgeZ + step;
+        int apronFarZ = edgeZ + step * YardClearingPiece.GATE_PATH_LENGTH;
+        int apronMinZ = Math.min(apronNearZ, apronFarZ);
+        int apronMaxZ = Math.max(apronNearZ, apronFarZ);
+        for (Yard yard : yards)
+        {
+            StructureTemplate other = sizes.get(yard.template());
+            if (other == null)
+            {
+                continue;
+            }
+            int otherSizeX = other.getSize().getX();
+            int otherSizeZ = other.getSize().getZ();
+            int otherMinX = footprintMinX(yard.pos().getX(), otherSizeX, yard.rotation());
+            int otherMinZ = footprintMinZ(yard.pos().getZ(), otherSizeZ, yard.rotation());
+            if (rectanglesOverlap(apronMinX, apronMinZ, apronMaxX, apronMaxZ,
+                    otherMinX, otherMinZ, otherMinX + otherSizeX - 1, otherMinZ + otherSizeZ - 1))
+            {
+                return true;
+            }
+        }
+        return false;
     }
 
     /** 门口前方那块地能不能走人 */
-    private boolean gateFrontOk(GenerationContext context, String template, BlockPos pos,
+    private boolean gateFrontOk(GenerationContext context, StructureTemplate template, BlockPos footprintMin,
                                 Rotation rotation, int yardSurface)
     {
-        StructureTemplate t = context.structureTemplateManager().getOrCreate(DdIds.parse(template));
-        int sizeX = t.getSize().getX();
-        int sizeZ = t.getSize().getZ();
-        boolean flipped = rotation == Rotation.CLOCKWISE_180;
-        int centerX = pos.getX() + sizeX / 2;
-        int edgeZ = flipped ? pos.getZ() : pos.getZ() + sizeZ - 1;
-        int step = flipped ? -1 : 1;
+        int sizeX = template.getSize().getX();
+        int sizeZ = template.getSize().getZ();
+        int centerX = gateCenterX(footprintMin, sizeX);
+        int edgeZ = gateEdgeZ(footprintMin, sizeZ, rotation);
+        int step = gateStep(rotation);
         for (int dx = -GATE_CHECK_WIDTH / 2; dx <= GATE_CHECK_WIDTH / 2; dx += 2)
         {
             for (int dz = 2; dz <= this.gateCheckDepth; dz += 2)

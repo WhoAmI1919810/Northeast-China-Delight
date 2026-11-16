@@ -1,6 +1,7 @@
 package com.gunmu.northeast_china_delight.worldgen;
 
 import com.gunmu.northeast_china_delight.NortheastChinaDelight;
+import net.minecraft.core.BlockPos;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.util.RandomSource;
@@ -125,6 +126,101 @@ public final class NortheastCourtyardStructureGameTests
                 "180 度院子向东步进后，下一座应从真实东边界外留出间距");
         helper.assertTrue(NortheastCourtyardStructure.gapStepOrigin(rotatedMin, 34, 20, -1, 20, 0) == 27,
                 "180 度院子向西步进后，下一座应从真实西边界外留出间距");
+        helper.succeed();
+    }
+
+    @GameTest(template = "empty")
+    public static void clusterFacingKeepsFirstYardDirectionMostOfTheTime(GameTestHelper helper)
+    {
+        helper.assertTrue(NortheastCourtyardStructure.chooseRotation(
+                        Rotation.NONE, true, true, true, true, 0.79F) == Rotation.NONE,
+                "两侧都能通行时，南向主门向应在 80% 的掷骰中保持不变");
+        helper.assertTrue(NortheastCourtyardStructure.chooseRotation(
+                        Rotation.NONE, true, true, true, true, 0.81F) == Rotation.CLOCKWISE_180,
+                "南向主门向应有 20% 概率尝试反向，避免院群过于机械");
+        helper.assertTrue(NortheastCourtyardStructure.chooseRotation(
+                        Rotation.CLOCKWISE_180, true, true, true, true, 0.79F) == Rotation.CLOCKWISE_180,
+                "北向主门向同样应在 80% 的掷骰中保持不变");
+        helper.assertTrue(NortheastCourtyardStructure.chooseRotation(
+                        Rotation.CLOCKWISE_180, true, true, true, true, 0.81F) == Rotation.NONE,
+                "北向主门向应有 20% 概率尝试反向");
+        helper.assertTrue(NortheastCourtyardStructure.chooseRotation(
+                        null, true, true, true, true, 0.49F) == Rotation.NONE,
+                "第一座没有主门向时，两向都应可随机参与");
+        helper.assertTrue(NortheastCourtyardStructure.chooseRotation(
+                        null, true, true, true, true, 0.51F) == Rotation.CLOCKWISE_180,
+                "第一座没有主门向时应保留两向各半的随机性");
+        helper.succeed();
+    }
+
+    @GameTest(template = "empty")
+    public static void clusterFacingFallsBackWhenPreferredGateTerrainIsUnusable(GameTestHelper helper)
+    {
+        helper.assertTrue(NortheastCourtyardStructure.chooseRotation(
+                        Rotation.NONE, false, true, true, true, 0.1F) == Rotation.CLOCKWISE_180,
+                "主门向门口地形不可用时应自动反向");
+        helper.assertTrue(NortheastCourtyardStructure.chooseRotation(
+                        Rotation.CLOCKWISE_180, true, false, true, true, 0.1F) == Rotation.NONE,
+                "北向主门不可用时应自动改走南门");
+        helper.assertTrue(NortheastCourtyardStructure.chooseRotation(
+                        Rotation.NONE, false, false, true, true, 0.1F) == null,
+                "两个门口地形都不可用时应放弃候选点，而不是硬放一座院子");
+        helper.succeed();
+    }
+
+    @GameTest(template = "empty")
+    public static void clusterFacingAvoidsExistingYardsBeforeKeepingPreference(GameTestHelper helper)
+    {
+        helper.assertTrue(NortheastCourtyardStructure.chooseRotation(
+                        Rotation.NONE, true, true, false, true, 0.1F) == Rotation.CLOCKWISE_180,
+                "主门向前方会撞已有院子时应优先反向");
+        helper.assertTrue(NortheastCourtyardStructure.chooseRotation(
+                        Rotation.CLOCKWISE_180, true, true, true, false, 0.1F) == Rotation.NONE,
+                "北向门前会撞已有院子时应优先改走南门");
+        helper.assertTrue(NortheastCourtyardStructure.chooseRotation(
+                        Rotation.NONE, true, true, false, false, 0.1F) == null,
+                "两个门前都撞已有院子时应放弃候选点");
+        helper.assertTrue(NortheastCourtyardStructure.chooseRotation(
+                        Rotation.NONE, false, true, true, false, 0.1F) == null,
+                "主门向地形不通且反向门前被挡时，不得退回一个不安全朝向");
+        helper.succeed();
+    }
+
+    @GameTest(template = "empty")
+    public static void rotatedTemplateOriginUsesTheSameFootprint(GameTestHelper helper)
+    {
+        BlockPos footprintMin = new BlockPos(100, 64, 200);
+        BlockPos southOrigin = NortheastCourtyardStructure.templateOrigin(
+                footprintMin, 34, 20, Rotation.NONE);
+        BlockPos northOrigin = NortheastCourtyardStructure.templateOrigin(
+                footprintMin, 34, 20, Rotation.CLOCKWISE_180);
+        helper.assertTrue(southOrigin.equals(footprintMin),
+                "未旋转院子的模板原点就是包围盒最小角");
+        helper.assertTrue(northOrigin.getX() == 133 && northOrigin.getZ() == 219,
+                "180 度院子的模板原点应移到包围盒对角");
+        helper.assertTrue(NortheastCourtyardStructure.footprintMinX(
+                        northOrigin.getX(), 34, Rotation.CLOCKWISE_180) == footprintMin.getX()
+                        && NortheastCourtyardStructure.footprintMinZ(
+                        northOrigin.getZ(), 20, Rotation.CLOCKWISE_180) == footprintMin.getZ(),
+                "模板原点与包围盒最小角必须能无损互转，避免放置时二次平移");
+        helper.succeed();
+    }
+
+    @GameTest(template = "empty")
+    public static void gateFacingUsesSharedFootprintEdges(GameTestHelper helper)
+    {
+        BlockPos footprintMin = new BlockPos(100, 64, 200);
+        helper.assertTrue(NortheastCourtyardStructure.gateCenterX(footprintMin, 34) == 117,
+                "两个朝向共用同一条门中心线");
+        helper.assertTrue(NortheastCourtyardStructure.gateEdgeZ(
+                        footprintMin, 20, Rotation.NONE) == 219,
+                "南向院门应位于包围盒南边");
+        helper.assertTrue(NortheastCourtyardStructure.gateEdgeZ(
+                        footprintMin, 20, Rotation.CLOCKWISE_180) == 200,
+                "北向院门应位于包围盒北边");
+        helper.assertTrue(NortheastCourtyardStructure.gateStep(Rotation.NONE) == 1
+                        && NortheastCourtyardStructure.gateStep(Rotation.CLOCKWISE_180) == -1,
+                "门前检查方向必须与院门所在边一致");
         helper.succeed();
     }
 
