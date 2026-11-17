@@ -89,7 +89,8 @@ public class NortheastCourtyardStructure extends Structure
             "northeast_china_delight:northeast_yard_tiled_house",
             "northeast_china_delight:northeast_yard_long_house",
             "northeast_china_delight:northeast_yard_brick_green_roof",
-            "northeast_china_delight:northeast_yard_manchu_thatch"
+            "northeast_china_delight:northeast_yard_manchu_thatch",
+            "northeast_china_delight:northeast_yard_korean"
     );
 
     public static final List<String> DEFAULT_AVOID_STRUCTURES = List.of(
