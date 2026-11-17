@@ -148,6 +148,34 @@ public final class MysteryStewGameTests {
     }
 
     @GameTest(template = "empty")
+    public static void bigPotStartDelayCountsDownInWholeSeconds(GameTestHelper helper) {
+        BigPotBlockEntity pot = new BigPotBlockEntity(BlockPos.ZERO, ModBlocks.BIG_STOVE.get().defaultBlockState());
+        pot.beginCooking(MysteryStew.ID, MysteryStew.COOKING_TIME, 60,
+                new ItemStack(ModItems.MYSTERY_STEW.get()));
+        helper.assertTrue(pot.startDelaySeconds() == 3,
+                "刚盖上锅盖应显示 3 秒，实际为 " + pot.startDelaySeconds());
+        advanceStartDelay(pot, 20);
+        helper.assertTrue(pot.startDelaySeconds() == 2,
+                "等待 1 秒后应显示 2 秒，实际为 " + pot.startDelaySeconds());
+        advanceStartDelay(pot, 20);
+        helper.assertTrue(pot.startDelaySeconds() == 1,
+                "等待 2 秒后应显示 1 秒，实际为 " + pot.startDelaySeconds());
+        advanceStartDelay(pot, 19);
+        helper.assertTrue(pot.startDelaySeconds() == 1,
+                "只剩不足 1 秒时仍应显示 1 秒，实际为 " + pot.startDelaySeconds());
+        advanceStartDelay(pot, 1);
+        helper.assertTrue(pot.startDelay() == 0 && pot.startDelaySeconds() == 0,
+                "等待结束后倒计时应归零");
+        helper.succeed();
+    }
+
+    private static void advanceStartDelay(BigPotBlockEntity pot, int ticks) {
+        for (int i = 0; i < ticks; i++) {
+            pot.tickStartDelay();
+        }
+    }
+
+    @GameTest(template = "empty")
     public static void bowlWritesEveryEffectToItsTag(GameTestHelper helper) {
         List<MysteryStewEffects.Entry> effects = mixedEffects();
         ItemStack stew = MysteryStewEffects.bowl(effects);
