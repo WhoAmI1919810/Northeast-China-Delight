@@ -217,20 +217,20 @@ public class SleepingPillowBlock extends FacingDecorBlock
     }
 
     /**
-     * 被子、睡眠侧空间和羊毛由同一次评估确定；空间问题优先于羊毛问题，避免逐项补查形成两套规则。
+     * 枕头本体、睡眠侧空间和羊毛先于被子评估；空间问题优先于羊毛问题，避免逐项补查形成两套规则。
      */
     public static SleepEvaluation evaluateSleep(Level level, BlockState state, BlockPos pos)
     {
-        Optional<BlockPos> quiltPos = findNearbyQuilt(level, pos);
-        if (quiltPos.isEmpty())
-        {
-            return new SleepEvaluation(null, null, MissingRequirement.QUILT);
-        }
-
         SideEvaluation side = evaluateSleepSide(level, state, pos);
         if (side.side() == null)
         {
             return new SleepEvaluation(null, null, side.missingRequirement());
+        }
+
+        Optional<BlockPos> quiltPos = findNearbyQuilt(level, pos);
+        if (quiltPos.isEmpty())
+        {
+            return new SleepEvaluation(null, null, MissingRequirement.QUILT);
         }
         return new SleepEvaluation(side.side(), quiltPos.get(), null);
     }
