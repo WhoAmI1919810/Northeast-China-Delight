@@ -32,7 +32,7 @@ public class QuiltSleepLayer extends RenderLayer<AbstractClientPlayer, PlayerMod
     private static final float MIN_Y = 0.0F;
     private static final float MAX_Y = 24.0F;
     private static final float TOP_Z = -4.0F;
-    private static final float EDGE_Z = -1.5F;
+    private static final float DRAPE_BOTTOM_Z = 4.0F;
     private static final int COLUMNS = 2;
     private static final int ROWS = 4;
     private static final float MODEL_PIXEL = 1.0F / 16.0F;
@@ -125,8 +125,8 @@ public class QuiltSleepLayer extends RenderLayer<AbstractClientPlayer, PlayerMod
                 1.0F, 1.0F, 1.0F, 1.0F,
                 x, y0, TOP_Z, 0.0F, 1.0F,
                 x, y1, TOP_Z, 1.0F, 1.0F,
-                x, y1, EDGE_Z, 1.0F, 0.0F,
-                x, y0, EDGE_Z, 0.0F, 0.0F,
+                x, y1, DRAPE_BOTTOM_Z, 1.0F, 0.0F,
+                x, y0, DRAPE_BOTTOM_Z, 0.0F, 0.0F,
                 normalX, normalY, normalZ);
     }
 
@@ -149,8 +149,8 @@ public class QuiltSleepLayer extends RenderLayer<AbstractClientPlayer, PlayerMod
                 1.0F, 1.0F, 1.0F, 1.0F,
                 x0, y, TOP_Z, 0.0F, 1.0F,
                 x1, y, TOP_Z, 1.0F, 1.0F,
-                x1, y, EDGE_Z, 1.0F, 0.0F,
-                x0, y, EDGE_Z, 0.0F, 0.0F,
+                x1, y, DRAPE_BOTTOM_Z, 1.0F, 0.0F,
+                x0, y, DRAPE_BOTTOM_Z, 0.0F, 0.0F,
                 0.0F, normalY, 0.0F);
     }
 }
