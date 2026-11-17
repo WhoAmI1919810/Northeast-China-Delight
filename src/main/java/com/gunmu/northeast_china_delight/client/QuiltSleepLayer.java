@@ -27,10 +27,10 @@ public class QuiltSleepLayer extends RenderLayer<AbstractClientPlayer, PlayerMod
     private static final ResourceLocation SIDE_TEXTURE =
             DdIds.of(NortheastChinaDelight.MODID, "textures/block/quilt_red_side.png");
 
-    private static final float MIN_X = -7.0F;
-    private static final float MAX_X = 7.0F;
-    private static final float MIN_Y = 0.0F;
-    private static final float MAX_Y = 24.0F;
+    private static final float MIN_X = -10.0F;
+    private static final float MAX_X = 10.0F;
+    private static final float MIN_Y = -3.0F;
+    private static final float MAX_Y = 27.0F;
     private static final float TOP_Z = -4.0F;
     private static final float DRAPE_BOTTOM_Z = 4.0F;
     private static final int COLUMNS = 2;
