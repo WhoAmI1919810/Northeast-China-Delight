@@ -12,6 +12,7 @@ import com.gunmu.northeast_china_delight.block.PlatedDishBlock;
 import com.gunmu.northeast_china_delight.compat.displaydelight.DisplayDelightCompat;
 import com.gunmu.northeast_china_delight.block.WoodenMortarBlock;
 import com.gunmu.northeast_china_delight.effect.ModEffects;
+import com.gunmu.northeast_china_delight.entity.QuiltSleepData;
 import com.gunmu.northeast_china_delight.item.ModItems;
 import com.gunmu.northeast_china_delight.item.NortheastOutfit;
 import com.gunmu.northeast_china_delight.item.SeasoningBottleItem;
@@ -135,6 +136,7 @@ public final class ModGameplayEvents
         if (event.getEntity() instanceof ServerPlayer player)
         {
             SleepComfort.applyAfterWakeUp(player);
+            ((QuiltSleepData) player).ncd$setQuiltPos(null);
         }
     }
 

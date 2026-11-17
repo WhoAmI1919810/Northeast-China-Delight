@@ -4,6 +4,7 @@ import com.gunmu.northeast_china_delight.NortheastChinaDelight;
 import com.gunmu.northeast_china_delight.block.FacingDecorBlock;
 import com.gunmu.northeast_china_delight.block.ModBlocks;
 import com.gunmu.northeast_china_delight.block.SleepingPillowBlock;
+import com.gunmu.northeast_china_delight.entity.QuiltSleepData;
 import com.mojang.authlib.GameProfile;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -97,19 +98,27 @@ public final class PillowSleepGameTests
         BlockPos pos = helper.absolutePos(new BlockPos(4, 4, 4));
         level.setBlockAndUpdate(pos, pillow(Direction.NORTH));
 
-        level.setBlockAndUpdate(pos.offset(4, 2, 4), ModBlocks.FOLDED_QUILT.get().defaultBlockState());
-        helper.assertTrue(SleepingPillowBlock.hasNearbyQuilt(level, pos),
+        BlockPos boundary = pos.offset(4, 2, 4);
+        level.setBlockAndUpdate(boundary, ModBlocks.FOLDED_QUILT.get().defaultBlockState());
+        helper.assertTrue(SleepingPillowBlock.findNearbyQuilt(level, pos).orElse(null).equals(boundary),
                 "x/z=4、y=2 的边界应算在被子范围内");
 
-        level.setBlockAndUpdate(pos.offset(4, 2, 4), Blocks.AIR.defaultBlockState());
+        level.setBlockAndUpdate(boundary, Blocks.AIR.defaultBlockState());
         level.setBlockAndUpdate(pos.offset(5, 2, 0), ModBlocks.FOLDED_QUILT.get().defaultBlockState());
-        helper.assertTrue(!SleepingPillowBlock.hasNearbyQuilt(level, pos),
+        helper.assertTrue(SleepingPillowBlock.findNearbyQuilt(level, pos).isEmpty(),
                 "x=5 不应算在被子范围内");
 
         level.setBlockAndUpdate(pos.offset(5, 2, 0), Blocks.AIR.defaultBlockState());
         level.setBlockAndUpdate(pos.offset(0, 3, 0), ModBlocks.FOLDED_QUILT.get().defaultBlockState());
-        helper.assertTrue(!SleepingPillowBlock.hasNearbyQuilt(level, pos),
+        helper.assertTrue(SleepingPillowBlock.findNearbyQuilt(level, pos).isEmpty(),
                 "y=3 不应算在被子范围内");
+
+        level.setBlockAndUpdate(pos.offset(0, 3, 0), Blocks.AIR.defaultBlockState());
+        BlockPos nearest = pos.offset(1, 0, 1);
+        level.setBlockAndUpdate(pos.offset(4, 0, 4), ModBlocks.FOLDED_QUILT.get().defaultBlockState());
+        level.setBlockAndUpdate(nearest, ModBlocks.FOLDED_QUILT.get().defaultBlockState());
+        helper.assertTrue(SleepingPillowBlock.findNearbyQuilt(level, pos).orElse(null).equals(nearest),
+                "多块被子时应选距离枕头最近的一块");
         helper.succeed();
     }
 
@@ -130,6 +139,7 @@ public final class PillowSleepGameTests
             level.setBlockAndUpdate(quiltPos, ModBlocks.FOLDED_QUILT.get().defaultBlockState());
 
             ServerPlayer player = serverPlayer(helper);
+            QuiltSleepData quiltData = (QuiltSleepData) player;
             player.moveTo(pos.getX() + 2.5, pos.getY(), pos.getZ() + 0.5, 0.0F, 0.0F);
             BlockPos oldRespawn = player.getRespawnPosition();
 
@@ -159,6 +169,7 @@ public final class PillowSleepGameTests
             level.setBlockAndUpdate(quiltPos, Blocks.AIR.defaultBlockState());
             usePillow(level, pos, player);
             helper.assertTrue(!player.isSleeping(), "附近没有被子时不应入睡");
+            helper.assertTrue(quiltData.ncd$getQuiltPos().isEmpty(), "没有被子时不应记录被子坐标");
             level.setBlockAndUpdate(quiltPos, ModBlocks.FOLDED_QUILT.get().defaultBlockState());
 
             presetRespawn(player, pos);
@@ -169,12 +180,15 @@ public final class PillowSleepGameTests
             helper.assertTrue(player.getBedOrientation() == Direction.SOUTH,
                     "D 为北时镜头应朝北，对应的原版床方向应为南");
             helper.assertTrue(pos.equals(player.getRespawnPosition()), "成功入睡后重生点应设为枕头");
+            helper.assertTrue(quiltData.ncd$getQuiltPos().orElse(null).equals(quiltPos),
+                    "成功入睡后应记录选中的被子坐标");
 
             var respawn = level.getBlockState(pos).getRespawnPosition(
                     net.minecraft.world.entity.EntityType.PLAYER, level, pos, 0.0F);
             helper.assertTrue(respawn.isPresent(), "枕头应该能作为重生位置");
 
             player.stopSleepInBed(true, false);
+            helper.assertTrue(quiltData.ncd$getQuiltPos().isEmpty(), "醒来后应清空被子坐标");
         }
         finally
         {

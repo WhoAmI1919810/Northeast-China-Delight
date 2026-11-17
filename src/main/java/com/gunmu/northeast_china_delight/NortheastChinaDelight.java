@@ -9,6 +9,7 @@ import com.gunmu.northeast_china_delight.client.GrillCampfireRenderer;
 import com.gunmu.northeast_china_delight.client.VatRenderer;
 import com.gunmu.northeast_china_delight.client.WoodenMortarRenderer;
 import com.gunmu.northeast_china_delight.client.BigPotRenderer;
+import com.gunmu.northeast_china_delight.client.QuiltSleepLayer;
 import com.gunmu.northeast_china_delight.compat.CreateVillageShops;
 import com.gunmu.northeast_china_delight.compat.OptionalMods;
 import com.gunmu.northeast_china_delight.compat.create.CreateArmCompat;
@@ -499,6 +500,18 @@ public class NortheastChinaDelight
             event.registerBlockEntityRenderer(ModBlockEntities.BIG_POT.get(), BigPotRenderer::new);
             // 小板凳的座位实体看不见
             event.registerEntityRenderer(ModEntities.SEAT.get(), net.minecraft.client.renderer.entity.NoopRenderer::new);
+        }
+
+        @SubscribeEvent
+        public static void onAddLayers(EntityRenderersEvent.AddLayers event)
+        {
+            for (var skin : event.getSkins())
+            {
+                if (event.getSkin(skin) instanceof net.minecraft.client.renderer.entity.player.PlayerRenderer renderer)
+                {
+                    renderer.addLayer(new QuiltSleepLayer(renderer));
+                }
+            }
         }
 
         /**
