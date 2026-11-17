@@ -80,12 +80,14 @@ public class SleepingPillowBlock extends FacingDecorBlock
             return InteractionResult.SUCCESS;
         }
 
-        quiltData.ncd$setQuiltPos(quiltPos.get());
         var result = serverPlayer.startSleepInBed(pos);
-        result.ifLeft(problem -> {
-            showProblem(serverPlayer, problem);
+        if (result.left().isPresent())
+        {
+            showProblem(serverPlayer, result.left().get());
             quiltData.ncd$setQuiltPos(null);
-        });
+            return InteractionResult.SUCCESS;
+        }
+        quiltData.ncd$setQuiltPos(quiltPos.get());
         return InteractionResult.SUCCESS;
     }
 

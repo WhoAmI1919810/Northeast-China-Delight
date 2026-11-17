@@ -27,12 +27,12 @@ public class QuiltSleepLayer extends RenderLayer<AbstractClientPlayer, PlayerMod
     private static final ResourceLocation SIDE_TEXTURE =
             DdIds.of(NortheastChinaDelight.MODID, "textures/block/quilt_red_side.png");
 
-    private static final float MIN_X = -6.5F;
-    private static final float MAX_X = 6.5F;
-    private static final float MIN_Y = 2.0F;
-    private static final float MAX_Y = 23.0F;
-    private static final float TOP_Z = -3.3F;
-    private static final float EDGE_Z = -1.75F;
+    private static final float MIN_X = -7.0F;
+    private static final float MAX_X = 7.0F;
+    private static final float MIN_Y = 0.0F;
+    private static final float MAX_Y = 24.0F;
+    private static final float TOP_Z = -4.0F;
+    private static final float EDGE_Z = -1.5F;
     private static final int COLUMNS = 2;
     private static final int ROWS = 4;
 
@@ -72,10 +72,11 @@ public class QuiltSleepLayer extends RenderLayer<AbstractClientPlayer, PlayerMod
             return false;
         }
 
-        BlockPos quiltPos = ((QuiltSleepData) player).ncd$getQuiltPos().orElse(null);
-        return quiltPos != null
-                && SleepingPillowBlock.isQuiltInRange(pillowPos, quiltPos)
-                && player.level().getBlockState(quiltPos).is(ModBlockTags.QUILTS);
+        return ((QuiltSleepData) player).ncd$getQuiltPos()
+                .filter(pos -> SleepingPillowBlock.isQuiltInRange(pillowPos, pos))
+                .filter(pos -> player.level().getBlockState(pos).is(ModBlockTags.QUILTS))
+                .or(() -> SleepingPillowBlock.findNearbyQuilt(player.level(), pillowPos))
+                .isPresent();
     }
 
     private static void drawTop(PoseStack.Pose pose, VertexConsumer consumer, int light)
