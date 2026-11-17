@@ -267,29 +267,26 @@ public final class NortheastCourtyardStructureGameTests
                 "种子范围外、但与种子树叶相邻的树叶必须继续遍历");
         helper.assertTrue(treeBlocks.contains(helper.absolutePos(trunkTop))
                         && treeBlocks.contains(helper.absolutePos(trunkBottom)),
-                "与树叶相邻的 Y 轴原木必须入选，并能沿树干继续向下遍历");
-        helper.assertTrue(!treeBlocks.contains(helper.absolutePos(horizontalLog)),
-                "X/Z 轴原木不能作为树体目标");
+                "与树叶相邻的原木必须入选，并能沿树干继续向下遍历");
+        helper.assertTrue(treeBlocks.contains(helper.absolutePos(horizontalLog)),
+                "与树叶相邻的原木不再区分朝向，X/Z 轴原木也必须入选");
         helper.assertTrue(!treeBlocks.contains(helper.absolutePos(isolatedLog)),
-                "没有树叶连接、也不是从树叶进入的 Y 轴原木不能直接按范围选中");
+                "没有树叶连接、也不是从树叶进入的原木不能直接按范围选中");
         helper.assertTrue(!treeBlocks.contains(helper.absolutePos(disconnectedLeaf))
                         && !treeBlocks.contains(helper.absolutePos(disconnectedLog)),
                 "种子范围外且与种子不连通的树不能被扫描进来");
-        helper.assertTrue(treeBlocks.size() == 4, "遍历结果不应混入其他方块："
+        helper.assertTrue(treeBlocks.size() == 5, "遍历结果不应混入其他方块："
                 + treeBlocks.size());
         helper.assertTrue(helper.getLevel().getBlockState(helper.absolutePos(trunkBottom))
                         .is(Blocks.OAK_LOG),
                 "DFS 遍历阶段只能收集坐标，不能提前修改方块");
 
         YardClearingPiece.clearTreeBlocks(helper.getLevel(), treeBlocks, traversalBox);
-        for (BlockPos pos : List.of(seedLeaf, connectedLeaf, trunkTop, trunkBottom))
+        for (BlockPos pos : List.of(seedLeaf, connectedLeaf, trunkTop, trunkBottom, horizontalLog))
         {
             helper.assertTrue(helper.getLevel().getBlockState(helper.absolutePos(pos)).isAir(),
                     "整棵树应在遍历完成后统一清空：" + pos);
         }
-        helper.assertTrue(helper.getLevel().getBlockState(helper.absolutePos(horizontalLog))
-                        .is(Blocks.OAK_LOG),
-                "横向原木必须保留");
         helper.assertTrue(helper.getLevel().getBlockState(helper.absolutePos(isolatedLog))
                         .is(Blocks.OAK_LOG),
                 "未被树叶连到的原木必须保留");
