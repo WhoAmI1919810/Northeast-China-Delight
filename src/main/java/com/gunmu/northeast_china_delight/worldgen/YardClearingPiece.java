@@ -12,7 +12,6 @@ import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.chunk.ChunkGenerator;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.level.levelgen.structure.BoundingBox;
@@ -32,7 +31,7 @@ import java.util.Set;
  * <ul>
  *   <li>院子轮廓外扩 radius 格（默认 3）、地坪以上 clearAbove 格（默认 60）：
  *       以范围内的树叶为种子；</li>
- *   <li>从种子出发，按六方向深度优先遍历相邻的树叶与 Y 轴原木，遍历完成后再统一清空。
+ *   <li>从种子出发，按六方向深度优先遍历相邻的树叶与原木，遍历完成后再统一清空。
  *       DFS 最多再向外扩 {@link #TREE_DFS_MARGIN} 格，保证不会只削掉树冠的一半。</li>
  * </ul>
  *
@@ -272,14 +271,7 @@ public class YardClearingPiece extends StructurePiece
 
     private static boolean isTreeBlock(BlockState state)
     {
-        return state.is(BlockTags.LEAVES) || isVerticalLog(state);
-    }
-
-    private static boolean isVerticalLog(BlockState state)
-    {
-        return state.is(BlockTags.LOGS)
-                && state.hasProperty(BlockStateProperties.AXIS)
-                && state.getValue(BlockStateProperties.AXIS) == Direction.Axis.Y;
+        return state.is(BlockTags.LEAVES) || state.is(BlockTags.LOGS);
     }
 
     static boolean shouldFillFoundation(BlockState state)
