@@ -462,13 +462,13 @@ public class BigPotBlockEntity extends BlockEntity {
         sync();
     }
 
-    /** 反悔等待走一刻；每秒和归零时同步，让 Jade 跟着刷新倒计时 */
+    /** 反悔等待走一刻；到 0 时同步一次，让 Jade 从等待切到进度条 */
     public void tickStartDelay() {
         if (startDelay <= 0) {
             return;
         }
         startDelay--;
-        if (startDelay <= 0 || startDelay % 20 == 0) {
+        if (startDelay <= 0) {
             sync();
         } else {
             setChanged();

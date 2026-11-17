@@ -26,9 +26,9 @@ import java.util.List;
 
 /**
  * 准星指大灶（四格哪一格都行，锅的数据在西北那格上，见 {@link BigStoveBlock#potAt}）：投料阶段显示水量，把食材（图标）和
- * 调料（只写名称）分开显示；盖上锅盖以后，前 3 秒显示「N 秒后开始烹饪：菜名」，之后（煮着、煮好了还没盛完）显示
- * 「本次烹饪得到：菜名」和进度条（百分比；走满了写「烹饪完成」），不再显示水量、投料和调料。别的（火、锅盖、怎么盛）不写。
- * 倒计时和进度每秒从服务端同步一次（{@link BigPotBlockEntity#tickStartDelay}、{@link BigPotBlockEntity#tickCooking}）。
+ * 调料（只写名称）分开显示；盖上锅盖以后（3 秒反悔期、煮着、煮好了还没盛完）显示「本次烹饪得到：菜名」和进度条
+ * （百分比；走满了写「烹饪完成」），不再显示水量、投料和调料。别的（火、锅盖、怎么盛）不写。
+ * 进度每秒从服务端同步一次（{@link BigPotBlockEntity#tickCooking}）。
  */
 public enum BigStoveComponentProvider implements IBlockComponentProvider {
 
@@ -61,12 +61,8 @@ public enum BigStoveComponentProvider implements IBlockComponentProvider {
         ItemStack currentDish = pot.hasResult() ? pot.result() : pot.displayDish();
         if (pot.hasResult() || pot.cooking() != null) {
             if (!currentDish.isEmpty()) {
-                MutableComponent dishLine = pot.startDelay() > 0
-                        ? Component.translatable("jade.northeast_china_delight.big_pot.starting",
-                                pot.startDelaySeconds(), currentDish.getHoverName())
-                        : Component.translatable("jade.northeast_china_delight.big_pot.result",
-                                currentDish.getHoverName());
-                tooltip.add(helper.text(dishLine));
+                tooltip.add(helper.text(Component.translatable(
+                        "jade.northeast_china_delight.big_pot.result", currentDish.getHoverName())));
             }
         } else {
             tooltip.add(helper.text(Component.translatable(

@@ -439,6 +439,7 @@ public final class BigPotCooking {
                 return;
             }
             pot.beginCooking(plan.id(), plan.total(), START_DELAY_TICKS, plan.result());
+            announceStartCountdown(level, pos, pot);
             return;
         }
         // 反悔期：锅盖揭开就取消；等满 3 秒才开始真正烹饪
@@ -447,7 +448,16 @@ public final class BigPotCooking {
                 pot.setCooking(null);
                 return;
             }
+            int seconds = pot.startDelaySeconds();
             pot.tickStartDelay();
+            int remaining = pot.startDelaySeconds();
+            if (remaining != seconds) {
+                if (remaining > 0) {
+                    announceStartCountdown(level, pos, pot);
+                } else {
+                    announceCookingStarted(level, pos, pot);
+                }
+            }
             return;
         }
         // 旧存档没有预览菜名：补一次；数据包在中途换了配方（正常玩法不会发生）：从头按当前配方算
@@ -493,9 +503,8 @@ public final class BigPotCooking {
         return null;
     }
 
-    /** 放上锅盖时由 BigStoveBlock 调：立刻显示「本次烹饪：XX」，并开始 3 秒反悔期 */
-    public static void lidPlaced(BigPotBlockEntity pot, Level level, BlockPos pos, BlockState state,
-                                 @Nullable Player player) {
+    /** 放上锅盖时由 BigStoveBlock 调：在快捷栏上方显示 3 秒倒计时，并开始反悔期 */
+    public static void lidPlaced(BigPotBlockEntity pot, Level level, BlockPos pos, BlockState state) {
         if (level.isClientSide || pot.hasResult() || pot.cooking() != null) {
             return;
         }
@@ -504,8 +513,7 @@ public final class BigPotCooking {
             return;
         }
         pot.beginCooking(plan.id(), plan.total(), START_DELAY_TICKS, plan.result());
-        tell(player, Component.translatable("message.northeast_china_delight.big_pot.cooking",
-                plan.result().getHoverName()));
+        announceStartCountdown(level, pos, pot);
     }
 
     /** 揭盖时先处理反悔：还在 3 秒等待里就取消这次烹饪；已经开始煮的只按常速继续 */
@@ -679,6 +687,29 @@ public final class BigPotCooking {
     private static void tell(@Nullable Player player, Component message) {
         if (player != null && !player.level().isClientSide) {
             player.displayClientMessage(message, true);
+        }
+    }
+
+    /** 在快捷栏上方显示剩余整秒数；只发给锅附近能看到这次操作的玩家。 */
+    private static void announceStartCountdown(Level level, BlockPos pos, BigPotBlockEntity pot) {
+        tellNearby(level, pos, Component.translatable("message.northeast_china_delight.big_pot.starting",
+                pot.startDelaySeconds(), pot.displayDish().getHoverName()));
+    }
+
+    private static void announceCookingStarted(Level level, BlockPos pos, BigPotBlockEntity pot) {
+        tellNearby(level, pos, Component.translatable("message.northeast_china_delight.big_pot.cooking",
+                pot.displayDish().getHoverName()));
+    }
+
+    private static void tellNearby(Level level, BlockPos pos, Component message) {
+        if (!(level instanceof ServerLevel server)) {
+            return;
+        }
+        Vec3 center = Vec3.atCenterOf(pos);
+        for (ServerPlayer player : server.players()) {
+            if (player.distanceToSqr(center) <= 16.0 * 16.0) {
+                player.displayClientMessage(message, true);
+            }
         }
     }
 }

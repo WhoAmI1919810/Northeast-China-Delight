@@ -406,7 +406,7 @@ public class BigStoveBlock extends Block implements EntityBlock, WorldlyContaine
         }
         ((BigStoveBlock) state.getBlock()).updateAll(level, pos, state, s -> s.setValue(POT, Pot.LID));
         contents.putLid(lid.copyWithCount(1));
-        BigPotCooking.lidPlaced(contents, level, pos, state, player);
+        BigPotCooking.lidPlaced(contents, level, pos, state);
         level.playSound(null, pos, SoundEvents.WOOD_PLACE, SoundSource.BLOCKS, 1.0F, 1.0F);
         level.gameEvent(player, GameEvent.BLOCK_CHANGE, pos);
         return true;
