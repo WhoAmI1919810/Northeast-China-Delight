@@ -2,14 +2,18 @@ package com.gunmu.northeast_china_delight.worldgen;
 
 import com.gunmu.northeast_china_delight.NortheastChinaDelight;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.NoiseColumn;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.LeavesBlock;
 import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.level.levelgen.structure.BoundingBox;
 import net.minecraft.world.level.levelgen.WorldgenRandom;
 import net.minecraft.world.level.levelgen.structure.pieces.StructurePieceSerializationContext;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplateManager;
@@ -225,6 +229,77 @@ public final class NortheastCourtyardStructureGameTests
     }
 
     @GameTest(template = "empty")
+    public static void treeClearingFollowsLeavesBeforeRemovingWholeTrees(GameTestHelper helper)
+    {
+        BlockPos seedLeaf = new BlockPos(2, 3, 2);
+        BlockPos connectedLeaf = new BlockPos(3, 3, 2);
+        BlockPos trunkTop = new BlockPos(3, 2, 2);
+        BlockPos trunkBottom = new BlockPos(3, 1, 2);
+        BlockPos horizontalLog = new BlockPos(2, 4, 2);
+        BlockPos isolatedLog = new BlockPos(6, 2, 2);
+        BlockPos disconnectedLeaf = new BlockPos(8, 4, 8);
+        BlockPos disconnectedLog = new BlockPos(8, 3, 8);
+        helper.setBlock(seedLeaf, Blocks.OAK_LEAVES.defaultBlockState()
+                .setValue(LeavesBlock.PERSISTENT, true));
+        helper.setBlock(connectedLeaf, Blocks.OAK_LEAVES.defaultBlockState()
+                .setValue(LeavesBlock.PERSISTENT, true));
+        helper.setBlock(trunkTop, log(Direction.Axis.Y));
+        helper.setBlock(trunkBottom, log(Direction.Axis.Y));
+        helper.setBlock(horizontalLog, log(Direction.Axis.X));
+        helper.setBlock(isolatedLog, log(Direction.Axis.Y));
+        helper.setBlock(disconnectedLeaf, Blocks.OAK_LEAVES.defaultBlockState()
+                .setValue(LeavesBlock.PERSISTENT, true));
+        helper.setBlock(disconnectedLog, log(Direction.Axis.Y));
+
+        BlockPos origin = helper.absolutePos(BlockPos.ZERO);
+        BoundingBox seedBox = new BoundingBox(
+                origin.getX() + 1, origin.getY() + 3, origin.getZ() + 1,
+                origin.getX() + 2, origin.getY() + 4, origin.getZ() + 2);
+        BoundingBox traversalBox = new BoundingBox(
+                origin.getX(), origin.getY(), origin.getZ(),
+                origin.getX() + 10, origin.getY() + 8, origin.getZ() + 10);
+        Set<BlockPos> treeBlocks = YardClearingPiece.collectTreeBlocks(
+                helper.getLevel(), seedBox, traversalBox);
+
+        helper.assertTrue(treeBlocks.contains(helper.absolutePos(seedLeaf)),
+                "种子范围内的树叶必须入选");
+        helper.assertTrue(treeBlocks.contains(helper.absolutePos(connectedLeaf)),
+                "种子范围外、但与种子树叶相邻的树叶必须继续遍历");
+        helper.assertTrue(treeBlocks.contains(helper.absolutePos(trunkTop))
+                        && treeBlocks.contains(helper.absolutePos(trunkBottom)),
+                "与树叶相邻的 Y 轴原木必须入选，并能沿树干继续向下遍历");
+        helper.assertTrue(!treeBlocks.contains(helper.absolutePos(horizontalLog)),
+                "X/Z 轴原木不能作为树体目标");
+        helper.assertTrue(!treeBlocks.contains(helper.absolutePos(isolatedLog)),
+                "没有树叶连接、也不是从树叶进入的 Y 轴原木不能直接按范围选中");
+        helper.assertTrue(!treeBlocks.contains(helper.absolutePos(disconnectedLeaf))
+                        && !treeBlocks.contains(helper.absolutePos(disconnectedLog)),
+                "种子范围外且与种子不连通的树不能被扫描进来");
+        helper.assertTrue(treeBlocks.size() == 4, "遍历结果不应混入其他方块："
+                + treeBlocks.size());
+        helper.assertTrue(helper.getLevel().getBlockState(helper.absolutePos(trunkBottom))
+                        .is(Blocks.OAK_LOG),
+                "DFS 遍历阶段只能收集坐标，不能提前修改方块");
+
+        YardClearingPiece.clearTreeBlocks(helper.getLevel(), treeBlocks, traversalBox);
+        for (BlockPos pos : List.of(seedLeaf, connectedLeaf, trunkTop, trunkBottom))
+        {
+            helper.assertTrue(helper.getLevel().getBlockState(helper.absolutePos(pos)).isAir(),
+                    "整棵树应在遍历完成后统一清空：" + pos);
+        }
+        helper.assertTrue(helper.getLevel().getBlockState(helper.absolutePos(horizontalLog))
+                        .is(Blocks.OAK_LOG),
+                "横向原木必须保留");
+        helper.assertTrue(helper.getLevel().getBlockState(helper.absolutePos(isolatedLog))
+                        .is(Blocks.OAK_LOG),
+                "未被树叶连到的原木必须保留");
+        helper.assertTrue(helper.getLevel().getBlockState(helper.absolutePos(disconnectedLeaf))
+                        .is(Blocks.OAK_LEAVES),
+                "未与种子连通的树叶必须保留");
+        helper.succeed();
+    }
+
+    @GameTest(template = "empty")
     public static void footprintHeightAllowsGentleSlopeButRejectsBuriedWalls(GameTestHelper helper)
     {
         helper.assertTrue(NortheastCourtyardStructure.isFootprintHeightSuitable(
@@ -393,6 +468,12 @@ public final class NortheastCourtyardStructureGameTests
     private static long cellKey(int x, int z)
     {
         return ((long) x << 32) ^ (z & 0xFFFFFFFFL);
+    }
+
+    private static BlockState log(Direction.Axis axis)
+    {
+        return Blocks.OAK_LOG.defaultBlockState()
+                .setValue(BlockStateProperties.AXIS, axis);
     }
 
     private static NoiseColumn solidColumn(int minY, int maxY, int groundY, BlockState ground)
