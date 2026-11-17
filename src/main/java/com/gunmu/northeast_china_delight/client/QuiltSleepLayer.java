@@ -29,10 +29,10 @@ public class QuiltSleepLayer extends RenderLayer<AbstractClientPlayer, PlayerMod
 
     private static final float MIN_X = -9.0F;
     private static final float MAX_X = 9.0F;
-    private static final float MIN_Y = -2.0F;
+    private static final float MIN_Y = 0.0F;
     private static final float MAX_Y = 26.0F;
-    private static final float TOP_Z = -4.0F;
-    private static final float DRAPE_BOTTOM_Z = 10.0F;
+    private static final float TOP_Z = -3.0F;
+    private static final float DRAPE_BOTTOM_Z = 11.0F;
     private static final int COLUMNS = 2;
     private static final int ROWS = 4;
     private static final int SIDE_BANDS = 2;
