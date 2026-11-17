@@ -64,6 +64,11 @@ public final class PillowSleepGameTests
         level.updateSkyBrightness();
     }
 
+    private static SleepingPillowBlock.MissingRequirement missingRequirement(ServerLevel level, BlockPos pos)
+    {
+        return SleepingPillowBlock.evaluateSleep(level, level.getBlockState(pos), pos).missingRequirement();
+    }
+
     @GameTest(template = "empty")
     public static void pillowSleepSidePrefersFacingThenOtherAirSide(GameTestHelper helper)
     {
@@ -73,6 +78,9 @@ public final class PillowSleepGameTests
         level.setBlockAndUpdate(pos, pillow(Direction.EAST));
         level.setBlockAndUpdate(pos.east(), Blocks.AIR.defaultBlockState());
         level.setBlockAndUpdate(pos.west(), Blocks.AIR.defaultBlockState());
+        level.setBlockAndUpdate(pos.above(), Blocks.AIR.defaultBlockState());
+        level.setBlockAndUpdate(pos.east().above(), Blocks.AIR.defaultBlockState());
+        level.setBlockAndUpdate(pos.west().above(), Blocks.AIR.defaultBlockState());
         level.setBlockAndUpdate(pos.east().below(), Blocks.STONE.defaultBlockState());
         level.setBlockAndUpdate(pos.west().below(), Blocks.WHITE_WOOL.defaultBlockState());
 
@@ -144,7 +152,7 @@ public final class PillowSleepGameTests
             QuiltSleepData quiltData = (QuiltSleepData) player;
             player.moveTo(pos.getX() + 2.5, pos.getY(), pos.getZ() + 0.5, 0.0F, 0.0F);
             BlockPos oldRespawn = player.getRespawnPosition();
-            helper.assertTrue(SleepingPillowBlock.missingRequirement(level, level.getBlockState(pos), pos) == null,
+            helper.assertTrue(missingRequirement(level, pos) == null,
                     "完整布局不应缺少睡眠条件");
 
             setTime(level, 6000L);
@@ -158,33 +166,29 @@ public final class PillowSleepGameTests
             level.setBlockAndUpdate(pos.below(), Blocks.STONE.defaultBlockState());
             usePillow(level, pos, player);
             helper.assertTrue(!player.isSleeping(), "枕头下方不是羊毛时不应入睡");
-            helper.assertTrue(SleepingPillowBlock.missingRequirement(level, level.getBlockState(pos), pos)
-                            == SleepingPillowBlock.MissingRequirement.WOOL,
+            helper.assertTrue(missingRequirement(level, pos) == SleepingPillowBlock.MissingRequirement.WOOL,
                     "枕头下方不是羊毛时应提示缺羊毛");
             level.setBlockAndUpdate(pos.below(), Blocks.WHITE_WOOL.defaultBlockState());
 
             level.setBlockAndUpdate(pos.north(), Blocks.STONE.defaultBlockState());
             usePillow(level, pos, player);
             helper.assertTrue(!player.isSleeping(), "枕头两侧都不通时不应入睡");
-            helper.assertTrue(SleepingPillowBlock.missingRequirement(level, level.getBlockState(pos), pos)
-                            == SleepingPillowBlock.MissingRequirement.SPACE,
+            helper.assertTrue(missingRequirement(level, pos) == SleepingPillowBlock.MissingRequirement.SPACE,
                     "两侧都被挡住时应提示缺空间");
             level.setBlockAndUpdate(pos.north(), Blocks.AIR.defaultBlockState());
 
             level.setBlockAndUpdate(pos.north().below(), Blocks.STONE.defaultBlockState());
             usePillow(level, pos, player);
-            helper.assertTrue(!player.isSleeping(), "D 方向前下方不是羊毛时不应入睡");
-            helper.assertTrue(SleepingPillowBlock.missingRequirement(level, level.getBlockState(pos), pos)
-                            == SleepingPillowBlock.MissingRequirement.WOOL,
-                    "睡觉侧下方不是羊毛时应提示缺羊毛");
+            helper.assertTrue(!player.isSleeping(), "一侧缺羊毛而另一侧缺空间时不应入睡");
+            helper.assertTrue(missingRequirement(level, pos) == SleepingPillowBlock.MissingRequirement.SPACE,
+                    "一侧缺羊毛而另一侧缺空间时应优先提示缺空间");
             level.setBlockAndUpdate(pos.north().below(), Blocks.WHITE_WOOL.defaultBlockState());
 
             level.setBlockAndUpdate(quiltPos, Blocks.AIR.defaultBlockState());
             usePillow(level, pos, player);
             helper.assertTrue(!player.isSleeping(), "附近没有被子时不应入睡");
             helper.assertTrue(quiltData.ncd$getQuiltPos().isEmpty(), "没有被子时不应记录被子坐标");
-            helper.assertTrue(SleepingPillowBlock.missingRequirement(level, level.getBlockState(pos), pos)
-                            == SleepingPillowBlock.MissingRequirement.QUILT,
+            helper.assertTrue(missingRequirement(level, pos) == SleepingPillowBlock.MissingRequirement.QUILT,
                     "附近没有被子时应提示缺被子");
             level.setBlockAndUpdate(quiltPos, ModBlocks.FOLDED_QUILT.get().defaultBlockState());
 
@@ -225,6 +229,109 @@ public final class PillowSleepGameTests
     }
 
     @GameTest(template = "empty")
+    public static void pillowReportsSpaceWhenWoolAndSpaceProblemsCoexist(GameTestHelper helper)
+    {
+        ServerLevel level = helper.getLevel();
+        BlockPos pos = helper.absolutePos(new BlockPos(4, 3, 4));
+        BlockPos quiltPos = pos.east(3);
+        long oldTime = level.getDayTime();
+        ServerPlayer player = serverPlayer(helper);
+        try
+        {
+            level.setBlockAndUpdate(pos.below(), Blocks.WHITE_WOOL.defaultBlockState());
+            level.setBlockAndUpdate(pos.north(), Blocks.STONE.defaultBlockState());
+            level.setBlockAndUpdate(pos.north().below(), Blocks.WHITE_WOOL.defaultBlockState());
+            level.setBlockAndUpdate(pos.south(), Blocks.AIR.defaultBlockState());
+            level.setBlockAndUpdate(pos.south().below(), Blocks.STONE.defaultBlockState());
+            level.setBlockAndUpdate(pos, pillow(Direction.SOUTH));
+            level.setBlockAndUpdate(quiltPos, ModBlocks.FOLDED_QUILT.get().defaultBlockState());
+            setTime(level, 18000L);
+
+            helper.assertTrue(missingRequirement(level, pos) == SleepingPillowBlock.MissingRequirement.SPACE,
+                    "朝向侧缺羊毛、相对侧缺空间时应提示缺空间");
+
+            player.moveTo(pos.getX() + 2.5, pos.getY(), pos.getZ() + 0.5, 0.0F, 0.0F);
+            presetRespawn(player, pos);
+            usePillow(level, pos, player);
+            helper.assertTrue(!player.isSleeping(), "两侧分别缺羊毛和空间时不应入睡");
+        }
+        finally
+        {
+            level.setDayTime(oldTime);
+            level.updateSkyBrightness();
+        }
+        helper.succeed();
+    }
+
+    @GameTest(template = "empty")
+    public static void pillowReportsWoolWhenBothSidesHaveSpaceButNoWool(GameTestHelper helper)
+    {
+        ServerLevel level = helper.getLevel();
+        BlockPos pos = helper.absolutePos(new BlockPos(4, 3, 4));
+        level.setBlockAndUpdate(pos.below(), Blocks.WHITE_WOOL.defaultBlockState());
+        level.setBlockAndUpdate(pos.north(), Blocks.AIR.defaultBlockState());
+        level.setBlockAndUpdate(pos.south(), Blocks.AIR.defaultBlockState());
+        level.setBlockAndUpdate(pos.above(), Blocks.AIR.defaultBlockState());
+        level.setBlockAndUpdate(pos.north().above(), Blocks.AIR.defaultBlockState());
+        level.setBlockAndUpdate(pos.south().above(), Blocks.AIR.defaultBlockState());
+        level.setBlockAndUpdate(pos.north().below(), Blocks.STONE.defaultBlockState());
+        level.setBlockAndUpdate(pos.south().below(), Blocks.STONE.defaultBlockState());
+        level.setBlockAndUpdate(pos, pillow(Direction.NORTH));
+        level.setBlockAndUpdate(pos.east(3), ModBlocks.FOLDED_QUILT.get().defaultBlockState());
+
+        helper.assertTrue(missingRequirement(level, pos) == SleepingPillowBlock.MissingRequirement.WOOL,
+                "两侧都有空间但前下方都不是羊毛时应提示缺羊毛");
+        helper.succeed();
+    }
+
+    @GameTest(template = "empty")
+    public static void pillowFallsBackWhenPreferredHeadspaceBlocked(GameTestHelper helper)
+    {
+        ServerLevel level = helper.getLevel();
+        BlockPos pos = helper.absolutePos(new BlockPos(4, 3, 4));
+        BlockPos quiltPos = pos.north(3);
+        long oldTime = level.getDayTime();
+        ServerPlayer player = serverPlayer(helper);
+        try
+        {
+            level.setBlockAndUpdate(pos.below(), Blocks.WHITE_WOOL.defaultBlockState());
+            level.setBlockAndUpdate(pos.east().below(), Blocks.WHITE_WOOL.defaultBlockState());
+            level.setBlockAndUpdate(pos.west().below(), Blocks.WHITE_WOOL.defaultBlockState());
+            level.setBlockAndUpdate(pos.east(), Blocks.AIR.defaultBlockState());
+            level.setBlockAndUpdate(pos.west(), Blocks.AIR.defaultBlockState());
+            level.setBlockAndUpdate(pos.above(), Blocks.AIR.defaultBlockState());
+            level.setBlockAndUpdate(pos.east().above(), Blocks.STONE.defaultBlockState());
+            level.setBlockAndUpdate(pos.west().above(), Blocks.AIR.defaultBlockState());
+            level.setBlockAndUpdate(pos, pillow(Direction.EAST));
+            level.setBlockAndUpdate(quiltPos, ModBlocks.FOLDED_QUILT.get().defaultBlockState());
+            setTime(level, 18000L);
+
+            SleepingPillowBlock.SleepEvaluation evaluation =
+                    SleepingPillowBlock.evaluateSleep(level, level.getBlockState(pos), pos);
+            helper.assertTrue(evaluation.canSleep(), "相对侧空间完整时应能睡眠");
+            helper.assertTrue(evaluation.side() == Direction.WEST,
+                    "朝向侧头部空间不足时应回退到相对侧");
+
+            player.moveTo(pos.getX() + 0.5, pos.getY(), pos.getZ() + 2.5, 0.0F, 0.0F);
+            presetRespawn(player, pos);
+            usePillow(level, pos, player);
+            helper.assertTrue(player.isSleeping(), "朝向侧头部空间不足但相对侧可用时应入睡");
+            helper.assertTrue(player.getBedOrientation() == Direction.EAST,
+                    "D 为西时镜头应朝西，对应的原版床方向应为东");
+        }
+        finally
+        {
+            if (player.isSleeping())
+            {
+                player.stopSleepInBed(true, false);
+            }
+            level.setDayTime(oldTime);
+            level.updateSkyBrightness();
+        }
+        helper.succeed();
+    }
+
+    @GameTest(template = "empty")
     public static void selectedQuiltCannotBeTakenBySecondPlayer(GameTestHelper helper)
     {
         ServerLevel level = helper.getLevel();
@@ -249,8 +356,7 @@ public final class PillowSleepGameTests
             helper.assertTrue(first.isSleeping(), "第一名玩家应能选中空闲被子并入睡");
 
             second.moveTo(pos.getX() + 2.5, pos.getY(), pos.getZ() + 0.5, 0.0F, 0.0F);
-            helper.assertTrue(SleepingPillowBlock.missingRequirement(level, level.getBlockState(pos), pos)
-                            == SleepingPillowBlock.MissingRequirement.QUILT,
+            helper.assertTrue(missingRequirement(level, pos) == SleepingPillowBlock.MissingRequirement.QUILT,
                     "只能找到已占用被子时应提示缺被子");
             usePillow(level, pos, second);
             helper.assertTrue(!second.isSleeping(), "已被选中的被子不能让第二名玩家再次选中");

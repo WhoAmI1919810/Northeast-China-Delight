@@ -58,6 +58,22 @@ public class SleepingPillowBlock extends FacingDecorBlock
         }
     }
 
+    /**
+     * 一次完整的枕头睡眠条件评估。睡眠尝试和失败提示都使用这一份结果，避免两套判定逐渐分叉。
+     */
+    public record SleepEvaluation(@Nullable Direction side, @Nullable BlockPos quiltPos,
+                                  @Nullable MissingRequirement missingRequirement)
+    {
+        public boolean canSleep()
+        {
+            return this.missingRequirement == null;
+        }
+    }
+
+    private record SideEvaluation(@Nullable Direction side, @Nullable MissingRequirement missingRequirement)
+    {
+    }
+
     public SleepingPillowBlock(Properties properties)
     {
         super(properties, Block.box(2, 0, 2, 14, 4.5, 14), false);
@@ -84,28 +100,22 @@ public class SleepingPillowBlock extends FacingDecorBlock
             return InteractionResult.SUCCESS;
         }
 
-        MissingRequirement missingRequirement = missingRequirement(level, state, pos);
-        if (missingRequirement != null)
+        SleepEvaluation evaluation = evaluateSleep(level, state, pos);
+        if (!evaluation.canSleep())
         {
-            showMissingRequirement(serverPlayer, missingRequirement);
+            showMissingRequirement(serverPlayer, evaluation.missingRequirement());
             return InteractionResult.SUCCESS;
         }
 
-        Player.BedSleepingProblem environmentProblem = environmentSleepProblem(serverPlayer, state, pos);
+        Player.BedSleepingProblem environmentProblem = environmentSleepProblem(serverPlayer, pos);
         if (environmentProblem != null)
         {
             showProblem(serverPlayer, environmentProblem);
             return InteractionResult.SUCCESS;
         }
 
-        Optional<BlockPos> quiltPos = findNearbyQuilt(level, pos);
-        if (quiltPos.isEmpty())
-        {
-            showMissingRequirement(serverPlayer, MissingRequirement.QUILT);
-            return InteractionResult.SUCCESS;
-        }
-
-        if (!FoldedQuiltBlock.select((ServerLevel) level, quiltPos.get(), serverPlayer.getUUID()))
+        BlockPos quiltPos = evaluation.quiltPos();
+        if (!FoldedQuiltBlock.select((ServerLevel) level, quiltPos, serverPlayer.getUUID()))
         {
             showMissingRequirement(serverPlayer, MissingRequirement.QUILT);
             return InteractionResult.SUCCESS;
@@ -115,46 +125,61 @@ public class SleepingPillowBlock extends FacingDecorBlock
         if (result.left().isPresent())
         {
             showProblem(serverPlayer, result.left().get());
-            FoldedQuiltBlock.release((ServerLevel) level, quiltPos.get(), serverPlayer.getUUID());
+            FoldedQuiltBlock.release((ServerLevel) level, quiltPos, serverPlayer.getUUID());
             quiltData.ncd$setQuiltPos(null);
             return InteractionResult.SUCCESS;
         }
-        quiltData.ncd$setQuiltPos(quiltPos.get());
+        quiltData.ncd$setQuiltPos(quiltPos);
         return InteractionResult.SUCCESS;
     }
 
     /**
      * 返回本次右键选中的 D：先看枕头朝向的一侧，再看反向。候选方向必须同时满足
-     * 该侧是空气且前下方是羊毛；两侧都不满足时返回 null。
+     * 该侧是空气、头部空间未被阻挡且前下方是羊毛；两侧都不满足时返回 null。
      */
     @Nullable
     public static Direction sleepSide(BlockState state, BlockGetter level, BlockPos pos)
     {
-        Direction facing = state.getValue(FACING);
-        if (isUsableSleepSide(level, pos, facing))
-        {
-            return facing;
-        }
-        Direction opposite = facing.getOpposite();
-        return isUsableSleepSide(level, pos, opposite) ? opposite : null;
+        return evaluateSleepSide(level, state, pos).side();
     }
 
-    private static boolean isUsableSleepSide(BlockGetter level, BlockPos pos, Direction side)
+    private static SideEvaluation evaluateSleepSide(BlockGetter level, BlockState state, BlockPos pos)
     {
-        BlockPos sidePos = pos.relative(side);
-        return level.getBlockState(sidePos).isAir()
-                && level.getBlockState(sidePos.below()).is(BlockTags.WOOL);
+        if (!level.getBlockState(pos.below()).is(BlockTags.WOOL))
+        {
+            return new SideEvaluation(null, MissingRequirement.WOOL);
+        }
+
+        Direction facing = state.getValue(FACING);
+        MissingRequirement facingProblem = sideProblem(level, pos, facing);
+        if (facingProblem == null)
+        {
+            return new SideEvaluation(facing, null);
+        }
+
+        Direction opposite = facing.getOpposite();
+        MissingRequirement oppositeProblem = sideProblem(level, pos, opposite);
+        if (oppositeProblem == null)
+        {
+            return new SideEvaluation(opposite, null);
+        }
+
+        MissingRequirement reason = facingProblem == MissingRequirement.SPACE
+                || oppositeProblem == MissingRequirement.SPACE
+                ? MissingRequirement.SPACE
+                : MissingRequirement.WOOL;
+        return new SideEvaluation(null, reason);
     }
 
     @Nullable
-    private static Direction firstAirSide(BlockGetter level, BlockPos pos, Direction facing)
+    private static MissingRequirement sideProblem(BlockGetter level, BlockPos pos, Direction side)
     {
-        if (level.getBlockState(pos.relative(facing)).isAir())
+        BlockPos sidePos = pos.relative(side);
+        if (!level.getBlockState(sidePos).isAir() || isHeadspaceBlocked(level, pos, side))
         {
-            return facing;
+            return MissingRequirement.SPACE;
         }
-        Direction opposite = facing.getOpposite();
-        return level.getBlockState(pos.relative(opposite)).isAir() ? opposite : null;
+        return level.getBlockState(sidePos.below()).is(BlockTags.WOOL) ? null : MissingRequirement.WOOL;
     }
 
     /** 以枕头为中心，x/z 各 ±4、y 各 ±2 的闭区间内是否有被子方块。 */
@@ -191,30 +216,23 @@ public class SleepingPillowBlock extends FacingDecorBlock
         return Optional.ofNullable(nearest);
     }
 
-    @Nullable
-    public static MissingRequirement missingRequirement(Level level, BlockState state, BlockPos pos)
+    /**
+     * 被子、睡眠侧空间和羊毛由同一次评估确定；空间问题优先于羊毛问题，避免逐项补查形成两套规则。
+     */
+    public static SleepEvaluation evaluateSleep(Level level, BlockState state, BlockPos pos)
     {
-        if (findNearbyQuilt(level, pos).isEmpty())
+        Optional<BlockPos> quiltPos = findNearbyQuilt(level, pos);
+        if (quiltPos.isEmpty())
         {
-            return MissingRequirement.QUILT;
+            return new SleepEvaluation(null, null, MissingRequirement.QUILT);
         }
 
-        Direction facing = state.getValue(FACING);
-        Direction chosenSide = sleepSide(state, level, pos);
-        Direction headspaceSide = chosenSide != null ? chosenSide : firstAirSide(level, pos, facing);
-        if (headspaceSide == null || isHeadspaceBlocked(level, pos, headspaceSide))
+        SideEvaluation side = evaluateSleepSide(level, state, pos);
+        if (side.side() == null)
         {
-            return MissingRequirement.SPACE;
+            return new SleepEvaluation(null, null, side.missingRequirement());
         }
-
-        boolean woolUnderPillow = level.getBlockState(pos.below()).is(BlockTags.WOOL);
-        boolean woolUnderSide = level.getBlockState(pos.relative(facing).below()).is(BlockTags.WOOL)
-                || level.getBlockState(pos.relative(facing.getOpposite()).below()).is(BlockTags.WOOL);
-        if (!woolUnderPillow || !woolUnderSide || chosenSide == null)
-        {
-            return MissingRequirement.WOOL;
-        }
-        return null;
+        return new SleepEvaluation(side.side(), quiltPos.get(), null);
     }
 
     /** 被子坐标是否仍在枕头对应的搜索范围内。 */
@@ -263,17 +281,11 @@ public class SleepingPillowBlock extends FacingDecorBlock
         return null;
     }
 
-    /** 睡觉时间、附近怪物与头部空间等原版环境限制。 */
+    /** 睡觉时间与附近怪物等原版环境限制。 */
     @Nullable
-    private static Player.BedSleepingProblem environmentSleepProblem(ServerPlayer player, BlockState state, BlockPos pos)
+    private static Player.BedSleepingProblem environmentSleepProblem(ServerPlayer player, BlockPos pos)
     {
         ServerLevel level = player.serverLevel();
-        Direction facing = state.getValue(FACING);
-        Direction chosen = sleepSide(state, level, pos);
-        if (isHeadspaceBlocked(level, pos, chosen == null ? facing : chosen))
-        {
-            return Player.BedSleepingProblem.OBSTRUCTED;
-        }
         if (level.isDay())
         {
             return Player.BedSleepingProblem.NOT_POSSIBLE_NOW;
