@@ -35,6 +35,7 @@ public class QuiltSleepLayer extends RenderLayer<AbstractClientPlayer, PlayerMod
     private static final float EDGE_Z = -1.5F;
     private static final int COLUMNS = 2;
     private static final int ROWS = 4;
+    private static final float MODEL_PIXEL = 1.0F / 16.0F;
 
     public QuiltSleepLayer(PlayerRenderer renderer)
     {
@@ -51,11 +52,14 @@ public class QuiltSleepLayer extends RenderLayer<AbstractClientPlayer, PlayerMod
             return;
         }
 
+        pose.pushPose();
+        pose.scale(MODEL_PIXEL, MODEL_PIXEL, MODEL_PIXEL);
         PoseStack.Pose last = pose.last();
         drawTop(last, buffer.getBuffer(RenderType.entityCutoutNoCull(TOP_TEXTURE)), packedLight);
         VertexConsumer sides = buffer.getBuffer(RenderType.entityCutoutNoCull(SIDE_TEXTURE));
         drawLongSides(last, sides, packedLight);
         drawEnds(last, sides, packedLight);
+        pose.popPose();
     }
 
     private static boolean hasVisibleQuilt(AbstractClientPlayer player)
