@@ -38,6 +38,26 @@ public class SleepingPillowBlock extends FacingDecorBlock
     private static final int QUILT_RADIUS_XZ = 4;
     private static final int QUILT_RADIUS_Y = 2;
 
+    /** 枕头缺少的睡眠条件；诊断顺序为被子、空间、羊毛。 */
+    public enum MissingRequirement
+    {
+        QUILT("message.northeast_china_delight.pillow.need_quilt"),
+        SPACE("message.northeast_china_delight.pillow.need_space"),
+        WOOL("message.northeast_china_delight.pillow.need_wool");
+
+        private final String translationKey;
+
+        MissingRequirement(String translationKey)
+        {
+            this.translationKey = translationKey;
+        }
+
+        public Component message()
+        {
+            return Component.translatable(this.translationKey);
+        }
+    }
+
     public SleepingPillowBlock(Properties properties)
     {
         super(properties, Block.box(2, 0, 2, 14, 4.5, 14), false);
@@ -57,31 +77,37 @@ public class SleepingPillowBlock extends FacingDecorBlock
         QuiltSleepData quiltData = (QuiltSleepData) serverPlayer;
         quiltData.ncd$setQuiltPos(null);
 
-        Player.BedSleepingProblem originalProblem = originalSleepProblem(serverPlayer, state, pos);
-        if (originalProblem != null)
+        Player.BedSleepingProblem basicProblem = basicSleepProblem(serverPlayer, state, pos);
+        if (basicProblem != null)
         {
-            showProblem(serverPlayer, originalProblem);
+            showProblem(serverPlayer, basicProblem);
             return InteractionResult.SUCCESS;
         }
 
-        if (!level.getBlockState(pos.below()).is(BlockTags.WOOL))
+        MissingRequirement missingRequirement = missingRequirement(level, state, pos);
+        if (missingRequirement != null)
         {
+            showMissingRequirement(serverPlayer, missingRequirement);
             return InteractionResult.SUCCESS;
         }
 
-        Direction sleepSide = sleepSide(state, level, pos);
-        if (sleepSide == null)
+        Player.BedSleepingProblem environmentProblem = environmentSleepProblem(serverPlayer, state, pos);
+        if (environmentProblem != null)
         {
+            showProblem(serverPlayer, environmentProblem);
             return InteractionResult.SUCCESS;
         }
+
         Optional<BlockPos> quiltPos = findNearbyQuilt(level, pos);
         if (quiltPos.isEmpty())
         {
+            showMissingRequirement(serverPlayer, MissingRequirement.QUILT);
             return InteractionResult.SUCCESS;
         }
 
         if (!FoldedQuiltBlock.select((ServerLevel) level, quiltPos.get(), serverPlayer.getUUID()))
         {
+            showMissingRequirement(serverPlayer, MissingRequirement.QUILT);
             return InteractionResult.SUCCESS;
         }
 
@@ -120,6 +146,17 @@ public class SleepingPillowBlock extends FacingDecorBlock
                 && level.getBlockState(sidePos.below()).is(BlockTags.WOOL);
     }
 
+    @Nullable
+    private static Direction firstAirSide(BlockGetter level, BlockPos pos, Direction facing)
+    {
+        if (level.getBlockState(pos.relative(facing)).isAir())
+        {
+            return facing;
+        }
+        Direction opposite = facing.getOpposite();
+        return level.getBlockState(pos.relative(opposite)).isAir() ? opposite : null;
+    }
+
     /** 以枕头为中心，x/z 各 ±4、y 各 ±2 的闭区间内是否有被子方块。 */
     public static boolean hasNearbyQuilt(Level level, BlockPos pos)
     {
@@ -154,6 +191,32 @@ public class SleepingPillowBlock extends FacingDecorBlock
         return Optional.ofNullable(nearest);
     }
 
+    @Nullable
+    public static MissingRequirement missingRequirement(Level level, BlockState state, BlockPos pos)
+    {
+        if (findNearbyQuilt(level, pos).isEmpty())
+        {
+            return MissingRequirement.QUILT;
+        }
+
+        Direction facing = state.getValue(FACING);
+        Direction chosenSide = sleepSide(state, level, pos);
+        Direction headspaceSide = chosenSide != null ? chosenSide : firstAirSide(level, pos, facing);
+        if (headspaceSide == null || isHeadspaceBlocked(level, pos, headspaceSide))
+        {
+            return MissingRequirement.SPACE;
+        }
+
+        boolean woolUnderPillow = level.getBlockState(pos.below()).is(BlockTags.WOOL);
+        boolean woolUnderSide = level.getBlockState(pos.relative(facing).below()).is(BlockTags.WOOL)
+                || level.getBlockState(pos.relative(facing.getOpposite()).below()).is(BlockTags.WOOL);
+        if (!woolUnderPillow || !woolUnderSide || chosenSide == null)
+        {
+            return MissingRequirement.WOOL;
+        }
+        return null;
+    }
+
     /** 被子坐标是否仍在枕头对应的搜索范围内。 */
     public static boolean isQuiltInRange(BlockPos pillowPos, BlockPos quiltPos)
     {
@@ -179,11 +242,9 @@ public class SleepingPillowBlock extends FacingDecorBlock
         return level.getBlockState(pos).isSuffocating(level, pos);
     }
 
-    /**
-     * 提前执行原版会做的检查，避免原版在“白天/附近有怪物”等失败路径上先写入重生点。
-     */
+    /** 玩家状态、维度和距离等基础限制。 */
     @Nullable
-    private static Player.BedSleepingProblem originalSleepProblem(ServerPlayer player, BlockState state, BlockPos pos)
+    private static Player.BedSleepingProblem basicSleepProblem(ServerPlayer player, BlockState state, BlockPos pos)
     {
         ServerLevel level = player.serverLevel();
         Direction facing = state.getValue(FACING);
@@ -199,6 +260,15 @@ public class SleepingPillowBlock extends FacingDecorBlock
         {
             return Player.BedSleepingProblem.TOO_FAR_AWAY;
         }
+        return null;
+    }
+
+    /** 睡觉时间、附近怪物与头部空间等原版环境限制。 */
+    @Nullable
+    private static Player.BedSleepingProblem environmentSleepProblem(ServerPlayer player, BlockState state, BlockPos pos)
+    {
+        ServerLevel level = player.serverLevel();
+        Direction facing = state.getValue(FACING);
         Direction chosen = sleepSide(state, level, pos);
         if (isHeadspaceBlocked(level, pos, chosen == null ? facing : chosen))
         {
@@ -240,6 +310,14 @@ public class SleepingPillowBlock extends FacingDecorBlock
         if (message != null && player.connection != null)
         {
             player.displayClientMessage(message, true);
+        }
+    }
+
+    private static void showMissingRequirement(ServerPlayer player, MissingRequirement requirement)
+    {
+        if (player.connection != null)
+        {
+            player.displayClientMessage(requirement.message(), true);
         }
     }
 
