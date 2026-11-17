@@ -80,10 +80,16 @@ public class SleepingPillowBlock extends FacingDecorBlock
             return InteractionResult.SUCCESS;
         }
 
+        if (!FoldedQuiltBlock.select((ServerLevel) level, quiltPos.get(), serverPlayer.getUUID()))
+        {
+            return InteractionResult.SUCCESS;
+        }
+
         var result = serverPlayer.startSleepInBed(pos);
         if (result.left().isPresent())
         {
             showProblem(serverPlayer, result.left().get());
+            FoldedQuiltBlock.release((ServerLevel) level, quiltPos.get(), serverPlayer.getUUID());
             quiltData.ncd$setQuiltPos(null);
             return InteractionResult.SUCCESS;
         }
@@ -131,7 +137,8 @@ public class SleepingPillowBlock extends FacingDecorBlock
         long nearestDistance = Long.MAX_VALUE;
         for (BlockPos cursor : BlockPos.betweenClosed(min, max))
         {
-            if (level.getBlockState(cursor).is(ModBlockTags.QUILTS))
+            BlockState cursorState = level.getBlockState(cursor);
+            if (cursorState.is(ModBlockTags.QUILTS) && !FoldedQuiltBlock.isOccupied(cursorState))
             {
                 long dx = (long) cursor.getX() - pos.getX();
                 long dy = (long) cursor.getY() - pos.getY();

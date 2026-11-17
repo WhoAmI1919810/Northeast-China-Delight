@@ -4,6 +4,7 @@ import com.gunmu.northeast_china_delight.NortheastChinaDelight;
 import com.gunmu.northeast_china_delight.advancement.ModAdvancements;
 import com.gunmu.northeast_china_delight.block.BigStoveBlock;
 import com.gunmu.northeast_china_delight.block.FacingDecorBlock;
+import com.gunmu.northeast_china_delight.block.FoldedQuiltBlock;
 import com.gunmu.northeast_china_delight.block.GinsengCropBlock;
 import com.gunmu.northeast_china_delight.block.ModBlockTags;
 import com.gunmu.northeast_china_delight.block.ModBlocks;
@@ -121,6 +122,8 @@ public final class ModGameplayEvents
         if (event.getEntity() instanceof ServerPlayer player)
         {
             SleepComfort.applyAfterWakeUp(player);
+            ((QuiltSleepData) player).ncd$getQuiltPos().ifPresent(quiltPos ->
+                    FoldedQuiltBlock.release(player.serverLevel(), quiltPos, player.getUUID()));
             ((QuiltSleepData) player).ncd$setQuiltPos(null);
         }
     }

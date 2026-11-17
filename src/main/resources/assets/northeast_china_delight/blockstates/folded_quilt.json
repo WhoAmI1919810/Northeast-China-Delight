@@ -1,19 +1,31 @@
 {
   "variants": {
-    "facing=north": {
+    "facing=north,occupied=false": {
       "model": "northeast_china_delight:block/folded_quilt"
     },
-    "facing=east": {
+    "facing=north,occupied=true": {
+      "model": "northeast_china_delight:block/folded_quilt_hidden"
+    },
+    "facing=east,occupied=false": {
       "model": "northeast_china_delight:block/folded_quilt",
       "y": 90
     },
-    "facing=south": {
+    "facing=east,occupied=true": {
+      "model": "northeast_china_delight:block/folded_quilt_hidden"
+    },
+    "facing=south,occupied=false": {
       "model": "northeast_china_delight:block/folded_quilt",
       "y": 180
     },
-    "facing=west": {
+    "facing=south,occupied=true": {
+      "model": "northeast_china_delight:block/folded_quilt_hidden"
+    },
+    "facing=west,occupied=false": {
       "model": "northeast_china_delight:block/folded_quilt",
       "y": 270
+    },
+    "facing=west,occupied=true": {
+      "model": "northeast_china_delight:block/folded_quilt_hidden"
     }
   }
 }

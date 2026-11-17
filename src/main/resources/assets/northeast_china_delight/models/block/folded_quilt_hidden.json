@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:block/block",
+  "textures": {
+    "particle": "northeast_china_delight:block/quilt_red"
+  }
+}

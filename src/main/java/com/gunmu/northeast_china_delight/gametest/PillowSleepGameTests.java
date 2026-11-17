@@ -2,6 +2,8 @@ package com.gunmu.northeast_china_delight.gametest;
 
 import com.gunmu.northeast_china_delight.NortheastChinaDelight;
 import com.gunmu.northeast_china_delight.block.FacingDecorBlock;
+import com.gunmu.northeast_china_delight.block.FoldedQuiltBlock;
+import com.gunmu.northeast_china_delight.block.FoldedQuiltBlockEntity;
 import com.gunmu.northeast_china_delight.block.ModBlocks;
 import com.gunmu.northeast_china_delight.block.SleepingPillowBlock;
 import com.gunmu.northeast_china_delight.entity.QuiltSleepData;
@@ -181,12 +183,73 @@ public final class PillowSleepGameTests
             helper.assertTrue(pos.equals(player.getRespawnPosition()), "成功入睡后重生点应设为枕头");
             helper.assertTrue(quiltData.ncd$getQuiltPos().orElse(null).equals(quiltPos),
                     "成功入睡后应记录选中的被子坐标");
+            helper.assertTrue(FoldedQuiltBlock.isOccupied(level.getBlockState(quiltPos)),
+                    "成功入睡后被子应进入占用外观");
+            helper.assertTrue(level.getBlockEntity(quiltPos) instanceof FoldedQuiltBlockEntity quilt
+                            && quilt.isSelectedBy(player.getUUID()),
+                    "被子实体应记录选中它的玩家 UUID");
 
             player.stopSleepInBed(true, false);
             helper.assertTrue(quiltData.ncd$getQuiltPos().isEmpty(), "醒来后应清空被子坐标");
+            helper.assertTrue(!FoldedQuiltBlock.isOccupied(level.getBlockState(quiltPos)),
+                    "醒来后被子应恢复正常外观");
+            helper.assertTrue(level.getBlockEntity(quiltPos) instanceof FoldedQuiltBlockEntity releasedQuilt
+                            && !releasedQuilt.isSelected(),
+                    "醒来后被子实体应清除占用玩家");
         }
         finally
         {
+            level.setDayTime(oldTime);
+            level.updateSkyBrightness();
+        }
+        helper.succeed();
+    }
+
+    @GameTest(template = "empty")
+    public static void selectedQuiltCannotBeTakenBySecondPlayer(GameTestHelper helper)
+    {
+        ServerLevel level = helper.getLevel();
+        BlockPos pos = helper.absolutePos(new BlockPos(4, 3, 4));
+        BlockPos quiltPos = pos.east(3);
+        long oldTime = level.getDayTime();
+        ServerPlayer first = serverPlayer(helper);
+        ServerPlayer second = serverPlayer(helper);
+        try
+        {
+            level.setBlockAndUpdate(pos.below(), Blocks.WHITE_WOOL.defaultBlockState());
+            level.setBlockAndUpdate(pos.north().below(), Blocks.WHITE_WOOL.defaultBlockState());
+            level.setBlockAndUpdate(pos.south(), Blocks.STONE.defaultBlockState());
+            level.setBlockAndUpdate(pos.south().above(), Blocks.STONE.defaultBlockState());
+            level.setBlockAndUpdate(pos, pillow(Direction.NORTH));
+            level.setBlockAndUpdate(quiltPos, ModBlocks.FOLDED_QUILT.get().defaultBlockState());
+            setTime(level, 18000L);
+
+            first.moveTo(pos.getX() + 2.5, pos.getY(), pos.getZ() + 0.5, 0.0F, 0.0F);
+            presetRespawn(first, pos);
+            usePillow(level, pos, first);
+            helper.assertTrue(first.isSleeping(), "第一名玩家应能选中空闲被子并入睡");
+
+            second.moveTo(pos.getX() + 2.5, pos.getY(), pos.getZ() + 0.5, 0.0F, 0.0F);
+            usePillow(level, pos, second);
+            helper.assertTrue(!second.isSleeping(), "已被选中的被子不能让第二名玩家再次选中");
+            helper.assertTrue(level.getBlockEntity(quiltPos) instanceof FoldedQuiltBlockEntity quilt
+                            && quilt.isSelectedBy(first.getUUID()),
+                    "被子的占用者应保持为第一名玩家");
+            helper.assertTrue(!FoldedQuiltBlock.release(level, quiltPos, second.getUUID()),
+                    "非占用者不能释放被子");
+
+            first.stopSleepInBed(true, false);
+            helper.assertTrue(!FoldedQuiltBlock.isOccupied(level.getBlockState(quiltPos)),
+                    "占用者醒来后被子应重新可选");
+            helper.assertTrue(SleepingPillowBlock.findNearbyQuilt(level, pos).orElse(null).equals(quiltPos),
+                    "被子释放后应重新进入候选列表");
+        }
+        finally
+        {
+            if (first.isSleeping())
+            {
+                first.stopSleepInBed(true, false);
+            }
             level.setDayTime(oldTime);
             level.updateSkyBrightness();
         }

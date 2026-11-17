@@ -27,14 +27,15 @@ public class QuiltSleepLayer extends RenderLayer<AbstractClientPlayer, PlayerMod
     private static final ResourceLocation SIDE_TEXTURE =
             DdIds.of(NortheastChinaDelight.MODID, "textures/block/quilt_red_side.png");
 
-    private static final float MIN_X = -10.0F;
-    private static final float MAX_X = 10.0F;
-    private static final float MIN_Y = -3.0F;
-    private static final float MAX_Y = 27.0F;
+    private static final float MIN_X = -8.0F;
+    private static final float MAX_X = 8.0F;
+    private static final float MIN_Y = -2.0F;
+    private static final float MAX_Y = 26.0F;
     private static final float TOP_Z = -4.0F;
     private static final float DRAPE_BOTTOM_Z = 10.0F;
     private static final int COLUMNS = 2;
     private static final int ROWS = 4;
+    private static final int SIDE_BANDS = 2;
     private static final float MODEL_PIXEL = 1.0F / 16.0F;
 
     public QuiltSleepLayer(PlayerRenderer renderer)
@@ -121,13 +122,19 @@ public class QuiltSleepLayer extends RenderLayer<AbstractClientPlayer, PlayerMod
     private static void quad(VertexConsumer consumer, PoseStack.Pose pose, int light, float x,
                              float y0, float y1, float normalX, float normalY, float normalZ)
     {
-        VatRenderer.quad(consumer, pose, light, OverlayTexture.NO_OVERLAY,
-                1.0F, 1.0F, 1.0F, 1.0F,
-                x, y0, TOP_Z, 0.0F, 1.0F,
-                x, y1, TOP_Z, 1.0F, 1.0F,
-                x, y1, DRAPE_BOTTOM_Z, 1.0F, 0.0F,
-                x, y0, DRAPE_BOTTOM_Z, 0.0F, 0.0F,
-                normalX, normalY, normalZ);
+        float bandHeight = (DRAPE_BOTTOM_Z - TOP_Z) / SIDE_BANDS;
+        for (int band = 0; band < SIDE_BANDS; band++)
+        {
+            float z0 = TOP_Z + band * bandHeight;
+            float z1 = z0 + bandHeight;
+            VatRenderer.quad(consumer, pose, light, OverlayTexture.NO_OVERLAY,
+                    1.0F, 1.0F, 1.0F, 1.0F,
+                    x, y0, z0, 0.0F, 1.0F,
+                    x, y1, z0, 1.0F, 1.0F,
+                    x, y1, z1, 1.0F, 0.0F,
+                    x, y0, z1, 0.0F, 0.0F,
+                    normalX, normalY, normalZ);
+        }
     }
 
     private static void drawEnds(PoseStack.Pose pose, VertexConsumer consumer, int light)
@@ -145,12 +152,18 @@ public class QuiltSleepLayer extends RenderLayer<AbstractClientPlayer, PlayerMod
     private static void endQuad(VertexConsumer consumer, PoseStack.Pose pose, int light, float y,
                                 float x0, float x1, float normalY)
     {
-        VatRenderer.quad(consumer, pose, light, OverlayTexture.NO_OVERLAY,
-                1.0F, 1.0F, 1.0F, 1.0F,
-                x0, y, TOP_Z, 0.0F, 1.0F,
-                x1, y, TOP_Z, 1.0F, 1.0F,
-                x1, y, DRAPE_BOTTOM_Z, 1.0F, 0.0F,
-                x0, y, DRAPE_BOTTOM_Z, 0.0F, 0.0F,
-                0.0F, normalY, 0.0F);
+        float bandHeight = (DRAPE_BOTTOM_Z - TOP_Z) / SIDE_BANDS;
+        for (int band = 0; band < SIDE_BANDS; band++)
+        {
+            float z0 = TOP_Z + band * bandHeight;
+            float z1 = z0 + bandHeight;
+            VatRenderer.quad(consumer, pose, light, OverlayTexture.NO_OVERLAY,
+                    1.0F, 1.0F, 1.0F, 1.0F,
+                    x0, y, z0, 0.0F, 1.0F,
+                    x1, y, z0, 1.0F, 1.0F,
+                    x1, y, z1, 1.0F, 0.0F,
+                    x0, y, z1, 0.0F, 0.0F,
+                    0.0F, normalY, 0.0F);
+        }
     }
 }
