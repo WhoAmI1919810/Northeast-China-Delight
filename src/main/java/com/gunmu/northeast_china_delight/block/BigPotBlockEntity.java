@@ -274,6 +274,11 @@ public class BigPotBlockEntity extends BlockEntity {
         return startDelay;
     }
 
+    /** 反悔等待折合成显示用的整秒数，向上取整；0 = 已在烹饪或没在等待 */
+    public int startDelaySeconds() {
+        return (startDelay + 19) / 20;
+    }
+
     public int cookTotal() {
         return cookTotal;
     }
@@ -457,13 +462,13 @@ public class BigPotBlockEntity extends BlockEntity {
         sync();
     }
 
-    /** 反悔等待走一刻；到 0 时同步一次，让 Jade 从等待切到进度条 */
+    /** 反悔等待走一刻；每秒和归零时同步，让 Jade 跟着刷新倒计时 */
     public void tickStartDelay() {
         if (startDelay <= 0) {
             return;
         }
         startDelay--;
-        if (startDelay <= 0) {
+        if (startDelay <= 0 || startDelay % 20 == 0) {
             sync();
         } else {
             setChanged();
