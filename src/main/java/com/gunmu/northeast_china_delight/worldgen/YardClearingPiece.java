@@ -1,20 +1,27 @@
 package com.gunmu.northeast_china_delight.worldgen;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.util.RandomSource;
+import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.StructureManager;
 import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.chunk.ChunkGenerator;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.level.levelgen.structure.BoundingBox;
 import net.minecraft.world.level.levelgen.structure.StructurePiece;
 import net.minecraft.world.level.levelgen.structure.pieces.StructurePieceSerializationContext;
+
+import java.util.ArrayDeque;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * 小院周边清场：把树、灌木、花草这类「地物」从院子和它周围一圈清掉。
@@ -23,8 +30,10 @@ import net.minecraft.world.level.levelgen.structure.pieces.StructurePieceSeriali
  * 模板里的空气格不会覆盖世界（结构模板只写非空气方块），所以不主动清的话，
  * 树会长在院子里、挡住屋顶。清场分两块：
  * <ul>
- *   <li>院子正上方 30 格：保证是空气；</li>
- *   <li>院子外扩 radius 格（默认 20）：清掉树、灌木、花草地物。</li>
+ *   <li>院子轮廓外扩 radius 格（默认 3）、地坪以上 clearAbove 格（默认 60）：
+ *       以范围内的树叶为种子；</li>
+ *   <li>从种子出发，按六方向深度优先遍历相邻的树叶与 Y 轴原木，遍历完成后再统一清空。
+ *       DFS 最多再向外扩 {@link #TREE_DFS_MARGIN} 格，保证不会只削掉树冠的一半。</li>
  * </ul>
  *
  * <p>它被排在院子方块之前生成，所以院子里那棵（模板自带的）大树不会被自己清掉。
@@ -33,9 +42,14 @@ public class YardClearingPiece extends StructurePiece
 {
     public static final int FOUNDATION_DEPTH = 32;
     public static final int FOUNDATION_MARGIN = 1;
-    public static final int LEAF_MARGIN = 6;
+    public static final int TREE_DFS_MARGIN = 16;
     public static final int GATE_PATH_LENGTH = 8;
     public static final int GATE_PATH_HALF_WIDTH = 5;
+
+    private static final Direction[] TREE_NEIGHBORS = {
+            Direction.DOWN, Direction.UP, Direction.NORTH,
+            Direction.SOUTH, Direction.WEST, Direction.EAST
+    };
 
     private final int groundY;
     private final int radius;
@@ -50,9 +64,13 @@ public class YardClearingPiece extends StructurePiece
                              int radius, int clearAbove, int gateDir)
     {
         super(ModWorldGen.CLEARING_PIECE.get(), 0,
-                new BoundingBox(yardOrigin.getX() - radius, yardOrigin.getY() - 8, yardOrigin.getZ() - radius,
-                        yardOrigin.getX() + sizeX - 1 + radius, yardOrigin.getY() + clearAbove + 8,
-                        yardOrigin.getZ() + sizeZ - 1 + radius));
+                new BoundingBox(
+                        yardOrigin.getX() - radius - TREE_DFS_MARGIN,
+                        yardOrigin.getY() - 8,
+                        yardOrigin.getZ() - radius - TREE_DFS_MARGIN,
+                        yardOrigin.getX() + sizeX - 1 + radius + TREE_DFS_MARGIN,
+                        groundY + clearAbove,
+                        yardOrigin.getZ() + sizeZ - 1 + radius + TREE_DFS_MARGIN));
         this.boundingBox = new DetectionFreeBoundingBox(this.boundingBox);
         this.groundY = groundY;
         this.radius = radius;
@@ -102,6 +120,9 @@ public class YardClearingPiece extends StructurePiece
         int minY = level.getMinBuildHeight();
         int maxY = level.getMaxBuildHeight() - 1;
         int yardTop = Math.min(maxY, this.groundY + this.clearAbove);
+        Set<BlockPos> treeBlocks = collectTreeBlocks(level, this.treeSeedBox(maxY),
+                this.treeTraversalBox(minY, maxY));
+        clearTreeBlocks(level, treeBlocks, box);
         int gateCenterX = this.yardMinX + (this.yardMaxX - this.yardMinX + 1) / 2;
         BlockPos.MutableBlockPos cursor = new BlockPos.MutableBlockPos();
         for (int x = minX; x <= maxX; x++)
@@ -118,7 +139,7 @@ public class YardClearingPiece extends StructurePiece
                     {
                         continue;
                     }
-                    if (isVegetation(state))
+                    if (isNonTreeVegetation(state))
                     {
                         level.setBlock(cursor, Blocks.AIR.defaultBlockState(), 2);
                     }
@@ -157,20 +178,7 @@ public class YardClearingPiece extends StructurePiece
                         cursor.set(x, y, z);
                         BlockState cover = level.getBlockState(cursor);
                         if (cover.is(Blocks.SNOW) || cover.is(Blocks.SNOW_BLOCK) || isIce(cover)
-                                || isVegetation(cover))
-                        {
-                            level.setBlock(cursor, Blocks.AIR.defaultBlockState(), 2);
-                        }
-                    }
-                }
-                if (!inYard && Math.abs(x - (this.yardMinX + this.yardMaxX) / 2) <= this.radius + LEAF_MARGIN
-                        && Math.abs(z - (this.yardMinZ + this.yardMaxZ) / 2) <= this.radius + LEAF_MARGIN)
-                {
-                    for (int y = yFrom; y <= yardTop; y++)
-                    {
-                        cursor.set(x, y, z);
-                        BlockState state = level.getBlockState(cursor);
-                        if (state.is(BlockTags.LEAVES) || state.is(BlockTags.LOGS))
+                                || isNonTreeVegetation(cover))
                         {
                             level.setBlock(cursor, Blocks.AIR.defaultBlockState(), 2);
                         }
@@ -178,6 +186,100 @@ public class YardClearingPiece extends StructurePiece
                 }
             }
         }
+    }
+
+    private BoundingBox treeSeedBox(int maxY)
+    {
+        return new BoundingBox(
+                this.yardMinX - this.radius,
+                Math.min(maxY, this.groundY),
+                this.yardMinZ - this.radius,
+                this.yardMaxX + this.radius,
+                Math.min(maxY, this.groundY + this.clearAbove),
+                this.yardMaxZ + this.radius);
+    }
+
+    private BoundingBox treeTraversalBox(int minY, int maxY)
+    {
+        return new BoundingBox(
+                this.boundingBox.minX(),
+                Math.max(minY, this.boundingBox.minY()),
+                this.boundingBox.minZ(),
+                this.boundingBox.maxX(),
+                Math.min(maxY, this.boundingBox.maxY()),
+                this.boundingBox.maxZ());
+    }
+
+    static Set<BlockPos> collectTreeBlocks(BlockGetter level, BoundingBox seedBox,
+                                           BoundingBox traversalBox)
+    {
+        Set<BlockPos> visited = new HashSet<>();
+        Set<BlockPos> treeBlocks = new HashSet<>();
+        ArrayDeque<BlockPos> stack = new ArrayDeque<>();
+        for (int x = seedBox.minX(); x <= seedBox.maxX(); x++)
+        {
+            for (int y = seedBox.minY(); y <= seedBox.maxY(); y++)
+            {
+                for (int z = seedBox.minZ(); z <= seedBox.maxZ(); z++)
+                {
+                    BlockPos seed = new BlockPos(x, y, z);
+                    if (level.getBlockState(seed).is(BlockTags.LEAVES)
+                            && visited.add(seed))
+                    {
+                        stack.addLast(seed);
+                    }
+                }
+            }
+        }
+        while (!stack.isEmpty())
+        {
+            BlockPos current = stack.removeLast();
+            BlockState state = level.getBlockState(current);
+            if (!isTreeBlock(state))
+            {
+                continue;
+            }
+            treeBlocks.add(current);
+            for (Direction direction : TREE_NEIGHBORS)
+            {
+                BlockPos next = current.relative(direction);
+                if (!traversalBox.isInside(next) || visited.contains(next))
+                {
+                    continue;
+                }
+                BlockState nextState = level.getBlockState(next);
+                if (isTreeBlock(nextState))
+                {
+                    visited.add(next);
+                    stack.addLast(next);
+                }
+            }
+        }
+        return treeBlocks;
+    }
+
+    static void clearTreeBlocks(WorldGenLevel level, Set<BlockPos> treeBlocks, BoundingBox box)
+    {
+        BlockState air = Blocks.AIR.defaultBlockState();
+        for (BlockPos treeBlock : treeBlocks)
+        {
+            if (box.isInside(treeBlock))
+            {
+                level.setBlock(treeBlock, air, 2);
+            }
+        }
+    }
+
+    private static boolean isTreeBlock(BlockState state)
+    {
+        return state.is(BlockTags.LEAVES) || isVerticalLog(state);
+    }
+
+    private static boolean isVerticalLog(BlockState state)
+    {
+        return state.is(BlockTags.LOGS)
+                && state.hasProperty(BlockStateProperties.AXIS)
+                && state.getValue(BlockStateProperties.AXIS) == Direction.Axis.Y;
     }
 
     static boolean shouldFillFoundation(BlockState state)
@@ -244,5 +346,10 @@ public class YardClearingPiece extends StructurePiece
                 || block == Blocks.PUMPKIN
                 || block == Blocks.MELON
                 || block == Blocks.CHORUS_FLOWER;
+    }
+
+    static boolean isNonTreeVegetation(BlockState state)
+    {
+        return !state.is(BlockTags.LEAVES) && !state.is(BlockTags.LOGS) && isVegetation(state);
     }
 }

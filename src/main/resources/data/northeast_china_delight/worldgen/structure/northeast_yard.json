@@ -37,10 +37,10 @@
   "black_soil_radius": 18,
   "black_soil_density": 0.12,
 
-  "__说明_净空与朝向": "clear.above=院子正上方要留多少格空气（默认30）；clear.radius=院子外扩多少格清树和地物（默认20）；check_gate_front=是否检查门口朝向；gate_check_depth/width=门口前方检查的范围；max_gate_slope=门口地形高差容忍度，超了就换朝向，两个朝向都不行就不生成",
+  "__说明_净空与朝向": "clear.above=院子地坪以上多少格内寻找树叶种子（默认60）；clear.radius=院子完整轮廓向外扩多少格寻找树叶种子（默认3）。树叶会沿相邻树体继续遍历，原木只有经树叶连接才会被清除；check_gate_front=是否检查门口朝向；gate_check_depth/width=门口前方检查的范围；max_gate_slope=门口地形高差容忍度，超了就换朝向，两个朝向都不行就不生成",
   "clear": {
-    "radius": 20,
-    "above": 30
+    "radius": 3,
+    "above": 60
   },
   "check_gate_front": true,
   "gate_check_depth": 12,
