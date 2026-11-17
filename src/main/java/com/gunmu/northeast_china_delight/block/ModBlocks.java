@@ -387,7 +387,7 @@ public class ModBlocks {
     /** 被子：叠好放着的一床花被（三折摞起来） */
     public static final Supplier<Block> FOLDED_QUILT = block(
             "folded_quilt",
-            properties -> new FacingDecorBlock(properties, Block.box(1, 0, 1, 15, 7, 15), false),
+            FoldedQuiltBlock::new,
             beddingProperties(MapColor.COLOR_RED)
     );
     /** 枕头：白布枕头，两头绣花的枕头顶 */

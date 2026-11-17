@@ -54,6 +54,10 @@ public class ModBlockEntities {
             "basin_stand",
             () -> BlockEntityType.Builder.of(BasinStandBlockEntity::new, ModBlocks.BASIN_STAND.get()).build(null));
 
+    public static final Supplier<BlockEntityType<FoldedQuiltBlockEntity>> FOLDED_QUILT = BLOCK_ENTITIES.register(
+            "folded_quilt",
+            () -> BlockEntityType.Builder.of(FoldedQuiltBlockEntity::new, ModBlocks.FOLDED_QUILT.get()).build(null));
+
     public static void register(IEventBus eventBus) {
         BLOCK_ENTITIES.register(eventBus);
     }
