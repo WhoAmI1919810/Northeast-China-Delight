@@ -285,6 +285,21 @@ public final class PillowSleepGameTests
     }
 
     @GameTest(template = "empty")
+    public static void pillowReportsWoolBeforeQuiltWhenPillowNotOnWool(GameTestHelper helper)
+    {
+        ServerLevel level = helper.getLevel();
+        BlockPos pos = helper.absolutePos(new BlockPos(4, 3, 4));
+        level.setBlockAndUpdate(pos.below(), Blocks.STONE.defaultBlockState());
+        level.setBlockAndUpdate(pos.north(), Blocks.STONE.defaultBlockState());
+        level.setBlockAndUpdate(pos.south(), Blocks.STONE.defaultBlockState());
+        level.setBlockAndUpdate(pos, pillow(Direction.NORTH));
+
+        helper.assertTrue(missingRequirement(level, pos) == SleepingPillowBlock.MissingRequirement.WOOL,
+                "枕头下方没有羊毛时应先提示缺羊毛，而不是缺被子或缺空间");
+        helper.succeed();
+    }
+
+    @GameTest(template = "empty")
     public static void pillowFallsBackWhenPreferredHeadspaceBlocked(GameTestHelper helper)
     {
         ServerLevel level = helper.getLevel();
