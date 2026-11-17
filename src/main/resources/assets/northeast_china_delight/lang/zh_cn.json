@@ -233,7 +233,7 @@
   "message.northeast_china_delight.big_pot.full": "锅里放不下了",
   "message.northeast_china_delight.big_pot.added": "放进锅里：%s",
   "message.northeast_china_delight.big_pot.need_water": "需加水烹饪",
-  "message.northeast_china_delight.big_pot.starting": "%s秒后开始烹饪：%s",
+  "message.northeast_china_delight.big_pot.starting": "%s 秒后开始烹饪：%s",
   "message.northeast_china_delight.big_pot.cooking": "本次烹饪：%s",
   "message.northeast_china_delight.pillow.need_quilt": "睡觉需要一床被子",
   "message.northeast_china_delight.pillow.need_space": "睡觉需要足够的空间",
