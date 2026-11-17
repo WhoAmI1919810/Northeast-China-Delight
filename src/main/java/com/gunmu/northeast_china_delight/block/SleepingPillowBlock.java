@@ -1,5 +1,6 @@
 package com.gunmu.northeast_china_delight.block;
 
+import com.gunmu.northeast_china_delight.entity.QuiltSleepData;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
@@ -53,6 +54,9 @@ public class SleepingPillowBlock extends FacingDecorBlock
             return InteractionResult.PASS;
         }
 
+        QuiltSleepData quiltData = (QuiltSleepData) serverPlayer;
+        quiltData.ncd$setQuiltPos(null);
+
         Player.BedSleepingProblem originalProblem = originalSleepProblem(serverPlayer, state, pos);
         if (originalProblem != null)
         {
@@ -70,13 +74,18 @@ public class SleepingPillowBlock extends FacingDecorBlock
         {
             return InteractionResult.SUCCESS;
         }
-        if (!hasNearbyQuilt(level, pos))
+        Optional<BlockPos> quiltPos = findNearbyQuilt(level, pos);
+        if (quiltPos.isEmpty())
         {
             return InteractionResult.SUCCESS;
         }
 
+        quiltData.ncd$setQuiltPos(quiltPos.get());
         var result = serverPlayer.startSleepInBed(pos);
-        result.ifLeft(problem -> showProblem(serverPlayer, problem));
+        result.ifLeft(problem -> {
+            showProblem(serverPlayer, problem);
+            quiltData.ncd$setQuiltPos(null);
+        });
         return InteractionResult.SUCCESS;
     }
 
@@ -103,21 +112,45 @@ public class SleepingPillowBlock extends FacingDecorBlock
                 && level.getBlockState(sidePos.below()).is(BlockTags.WOOL);
     }
 
-    /**
-     * 以枕头为中心，x/z 各 ±4、y 各 ±2 的闭区间内是否有被子方块。
-     */
+    /** 以枕头为中心，x/z 各 ±4、y 各 ±2 的闭区间内是否有被子方块。 */
     public static boolean hasNearbyQuilt(Level level, BlockPos pos)
+    {
+        return findNearbyQuilt(level, pos).isPresent();
+    }
+
+    /**
+     * 在枕头周围选一块被子；多块时取距离最近的一块，距离相同则保留遍历到的第一块。
+     */
+    public static Optional<BlockPos> findNearbyQuilt(Level level, BlockPos pos)
     {
         BlockPos min = pos.offset(-QUILT_RADIUS_XZ, -QUILT_RADIUS_Y, -QUILT_RADIUS_XZ);
         BlockPos max = pos.offset(QUILT_RADIUS_XZ, QUILT_RADIUS_Y, QUILT_RADIUS_XZ);
+        BlockPos nearest = null;
+        long nearestDistance = Long.MAX_VALUE;
         for (BlockPos cursor : BlockPos.betweenClosed(min, max))
         {
             if (level.getBlockState(cursor).is(ModBlockTags.QUILTS))
             {
-                return true;
+                long dx = (long) cursor.getX() - pos.getX();
+                long dy = (long) cursor.getY() - pos.getY();
+                long dz = (long) cursor.getZ() - pos.getZ();
+                long distance = dx * dx + dy * dy + dz * dz;
+                if (distance < nearestDistance)
+                {
+                    nearest = cursor.immutable();
+                    nearestDistance = distance;
+                }
             }
         }
-        return false;
+        return Optional.ofNullable(nearest);
+    }
+
+    /** 被子坐标是否仍在枕头对应的搜索范围内。 */
+    public static boolean isQuiltInRange(BlockPos pillowPos, BlockPos quiltPos)
+    {
+        return Math.abs(quiltPos.getX() - pillowPos.getX()) <= QUILT_RADIUS_XZ
+                && Math.abs(quiltPos.getY() - pillowPos.getY()) <= QUILT_RADIUS_Y
+                && Math.abs(quiltPos.getZ() - pillowPos.getZ()) <= QUILT_RADIUS_XZ;
     }
 
     /**

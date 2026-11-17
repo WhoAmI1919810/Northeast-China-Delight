@@ -306,7 +306,7 @@ public class ModItems {
     public static final Supplier<Item> HAZELNUT_SUGAR_FIRE_BUN = food("hazelnut_sugar_fire_bun", 7, 0.6F);
     public static final Supplier<Item> XUN_JIANG_PIN_PAN = bowlFood("smoked_meat_platter", 10, 0.7F);
     public static final Supplier<Item> ORANGE_GUO_BAO_ROU = bowlFood("orange_crispy_pork", 9, 0.7F);
-    public static final Supplier<Item> JIANG_BAN_LA_PI = bowlFood("mung_bean_sheet_salad", 7, 0.5F);
+    public static final Supplier<Item> JIANG_BAN_LA_PI = bowlFood("mung_bean_sheet_salad", 9, 0.5F);
     public static final Supplier<Item> CONG_SHAO_HAI_SHEN = bowlFood("braised_sea_cucumber_scallion", 8, 0.7F);
     public static final Supplier<Item> HAI_SHEN_DOU_FU_TANG = bowlFood("sea_cucumber_tofu_soup", 7, 0.6F);
     public static final Supplier<Item> XIAN_YU_BING_ZI = bowlFood("salted_fish_flatbread", 8, 0.6F);
