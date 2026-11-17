@@ -30,7 +30,8 @@ import java.util.WeakHashMap;
  *   <li>一棒子敲懵：木槌近身打中的东西多被击退一截（相当于击退 I）、缓慢 II 两秒，见 {@link #onLivingDamage} / {@link #onKnockBack}；</li>
  *   <li>自家人：找村民换东西便宜一点（每条交易的第一样要价少 15%，至少少 1 个；村庄英雄 I 是 30%），
  *       见 {@link #applyVillagerDiscount}，由 mixin/VillagerOutfitDiscountMixin 在原版算完声望、村庄英雄折扣之后调用。
- *       流浪商人不算村民，没有这个折扣。</li>
+ *       流浪商人不算村民，没有这个折扣；</li>
+ *   <li>一身力气：四件齐全时持续获得短暂的力量 I，见 {@link #refreshStrength}。</li>
  * </ul>
  * 「你瞅啥？」进度也认这一身（ModGameplayEvents#onLivingChangeTarget）。
  */
@@ -45,6 +46,10 @@ public final class NortheastOutfit {
     private static final float EXTRA_KNOCKBACK = 0.5F;
     /** 找村民换东西少要的比例 */
     private static final float VILLAGER_DISCOUNT = 0.15F;
+    /** 四件套续力量：一次给 5 秒，每秒检查一次，避免效果到期闪烁 */
+    public static final int STRENGTH_DURATION_TICKS = 100;
+    public static final int STRENGTH_REFRESH_INTERVAL = 20;
+    private static final int STRENGTH_REFRESH_BELOW_TICKS = 40;
 
     /**
      * 这一下木槌刚打中、还没轮到原版击退的东西（记的是打中时的游戏刻）。原版在扣血之后才击退（LivingEntity#hurt），
@@ -60,6 +65,22 @@ public final class NortheastOutfit {
                 && entity.getItemBySlot(EquipmentSlot.CHEST).is(ModItems.FLORAL_JACKET.get())
                 && entity.getMainHandItem().is(ModItems.WOODEN_MALLET.get())
                 && entity.getOffhandItem().is(ModItems.BIG_POT_LID.get());
+    }
+
+    /**
+     * 四件套的力量 I：效果快到期时续到 5 秒。已有的更高级力量不会被降级，
+     * 更长的同级力量也不会被缩短。
+     */
+    public static void refreshStrength(Player player) {
+        if (player.level().isClientSide() || !isComplete(player)) {
+            return;
+        }
+        MobEffectInstance current = player.getEffect(MobEffects.DAMAGE_BOOST);
+        if (current != null && (current.getAmplifier() > 0
+                || current.getDuration() > STRENGTH_REFRESH_BELOW_TICKS)) {
+            return;
+        }
+        player.addEffect(new MobEffectInstance(MobEffects.DAMAGE_BOOST, STRENGTH_DURATION_TICKS, 0));
     }
 
     /** 一棒子敲懵：穿齐了用木槌近身打中，缓慢两秒，并记下来等原版击退时加力度 */

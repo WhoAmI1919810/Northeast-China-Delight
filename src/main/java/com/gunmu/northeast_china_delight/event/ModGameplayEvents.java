@@ -13,6 +13,7 @@ import com.gunmu.northeast_china_delight.compat.displaydelight.DisplayDelightCom
 import com.gunmu.northeast_china_delight.block.WoodenMortarBlock;
 import com.gunmu.northeast_china_delight.effect.ModEffects;
 import com.gunmu.northeast_china_delight.item.ModItems;
+import com.gunmu.northeast_china_delight.item.NortheastOutfit;
 import com.gunmu.northeast_china_delight.item.SeasoningBottleItem;
 import com.gunmu.northeast_china_delight.util.DdEffects;
 import com.gunmu.northeast_china_delight.util.DdIds;
@@ -227,6 +228,7 @@ public final class ModGameplayEvents
             return;
         }
         awardYardVisits(event.getServer());
+        applyOutfitStrength(event.getServer());
         applyRadiatorWarmth(event.getServer());
     }
     //?} else {
@@ -234,9 +236,21 @@ public final class ModGameplayEvents
     public static void onServerTick(ServerTickEvent.Post event)
     {
         awardYardVisits(event.getServer());
+        applyOutfitStrength(event.getServer());
         applyRadiatorWarmth(event.getServer());
     }
     *///?}
+
+    /** 「东北行头」四件套：每秒把短暂的力量 I 续上 */
+    private static void applyOutfitStrength(MinecraftServer server)
+    {
+        if (server.getTickCount() % NortheastOutfit.STRENGTH_REFRESH_INTERVAL != 0) {
+            return;
+        }
+        for (ServerPlayer player : server.getPlayerList().getPlayers()) {
+            NortheastOutfit.refreshStrength(player);
+        }
+    }
 
     private static void awardYardVisits(MinecraftServer server)
     {
