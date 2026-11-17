@@ -1,6 +1,12 @@
 package com.gunmu.northeast_china_delight.worldgen;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import com.gunmu.northeast_china_delight.NortheastChinaDelight;
+import com.gunmu.northeast_china_delight.advancement.ModAdvancements;
+import com.gunmu.northeast_china_delight.util.DdIds;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.gametest.framework.GameTest;
@@ -16,6 +22,8 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.levelgen.structure.BoundingBox;
 import net.minecraft.world.level.levelgen.WorldgenRandom;
 import net.minecraft.world.level.levelgen.structure.pieces.StructurePieceSerializationContext;
+import net.minecraft.world.level.levelgen.structure.templatesystem.StructurePlaceSettings;
+import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplate;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplateManager;
 //? if <1.20.2 {
 import net.minecraftforge.gametest.GameTestHolder;
@@ -25,9 +33,15 @@ import net.minecraftforge.gametest.PrefixGameTestTemplate;
 import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
 *///?}
 
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.util.HashSet;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 @GameTestHolder(NortheastChinaDelight.MODID)
@@ -456,6 +470,57 @@ public final class NortheastCourtyardStructureGameTests
         helper.succeed();
     }
 
+    @GameTest(template = "empty")
+    public static void everyCourtyardTemplateHasAVisitCriterion(GameTestHelper helper)
+    {
+        JsonObject structure = resource(
+                "northeast_china_delight/worldgen/structure/northeast_yard.json");
+        JsonArray configured = structure.getAsJsonArray("templates");
+        List<String> templates = configured.asList().stream().map(JsonElement::getAsString).toList();
+        helper.assertTrue(templates.equals(NortheastCourtyardStructure.DEFAULT_TEMPLATES),
+                "小院结构 JSON 与 Java 默认模板池必须一致");
+        helper.assertTrue(templates.contains("northeast_china_delight:northeast_yard_korean"),
+                "韩式小院必须进入世界生成模板池");
+        for (String template : templates) {
+            helper.assertTrue(helper.getLevel().getStructureManager().get(DdIds.parse(template)).isPresent(),
+                    "小院模板 NBT 必须能从资源包加载：" + template);
+        }
+        StructureTemplate korean = helper.getLevel().getStructureManager()
+                .get(DdIds.parse("northeast_china_delight:northeast_yard_korean")).orElseThrow();
+        List<StructureTemplate.StructureBlockInfo> chests = korean.filterBlocks(
+                BlockPos.ZERO, new StructurePlaceSettings(), Blocks.CHEST);
+        Map<BlockPos, String> lootTables = new HashMap<>();
+        for (StructureTemplate.StructureBlockInfo chest : chests) {
+            lootTables.put(chest.pos(), chest.nbt() == null ? "" : chest.nbt().getString("LootTable"));
+        }
+        Map<BlockPos, String> expectedLoot = Map.of(
+                new BlockPos(11, 4, 6), "northeast_china_delight:chests/courtyard_kitchen",
+                new BlockPos(21, 4, 18), "northeast_china_delight:chests/courtyard_granary",
+                new BlockPos(26, 6, 7), "northeast_china_delight:chests/courtyard_disc");
+        helper.assertTrue(lootTables.equals(expectedLoot),
+                "韩式小院的 3 个箱子必须全部挂上预期战利品表：" + lootTables);
+
+        JsonObject advancement = resource(
+                "northeast_china_delight/advancement/visit_all_yards.json");
+        Set<String> criteria = advancement.getAsJsonObject("criteria").keySet();
+        Set<String> required = new HashSet<>();
+        for (JsonElement group : advancement.getAsJsonArray("requirements")) {
+            for (JsonElement name : group.getAsJsonArray()) {
+                required.add(name.getAsString());
+            }
+        }
+
+        Set<String> expected = new HashSet<>();
+        for (String template : templates) {
+            expected.add(ModAdvancements.yardCriterion(template));
+        }
+        helper.assertTrue(criteria.equals(expected),
+                "每种小院都必须有且只有一条对应的「挨户串门」判据：" + expected);
+        helper.assertTrue(required.equals(expected),
+                "每条「挨户串门」判据都必须进入 requirements：" + expected);
+        helper.succeed();
+    }
+
     private static void assertChance(GameTestHelper helper, int placedCount, float expected, String message)
     {
         float actual = NortheastCourtyardStructure.walkChanceFor(placedCount, 0.80F);
@@ -483,5 +548,19 @@ public final class NortheastCourtyardStructureGameTests
         }
         states[groundY - minY] = ground;
         return new NoiseColumn(minY, states);
+    }
+
+    private static JsonObject resource(String path)
+    {
+        try (InputStreamReader reader = new InputStreamReader(Objects.requireNonNull(
+                NortheastCourtyardStructureGameTests.class.getResourceAsStream("/data/" + path)),
+                StandardCharsets.UTF_8))
+        {
+            return JsonParser.parseReader(reader).getAsJsonObject();
+        }
+        catch (IOException exception)
+        {
+            throw new IllegalStateException("无法读取测试资源：" + path, exception);
+        }
     }
 }
