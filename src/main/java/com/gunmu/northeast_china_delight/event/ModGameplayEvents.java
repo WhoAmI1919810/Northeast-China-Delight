@@ -101,8 +101,10 @@ import net.minecraftforge.event.TickEvent;
 *///?}
 //? if <1.20.2 {
 import net.minecraftforge.event.entity.player.PlayerWakeUpEvent;
+import net.minecraftforge.event.entity.player.PlayerEvent;
 //?} else {
 /*import net.neoforged.neoforge.event.entity.player.PlayerWakeUpEvent;
+import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 *///?}
 
 public final class ModGameplayEvents
@@ -122,6 +124,12 @@ public final class ModGameplayEvents
 
     private ModGameplayEvents()
     {
+    }
+
+    @SubscribeEvent
+    public static void onPlayerClone(PlayerEvent.Clone event)
+    {
+        SleepComfort.copyCooldown(event.getOriginal(), event.getEntity());
     }
 
     @SubscribeEvent
