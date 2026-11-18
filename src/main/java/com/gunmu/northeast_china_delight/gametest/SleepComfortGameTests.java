@@ -27,6 +27,7 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.neoforge.gametest.GameTestHolder;
+import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
 
 import java.util.UUID;
@@ -220,6 +221,9 @@ public final class SleepComfortGameTests
         helper.assertTrue(player.getEffect(MobEffects.REGENERATION) == null,
                 "冷却期内再次睡满阈值不应再次获得生命恢复");
         helper.assertTrue(SleepComfort.isCooldownActive(player), "冷却应继续生效");
+        TestServerPlayer respawned = serverPlayer(helper);
+        ModGameplayEvents.onPlayerClone(new PlayerEvent.Clone(respawned, player, true));
+        helper.assertTrue(SleepComfort.isCooldownActive(respawned), "死亡重生后应保留暖气奖励冷却");
         helper.succeed();
     }
 
