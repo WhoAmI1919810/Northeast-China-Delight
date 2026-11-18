@@ -254,10 +254,10 @@ public class ModItems {
     public static final Supplier<Item> BUCKWHEAT_COLD_NOODLES = brassBowlFood("buckwheat_cold_noodles", 9, 0.6F);
     public static final Supplier<Item> DOG_BAO_PICKLES = brassBowlFood("dog_bao_pickles", 6, 0.6F);
     public static final Supplier<Item> LIANG_BAN_XIAN_CAI = bowlFood("pickled_veggie_salad", 6, 0.5F);
-    public static final Supplier<Item> MING_TAI_YU_SI = bowlFood("shredded_pollack", 6, 0.5F);
+    public static final Supplier<Item> MING_TAI_YU_SI = brassBowlFood("shredded_pollack", 6, 0.5F);
     public static final Supplier<Item> ZHAN_JIANG_CAI = bowlFood("dip_veggie_platter", 7, 0.5F);
     public static final Supplier<Item> DA_FAN_BAO = food("northeast_rice_wrap", 10, 0.7F);
-    public static final Supplier<Item> JIA_XIAN_HUANG_GUA_PAO_CAI = bowlFood("stuffed_cucumber_pickle", 6, 0.5F);
+    public static final Supplier<Item> JIA_XIAN_HUANG_GUA_PAO_CAI = brassBowlFood("stuffed_cucumber_pickle", 6, 0.5F);
     public static final Supplier<Item> LIANG_BAN_HUA_CAI = bowlFood("peanut_potato_salad", 8, 0.5F);
     public static final Supplier<Item> DA_FENG_SHOU = feastItem("harvest_stew", () -> ModBlocks.DA_FENG_SHOU_POT.get());
     public static final Supplier<Item> DA_FENG_SHOU_BOWL = bowlFood("harvest_stew_bowl", 12, 0.8F);
