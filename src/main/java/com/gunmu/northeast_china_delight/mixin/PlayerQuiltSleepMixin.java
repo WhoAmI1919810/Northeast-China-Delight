@@ -2,12 +2,14 @@ package com.gunmu.northeast_china_delight.mixin;
 
 import com.gunmu.northeast_china_delight.entity.QuiltSleepData;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.world.entity.player.Player;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -22,6 +24,10 @@ public abstract class PlayerQuiltSleepMixin implements QuiltSleepData
 {
     private static final EntityDataAccessor<Optional<BlockPos>> DATA_QUILT_POS =
             SynchedEntityData.defineId(Player.class, EntityDataSerializers.OPTIONAL_BLOCK_POS);
+
+    @Unique
+    @Nullable
+    private Direction ncd$sleepSide;
 
     @Inject(method = "defineSynchedData", at = @At("TAIL"))
     private void northeast_china_delight$defineQuiltData(CallbackInfo callback)
@@ -40,6 +46,18 @@ public abstract class PlayerQuiltSleepMixin implements QuiltSleepData
     {
         ncd$player().getEntityData().set(DATA_QUILT_POS,
                 pos == null ? Optional.empty() : Optional.of(pos.immutable()));
+    }
+
+    @Override
+    public Optional<Direction> ncd$getSleepSide()
+    {
+        return Optional.ofNullable(this.ncd$sleepSide);
+    }
+
+    @Override
+    public void ncd$setSleepSide(@Nullable Direction side)
+    {
+        this.ncd$sleepSide = side;
     }
 
     private Player ncd$player()

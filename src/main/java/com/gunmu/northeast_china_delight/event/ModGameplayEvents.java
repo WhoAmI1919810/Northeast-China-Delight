@@ -10,6 +10,7 @@ import com.gunmu.northeast_china_delight.block.ModBlockTags;
 import com.gunmu.northeast_china_delight.block.ModBlocks;
 import com.gunmu.northeast_china_delight.block.PlacedDishBlock;
 import com.gunmu.northeast_china_delight.block.PlatedDishBlock;
+import com.gunmu.northeast_china_delight.block.SleepingPillowBlock;
 import com.gunmu.northeast_china_delight.compat.displaydelight.DisplayDelightCompat;
 import com.gunmu.northeast_china_delight.block.WoodenMortarBlock;
 import com.gunmu.northeast_china_delight.effect.ModEffects;
@@ -107,6 +108,7 @@ public final class ModGameplayEvents
     public static final int RADIATOR_DURATION_TICKS = 220;
     public static final int RADIATOR_SCAN_RADIUS = 9;
     public static final double RADIATOR_RANGE = RADIATOR_SCAN_RADIUS;
+    private static final int PILLOW_LAYOUT_CHECK_INTERVAL = 5;
 
     /** 小院群落的注册名，见 data/northeast_china_delight/worldgen/structure/northeast_yard.json */
     private static final ResourceLocation YARD_STRUCTURE =
@@ -122,9 +124,11 @@ public final class ModGameplayEvents
         if (event.getEntity() instanceof ServerPlayer player)
         {
             SleepComfort.applyAfterWakeUp(player);
-            ((QuiltSleepData) player).ncd$getQuiltPos().ifPresent(quiltPos ->
+            QuiltSleepData quiltData = (QuiltSleepData) player;
+            quiltData.ncd$getQuiltPos().ifPresent(quiltPos ->
                     FoldedQuiltBlock.release(player.serverLevel(), quiltPos, player.getUUID()));
-            ((QuiltSleepData) player).ncd$setQuiltPos(null);
+            quiltData.ncd$setQuiltPos(null);
+            quiltData.ncd$setSleepSide(null);
         }
     }
 
@@ -235,6 +239,7 @@ public final class ModGameplayEvents
         awardYardVisits(event.getServer());
         applyOutfitStrength(event.getServer());
         applyRadiatorWarmth(event.getServer());
+        validatePillowSleepLayouts(event.getServer());
     }
     //?} else {
     /*@SubscribeEvent
@@ -243,6 +248,7 @@ public final class ModGameplayEvents
         awardYardVisits(event.getServer());
         applyOutfitStrength(event.getServer());
         applyRadiatorWarmth(event.getServer());
+        validatePillowSleepLayouts(event.getServer());
     }
     *///?}
 
@@ -278,6 +284,22 @@ public final class ModGameplayEvents
                 MobEffectInstance warmth = DdEffects.ambientInstance(
                         DdEffects.hold(ModEffects.WARMTH), RADIATOR_DURATION_TICKS, 0);
                 player.addEffect(warmth);
+            }
+        }
+    }
+
+    /** 枕头睡眠要求整套布局持续成立；每 5 tick 检查一次，任一格被改掉后最迟 5 tick 内起床。 */
+    private static void validatePillowSleepLayouts(MinecraftServer server)
+    {
+        if (server.getTickCount() % PILLOW_LAYOUT_CHECK_INTERVAL != 0)
+        {
+            return;
+        }
+        for (ServerPlayer player : server.getPlayerList().getPlayers())
+        {
+            if (player.isSleeping())
+            {
+                SleepingPillowBlock.validateSleepingLayout(player);
             }
         }
     }
@@ -522,6 +544,12 @@ public final class ModGameplayEvents
     {
         if (!(event.getLevel() instanceof ServerLevel level))
         {
+            return;
+        }
+        BlockState target = level.getBlockState(event.getPos());
+        if (target.getBlock() instanceof FoldedQuiltBlock && FoldedQuiltBlock.isOccupied(target))
+        {
+            event.setCanceled(true);
             return;
         }
         Player player = event.getPlayer();

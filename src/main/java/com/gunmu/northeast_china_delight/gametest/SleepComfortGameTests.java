@@ -45,9 +45,22 @@ public final class SleepComfortGameTests
 
     private static final class TestServerPlayer extends ServerPlayer
     {
+        private int sleepTimer = SleepComfort.MINIMUM_SLEEP_TICKS;
+
         private TestServerPlayer(ServerLevel level, GameProfile profile)
         {
             super(level.getServer(), level, profile);
+        }
+
+        @Override
+        public int getSleepTimer()
+        {
+            return sleepTimer;
+        }
+
+        private void setSleepTimer(int ticks)
+        {
+            sleepTimer = ticks;
         }
 
         @Override
@@ -60,16 +73,21 @@ public final class SleepComfortGameTests
                                        net.minecraft.world.entity.Entity source)
         {
         }
+
+        @Override
+        protected void onEffectRemoved(MobEffectInstance effectInstance)
+        {
+        }
     }
 
-    private static ServerPlayer serverPlayer(GameTestHelper helper)
+    private static TestServerPlayer serverPlayer(GameTestHelper helper)
     {
         ServerLevel level = helper.getLevel();
         //? if <1.20.2 {
-        ServerPlayer player = new TestServerPlayer(level,
+        TestServerPlayer player = new TestServerPlayer(level,
                 new GameProfile(UUID.randomUUID(), "sleep-comfort-test-player"));
         //?} else {
-        /*ServerPlayer player = new TestServerPlayer(level,
+        /*TestServerPlayer player = new TestServerPlayer(level,
                 new GameProfile(UUID.randomUUID(), "sleep-comfort-test-player"));
         *///?}
         CompoundTag gameTypes = new CompoundTag();
@@ -116,12 +134,12 @@ public final class SleepComfortGameTests
                 .setValue(FacingDecorBlock.FACING, Direction.WEST));
     }
 
-    private static ServerPlayer sleepOnBed(GameTestHelper helper, BlockPos foot, Direction facing)
+    private static TestServerPlayer sleepOnBed(GameTestHelper helper, BlockPos foot, Direction facing)
     {
         ServerLevel level = helper.getLevel();
         setBiome(helper, foot, "minecraft:snowy_taiga");
         placeBed(level, foot, facing);
-        ServerPlayer player = serverPlayer(helper);
+        TestServerPlayer player = serverPlayer(helper);
         player.moveTo(foot.getX() + 0.5, foot.getY(), foot.getZ() + 0.5, 0.0F, 0.0F);
         level.setDayTime(18000L);
         level.updateSkyBrightness();
@@ -154,6 +172,67 @@ public final class SleepComfortGameTests
         helper.assertTrue(advancement != null, "应加载睡舒坦了进度");
         helper.assertTrue(!player.getAdvancements().getOrStartProgress(advancement).isDone(),
                 "只有枕头睡觉才发睡舒坦了进度");
+        helper.succeed();
+    }
+
+    @GameTest(template = "empty")
+    public static void interruptedSleepBeforeMinimumDoesNotGrantRegeneration(GameTestHelper helper)
+    {
+        ServerLevel level = helper.getLevel();
+        BlockPos foot = helper.absolutePos(new BlockPos(4, 3, 4));
+        placeRadiator(level, foot.east(3));
+        TestServerPlayer player = sleepOnBed(helper, foot, Direction.NORTH);
+
+        player.setSleepTimer(SleepComfort.MINIMUM_SLEEP_TICKS - 1);
+        player.stopSleepInBed(true, false);
+
+        helper.assertTrue(player.getEffect(MobEffects.REGENERATION) == null,
+                "未睡满原版深睡阈值时不应获得生命恢复");
+        helper.assertTrue(!SleepComfort.isCooldownActive(player),
+                "未发奖励时不应开始冷却");
+        helper.succeed();
+    }
+
+    @GameTest(template = "empty")
+    public static void manualWakeAfterMinimumSleepGrantsRegeneration(GameTestHelper helper)
+    {
+        ServerLevel level = helper.getLevel();
+        BlockPos foot = helper.absolutePos(new BlockPos(4, 3, 4));
+        placeRadiator(level, foot.east(3));
+        TestServerPlayer player = sleepOnBed(helper, foot, Direction.NORTH);
+
+        player.setSleepTimer(SleepComfort.MINIMUM_SLEEP_TICKS);
+        player.stopSleepInBed(true, false);
+
+        MobEffectInstance regeneration = player.getEffect(MobEffects.REGENERATION);
+        helper.assertTrue(regeneration != null, "睡满阈值后主动起床也应获得生命恢复");
+        helper.assertTrue(regeneration.getDuration() == SleepComfort.BED_REGENERATION_TICKS,
+                "主动起床仍应按床发放 6 秒生命恢复");
+        helper.assertTrue(SleepComfort.isCooldownActive(player), "发奖励后应进入个人冷却");
+        helper.succeed();
+    }
+
+    @GameTest(template = "empty")
+    public static void sleepComfortCooldownBlocksRepeatedReward(GameTestHelper helper)
+    {
+        ServerLevel level = helper.getLevel();
+        BlockPos foot = helper.absolutePos(new BlockPos(4, 3, 4));
+        placeRadiator(level, foot.east(3));
+        TestServerPlayer player = sleepOnBed(helper, foot, Direction.NORTH);
+
+        player.setSleepTimer(SleepComfort.MINIMUM_SLEEP_TICKS);
+        player.stopSleepInBed(true, false);
+        helper.assertTrue(player.getEffect(MobEffects.REGENERATION) != null,
+                "第一次睡满阈值应获得生命恢复");
+
+        player.removeEffect(MobEffects.REGENERATION);
+        player.startSleeping(foot);
+        player.setSleepTimer(SleepComfort.MINIMUM_SLEEP_TICKS);
+        player.stopSleepInBed(true, false);
+
+        helper.assertTrue(player.getEffect(MobEffects.REGENERATION) == null,
+                "冷却期内再次睡满阈值不应再次获得生命恢复");
+        helper.assertTrue(SleepComfort.isCooldownActive(player), "冷却应继续生效");
         helper.succeed();
     }
 

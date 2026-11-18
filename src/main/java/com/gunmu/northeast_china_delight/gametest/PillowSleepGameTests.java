@@ -7,6 +7,7 @@ import com.gunmu.northeast_china_delight.block.FoldedQuiltBlockEntity;
 import com.gunmu.northeast_china_delight.block.ModBlocks;
 import com.gunmu.northeast_china_delight.block.SleepingPillowBlock;
 import com.gunmu.northeast_china_delight.entity.QuiltSleepData;
+import com.gunmu.northeast_china_delight.event.ModGameplayEvents;
 import com.mojang.authlib.GameProfile;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -18,8 +19,10 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.material.PushReaction;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
+import net.minecraftforge.event.level.BlockEvent;
 import net.minecraftforge.gametest.GameTestHolder;
 import net.minecraftforge.gametest.PrefixGameTestTemplate;
 
@@ -66,6 +69,44 @@ public final class PillowSleepGameTests
     private static SleepingPillowBlock.MissingRequirement missingRequirement(ServerLevel level, BlockPos pos)
     {
         return SleepingPillowBlock.evaluateSleep(level, level.getBlockState(pos), pos).missingRequirement();
+    }
+
+    private static void preparePillowLayout(ServerLevel level, BlockPos pos, BlockPos quiltPos)
+    {
+        level.setBlockAndUpdate(pos.below(), Blocks.WHITE_WOOL.defaultBlockState());
+        level.setBlockAndUpdate(pos, pillow(Direction.NORTH));
+        level.setBlockAndUpdate(pos.north(), Blocks.AIR.defaultBlockState());
+        level.setBlockAndUpdate(pos.north().above(), Blocks.AIR.defaultBlockState());
+        level.setBlockAndUpdate(pos.north().below(), Blocks.WHITE_WOOL.defaultBlockState());
+        level.setBlockAndUpdate(pos.above(), Blocks.AIR.defaultBlockState());
+        level.setBlockAndUpdate(pos.south(), Blocks.AIR.defaultBlockState());
+        level.setBlockAndUpdate(pos.south().above(), Blocks.AIR.defaultBlockState());
+        level.setBlockAndUpdate(pos.south().below(), Blocks.STONE.defaultBlockState());
+        level.setBlockAndUpdate(quiltPos, ModBlocks.FOLDED_QUILT.get().defaultBlockState());
+    }
+
+    private static void beginPillowSleep(GameTestHelper helper, ServerLevel level, ServerPlayer player,
+                                         BlockPos pos, BlockPos quiltPos)
+    {
+        preparePillowLayout(level, pos, quiltPos);
+        player.moveTo(pos.getX() + 2.5, pos.getY(), pos.getZ() + 0.5, 0.0F, 0.0F);
+        setTime(level, 18000L);
+        presetRespawn(player, pos);
+        usePillow(level, pos, player);
+        helper.assertTrue(player.isSleeping(), "完整布局下应能开始枕头睡眠");
+        helper.assertTrue(((QuiltSleepData) player).ncd$getSleepSide().orElse(null) == Direction.NORTH,
+                "应记录本次选中的睡眠方向 D");
+    }
+
+    private static void assertPillowSleepCleared(GameTestHelper helper, ServerLevel level, ServerPlayer player,
+                                                 BlockPos quiltPos, String reason)
+    {
+        QuiltSleepData data = (QuiltSleepData) player;
+        helper.assertFalse(player.isSleeping(), reason + " 时应立即起床");
+        helper.assertTrue(data.ncd$getQuiltPos().isEmpty(), reason + " 后应清空被子坐标");
+        helper.assertTrue(data.ncd$getSleepSide().isEmpty(), reason + " 后应清空睡眠方向");
+        BlockState quiltState = level.getBlockState(quiltPos);
+        helper.assertFalse(FoldedQuiltBlock.isOccupied(quiltState), reason + " 后被子不应仍处于占用状态");
     }
 
     @GameTest(template = "empty")
@@ -395,6 +436,46 @@ public final class PillowSleepGameTests
     }
 
     @GameTest(template = "empty")
+    public static void occupiedQuiltKeepsCollisionAndRejectsOtherPlayerBreaking(GameTestHelper helper)
+    {
+        ServerLevel level = helper.getLevel();
+        BlockPos quiltPos = helper.absolutePos(new BlockPos(4, 3, 4));
+        ServerPlayer owner = serverPlayer(helper);
+        ServerPlayer breaker = serverPlayer(helper);
+        level.setBlockAndUpdate(quiltPos, ModBlocks.FOLDED_QUILT.get().defaultBlockState());
+
+        helper.assertFalse(level.getBlockState(quiltPos).getCollisionShape(level, quiltPos).isEmpty(),
+                "空闲被子应保留碰撞箱");
+        helper.assertTrue(level.getBlockState(quiltPos).getPistonPushReaction() == PushReaction.DESTROY,
+                "空闲被子应保持原版的活塞破坏行为");
+        helper.assertTrue(FoldedQuiltBlock.select(level, quiltPos, owner.getUUID()), "应能占用空闲被子");
+
+        BlockState occupied = level.getBlockState(quiltPos);
+        helper.assertTrue(FoldedQuiltBlock.isOccupied(occupied), "被子应处于占用状态");
+        helper.assertFalse(occupied.getCollisionShape(level, quiltPos).isEmpty(),
+                "占用中的被子仍应保留碰撞箱");
+        helper.assertTrue(occupied.getPistonPushReaction() == PushReaction.BLOCK,
+                "占用中的被子不能被活塞推动或销毁");
+        helper.assertTrue(occupied.getExplosionResistance(level, quiltPos, null) >= 3_600_000.0F,
+                "占用中的被子应能抵挡常规爆炸");
+        helper.assertFalse(occupied.isFlammable(level, quiltPos, Direction.UP),
+                "占用中的被子不能被点燃");
+
+        BlockEvent.BreakEvent blocked = new BlockEvent.BreakEvent(level, quiltPos, occupied, breaker);
+        ModGameplayEvents.onBlockBreak(blocked);
+        helper.assertTrue(blocked.isCanceled(), "其他玩家不能拆除占用中的被子");
+
+        helper.assertTrue(FoldedQuiltBlock.release(level, quiltPos, owner.getUUID()), "占用者应能释放被子");
+        BlockState released = level.getBlockState(quiltPos);
+        helper.assertTrue(released.getPistonPushReaction() == PushReaction.DESTROY,
+                "释放后的被子应恢复可被活塞破坏");
+        BlockEvent.BreakEvent allowed = new BlockEvent.BreakEvent(level, quiltPos, released, breaker);
+        ModGameplayEvents.onBlockBreak(allowed);
+        helper.assertFalse(allowed.isCanceled(), "释放后的被子应恢复可拆除状态");
+        helper.succeed();
+    }
+
+    @GameTest(template = "empty")
     public static void pillowFallsBackToOppositeWoolSide(GameTestHelper helper)
     {
         ServerLevel level = helper.getLevel();
@@ -417,6 +498,79 @@ public final class PillowSleepGameTests
             helper.assertTrue(player.isSleeping(), "羊毛向西铺时应该回退到相对方向并入睡");
             helper.assertTrue(player.getBedOrientation() == Direction.EAST,
                     "D 为西时镜头应朝西，对应的原版床方向应为东");
+        }
+        finally
+        {
+            if (player.isSleeping())
+            {
+                player.stopSleepInBed(true, false);
+            }
+            level.setDayTime(oldTime);
+            level.updateSkyBrightness();
+        }
+        helper.succeed();
+    }
+
+    @GameTest(template = "empty")
+    public static void pillowSleepLayoutIsValidatedUntilWakeUp(GameTestHelper helper)
+    {
+        ServerLevel level = helper.getLevel();
+        BlockPos pos = helper.absolutePos(new BlockPos(4, 3, 4));
+        BlockPos quiltPos = pos.east(3);
+        long oldTime = level.getDayTime();
+        ServerPlayer player = serverPlayer(helper);
+        try
+        {
+            beginPillowSleep(helper, level, player, pos, quiltPos);
+            helper.assertTrue(SleepingPillowBlock.isSleepingLayoutValid(player), "完整布局应持续有效");
+            SleepingPillowBlock.validateSleepingLayout(player);
+            helper.assertTrue(player.isSleeping(), "完整布局未被改动时不应被叫醒");
+            usePillow(level, pos, player);
+            helper.assertTrue(player.isSleeping(), "睡眠中再次右键枕头不应打断本次睡眠");
+            helper.assertTrue(((QuiltSleepData) player).ncd$getQuiltPos().isPresent(),
+                    "睡眠中再次右键枕头不应清掉被子坐标");
+
+            level.setBlockAndUpdate(pos.north().below(), Blocks.STONE.defaultBlockState());
+            SleepingPillowBlock.validateSleepingLayout(player);
+            assertPillowSleepCleared(helper, level, player, quiltPos, "所选侧羊毛被破坏");
+
+            beginPillowSleep(helper, level, player, pos, quiltPos);
+            level.setBlockAndUpdate(pos.north(), Blocks.STONE.defaultBlockState());
+            SleepingPillowBlock.validateSleepingLayout(player);
+            assertPillowSleepCleared(helper, level, player, quiltPos, "所选侧空位被堵住");
+
+            beginPillowSleep(helper, level, player, pos, quiltPos);
+            level.setBlockAndUpdate(pos.north().above(), Blocks.STONE.defaultBlockState());
+            SleepingPillowBlock.validateSleepingLayout(player);
+            assertPillowSleepCleared(helper, level, player, quiltPos, "头部空间被堵住");
+
+            beginPillowSleep(helper, level, player, pos, quiltPos);
+            level.setBlockAndUpdate(pos.below(), Blocks.STONE.defaultBlockState());
+            SleepingPillowBlock.validateSleepingLayout(player);
+            assertPillowSleepCleared(helper, level, player, quiltPos, "枕头下羊毛被破坏");
+
+            beginPillowSleep(helper, level, player, pos, quiltPos);
+            level.setBlockAndUpdate(pos, Blocks.AIR.defaultBlockState());
+            SleepingPillowBlock.validateSleepingLayout(player);
+            assertPillowSleepCleared(helper, level, player, quiltPos, "枕头被移除");
+
+            beginPillowSleep(helper, level, player, pos, quiltPos);
+            level.setBlockAndUpdate(quiltPos, Blocks.AIR.defaultBlockState());
+            SleepingPillowBlock.validateSleepingLayout(player);
+            assertPillowSleepCleared(helper, level, player, quiltPos, "被子被移除");
+
+            beginPillowSleep(helper, level, player, pos, quiltPos);
+            level.setBlockAndUpdate(quiltPos, ModBlocks.FOLDED_QUILT.get().defaultBlockState());
+            SleepingPillowBlock.validateSleepingLayout(player);
+            assertPillowSleepCleared(helper, level, player, quiltPos, "被子被替换为空闲被子");
+
+            beginPillowSleep(helper, level, player, pos, quiltPos);
+            level.setBlockAndUpdate(pos.south().below(), Blocks.WHITE_WOOL.defaultBlockState());
+            level.setBlockAndUpdate(pos.north().below(), Blocks.STONE.defaultBlockState());
+            helper.assertFalse(SleepingPillowBlock.isSleepingLayoutValid(player),
+                    "另一侧变得合法也不能替代入睡时选定的方向");
+            SleepingPillowBlock.validateSleepingLayout(player);
+            assertPillowSleepCleared(helper, level, player, quiltPos, "原睡眠方向的羊毛被破坏");
         }
         finally
         {

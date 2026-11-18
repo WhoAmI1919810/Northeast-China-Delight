@@ -18,9 +18,12 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.GameType;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
+import net.minecraftforge.common.IPlantable;
 //? if <1.20.2 {
 import net.minecraftforge.gametest.GameTestHolder;
 //?} else {
@@ -32,12 +35,53 @@ import net.minecraftforge.gametest.PrefixGameTestTemplate;
 /*import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
 *///?}
 
+import java.util.List;
+import java.util.function.Supplier;
+
 @GameTestHolder(NortheastChinaDelight.MODID)
 @PrefixGameTestTemplate(false)
 public final class PlantingGameTests
 {
+    private static final List<Supplier<Block>> FARMLAND_CROPS = List.of(
+            ModBlocks.SOYBEAN_CROP,
+            ModBlocks.EGGPLANT_CROP,
+            ModBlocks.GREEN_PEPPER_CROP,
+            ModBlocks.CORN_CROP,
+            ModBlocks.GREEN_BEANS_CROP,
+            ModBlocks.BUCKWHEAT_CROP,
+            ModBlocks.NAPA_CABBAGE_CROP,
+            ModBlocks.SNOW_MUSTARD_CROP,
+            ModBlocks.CUCUMBER_CROP,
+            ModBlocks.SWEET_POTATO_CROP,
+            ModBlocks.RED_CHILI_CROP,
+            ModBlocks.PEANUT_CROP,
+            ModBlocks.RED_BEAN_CROP,
+            ModBlocks.GREEN_ONION_CROP,
+            ModBlocks.GREEN_RADISH_CROP,
+            ModBlocks.BELLFLOWER_CROP,
+            ModBlocks.GINSENG_CROP
+    );
+
     private PlantingGameTests()
     {
+    }
+
+    @GameTest(template = "empty")
+    public static void modCropsSatisfyVanillaFarmlandMaintenanceCheck(GameTestHelper helper)
+    {
+        ServerLevel level = helper.getLevel();
+        BlockPos farmlandPos = helper.absolutePos(new BlockPos(1, 1, 1));
+        BlockState farmland = Blocks.FARMLAND.defaultBlockState();
+        for (Supplier<Block> crop : FARMLAND_CROPS)
+        {
+            BlockState state = crop.get().defaultBlockState();
+            helper.assertTrue(state.getBlock() instanceof IPlantable,
+                    state.getBlock().getName().getString() + " 应实现原版作物接口");
+            helper.assertTrue(farmland.canSustainPlant(level, farmlandPos, Direction.UP,
+                            (IPlantable) state.getBlock()),
+                    state.getBlock().getName().getString() + " 应满足原版耕地的保耕判定");
+        }
+        helper.succeed();
     }
 
     private static Player mockPlayer(GameTestHelper helper, GameType gameType)
