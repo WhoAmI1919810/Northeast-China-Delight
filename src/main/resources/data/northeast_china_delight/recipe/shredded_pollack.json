@@ -3,6 +3,9 @@
   "category": "misc",
   "ingredients": [
     {
+      "item": "chinese_regional_culinary_ingredients:brass_bowl"
+    },
+    {
       "item": "farmersdelight:cod_slice"
     },
     {
@@ -16,9 +19,6 @@
     },
     {
       "tag": "c:foods/seasonings/chili_sauce"
-    },
-    {
-      "item": "minecraft:bowl"
     },
     {
       "tag": "c:crops/green_pepper"

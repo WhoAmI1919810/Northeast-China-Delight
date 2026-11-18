@@ -36,6 +36,9 @@
     },
     "manchu_thatch": {
       "trigger": "minecraft:impossible"
+    },
+    "korean": {
+      "trigger": "minecraft:impossible"
     }
   },
   "requirements": [
@@ -59,6 +62,9 @@
     ],
     [
       "manchu_thatch"
+    ],
+    [
+      "korean"
     ]
   ]
 }

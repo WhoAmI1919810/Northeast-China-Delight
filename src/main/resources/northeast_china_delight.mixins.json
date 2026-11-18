@@ -12,6 +12,7 @@
     "RepairItemRecipeMixin",
     "VillagerOutfitDiscountMixin",
     "LivingEntityLidSoundMixin",
+    "PlayerQuiltSleepMixin",
     "ServerPlayerPillowSleepMixin"
   ],
   "client": [

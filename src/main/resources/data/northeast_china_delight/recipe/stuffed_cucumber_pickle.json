@@ -3,6 +3,9 @@
   "category": "misc",
   "ingredients": [
     {
+      "item": "chinese_regional_culinary_ingredients:brass_bowl"
+    },
+    {
       "item": "chinese_regional_culinary_ingredients:pickled_cucumber"
     },
     {

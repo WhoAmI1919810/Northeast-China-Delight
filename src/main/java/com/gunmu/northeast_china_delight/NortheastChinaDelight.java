@@ -11,6 +11,8 @@ import com.gunmu.chinese_regional_culinary_ingredients.block.CrciBlocks;
 import com.gunmu.chinese_regional_culinary_ingredients.block.GrillCampfireBlock;
 import com.gunmu.northeast_china_delight.advancement.NortheastProgressHooks;
 import com.gunmu.northeast_china_delight.block.ModBlocks;
+import com.gunmu.northeast_china_delight.block.ModBlockEntities;
+import com.gunmu.northeast_china_delight.client.QuiltSleepLayer;
 import com.gunmu.northeast_china_delight.compat.OptionalMods;
 import com.gunmu.northeast_china_delight.compat.create.CreateArmCompat;
 import com.gunmu.northeast_china_delight.compat.create.ModFanProcessingTypes;
@@ -168,6 +170,7 @@ public class NortheastChinaDelight
         ModItems.register(modEventBus);
         ModSounds.register(modEventBus);
         ModBlocks.register(modEventBus);
+        ModBlockEntities.register(modEventBus);
         ModEntities.register(modEventBus);
         ModCreativeTabs.register(modEventBus);
         ModLootModifiers.register(modEventBus);
@@ -327,6 +330,18 @@ public class NortheastChinaDelight
         {
             // 小板凳的座位实体看不见
             event.registerEntityRenderer(ModEntities.SEAT.get(), net.minecraft.client.renderer.entity.NoopRenderer::new);
+        }
+
+        @SubscribeEvent
+        public static void onAddLayers(EntityRenderersEvent.AddLayers event)
+        {
+            for (var skin : event.getSkins())
+            {
+                if (event.getSkin(skin) instanceof net.minecraft.client.renderer.entity.player.PlayerRenderer renderer)
+                {
+                    renderer.addLayer(new QuiltSleepLayer(renderer));
+                }
+            }
         }
 
         /**
