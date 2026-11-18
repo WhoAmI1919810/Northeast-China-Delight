@@ -5,6 +5,7 @@ import com.gunmu.northeast_china_delight.block.ModBlocks;
 import com.gunmu.northeast_china_delight.block.SleepingPillowBlock;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -22,15 +23,21 @@ import java.util.Set;
 /**
  * 寒冷群系里挨着暖气片睡觉时的起床奖励。
  *
+ * <p>睡满原版深睡阈值才发奖励，因此多人服务器里即使没有睡到天亮，只要睡眠计时达到 100 tick
+ * 后正常起床也能获得。奖励带个人冷却，避免反复短睡刷生命恢复。</p>
+ *
  * <p>{@link #hasReachableRadiator} 不要求直线可见，而是在暖气片和睡眠位置之间做三维连通检查：
  * 中间格必须没有碰撞体积，起点暖气片和终点床/枕头本身不参与可通行判断。</p>
  */
 public final class SleepComfort
 {
     public static final float MAX_RADIATOR_TEMPERATURE = 0.3F;
+    public static final int MINIMUM_SLEEP_TICKS = 100;
+    public static final int COOLDOWN_TICKS = 22_800;
     public static final int BED_REGENERATION_TICKS = 6 * 20;
     public static final int PILLOW_REGENERATION_TICKS = 12 * 20;
 
+    private static final String COOLDOWN_UNTIL_TAG = "ncd_sleep_comfort_cooldown_until";
     private static final int RADIATOR_SCAN_RADIUS = ModGameplayEvents.RADIATOR_SCAN_RADIUS;
     private static final int MAX_PATH_NODES = 4096;
     private static final double RADIATOR_RANGE_SQR =
@@ -42,7 +49,7 @@ public final class SleepComfort
 
     public static void applyAfterWakeUp(ServerPlayer player)
     {
-        if (!player.isSleeping())
+        if (!player.isSleeping() || player.getSleepTimer() < MINIMUM_SLEEP_TICKS)
         {
             return;
         }
@@ -66,12 +73,26 @@ public final class SleepComfort
             return;
         }
 
-        int duration = pillow ? PILLOW_REGENERATION_TICKS : BED_REGENERATION_TICKS;
-        player.addEffect(new MobEffectInstance(MobEffects.REGENERATION, duration, 0));
         if (pillow)
         {
             ModAdvancements.award(player, ModAdvancements.COZY_SLEEP, "sleep");
         }
+        if (isCooldownActive(player))
+        {
+            return;
+        }
+
+        int duration = pillow ? PILLOW_REGENERATION_TICKS : BED_REGENERATION_TICKS;
+        player.addEffect(new MobEffectInstance(MobEffects.REGENERATION, duration, 0));
+        CompoundTag data = player.getPersistentData();
+        data.putLong(COOLDOWN_UNTIL_TAG, level.getGameTime() + COOLDOWN_TICKS);
+    }
+
+    public static boolean isCooldownActive(ServerPlayer player)
+    {
+        CompoundTag data = player.getPersistentData();
+        return data.contains(COOLDOWN_UNTIL_TAG)
+                && player.serverLevel().getGameTime() < data.getLong(COOLDOWN_UNTIL_TAG);
     }
 
     public static boolean isRadiatorTemperatureSuitable(Level level, BlockPos pos)

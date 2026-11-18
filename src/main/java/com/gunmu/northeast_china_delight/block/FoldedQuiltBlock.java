@@ -1,7 +1,10 @@
 package com.gunmu.northeast_china_delight.block;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.Explosion;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.EntityBlock;
@@ -13,6 +16,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
+import net.minecraft.world.level.material.PushReaction;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.UUID;
@@ -22,6 +26,8 @@ import java.util.UUID;
  */
 public class FoldedQuiltBlock extends FacingDecorBlock implements EntityBlock
 {
+    private static final float OCCUPIED_EXPLOSION_RESISTANCE = 3_600_000.0F;
+
     public static final BooleanProperty OCCUPIED = BlockStateProperties.OCCUPIED;
 
     public FoldedQuiltBlock(BlockBehaviour.Properties properties)
@@ -35,6 +41,24 @@ public class FoldedQuiltBlock extends FacingDecorBlock implements EntityBlock
     {
         super.createBlockStateDefinition(builder);
         builder.add(OCCUPIED);
+    }
+
+    @Override
+    public PushReaction getPistonPushReaction(BlockState state)
+    {
+        return isOccupied(state) ? PushReaction.BLOCK : PushReaction.DESTROY;
+    }
+
+    @Override
+    public float getExplosionResistance(BlockState state, BlockGetter level, BlockPos pos, Explosion explosion)
+    {
+        return isOccupied(state) ? OCCUPIED_EXPLOSION_RESISTANCE : super.getExplosionResistance();
+    }
+
+    @Override
+    public boolean isFlammable(BlockState state, BlockGetter level, BlockPos pos, Direction direction)
+    {
+        return !isOccupied(state) && super.isFlammable(state, level, pos, direction);
     }
 
     @Nullable

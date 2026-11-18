@@ -91,7 +91,11 @@ public class SleepingPillowBlock extends FacingDecorBlock
         }
 
         QuiltSleepData quiltData = (QuiltSleepData) serverPlayer;
-        quiltData.ncd$setQuiltPos(null);
+        if (!serverPlayer.isSleeping())
+        {
+            quiltData.ncd$setQuiltPos(null);
+            quiltData.ncd$setSleepSide(null);
+        }
 
         Player.BedSleepingProblem basicProblem = basicSleepProblem(serverPlayer, state, pos);
         if (basicProblem != null)
@@ -127,9 +131,11 @@ public class SleepingPillowBlock extends FacingDecorBlock
             showProblem(serverPlayer, result.left().get());
             FoldedQuiltBlock.release((ServerLevel) level, quiltPos, serverPlayer.getUUID());
             quiltData.ncd$setQuiltPos(null);
+            quiltData.ncd$setSleepSide(null);
             return InteractionResult.SUCCESS;
         }
         quiltData.ncd$setQuiltPos(quiltPos);
+        quiltData.ncd$setSleepSide(evaluation.side());
         return InteractionResult.SUCCESS;
     }
 
@@ -241,6 +247,84 @@ public class SleepingPillowBlock extends FacingDecorBlock
         return Math.abs(quiltPos.getX() - pillowPos.getX()) <= QUILT_RADIUS_XZ
                 && Math.abs(quiltPos.getY() - pillowPos.getY()) <= QUILT_RADIUS_Y
                 && Math.abs(quiltPos.getZ() - pillowPos.getZ()) <= QUILT_RADIUS_XZ;
+    }
+
+    /**
+     * 睡眠期间重新核对入睡时选定的完整布局：枕头、方向 D 的空位与头部空间、
+     * 枕头和 D 前下方的羊毛，以及本人占用中的那床被子。
+     */
+    public static boolean isSleepingLayoutValid(ServerPlayer player)
+    {
+        if (!player.isSleeping())
+        {
+            return false;
+        }
+        BlockPos pillowPos = player.getSleepingPos().orElse(null);
+        if (pillowPos == null)
+        {
+            return false;
+        }
+
+        ServerLevel level = player.serverLevel();
+        BlockState pillowState = level.getBlockState(pillowPos);
+        if (!(pillowState.getBlock() instanceof SleepingPillowBlock))
+        {
+            return false;
+        }
+
+        QuiltSleepData quiltData = (QuiltSleepData) player;
+        Direction side = quiltData.ncd$getSleepSide().orElse(null);
+        Direction facing = pillowState.getValue(FACING);
+        if (side == null || (side != facing && side != facing.getOpposite()))
+        {
+            return false;
+        }
+        if (!level.getBlockState(pillowPos.below()).is(BlockTags.WOOL) || sideProblem(level, pillowPos, side) != null)
+        {
+            return false;
+        }
+
+        BlockPos quiltPos = quiltData.ncd$getQuiltPos().orElse(null);
+        if (quiltPos == null || !isQuiltInRange(pillowPos, quiltPos))
+        {
+            return false;
+        }
+        BlockState quiltState = level.getBlockState(quiltPos);
+        return quiltState.is(ModBlockTags.QUILTS)
+                && FoldedQuiltBlock.isOccupied(quiltState)
+                && level.getBlockEntity(quiltPos) instanceof FoldedQuiltBlockEntity quilt
+                && quilt.isSelectedBy(player.getUUID());
+    }
+
+    /**
+     * 枕头睡眠期间定期校验整套布局；被子被指令替换、羊毛被破坏或空位被堵住时立即起床。
+     */
+    public static void validateSleepingLayout(ServerPlayer player)
+    {
+        if (!player.isSleeping())
+        {
+            return;
+        }
+
+        QuiltSleepData quiltData = (QuiltSleepData) player;
+        BlockPos pillowPos = player.getSleepingPos().orElse(null);
+        boolean pillow = pillowPos != null
+                && player.serverLevel().getBlockState(pillowPos).getBlock() instanceof SleepingPillowBlock;
+        boolean hadPillowSelection = quiltData.ncd$getSleepSide().isPresent();
+        if (!pillow && !hadPillowSelection)
+        {
+            return;
+        }
+        if (pillow && isSleepingLayoutValid(player))
+        {
+            return;
+        }
+
+        quiltData.ncd$getQuiltPos().ifPresent(quiltPos ->
+                FoldedQuiltBlock.release(player.serverLevel(), quiltPos, player.getUUID()));
+        quiltData.ncd$setQuiltPos(null);
+        quiltData.ncd$setSleepSide(null);
+        player.stopSleepInBed(true, true);
     }
 
     /**
