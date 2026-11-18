@@ -3,6 +3,9 @@
   "category": "misc",
   "ingredients": [
     {
+      "item": "northeast_china_delight:brass_bowl"
+    },
+    {
       "item": "northeast_china_delight:pickled_cucumber"
     },
     {
