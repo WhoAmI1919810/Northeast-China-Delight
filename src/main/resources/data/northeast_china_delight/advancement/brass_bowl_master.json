@@ -9,7 +9,9 @@
     "ginseng_chicken_soup": {"trigger": "minecraft:inventory_changed", "conditions": {"items": [{"items": ["northeast_china_delight:ginseng_chicken_soup"]}]}},
     "cold_noodles": {"trigger": "minecraft:inventory_changed", "conditions": {"items": [{"items": ["northeast_china_delight:buckwheat_cold_noodles"]}]}},
     "bibimbap": {"trigger": "minecraft:inventory_changed", "conditions": {"items": [{"items": ["northeast_china_delight:bibimbap"]}]}},
-    "dog_bao_pickles": {"trigger": "minecraft:inventory_changed", "conditions": {"items": [{"items": ["northeast_china_delight:dog_bao_pickles"]}]}}
+    "dog_bao_pickles": {"trigger": "minecraft:inventory_changed", "conditions": {"items": [{"items": ["northeast_china_delight:dog_bao_pickles"]}]}},
+    "stuffed_cucumber_pickle": {"trigger": "minecraft:inventory_changed", "conditions": {"items": [{"items": ["northeast_china_delight:stuffed_cucumber_pickle"]}]}},
+    "shredded_pollack": {"trigger": "minecraft:inventory_changed", "conditions": {"items": [{"items": ["northeast_china_delight:shredded_pollack"]}]}}
   },
-  "requirements": [["spicy_beef_soup"], ["kimchi_fried_rice"], ["kimchi_tofu_soup"], ["soy_paste_soup"], ["ginseng_chicken_soup"], ["cold_noodles"], ["bibimbap"], ["dog_bao_pickles"]]
+  "requirements": [["spicy_beef_soup"], ["kimchi_fried_rice"], ["kimchi_tofu_soup"], ["soy_paste_soup"], ["ginseng_chicken_soup"], ["cold_noodles"], ["bibimbap"], ["dog_bao_pickles"], ["stuffed_cucumber_pickle"], ["shredded_pollack"]]
 }

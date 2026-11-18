@@ -241,7 +241,7 @@ public class ModBlocks {
     /** 被子：叠好放着的一床花被（三折摞起来） */
     public static final Supplier<Block> FOLDED_QUILT = block(
             "folded_quilt",
-            properties -> new FacingDecorBlock(properties, Block.box(1, 0, 1, 15, 7, 15), false),
+            FoldedQuiltBlock::new,
             beddingProperties(MapColor.COLOR_RED)
     );
     /** 枕头：白布枕头，两头绣花的枕头顶 */
@@ -380,8 +380,8 @@ public class ModBlocks {
             "braised_pork_hock", "braised_pork_strips", "candied_sweet_potato", "smoked_meat_platter",
             "snowy_bean_paste", "candied_peanuts", "potato_pancake", "corn_fritter", "salted_fish_flatbread",
             "kimchi_pancake", "sauerkraut_fried_vermicelli", "pepper_dried_tofu", "pickled_cucumber_pork_stirfry",
-            "pickled_veggie_salad", "peanut_potato_salad", "stuffed_cucumber_pickle", "dip_veggie_platter",
-            "shredded_pollack", "tiger_salad", "shrimp_paste_scrambled_egg", "mung_bean_sheet_salad",
+            "pickled_veggie_salad", "peanut_potato_salad", "dip_veggie_platter",
+            "tiger_salad", "shrimp_paste_scrambled_egg", "mung_bean_sheet_salad",
             "braised_sea_cucumber_scallion", "cured_pork_bean_stew", "dry_fried_hairtail",
             "braised_hairtail"
     );
@@ -404,7 +404,8 @@ public class ModBlocks {
     /** 黄铜碗料理统一用 block/brass_bowl 的碗体，边界见 DishBlock.BRASS_BOWL_SHAPE。 */
     public static final List<String> BRASS_BOWL_DISH_IDS = List.of(
             "buckwheat_cold_noodles", "spicy_beef_soup", "kimchi_fried_rice",
-            "kimchi_tofu_soup", "soy_paste_soup", "ginseng_chicken_soup", "bibimbap", "dog_bao_pickles"
+            "kimchi_tofu_soup", "soy_paste_soup", "ginseng_chicken_soup", "bibimbap", "dog_bao_pickles",
+            "stuffed_cucumber_pickle", "shredded_pollack"
     );
 
     public static final Map<String, Supplier<Block>> DISH_BLOCKS = registerDishBlocks();

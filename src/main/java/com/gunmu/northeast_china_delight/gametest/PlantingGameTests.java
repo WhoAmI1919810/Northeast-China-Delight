@@ -15,6 +15,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.tags.BlockTags;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.BlockItem;
@@ -22,7 +23,9 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.GameType;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
 //? if <1.20.2 {
@@ -35,6 +38,9 @@ import net.neoforged.neoforge.gametest.GameTestHolder;
 *///?} else {
 import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
 //?}
+
+import java.util.List;
+import java.util.function.Supplier;
 
 /**
  * 雪地种植的回归测试。
@@ -51,8 +57,40 @@ import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
 @PrefixGameTestTemplate(false)
 public final class PlantingGameTests
 {
+    private static final List<Supplier<Block>> FARMLAND_CROPS = List.of(
+            CrciBlocks.SOYBEAN_CROP,
+            CrciBlocks.EGGPLANT_CROP,
+            CrciBlocks.GREEN_PEPPER_CROP,
+            CrciBlocks.CORN_CROP,
+            CrciBlocks.GREEN_BEANS_CROP,
+            CrciBlocks.BUCKWHEAT_CROP,
+            CrciBlocks.NAPA_CABBAGE_CROP,
+            CrciBlocks.SNOW_MUSTARD_CROP,
+            CrciBlocks.CUCUMBER_CROP,
+            CrciBlocks.SWEET_POTATO_CROP,
+            CrciBlocks.RED_CHILI_CROP,
+            CrciBlocks.PEANUT_CROP,
+            CrciBlocks.RED_BEAN_CROP,
+            CrciBlocks.GREEN_ONION_CROP,
+            CrciBlocks.GREEN_RADISH_CROP,
+            CrciBlocks.BELLFLOWER_CROP,
+            CrciBlocks.GINSENG_CROP
+    );
+
     private PlantingGameTests()
     {
+    }
+
+    @GameTest(template = "empty")
+    public static void modCropsMaintainFarmlandByVanillaTag(GameTestHelper helper)
+    {
+        for (Supplier<Block> crop : FARMLAND_CROPS)
+        {
+            BlockState state = crop.get().defaultBlockState();
+            helper.assertTrue(state.is(BlockTags.MAINTAINS_FARMLAND),
+                    state.getBlock().getName().getString() + " 应加入 #minecraft:maintains_farmland");
+        }
+        helper.succeed();
     }
 
     private static Player mockPlayer(GameTestHelper helper, GameType gameType)

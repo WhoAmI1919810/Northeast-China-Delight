@@ -156,10 +156,10 @@ public class ModItems {
     public static final Supplier<Item> BUCKWHEAT_COLD_NOODLES = brassBowlFood("buckwheat_cold_noodles", 9, 0.6F);
     public static final Supplier<Item> DOG_BAO_PICKLES = brassBowlFood("dog_bao_pickles", 6, 0.6F);
     public static final Supplier<Item> LIANG_BAN_XIAN_CAI = bowlFood("pickled_veggie_salad", 6, 0.5F);
-    public static final Supplier<Item> MING_TAI_YU_SI = bowlFood("shredded_pollack", 6, 0.5F);
+    public static final Supplier<Item> MING_TAI_YU_SI = brassBowlFood("shredded_pollack", 6, 0.5F);
     public static final Supplier<Item> ZHAN_JIANG_CAI = bowlFood("dip_veggie_platter", 7, 0.5F);
     public static final Supplier<Item> DA_FAN_BAO = food("northeast_rice_wrap", 10, 0.7F);
-    public static final Supplier<Item> JIA_XIAN_HUANG_GUA_PAO_CAI = bowlFood("stuffed_cucumber_pickle", 6, 0.5F);
+    public static final Supplier<Item> JIA_XIAN_HUANG_GUA_PAO_CAI = brassBowlFood("stuffed_cucumber_pickle", 6, 0.5F);
     public static final Supplier<Item> LIANG_BAN_HUA_CAI = bowlFood("peanut_potato_salad", 8, 0.5F);
     public static final Supplier<Item> DA_FENG_SHOU = feastItem("harvest_stew", () -> ModBlocks.DA_FENG_SHOU_POT.get());
     public static final Supplier<Item> DA_FENG_SHOU_BOWL = bowlFood("harvest_stew_bowl", 12, 0.8F);
@@ -209,7 +209,7 @@ public class ModItems {
     public static final Supplier<Item> HAZELNUT_SUGAR_FIRE_BUN = food("hazelnut_sugar_fire_bun", 7, 0.6F);
     public static final Supplier<Item> XUN_JIANG_PIN_PAN = bowlFood("smoked_meat_platter", 10, 0.7F);
     public static final Supplier<Item> ORANGE_GUO_BAO_ROU = bowlFood("orange_crispy_pork", 9, 0.7F);
-    public static final Supplier<Item> JIANG_BAN_LA_PI = bowlFood("mung_bean_sheet_salad", 7, 0.5F);
+    public static final Supplier<Item> JIANG_BAN_LA_PI = bowlFood("mung_bean_sheet_salad", 9, 0.3F);
     public static final Supplier<Item> CONG_SHAO_HAI_SHEN = bowlFood("braised_sea_cucumber_scallion", 8, 0.7F);
     public static final Supplier<Item> HAI_SHEN_DOU_FU_TANG = bowlFood("sea_cucumber_tofu_soup", 7, 0.6F);
     public static final Supplier<Item> XIAN_YU_BING_ZI = bowlFood("salted_fish_flatbread", 8, 0.6F);
