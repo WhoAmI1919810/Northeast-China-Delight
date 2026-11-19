@@ -1,0 +1,106 @@
+{
+  "values": {
+    "chinese_regional_culinary_ingredients:eggplant_seeds": {
+      "chance": 0.3
+    },
+    "chinese_regional_culinary_ingredients:green_pepper_seeds": {
+      "chance": 0.3
+    },
+    "chinese_regional_culinary_ingredients:corn_seeds": {
+      "chance": 0.3
+    },
+    "chinese_regional_culinary_ingredients:green_beans_seeds": {
+      "chance": 0.3
+    },
+    "chinese_regional_culinary_ingredients:napa_cabbage_seeds": {
+      "chance": 0.3
+    },
+    "chinese_regional_culinary_ingredients:snow_mustard_seeds": {
+      "chance": 0.3
+    },
+    "chinese_regional_culinary_ingredients:cucumber_seeds": {
+      "chance": 0.3
+    },
+    "chinese_regional_culinary_ingredients:red_chili_seeds": {
+      "chance": 0.3
+    },
+    "chinese_regional_culinary_ingredients:green_onion_seeds": {
+      "chance": 0.3
+    },
+    "chinese_regional_culinary_ingredients:green_radish_seeds": {
+      "chance": 0.3
+    },
+    "chinese_regional_culinary_ingredients:ginseng_seeds": {
+      "chance": 0.3
+    },
+    "chinese_regional_culinary_ingredients:bellflower_seeds": {
+      "chance": 0.3
+    },
+    "chinese_regional_culinary_ingredients:soybean": {
+      "chance": 0.65
+    },
+    "chinese_regional_culinary_ingredients:eggplant": {
+      "chance": 0.65
+    },
+    "chinese_regional_culinary_ingredients:green_pepper": {
+      "chance": 0.65
+    },
+    "chinese_regional_culinary_ingredients:corn": {
+      "chance": 0.65
+    },
+    "chinese_regional_culinary_ingredients:green_beans": {
+      "chance": 0.65
+    },
+    "chinese_regional_culinary_ingredients:buckwheat": {
+      "chance": 0.65
+    },
+    "chinese_regional_culinary_ingredients:napa_cabbage": {
+      "chance": 0.65
+    },
+    "chinese_regional_culinary_ingredients:snow_mustard": {
+      "chance": 0.65
+    },
+    "chinese_regional_culinary_ingredients:cucumber": {
+      "chance": 0.65
+    },
+    "chinese_regional_culinary_ingredients:sweet_potato": {
+      "chance": 0.65
+    },
+    "chinese_regional_culinary_ingredients:peanut": {
+      "chance": 0.65
+    },
+    "chinese_regional_culinary_ingredients:red_bean": {
+      "chance": 0.65
+    },
+    "chinese_regional_culinary_ingredients:red_chili": {
+      "chance": 0.65
+    },
+    "chinese_regional_culinary_ingredients:green_onion": {
+      "chance": 0.65
+    },
+    "chinese_regional_culinary_ingredients:green_radish": {
+      "chance": 0.65
+    },
+    "chinese_regional_culinary_ingredients:bellflower_root": {
+      "chance": 0.65
+    },
+    "chinese_regional_culinary_ingredients:ginseng": {
+      "chance": 0.65
+    },
+    "chinese_regional_culinary_ingredients:hazelnut": {
+      "chance": 0.65
+    },
+    "chinese_regional_culinary_ingredients:hazel_mushroom": {
+      "chance": 0.65
+    },
+    "chinese_regional_culinary_ingredients:hazel_mushroom_colony": {
+      "chance": 0.65
+    },
+    "chinese_regional_culinary_ingredients:wood_ear": {
+      "chance": 0.65
+    },
+    "chinese_regional_culinary_ingredients:corn_stalk": {
+      "chance": 0.65
+    }
+  }
+}
