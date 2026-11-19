@@ -594,15 +594,32 @@ public class ModBlocks {
                     : NO_CONTAINER_DISH_IDS.contains(id)
                     ? DishBlock.TRAY_SHAPE
                     : DishBlock.BOWL_SHAPE;
-            if (NO_CONTAINER_DISH_IDS.contains(id))
+            if (id.equals("kvass"))
             {
-                ResourceLocation plate = SMALL_PLATE_DISH_IDS.contains(id)
-                        ? DisplayDelightCompat.SMALL_PLATE : DisplayDelightCompat.PLATE;
-                map.put(id, dishBlock(id, properties -> new PlatedDishBlock(properties, shape, plate)));
+                map.put(id, dishBlock(id, properties -> new PlacedDishBlock(properties, shape)));
+            }
+            else if (NO_CONTAINER_DISH_IDS.contains(id))
+            {
+                boolean small = SMALL_PLATE_DISH_IDS.contains(id);
+                ResourceLocation plate = small ? DisplayDelightCompat.SMALL_PLATE : DisplayDelightCompat.PLATE;
+                map.put(id, dishBlock(id, properties -> small
+                        ? EdiblePlatedDishBlock.oneBite(properties, shape, plate)
+                        : EdiblePlatedDishBlock.threeBites(properties, shape, plate)));
+            }
+            else if (TRAY_DISH_IDS.contains(id))
+            {
+                map.put(id, dishBlock(id, properties ->
+                        EdibleDishBlock.threeBites(properties, shape, () -> net.minecraft.world.item.Items.BOWL)));
+            }
+            else if (BRASS_BOWL_DISH_IDS.contains(id))
+            {
+                map.put(id, dishBlock(id, properties ->
+                        EdibleDishBlock.twoBites(properties, shape, () -> ModItems.BRASS_BOWL.get())));
             }
             else
             {
-                map.put(id, dishBlock(id, properties -> new PlacedDishBlock(properties, shape)));
+                map.put(id, dishBlock(id, properties ->
+                        EdibleDishBlock.twoBites(properties, shape, () -> net.minecraft.world.item.Items.BOWL)));
             }
         }
         return Collections.unmodifiableMap(map);

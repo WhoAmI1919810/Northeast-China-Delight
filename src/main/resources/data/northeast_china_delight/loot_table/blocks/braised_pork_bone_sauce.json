@@ -3,7 +3,21 @@
   "pools": [
     {
       "bonus_rolls": 0.0,
-      "entries": [ { "type": "minecraft:item", "name": "northeast_china_delight:braised_pork_bone_sauce" } ],
+      "conditions": [
+        {
+          "condition": "minecraft:block_state_property",
+          "block": "northeast_china_delight:braised_pork_bone_sauce",
+          "properties": {
+            "bites": "0"
+          }
+        }
+      ],
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "northeast_china_delight:braised_pork_bone_sauce"
+        }
+      ],
       "rolls": 1.0
     }
   ],

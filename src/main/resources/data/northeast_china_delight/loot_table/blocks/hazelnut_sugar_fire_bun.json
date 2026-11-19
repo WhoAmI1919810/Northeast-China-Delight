@@ -3,7 +3,21 @@
   "pools": [
     {
       "bonus_rolls": 0.0,
-      "entries": [ { "type": "minecraft:item", "name": "northeast_china_delight:hazelnut_sugar_fire_bun" } ],
+      "conditions": [
+        {
+          "condition": "minecraft:block_state_property",
+          "block": "northeast_china_delight:hazelnut_sugar_fire_bun",
+          "properties": {
+            "bites": "0"
+          }
+        }
+      ],
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "northeast_china_delight:hazelnut_sugar_fire_bun"
+        }
+      ],
       "rolls": 1.0
     }
   ],
