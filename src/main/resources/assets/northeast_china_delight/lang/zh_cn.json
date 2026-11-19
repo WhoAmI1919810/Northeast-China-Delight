@@ -524,7 +524,10 @@
   "lyrics.northeast_china_delight.13": "我就在这嘎达土生土长",
   "lyrics.northeast_china_delight.14": "东北人的情东北人的爱",
   "lyrics.northeast_china_delight.15": "贼拉拉的爱你呀我的家乡",
-  "message.northeast_china_delight.dish.cooldown": "还在咀嚼中…（%s 秒）",
-  "message.northeast_china_delight.dish.cooldown_greasy": "吃得有点腻，稍等一下或吃点爽口的（%s 秒）",
-  "message.northeast_china_delight.dish.cooldown_refreshing": "嘴里太清爽了，稍等一下或换换口味（%s 秒）"
+  "advancements.northeast_china_delight.place_dish.title": "先对付两口",
+  "advancements.northeast_china_delight.place_dish.description": "放下一道菜肴",
+  "jei.northeast_china_delight.info.effect_greasy": "食用油腻菜肴后会感到油腻，肚子更扛饿，但再吃油腻的菜会变得下咽困难；吃口爽口的菜肴可以解腻。",
+  "jei.northeast_china_delight.info.effect_refreshing": "食用爽口菜肴后会感到爽口，在吃饱时伤势恢复得更快，但一连吃太多爽口的菜也会让人有点吃不消；改吃油腻菜肴能换换口味。",
+  "jei.northeast_china_delight.info.effect_warmth": "享用热气腾腾的汤菜小吃，或待在暖气片旁都会让人浑身暖和。身带暖身时，在冰天雪地里走起路来更轻快，也稳稳当当不会陷进细雪。",
+  "jei.northeast_china_delight.info.effect_nourishing": "食用参鸡汤或海参菜肴会带来养生效果，能持续调理气血、回复生命；伤势越重时，回血越是明显。"
 }
