@@ -2,6 +2,7 @@ package com.gunmu.northeast_china_delight.effect;
 
 
 import com.gunmu.chinese_regional_culinary_ingredients.effect.CrciMobEffects;
+import com.gunmu.northeast_china_delight.block.PlacedDishEating;
 import com.gunmu.northeast_china_delight.item.ModItems;
 import com.gunmu.chinese_regional_culinary_ingredients.item.MysteryStewEffects;
 import com.gunmu.chinese_regional_culinary_ingredients.item.SeasoningBottleItem;
@@ -17,6 +18,7 @@ import net.minecraft.world.effect.MobEffectUtil;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.food.FoodData;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 //? if <1.20.2 {
@@ -106,6 +108,153 @@ public class DishEffectEvents {
                 player.addEffect(applied.instance());
             }
         }
+    }
+
+    /**
+     * 摆放菜肴分阶段食用时的状态效果结算（不额外提示数值差异）。
+     * <ul>
+     *   <li>1 口小餐盘菜：直接按满态给 100% 效果；</li>
+     *   <li>2 / 3 口分阶段菜：常规效果按口分摊（2 口 60%/口、3 口 40%/口）并有上限累加至 115%；</li>
+     *   <li>养生与生命恢复同样按口拆开，且合起来的总时长略高于手持整吃。</li>
+     * </ul>
+     */
+    public static void applyPlacedDishEffects(Player player, Item dishItem, int totalBites) {
+        DishFlavors.Info info = DishFlavors.of(dishItem);
+        if (info == null) {
+            return;
+        }
+        ItemStack stack = new ItemStack(dishItem);
+
+        switch (info.flavor()) {
+            case GREASY -> DdEffects.removeEffect(player, CrciMobEffects.REFRESHING);
+            case REFRESHING -> DdEffects.removeEffect(player, CrciMobEffects.GREASY);
+            default -> {
+            }
+        }
+
+        if (totalBites <= 1) {
+            for (DishEffects.Applied applied : DishEffects.of(info)) {
+                player.addEffect(applied.instance());
+            }
+            int warmth = DishFlavors.warmthTicks(dishItem, info);
+            if (warmth > 0) {
+                for (DishEffects.Applied applied : DishEffects.warmth(warmth)) {
+                    player.addEffect(applied.instance());
+                }
+            }
+            if (givesNourishing(stack)) {
+                for (DishEffects.Applied applied : DishEffects.nourishingExtras()) {
+                    player.addEffect(applied.instance());
+                }
+            }
+            if (stack.is(ModItems.ORANGE_GUO_BAO_ROU.get())) {
+                for (DishEffects.Applied applied : DishEffects.orangeJuiceExtras()) {
+                    player.addEffect(applied.instance());
+                }
+            }
+            return;
+        }
+
+        float perBiteRatio = totalBites == 2 ? 0.60F : 0.40F;
+        float maxCapRatio = 1.15F;
+
+        for (DishEffects.Applied applied : DishEffects.of(info)) {
+            int delta = Math.max(1, Math.round(applied.durationTicks() * perBiteRatio));
+            int cap = Math.max(delta, Math.round(applied.durationTicks() * maxCapRatio));
+            addStackedEffect(player, applied.effect(), applied.amplifier(), delta, cap);
+        }
+        int warmth = DishFlavors.warmthTicks(dishItem, info);
+        if (warmth > 0) {
+            for (DishEffects.Applied applied : DishEffects.warmth(warmth)) {
+                int delta = Math.max(1, Math.round(applied.durationTicks() * perBiteRatio));
+                int cap = Math.max(delta, Math.round(applied.durationTicks() * maxCapRatio));
+                addStackedEffect(player, applied.effect(), applied.amplifier(), delta, cap);
+            }
+        }
+        if (givesNourishing(stack)) {
+            // 满态 200t（10s）：3 口 80t/口、2 口 120t/口，上限 240t（12s）
+            int delta = totalBites == 2 ? 120 : 80;
+            int cap = 240;
+            for (DishEffects.Applied applied : DishEffects.nourishingExtras()) {
+                addStackedEffect(player, applied.effect(), applied.amplifier(), delta, cap);
+            }
+        }
+        if (stack.is(ModItems.ORANGE_GUO_BAO_ROU.get())) {
+            // 满态生命恢复 I 100t（每 50t 回 1 HP，共 2 HP）：每口 50t 保底跳 1 点血，3 口上限 150t（共 3 HP）
+            int delta = 50;
+            int cap = 150;
+            for (DishEffects.Applied applied : DishEffects.orangeJuiceExtras()) {
+                addStackedEffect(player, applied.effect(), applied.amplifier(), delta, cap);
+            }
+        }
+    }
+
+    private static void addStackedEffect(Player player, Holder<MobEffect> effect, int amplifier,
+                                         int deltaTicks, int maxDurationTicks) {
+        if (deltaTicks <= 0) {
+            return;
+        }
+        MobEffectInstance existing = DdEffects.getEffect(player, effect);
+        int newDuration;
+        if (existing != null) {
+            if (existing.getAmplifier() > amplifier) {
+                return;
+            }
+            if (existing.getAmplifier() == amplifier) {
+                int cur = existing.getDuration();
+                newDuration = Math.max(cur, Math.min(cur + deltaTicks, maxDurationTicks));
+            } else {
+                newDuration = Math.max(existing.getDuration(), deltaTicks);
+            }
+        } else {
+            newDuration = deltaTicks;
+        }
+        player.addEffect(DdEffects.instance(effect, newDuration, amplifier));
+    }
+
+    /** 若玩家身上正好带着与这道菜同口味的减速效果（油腻吃油腻 / 爽口吃爽口），返回该效果实例，否则返回 null。 */
+    public static MobEffectInstance matchingSlowdownEffect(Player player, Item item) {
+        DishFlavors.Flavor flavor = DishFlavors.flavorOf(item);
+        if (flavor == null) {
+            return null;
+        }
+        Holder<MobEffect> effect = switch (flavor) {
+            case GREASY -> DdEffects.hold(CrciMobEffects.GREASY);
+            case REFRESHING -> DdEffects.hold(CrciMobEffects.REFRESHING);
+            default -> null;
+        };
+        return effect == null ? null : DdEffects.getEffect(player, effect);
+    }
+
+    /** 油腻/爽口同口味手持进食减速耗时。 */
+    public static int applyFlavorSlowdown(Player player, Item item, int baseTicks) {
+        if (baseTicks <= 0) {
+            return 0;
+        }
+        MobEffectInstance instance = matchingSlowdownEffect(player, item);
+        if (instance == null) {
+            return baseTicks;
+        }
+        int percent = 50 + (instance.getAmplifier() + 1) * 10;
+        float remaining = Math.max(0.25F, 1.0F - percent / 100.0F);
+        return Math.min(baseTicks * 4, Math.round(baseTicks / remaining));
+    }
+
+    /**
+     * 摆放菜肴两口之间的同口味冷却放大：吃第 1 口就会挂上油腻/爽口，
+     * 因此采用更温和的 +25%/级（上限 2.0×：爽口 I 为 1.25×、油腻 II 为 1.50×），避免吃单盘菜耗时过长。
+     */
+    public static int applyPlacedFlavorCooldown(Player player, Item item, int baseTicks) {
+        if (baseTicks <= 0) {
+            return 0;
+        }
+        MobEffectInstance instance = matchingSlowdownEffect(player, item);
+        if (instance == null) {
+            return baseTicks;
+        }
+        int level = instance.getAmplifier() + 1;
+        float multiplier = Math.min(2.0F, 1.0F + 0.25F * level);
+        return Math.round(baseTicks * multiplier);
     }
 
     @SubscribeEvent
@@ -225,24 +374,10 @@ public class DishEffectEvents {
         if (!(event.getEntity() instanceof Player player) || player.level().isClientSide()) {
             return;
         }
-        DishFlavors.Flavor flavor = DishFlavors.flavorOf(event.getItem().getItem());
-        Holder<MobEffect> effect = switch (flavor == null ? DishFlavors.Flavor.BALANCED : flavor) {
-            case GREASY -> DdEffects.hold(CrciMobEffects.GREASY);
-            case REFRESHING -> DdEffects.hold(CrciMobEffects.REFRESHING);
-            default -> null;
-        };
-        if (effect == null) {
-            return;
+        int duration = applyFlavorSlowdown(player, event.getItem().getItem(), event.getDuration());
+        if (duration != event.getDuration()) {
+            event.setDuration(duration);
         }
-        MobEffectInstance instance = DdEffects.getEffect(player, effect);
-        if (instance == null) {
-            return;
-        }
-
-        int percent = 50 + (instance.getAmplifier() + 1) * 10;
-        float remaining = Math.max(0.25F, 1.0F - percent / 100.0F);
-        int duration = Math.min(event.getDuration() * 4, Math.round(event.getDuration() / remaining));
-        event.setDuration(duration);
     }
 
     @SubscribeEvent
@@ -301,6 +436,7 @@ public class DishEffectEvents {
         UUID id = event.getEntity().getUUID();
         LAST_EXHAUSTION.remove(id);
         REGEN_CREDIT.remove(id);
+        PlacedDishEating.clearCooldown(id);
     }
 
     private static final net.minecraft.resources.ResourceLocation WARMTH_SPEED_ID =

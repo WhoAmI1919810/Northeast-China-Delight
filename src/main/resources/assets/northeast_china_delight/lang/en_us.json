@@ -374,7 +374,6 @@
   "jei.northeast_china_delight.pound.result_mb_value": "%s mB",
   "jei.northeast_china_delight.grill.seasoning_amount": "%s mB",
   "jei.northeast_china_delight.time.seconds": "%s s",
-  
   "jei.northeast_china_delight.time.days": "%s day(s)",
   "jei.northeast_china_delight.time.days_seconds": "%s day(s) %s s",
   "message.northeast_china_delight.grill.not_grillable": "This can't be grilled",
@@ -504,5 +503,8 @@
   "item.northeast_china_delight.music_disc_northeast.desc": "The Great Northeast Is Mine Own Native Land",
   "message.northeast_china_delight.pillow.need_quilt": "You need a quilt to sleep",
   "message.northeast_china_delight.pillow.need_space": "You need more space to sleep",
-  "message.northeast_china_delight.pillow.need_wool": "You need wool to sleep on"
+  "message.northeast_china_delight.pillow.need_wool": "You need wool to sleep on",
+  "message.northeast_china_delight.dish.cooldown": "Still chewing... (%ss)",
+  "message.northeast_china_delight.dish.cooldown_greasy": "A bit greasy - wait a moment or try something refreshing (%ss)",
+  "message.northeast_china_delight.dish.cooldown_refreshing": "Too refreshing in a row - wait a moment or switch flavors (%ss)"
 }

@@ -3,7 +3,59 @@
   "pools": [
     {
       "bonus_rolls": 0.0,
-      "entries": [ { "type": "minecraft:item", "name": "northeast_china_delight:crispy_pork_strips" } ],
+      "conditions": [
+        {
+          "condition": "minecraft:block_state_property",
+          "block": "northeast_china_delight:crispy_pork_strips",
+          "properties": {
+            "bites": "0"
+          }
+        }
+      ],
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "northeast_china_delight:crispy_pork_strips"
+        }
+      ],
+      "rolls": 1.0
+    },
+    {
+      "bonus_rolls": 0.0,
+      "conditions": [
+        {
+          "condition": "minecraft:block_state_property",
+          "block": "northeast_china_delight:crispy_pork_strips",
+          "properties": {
+            "bites": "1"
+          }
+        }
+      ],
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:bowl"
+        }
+      ],
+      "rolls": 1.0
+    },
+    {
+      "bonus_rolls": 0.0,
+      "conditions": [
+        {
+          "condition": "minecraft:block_state_property",
+          "block": "northeast_china_delight:crispy_pork_strips",
+          "properties": {
+            "bites": "2"
+          }
+        }
+      ],
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "minecraft:bowl"
+        }
+      ],
       "rolls": 1.0
     }
   ],

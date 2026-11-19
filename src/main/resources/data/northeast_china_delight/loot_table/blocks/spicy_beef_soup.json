@@ -3,7 +3,40 @@
   "pools": [
     {
       "bonus_rolls": 0.0,
-      "entries": [ { "type": "minecraft:item", "name": "northeast_china_delight:spicy_beef_soup" } ],
+      "conditions": [
+        {
+          "condition": "minecraft:block_state_property",
+          "block": "northeast_china_delight:spicy_beef_soup",
+          "properties": {
+            "bites": "0"
+          }
+        }
+      ],
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "northeast_china_delight:spicy_beef_soup"
+        }
+      ],
+      "rolls": 1.0
+    },
+    {
+      "bonus_rolls": 0.0,
+      "conditions": [
+        {
+          "condition": "minecraft:block_state_property",
+          "block": "northeast_china_delight:spicy_beef_soup",
+          "properties": {
+            "bites": "1"
+          }
+        }
+      ],
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "chinese_regional_culinary_ingredients:brass_bowl"
+        }
+      ],
       "rolls": 1.0
     }
   ],
