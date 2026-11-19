@@ -130,6 +130,12 @@ public final class DishPlacementGameTests
         helper.assertTrue(state.is(ModBlocks.DISH_BLOCKS.get("kvass").get()), "潜行右键应该放下格瓦斯");
         helper.assertTrue(player.getMainHandItem().isEmpty(), "放下格瓦斯应消耗手里的一瓶");
 
+        var outline = state.getShape(level, target);
+        var collision = state.getCollisionShape(level, target);
+        helper.assertTrue(outline.toAabbs().size() == 1 && outline.bounds().equals(collision.bounds()),
+                "格瓦斯应使用贴合瓶身外沿的单个方框");
+        helper.assertTrue(collision.toAabbs().size() > 1, "格瓦斯应保留瓶身的实体碰撞形状");
+
         helper.assertTrue(PlacedDishBlock.pickUp(state, level, target, player).consumesAction(),
                 "潜行空手右键应该收回格瓦斯");
         helper.assertTrue(level.getBlockState(target).isAir() && player.getInventory().countItem(kvass) == 1,
