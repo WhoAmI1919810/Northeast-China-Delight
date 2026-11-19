@@ -1,0 +1,23 @@
+{
+  "parent": "northeast_china_delight:root",
+  "display": {
+    "icon": {
+      "id": "northeast_china_delight:three_fresh_veggies"
+    },
+    "title": {
+      "translate": "advancements.northeast_china_delight.place_dish.title"
+    },
+    "description": {
+      "translate": "advancements.northeast_china_delight.place_dish.description"
+    },
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true,
+    "hidden": false
+  },
+  "criteria": {
+    "place": {
+      "trigger": "minecraft:impossible"
+    }
+  }
+}

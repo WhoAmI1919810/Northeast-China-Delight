@@ -459,6 +459,7 @@ public final class ModGameplayEvents
         {
             BlockState state = dish.defaultBlockState().setValue(PlacedDishBlock.FACING, player.getDirection().getOpposite());
             level.setBlock(pos, state, 3);
+            dish.setPlacedBy(level, pos, state, player, stack);
             SoundType sound = state.getSoundType(level, pos, player);
             level.playSound(null, pos, sound.getPlaceSound(), SoundSource.BLOCKS,
                     (sound.getVolume() + 1.0F) / 2.0F, sound.getPitch() * 0.8F);
