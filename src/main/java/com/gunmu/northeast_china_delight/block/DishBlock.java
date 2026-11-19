@@ -6,6 +6,7 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
 public class DishBlock extends Block
@@ -20,6 +21,18 @@ public class DishBlock extends Block
     public static final VoxelShape BASIN_SHAPE = Block.box(1.0, 0.0, 1.0, 15.0, 5.5, 15.0);
     /** 黄桃罐头瓶身：模型外轮廓 3..13 × 0..16 × 3..13。 */
     public static final VoxelShape CANNED_YELLOW_PEACH_SHAPE = Block.box(3.0, 0.0, 3.0, 13.0, 16.0, 13.0);
+
+    /** 格瓦斯瓶按模型各层的宽度收窄，最宽 9 像素，高 13 像素。 */
+    public static final VoxelShape KVASS_BOTTLE_SHAPE = Shapes.or(
+            Block.box(5.5, 0, 5.5, 10.5, 1, 10.5),
+            Block.box(4.5, 1, 4.5, 11.5, 2, 11.5),
+            Block.box(3.5, 2, 3.5, 12.5, 6, 12.5),
+            Block.box(4.5, 6, 4.5, 11.5, 7, 11.5),
+            Block.box(5.5, 7, 5.5, 10.5, 8, 10.5),
+            Block.box(6.5, 8, 6.5, 9.5, 10, 9.5),
+            Block.box(5.5, 10, 5.5, 10.5, 12, 10.5),
+            Block.box(6.5, 12, 6.5, 9.5, 13, 9.5)
+    );
 
     private final VoxelShape shape;
 

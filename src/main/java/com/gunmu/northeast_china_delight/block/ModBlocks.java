@@ -536,7 +536,7 @@ public class ModBlocks {
             "shrimp_pork_dumpling", "three_delicacy_dumpling", "dry_fried_hairtail",
             "braised_hairtail", "hazelnut_sugar_fire_bun",
             "soy_milk", "snow_mustard_tofu_stew", "dog_bao_pickles", "pounded_rice_cake", "peanut_cake",
-            "braised_eggplant_potato"
+            "braised_eggplant_potato", "kvass"
     );
 
     public static final List<String> TRAY_DISH_IDS = List.of(
@@ -584,7 +584,9 @@ public class ModBlocks {
         Map<String, Supplier<Block>> map = new LinkedHashMap<>();
         for (String id : DISH_BLOCK_IDS)
         {
-            VoxelShape shape = TRAY_DISH_IDS.contains(id)
+            VoxelShape shape = id.equals("kvass")
+                    ? DishBlock.KVASS_BOTTLE_SHAPE
+                    : TRAY_DISH_IDS.contains(id)
                     ? DishBlock.TRAY_SHAPE
                     : SMALL_PLATE_DISH_IDS.contains(id)
                     ? DishBlock.SMALL_PLATE_SHAPE
@@ -620,7 +622,7 @@ public class ModBlocks {
                 BlockBehaviour.Properties.of()
                         .mapColor(MapColor.WOOD)
                         .strength(0.3F)
-                        .sound(SoundType.WOOD)
+                        .sound(name.equals("kvass") ? SoundType.GLASS : SoundType.WOOD)
                         .noOcclusion()
                         .instabreak()
                         .pushReaction(PushReaction.DESTROY));
