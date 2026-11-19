@@ -2,7 +2,9 @@ package com.gunmu.northeast_china_delight.block;
 
 import com.gunmu.chinese_regional_culinary_ingredients.block.PlatedDishBlock;
 import com.gunmu.chinese_regional_culinary_ingredients.compat.displaydelight.DisplayDelightCompat;
+import com.gunmu.northeast_china_delight.advancement.ModAdvancements;
 import net.minecraft.core.BlockPos;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvents;
@@ -11,6 +13,7 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 //?}
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
@@ -23,6 +26,7 @@ import net.minecraft.world.level.block.state.properties.IntegerProperty;
 import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * 摆在展示乐事餐盘上的可食用菜肴：大餐盘 3 口吃完、小餐盘 1 口直接吃完。
@@ -83,6 +87,18 @@ public abstract class EdiblePlatedDishBlock extends PlatedDishBlock
         BlockState state = super.getStateForPlacement(context);
         IntegerProperty prop = this.bitesProperty();
         return prop == null ? state : state.setValue(prop, 0);
+    }
+
+    @Override
+    public void setPlacedBy(Level level, BlockPos pos, BlockState state,
+                            @Nullable LivingEntity placer, ItemStack stack)
+    {
+        super.setPlacedBy(level, pos, state, placer, stack);
+        if (!level.isClientSide && placer instanceof ServerPlayer serverPlayer
+                && PlacedDishEating.isTableDish(this))
+        {
+            ModAdvancements.award(serverPlayer, ModAdvancements.PLACE_DISH, "place");
+        }
     }
 
     //? if <1.20.5 {

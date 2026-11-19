@@ -67,6 +67,14 @@ public class DishEffectEvents {
                 || stack.is(ModItems.HAI_SHEN_DOU_FU_TANG.get());
     }
 
+    /** 会赋予「养生」效果的全部菜肴（与 {@link #givesNourishing} 共用同一份清单，供 JEI 信息页登记）。 */
+    public static List<Item> nourishingItems() {
+        return List.of(
+                ModItems.SHEN_JI_TANG.get(),
+                ModItems.CONG_SHAO_HAI_SHEN.get(),
+                ModItems.HAI_SHEN_DOU_FU_TANG.get());
+    }
+
     @SubscribeEvent
     public static void onFinishUsingItem(LivingEntityUseItemEvent.Finish event) {
         if (!(event.getEntity() instanceof Player player) || player.level().isClientSide()) {
@@ -119,11 +127,23 @@ public class DishEffectEvents {
      * </ul>
      */
     public static void applyPlacedDishEffects(Player player, Item dishItem, int totalBites) {
+        ItemStack stack = new ItemStack(dishItem);
+        if (stack.is(ModItems.CANNED_YELLOW_PEACH.get())) {
+            // 满态生命恢复 I 200t（10s，回 4 HP）：3 口每口 100t（5s，保底回 2 HP），累加封顶 250t（12.5s，3 口连吃共回 5 HP）
+            int delta = totalBites <= 1 ? 200 : 100;
+            int cap = totalBites <= 1 ? 200 : 250;
+            for (DishEffects.Applied applied : DishEffects.cannedYellowPeachExtras()) {
+                if (totalBites <= 1) {
+                    player.addEffect(applied.instance());
+                } else {
+                    addStackedEffect(player, applied.effect(), applied.amplifier(), delta, cap);
+                }
+            }
+        }
         DishFlavors.Info info = DishFlavors.of(dishItem);
         if (info == null) {
             return;
         }
-        ItemStack stack = new ItemStack(dishItem);
 
         switch (info.flavor()) {
             case GREASY -> DdEffects.removeEffect(player, CrciMobEffects.REFRESHING);

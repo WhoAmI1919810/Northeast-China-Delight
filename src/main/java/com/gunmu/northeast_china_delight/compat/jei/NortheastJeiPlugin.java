@@ -7,6 +7,8 @@ import com.gunmu.chinese_regional_culinary_ingredients.region.CrciAvailability;
 import com.gunmu.chinese_regional_culinary_ingredients.region.CrciContentCatalog;
 import com.gunmu.chinese_regional_culinary_ingredients.region.CrciUseSite;
 import com.gunmu.northeast_china_delight.block.ModBlocks;
+import com.gunmu.northeast_china_delight.effect.DishEffectEvents;
+import com.gunmu.northeast_china_delight.effect.DishFlavors;
 import com.gunmu.northeast_china_delight.item.ModItems;
 import com.gunmu.northeast_china_delight.NortheastChinaDelight;
 import com.gunmu.northeast_china_delight.compat.OptionalMods;
@@ -182,6 +184,34 @@ public class NortheastJeiPlugin implements IModPlugin {
                 Component.translatable("jei.northeast_china_delight.info.sleep_on_wool"));
         registration.addItemStackInfo(new ItemStack(ModBlocks.RADIATOR.get()),
                 Component.translatable("jei.northeast_china_delight.info.radiator"));
+        // 四种特色状态效果（油腻、爽口、暖身、养生）的观察视角说明页；暖身同时挂在暖气片上
+        addStacksInfo(registration, DishFlavors.itemsWithFlavor(DishFlavors.Flavor.GREASY),
+                "jei.northeast_china_delight.info.effect_greasy");
+        addStacksInfo(registration, DishFlavors.itemsWithFlavor(DishFlavors.Flavor.REFRESHING),
+                "jei.northeast_china_delight.info.effect_refreshing");
+        java.util.List<ItemStack> warmthStacks = new java.util.ArrayList<>();
+        for (var item : DishFlavors.warmthItems()) {
+            warmthStacks.add(new ItemStack(item));
+        }
+        warmthStacks.add(new ItemStack(ModBlocks.RADIATOR.get()));
+        registration.addItemStackInfo(warmthStacks,
+                Component.translatable("jei.northeast_china_delight.info.effect_warmth"));
+        addStacksInfo(registration, DishEffectEvents.nourishingItems(),
+                "jei.northeast_china_delight.info.effect_nourishing");
+    }
+
+    private static void addStacksInfo(IRecipeRegistration registration,
+                                      java.util.List<net.minecraft.world.item.Item> items, String langKey) {
+        java.util.List<ItemStack> stacks = new java.util.ArrayList<>(items.size());
+        for (var item : items) {
+            ItemStack stack = new ItemStack(item);
+            if (!stack.isEmpty()) {
+                stacks.add(stack);
+            }
+        }
+        if (!stacks.isEmpty()) {
+            registration.addItemStackInfo(stacks, Component.translatable(langKey));
+        }
     }
 
     @Override
