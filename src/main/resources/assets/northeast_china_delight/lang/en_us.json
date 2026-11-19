@@ -716,7 +716,10 @@
   "lyrics.northeast_china_delight.13": "In this same spot, born and bred, here I stand.",
   "lyrics.northeast_china_delight.14": "The heart of the Northeast, the Northeast's love;",
   "lyrics.northeast_china_delight.15": "I love thee passing well, O native land!",
-  "message.northeast_china_delight.dish.cooldown": "Still chewing... (%ss)",
-  "message.northeast_china_delight.dish.cooldown_greasy": "A bit greasy - wait a moment or try something refreshing (%ss)",
-  "message.northeast_china_delight.dish.cooldown_refreshing": "Too refreshing in a row - wait a moment or switch flavors (%ss)"
+  "advancements.northeast_china_delight.place_dish.title": "Grab a Few Bites",
+  "advancements.northeast_china_delight.place_dish.description": "Place a dish down",
+  "jei.northeast_china_delight.info.effect_greasy": "Eating rich dishes leaves you feeling greasy—hunger stays away longer, though eating more rich food becomes sluggish. Something refreshing helps cut through the richness.",
+  "jei.northeast_china_delight.info.effect_refreshing": "Eating refreshing dishes leaves you feeling refreshed—wounds mend faster when you're well-fed, though having too many refreshing dishes in a row slows you down. A rich dish helps switch up the taste.",
+  "jei.northeast_china_delight.info.effect_warmth": "Enjoying piping-hot soups and snacks—or staying near a radiator—fills you with warmth. While warm, you move more briskly in freezing snowfields and won't sink into powder snow.",
+  "jei.northeast_china_delight.info.effect_nourishing": "Eating ginseng chicken soup or sea cucumber dishes grants a nourishing feeling that steadily restores health—the more badly hurt you are, the more noticeably you recover."
 }

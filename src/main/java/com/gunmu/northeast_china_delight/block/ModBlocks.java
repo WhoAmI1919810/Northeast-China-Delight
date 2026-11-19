@@ -670,7 +670,7 @@ public class ModBlocks {
     /** 黄桃罐头放下后的方块形态：玻璃瓶装饰，可回收。 */
     public static final Supplier<Block> CANNED_YELLOW_PEACH =
             block("canned_yellow_peach",
-                    properties -> new DishBlock(properties, DishBlock.CANNED_YELLOW_PEACH_SHAPE),
+                    properties -> EdibleDishBlock.threeBites(properties, DishBlock.CANNED_YELLOW_PEACH_SHAPE, () -> net.minecraft.world.item.Items.GLASS_BOTTLE),
                     BlockBehaviour.Properties.of()
                             .mapColor(MapColor.COLOR_YELLOW)
                             .strength(0.2F)

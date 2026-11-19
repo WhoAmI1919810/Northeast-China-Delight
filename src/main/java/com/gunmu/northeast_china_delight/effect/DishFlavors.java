@@ -5,8 +5,12 @@ import com.gunmu.northeast_china_delight.util.DdIds;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.Items;
 
-import java.util.HashMap;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -100,15 +104,53 @@ public final class DishFlavors {
         return info == null ? null : info.flavor();
     }
 
-    public static int warmthTicks(Item item, Info info) {
-        if (warmthTable == null) {
-            Map<Item, Integer> map = new HashMap<>();
-            for (Map.Entry<String, Integer> entry : WARMTH_PATHS.entrySet()) {
-                map.put(BuiltInRegistries.ITEM.get(
-                        DdIds.of(NortheastChinaDelight.MODID, entry.getKey())), entry.getValue());
-            }
-            warmthTable = Map.copyOf(map);
+    private static Item resolveItem(String path) {
+        Item item = BuiltInRegistries.ITEM.get(DdIds.of(NortheastChinaDelight.MODID, path));
+        if (item == Items.AIR) {
+            item = BuiltInRegistries.ITEM.get(DdIds.of("chinese_regional_culinary_ingredients", path));
         }
+        return item;
+    }
+
+    private static void ensureWarmthTable() {
+        if (warmthTable == null) {
+            Map<Item, Integer> map = new LinkedHashMap<>();
+            for (Map.Entry<String, Integer> entry : WARMTH_PATHS.entrySet()) {
+                Item item = resolveItem(entry.getKey());
+                if (item != Items.AIR) {
+                    map.put(item, entry.getValue());
+                }
+            }
+            warmthTable = Collections.unmodifiableMap(map);
+        }
+    }
+
+    public static List<Item> itemsWithFlavor(Flavor flavor) {
+        if (table == null) {
+            table = build();
+        }
+        List<Item> result = new ArrayList<>();
+        for (Map.Entry<Item, Info> entry : table.entrySet()) {
+            if (entry.getKey() != Items.AIR && entry.getValue().flavor() == flavor) {
+                result.add(entry.getKey());
+            }
+        }
+        return result;
+    }
+
+    public static List<Item> warmthItems() {
+        ensureWarmthTable();
+        List<Item> result = new ArrayList<>();
+        for (Item item : warmthTable.keySet()) {
+            if (item != Items.AIR) {
+                result.add(item);
+            }
+        }
+        return result;
+    }
+
+    public static int warmthTicks(Item item, Info info) {
+        ensureWarmthTable();
         Integer ticks = warmthTable.get(item);
         if (ticks == null) {
             return 0;
@@ -117,7 +159,7 @@ public final class DishFlavors {
     }
 
     private static Map<Item, Info> build() {
-        Map<Item, Info> map = new HashMap<>();
+        Map<Item, Info> map = new LinkedHashMap<>();
 
         put(map, Flavor.GREASY, 1, 1000, "old_style_crispy_pork");
         put(map, Flavor.GREASY, 1, 800, "new_style_crispy_pork");
@@ -199,7 +241,7 @@ public final class DishFlavors {
         put(map, Flavor.BALANCED, 2, "red_bean_songpyeon");
         put(map, Flavor.BALANCED, 2, "peanut_songpyeon");
 
-        return Map.copyOf(map);
+        return Collections.unmodifiableMap(map);
     }
 
     private static void put(Map<Item, Info> map, Flavor flavor, int ingredientCount, String path) {
@@ -207,7 +249,10 @@ public final class DishFlavors {
     }
 
     private static void put(Map<Item, Info> map, Flavor flavor, int ingredientCount, int overrideTicks, String path) {
-        Item item = BuiltInRegistries.ITEM.get(DdIds.of(NortheastChinaDelight.MODID, path));
+        Item item = resolveItem(path);
+        if (item == Items.AIR) {
+            return;
+        }
         map.put(item, new Info(flavor, ingredientCount, overrideTicks,
                 flavor == Flavor.GREASY && SLOWING_GREASY.contains(path), FEAST_BOWLS.contains(path)));
     }

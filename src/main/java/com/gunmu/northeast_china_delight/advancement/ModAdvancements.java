@@ -46,6 +46,8 @@ public final class ModAdvancements
     public static final ResourceLocation WASH_FACE = id("wash_face");
     /** 睡舒坦了——在寒冷群系里枕着枕头、挨着暖气片睡一觉 */
     public static final ResourceLocation COZY_SLEEP = id("cozy_sleep");
+    /** 先对付两口——放下一道菜肴（盘装、碗装、黄铜碗装、展示乐事餐盘菜；不含格瓦斯、黄桃罐头、盆装菜） */
+    public static final ResourceLocation PLACE_DISH = id("place_dish");
 
     private ModAdvancements()
     {

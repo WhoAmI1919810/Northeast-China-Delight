@@ -2,7 +2,6 @@ package com.gunmu.northeast_china_delight.block;
 
 import com.gunmu.northeast_china_delight.NortheastChinaConfig;
 import com.gunmu.northeast_china_delight.effect.DishEffectEvents;
-import com.gunmu.northeast_china_delight.effect.DishFlavors;
 import com.gunmu.northeast_china_delight.util.DdIds;
 import com.gunmu.northeast_china_delight.util.DdPlayers;
 import net.minecraft.advancements.CriteriaTriggers;
@@ -13,14 +12,12 @@ import net.minecraft.core.component.DataComponents;
 import net.minecraft.core.particles.ItemParticleOption;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.Item;
@@ -32,7 +29,6 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.gameevent.GameEvent;
 
 import java.util.HashMap;
-import java.util.Locale;
 import java.util.Map;
 import java.util.UUID;
 
@@ -40,7 +36,7 @@ import java.util.UUID;
  * 摆放菜肴的分阶段进食逻辑与个人独立进食冷却。
  *
  * <p>每位玩家独立记录上次夹菜的时间戳，多人同桌合餐互不干扰；每次点击按「当前口味效果 + 眼前菜肴口味」动态算冷却：
- * 已有油腻时吃油腻菜、已有爽口时吃爽口菜会延长冷却，换口味或吃均衡/暖身菜则按基础冷却结算。</p>
+ * 已有油腻时吃油腻菜、已有爽口时吃爽口菜会延长冷却，换口味或吃均衡/暖身菜则按基础冷却结算，冷却中静默拦截不出提示文案。</p>
  */
 public final class PlacedDishEating
 {
@@ -55,6 +51,13 @@ public final class PlacedDishEating
     public static void clearCooldown(UUID playerId)
     {
         LAST_BITE_TICK.remove(playerId);
+    }
+
+    /** 是否属于「先对付两口」进度计入的菜肴方块（盘装、碗装、黄铜碗装、餐盘菜；不含格瓦斯、黄桃罐头、盆装菜）。 */
+    public static boolean isTableDish(Block block)
+    {
+        return (block instanceof EdibleDishBlock && block != ModBlocks.CANNED_YELLOW_PEACH.get())
+                || block instanceof EdiblePlatedDishBlock;
     }
 
     /** 菜肴方块与对应食物物品同名；拆分版中豆浆等共用物品在 CRCI 命名空间下，查不到时顺手回退一次。 */
@@ -133,9 +136,6 @@ public final class PlacedDishEating
                 long elapsed = now - lastTick;
                 if (elapsed >= 0L && elapsed < required)
                 {
-                    long remainTicks = required - elapsed;
-                    String seconds = String.format(Locale.ROOT, "%.1f", remainTicks / 20.0D);
-                    player.displayClientMessage(Component.translatable(cooldownMessageKey(player, dishItem), seconds), true);
                     return InteractionResult.CONSUME;
                 }
             }
@@ -176,23 +176,5 @@ public final class PlacedDishEating
 
         advanceBlock.run();
         return InteractionResult.CONSUME;
-    }
-
-    private static String cooldownMessageKey(Player player, Item dishItem)
-    {
-        MobEffectInstance slow = DishEffectEvents.matchingSlowdownEffect(player, dishItem);
-        if (slow != null)
-        {
-            DishFlavors.Flavor flavor = DishFlavors.flavorOf(dishItem);
-            if (flavor == DishFlavors.Flavor.GREASY)
-            {
-                return "message.northeast_china_delight.dish.cooldown_greasy";
-            }
-            if (flavor == DishFlavors.Flavor.REFRESHING)
-            {
-                return "message.northeast_china_delight.dish.cooldown_refreshing";
-            }
-        }
-        return "message.northeast_china_delight.dish.cooldown";
     }
 }
