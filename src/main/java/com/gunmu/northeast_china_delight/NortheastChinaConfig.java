@@ -187,6 +187,7 @@ public final class NortheastChinaConfig
     public static final ForgeConfigSpec.ConfigValue<List<? extends String>> VILLAGE_FARM_ALLOWED_CROPS;
     public static final ForgeConfigSpec.BooleanValue CHEST_LOOT_ENABLED;
     public static final ForgeConfigSpec.ConfigValue<List<? extends String>> CHEST_LOOT_ALLOWED_ITEMS;
+    public static final ForgeConfigSpec.IntValue DISH_BITE_COOLDOWN_TICKS;
     *///?} else {
     public static final ModConfigSpec SPEC;
 
@@ -197,6 +198,7 @@ public final class NortheastChinaConfig
     public static final ModConfigSpec.ConfigValue<List<? extends String>> VILLAGE_FARM_ALLOWED_CROPS;
     public static final ModConfigSpec.BooleanValue CHEST_LOOT_ENABLED;
     public static final ModConfigSpec.ConfigValue<List<? extends String>> CHEST_LOOT_ALLOWED_ITEMS;
+    public static final ModConfigSpec.IntValue DISH_BITE_COOLDOWN_TICKS;
     //?}
 
     static
@@ -247,6 +249,13 @@ public final class NortheastChinaConfig
                         () -> "northeast_china_delight:soybean",
                         //?}
                         NortheastChinaConfig::isItemId);
+        builder.pop();
+
+        builder.comment("菜肴食用").push("dish_eating");
+        DISH_BITE_COOLDOWN_TICKS = builder
+                .comment("摆放菜肴两口之间的基础冷却时间（单位：tick，20 tick = 1 秒；0 表示无冷却）。",
+                        "按玩家个人单独计算；受「油腻 / 爽口」影响：已有油腻时吃油腻菜、已有爽口时吃爽口菜会延长冷却。")
+                .defineInRange("bite_cooldown_ticks", 28, 0, 200);
         builder.pop();
         SPEC = builder.build();
     }
@@ -299,6 +308,11 @@ public final class NortheastChinaConfig
         return isChestLootEnabled()
                 && (SPEC.isLoaded() ? CHEST_LOOT_ALLOWED_ITEMS.get() : DEFAULT_CHEST_LOOT_ITEMS)
                 .contains(itemId.toString());
+    }
+
+    public static int dishBiteCooldownTicks()
+    {
+        return SPEC.isLoaded() ? DISH_BITE_COOLDOWN_TICKS.get() : 28;
     }
 
     private NortheastChinaConfig()

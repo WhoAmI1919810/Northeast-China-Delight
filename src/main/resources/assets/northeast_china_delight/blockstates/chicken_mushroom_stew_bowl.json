@@ -1,18 +1,33 @@
 {
   "variants": {
-    "facing=north": {
+    "bites=0,facing=north": {
       "model": "northeast_china_delight:block/chicken_mushroom_stew_bowl"
     },
-    "facing=east": {
+    "bites=1,facing=north": {
+      "model": "northeast_china_delight:block/chicken_mushroom_stew_bowl_bite1"
+    },
+    "bites=0,facing=east": {
       "model": "northeast_china_delight:block/chicken_mushroom_stew_bowl",
       "y": 90
     },
-    "facing=south": {
+    "bites=1,facing=east": {
+      "model": "northeast_china_delight:block/chicken_mushroom_stew_bowl_bite1",
+      "y": 90
+    },
+    "bites=0,facing=south": {
       "model": "northeast_china_delight:block/chicken_mushroom_stew_bowl",
       "y": 180
     },
-    "facing=west": {
+    "bites=1,facing=south": {
+      "model": "northeast_china_delight:block/chicken_mushroom_stew_bowl_bite1",
+      "y": 180
+    },
+    "bites=0,facing=west": {
       "model": "northeast_china_delight:block/chicken_mushroom_stew_bowl",
+      "y": 270
+    },
+    "bites=1,facing=west": {
+      "model": "northeast_china_delight:block/chicken_mushroom_stew_bowl_bite1",
       "y": 270
     }
   }

@@ -77,7 +77,6 @@
   "item.northeast_china_delight.pickled_carrot": "Pickled Carrot",
   "item.northeast_china_delight.pickled_green_radish": "Pickled Green Radish",
   "item.northeast_china_delight.corn_stalk": "Corn Stalk",
-  "item.northeast_china_delight.salt": "Salt",
   "item.northeast_china_delight.salted_pork": "Cured Pork",
   "item.northeast_china_delight.salted_fish": "Salted Fish",
   "item.northeast_china_delight.soy_paste_chunk": "Soybean Paste Chunk",
@@ -534,7 +533,6 @@
   "jei.northeast_china_delight.pound.result_mb_value": "%s mB",
   "jei.northeast_china_delight.grill.seasoning_amount": "%s mB",
   "jei.northeast_china_delight.time.seconds": "%s s",
-  
   "jei.northeast_china_delight.time.days": "%s day(s)",
   "jei.northeast_china_delight.time.days_seconds": "%s day(s) %s s",
   "message.northeast_china_delight.grill.not_grillable": "This can't be grilled",
@@ -698,8 +696,7 @@
   "advancements.northeast_china_delight.basin_master.title": "That Is One Hearty Dish",
   "advancements.northeast_china_delight.basin_master.description": "Make and place every basin dish",
   "advancements.northeast_china_delight.brass_bowl_master.title": "Korean-Northeast Delight",
-  "advancements.northeast_china_delight.brass_bowl_master.description": "Make every brass-bowl dish"
-,
+  "advancements.northeast_china_delight.brass_bowl_master.description": "Make every brass-bowl dish",
   "item.northeast_china_delight.music_disc_northeast": "Music Disc",
   "item.northeast_china_delight.music_disc_northeast.desc": "The Great Northeast Is Mine Own Native Land",
   "jukebox_song.northeast_china_delight.northeast": "The Great Northeast Is Mine Own Native Land",
@@ -718,5 +715,8 @@
   "lyrics.northeast_china_delight.12": "The Great Northeast is mine own native land,",
   "lyrics.northeast_china_delight.13": "In this same spot, born and bred, here I stand.",
   "lyrics.northeast_china_delight.14": "The heart of the Northeast, the Northeast's love;",
-  "lyrics.northeast_china_delight.15": "I love thee passing well, O native land!"
+  "lyrics.northeast_china_delight.15": "I love thee passing well, O native land!",
+  "message.northeast_china_delight.dish.cooldown": "Still chewing... (%ss)",
+  "message.northeast_china_delight.dish.cooldown_greasy": "A bit greasy - wait a moment or try something refreshing (%ss)",
+  "message.northeast_china_delight.dish.cooldown_refreshing": "Too refreshing in a row - wait a moment or switch flavors (%ss)"
 }
