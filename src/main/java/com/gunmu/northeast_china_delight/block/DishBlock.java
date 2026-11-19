@@ -34,6 +34,8 @@ public class DishBlock extends Block
             Block.box(6.5, 12, 6.5, 9.5, 13, 9.5)
     );
 
+    private static final VoxelShape KVASS_BOTTLE_OUTLINE = Shapes.create(KVASS_BOTTLE_SHAPE.bounds());
+
     private final VoxelShape shape;
 
     public DishBlock(BlockBehaviour.Properties properties, VoxelShape shape)
@@ -45,7 +47,7 @@ public class DishBlock extends Block
     @Override
     public VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context)
     {
-        return this.shape;
+        return this.shape == KVASS_BOTTLE_SHAPE ? KVASS_BOTTLE_OUTLINE : this.shape;
     }
 
     @Override
