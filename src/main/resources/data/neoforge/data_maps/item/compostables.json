@@ -1,0 +1,106 @@
+{
+  "values": {
+    "northeast_china_delight:eggplant_seeds": {
+      "chance": 0.3
+    },
+    "northeast_china_delight:green_pepper_seeds": {
+      "chance": 0.3
+    },
+    "northeast_china_delight:corn_seeds": {
+      "chance": 0.3
+    },
+    "northeast_china_delight:green_beans_seeds": {
+      "chance": 0.3
+    },
+    "northeast_china_delight:napa_cabbage_seeds": {
+      "chance": 0.3
+    },
+    "northeast_china_delight:snow_mustard_seeds": {
+      "chance": 0.3
+    },
+    "northeast_china_delight:cucumber_seeds": {
+      "chance": 0.3
+    },
+    "northeast_china_delight:red_chili_seeds": {
+      "chance": 0.3
+    },
+    "northeast_china_delight:green_onion_seeds": {
+      "chance": 0.3
+    },
+    "northeast_china_delight:green_radish_seeds": {
+      "chance": 0.3
+    },
+    "northeast_china_delight:ginseng_seeds": {
+      "chance": 0.3
+    },
+    "northeast_china_delight:bellflower_seeds": {
+      "chance": 0.3
+    },
+    "northeast_china_delight:soybean": {
+      "chance": 0.65
+    },
+    "northeast_china_delight:eggplant": {
+      "chance": 0.65
+    },
+    "northeast_china_delight:green_pepper": {
+      "chance": 0.65
+    },
+    "northeast_china_delight:corn": {
+      "chance": 0.65
+    },
+    "northeast_china_delight:green_beans": {
+      "chance": 0.65
+    },
+    "northeast_china_delight:buckwheat": {
+      "chance": 0.65
+    },
+    "northeast_china_delight:napa_cabbage": {
+      "chance": 0.65
+    },
+    "northeast_china_delight:snow_mustard": {
+      "chance": 0.65
+    },
+    "northeast_china_delight:cucumber": {
+      "chance": 0.65
+    },
+    "northeast_china_delight:sweet_potato": {
+      "chance": 0.65
+    },
+    "northeast_china_delight:peanut": {
+      "chance": 0.65
+    },
+    "northeast_china_delight:red_bean": {
+      "chance": 0.65
+    },
+    "northeast_china_delight:red_chili": {
+      "chance": 0.65
+    },
+    "northeast_china_delight:green_onion": {
+      "chance": 0.65
+    },
+    "northeast_china_delight:green_radish": {
+      "chance": 0.65
+    },
+    "northeast_china_delight:bellflower_root": {
+      "chance": 0.65
+    },
+    "northeast_china_delight:ginseng": {
+      "chance": 0.65
+    },
+    "northeast_china_delight:hazelnut": {
+      "chance": 0.65
+    },
+    "northeast_china_delight:hazel_mushroom": {
+      "chance": 0.65
+    },
+    "northeast_china_delight:hazel_mushroom_colony": {
+      "chance": 0.65
+    },
+    "northeast_china_delight:wood_ear": {
+      "chance": 0.65
+    },
+    "northeast_china_delight:corn_stalk": {
+      "chance": 0.65
+    }
+  }
+}
