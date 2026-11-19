@@ -1,6 +1,7 @@
 package com.gunmu.northeast_china_delight.gametest;
 
 import com.gunmu.northeast_china_delight.block.ModBlocks;
+import com.gunmu.chinese_regional_culinary_ingredients.block.PlacedDishBlock;
 import com.gunmu.northeast_china_delight.event.ModGameplayEvents;
 import com.gunmu.northeast_china_delight.item.ModItems;
 import com.gunmu.northeast_china_delight.NortheastChinaDelight;
@@ -98,18 +99,7 @@ public final class DishPlacementGameTests
             helper.assertTrue(item != net.minecraft.world.item.Items.AIR,
                     "料理物品未注册: " + id);
             player.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(item));
-            BlockHitResult hit = new BlockHitResult(
-                    Vec3.atCenterOf(ground).add(0.0, 0.5, 0.0), Direction.UP, ground, false);
-
-            ModGameplayEvents.onDishRightClick(
-                    new
-                            //? if <1.20.2 {
-                            /*net.minecraftforge.event.entity.player.PlayerInteractEvent
-                            *///?} else {
-                            net.neoforged.neoforge.event.entity.player.PlayerInteractEvent
-                            //?}
-                            .RightClickBlock(
-                            player, InteractionHand.MAIN_HAND, ground, hit));
+            clickDish(player, ground);
             if (ModBlocks.canPlaceDish(id))
             {
                 helper.assertTrue(level.getBlockState(target).is(dishBlock.get()),
@@ -122,6 +112,52 @@ public final class DishPlacementGameTests
             }
         }
         helper.succeed();
+    }
+
+    @GameTest(template = "empty")
+    public static void kvassDrinksPlacesAndPicksUp(GameTestHelper helper)
+    {
+        ServerLevel level = helper.getLevel();
+        BlockPos ground = helper.absolutePos(new BlockPos(1, 1, 1));
+        BlockPos target = ground.above();
+        level.setBlockAndUpdate(ground, Blocks.STONE.defaultBlockState());
+        Player player = mockPlayer(helper, GameType.SURVIVAL);
+        var kvass = ModItems.KVASS.get();
+        player.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(kvass));
+
+        player.setShiftKeyDown(false);
+        clickDish(player, ground);
+        helper.assertTrue(level.getBlockState(target).isAir() && player.isUsingItem(),
+                "普通右键应该喝格瓦斯");
+        player.stopUsingItem();
+
+        player.setShiftKeyDown(true);
+        clickDish(player, ground);
+        var state = level.getBlockState(target);
+        helper.assertTrue(state.is(ModBlocks.DISH_BLOCKS.get("kvass").get()), "潜行右键应该放下格瓦斯");
+        helper.assertTrue(player.getMainHandItem().isEmpty(), "放下格瓦斯应消耗手里的一瓶");
+
+        helper.assertTrue(PlacedDishBlock.pickUp(state, level, target, player).consumesAction(),
+                "潜行空手右键应该收回格瓦斯");
+        helper.assertTrue(level.getBlockState(target).isAir() && player.getInventory().countItem(kvass) == 1,
+                "收回应该返还一整瓶格瓦斯");
+        helper.succeed();
+    }
+
+    private static void clickDish(Player player, BlockPos ground)
+    {
+        BlockHitResult hit = new BlockHitResult(
+                Vec3.atCenterOf(ground).add(0.0, 0.5, 0.0), Direction.UP, ground, false);
+
+        ModGameplayEvents.onDishRightClick(
+                new
+                        //? if <1.20.2 {
+                        /*net.minecraftforge.event.entity.player.PlayerInteractEvent
+                        *///?} else {
+                        net.neoforged.neoforge.event.entity.player.PlayerInteractEvent
+                        //?}
+                        .RightClickBlock(
+                        player, InteractionHand.MAIN_HAND, ground, hit));
     }
 
     private static void useOn(ServerLevel level, Player player, BlockPos pos)
