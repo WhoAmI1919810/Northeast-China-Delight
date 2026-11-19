@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "facing=north": {
+      "model": "chinese_regional_culinary_ingredients:block/kvass"
+    },
+    "facing=east": {
+      "model": "chinese_regional_culinary_ingredients:block/kvass",
+      "y": 90
+    },
+    "facing=south": {
+      "model": "chinese_regional_culinary_ingredients:block/kvass",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "chinese_regional_culinary_ingredients:block/kvass",
+      "y": 270
+    }
+  }
+}
