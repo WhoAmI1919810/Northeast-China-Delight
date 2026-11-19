@@ -1,0 +1,858 @@
+{
+  "credit": "Staged eating model v2 (full model untouched)",
+  "parent": "block/block",
+  "textures": {
+    "particle": "northeast_china_delight:item/crispy_pork_strips",
+    "food": "northeast_china_delight:block/dish/crispy_pork_strips"
+  },
+  "elements": [
+    {
+      "from": [
+        1,
+        0,
+        1
+      ],
+      "to": [
+        15,
+        2,
+        15
+      ],
+      "rotation": {
+        "angle": 0,
+        "axis": "y",
+        "origin": [
+          1,
+          0,
+          1
+        ]
+      },
+      "faces": {
+        "north": {
+          "uv": [
+            7,
+            0,
+            14,
+            1
+          ],
+          "texture": "#food"
+        },
+        "east": {
+          "uv": [
+            7,
+            1,
+            14,
+            2
+          ],
+          "texture": "#food"
+        },
+        "south": {
+          "uv": [
+            7,
+            2,
+            14,
+            3
+          ],
+          "texture": "#food"
+        },
+        "west": {
+          "uv": [
+            7,
+            3,
+            14,
+            4
+          ],
+          "texture": "#food"
+        },
+        "up": {
+          "uv": [
+            0,
+            0,
+            7,
+            7
+          ],
+          "texture": "#food"
+        },
+        "down": {
+          "uv": [
+            0,
+            7,
+            7,
+            14
+          ],
+          "texture": "#food"
+        }
+      }
+    },
+    {
+      "from": [
+        4.4,
+        2,
+        6.125
+      ],
+      "to": [
+        7.4,
+        4,
+        8.125
+      ],
+      "rotation": {
+        "angle": 22.5,
+        "axis": "y",
+        "origin": [
+          5.9,
+          3,
+          7.125
+        ]
+      },
+      "faces": {
+        "north": {
+          "uv": [
+            8.5,
+            7,
+            10,
+            8
+          ],
+          "texture": "#food"
+        },
+        "east": {
+          "uv": [
+            10,
+            8,
+            11,
+            9
+          ],
+          "texture": "#food"
+        },
+        "south": {
+          "uv": [
+            8.5,
+            8,
+            10,
+            9
+          ],
+          "texture": "#food"
+        },
+        "west": {
+          "uv": [
+            9,
+            10,
+            10,
+            11
+          ],
+          "texture": "#food"
+        },
+        "up": {
+          "uv": [
+            8.5,
+            9,
+            10,
+            10
+          ],
+          "texture": "#food"
+        },
+        "down": {
+          "uv": [
+            10,
+            4,
+            11.5,
+            5
+          ],
+          "texture": "#food"
+        }
+      }
+    },
+    {
+      "from": [
+        8.375,
+        2,
+        11.25
+      ],
+      "to": [
+        10.375,
+        4,
+        13.25
+      ],
+      "rotation": {
+        "angle": -22.5,
+        "axis": "y",
+        "origin": [
+          9.375,
+          3,
+          12.25
+        ]
+      },
+      "faces": {
+        "north": {
+          "uv": [
+            11,
+            5,
+            12,
+            6
+          ],
+          "texture": "#food"
+        },
+        "east": {
+          "uv": [
+            11,
+            6,
+            12,
+            7
+          ],
+          "texture": "#food"
+        },
+        "south": {
+          "uv": [
+            11,
+            7,
+            12,
+            8
+          ],
+          "texture": "#food"
+        },
+        "west": {
+          "uv": [
+            11,
+            8,
+            12,
+            9
+          ],
+          "texture": "#food"
+        },
+        "up": {
+          "uv": [
+            9,
+            11,
+            10,
+            12
+          ],
+          "texture": "#food"
+        },
+        "down": {
+          "uv": [
+            11,
+            9,
+            12,
+            10
+          ],
+          "texture": "#food"
+        }
+      }
+    },
+    {
+      "from": [
+        6.575,
+        2,
+        2.05
+      ],
+      "to": [
+        8.575,
+        3.25,
+        4.05
+      ],
+      "rotation": {
+        "angle": -22.5,
+        "axis": "y",
+        "origin": [
+          7.575,
+          3,
+          3.05
+        ]
+      },
+      "faces": {
+        "north": {
+          "uv": [
+            11,
+            5,
+            12,
+            6
+          ],
+          "texture": "#food"
+        },
+        "east": {
+          "uv": [
+            11,
+            6,
+            12,
+            7
+          ],
+          "texture": "#food"
+        },
+        "south": {
+          "uv": [
+            11,
+            7,
+            12,
+            8
+          ],
+          "texture": "#food"
+        },
+        "west": {
+          "uv": [
+            11,
+            8,
+            12,
+            9
+          ],
+          "texture": "#food"
+        },
+        "up": {
+          "uv": [
+            9,
+            11,
+            10,
+            12
+          ],
+          "texture": "#food"
+        },
+        "down": {
+          "uv": [
+            11,
+            9,
+            12,
+            10
+          ],
+          "texture": "#food"
+        }
+      }
+    },
+    {
+      "from": [
+        3.85,
+        2,
+        3.325
+      ],
+      "to": [
+        5.85,
+        3.5,
+        5.325
+      ],
+      "rotation": {
+        "angle": -45,
+        "axis": "y",
+        "origin": [
+          4.85,
+          3,
+          4.325
+        ]
+      },
+      "faces": {
+        "north": {
+          "uv": [
+            10,
+            11,
+            11,
+            12
+          ],
+          "texture": "#food"
+        },
+        "east": {
+          "uv": [
+            11,
+            10,
+            12,
+            11
+          ],
+          "texture": "#food"
+        },
+        "south": {
+          "uv": [
+            11,
+            11,
+            12,
+            12
+          ],
+          "texture": "#food"
+        },
+        "west": {
+          "uv": [
+            11.5,
+            4,
+            12.5,
+            5
+          ],
+          "texture": "#food"
+        },
+        "up": {
+          "uv": [
+            7,
+            11.5,
+            8,
+            12.5
+          ],
+          "texture": "#food"
+        },
+        "down": {
+          "uv": [
+            8,
+            11.5,
+            9,
+            12.5
+          ],
+          "texture": "#food"
+        }
+      }
+    },
+    {
+      "from": [
+        11.55,
+        2,
+        9.175
+      ],
+      "to": [
+        13.55,
+        3.5,
+        11.175
+      ],
+      "rotation": {
+        "angle": -22.5,
+        "axis": "y",
+        "origin": [
+          12.55,
+          3,
+          10.175
+        ]
+      },
+      "faces": {
+        "north": {
+          "uv": [
+            12,
+            5,
+            13,
+            6
+          ],
+          "texture": "#food"
+        },
+        "east": {
+          "uv": [
+            12,
+            6,
+            13,
+            7
+          ],
+          "texture": "#food"
+        },
+        "south": {
+          "uv": [
+            12,
+            7,
+            13,
+            8
+          ],
+          "texture": "#food"
+        },
+        "west": {
+          "uv": [
+            12,
+            8,
+            13,
+            9
+          ],
+          "texture": "#food"
+        },
+        "up": {
+          "uv": [
+            9,
+            12,
+            10,
+            13
+          ],
+          "texture": "#food"
+        },
+        "down": {
+          "uv": [
+            12,
+            9,
+            13,
+            10
+          ],
+          "texture": "#food"
+        }
+      }
+    },
+    {
+      "from": [
+        2.27074,
+        2,
+        4.49022
+      ],
+      "to": [
+        3.27074,
+        2.45,
+        6.49022
+      ],
+      "rotation": {
+        "angle": 22.5,
+        "axis": "y",
+        "origin": [
+          2.77074,
+          2.125,
+          5.49022
+        ]
+      },
+      "faces": {
+        "north": {
+          "uv": [
+            9.5,
+            14,
+            10,
+            14.5
+          ],
+          "texture": "#food"
+        },
+        "east": {
+          "uv": [
+            7,
+            13,
+            8,
+            13.5
+          ],
+          "texture": "#food"
+        },
+        "south": {
+          "uv": [
+            14,
+            9.5,
+            14.5,
+            10
+          ],
+          "texture": "#food"
+        },
+        "west": {
+          "uv": [
+            13,
+            7,
+            14,
+            7.5
+          ],
+          "texture": "#food"
+        },
+        "up": {
+          "uv": [
+            13,
+            7.5,
+            13.5,
+            8.5
+          ],
+          "texture": "#food"
+        },
+        "down": {
+          "uv": [
+            8,
+            13,
+            8.5,
+            14
+          ],
+          "texture": "#food"
+        }
+      }
+    },
+    {
+      "from": [
+        10.92074,
+        2,
+        11.91522
+      ],
+      "to": [
+        12.92074,
+        2.45,
+        12.91522
+      ],
+      "rotation": {
+        "angle": 22.5,
+        "axis": "y",
+        "origin": [
+          11.92074,
+          2.125,
+          12.41522
+        ]
+      },
+      "faces": {
+        "north": {
+          "uv": [
+            10,
+            12,
+            11,
+            12.5
+          ],
+          "texture": "#food"
+        },
+        "east": {
+          "uv": [
+            13,
+            11.5,
+            13.5,
+            12
+          ],
+          "texture": "#food"
+        },
+        "south": {
+          "uv": [
+            12,
+            10,
+            13,
+            10.5
+          ],
+          "texture": "#food"
+        },
+        "west": {
+          "uv": [
+            12,
+            13,
+            12.5,
+            13.5
+          ],
+          "texture": "#food"
+        },
+        "up": {
+          "uv": [
+            12,
+            10.5,
+            13,
+            11
+          ],
+          "texture": "#food"
+        },
+        "down": {
+          "uv": [
+            11,
+            12,
+            12,
+            12.5
+          ],
+          "texture": "#food"
+        }
+      }
+    },
+    {
+      "from": [
+        10.64574,
+        2,
+        2.19022
+      ],
+      "to": [
+        12.64574,
+        2.45,
+        3.19022
+      ],
+      "rotation": {
+        "angle": -22.5,
+        "axis": "y",
+        "origin": [
+          11.64574,
+          2.125,
+          2.69022
+        ]
+      },
+      "faces": {
+        "north": {
+          "uv": [
+            13,
+            10,
+            14,
+            10.5
+          ],
+          "texture": "#food"
+        },
+        "east": {
+          "uv": [
+            10.5,
+            14,
+            11,
+            14.5
+          ],
+          "texture": "#food"
+        },
+        "south": {
+          "uv": [
+            13,
+            10.5,
+            14,
+            11
+          ],
+          "texture": "#food"
+        },
+        "west": {
+          "uv": [
+            14,
+            10.5,
+            14.5,
+            11
+          ],
+          "texture": "#food"
+        },
+        "up": {
+          "uv": [
+            11,
+            13,
+            12,
+            13.5
+          ],
+          "texture": "#food"
+        },
+        "down": {
+          "uv": [
+            13,
+            11,
+            14,
+            11.5
+          ],
+          "texture": "#food"
+        }
+      }
+    },
+    {
+      "from": [
+        7.125,
+        1.95,
+        9.375
+      ],
+      "to": [
+        10.125,
+        2.5,
+        10.375
+      ],
+      "rotation": {
+        "angle": -22.5,
+        "axis": "y",
+        "origin": [
+          8.625,
+          2.25,
+          9.875
+        ]
+      },
+      "faces": {
+        "north": {
+          "uv": [
+            7,
+            12.5,
+            8.5,
+            13
+          ],
+          "texture": "#food"
+        },
+        "east": {
+          "uv": [
+            8.5,
+            12.5,
+            9,
+            13
+          ],
+          "texture": "#food"
+        },
+        "south": {
+          "uv": [
+            11,
+            14,
+            12.5,
+            14.5
+          ],
+          "texture": "#food"
+        },
+        "west": {
+          "uv": [
+            10,
+            12.5,
+            10.5,
+            13
+          ],
+          "texture": "#food"
+        },
+        "up": {
+          "uv": [
+            14,
+            11,
+            15.5,
+            11.5
+          ],
+          "texture": "#food"
+        },
+        "down": {
+          "uv": [
+            14,
+            11.5,
+            15.5,
+            12
+          ],
+          "texture": "#food"
+        }
+      }
+    },
+    {
+      "from": [
+        9.72524,
+        4,
+        4.59606
+      ],
+      "to": [
+        10.02524,
+        4.3,
+        4.89606
+      ],
+      "rotation": {
+        "angle": 0,
+        "axis": "y",
+        "origin": [
+          9.94717,
+          3.575,
+          4.71044
+        ]
+      },
+      "faces": {
+        "north": {
+          "uv": [
+            0.5,
+            14,
+            1,
+            14.5
+          ],
+          "texture": "#food"
+        },
+        "east": {
+          "uv": [
+            14,
+            0.5,
+            14.5,
+            1
+          ],
+          "texture": "#food"
+        },
+        "south": {
+          "uv": [
+            1,
+            14,
+            1.5,
+            14.5
+          ],
+          "texture": "#food"
+        },
+        "west": {
+          "uv": [
+            14,
+            1,
+            14.5,
+            1.5
+          ],
+          "texture": "#food"
+        },
+        "up": {
+          "uv": [
+            1.5,
+            14,
+            2,
+            14.5
+          ],
+          "texture": "#food"
+        },
+        "down": {
+          "uv": [
+            14,
+            1.5,
+            14.5,
+            2
+          ],
+          "texture": "#food"
+        }
+      }
+    }
+  ],
+  "render_type": "minecraft:cutout"
+}
