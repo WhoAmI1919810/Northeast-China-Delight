@@ -14,11 +14,13 @@
     "VillagerOutfitDiscountMixin",
     "LivingEntityLidSoundMixin",
     "PlayerQuiltSleepMixin",
-    "ServerPlayerPillowSleepMixin"
+    "ServerPlayerPillowSleepMixin",
+    "MapItemSavedDataMixin"
   ],
   "client": [
     "LoomScreenMixin",
-    "SoundEngineMixin"
+    "SoundEngineMixin",
+    "MapRendererMixin"
   ],
   "injectors": {
     "defaultRequire": 1
