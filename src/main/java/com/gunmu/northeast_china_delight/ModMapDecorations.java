@@ -23,7 +23,8 @@ import java.util.function.Supplier;
 public final class ModMapDecorations
 {
     //? if <1.20.5 {
-    // 1.20.4：没有自定义地图标识的注册表，退回原版红叉
+    // 1.20.1：MapDecoration.Type 为封闭枚举，借用 TARGET_X 承载边界钳制与网络同步，
+    // 渲染时由 MapItemSavedDataMixin + MapRendererMixin 替换为 northeast_yard.png 专属小屋图标
     public static final MapDecoration.Type DONGBEI_YARD = MapDecoration.Type.TARGET_X;
     //?} else {
     /*public static final DeferredRegister<MapDecorationType> DECORATION_TYPES =
