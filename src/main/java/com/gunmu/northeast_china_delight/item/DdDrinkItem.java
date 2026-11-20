@@ -18,4 +18,12 @@ public class DdDrinkItem extends DdConsumableItem {
     public UseAnim getUseAnimation(ItemStack stack) {
         return UseAnim.DRINK;
     }
+
+    //? if <1.20.2 {
+    @Override
+    public net.minecraftforge.common.capabilities.ICapabilityProvider initCapabilities(
+            ItemStack stack, net.minecraft.nbt.CompoundTag nbt) {
+        return com.gunmu.chinese_regional_culinary_ingredients.item.SeasoningBottleFluidHandler.provider(stack);
+    }
+    //?}
 }

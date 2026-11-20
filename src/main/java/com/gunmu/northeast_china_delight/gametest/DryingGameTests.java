@@ -17,6 +17,7 @@ import com.gunmu.northeast_china_delight.item.ModItems;
 import com.gunmu.northeast_china_delight.util.DdIds;
 import com.simibubi.create.AllBlocks;
 import com.simibubi.create.content.kinetics.fan.EncasedFanBlock;
+import com.simibubi.create.content.kinetics.fan.EncasedFanBlockEntity;
 import com.simibubi.create.content.kinetics.fan.processing.FanProcessing;
 import com.simibubi.create.content.kinetics.fan.processing.FanProcessingType;
 import io.netty.buffer.Unpooled;
@@ -305,9 +306,14 @@ public final class DryingGameTests {
                 .setValue(EncasedFanBlock.FACING, Direction.EAST));
         helper.setBlock(front, Blocks.AIR);
         FanProcessingType drying = ModFanProcessingTypes.DRYING.get();
+        helper.assertTrue(!drying.isValidAt(helper.getLevel(), helper.absolutePos(front)),
+                "未运转的鼓风机正前方不应覆盖其他气流的风干判定");
+        if (helper.getLevel().getBlockEntity(helper.absolutePos(fanPos)) instanceof EncasedFanBlockEntity fan) {
+            fan.setSpeed(64.0F);
+        }
         helper.assertTrue(drying.isValidAt(helper.getLevel(), helper.absolutePos(front))
                 && !drying.isValidAt(helper.getLevel(), helper.absolutePos(front.east())),
-                "裸风处理只能从鼓风机正前方的空气格开始");
+                "裸风处理只能从运转中的鼓风机正前方的空气格开始");
         helper.setBlock(front, Blocks.WATER);
         helper.assertTrue(FanProcessingType.getAt(helper.getLevel(), helper.absolutePos(front))
                 == FanProcessingType.parse("create:splashing"), "水催化的喷溅配方不能被风干顶掉");

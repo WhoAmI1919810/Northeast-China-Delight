@@ -1,19 +1,39 @@
 {
-  "variants": {
-    "facing=north": {
-      "model": "northeast_china_delight:block/pillow"
+  "multipart": [
+    {
+      "when": {
+        "facing": "north"
+      },
+      "apply": {
+        "model": "northeast_china_delight:block/pillow"
+      }
     },
-    "facing=east": {
-      "model": "northeast_china_delight:block/pillow",
-      "y": 90
+    {
+      "when": {
+        "facing": "east"
+      },
+      "apply": {
+        "model": "northeast_china_delight:block/pillow",
+        "y": 90
+      }
     },
-    "facing=south": {
-      "model": "northeast_china_delight:block/pillow",
-      "y": 180
+    {
+      "when": {
+        "facing": "south"
+      },
+      "apply": {
+        "model": "northeast_china_delight:block/pillow",
+        "y": 180
+      }
     },
-    "facing=west": {
-      "model": "northeast_china_delight:block/pillow",
-      "y": 270
+    {
+      "when": {
+        "facing": "west"
+      },
+      "apply": {
+        "model": "northeast_china_delight:block/pillow",
+        "y": 270
+      }
     }
-  }
+  ]
 }

@@ -28,6 +28,11 @@ public final class NortheastProgressHooks {
             public void onMysteryStewServed(ServerPlayer player) {
                 ModAdvancements.award(player, ModAdvancements.MYSTERY_STEW_FEAST, "cook");
             }
+
+            @Override
+            public void onBrushed(ServerPlayer player) {
+                ModAdvancements.award(player, ModAdvancements.BRUSH, "brush");
+            }
         });
     }
 

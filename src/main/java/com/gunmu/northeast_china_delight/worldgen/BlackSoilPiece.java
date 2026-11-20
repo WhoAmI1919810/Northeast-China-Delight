@@ -25,21 +25,32 @@ public class BlackSoilPiece extends StructurePiece
 
     private final int radius;
     private final float density;
+    /** 需要避开的院落水平包围盒，按 [minX, minZ, maxX, maxZ] 四元组平铺存储 */
+    private final int[] excludedBoxes;
 
     public BlackSoilPiece(BlockPos center, int radius, float density)
+    {
+        this(center, radius, density, new int[0]);
+    }
+
+    public BlackSoilPiece(BlockPos center, int radius, float density, int[] excludedBoxes)
     {
         super(ModWorldGen.BLACK_SOIL_PIECE.get(), 0,
                 new BoundingBox(center.getX() - radius, center.getY() - 96, center.getZ() - radius,
                         center.getX() + radius, center.getY() + 96, center.getZ() + radius));
+        this.boundingBox = new YardClearingPiece.DetectionFreeBoundingBox(this.boundingBox);
         this.radius = radius;
         this.density = density;
+        this.excludedBoxes = excludedBoxes == null ? new int[0] : excludedBoxes.clone();
     }
 
     public BlackSoilPiece(CompoundTag tag)
     {
         super(ModWorldGen.BLACK_SOIL_PIECE.get(), tag);
+        this.boundingBox = new YardClearingPiece.DetectionFreeBoundingBox(this.boundingBox);
         this.radius = tag.getInt("Radius");
         this.density = tag.getFloat("Density");
+        this.excludedBoxes = tag.getIntArray("ExcludedBoxes");
     }
 
     @Override
@@ -47,6 +58,10 @@ public class BlackSoilPiece extends StructurePiece
     {
         tag.putInt("Radius", this.radius);
         tag.putFloat("Density", this.density);
+        if (this.excludedBoxes.length > 0)
+        {
+            tag.putIntArray("ExcludedBoxes", this.excludedBoxes);
+        }
     }
 
     @Override
@@ -68,7 +83,7 @@ public class BlackSoilPiece extends StructurePiece
         {
             for (int z = minZ; z <= maxZ; z++)
             {
-                if (!chunkContains(chunkPos, x, z))
+                if (!chunkContains(chunkPos, x, z) || isExcluded(this.excludedBoxes, x, z))
                 {
                     continue;
                 }
@@ -85,9 +100,14 @@ public class BlackSoilPiece extends StructurePiece
                 BlockState state = level.getBlockState(cursor);
                 if (state.is(Blocks.SNOW))
                 {
-                    level.setBlock(cursor, Blocks.AIR.defaultBlockState(), 2);
-                    cursor.setY(y - 1);
-                    state = level.getBlockState(cursor);
+                    BlockPos belowPos = cursor.below();
+                    BlockState below = level.getBlockState(belowPos);
+                    if (isReplaceable(below))
+                    {
+                        level.setBlock(cursor, Blocks.AIR.defaultBlockState(), 2);
+                        level.setBlock(belowPos, soil, 2);
+                    }
+                    continue;
                 }
                 if (isReplaceable(state))
                 {
@@ -95,6 +115,19 @@ public class BlackSoilPiece extends StructurePiece
                 }
             }
         }
+    }
+
+    static boolean isExcluded(int[] excludedBoxes, int x, int z)
+    {
+        for (int i = 0; i + 3 < excludedBoxes.length; i += 4)
+        {
+            if (x >= excludedBoxes[i] && x <= excludedBoxes[i + 2]
+                    && z >= excludedBoxes[i + 1] && z <= excludedBoxes[i + 3])
+            {
+                return true;
+            }
+        }
+        return false;
     }
 
     private static boolean chunkContains(ChunkPos chunk, int x, int z)
@@ -110,8 +143,6 @@ public class BlackSoilPiece extends StructurePiece
                 || state.is(Blocks.COARSE_DIRT)
                 || state.is(Blocks.ROOTED_DIRT)
                 || state.is(Blocks.PODZOL)
-                || state.is(Blocks.MYCELIUM)
-                || state.is(Blocks.SNOW_BLOCK)
-                || state.is(Blocks.SNOW);
+                || state.is(Blocks.MYCELIUM);
     }
 }

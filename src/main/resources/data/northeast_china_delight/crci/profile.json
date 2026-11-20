@@ -144,7 +144,7 @@
       "seed": "chinese_regional_culinary_ingredients:corn_seeds",
       "full_growth": {
         "Name": "chinese_regional_culinary_ingredients:corn_crop",
-        "Properties": { "age": "7" }
+        "Properties": { "age": "4" }
       },
       "pools": [
         { "id": "plains", "weight": 1 }
@@ -504,7 +504,7 @@
         "id": "northeast_china_delight:fisherman/sauerkraut_seafood_stew",
         "level": 5,
         "cost_a": { "item": "minecraft:emerald", "count": 15 },
-        "result": "northeast_china_delight:sauerkraut_seafood_stew",
+        "result": "northeast_china_delight:sauerkraut_seafood_stew_bowl",
         "max_uses": 8,
         "xp": 30
       }

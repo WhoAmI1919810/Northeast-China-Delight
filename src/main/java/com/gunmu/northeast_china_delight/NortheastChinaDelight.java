@@ -294,37 +294,6 @@ public class NortheastChinaDelight
             event.enqueueWork(com.gunmu.northeast_china_delight.client.MirrorReflections::enableStencil);
         }
 
-        /**
-         * 唱片歌词 HUD：唱片机播放「大东北是我的家乡」时在物品栏上方滚动显示歌词。
-         *
-         * <p>NeoForge 的 @EventBusSubscriber 会把游戏总线事件与模组总线事件分开注册，
-         * 所以这个游戏总线事件挂在 MOD 总线的类里也能被正确接上；1.20.1（Forge）没有这套
-         * 自动分流，那边交给下面的 ClientForgeEvents（Bus.FORGE）单独接。</p>
-         */
-        //? if >=1.20.2 {
-        /*
-        @SubscribeEvent
-        public static void onRenderGui(net.neoforged.neoforge.client.event.RenderGuiEvent.Post event)
-        {
-            LyricsHudOverlay.render(event.getGuiGraphics(),
-                    event.getGuiGraphics().guiWidth(),
-                    event.getGuiGraphics().guiHeight());
-        }
-
-        // 脸盆架的镜子照出镜子前面的活物（client/MirrorReflections）；1.20.1 在下面的 ClientForgeEvents 里接
-        @SubscribeEvent
-        public static void onRenderLevelStage(net.neoforged.neoforge.client.event.RenderLevelStageEvent event)
-        {
-            // 半透明方块画完以后再照：放着水盆的脸盆架整个模型是半透明那一层的，镜子到这时才画好（见 MirrorReflections）。
-            // 这一步 NeoForge 不给 PoseStack，相机旋转已经在全局的模型视图矩阵里，新建一个空的就行
-            if (event.getStage() == net.neoforged.neoforge.client.event.RenderLevelStageEvent.Stage.AFTER_TRANSLUCENT_BLOCKS) {
-                com.gunmu.northeast_china_delight.client.MirrorReflections.render(
-                        event.getPoseStack() != null ? event.getPoseStack() : new com.mojang.blaze3d.vertex.PoseStack(),
-                        event.getCamera(), event.getFrustum(), event.getPartialTick().getGameTimeDeltaPartialTick(false));
-            }
-        }
-        *///?}
-
         @SubscribeEvent
         public static void onRegisterRenderers(EntityRenderersEvent.RegisterRenderers event)
         {
@@ -444,14 +413,52 @@ public class NortheastChinaDelight
     }
 
     /**
-     * 1.20.1（Forge）的游戏总线客户端事件。Forge 的 @Mod.EventBusSubscriber 不会像 NeoForge 那样把游戏总线事件拆出去，
-     * RenderLevelStageEvent 在 Forge 里挂在主事件总线上，所以单独开一个 Bus.FORGE 的类来接。
-     * （main 分支这里还接了唱片歌词 HUD，1.20.1 没有那个功能，不接。）
+     * NeoForge 客户端游戏总线事件（唱片歌词 HUD 与脸盆架镜面渲染）。
+     * 单独声明 Bus.GAME，避免早期 NeoForge 21.1.x 在 Bus.MOD 类中注册游戏总线事件时崩溃。
+     */
+    //? if >=1.20.5 {
+    /*@EventBusSubscriber(modid = MODID, bus = EventBusSubscriber.Bus.GAME, value = Dist.CLIENT)
+    public static class ClientGameEvents
+    {
+        @SubscribeEvent
+        public static void onRenderGui(net.neoforged.neoforge.client.event.RenderGuiEvent.Post event)
+        {
+            com.gunmu.northeast_china_delight.client.LyricsHudOverlay.render(event.getGuiGraphics(),
+                    event.getGuiGraphics().guiWidth(),
+                    event.getGuiGraphics().guiHeight());
+        }
+
+        @SubscribeEvent
+        public static void onRenderLevelStage(net.neoforged.neoforge.client.event.RenderLevelStageEvent event)
+        {
+            // 半透明方块画完以后再照：放着水盆的脸盆架整个模型是半透明那一层的，镜子到这时才画好（见 MirrorReflections）。
+            // 这一步 NeoForge 不给 PoseStack，相机旋转已经在全局的模型视图矩阵里，新建一个空的就行
+            if (event.getStage() == net.neoforged.neoforge.client.event.RenderLevelStageEvent.Stage.AFTER_TRANSLUCENT_BLOCKS) {
+                com.gunmu.northeast_china_delight.client.MirrorReflections.render(
+                        event.getPoseStack() != null ? event.getPoseStack() : new com.mojang.blaze3d.vertex.PoseStack(),
+                        event.getCamera(), event.getFrustum(), event.getPartialTick().getGameTimeDeltaPartialTick(false));
+            }
+        }
+    }
+    *///?}
+
+    /**
+     * 1.20.1（Forge）的客户端游戏总线事件（唱片歌词 HUD 与脸盆架镜面渲染）。
+     * Forge 的 @Mod.EventBusSubscriber 需要通过 Bus.FORGE 订阅主事件总线。
      */
     //? if <1.20.2 {
     @Mod.EventBusSubscriber(modid = MODID, bus = Mod.EventBusSubscriber.Bus.FORGE, value = Dist.CLIENT)
     public static class ClientForgeEvents
     {
+        /** 唱片歌词 HUD：唱片机播放「大东北是我的家乡」时在物品栏上方滚动显示歌词 */
+        @SubscribeEvent
+        public static void onRenderGui(net.minecraftforge.client.event.RenderGuiEvent.Post event)
+        {
+            com.gunmu.northeast_china_delight.client.LyricsHudOverlay.render(event.getGuiGraphics(),
+                    event.getGuiGraphics().guiWidth(),
+                    event.getGuiGraphics().guiHeight());
+        }
+
         /** 脸盆架的镜子照出镜子前面的活物（client/MirrorReflections） */
         @SubscribeEvent
         public static void onRenderLevelStage(net.minecraftforge.client.event.RenderLevelStageEvent event)

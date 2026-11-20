@@ -75,8 +75,7 @@ public final class CreateArmCompat {
         @Override
         public boolean canCreatePoint(Level level, BlockPos pos, BlockState state) {
             return state.getBlock() instanceof BigStoveBlock
-                    && state.getValue(BigStoveBlock.PART) == BigStoveBlock.Part.NW
-                    && state.getValue(BigStoveBlock.POT) == BigStoveBlock.Pot.POT;
+                    && state.getValue(BigStoveBlock.POT) != BigStoveBlock.Pot.NONE;
         }
 
         @Nullable

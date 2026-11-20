@@ -71,7 +71,7 @@ public class YardMapForEmeralds implements VillagerTrades.ItemListing
         ItemStack map = MapItem.create(serverLevel, yardPos.getX(), yardPos.getZ(), MAP_SCALE, true, true);
         MapItem.renderBiomePreviewMap(serverLevel, map);
         //? if <1.20.5 {
-        MapItemSavedData.addTargetDecoration(map, yardPos, DECORATION_LABEL, ModMapDecorations.DONGBEI_YARD);
+        MapItemSavedData.addTargetDecoration(map, yardPos, YardMapIconMarker.DECORATION_ID, ModMapDecorations.DONGBEI_YARD);
         //?} else {
         /*MapItemSavedData.addTargetDecoration(map, yardPos, DECORATION_LABEL, ModMapDecorations.dongbeiYardHolder());
         *///?}
