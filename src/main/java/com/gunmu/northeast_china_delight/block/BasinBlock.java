@@ -79,7 +79,7 @@ public class BasinBlock extends PlacedDishBlock
                                  InteractionHand hand, BlockHitResult hitResult)
     {
         ItemStack held = player.getItemInHand(hand);
-        return held.isEmpty() ? pickUp(state, level, pos, player) : pourOrScoop(held, state, level, pos, player, hand);
+        return held.isEmpty() ? pickUpBasin(state, level, pos, player) : pourOrScoop(held, state, level, pos, player, hand);
     }
     //?} else {
     /*@Override
@@ -96,12 +96,12 @@ public class BasinBlock extends PlacedDishBlock
     protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos,
                                                Player player, BlockHitResult hitResult)
     {
-        return pickUp(state, level, pos, player);
+        return pickUpBasin(state, level, pos, player);
     }
     *///?}
 
     /** 地上的盆：潜行空手右键收回物品栏（背包满了就掉在脚下） */
-    private InteractionResult pickUp(BlockState state, Level level, BlockPos pos, Player player)
+    private InteractionResult pickUpBasin(BlockState state, Level level, BlockPos pos, Player player)
     {
         if (!player.isSecondaryUseActive())
         {
