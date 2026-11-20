@@ -21,6 +21,9 @@ import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.BedBlock;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.StateDefinition;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
@@ -37,6 +40,9 @@ import java.util.Optional;
  */
 public class SleepingPillowBlock extends FacingDecorBlock
 {
+    public static final BooleanProperty OCCUPIED = BlockStateProperties.OCCUPIED;
+    public static final BooleanProperty REVERSED = BooleanProperty.create("reversed");
+
     private static final int QUILT_RADIUS_XZ = 4;
     private static final int QUILT_RADIUS_Y = 2;
 
@@ -79,6 +85,23 @@ public class SleepingPillowBlock extends FacingDecorBlock
     public SleepingPillowBlock(Properties properties)
     {
         super(properties, Block.box(2, 0, 2, 14, 4.5, 14), false);
+        this.registerDefaultState(this.defaultBlockState()
+                .setValue(OCCUPIED, false)
+                .setValue(REVERSED, false));
+    }
+
+    @Override
+    protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder)
+    {
+        super.createBlockStateDefinition(builder);
+        builder.add(OCCUPIED, REVERSED);
+    }
+
+    private static boolean hasSleepingOccupant(ServerLevel level, BlockPos pos)
+    {
+        AABB area = new AABB(pos).inflate(2.0);
+        return !level.getEntitiesOfClass(LivingEntity.class, area,
+                entity -> entity.isSleeping() && pos.equals(entity.getSleepingPos().orElse(null))).isEmpty();
     }
 
     private static InteractionResult trySleep(BlockState state, Level level, BlockPos pos, Player player)
@@ -106,6 +129,21 @@ public class SleepingPillowBlock extends FacingDecorBlock
             return InteractionResult.SUCCESS;
         }
 
+        ServerLevel serverLevel = (ServerLevel) level;
+        if (state.getValue(OCCUPIED) || hasSleepingOccupant(serverLevel, pos))
+        {
+            if (hasSleepingOccupant(serverLevel, pos))
+            {
+                if (serverPlayer.connection != null)
+                {
+                    serverPlayer.displayClientMessage(Component.translatable("block.minecraft.bed.occupied"), true);
+                }
+                return InteractionResult.SUCCESS;
+            }
+            state = state.setValue(OCCUPIED, false).setValue(REVERSED, false);
+            level.setBlock(pos, state, Block.UPDATE_ALL);
+        }
+
         SleepEvaluation evaluation = evaluateSleep(level, state, pos);
         if (!evaluation.canSleep())
         {
@@ -121,17 +159,27 @@ public class SleepingPillowBlock extends FacingDecorBlock
         }
 
         BlockPos quiltPos = evaluation.quiltPos();
-        if (!FoldedQuiltBlock.select((ServerLevel) level, quiltPos, serverPlayer.getUUID()))
+        if (!FoldedQuiltBlock.select(serverLevel, quiltPos, serverPlayer.getUUID()))
         {
             showMissingRequirement(serverPlayer, MissingRequirement.QUILT);
             return InteractionResult.SUCCESS;
         }
 
+        boolean reversed = evaluation.side() == state.getValue(FACING).getOpposite();
+        BlockState prepared = state.setValue(REVERSED, reversed);
+        if (prepared != state)
+        {
+            level.setBlock(pos, prepared, Block.UPDATE_ALL);
+        }
         var result = serverPlayer.startSleepInBed(pos);
         if (result.left().isPresent())
         {
+            if (prepared != state)
+            {
+                level.setBlock(pos, state, Block.UPDATE_ALL);
+            }
             showProblem(serverPlayer, result.left().get());
-            FoldedQuiltBlock.release((ServerLevel) level, quiltPos, serverPlayer.getUUID());
+            FoldedQuiltBlock.release(serverLevel, quiltPos, serverPlayer.getUUID());
             quiltData.ncd$setQuiltPos(null);
             quiltData.ncd$setSleepSide(null);
             return InteractionResult.SUCCESS;
@@ -452,17 +500,40 @@ public class SleepingPillowBlock extends FacingDecorBlock
     @Override
     public void setBedOccupied(BlockState state, Level level, BlockPos pos, LivingEntity sleeper, boolean occupied)
     {
-        // 枕头没有 BedBlock.OCCUPIED 状态，不能走原版的属性写入。
+        BlockState next = occupied
+                ? state.setValue(OCCUPIED, true)
+                : state.setValue(OCCUPIED, false).setValue(REVERSED, false);
+        if (next != state)
+        {
+            level.setBlock(pos, next, Block.UPDATE_ALL);
+        }
     }
 
     @Override
     public Direction getBedDirection(BlockState state, LevelReader level, BlockPos pos)
     {
+        if (state.getValue(OCCUPIED) || state.getValue(REVERSED))
+        {
+            Direction facing = state.getValue(FACING);
+            return state.getValue(REVERSED) ? facing : facing.getOpposite();
+        }
         Direction chosen = sleepSide(state, level, pos);
         return (chosen == null ? state.getValue(FACING) : chosen).getOpposite();
     }
 
-    //? if >=1.20.2 {
+    //? if <1.20.2 {
+    /*@Override
+    public Optional<Vec3> getRespawnPosition(BlockState state, EntityType<?> type,
+                                             LevelReader levelReader, BlockPos pos,
+                                             float orientation, @Nullable LivingEntity entity)
+    {
+        if (!(levelReader instanceof Level level) || !BedBlock.canSetSpawn(level))
+        {
+            return Optional.empty();
+        }
+        return BedBlock.findStandUpPosition(type, level, pos, state.getValue(FACING), orientation);
+    }
+    *///?} else {
     @Override
     public Optional<ServerPlayer.RespawnPosAngle> getRespawnPosition(BlockState state, EntityType<?> type,
                                                                       LevelReader levelReader, BlockPos pos,

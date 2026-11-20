@@ -288,15 +288,6 @@ public class BigPotRecipeCategory implements IRecipeCategory<BigPotJeiRecipe> {
         builder.addWidget(new SceneWidget(this, recipe));
     }
 
-    @Override
-    public void draw(BigPotJeiRecipe recipe, IRecipeSlotsView view, GuiGraphics graphics,
-                     double mouseX, double mouseY) {
-        //? if <1.20.5 {
-        // 1.20.1 走老 draw：灶、火、箭头、大框都在这里画
-        drawScene(graphics, recipe);
-        //?}
-    }
-
     /** 农夫乐事厨锅那页的白箭头，按这条配方的烹饪时间走满一遍 */
     private IDrawableAnimated arrow(BigPotJeiRecipe recipe) {
         return this.arrows.computeIfAbsent(Math.max(1, recipe.cookingTime()), ticks -> this.guiHelper

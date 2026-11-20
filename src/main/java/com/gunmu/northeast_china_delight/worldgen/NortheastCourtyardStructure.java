@@ -118,6 +118,27 @@ public class NortheastCourtyardStructure extends Structure
         ).apply(i, ClearSettings::new));
     }
 
+    public record SoilSettings(float chance, int radius, float density)
+    {
+        public static final MapCodec<SoilSettings> CODEC = RecordCodecBuilder.mapCodec(i -> i.group(
+                Codec.floatRange(0.0F, 1.0F).optionalFieldOf("black_soil_chance", 0.35F).forGetter(SoilSettings::chance),
+                Codec.intRange(0, 64).optionalFieldOf("black_soil_radius", 18).forGetter(SoilSettings::radius),
+                Codec.floatRange(0.0F, 1.0F).optionalFieldOf("black_soil_density", BLACK_SOIL_DENSITY)
+                        .forGetter(SoilSettings::density)
+        ).apply(i, SoilSettings::new));
+    }
+
+    public record GateSettings(boolean checkFront, int checkDepth, int checkWidth, int maxSlope)
+    {
+        public static final MapCodec<GateSettings> CODEC = RecordCodecBuilder.mapCodec(i -> i.group(
+                Codec.BOOL.optionalFieldOf("check_gate_front", true).forGetter(GateSettings::checkFront),
+                Codec.intRange(0, 48).optionalFieldOf("gate_check_depth", 12).forGetter(GateSettings::checkDepth),
+                Codec.intRange(1, 64).optionalFieldOf("gate_check_width",
+                        YardClearingPiece.GATE_PATH_HALF_WIDTH * 2 + 1).forGetter(GateSettings::checkWidth),
+                Codec.intRange(0, 32).optionalFieldOf("max_gate_slope", MAX_GATE_SLOPE).forGetter(GateSettings::maxSlope)
+        ).apply(i, GateSettings::new));
+    }
+
     public record AvoidSettings(List<String> structures, int margin)
     {
         public static final Codec<AvoidSettings> CODEC = RecordCodecBuilder.create(i -> i.group(
@@ -156,12 +177,13 @@ public class NortheastCourtyardStructure extends Structure
             Codec.intRange(-8, 64).optionalFieldOf("min_gap", 1).forGetter(s -> s.minGap),
             Codec.intRange(0, 32).optionalFieldOf("max_slope", 6).forGetter(s -> s.maxSlope),
             Codec.BOOL.optionalFieldOf("allow_flip", true).forGetter(s -> s.allowFlip),
-            Codec.floatRange(0.0F, 1.0F).optionalFieldOf("black_soil_chance", 0.35F).forGetter(s -> s.blackSoilChance),
-            Codec.intRange(0, 64).optionalFieldOf("black_soil_radius", 18).forGetter(s -> s.blackSoilRadius),
+            SoilSettings.CODEC.forGetter(s -> new SoilSettings(s.blackSoilChance, s.blackSoilRadius, s.blackSoilDensity)),
             Codec.STRING.optionalFieldOf("step_measure", "gap").forGetter(s -> s.stepMeasure),
+            Codec.intRange(0, 32).optionalFieldOf("lateral_jitter", LATERAL_JITTER).forGetter(s -> s.lateralJitter),
             ClearSettings.CODEC.optionalFieldOf("clear", new ClearSettings(20, 30))
                     .forGetter(s -> new ClearSettings(s.clearRadius, s.clearAbove)),
-            Codec.intRange(0, 48).optionalFieldOf("gate_check_depth", 12).forGetter(s -> s.gateCheckDepth),
+            GateSettings.CODEC.forGetter(s -> new GateSettings(
+                    s.checkGateFront, s.gateCheckDepth, s.gateCheckWidth, s.maxGateSlope)),
             AvoidSettings.CODEC.optionalFieldOf("avoid", AvoidSettings.DEFAULT)
                     .forGetter(s -> new AvoidSettings(s.avoidStructures, s.avoidMargin))
     ).apply(instance, NortheastCourtyardStructure::new));
@@ -177,18 +199,23 @@ public class NortheastCourtyardStructure extends Structure
     private final boolean allowFlip;
     private final float blackSoilChance;
     private final int blackSoilRadius;
+    private final float blackSoilDensity;
     private final String stepMeasure;
+    private final int lateralJitter;
     private final int clearRadius;
     private final int clearAbove;
+    private final boolean checkGateFront;
     private final int gateCheckDepth;
+    private final int gateCheckWidth;
+    private final int maxGateSlope;
     private final List<String> avoidStructures;
     private final int avoidMargin;
 
     public NortheastCourtyardStructure(StructureSettings settings, List<String> templates, float originChance,
                                      float walkChance, int stepMin, int stepMax, int maxHouses, int minGap,
-                                     int maxSlope, boolean allowFlip, float blackSoilChance,
-                                     int blackSoilRadius, String stepMeasure,
-                                     ClearSettings clear, int gateCheckDepth, AvoidSettings avoid)
+                                     int maxSlope, boolean allowFlip, SoilSettings soil,
+                                     String stepMeasure, int lateralJitter, ClearSettings clear,
+                                     GateSettings gate, AvoidSettings avoid)
     {
         super(settings);
         this.templates = templates.isEmpty() ? DEFAULT_TEMPLATES : templates;
@@ -200,12 +227,17 @@ public class NortheastCourtyardStructure extends Structure
         this.minGap = minGap;
         this.maxSlope = maxSlope;
         this.allowFlip = allowFlip;
-        this.blackSoilChance = blackSoilChance;
-        this.blackSoilRadius = blackSoilRadius;
+        this.blackSoilChance = soil.chance();
+        this.blackSoilRadius = soil.radius();
+        this.blackSoilDensity = soil.density();
         this.stepMeasure = "center".equalsIgnoreCase(stepMeasure) ? "center" : "gap";
+        this.lateralJitter = lateralJitter;
         this.clearRadius = clear.radius();
         this.clearAbove = clear.above();
-        this.gateCheckDepth = gateCheckDepth;
+        this.checkGateFront = gate.checkFront();
+        this.gateCheckDepth = gate.checkDepth();
+        this.gateCheckWidth = gate.checkWidth();
+        this.maxGateSlope = gate.maxSlope();
         this.avoidStructures = avoid.structures();
         this.avoidMargin = avoid.margin();
     }
@@ -242,6 +274,22 @@ public class NortheastCourtyardStructure extends Structure
         List<Yard> generatedYards = yards;
         BlockPos origin = yards.get(0).pos();
         return Optional.of(new GenerationStub(origin, builder -> {
+            int[] excludedBoxes = new int[generatedYards.size() * 4];
+            for (int index = 0; index < generatedYards.size(); index++)
+            {
+                Yard yard = generatedYards.get(index);
+                StructureTemplate template = context.structureTemplateManager()
+                        .getOrCreate(DdIds.parse(yard.template()));
+                int sizeX = template.getSize().getX();
+                int sizeZ = template.getSize().getZ();
+                int minX = footprintMinX(yard.pos().getX(), sizeX, yard.rotation());
+                int minZ = footprintMinZ(yard.pos().getZ(), sizeZ, yard.rotation());
+                int base = index * 4;
+                excludedBoxes[base] = minX;
+                excludedBoxes[base + 1] = minZ;
+                excludedBoxes[base + 2] = minX + sizeX - 1;
+                excludedBoxes[base + 3] = minZ + sizeZ - 1;
+            }
             for (Yard yard : generatedYards)
             {
                 if (this.clearRadius <= 0 && this.clearAbove <= 0)
@@ -276,16 +324,16 @@ public class NortheastCourtyardStructure extends Structure
                             footprintMinX(yard.pos().getX(), sizeX, yard.rotation()) + sizeX / 2,
                             yard.pos().getY(),
                             footprintMinZ(yard.pos().getZ(), sizeZ, yard.rotation()) + sizeZ / 2);
-                    builder.addPiece(new BlackSoilPiece(center, this.blackSoilRadius, BLACK_SOIL_DENSITY));
-                    builder.addPiece(new BiomeRichSoilPiece(center, this.blackSoilRadius * 4, BIOME_SOIL_DENSITY));
+                    if (this.blackSoilDensity > 0.0F)
+                    {
+                        builder.addPiece(new BlackSoilPiece(center, this.blackSoilRadius,
+                                this.blackSoilDensity, excludedBoxes));
+                    }
+                    builder.addPiece(new BiomeRichSoilPiece(center, this.blackSoilRadius * 4,
+                            BIOME_SOIL_DENSITY, excludedBoxes));
                 }
             }
         }));
-    }
-
-    private static boolean partsEnabled()
-    {
-        return com.gunmu.northeast_china_delight.NortheastChinaConfig.YARD_PARTS_ENABLED.get();
     }
 
     private List<Yard> growCluster(GenerationContext context, TerrainSampler terrain, WorldgenRandom random,
@@ -334,8 +382,8 @@ public class NortheastCourtyardStructure extends Structure
                         id -> context.structureTemplateManager().getOrCreate(DdIds.parse(id)));
                 StructureTemplate nextSize = sizes.computeIfAbsent(template,
                         id -> context.structureTemplateManager().getOrCreate(DdIds.parse(id)));
-                int lateral = LATERAL_JITTER > 0
-                        ? random.nextInt(LATERAL_JITTER * 2 + 1) - LATERAL_JITTER : 0;
+                int lateral = this.lateralJitter > 0
+                        ? random.nextInt(this.lateralJitter * 2 + 1) - this.lateralJitter : 0;
                 int[] next = this.stepPosition(current, currentSize, nextSize,
                         direction.getStepX(), direction.getStepZ(), distance, lateral);
                 Yard candidate = this.tryMakeYard(context, terrain, random, sizes, template,
@@ -386,8 +434,8 @@ public class NortheastCourtyardStructure extends Structure
                 {
                     int distance = this.stepMin + (SECOND_YARD_DISTANCE_SAMPLES == 1 ? 0
                             : Math.round((float) distanceSpan * sample / (SECOND_YARD_DISTANCE_SAMPLES - 1)));
-                    int lateral = step[0] == 0 || step[1] == 0
-                            ? random.nextInt(LATERAL_JITTER * 2 + 1) - LATERAL_JITTER : 0;
+                    int lateral = (step[0] == 0 || step[1] == 0) && this.lateralJitter > 0
+                            ? random.nextInt(this.lateralJitter * 2 + 1) - this.lateralJitter : 0;
                     int[] next = this.stepPosition(first, firstSize, secondSize,
                             step[0], step[1], distance, lateral);
                     Yard candidate = this.tryMakeSecondYard(context, terrain, random, sizes, template,
@@ -454,9 +502,11 @@ public class NortheastCourtyardStructure extends Structure
                     currentSize.getSize().getX(), current.rotation()) + currentSize.getSize().getX() / 2;
             int currentCenterZ = footprintMinZ(current.pos().getZ(),
                     currentSize.getSize().getZ(), current.rotation()) + currentSize.getSize().getZ() / 2;
+            int nextCenterX = currentCenterX + stepX * distance + (stepX == 0 ? lateral : 0);
+            int nextCenterZ = currentCenterZ + stepZ * distance + (stepZ == 0 ? lateral : 0);
             return new int[]{
-                    currentCenterX + stepX * distance,
-                    currentCenterZ + stepZ * distance
+                    nextCenterX - nextSize.getSize().getX() / 2,
+                    nextCenterZ - nextSize.getSize().getZ() / 2
             };
         }
         int currentMinX = footprintMinX(current.pos().getX(), currentSize.getSize().getX(), current.rotation());
@@ -593,17 +643,17 @@ public class NortheastCourtyardStructure extends Structure
                                   BlockPos footprintMin, int surface, WorldgenRandom random, Rotation preferred,
                                   List<Yard> existingYards, Map<String, StructureTemplate> sizes)
     {
-        if (!this.allowFlip)
-        {
-            return Rotation.NONE;
-        }
         int sizeX = template.getSize().getX();
         int sizeZ = template.getSize().getZ();
         boolean noneGateOk = this.gatePathOk(terrain, template, footprintMin, Rotation.NONE, surface, true);
-        boolean flippedGateOk = this.gatePathOk(terrain, template, footprintMin, Rotation.CLOCKWISE_180,
-                surface, true);
         boolean noneFrontageClear = !this.gateApronBlocked(footprintMin, sizeX, sizeZ,
                 Rotation.NONE, existingYards, sizes);
+        if (!this.allowFlip)
+        {
+            return noneGateOk && noneFrontageClear ? Rotation.NONE : null;
+        }
+        boolean flippedGateOk = this.gatePathOk(terrain, template, footprintMin, Rotation.CLOCKWISE_180,
+                surface, true);
         boolean flippedFrontageClear = !this.gateApronBlocked(footprintMin, sizeX, sizeZ,
                 Rotation.CLOCKWISE_180, existingYards, sizes);
         return chooseRotation(preferred, noneGateOk, flippedGateOk,
@@ -614,17 +664,17 @@ public class NortheastCourtyardStructure extends Structure
                                         BlockPos footprintMin, Yard first, Map<String, StructureTemplate> sizes,
                                         WorldgenRandom random, int surface)
     {
-        if (!this.allowFlip)
-        {
-            return Rotation.NONE;
-        }
         int sizeX = template.getSize().getX();
         int sizeZ = template.getSize().getZ();
         boolean noneGateOk = this.gatePathOk(terrain, template, footprintMin, Rotation.NONE, surface, false);
-        boolean flippedGateOk = this.gatePathOk(terrain, template, footprintMin, Rotation.CLOCKWISE_180,
-                surface, false);
         boolean noneFrontageClear = !this.gateApronBlocked(footprintMin, sizeX, sizeZ,
                 Rotation.NONE, List.of(first), sizes);
+        if (!this.allowFlip)
+        {
+            return noneGateOk && noneFrontageClear ? Rotation.NONE : null;
+        }
+        boolean flippedGateOk = this.gatePathOk(terrain, template, footprintMin, Rotation.CLOCKWISE_180,
+                surface, false);
         boolean flippedFrontageClear = !this.gateApronBlocked(footprintMin, sizeX, sizeZ,
                 Rotation.CLOCKWISE_180, List.of(first), sizes);
         return chooseRotation(first.rotation(), noneGateOk, flippedGateOk,
@@ -734,6 +784,10 @@ public class NortheastCourtyardStructure extends Structure
     private boolean gatePathOk(TerrainSampler terrain, StructureTemplate template, BlockPos footprintMin,
                                Rotation rotation, int yardSurface, boolean checkHeight)
     {
+        if (!this.checkGateFront)
+        {
+            return true;
+        }
         int sizeX = template.getSize().getX();
         int sizeZ = template.getSize().getZ();
         boolean waterClear = gatePathPasses(footprintMin.getX(), footprintMin.getZ(), sizeX, sizeZ,
@@ -746,25 +800,37 @@ public class NortheastCourtyardStructure extends Structure
         {
             return waterClear;
         }
+        if (this.gateCheckDepth <= 0)
+        {
+            return true;
+        }
         int heightDepth = Math.max(YardClearingPiece.GATE_PATH_LENGTH, this.gateCheckDepth);
+        int halfWidth = Math.max(0, (this.gateCheckWidth - 1) / 2);
         return gatePathPasses(footprintMin.getX(), footprintMin.getZ(), sizeX, sizeZ, gateStep(rotation),
                 (x, z) -> {
                     Optional<TerrainProbe> probe = terrain.probe(x, z);
                     return dryGround(probe)
-                            && Math.abs(probe.get().groundY() + 1 - yardSurface) <= MAX_GATE_SLOPE;
-                }, heightDepth);
+                            && Math.abs(probe.get().groundY() + 1 - yardSurface) <= this.maxGateSlope;
+                }, heightDepth, halfWidth, halfWidth);
     }
 
     static boolean gatePathPasses(int minX, int minZ, int sizeX, int sizeZ, int gateDir,
                                   BiPredicate<Integer, Integer> passable, int depth)
+    {
+        return gatePathPasses(minX, minZ, sizeX, sizeZ, gateDir, passable, depth,
+                YardClearingPiece.GATE_PATH_HALF_WIDTH, 0);
+    }
+
+    static boolean gatePathPasses(int minX, int minZ, int sizeX, int sizeZ, int gateDir,
+                                  BiPredicate<Integer, Integer> passable, int depth,
+                                  int nearHalfWidth, int farHalfWidth)
     {
         int centerX = gateCenterX(minX, sizeX);
         int edgeZ = gateDir > 0 ? minZ + sizeZ - 1 : minZ;
         for (int dz = 1; dz <= depth; dz++)
         {
             int z = edgeZ + gateDir * dz;
-            int halfWidth = dz <= YardClearingPiece.GATE_PATH_LENGTH
-                    ? YardClearingPiece.GATE_PATH_HALF_WIDTH : 0;
+            int halfWidth = dz <= YardClearingPiece.GATE_PATH_LENGTH ? nearHalfWidth : farHalfWidth;
             for (int dx = -halfWidth; dx <= halfWidth; dx++)
             {
                 if (!passable.test(centerX + dx, z))
@@ -1070,6 +1136,17 @@ public class NortheastCourtyardStructure extends Structure
             int overlapX = Math.min(aMinX + aw, bMinX + bw) - Math.max(aMinX, bMinX);
             int overlapZ = Math.min(aMinZ + ad, bMinZ + bd) - Math.max(aMinZ, bMinZ);
             if (overlapX > -this.minGap && overlapZ > -this.minGap)
+            {
+                return true;
+            }
+            int otherCenterX = gateCenterX(bMinX, bw);
+            int otherEdgeZ = other.rotation() == Rotation.CLOCKWISE_180 ? bMinZ : bMinZ + bd - 1;
+            int otherStep = gateStep(other.rotation());
+            int apronNearZ = otherEdgeZ + otherStep;
+            int apronFarZ = otherEdgeZ + otherStep * YardClearingPiece.GATE_PATH_LENGTH;
+            if (rectanglesOverlap(aMinX, aMinZ, aMinX + aw - 1, aMinZ + ad - 1,
+                    otherCenterX - YardClearingPiece.GATE_PATH_HALF_WIDTH, Math.min(apronNearZ, apronFarZ),
+                    otherCenterX + YardClearingPiece.GATE_PATH_HALF_WIDTH, Math.max(apronNearZ, apronFarZ)))
             {
                 return true;
             }

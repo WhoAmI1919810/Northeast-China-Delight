@@ -146,7 +146,11 @@ public class LyricsHudOverlay {
         // 物品栏上方约 60px
         int y = screenHeight - 60;
 
-        int color = ((int) (alpha * 255) << 24) | 0xFFFFFF;
+        int alphaInt = (int) (alpha * 255);
+        if (alphaInt < 4) {
+            return;
+        }
+        int color = (alphaInt << 24) | 0xFFFFFF;
         graphics.drawString(font, text, x, y, color, true);
     }
 

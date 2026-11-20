@@ -159,14 +159,17 @@ public class HandPumpBlock extends FacingDecorBlock {
     }
     //?}
 
-    /** 同门帘：创造模式敲上半时，下半直接换成空气（35 = 通知客户端 + 不掉落），免得下半掉出一个压水井 */
+    /** 创造模式或未使用正确挖掘工具敲上半时，下半直接换成空气（35 = 通知客户端 + 不掉落），避免绕过采集要求白掉压水井 */
     private static void removeLowerHalfInCreative(Level level, BlockPos pos, BlockState state, Player player) {
-        if (level.isClientSide || !player.isCreative() || state.getValue(HALF) != DoubleBlockHalf.UPPER) {
+        if (level.isClientSide || state.getValue(HALF) != DoubleBlockHalf.UPPER) {
             return;
         }
         BlockPos below = pos.below();
         BlockState belowState = level.getBlockState(below);
-        if (belowState.is(state.getBlock()) && belowState.getValue(HALF) == DoubleBlockHalf.LOWER) {
+        if (!belowState.is(state.getBlock()) || belowState.getValue(HALF) != DoubleBlockHalf.LOWER) {
+            return;
+        }
+        if (player.isCreative() || !player.hasCorrectToolForDrops(belowState)) {
             level.setBlock(below, Blocks.AIR.defaultBlockState(), 35);
             level.levelEvent(player, 2001, below, Block.getId(belowState));
         }
@@ -261,10 +264,10 @@ public class HandPumpBlock extends FacingDecorBlock {
      * 哪只手里有盛东西的家伙就让开 —— 主手的桶自己去倒水，副手拿着空桶的轮到副手时再压水。
      */
     private static InteractionResult splash(BlockState state, Level level, BlockPos clicked, Player player) {
-        if (waterEvaporates(level)) {
-            return InteractionResult.sidedSuccess(level.isClientSide);
-        }
         if (isContainer(player.getMainHandItem()) || isContainer(player.getOffhandItem())) {
+            return InteractionResult.PASS;
+        }
+        if (waterEvaporates(level)) {
             return InteractionResult.PASS;
         }
         if (level instanceof ServerLevel server) {

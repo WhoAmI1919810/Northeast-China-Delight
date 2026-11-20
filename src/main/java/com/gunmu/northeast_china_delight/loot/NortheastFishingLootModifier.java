@@ -106,11 +106,8 @@ public class NortheastFishingLootModifier extends LootModifier
             return generatedLoot;
         }
 
-        boolean deepOcean = isColdDeepOcean(level, surface);
-        boolean openWater = isOpenWater(level, surface);
-
         Entry[] table;
-        if (deepOcean && openWater)
+        if (isColdDeepOcean(level, surface) && isOpenWater(level, surface))
         {
             table = HAIRTAIL;
         }
@@ -174,6 +171,10 @@ public class NortheastFishingLootModifier extends LootModifier
                     continue;
                 }
                 cursor.set(surface.getX() + dx, surface.getY(), surface.getZ() + dz);
+                if (!level.isLoaded(cursor))
+                {
+                    continue;
+                }
                 Holder<Biome> biome = level.getBiome(cursor);
                 river |= biome.is(BiomeTags.IS_RIVER);
                 ocean |= biome.is(BiomeTags.IS_OCEAN);
@@ -204,6 +205,14 @@ public class NortheastFishingLootModifier extends LootModifier
 
     public static boolean isOpenWater(ServerLevel level, BlockPos surface)
     {
+        BlockPos.MutableBlockPos depthCursor = surface.mutable();
+        for (int i = 0; i < HAIRTAIL_VERTICAL_RANGE; i++)
+        {
+            if (!isWater(level, depthCursor.move(Direction.DOWN)))
+            {
+                return false;
+            }
+        }
         for (Direction direction : Direction.Plane.HORIZONTAL)
         {
             BlockPos.MutableBlockPos cursor = surface.mutable();
@@ -215,19 +224,15 @@ public class NortheastFishingLootModifier extends LootModifier
                 }
             }
         }
-        BlockPos.MutableBlockPos cursor = surface.mutable();
-        for (int i = 0; i < HAIRTAIL_VERTICAL_RANGE; i++)
-        {
-            if (!isWater(level, cursor.move(Direction.DOWN)))
-            {
-                return false;
-            }
-        }
         return true;
     }
 
     private static boolean isWaterOrIce(ServerLevel level, BlockPos pos)
     {
+        if (!level.isLoaded(pos))
+        {
+            return false;
+        }
         BlockState state = level.getBlockState(pos);
         if (state.getFluidState().is(FluidTags.WATER))
         {
@@ -250,6 +255,10 @@ public class NortheastFishingLootModifier extends LootModifier
 
     private static boolean isWater(ServerLevel level, BlockPos pos)
     {
+        if (!level.isLoaded(pos))
+        {
+            return false;
+        }
         BlockState state = level.getBlockState(pos);
         return state.getFluidState().is(FluidTags.WATER)
                 || (state.hasProperty(net.minecraft.world.level.block.state.properties.BlockStateProperties.WATERLOGGED)

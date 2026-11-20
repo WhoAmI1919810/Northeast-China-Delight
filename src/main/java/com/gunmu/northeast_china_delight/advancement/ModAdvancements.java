@@ -48,6 +48,8 @@ public final class ModAdvancements
     public static final ResourceLocation COZY_SLEEP = id("cozy_sleep");
     /** 先对付两口——放下一道菜肴（盘装、碗装、黄铜碗装、展示乐事餐盘菜；不含格瓦斯、黄桃罐头、盆装菜） */
     public static final ResourceLocation PLACE_DISH = id("place_dish");
+    /** 刷油/刷酱——在烤架营火上使用刷子成功给食材刷料 */
+    public static final ResourceLocation BRUSH = id("brush");
 
     private ModAdvancements()
     {

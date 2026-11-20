@@ -1,6 +1,6 @@
 // 这个分类完全靠机械动力的模型（AllPartialModels）+ catnip 的 GUI 元素渲染，
-// 这个分类只在 1.21.1 线注册（低版本线整体停用，只留注释）。
-//? if >=1.20.5 {
+// 1.20.1 与 1.21.1 均装有机械动力 6.x，1.20.4 线没有机械动力所以整块跳过。
+//? if <1.20.2 || >=1.20.5 {
 package com.gunmu.northeast_china_delight.compat.jei;
 
 import com.gunmu.northeast_china_delight.NortheastChinaDelight;
@@ -17,6 +17,7 @@ import mezz.jei.api.recipe.RecipeIngredientRole;
 import mezz.jei.api.recipe.RecipeType;
 import mezz.jei.api.recipe.category.IRecipeCategory;
 import net.createmod.catnip.gui.element.GuiGameElement;
+import net.minecraft.Util;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.navigation.ScreenPosition;
 import net.minecraft.network.chat.Component;
@@ -51,10 +52,12 @@ public class DryingRecipeCategory implements IRecipeCategory<DryingJeiRecipe> {
     private static final int SHADOW_U = 0, SHADOW_V = 56, SHADOW_W = 52, SHADOW_H = 11;
 
     private final IDrawable icon;
+    private final IDrawable background;
 
     public DryingRecipeCategory(IGuiHelper guiHelper) {
         this.icon = guiHelper.createDrawableItemStack(new ItemStack(
                 AllBlocks.ENCASED_FAN.get()));
+        this.background = guiHelper.createBlankDrawable(WIDTH, HEIGHT);
     }
 
     @Override public RecipeType<DryingJeiRecipe> getRecipeType() { return NortheastJeiPlugin.DRYING_TYPE; }
@@ -62,6 +65,7 @@ public class DryingRecipeCategory implements IRecipeCategory<DryingJeiRecipe> {
     @Override public IDrawable getIcon() { return this.icon; }
     @Override public int getWidth() { return WIDTH; }
     @Override public int getHeight() { return HEIGHT; }
+    @Override public IDrawable getBackground() { return this.background; }
 
     @Override
     public ResourceLocation getRegistryName(DryingJeiRecipe recipe) {
@@ -91,11 +95,10 @@ public class DryingRecipeCategory implements IRecipeCategory<DryingJeiRecipe> {
     private static void blitWidget(GuiGraphics g, int u, int v, int w, int h, int x, int y) {
         g.blit(WIDGETS, x, y, u, v, w, h, 256, 256);
     }
+
     private static final class DryingWidget implements IRecipeWidget {
-        private int ticks;
 
         @Override public ScreenPosition getPosition() { return new ScreenPosition(0, 0); }
-        @Override public void tick() { this.ticks++; }
 
         @Override
         public void drawWidget(GuiGraphics graphics, double mouseX, double mouseY) {
@@ -112,7 +115,7 @@ public class DryingRecipeCategory implements IRecipeCategory<DryingJeiRecipe> {
             pose.mulPose(com.mojang.math.Axis.XP.rotationDegrees(-12.5F));
             pose.mulPose(com.mojang.math.Axis.YP.rotationDegrees(22.5F));
 
-            float angle = this.ticks * 4.0F;
+            float angle = (Util.getMillis() % 360_000L) / 50.0F * 4.0F;
             GuiGameElement.of(AllPartialModels.ENCASED_FAN_INNER)
                     .rotateBlock(0, 180, angle * 16.0F)
                     .scale(FAN_SCALE)
