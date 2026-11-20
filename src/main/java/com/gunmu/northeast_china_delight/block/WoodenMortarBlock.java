@@ -589,10 +589,10 @@ public class WoodenMortarBlock extends BaseEntityBlock {
         level.playSound(null, pos, SoundEvents.WOOD_HIT, SoundSource.BLOCKS, 1.0F,
                 0.9F + level.getRandom().nextFloat() * 0.2F);
 
+        awardPound(player, held);
         if (!player.getAbilities().instabuild) {
             DdStacks.hurtAndBreak(held, 1, player, InteractionHand.MAIN_HAND);
         }
-        awardPound(player, held);
         return true;
     }
 

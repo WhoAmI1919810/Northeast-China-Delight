@@ -79,6 +79,9 @@ public abstract class CookingPotBlockEntityMixin {
                 continue;
             }
             if (stack.is(ModItems.DEEP_FRY_OILS) && result.is(ModItems.DEEP_FRIED_DISHES)) {
+                if (!SeasoningBottleItem.isFull(stack)) {
+                    return true;
+                }
                 continue;
             }
             if (SeasoningBottleItem.isBottle(result)) {

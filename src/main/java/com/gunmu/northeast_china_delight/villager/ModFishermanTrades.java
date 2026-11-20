@@ -39,6 +39,6 @@ public final class ModFishermanTrades
 
         trades.get(5).add(sell(8, ModItems.XIAN_YU_BING_ZI.get(), 1, 12, 30));
         trades.get(5).add(sell(18, ModItems.CONG_SHAO_HAI_SHEN.get(), 1, 8, 30));
-        trades.get(5).add(sell(15, ModItems.SUAN_CAI_HAI_XIAN_GUO.get(), 1, 8, 30));
+        trades.get(5).add(sell(15, ModItems.SUAN_CAI_HAI_XIAN_GUO_BOWL.get(), 1, 8, 30));
     }
 }

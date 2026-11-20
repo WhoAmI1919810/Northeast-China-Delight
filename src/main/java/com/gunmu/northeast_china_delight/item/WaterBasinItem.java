@@ -1,7 +1,14 @@
 package com.gunmu.northeast_china_delight.item;
 
+import com.gunmu.northeast_china_delight.block.BasinStandBlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+//? if <1.20.5 {
+/*import net.minecraft.nbt.CompoundTag;
+*///?} else {
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.world.item.component.CustomData;
+//?}
 import net.minecraft.stats.Stats;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -36,9 +43,42 @@ import net.minecraft.world.phys.HitResult;
  */
 public class WaterBasinItem extends ItemNameBlockItem
 {
+    private static final String TAG_WASH_USES = "WashUses";
+
     public WaterBasinItem(Block block, Item.Properties properties)
     {
         super(block, properties);
+    }
+
+    public static int getWashUses(ItemStack stack)
+    {
+        //? if <1.20.5 {
+        /*CompoundTag tag = stack.getTag();
+        return tag == null ? 0
+                : Math.max(0, Math.min(BasinStandBlockEntity.USES_BEFORE_EMPTY, tag.getInt(TAG_WASH_USES)));
+        *///?} else {
+        CustomData data = stack.get(DataComponents.CUSTOM_DATA);
+        if (data == null)
+        {
+            return 0;
+        }
+        return Math.max(0, Math.min(BasinStandBlockEntity.USES_BEFORE_EMPTY, data.copyTag().getInt(TAG_WASH_USES)));
+        //?}
+    }
+
+    public static ItemStack withWashUses(ItemStack stack, int uses)
+    {
+        int clamped = Math.max(0, Math.min(BasinStandBlockEntity.USES_BEFORE_EMPTY, uses));
+        if (clamped <= 0)
+        {
+            return stack;
+        }
+        //? if <1.20.5 {
+        /*stack.getOrCreateTag().putInt(TAG_WASH_USES, clamped);
+        *///?} else {
+        CustomData.update(DataComponents.CUSTOM_DATA, stack, tag -> tag.putInt(TAG_WASH_USES, clamped));
+        //?}
+        return stack;
     }
 
     /** 不潜行右键方块就放下；潜行交给 {@link #use} 倒水（返回 PASS 后客户端会接着调 use） */

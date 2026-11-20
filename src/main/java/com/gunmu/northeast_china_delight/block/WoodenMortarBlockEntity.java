@@ -1,6 +1,7 @@
 package com.gunmu.northeast_china_delight.block;
 
 import com.gunmu.northeast_china_delight.crafting.PoundingRecipes;
+import com.mojang.serialization.DynamicOps;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
@@ -225,16 +226,22 @@ public class WoodenMortarBlockEntity extends BlockEntity {
     //? if <1.20.5 {
     /*protected void saveAdditional(CompoundTag tag) {
         super.saveAdditional(tag);
-        this.writeToTag(tag);
+        this.writeToTag(tag, NbtOps.INSTANCE);
     }*/
     //?} else {
     protected void saveAdditional(CompoundTag tag, net.minecraft.core.HolderLookup.Provider registries) {
         super.saveAdditional(tag, registries);
-        this.writeToTag(tag);
+        this.writeToTag(tag, nbtOps(registries));
     }
     //?}
 
-    private void writeToTag(CompoundTag tag) {
+    //? if >=1.20.5 {
+    private static DynamicOps<Tag> nbtOps(@Nullable net.minecraft.core.HolderLookup.Provider registries) {
+        return registries != null ? registries.createSerializationContext(NbtOps.INSTANCE) : NbtOps.INSTANCE;
+    }
+    //?}
+
+    private void writeToTag(CompoundTag tag, DynamicOps<Tag> ops) {
         if (this.recipeId != null) {
             tag.putString("PoundRecipe", this.recipeId.toString());
             tag.putInt("PoundProgress", this.progress);
@@ -247,7 +254,7 @@ public class WoodenMortarBlockEntity extends BlockEntity {
                 continue;
             }
             int slot = i;
-            ItemStack.CODEC.encodeStart(NbtOps.INSTANCE, stack).result().ifPresent(saved -> {
+            ItemStack.CODEC.encodeStart(ops, stack).result().ifPresent(saved -> {
                 CompoundTag entry = new CompoundTag();
                 entry.putInt("Slot", slot);
                 entry.put("Item", saved);
@@ -260,7 +267,7 @@ public class WoodenMortarBlockEntity extends BlockEntity {
             tag.putBoolean("PoundResultsRolled", true);
             ListTag results = new ListTag();
             for (ItemStack stack : this.pendingResults) {
-                ItemStack.CODEC.encodeStart(NbtOps.INSTANCE, stack).result().ifPresent(saved -> {
+                ItemStack.CODEC.encodeStart(ops, stack).result().ifPresent(saved -> {
                     CompoundTag entry = new CompoundTag();
                     entry.put("Item", saved);
                     results.add(entry);
@@ -270,7 +277,7 @@ public class WoodenMortarBlockEntity extends BlockEntity {
         }
 
         if (!this.mallet.isEmpty()) {
-            ItemStack.CODEC.encodeStart(NbtOps.INSTANCE, this.mallet)
+            ItemStack.CODEC.encodeStart(ops, this.mallet)
                     .result().ifPresent(saved -> tag.put("Mallet", saved));
         }
     }
@@ -279,16 +286,16 @@ public class WoodenMortarBlockEntity extends BlockEntity {
     //? if <1.20.5 {
     /*public void load(CompoundTag tag) {
         super.load(tag);
-        this.readFromTag(tag);
+        this.readFromTag(tag, NbtOps.INSTANCE);
     }*/
     //?} else {
     protected void loadAdditional(CompoundTag tag, net.minecraft.core.HolderLookup.Provider registries) {
         super.loadAdditional(tag, registries);
-        this.readFromTag(tag);
+        this.readFromTag(tag, nbtOps(registries));
     }
     //?}
 
-    private void readFromTag(CompoundTag tag) {
+    private void readFromTag(CompoundTag tag, DynamicOps<Tag> ops) {
         this.recipeId = tag.contains("PoundRecipe") ? ResourceLocation.tryParse(tag.getString("PoundRecipe")) : null;
         this.progress = tag.getInt("PoundProgress");
 
@@ -307,7 +314,7 @@ public class WoodenMortarBlockEntity extends BlockEntity {
             if (slot < 0 || slot >= this.depositedInputs.size()) {
                 continue;
             }
-            ItemStack stack = ItemStack.CODEC.parse(NbtOps.INSTANCE, entry.get("Item"))
+            ItemStack stack = ItemStack.CODEC.parse(ops, entry.get("Item"))
                     .result().orElse(ItemStack.EMPTY);
             this.depositedInputs.set(slot, stack);
         }
@@ -317,7 +324,7 @@ public class WoodenMortarBlockEntity extends BlockEntity {
             List<ItemStack> results = new ArrayList<>();
             ListTag resultTags = tag.getList("PoundResults", Tag.TAG_COMPOUND);
             for (int i = 0; i < resultTags.size(); i++) {
-                ItemStack stack = ItemStack.CODEC.parse(NbtOps.INSTANCE, resultTags.getCompound(i).get("Item"))
+                ItemStack stack = ItemStack.CODEC.parse(ops, resultTags.getCompound(i).get("Item"))
                         .result().orElse(ItemStack.EMPTY);
                 if (!stack.isEmpty()) {
                     results.add(stack);
@@ -328,7 +335,7 @@ public class WoodenMortarBlockEntity extends BlockEntity {
 
         Tag malletTag = tag.get("Mallet");
         this.mallet = malletTag == null ? ItemStack.EMPTY
-                : ItemStack.CODEC.parse(NbtOps.INSTANCE, malletTag).result().orElse(ItemStack.EMPTY);
+                : ItemStack.CODEC.parse(ops, malletTag).result().orElse(ItemStack.EMPTY);
     }
 
     @Nullable
@@ -341,13 +348,13 @@ public class WoodenMortarBlockEntity extends BlockEntity {
     //? if <1.20.5 {
     /*public CompoundTag getUpdateTag() {
         CompoundTag tag = new CompoundTag();
-        this.writeToTag(tag);
+        this.writeToTag(tag, NbtOps.INSTANCE);
         return tag;
     }*/
     //?} else {
     public CompoundTag getUpdateTag(net.minecraft.core.HolderLookup.Provider registries) {
         CompoundTag tag = new CompoundTag();
-        this.writeToTag(tag);
+        this.writeToTag(tag, nbtOps(registries));
         return tag;
     }
     //?}

@@ -1,6 +1,7 @@
 package com.gunmu.northeast_china_delight.block;
 
 import com.gunmu.northeast_china_delight.item.ModItems;
+import com.gunmu.northeast_china_delight.item.WaterBasinItem;
 import net.minecraft.core.BlockPos;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -14,10 +15,13 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.ItemUtils;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.StateDefinition;
+import net.minecraft.world.level.block.state.properties.IntegerProperty;
 import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.phys.BlockHitResult;
 
@@ -30,12 +34,31 @@ import net.minecraft.world.phys.BlockHitResult;
  */
 public class BasinBlock extends PlacedDishBlock
 {
+    public static final IntegerProperty WASH_USES =
+            IntegerProperty.create("wash_uses", 0, BasinStandBlockEntity.USES_BEFORE_EMPTY);
+
     private final boolean filled;
 
     public BasinBlock(BlockBehaviour.Properties properties, boolean filled)
     {
         super(properties, BASIN_SHAPE);
         this.filled = filled;
+        this.registerDefaultState(this.defaultBlockState().setValue(WASH_USES, 0));
+    }
+
+    @Override
+    protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder)
+    {
+        super.createBlockStateDefinition(builder);
+        builder.add(WASH_USES);
+    }
+
+    @Override
+    public BlockState getStateForPlacement(BlockPlaceContext context)
+    {
+        BlockState state = super.getStateForPlacement(context);
+        int uses = this.filled ? WaterBasinItem.getWashUses(context.getItemInHand()) : 0;
+        return state.setValue(WASH_USES, uses);
     }
 
     @Override
@@ -56,14 +79,14 @@ public class BasinBlock extends PlacedDishBlock
                                  InteractionHand hand, BlockHitResult hitResult)
     {
         ItemStack held = player.getItemInHand(hand);
-        return held.isEmpty() ? pickUp(level, pos, player) : pourOrScoop(held, level, pos, player, hand);
+        return held.isEmpty() ? pickUp(state, level, pos, player) : pourOrScoop(held, state, level, pos, player, hand);
     }*/
     //?} else {
     @Override
     protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos,
                                               Player player, InteractionHand hand, BlockHitResult hitResult)
     {
-        InteractionResult result = pourOrScoop(stack, level, pos, player, hand);
+        InteractionResult result = pourOrScoop(stack, state, level, pos, player, hand);
         return result == InteractionResult.PASS
                 ? ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION
                 : ItemInteractionResult.sidedSuccess(level.isClientSide());
@@ -73,12 +96,12 @@ public class BasinBlock extends PlacedDishBlock
     protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos,
                                                Player player, BlockHitResult hitResult)
     {
-        return pickUp(level, pos, player);
+        return pickUp(state, level, pos, player);
     }
     //?}
 
     /** 地上的盆：潜行空手右键收回物品栏（背包满了就掉在脚下） */
-    private InteractionResult pickUp(Level level, BlockPos pos, Player player)
+    private InteractionResult pickUp(BlockState state, Level level, BlockPos pos, Player player)
     {
         if (!player.isSecondaryUseActive())
         {
@@ -86,10 +109,15 @@ public class BasinBlock extends PlacedDishBlock
         }
         if (!level.isClientSide)
         {
+            int washUses = filled ? state.getValue(WASH_USES) : 0;
             level.removeBlock(pos, false);
             level.gameEvent(player, GameEvent.BLOCK_DESTROY, pos);
             level.playSound(null, pos, SoundEvents.ITEM_PICKUP, SoundSource.PLAYERS, 0.2F, 1.0F);
             ItemStack item = new ItemStack(filled ? ModItems.WATER_BASIN.get() : ModItems.LARGE_BASIN.get());
+            if (filled && washUses > 0)
+            {
+                item = WaterBasinItem.withWashUses(item, washUses);
+            }
             if (!player.getInventory().add(item))
             {
                 player.drop(item, false);
@@ -98,7 +126,8 @@ public class BasinBlock extends PlacedDishBlock
         return InteractionResult.sidedSuccess(level.isClientSide);
     }
 
-    private InteractionResult pourOrScoop(ItemStack held, Level level, BlockPos pos, Player player, InteractionHand hand)
+    private InteractionResult pourOrScoop(ItemStack held, BlockState state, Level level, BlockPos pos,
+                                          Player player, InteractionHand hand)
     {
         // 桶和盆都行：倒进去剩空桶 / 空盆，舀出来得水桶 / 水盆
         boolean basin = held.is(ModItems.WATER_BASIN.get()) || held.is(ModItems.LARGE_BASIN.get());
@@ -108,16 +137,28 @@ public class BasinBlock extends PlacedDishBlock
         {
             return InteractionResult.PASS;
         }
+        if (scoop && held.is(Items.BUCKET) && state.getValue(WASH_USES) > 0)
+        {
+            return InteractionResult.PASS;
+        }
         if (!level.isClientSide)
         {
+            int washUses = pour
+                    ? (held.is(ModItems.WATER_BASIN.get()) ? WaterBasinItem.getWashUses(held) : 0)
+                    : state.getValue(WASH_USES);
             player.awardStat(Stats.ITEM_USED.get(held.getItem()));
             ItemStack result = new ItemStack(basin
                     ? (pour ? ModItems.LARGE_BASIN.get() : ModItems.WATER_BASIN.get())
                     : (pour ? Items.BUCKET : Items.WATER_BUCKET));
+            if (scoop && basin && washUses > 0)
+            {
+                result = WaterBasinItem.withWashUses(result, washUses);
+            }
             player.setItemInHand(hand, ItemUtils.createFilledResult(held, player, result));
             Block next = pour ? ModBlocks.WATER_BASIN.get() : ModBlocks.LARGE_BASIN.get();
-            level.setBlock(pos, PlacedDishBlock.withFacing(next.defaultBlockState(), level.getBlockState(pos)),
-                    Block.UPDATE_ALL);
+            BlockState nextState = PlacedDishBlock.withFacing(next.defaultBlockState(), state)
+                    .setValue(WASH_USES, pour ? washUses : 0);
+            level.setBlock(pos, nextState, Block.UPDATE_ALL);
             level.playSound(null, pos, pour ? SoundEvents.BUCKET_EMPTY : SoundEvents.BUCKET_FILL,
                     SoundSource.BLOCKS, 1.0F, 1.0F);
             level.gameEvent(player, pour ? GameEvent.FLUID_PLACE : GameEvent.FLUID_PICKUP, pos);

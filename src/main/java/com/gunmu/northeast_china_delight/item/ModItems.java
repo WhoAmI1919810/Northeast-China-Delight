@@ -645,7 +645,15 @@ public class ModItems {
     }
 
     private static Supplier<Item> bottledLiquid(String id) {
-        return regItem(id, Item::new, new Item.Properties()
+        return regItem(id, properties -> new Item(properties) {
+            //? if <1.20.2 {
+            /*@Override
+            public net.minecraftforge.common.capabilities.ICapabilityProvider initCapabilities(
+                    net.minecraft.world.item.ItemStack stack, net.minecraft.nbt.CompoundTag nbt) {
+                return SeasoningBottleFluidHandler.provider(stack);
+            }
+            *///?}
+        }, new Item.Properties()
                 .craftRemainder(Items.GLASS_BOTTLE));
     }
 

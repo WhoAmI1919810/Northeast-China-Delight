@@ -68,7 +68,7 @@ public class CornStalkBlock extends Block {
             return InteractionResult.PASS;
         }
         boolean withShears = stack.is(Items.SHEARS);
-        boolean emptyHand = stack.isEmpty() && player.getOffhandItem().isEmpty();
+        boolean emptyHand = player.getMainHandItem().isEmpty() && player.getOffhandItem().isEmpty();
         if (!withShears && !emptyHand) {
             return InteractionResult.PASS;
         }
@@ -95,7 +95,7 @@ public class CornStalkBlock extends Block {
             return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
         }
         boolean withShears = stack.is(Items.SHEARS);
-        boolean emptyHand = stack.isEmpty() && player.getOffhandItem().isEmpty();
+        boolean emptyHand = player.getMainHandItem().isEmpty() && player.getOffhandItem().isEmpty();
         if (!withShears && !emptyHand) {
             return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
         }

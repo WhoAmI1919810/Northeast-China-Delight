@@ -7,6 +7,7 @@ import net.minecraft.tags.BlockTags;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.ChunkPos;
+import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.StructureManager;
 import net.minecraft.world.level.WorldGenLevel;
 import net.minecraft.world.level.block.Block;
@@ -17,8 +18,10 @@ import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.level.levelgen.structure.BoundingBox;
 import net.minecraft.world.level.levelgen.structure.StructurePiece;
 import net.minecraft.world.level.levelgen.structure.pieces.StructurePieceSerializationContext;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayDeque;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -58,6 +61,8 @@ public class YardClearingPiece extends StructurePiece
     private final int yardMinZ;
     private final int yardMaxZ;
     private final int gateDir;
+    /** 跨区块清树时缓存落在当前区块外、尚未清掉的树块与未加载边界，供后续区块接力清完 */
+    private final Set<BlockPos> pendingTreeBlocks = new HashSet<>();
 
     public YardClearingPiece(BlockPos yardOrigin, int sizeX, int sizeZ, int groundY,
                              int radius, int clearAbove, int gateDir)
@@ -93,6 +98,10 @@ public class YardClearingPiece extends StructurePiece
         this.yardMinZ = tag.getInt("YardMinZ");
         this.yardMaxZ = tag.getInt("YardMaxZ");
         this.gateDir = tag.getInt("GateDir") >= 0 ? 1 : -1;
+        for (long packed : tag.getLongArray("PendingTreeBlocks"))
+        {
+            this.pendingTreeBlocks.add(BlockPos.of(packed));
+        }
     }
 
     @Override
@@ -106,6 +115,16 @@ public class YardClearingPiece extends StructurePiece
         tag.putInt("YardMinZ", this.yardMinZ);
         tag.putInt("YardMaxZ", this.yardMaxZ);
         tag.putInt("GateDir", this.gateDir);
+        if (!this.pendingTreeBlocks.isEmpty())
+        {
+            long[] packed = new long[this.pendingTreeBlocks.size()];
+            int i = 0;
+            for (BlockPos p : this.pendingTreeBlocks)
+            {
+                packed[i++] = p.asLong();
+            }
+            tag.putLongArray("PendingTreeBlocks", packed);
+        }
     }
 
     @Override
@@ -119,28 +138,51 @@ public class YardClearingPiece extends StructurePiece
         int minY = level.getMinBuildHeight();
         int maxY = level.getMaxBuildHeight() - 1;
         int yardTop = Math.min(maxY, this.groundY + this.clearAbove);
+        Set<BlockPos> unloadedFrontier = new HashSet<>();
         Set<BlockPos> treeBlocks = collectTreeBlocks(level, this.treeSeedBox(maxY),
-                this.treeTraversalBox(minY, maxY));
+                this.treeTraversalBox(minY, maxY), this.pendingTreeBlocks, unloadedFrontier);
         clearTreeBlocks(level, treeBlocks, box);
+        this.pendingTreeBlocks.clear();
+        for (BlockPos treeBlock : treeBlocks)
+        {
+            if (!box.isInside(treeBlock))
+            {
+                this.pendingTreeBlocks.add(treeBlock);
+            }
+        }
+        for (BlockPos frontier : unloadedFrontier)
+        {
+            if (!box.isInside(frontier))
+            {
+                this.pendingTreeBlocks.add(frontier);
+            }
+        }
         int gateCenterX = this.yardMinX + (this.yardMaxX - this.yardMinX + 1) / 2;
         BlockPos.MutableBlockPos cursor = new BlockPos.MutableBlockPos();
         for (int x = minX; x <= maxX; x++)
         {
             for (int z = minZ; z <= maxZ; z++)
             {
-                int surface = level.getHeight(Heightmap.Types.WORLD_SURFACE_WG, x, z);
-                int yFrom = Math.max(minY, Math.min(surface, this.groundY) - 1);
-                for (int y = yFrom; y <= yardTop; y++)
+                boolean inClearRadius = x >= this.yardMinX - this.radius
+                        && x <= this.yardMaxX + this.radius
+                        && z >= this.yardMinZ - this.radius
+                        && z <= this.yardMaxZ + this.radius;
+                if (inClearRadius)
                 {
-                    cursor.set(x, y, z);
-                    BlockState state = level.getBlockState(cursor);
-                    if (state.isAir())
+                    int surface = level.getHeight(Heightmap.Types.WORLD_SURFACE_WG, x, z);
+                    int yFrom = Math.max(minY, Math.min(surface, this.groundY) - 1);
+                    for (int y = yFrom; y <= yardTop; y++)
                     {
-                        continue;
-                    }
-                    if (isNonTreeVegetation(state))
-                    {
-                        level.setBlock(cursor, Blocks.AIR.defaultBlockState(), 2);
+                        cursor.set(x, y, z);
+                        BlockState state = level.getBlockState(cursor);
+                        if (state.isAir())
+                        {
+                            continue;
+                        }
+                        if (isNonTreeVegetation(state))
+                        {
+                            level.setBlock(cursor, Blocks.AIR.defaultBlockState(), 2);
+                        }
                     }
                 }
                 boolean inYard = x >= this.yardMinX - FOUNDATION_MARGIN
@@ -212,14 +254,25 @@ public class YardClearingPiece extends StructurePiece
     static Set<BlockPos> collectTreeBlocks(BlockGetter level, BoundingBox seedBox,
                                            BoundingBox traversalBox)
     {
+        return collectTreeBlocks(level, seedBox, traversalBox, Set.of(), null);
+    }
+
+    static Set<BlockPos> collectTreeBlocks(BlockGetter level, BoundingBox seedBox,
+                                           BoundingBox traversalBox, Collection<BlockPos> extraSeeds,
+                                           @Nullable Set<BlockPos> unloadedFrontier)
+    {
         Set<BlockPos> visited = new HashSet<>();
         Set<BlockPos> treeBlocks = new HashSet<>();
         ArrayDeque<BlockPos> stack = new ArrayDeque<>();
         for (int x = seedBox.minX(); x <= seedBox.maxX(); x++)
         {
-            for (int y = seedBox.minY(); y <= seedBox.maxY(); y++)
+            for (int z = seedBox.minZ(); z <= seedBox.maxZ(); z++)
             {
-                for (int z = seedBox.minZ(); z <= seedBox.maxZ(); z++)
+                if (!isChunkAvailable(level, x, z))
+                {
+                    continue;
+                }
+                for (int y = seedBox.minY(); y <= seedBox.maxY(); y++)
                 {
                     BlockPos seed = new BlockPos(x, y, z);
                     if (level.getBlockState(seed).is(BlockTags.LEAVES)
@@ -228,6 +281,25 @@ public class YardClearingPiece extends StructurePiece
                         stack.addLast(seed);
                     }
                 }
+            }
+        }
+        for (BlockPos extra : extraSeeds)
+        {
+            if (!traversalBox.isInside(extra))
+            {
+                continue;
+            }
+            if (!isChunkAvailable(level, extra.getX(), extra.getZ()))
+            {
+                if (unloadedFrontier != null)
+                {
+                    unloadedFrontier.add(extra);
+                }
+                continue;
+            }
+            if (isTreeBlock(level.getBlockState(extra)) && visited.add(extra))
+            {
+                stack.addLast(extra);
             }
         }
         while (!stack.isEmpty())
@@ -246,6 +318,14 @@ public class YardClearingPiece extends StructurePiece
                 {
                     continue;
                 }
+                if (!isChunkAvailable(level, next.getX(), next.getZ()))
+                {
+                    if (unloadedFrontier != null)
+                    {
+                        unloadedFrontier.add(next);
+                    }
+                    continue;
+                }
                 BlockState nextState = level.getBlockState(next);
                 if (isTreeBlock(nextState))
                 {
@@ -255,6 +335,11 @@ public class YardClearingPiece extends StructurePiece
             }
         }
         return treeBlocks;
+    }
+
+    private static boolean isChunkAvailable(BlockGetter level, int x, int z)
+    {
+        return !(level instanceof LevelReader reader) || reader.hasChunk(x >> 4, z >> 4);
     }
 
     static void clearTreeBlocks(WorldGenLevel level, Set<BlockPos> treeBlocks, BoundingBox box)
@@ -286,7 +371,7 @@ public class YardClearingPiece extends StructurePiece
                 || state.is(Blocks.BLUE_ICE) || state.is(Blocks.FROSTED_ICE);
     }
 
-    private static final class DetectionFreeBoundingBox extends BoundingBox
+    static final class DetectionFreeBoundingBox extends BoundingBox
     {
         DetectionFreeBoundingBox(BoundingBox src)
         {

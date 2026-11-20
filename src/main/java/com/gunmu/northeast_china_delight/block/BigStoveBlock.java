@@ -126,8 +126,8 @@ public class BigStoveBlock extends Block implements EntityBlock, WorldlyContaine
     public static final EnumProperty<Part> PART = EnumProperty.create("part", Part.class);
     public static final EnumProperty<Pot> POT = EnumProperty.create("pot", Pot.class);
 
-    /** 拆的时候会把另外三格改回炉灶，改的过程中别再连锁拆、别重复掉锅（只在服务端线程上用） */
-    private static boolean reverting;
+    /** 拆的时候会把另外三格改回炉灶，改的过程中别再连锁拆、别重复掉锅（按线程隔离，避免集成服并发竞态） */
+    private static final ThreadLocal<Boolean> REVERTING = ThreadLocal.withInitial(() -> Boolean.FALSE);
 
     public BigStoveBlock(BlockBehaviour.Properties properties) {
         super(properties);
@@ -261,8 +261,8 @@ public class BigStoveBlock extends Block implements EntityBlock, WorldlyContaine
 
     @Override
     public void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean movedByPiston) {
-        if (!newState.is(this) && !reverting) {
-            reverting = true;
+        if (!level.isClientSide && !newState.is(this) && !REVERTING.get()) {
+            REVERTING.set(Boolean.TRUE);
             try {
                 BigPotBlockEntity contents = potAt(level, pos, state);
                 if (contents != null) {
@@ -295,7 +295,7 @@ public class BigStoveBlock extends Block implements EntityBlock, WorldlyContaine
                     level.setBlock(at, back, Block.UPDATE_ALL);
                 }
             } finally {
-                reverting = false;
+                REVERTING.remove();
             }
         }
         super.onRemove(state, level, pos, newState, movedByPiston);
@@ -318,6 +318,9 @@ public class BigStoveBlock extends Block implements EntityBlock, WorldlyContaine
     @Override
     protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos,
                                               Player player, InteractionHand hand, BlockHitResult hitResult) {
+        if (stack.isEmpty()) {
+            return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+        }
         InteractionResult result = useItem(stack, state, level, pos, player, hand);
         return result == InteractionResult.PASS
                 ? ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION
@@ -360,6 +363,12 @@ public class BigStoveBlock extends Block implements EntityBlock, WorldlyContaine
         if (!lit && (flint || held.getItem() instanceof FireChargeItem)) {
             if (!level.isClientSide) {
                 updateAll(level, pos, state, s -> s.setValue(LIT, true));
+                if (pot == Pot.LID) {
+                    BigPotBlockEntity contents = potAt(level, pos, state);
+                    if (contents != null) {
+                        BigPotCooking.lidPlaced(contents, level, pos, state.setValue(LIT, true));
+                    }
+                }
                 if (flint) {
                     DdStacks.hurtAndBreak(held, 1, player, hand);
                 } else {
@@ -374,6 +383,12 @@ public class BigStoveBlock extends Block implements EntityBlock, WorldlyContaine
         if (lit && held.is(ItemTags.SHOVELS)) {
             if (!level.isClientSide) {
                 updateAll(level, pos, state, s -> s.setValue(LIT, false));
+                if (pot != Pot.NONE) {
+                    BigPotBlockEntity contents = potAt(level, pos, state);
+                    if (contents != null && contents.startDelay() > 0) {
+                        contents.setCooking(null);
+                    }
+                }
                 DdStacks.hurtAndBreak(held, 1, player, hand);
                 level.playSound(null, pos, SoundEvents.FIRE_EXTINGUISH, SoundSource.BLOCKS, 1.0F, 1.0F);
                 level.gameEvent(player, GameEvent.BLOCK_CHANGE, pos);

@@ -122,9 +122,12 @@ public final class DishPlacementGameTests
         player.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(kvass));
 
         player.setShiftKeyDown(false);
-        clickDish(player, ground);
-        helper.assertTrue(level.getBlockState(target).isAir() && player.isUsingItem(),
-                "普通右键应该喝格瓦斯");
+        boolean intercepted = clickDish(player, ground);
+        helper.assertTrue(!intercepted && level.getBlockState(target).isAir(),
+                "非潜行右键方块时不得拦下方块交互或错误摆放格瓦斯");
+        helper.assertTrue(kvass.use(level, player, InteractionHand.MAIN_HAND).getResult().consumesAction()
+                        && player.isUsingItem(),
+                "原版回退到物品使用后应该正常喝格瓦斯");
         player.stopUsingItem();
 
         player.setShiftKeyDown(true);
@@ -146,20 +149,21 @@ public final class DishPlacementGameTests
         helper.succeed();
     }
 
-    private static void clickDish(Player player, BlockPos ground)
+    private static boolean clickDish(Player player, BlockPos ground)
     {
         BlockHitResult hit = new BlockHitResult(
                 Vec3.atCenterOf(ground).add(0.0, 0.5, 0.0), Direction.UP, ground, false);
 
-        ModGameplayEvents.onDishRightClick(
-                new
+        var event = new
                         //? if <1.20.2 {
                         /*net.minecraftforge.event.entity.player.PlayerInteractEvent
                         *///?} else {
                         net.neoforged.neoforge.event.entity.player.PlayerInteractEvent
                         //?}
                         .RightClickBlock(
-                        player, InteractionHand.MAIN_HAND, ground, hit));
+                        player, InteractionHand.MAIN_HAND, ground, hit);
+        ModGameplayEvents.onDishRightClick(event);
+        return event.isCanceled();
     }
 
     private static void useOn(ServerLevel level, Player player, BlockPos pos)

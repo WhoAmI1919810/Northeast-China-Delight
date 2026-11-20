@@ -10,7 +10,6 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
 import mezz.jei.api.gui.drawable.IDrawable;
-import mezz.jei.api.gui.ingredient.IRecipeSlotsView;
 import mezz.jei.api.gui.widgets.IRecipeExtrasBuilder;
 import mezz.jei.api.gui.widgets.IRecipeWidget;
 import mezz.jei.api.helpers.IGuiHelper;
@@ -203,19 +202,6 @@ public class PoundRecipeCategory implements IRecipeCategory<PoundJeiRecipe> {
         builder.addWidget(new StationWidget(recipe));
         builder.addWidget(new TimesWidget(this.arrow, recipe.poundTimes(), recipe.chargeThreshold()));
         builder.addWidget(new ContainerWidget(recipe));
-    }
-
-    @Override
-    public void draw(PoundJeiRecipe recipe, IRecipeSlotsView view, GuiGraphics graphics,
-                     double mouseX, double mouseY) {
-        //? if <1.20.5 {
-        // 1.20.1 走老 draw：站台、箭头、小字都在这里画
-        drawStation(graphics, recipe, STATION_X + STATION_SIZE / 2.0F,
-                STATION_Y + STATION_SIZE / 2.0F, STATION_SCALE);
-        this.arrow.draw(graphics, ARROW_X, ARROW_Y);
-        drawTimes(graphics, recipe.poundTimes(), recipe.chargeThreshold());
-        drawContainerHint(graphics, recipe);
-        //?}
     }
 
     /** 一边要画几格：至少 2×2，多了补成整行 */

@@ -1,19 +1,8 @@
 {
-  "variants": {
-    "facing=north": {
-      "model": "northeast_china_delight:block/water_basin"
-    },
-    "facing=east": {
-      "model": "northeast_china_delight:block/water_basin",
-      "y": 90
-    },
-    "facing=south": {
-      "model": "northeast_china_delight:block/water_basin",
-      "y": 180
-    },
-    "facing=west": {
-      "model": "northeast_china_delight:block/water_basin",
-      "y": 270
-    }
-  }
+  "multipart": [
+    { "when": { "facing": "north" }, "apply": { "model": "northeast_china_delight:block/water_basin" } },
+    { "when": { "facing": "east" }, "apply": { "model": "northeast_china_delight:block/water_basin", "y": 90 } },
+    { "when": { "facing": "south" }, "apply": { "model": "northeast_china_delight:block/water_basin", "y": 180 } },
+    { "when": { "facing": "west" }, "apply": { "model": "northeast_china_delight:block/water_basin", "y": 270 } }
+  ]
 }

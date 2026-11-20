@@ -2,6 +2,7 @@ package com.gunmu.northeast_china_delight.block;
 
 import com.gunmu.northeast_china_delight.advancement.ModAdvancements;
 import com.gunmu.northeast_china_delight.item.ModItems;
+import com.gunmu.northeast_china_delight.item.WaterBasinItem;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
@@ -172,10 +173,14 @@ public class BasinStandBlock extends FacingDecorBlock implements EntityBlock {
             return InteractionResult.PASS;
         }
         if (!level.isClientSide) {
+            int washUses = basin == Basin.WATER && level.getBlockEntity(pos) instanceof BasinStandBlockEntity stand
+                    ? stand.uses() : 0;
             level.setBlock(pos, state.setValue(BASIN, Basin.NONE), Block.UPDATE_ALL);
             level.playSound(null, pos, SoundEvents.ITEM_PICKUP, SoundSource.PLAYERS, 0.2F, 1.0F);
             level.gameEvent(player, GameEvent.BLOCK_CHANGE, pos);
-            ItemStack item = basin.toItem();
+            ItemStack item = basin == Basin.WATER
+                    ? WaterBasinItem.withWashUses(basin.toItem(), washUses)
+                    : basin.toItem();
             if (!player.getInventory().add(item)) {
                 player.drop(item, false);
             }
@@ -193,7 +198,12 @@ public class BasinStandBlock extends FacingDecorBlock implements EntityBlock {
                 return InteractionResult.PASS;
             }
             if (!level.isClientSide) {
+                int washUses = put == Basin.WATER ? WaterBasinItem.getWashUses(held) : 0;
                 level.setBlock(pos, state.setValue(BASIN, put), Block.UPDATE_ALL);
+                if (put == Basin.WATER && washUses > 0
+                        && level.getBlockEntity(pos) instanceof BasinStandBlockEntity stand) {
+                    stand.setUses(washUses);
+                }
                 if (!player.getAbilities().instabuild) {
                     held.shrink(1);
                 }
@@ -208,14 +218,27 @@ public class BasinStandBlock extends FacingDecorBlock implements EntityBlock {
         if (!pour && !scoop) {
             return InteractionResult.PASS;
         }
+        if (scoop && held.is(Items.BUCKET)
+                && level.getBlockEntity(pos) instanceof BasinStandBlockEntity stand && stand.uses() > 0) {
+            return InteractionResult.PASS;
+        }
         if (!level.isClientSide) {
+            int washUses = pour
+                    ? (held.is(ModItems.WATER_BASIN.get()) ? WaterBasinItem.getWashUses(held) : 0)
+                    : (level.getBlockEntity(pos) instanceof BasinStandBlockEntity stand ? stand.uses() : 0);
             boolean withBasin = held.is(ModItems.WATER_BASIN.get()) || held.is(ModItems.LARGE_BASIN.get());
             ItemStack result = new ItemStack(withBasin
                     ? (pour ? ModItems.LARGE_BASIN.get() : ModItems.WATER_BASIN.get())
                     : (pour ? Items.BUCKET : Items.WATER_BUCKET));
+            if (scoop && withBasin && washUses > 0) {
+                result = WaterBasinItem.withWashUses(result, washUses);
+            }
             player.awardStat(Stats.ITEM_USED.get(held.getItem()));
             player.setItemInHand(hand, ItemUtils.createFilledResult(held, player, result));
             level.setBlock(pos, state.setValue(BASIN, pour ? Basin.WATER : Basin.BASIN), Block.UPDATE_ALL);
+            if (pour && washUses > 0 && level.getBlockEntity(pos) instanceof BasinStandBlockEntity stand) {
+                stand.setUses(washUses);
+            }
             level.playSound(null, pos, pour ? SoundEvents.BUCKET_EMPTY : SoundEvents.BUCKET_FILL,
                     SoundSource.BLOCKS, 1.0F, 1.0F);
             level.gameEvent(player, pour ? GameEvent.FLUID_PLACE : GameEvent.FLUID_PICKUP, pos);

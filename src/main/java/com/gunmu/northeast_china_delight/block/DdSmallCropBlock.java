@@ -85,6 +85,24 @@ public class DdSmallCropBlock extends BushBlock implements BonemealableBlock {
         return state.getBlock() instanceof FarmBlock;
     }
 
+    //? if <1.20.2 {
+    /*@Override
+    public net.minecraftforge.common.PlantType getPlantType(BlockGetter level, BlockPos pos) {
+        return net.minecraftforge.common.PlantType.CROP;
+    }
+    *///?} else if <1.20.5 {
+    /*@Override
+    public net.neoforged.neoforge.common.PlantType getPlantType(BlockGetter level, BlockPos pos) {
+        return net.neoforged.neoforge.common.PlantType.CROP;
+    }
+    *///?}
+
+    @Override
+    public boolean canSurvive(BlockState state, LevelReader level, BlockPos pos) {
+        return (level.getRawBrightness(pos, 0) >= 8 || level.canSeeSky(pos))
+                && super.canSurvive(state, level, pos);
+    }
+
     @Override
     public boolean isRandomlyTicking(BlockState state) {
         return state.getValue(AGE) < MAX_AGE;

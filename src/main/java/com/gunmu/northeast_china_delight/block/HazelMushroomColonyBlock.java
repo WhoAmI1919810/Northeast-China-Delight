@@ -109,14 +109,18 @@ public class HazelMushroomColonyBlock extends BushBlock implements BonemealableB
         BlockPos below = pos.below();
         BlockState belowState = level.getBlockState(below);
         //? if <1.20.5 {
-        /*// 1.20.1 的 canSustainPlant 只有「能／不能」两种答案（没有 1.21 的「说不准」档），
-        // 照农夫乐事 1.20.1 的蘑菇菌簇写法：亮度够暗 + 下面这层土能长东西
-        return belowState.is(BlockTags.MUSHROOM_GROW_BLOCK)
-                || level.getRawBrightness(pos, 0) < MAX_LIGHT
-                && belowState.canSustainPlant(level, below, Direction.UP, (IPlantable) state.getBlock());*/
+        /*if (belowState.is(BlockTags.MUSHROOM_GROW_BLOCK)
+                || belowState.is(ModBlockTags.RICH_SOIL_CONVERTS_TO_COLONY))
+        {
+            return true;
+        }
+        return level.getRawBrightness(pos, 0) < MAX_LIGHT
+                && (belowState.canSustainPlant(level, below, Direction.UP, (IPlantable) state.getBlock())
+                || this.mayPlaceOn(belowState, level, below));*/
         //?} else {
         TriState soil = belowState.canSustainPlant(level, below, Direction.UP, state);
-        if (belowState.is(BlockTags.MUSHROOM_GROW_BLOCK))
+        if (belowState.is(BlockTags.MUSHROOM_GROW_BLOCK)
+                || belowState.is(ModBlockTags.RICH_SOIL_CONVERTS_TO_COLONY))
         {
             return true;
         }

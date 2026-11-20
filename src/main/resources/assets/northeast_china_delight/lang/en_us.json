@@ -533,6 +533,8 @@
   "jei.northeast_china_delight.pound.result_mb_value": "%s mB",
   "jei.northeast_china_delight.grill.seasoning_amount": "%s mB",
   "jei.northeast_china_delight.time.seconds": "%s s",
+  "jei.northeast_china_delight.time.minutes": "%s min",
+  "jei.northeast_china_delight.time.minutes_seconds": "%s min %s s",
   "jei.northeast_china_delight.time.days": "%s day(s)",
   "jei.northeast_china_delight.time.days_seconds": "%s day(s) %s s",
   "message.northeast_china_delight.grill.not_grillable": "This can't be grilled",

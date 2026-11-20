@@ -74,12 +74,12 @@ public final class SideDishMerchantTrades
         trades.get(2).add(sell(6, ModItems.DRIED_TOFU.get(), 1, 16, 5));
         trades.get(2).add(sell(8, ModItems.VERMICELLI.get(), 1, 16, 5));
         trades.get(2).add(sell(5, ModItems.SOY_PASTE_CHUNK.get(), 1, 16, 5));
-        trades.get(2).add(coldOnly(sellWithUses(ModItems.SOY_PASTE.get(), 2, 4, 12, 5)));
+        trades.get(2).add(coldOnly(sell(4, ModItems.SOY_PASTE.get(), 1, 12, 5)));
         trades.get(2).add(buy(ModItems.NAPA_CABBAGE.get(), 18, 16, 5));
 
         trades.get(3).add(sellWithUses(ModItems.VINEGAR.get(), 2, 4, 12, 10));
         trades.get(3).add(sellWithUses(ModItems.WHITE_VINEGAR.get(), 2, 4, 12, 10));
-        trades.get(3).add(sellWithUses(ModItems.CHILI_SAUCE.get(), 2, 5, 12, 10));
+        trades.get(3).add(sell(5, ModItems.CHILI_SAUCE.get(), 1, 12, 10));
         // 植物油 50 mB（能用 1 次）；价格参照醋，一次用量 2 绿宝石。
         trades.get(3).add(sellWithUses(ModItems.COOKING_OIL.get(), 1, 2, 12, 10));
         trades.get(3).add(coldOnly(sell(5, ModItems.PICKLED_GREEN_RADISH.get(), 1, 12, 10)));

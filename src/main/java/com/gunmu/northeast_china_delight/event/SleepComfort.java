@@ -17,9 +17,9 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.CollisionContext;
 
-import java.util.ArrayDeque;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.PriorityQueue;
 
 /**
  * 寒冷群系里挨着暖气片睡觉时的起床奖励。
@@ -41,6 +41,7 @@ public final class SleepComfort
     private static final String COOLDOWN_UNTIL_TAG = "ncd_sleep_comfort_cooldown_until";
     private static final int RADIATOR_SCAN_RADIUS = ModGameplayEvents.RADIATOR_SCAN_RADIUS;
     private static final int MAX_PATH_NODES = 4096;
+    private static final int PATH_BOUND_MARGIN = 8;
     private static final double RADIATOR_RANGE_SQR =
             ModGameplayEvents.RADIATOR_RANGE * ModGameplayEvents.RADIATOR_RANGE;
 
@@ -134,33 +135,69 @@ public final class SleepComfort
         return false;
     }
 
+    private record PathNode(BlockPos pos, int g, int f) implements Comparable<PathNode>
+    {
+        @Override
+        public int compareTo(PathNode other)
+        {
+            int cmp = Integer.compare(this.f, other.f);
+            return cmp != 0 ? cmp : Integer.compare(this.g, other.g);
+        }
+    }
+
     public static boolean hasOpenPath(BlockGetter level, BlockPos from, BlockPos to)
     {
         if (from.equals(to))
         {
             return true;
         }
+        int minX = Math.min(from.getX(), to.getX()) - PATH_BOUND_MARGIN;
+        int maxX = Math.max(from.getX(), to.getX()) + PATH_BOUND_MARGIN;
+        int minY = Math.min(from.getY(), to.getY()) - PATH_BOUND_MARGIN;
+        int maxY = Math.max(from.getY(), to.getY()) + PATH_BOUND_MARGIN;
+        int minZ = Math.min(from.getZ(), to.getZ()) - PATH_BOUND_MARGIN;
+        int maxZ = Math.max(from.getZ(), to.getZ()) + PATH_BOUND_MARGIN;
 
-        Set<Long> visited = new HashSet<>();
-        ArrayDeque<BlockPos> queue = new ArrayDeque<>();
-        visited.add(from.asLong());
-        queue.addLast(from);
+        Map<Long, Integer> bestCost = new HashMap<>();
+        PriorityQueue<PathNode> open = new PriorityQueue<>();
+        bestCost.put(from.asLong(), 0);
+        open.add(new PathNode(from, 0, from.distManhattan(to)));
         int examined = 0;
-        while (!queue.isEmpty() && examined++ < MAX_PATH_NODES)
+        while (!open.isEmpty() && examined < MAX_PATH_NODES)
         {
-            BlockPos current = queue.removeFirst();
+            PathNode current = open.poll();
+            Integer recorded = bestCost.get(current.pos.asLong());
+            if (recorded != null && current.g > recorded)
+            {
+                continue;
+            }
+            examined++;
+            int nextG = current.g + 1;
             for (Direction direction : Direction.values())
             {
-                BlockPos next = current.relative(direction);
+                BlockPos next = current.pos.relative(direction);
                 if (next.equals(to))
                 {
                     return true;
                 }
-                if (!isPassable(level, next) || !visited.add(next.asLong()))
+                if (next.getX() < minX || next.getX() > maxX
+                        || next.getY() < minY || next.getY() > maxY
+                        || next.getZ() < minZ || next.getZ() > maxZ)
                 {
                     continue;
                 }
-                queue.addLast(next);
+                if (!isPassable(level, next))
+                {
+                    continue;
+                }
+                long key = next.asLong();
+                Integer prev = bestCost.get(key);
+                if (prev != null && nextG >= prev)
+                {
+                    continue;
+                }
+                bestCost.put(key, nextG);
+                open.add(new PathNode(next, nextG, nextG + next.distManhattan(to)));
             }
         }
         return false;

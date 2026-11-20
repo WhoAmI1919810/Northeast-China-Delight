@@ -325,6 +325,22 @@ public class VatRenderer implements BlockEntityRenderer<VatBlockEntity> {
         }
     }
 
+    private static float spriteU(TextureAtlasSprite sprite, float normalized) {
+        //? if <1.20.2 {
+        /*return sprite.getU(normalized * 16.0F);
+        *///?} else {
+        return sprite.getU(normalized);
+        //?}
+    }
+
+    private static float spriteV(TextureAtlasSprite sprite, float normalized) {
+        //? if <1.20.2 {
+        /*return sprite.getV(normalized * 16.0F);
+        *///?} else {
+        return sprite.getV(normalized);
+        //?}
+    }
+
     private static void boxWash(com.mojang.blaze3d.vertex.VertexConsumer vc, PoseStack.Pose pose,
                                 TextureAtlasSprite sprite, VatItemShapes.Box b, int light, int overlay,
                                 int color, float alpha) {
@@ -332,11 +348,11 @@ public class VatRenderer implements BlockEntityRenderer<VatBlockEntity> {
         float g = ((color >> 8) & 0xFF) / 255.0F;
         float bl = (color & 0xFF) / 255.0F;
         float x0 = b.x0(), y0 = b.y0(), z0 = b.z0(), x1 = b.x1(), y1 = b.y1(), z1 = b.z1();
-        float vTop = sprite.getV(1.0F - y1);
-        float vBot = sprite.getV(1.0F - y0);
-        float uX0 = sprite.getU(x0), uX1 = sprite.getU(x1);
-        float uZ0 = sprite.getU(z0), uZ1 = sprite.getU(z1);
-        float vZ0 = sprite.getV(1.0F - z1), vZ1 = sprite.getV(1.0F - z0);
+        float vTop = spriteV(sprite, 1.0F - y1);
+        float vBot = spriteV(sprite, 1.0F - y0);
+        float uX0 = spriteU(sprite, x0), uX1 = spriteU(sprite, x1);
+        float uZ0 = spriteU(sprite, z0), uZ1 = spriteU(sprite, z1);
+        float vZ0 = spriteV(sprite, 1.0F - z1), vZ1 = spriteV(sprite, 1.0F - z0);
         quad(vc, pose, light, overlay, r, g, bl, alpha,
                 x0, y1, z0, uX0, vZ0, x0, y1, z1, uX0, vZ1, x1, y1, z1, uX1, vZ1, x1, y1, z0, uX1, vZ0, 0, 1, 0);
         quad(vc, pose, light, overlay, r, g, bl, alpha,
@@ -368,11 +384,11 @@ public class VatRenderer implements BlockEntityRenderer<VatBlockEntity> {
         float bl = (b.tint() & 0xFF) / 255.0F;
 
         float x0 = b.x0(), y0 = b.y0(), z0 = b.z0(), x1 = b.x1(), y1 = b.y1(), z1 = b.z1();
-        float vTop = sprite.getV(1.0F - y1);
-        float vBot = sprite.getV(1.0F - y0);
-        float uX0 = sprite.getU(x0), uX1 = sprite.getU(x1);
-        float uZ0 = sprite.getU(z0), uZ1 = sprite.getU(z1);
-        float vZ0 = sprite.getV(1.0F - z1), vZ1 = sprite.getV(1.0F - z0);
+        float vTop = spriteV(sprite, 1.0F - y1);
+        float vBot = spriteV(sprite, 1.0F - y0);
+        float uX0 = spriteU(sprite, x0), uX1 = spriteU(sprite, x1);
+        float uZ0 = spriteU(sprite, z0), uZ1 = spriteU(sprite, z1);
+        float vZ0 = spriteV(sprite, 1.0F - z1), vZ1 = spriteV(sprite, 1.0F - z0);
 
         quad(vc, pose, light, overlay, r, g, bl, 1.0F,
                 x0, y1, z0, uX0, vZ0, x0, y1, z1, uX0, vZ1, x1, y1, z1, uX1, vZ1, x1, y1, z0, uX1, vZ0, 0, 1, 0);

@@ -2,6 +2,7 @@ package com.gunmu.northeast_china_delight.item;
 
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.stats.Stats;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.world.InteractionHand;
@@ -76,7 +77,53 @@ public class LargeBasinItem extends ItemNameBlockItem implements Equipable
         {
             return InteractionResultHolder.pass(player.getItemInHand(hand));
         }
-        return this.swapWithEquipmentSlot(this, level, player, hand);
+        return this.equipSingleBasin(level, player, hand);
+    }
+
+    /** 只戴上 1 个大脸盆，避免整组扣进头盔槽导致堆叠丢失或刷物品。 */
+    private InteractionResultHolder<ItemStack> equipSingleBasin(Level level, Player player, InteractionHand hand)
+    {
+        ItemStack held = player.getItemInHand(hand);
+        EquipmentSlot slot = this.getEquipmentSlot();
+        ItemStack equipped = player.getItemBySlot(slot);
+        if (equipped.is(this) || (!player.isCreative() && hasBindingCurse(equipped)))
+        {
+            return InteractionResultHolder.fail(held);
+        }
+        if (!level.isClientSide)
+        {
+            player.awardStat(Stats.ITEM_USED.get(this));
+            player.setItemSlot(slot, held.copyWithCount(1));
+            if (player.getAbilities().instabuild)
+            {
+                if (!equipped.isEmpty() && !player.getInventory().add(equipped.copy()))
+                {
+                    player.drop(equipped.copy(), false);
+                }
+                return InteractionResultHolder.sidedSuccess(held, false);
+            }
+            if (held.getCount() == 1)
+            {
+                return InteractionResultHolder.sidedSuccess(equipped.copy(), false);
+            }
+            held.shrink(1);
+            if (!equipped.isEmpty() && !player.getInventory().add(equipped.copy()))
+            {
+                player.drop(equipped.copy(), false);
+            }
+            return InteractionResultHolder.sidedSuccess(held, false);
+        }
+        return InteractionResultHolder.sidedSuccess(held, true);
+    }
+
+    private static boolean hasBindingCurse(ItemStack stack)
+    {
+        //? if <1.20.5 {
+        /*return net.minecraft.world.item.enchantment.EnchantmentHelper.hasBindingCurse(stack);
+        *///?} else {
+        return net.minecraft.world.item.enchantment.EnchantmentHelper.has(
+                stack, net.minecraft.world.item.enchantment.EnchantmentEffectComponents.PREVENT_ARMOR_CHANGE);
+        //?}
     }
 
     /**
@@ -141,7 +188,8 @@ public class LargeBasinItem extends ItemNameBlockItem implements Equipable
             {
                 return InteractionResultHolder.fail(stack);
             }
-            pickup.getPickupSound(state).ifPresent(sound -> player.playSound(sound, 1.0F, 1.0F));
+            pickup.getPickupSound(state).ifPresent(sound ->
+                    level.playSound(null, pos, sound, SoundSource.BLOCKS, 1.0F, 1.0F));
             level.gameEvent(player, GameEvent.FLUID_PICKUP, pos);
             player.awardStat(Stats.ITEM_USED.get(this));
         }

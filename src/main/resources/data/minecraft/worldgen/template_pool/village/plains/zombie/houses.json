@@ -325,7 +325,7 @@
       "element": {
         "element_type": "minecraft:legacy_single_pool_element",
         "location": "northeast_china_delight:village/relish_plains",
-        "processors": "minecraft:mossify_10_percent",
+        "processors": "minecraft:zombie_plains",
         "projection": "rigid"
       },
       "weight": 5
