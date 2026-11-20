@@ -595,12 +595,12 @@ public class VatBlockEntity extends BlockEntity implements IFluidHandler {
     }
 
     /**
-     * 用容器取走一份（{@link VatRecipes#SERVING_MB} mB）成品液体。
-     * 返回是否取到了（不够一份时把剩下的都取走，和以前一样）。
+     * 用容器取走一整份（{@link VatRecipes#SERVING_MB} mB）成品液体；不足一整份时拒绝取走，
+     * 防止残留极少流体被容器灌成满碗/满瓶导致无限刷液体。
      */
     public boolean takeOneServing(Fluid fluid) {
         int have = this.productMb(fluid);
-        if (have <= 0) {
+        if (have < VatRecipes.SERVING_MB) {
             return false;
         }
         this.setProductMb(fluid, have - VatRecipes.SERVING_MB);

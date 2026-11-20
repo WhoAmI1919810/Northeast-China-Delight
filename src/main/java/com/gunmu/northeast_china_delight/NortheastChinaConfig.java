@@ -179,8 +179,6 @@ public final class NortheastChinaConfig
     //? if <1.20.2 {
     public static final ForgeConfigSpec SPEC;
 
-    // 东北小院里的小零件（灶棚、鸡架、水井、菜窖等）是否生成
-    public static final ForgeConfigSpec.BooleanValue YARD_PARTS_ENABLED;
     public static final ForgeConfigSpec.DoubleValue WILD_WOOD_EAR_OAK_CHANCE;
     public static final ForgeConfigSpec.DoubleValue WILD_WOOD_EAR_FOREST_CHANCE;
     public static final ForgeConfigSpec.BooleanValue VILLAGE_FARM_CROPS_ENABLED;
@@ -191,8 +189,6 @@ public final class NortheastChinaConfig
     //?} else {
     /*public static final ModConfigSpec SPEC;
 
-    /^* 东北小院里的小零件（灶棚、鸡架、水井、菜窖等）是否生成 ^/
-    public static final ModConfigSpec.BooleanValue YARD_PARTS_ENABLED;
     public static final ModConfigSpec.DoubleValue WILD_WOOD_EAR_OAK_CHANCE;
     public static final ModConfigSpec.DoubleValue WILD_WOOD_EAR_FOREST_CHANCE;
     public static final ModConfigSpec.BooleanValue VILLAGE_FARM_CROPS_ENABLED;
@@ -211,10 +207,6 @@ public final class NortheastChinaConfig
         *///?}
         builder = configBuilder();
         builder.comment("世界生成").push("worldgen");
-        YARD_PARTS_ENABLED = builder
-                .comment("东北小院里的小建筑（灶棚、鸡架、水井、菜窖、柴垛等）是否生成。",
-                        "设为 false 时只生成院子主体，不生成零件。")
-                .define("yard_parts_enabled", false);
         WILD_WOOD_EAR_OAK_CHANCE = builder
                 .comment("野生木耳在任意群系橡木上的生成概率，取值 0~1；0 表示不生成。",
                         "只影响新生成区块；已生成区块不会回溯。")

@@ -15,6 +15,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Mirror;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
@@ -139,6 +140,23 @@ public class PaperLatticeWindowBlock extends LatticeWindowBlock {
             popResource(level, pos, new ItemStack(ModItems.PAPER_CUT.get()));
         }
         return InteractionResult.sidedSuccess(level.isClientSide);
+    }
+
+    @Override
+    public BlockState mirror(BlockState state, Mirror mirror) {
+        BlockState mirrored = super.mirror(state, mirror);
+        if (mirror == Mirror.NONE) {
+            return mirrored;
+        }
+        PaperCut cut = mirrored.getValue(PAPER_CUT);
+        PaperCut flipped = switch (cut) {
+            case CORNER_TL -> PaperCut.CORNER_TR;
+            case CORNER_TR -> PaperCut.CORNER_TL;
+            case CORNER_BL -> PaperCut.CORNER_BR;
+            case CORNER_BR -> PaperCut.CORNER_BL;
+            default -> cut;
+        };
+        return mirrored.setValue(PAPER_CUT, flipped);
     }
 
     @Override

@@ -503,9 +503,9 @@ public final class BigPotCooking {
         return null;
     }
 
-    /** 放上锅盖时由 BigStoveBlock 调：在快捷栏上方显示 3 秒倒计时，并开始反悔期 */
+    /** 放上锅盖时由 BigStoveBlock 调：仅在灶已点燃时显示 3 秒倒计时并开始反悔期 */
     public static void lidPlaced(BigPotBlockEntity pot, Level level, BlockPos pos, BlockState state) {
-        if (level.isClientSide || pot.hasResult() || pot.cooking() != null) {
+        if (level.isClientSide || !state.getValue(BigStoveBlock.LIT) || pot.hasResult() || pot.cooking() != null) {
             return;
         }
         CookingPlan plan = plan(pot, level);

@@ -6,6 +6,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.RecipeSerializer;
 import net.minecraft.world.item.crafting.ShapelessRecipe;
+import net.minecraft.world.level.Level;
 //? if <1.20.5 {
 import com.google.gson.JsonObject;
 import net.minecraft.network.FriendlyByteBuf;
@@ -35,6 +36,35 @@ public class WholeBottleShapelessRecipe extends ShapelessRecipe {
         /*super(base.getGroup(), base.category(), base.getResultItem(null), base.getIngredients());
         *///?}
     }
+
+    @Override
+    //? if <1.20.5 {
+    public boolean matches(CraftingContainer input, Level level) {
+        if (!super.matches(input, level)) {
+            return false;
+        }
+        for (int slot = 0; slot < input.getContainerSize(); slot++) {
+            ItemStack stack = input.getItem(slot);
+            if (SeasoningBottleItem.isBottle(stack) && !SeasoningBottleItem.isFull(stack)) {
+                return false;
+            }
+        }
+        return true;
+    }
+    //?} else {
+    /*public boolean matches(CraftingInput input, Level level) {
+        if (!super.matches(input, level)) {
+            return false;
+        }
+        for (int slot = 0; slot < input.size(); slot++) {
+            ItemStack stack = input.getItem(slot);
+            if (SeasoningBottleItem.isBottle(stack) && !SeasoningBottleItem.isFull(stack)) {
+                return false;
+            }
+        }
+        return true;
+    }
+    *///?}
 
     @Override
     //? if <1.20.5 {

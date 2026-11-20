@@ -3,6 +3,7 @@ package com.gunmu.northeast_china_delight.block;
 import com.mojang.serialization.MapCodec;
 import com.gunmu.northeast_china_delight.item.ModItems;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -21,7 +22,10 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.LevelReader;
+import net.minecraft.world.level.LightLayer;
+import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.BonemealableBlock;
 import net.minecraft.world.level.block.BushBlock;
@@ -116,12 +120,47 @@ public class HazelnutBushBlock extends BushBlock implements BonemealableBlock {
     }
 
     @Override
+    public BlockState updateShape(BlockState state, Direction direction, BlockState neighborState,
+                                  LevelAccessor level, BlockPos pos, BlockPos neighborPos) {
+        BlockState updated = super.updateShape(state, direction, neighborState, level, pos, neighborPos);
+        if (!updated.is(this)) {
+            return updated;
+        }
+        if (direction == Direction.UP) {
+            return updated.setValue(SNOWY, isSnow(neighborState) || isSnow(level.getBlockState(pos.below())));
+        }
+        if (direction == Direction.DOWN && isSnow(neighborState)) {
+            return updated.setValue(SNOWY, true);
+        }
+        return updated;
+    }
+
+    @Override
+    public void handlePrecipitation(BlockState state, Level level, BlockPos pos, Biome.Precipitation precipitation) {
+        if (level.isClientSide) {
+            return;
+        }
+        if (precipitation == Biome.Precipitation.SNOW && !state.getValue(SNOWY)) {
+            level.setBlock(pos, state.setValue(SNOWY, true), 2);
+        } else if (precipitation == Biome.Precipitation.RAIN && state.getValue(SNOWY)
+                && !isSnow(level.getBlockState(pos.below()))) {
+            level.setBlock(pos, state.setValue(SNOWY, false), 2);
+        }
+    }
+
+    @Override
     public boolean isRandomlyTicking(BlockState state) {
-        return state.getValue(AGE) < MAX_AGE;
+        return state.getValue(AGE) < MAX_AGE || state.getValue(SNOWY);
     }
 
     @Override
     public void randomTick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random) {
+        if (state.getValue(SNOWY)
+                && level.getBrightness(LightLayer.BLOCK, pos) > 11
+                && !isSnow(level.getBlockState(pos.below()))) {
+            state = state.setValue(SNOWY, false);
+            level.setBlock(pos, state, 2);
+        }
         int age = state.getValue(AGE);
         if (age < MAX_AGE
                 && level.getRawBrightness(pos.above(), 0) >= 9

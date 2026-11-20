@@ -116,6 +116,9 @@ public class DdFeastBlock extends Block {
         }
         // 必须拿碗来盛：右键一次盛走一份，碗被消耗，取一份「碗装XX」
         if (!stack.is(net.minecraft.world.item.Items.BOWL)) {
+            if (hand == InteractionHand.MAIN_HAND && player.getOffhandItem().is(net.minecraft.world.item.Items.BOWL)) {
+                return InteractionResult.PASS;
+            }
             if (!level.isClientSide) {
                 player.displayClientMessage(net.minecraft.network.chat.Component.translatable(
                         servings > 0 ? "message.northeast_china_delight.pot_need_bowl" : "message.northeast_china_delight.pot_empty"), true);
@@ -130,7 +133,9 @@ public class DdFeastBlock extends Block {
             return InteractionResult.sidedSuccess(level.isClientSide);
         }
         if (!level.isClientSide) {
-            stack.shrink(1);
+            if (!player.getAbilities().instabuild) {
+                stack.shrink(1);
+            }
             popResource(level, pos, this.servingStack(level, pos));
             if (servings == 1) {
                 // 最后一份：盆不倒空也不掉出来 —— 原地变成普通的大脸盆方块（想收走就把它敲下来）
@@ -159,6 +164,9 @@ public class DdFeastBlock extends Block {
         }
         // 必须拿**碗**来盛：右键一次盛走一份，碗被消耗，取一份「碗装XX」
         if (!stack.is(net.minecraft.world.item.Items.BOWL)) {
+            if (hand == InteractionHand.MAIN_HAND && player.getOffhandItem().is(net.minecraft.world.item.Items.BOWL)) {
+                return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+            }
             if (!level.isClientSide) {
                 player.displayClientMessage(net.minecraft.network.chat.Component.translatable(
                         servings > 0 ? "message.northeast_china_delight.pot_need_bowl" : "message.northeast_china_delight.pot_empty"), true);
@@ -173,7 +181,9 @@ public class DdFeastBlock extends Block {
             return ItemInteractionResult.sidedSuccess(level.isClientSide);
         }
         if (!level.isClientSide) {
-            stack.shrink(1);
+            if (!player.getAbilities().instabuild) {
+                stack.shrink(1);
+            }
             popResource(level, pos, this.servingStack(level, pos));
             if (servings == 1) {
                 // 最后一份：盆不倒空也不掉出来 —— 原地变成普通的大脸盆方块（想收走就把它敲下来）

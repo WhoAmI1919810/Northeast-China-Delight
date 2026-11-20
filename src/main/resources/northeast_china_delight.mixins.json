@@ -17,7 +17,8 @@
     "ServerPlayerPillowSleepMixin"
   ],
   "client": [
-    "LoomScreenMixin"
+    "LoomScreenMixin",
+    "SoundEngineMixin"
   ],
   "injectors": {
     "defaultRequire": 1

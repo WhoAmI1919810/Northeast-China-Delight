@@ -5,6 +5,7 @@ import com.gunmu.northeast_china_delight.crafting.DryingRecipes;
 //? if <1.20.2 || >=1.20.5 {
 import com.simibubi.create.api.registry.CreateRegistries;
 import com.simibubi.create.content.kinetics.fan.EncasedFanBlock;
+import com.simibubi.create.content.kinetics.fan.EncasedFanBlockEntity;
 import com.simibubi.create.content.kinetics.fan.processing.FanProcessingType;
 //?}
 import net.minecraft.core.BlockPos;
@@ -60,9 +61,12 @@ public class ModFanProcessingTypes {
         public boolean isValidAt(Level level, BlockPos pos) {
             if (!level.getBlockState(pos).isAir()) return false;
             for (Direction direction : Direction.values()) {
-                BlockState fanState = level.getBlockState(pos.relative(direction));
+                BlockPos fanPos = pos.relative(direction);
+                BlockState fanState = level.getBlockState(fanPos);
                 if (fanState.getBlock() instanceof EncasedFanBlock
-                        && fanState.getValue(EncasedFanBlock.FACING) == direction.getOpposite()) {
+                        && fanState.getValue(EncasedFanBlock.FACING) == direction.getOpposite()
+                        && level.getBlockEntity(fanPos) instanceof EncasedFanBlockEntity fan
+                        && fan.getSpeed() != 0.0F) {
                     return true;
                 }
             }

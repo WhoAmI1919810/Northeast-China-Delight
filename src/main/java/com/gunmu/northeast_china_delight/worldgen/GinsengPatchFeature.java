@@ -52,7 +52,7 @@ public class GinsengPatchFeature extends Feature<NoneFeatureConfiguration>
         {
             int x = baseX + random.nextInt(32);
             int z = baseZ + random.nextInt(32);
-            int surfaceY = level.getHeight(Heightmap.Types.MOTION_BLOCKING, x, z);
+            int surfaceY = level.getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, x, z);
             BlockPos plantPos = new BlockPos(x, surfaceY, z);
             BlockState here = level.getBlockState(plantPos);
             if (!here.canBeReplaced() && !here.is(Blocks.SNOW))

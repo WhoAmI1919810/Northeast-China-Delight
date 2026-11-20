@@ -55,6 +55,8 @@ public class SkewerBlock extends Block
 
     private static final ThreadLocal<Set<BlockPos>> REMOVING =
             ThreadLocal.withInitial(HashSet::new);
+    private static final ThreadLocal<Set<BlockPos>> CREATIVE_BREAKING =
+            ThreadLocal.withInitial(HashSet::new);
 
     private final Supplier<? extends Item> harvestItem;
 
@@ -142,17 +144,57 @@ public class SkewerBlock extends Block
         return InteractionResult.sidedSuccess(level.isClientSide());
     }
 
+    //? if <1.20.2 {
+    @Override
+    public void playerWillDestroy(Level level, BlockPos pos, BlockState state, Player player)
+    {
+        markCreativeBreak(level, pos, state, player);
+        super.playerWillDestroy(level, pos, state, player);
+    }
+    //?} else {
+    /*@Override
+    public BlockState playerWillDestroy(Level level, BlockPos pos, BlockState state, Player player)
+    {
+        markCreativeBreak(level, pos, state, player);
+        return super.playerWillDestroy(level, pos, state, player);
+    }
+    *///?}
+
+    private void markCreativeBreak(Level level, BlockPos pos, BlockState state, Player player)
+    {
+        if (level.isClientSide || !player.isCreative())
+        {
+            return;
+        }
+        Set<BlockPos> creative = CREATIVE_BREAKING.get();
+        creative.add(pos.immutable());
+        BlockPos otherPos = state.getValue(PART) == Part.TOP ? pos.below() : pos.above();
+        if (level.getBlockState(otherPos).is(this))
+        {
+            creative.add(otherPos.immutable());
+        }
+    }
+
     @Override
     public void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean movedByPiston)
     {
         if (!level.isClientSide && !newState.is(this))
         {
+            Set<BlockPos> creative = CREATIVE_BREAKING.get();
+            boolean creativeBreak = creative.remove(pos);
+            if (creative.isEmpty())
+            {
+                CREATIVE_BREAKING.remove();
+            }
             Set<BlockPos> removing = REMOVING.get();
             if (removing.add(pos))
             {
                 try
                 {
-                    dropSegment(level, pos, state);
+                    if (!creativeBreak)
+                    {
+                        dropSegment(level, pos, state);
+                    }
                     BlockPos otherPos = state.getValue(PART) == Part.TOP ? pos.below() : pos.above();
                     BlockState otherState = level.getBlockState(otherPos);
                     if (otherState.is(this))

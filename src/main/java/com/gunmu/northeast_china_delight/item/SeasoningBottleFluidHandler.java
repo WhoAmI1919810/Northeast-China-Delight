@@ -93,8 +93,13 @@ public final class SeasoningBottleFluidHandler implements IFluidHandlerItem {
 
     @Override
     public FluidStack getFluidInTank(int tank) {
+        if (this.stack.getCount() != 1) {
+            return FluidStack.EMPTY;
+        }
         Fluid fluid = fluidOf(this.stack.getItem());
-        int amount = SeasoningBottleItem.remainingMb(this.stack);
+        int amount = SeasoningBottleItem.isBottle(this.stack)
+                ? SeasoningBottleItem.remainingMb(this.stack)
+                : SeasoningBottleItem.CAPACITY_MB;
         return fluid == null || amount <= 0 ? FluidStack.EMPTY : new FluidStack(fluid, amount);
     }
 
@@ -111,7 +116,7 @@ public final class SeasoningBottleFluidHandler implements IFluidHandlerItem {
 
     @Override
     public int fill(FluidStack resource, FluidAction action) {
-        if (!isFluidValid(0, resource)) {
+        if (this.stack.getCount() != 1 || !SeasoningBottleItem.isBottle(this.stack) || !isFluidValid(0, resource)) {
             return 0;
         }
         int room = SeasoningBottleItem.usedMb(this.stack);
@@ -124,6 +129,9 @@ public final class SeasoningBottleFluidHandler implements IFluidHandlerItem {
 
     @Override
     public FluidStack drain(FluidStack resource, FluidAction action) {
+        if (this.stack.getCount() != 1) {
+            return FluidStack.EMPTY;
+        }
         Fluid fluid = fluidOf(this.stack.getItem());
         if (fluid == null || !resource.getFluid().isSame(fluid)) {
             return FluidStack.EMPTY;
@@ -133,9 +141,24 @@ public final class SeasoningBottleFluidHandler implements IFluidHandlerItem {
 
     @Override
     public FluidStack drain(int maxDrain, FluidAction action) {
+        if (this.stack.getCount() != 1) {
+            return FluidStack.EMPTY;
+        }
         Fluid fluid = fluidOf(this.stack.getItem());
+        if (fluid == null || maxDrain <= 0) {
+            return FluidStack.EMPTY;
+        }
+        if (!SeasoningBottleItem.isBottle(this.stack)) {
+            if (maxDrain < SeasoningBottleItem.CAPACITY_MB) {
+                return FluidStack.EMPTY;
+            }
+            if (action.execute()) {
+                this.stack = new ItemStack(Items.GLASS_BOTTLE);
+            }
+            return new FluidStack(fluid, SeasoningBottleItem.CAPACITY_MB);
+        }
         int have = SeasoningBottleItem.remainingMb(this.stack);
-        if (fluid == null || have <= 0 || maxDrain <= 0) {
+        if (have <= 0) {
             return FluidStack.EMPTY;
         }
         int moved = Math.min(have, maxDrain);

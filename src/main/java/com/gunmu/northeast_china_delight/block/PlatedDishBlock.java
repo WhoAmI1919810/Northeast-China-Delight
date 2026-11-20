@@ -13,8 +13,12 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.storage.loot.LootParams;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.VoxelShape;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * 无器具菜肴的方块：摆在展示乐事的餐盘 / 小餐盘上（模型里自带那块盘子）。
@@ -74,18 +78,16 @@ public class PlatedDishBlock extends PlacedDishBlock
     }
 
     @Override
-    public void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean isMoving)
+    public List<ItemStack> getDrops(BlockState state, LootParams.Builder params)
     {
-        // 拿回菜时方块换回盘子，盘子不用另掉；其它拆法（挖掉、炸掉、活塞推）把盘子还出来，菜按掉落表掉
-        if (!state.is(newState.getBlock()) && !level.isClientSide
-                && !BuiltInRegistries.BLOCK.getKey(newState.getBlock()).equals(this.plate))
+        // 仅在真正产生掉落时（生存破坏、爆炸、活塞推碎）一并掉回展示餐盘；
+        // 创造拆除、/setblock 和潜行空手拿回菜（takeBack）都不走 getDrops，不会多掉餐盘。
+        List<ItemStack> drops = new ArrayList<>(super.getDrops(state, params));
+        ItemStack plateItem = DisplayDelightCompat.plateItem(this.plate);
+        if (!plateItem.isEmpty())
         {
-            ItemStack plateItem = DisplayDelightCompat.plateItem(this.plate);
-            if (!plateItem.isEmpty())
-            {
-                popResource(level, pos, plateItem);
-            }
+            drops.add(plateItem);
         }
-        super.onRemove(state, level, pos, newState, isMoving);
+        return drops;
     }
 }

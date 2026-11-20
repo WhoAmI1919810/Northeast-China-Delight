@@ -237,7 +237,8 @@ public class ModBlocks {
                     .instrument(NoteBlockInstrument.BASS)
                     .strength(2.0F)
                     .sound(SoundType.WOOD)
-                    .lightLevel(state -> state.getValue(CampfireBlock.LIT) ? 15 : 0)
+                    .lightLevel(state -> state.getValue(CampfireBlock.LIT)
+                            ? (state.getValue(GrillCampfireBlock.SOUL) ? 10 : 15) : 0)
                     .noOcclusion()
                     .ignitedByLava()
     );

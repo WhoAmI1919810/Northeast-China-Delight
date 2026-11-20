@@ -1,7 +1,7 @@
 // 这个分类完全靠机械动力的模型（AllPartialModels）+ catnip 的 GUI 元素渲染，
-// 这个分类只在 1.21.1 线注册（低版本线整体停用，只留注释）。
-//? if >=1.20.5 {
-/*package com.gunmu.northeast_china_delight.compat.jei;
+// 1.20.1 与 1.21.1 均装有机械动力 6.x，1.20.4 线没有机械动力所以整块跳过。
+//? if <1.20.2 || >=1.20.5 {
+package com.gunmu.northeast_china_delight.compat.jei;
 
 import com.gunmu.northeast_china_delight.NortheastChinaDelight;
 import com.gunmu.northeast_china_delight.util.DdIds;
@@ -17,18 +17,17 @@ import mezz.jei.api.recipe.RecipeIngredientRole;
 import mezz.jei.api.recipe.RecipeType;
 import mezz.jei.api.recipe.category.IRecipeCategory;
 import net.createmod.catnip.gui.element.GuiGameElement;
+import net.minecraft.Util;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.navigation.ScreenPosition;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 
-/^*
- * JEI「批量风干」分类 —— 照抄 Create {@code ProcessingViaFanCategory}，
- * 区别只在没有底部催化剂方块（水/火/灵魂火）和白色阴影。
- * 风扇渲染直接调用 catnip {@link GuiGameElement#of}，就是
- * {@code AnimatedKinetics} 内部的真实调用。
- ^/
+/**
+ * JEI「批量风干」分类 —— 照抄 Create {@code ProcessingViaFanCategory}，区别只在没有底部催化剂方块（水/火/灵魂火）和白色阴影。风扇
+ * 渲染直接调用 catnip {@link GuiGameElement#of}，就是 {@code AnimatedKinetics} 内部的真实调用。
+ */
 public class DryingRecipeCategory implements IRecipeCategory<DryingJeiRecipe> {
 
     private static final int SLOT = 16;
@@ -36,16 +35,11 @@ public class DryingRecipeCategory implements IRecipeCategory<DryingJeiRecipe> {
     private static final int OUTPUT_X = 141, OUTPUT_Y = 48;
     private static final int ARROW_X = 54, ARROW_Y = 51;
 
-    // 风扇位置：页面正中偏左（Create 是 (56, 33)，但我们没有 attached block，居中摆）
-    // 风扇视觉中心想在页面的水平正中（177/2≈88）。
-    // 但 GuiGameElement 经 22.5 度 Y 旋转后，渲染出的投影中心比 translate 锚点偏右约 22px，
-    // 所以 translate 用 FAN_VCX-22 才能把风扇真正摆到正中。
     private static final int FAN_VCX = 88;
     private static final int FAN_X = FAN_VCX - 14;
     private static final int FAN_Y = 30;
     private static final int FAN_SCALE = 24;
 
-    // 第二个输出与主输出并排
     private static final int OUTPUT2_X = OUTPUT_X + SLOT + 2;
     private static final int OUTPUT2_Y = OUTPUT_Y;
 
@@ -55,14 +49,15 @@ public class DryingRecipeCategory implements IRecipeCategory<DryingJeiRecipe> {
     private static final ResourceLocation WIDGETS = DdIds.of(
             NortheastChinaDelight.MODID, "textures/gui/jei_widgets.png");
     private static final int LARROW_U = 19, LARROW_V = 0, LARROW_W = 71, LARROW_H = 10;
-    // Create JEI_SHADOW：白色椭圆光斑，画在风扇正下方
     private static final int SHADOW_U = 0, SHADOW_V = 56, SHADOW_W = 52, SHADOW_H = 11;
 
     private final IDrawable icon;
+    private final IDrawable background;
 
     public DryingRecipeCategory(IGuiHelper guiHelper) {
         this.icon = guiHelper.createDrawableItemStack(new ItemStack(
                 AllBlocks.ENCASED_FAN.get()));
+        this.background = guiHelper.createBlankDrawable(WIDTH, HEIGHT);
     }
 
     @Override public RecipeType<DryingJeiRecipe> getRecipeType() { return NortheastJeiPlugin.DRYING_TYPE; }
@@ -70,6 +65,7 @@ public class DryingRecipeCategory implements IRecipeCategory<DryingJeiRecipe> {
     @Override public IDrawable getIcon() { return this.icon; }
     @Override public int getWidth() { return WIDTH; }
     @Override public int getHeight() { return HEIGHT; }
+    @Override public IDrawable getBackground() { return this.background; }
 
     @Override
     public ResourceLocation getRegistryName(DryingJeiRecipe recipe) {
@@ -99,16 +95,14 @@ public class DryingRecipeCategory implements IRecipeCategory<DryingJeiRecipe> {
     private static void blitWidget(GuiGraphics g, int u, int v, int w, int h, int x, int y) {
         g.blit(WIDGETS, x, y, u, v, w, h, 256, 256);
     }
+
     private static final class DryingWidget implements IRecipeWidget {
-        private int ticks;
 
         @Override public ScreenPosition getPosition() { return new ScreenPosition(0, 0); }
-        @Override public void tick() { this.ticks++; }
 
         @Override
         public void drawWidget(GuiGraphics graphics, double mouseX, double mouseY) {
 
-            // 长箭头
             blitWidget(graphics, LARROW_U, LARROW_V, LARROW_W, LARROW_H, ARROW_X, ARROW_Y);
             // 阴影垫在风扇底下：风扇方块是从 FAN_Y 往上画的（底面落在 FAN_Y 上下几像素），阴影顶边比 FAN_Y 高 4 像素，
             // 同 Create 原版（阴影 y 29、风扇 y 33）。以前是 FAN_Y + 14，悬在风扇下面、压到箭头
@@ -121,7 +115,7 @@ public class DryingRecipeCategory implements IRecipeCategory<DryingJeiRecipe> {
             pose.mulPose(com.mojang.math.Axis.XP.rotationDegrees(-12.5F));
             pose.mulPose(com.mojang.math.Axis.YP.rotationDegrees(22.5F));
 
-            float angle = this.ticks * 4.0F;
+            float angle = (Util.getMillis() % 360_000L) / 50.0F * 4.0F;
             GuiGameElement.of(AllPartialModels.ENCASED_FAN_INNER)
                     .rotateBlock(0, 180, angle * 16.0F)
                     .scale(FAN_SCALE)
@@ -135,4 +129,4 @@ public class DryingRecipeCategory implements IRecipeCategory<DryingJeiRecipe> {
         }
     }
 }
-*///?}
+//?}

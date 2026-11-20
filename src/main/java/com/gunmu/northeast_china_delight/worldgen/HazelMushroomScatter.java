@@ -105,7 +105,7 @@ final class HazelMushroomScatter
                 }
                 int x = center.getX() + dx;
                 int z = center.getZ() + dz;
-                int y = level.getHeight(Heightmap.Types.OCEAN_FLOOR, x, z);
+                int y = level.getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, x, z);
                 BlockPos plantPos = new BlockPos(x, y, z);
                 BlockState ground = level.getBlockState(plantPos.below());
                 if (!ground.is(BlockTags.DIRT))

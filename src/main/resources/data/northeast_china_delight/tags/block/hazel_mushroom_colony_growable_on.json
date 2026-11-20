@@ -3,6 +3,7 @@
   "values": [
     "#minecraft:dirt",
     "minecraft:moss_block",
-    "farmersdelight:rich_soil"
+    "farmersdelight:rich_soil",
+    "farmersdelight:rich_soil_farmland"
   ]
 }

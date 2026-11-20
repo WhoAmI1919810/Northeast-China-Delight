@@ -1,0 +1,22 @@
+{
+  "replace": false,
+  "values": [
+    "northeast_china_delight:soybean_crop",
+    "northeast_china_delight:eggplant_crop",
+    "northeast_china_delight:green_pepper_crop",
+    "northeast_china_delight:corn_crop",
+    "northeast_china_delight:green_beans_crop",
+    "northeast_china_delight:buckwheat_crop",
+    "northeast_china_delight:napa_cabbage_crop",
+    "northeast_china_delight:snow_mustard_crop",
+    "northeast_china_delight:cucumber_crop",
+    "northeast_china_delight:sweet_potato_crop",
+    "northeast_china_delight:red_chili_crop",
+    "northeast_china_delight:peanut_crop",
+    "northeast_china_delight:red_bean_crop",
+    "northeast_china_delight:green_onion_crop",
+    "northeast_china_delight:green_radish_crop",
+    "northeast_china_delight:bellflower_crop",
+    "northeast_china_delight:ginseng_crop"
+  ]
+}

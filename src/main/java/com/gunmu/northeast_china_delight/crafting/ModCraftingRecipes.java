@@ -33,5 +33,13 @@ public final class ModCraftingRecipes {
 
     public static void register(IEventBus eventBus) {
         SERIALIZERS.register(eventBus);
+        //? if <1.20.2 {
+        eventBus.addListener((net.minecraftforge.registries.RegisterEvent event) -> {
+            if (event.getRegistryKey().equals(net.minecraftforge.registries.ForgeRegistries.Keys.RECIPE_SERIALIZERS)) {
+                net.minecraftforge.common.crafting.CraftingHelper.register(
+                        FullBottleIngredient.ID, FullBottleIngredient.SERIALIZER);
+            }
+        });
+        //?}
     }
 }

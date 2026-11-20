@@ -389,7 +389,7 @@ public class DishEffectEvents {
 
     @SubscribeEvent
     public static void onStartUsingItem(LivingEntityUseItemEvent.Start event) {
-        if (!(event.getEntity() instanceof Player player) || player.level().isClientSide()) {
+        if (!(event.getEntity() instanceof Player player)) {
             return;
         }
         int duration = applyFlavorSlowdown(player, event.getItem().getItem(), event.getDuration());
@@ -432,7 +432,9 @@ public class DishEffectEvents {
 
         MobEffectInstance refreshing = DdEffects.getEffect(player, ModEffects.REFRESHING);
         applyWarmthSpeed(player);
-        if (refreshing == null || player.getHealth() >= player.getMaxHealth() || food.getFoodLevel() < 18) {
+        if (refreshing == null || !player.isAlive()
+                || !player.level().getGameRules().getBoolean(net.minecraft.world.level.GameRules.RULE_NATURAL_REGENERATION)
+                || player.getHealth() >= player.getMaxHealth() || food.getFoodLevel() < 18) {
             REGEN_CREDIT.remove(id);
             return;
         }
@@ -441,10 +443,15 @@ public class DishEffectEvents {
         float percent = (20.0F + saturation * level) / 100.0F;
         float baseRate = food.getFoodLevel() >= 20 && saturation > 0 ? 0.1F : 1.0F / 80.0F;
         float credit = REGEN_CREDIT.getOrDefault(id, 0.0F) + baseRate * percent;
+        boolean healed = false;
         while (credit >= 1.0F && player.getHealth() < player.getMaxHealth()) {
             player.heal(1.0F);
             food.addExhaustion(6.0F);
             credit -= 1.0F;
+            healed = true;
+        }
+        if (healed) {
+            LAST_EXHAUSTION.put(id, food.getExhaustionLevel());
         }
         REGEN_CREDIT.put(id, credit);
     }

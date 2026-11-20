@@ -154,9 +154,17 @@ ext.legacyTransformNode = { Object node, Map env ->
             def one = items instanceof List ? items.get(0) : items
             env.changed = true
             def components = map.get('components')
-            // minecraft:damage 组件 → NBT 的 Damage 标签（int）。emptying 配方用它卡"满瓶"（damage:0）。
+            // minecraft:damage 组件 → 1.20.1 中全新满瓶没有 tag（Damage 键不存在），forge:partial_nbt 会误拒全新物品；
+            // damage == 0 改用自定义 northeast_china_delight:full_bottle 原料（判断 stack.getDamageValue() == 0），
+            // damage > 0 时物品必有 Damage NBT，仍用 forge:partial_nbt。
             if (components instanceof Map && components.containsKey('minecraft:damage')) {
                 def dmg = components.get('minecraft:damage')
+                if (dmg instanceof Number && (dmg as Number).intValue() == 0) {
+                    if (items instanceof List && (items as List).size() > 1) {
+                        return ['type': 'northeast_china_delight:full_bottle', 'items': items]
+                    }
+                    return ['type': 'northeast_china_delight:full_bottle', 'item': one]
+                }
                 return ['type': 'forge:partial_nbt',
                         'items': items instanceof List ? items : [items],
                         'nbt': "{\"Damage\":${dmg}}"]
@@ -241,6 +249,29 @@ ext.legacyTransformNode = { Object node, Map env ->
                 def icon = new LinkedHashMap(v as Map)
                 def iconId = icon.remove('id')
                 icon.put('item', iconId)
+                def components = icon.remove('components')
+                if (components instanceof Map) {
+                    def nbtParts = []
+                    if ((components as Map).containsKey('minecraft:damage')) {
+                        nbtParts << "Damage:${(components as Map).get('minecraft:damage')}"
+                    }
+                    if ((components as Map).containsKey('minecraft:potion_contents')) {
+                        def pc = (components as Map).get('minecraft:potion_contents')
+                        if (pc instanceof Map) {
+                            if ((pc as Map).containsKey('potion')) {
+                                nbtParts << "Potion:\"${(pc as Map).get('potion')}\""
+                            }
+                            if ((pc as Map).containsKey('custom_color')) {
+                                nbtParts << "CustomPotionColor:${(pc as Map).get('custom_color')}"
+                            }
+                        } else if (pc instanceof String) {
+                            nbtParts << "Potion:\"${pc}\""
+                        }
+                    }
+                    if (!nbtParts.isEmpty()) {
+                        icon.put('nbt', '{' + nbtParts.join(',') + '}')
+                    }
+                }
                 env.changed = true
                 out.put(key, legacyTransformNode(icon, env))
                 return
@@ -428,14 +459,35 @@ ext.portLegacyDataTree = { File resourcesDir ->
             return
         }
 
+        // 「大锤小用」的图标和玩法都靠 1.21 才有的重锤，1.20.1 整条丢掉（留着会刷 Unknown item）
+        if (newRel == 'northeast_china_delight/advancements/mace_pound.json') {
+            src.delete()
+            stats.dropped++
+            return
+        }
+
         def env = [changed: false, recipe: newRel.contains('/recipes/')
                    && !newRel.contains('/recipes/vat/') && !newRel.contains('/recipes/grill/')
-                   && !newRel.contains('/recipes/drying/'),
+                   && !newRel.contains('/recipes/drying/') && !newRel.contains('/recipes/pounding/'),
                    advancement: newRel.contains('/advancements/')]
         if (rel.endsWith('.json')) {
             def root = slurper.parse(src, 'UTF-8')
             def rewritten = legacyTransformNode(root, env)
-            if (env.recipe && rewritten instanceof Map
+            // 舂捣配方的工具列表里带着 1.21 的重锤，<1.20.5 得摘掉，否则整条配方加载失败
+            if (newRel.contains('/recipes/pounding/') && rewritten instanceof Map) {
+                def cfg = (rewritten as Map).get('config')
+                def tool = cfg instanceof Map ? (cfg as Map).get('tool') : null
+                if (tool instanceof List) {
+                    def kept = (tool as List).findAll { Object e ->
+                        e != 'minecraft:mace'
+                                && !(e instanceof Map && (e as Map).get('item') == 'minecraft:mace') }
+                    if (kept.size() != tool.size()) {
+                        (cfg as Map).put('tool', kept)
+                        env.changed = true
+                    }
+                }
+            }
+            if (newRel.contains('/recipes/') && rewritten instanceof Map
                     && (rewritten as Map).containsKey('forge:conditions')) {
                 def wrapper = new LinkedHashMap(rewritten as Map)
                 def recipeCondition = wrapper.remove('forge:conditions')
@@ -515,6 +567,11 @@ ext.legacyPortStructureNbt = { File file, int targetDataVersion ->
                 body.remove('count')
                 body.put('Count', new LegacyNbtTag(LegacyNbtCodec.BYTE, Math.max(0, count)))
                 stacks++
+                changed = true
+            }
+            if (idTag != null && idTag.type == LegacyNbtCodec.STRING
+                    && (countTag != null || body.get('Count') != null)
+                    && LegacyNbtCodec.convertItemComponents(body)) {
                 changed = true
             }
         }
@@ -601,6 +658,141 @@ class LegacyNbtCodec {
                 eachTag((LegacyNbtTag) child, visitor)
             }
         }
+    }
+
+    /** 将 1.20.5+ ItemStack 的 components 复合标签回退转换为 1.20.1 的 tag 复合标签。 */
+    static boolean convertItemComponents(Map body) {
+        def compsTag = body.get('components')
+        if (!(compsTag instanceof LegacyNbtTag) || ((LegacyNbtTag) compsTag).type != COMPOUND) {
+            return false
+        }
+        Map comps = (Map) ((LegacyNbtTag) compsTag).value
+        Map<String, LegacyNbtTag> tagMap
+        def existingTag = body.get('tag')
+        if (existingTag instanceof LegacyNbtTag && ((LegacyNbtTag) existingTag).type == COMPOUND) {
+            tagMap = (Map<String, LegacyNbtTag>) ((LegacyNbtTag) existingTag).value
+        } else {
+            tagMap = new LinkedHashMap<>()
+        }
+        def ensureDisplay = {
+            def disp = tagMap.get('display')
+            if (disp instanceof LegacyNbtTag && ((LegacyNbtTag) disp).type == COMPOUND) {
+                return (Map<String, LegacyNbtTag>) ((LegacyNbtTag) disp).value
+            }
+            Map<String, LegacyNbtTag> created = new LinkedHashMap<>()
+            tagMap.put('display', new LegacyNbtTag(COMPOUND, created))
+            return created
+        }
+        comps.each { Object keyObj, Object valObj ->
+            String key = (String) keyObj
+            LegacyNbtTag val = (LegacyNbtTag) valObj
+            switch (key) {
+                case 'minecraft:custom_data':
+                case 'minecraft:bucket_entity_data':
+                    if (val.type == COMPOUND) {
+                        ((Map) val.value).each { k, v -> tagMap.put((String) k, (LegacyNbtTag) v) }
+                    }
+                    break
+                case 'minecraft:damage':
+                    if (val.type == INT) {
+                        tagMap.put('Damage', new LegacyNbtTag(INT, val.value))
+                    }
+                    break
+                case 'minecraft:repair_cost':
+                    if (val.type == INT) {
+                        tagMap.put('RepairCost', new LegacyNbtTag(INT, val.value))
+                    }
+                    break
+                case 'minecraft:custom_model_data':
+                    if (val.type == INT) {
+                        tagMap.put('CustomModelData', new LegacyNbtTag(INT, val.value))
+                    }
+                    break
+                case 'minecraft:unbreakable':
+                    tagMap.put('Unbreakable', new LegacyNbtTag(BYTE, 1))
+                    break
+                case 'minecraft:custom_name':
+                    if (val.type == STRING) {
+                        ensureDisplay().put('Name', new LegacyNbtTag(STRING, val.value))
+                    }
+                    break
+                case 'minecraft:lore':
+                    if (val.type == LIST) {
+                        ensureDisplay().put('Lore', val)
+                    }
+                    break
+                case 'minecraft:dyed_color':
+                    if (val.type == INT) {
+                        ensureDisplay().put('color', new LegacyNbtTag(INT, val.value))
+                    } else if (val.type == COMPOUND) {
+                        def rgb = ((Map) val.value).get('rgb')
+                        if (rgb instanceof LegacyNbtTag && ((LegacyNbtTag) rgb).type == INT) {
+                            ensureDisplay().put('color', new LegacyNbtTag(INT, ((LegacyNbtTag) rgb).value))
+                        }
+                    }
+                    break
+                case 'minecraft:potion_contents':
+                    if (val.type == STRING) {
+                        tagMap.put('Potion', new LegacyNbtTag(STRING, val.value))
+                    } else if (val.type == COMPOUND) {
+                        Map pc = (Map) val.value
+                        def potion = pc.get('potion')
+                        if (potion instanceof LegacyNbtTag && ((LegacyNbtTag) potion).type == STRING) {
+                            tagMap.put('Potion', new LegacyNbtTag(STRING, ((LegacyNbtTag) potion).value))
+                        }
+                        def color = pc.get('custom_color')
+                        if (color instanceof LegacyNbtTag && ((LegacyNbtTag) color).type == INT) {
+                            tagMap.put('CustomPotionColor', new LegacyNbtTag(INT, ((LegacyNbtTag) color).value))
+                        }
+                    }
+                    break
+                case 'minecraft:enchantments':
+                case 'minecraft:stored_enchantments':
+                    if (val.type == COMPOUND) {
+                        Map enchSrc = (Map) val.value
+                        def levelsTag = enchSrc.get('levels')
+                        if (levelsTag instanceof LegacyNbtTag && ((LegacyNbtTag) levelsTag).type == COMPOUND) {
+                            enchSrc = (Map) ((LegacyNbtTag) levelsTag).value
+                        }
+                        List<LegacyNbtTag> enchList = new ArrayList<>()
+                        enchSrc.each { ek, ev ->
+                            if (ek != 'show_in_tooltip' && ev instanceof LegacyNbtTag
+                                    && ((LegacyNbtTag) ev).value instanceof Number) {
+                                Map<String, LegacyNbtTag> entry = new LinkedHashMap<>()
+                                entry.put('id', new LegacyNbtTag(STRING, (String) ek))
+                                entry.put('lvl', new LegacyNbtTag(SHORT, ((Number) ((LegacyNbtTag) ev).value).intValue()))
+                                enchList.add(new LegacyNbtTag(COMPOUND, entry))
+                            }
+                        }
+                        if (!enchList.isEmpty()) {
+                            String targetKey = key == 'minecraft:stored_enchantments'
+                                    ? 'StoredEnchantments' : 'Enchantments'
+                            tagMap.put(targetKey, new LegacyNbtTag(LIST, [COMPOUND, enchList]))
+                        }
+                    }
+                    break
+                case 'minecraft:block_entity_data':
+                    if (val.type == COMPOUND) {
+                        tagMap.put('BlockEntityTag', val)
+                    }
+                    break
+                case 'minecraft:block_state':
+                    if (val.type == COMPOUND) {
+                        tagMap.put('BlockStateTag', val)
+                    }
+                    break
+                case 'minecraft:entity_data':
+                    if (val.type == COMPOUND) {
+                        tagMap.put('EntityTag', val)
+                    }
+                    break
+            }
+        }
+        body.remove('components')
+        if (!tagMap.isEmpty()) {
+            body.put('tag', new LegacyNbtTag(COMPOUND, tagMap))
+        }
+        return true
     }
 
     private static String readUtf(DataInputStream input) {

@@ -59,9 +59,11 @@ import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.sounds.SoundSource;
 //? if <1.20.2 {
+import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 //?} else {
-/*import net.neoforged.bus.api.SubscribeEvent;
+/*import net.neoforged.bus.api.EventPriority;
+import net.neoforged.bus.api.SubscribeEvent;
 *///?}
 //? if <1.20.2 {
 import net.minecraftforge.event.furnace.FurnaceFuelBurnTimeEvent;
@@ -380,7 +382,7 @@ public final class ModGameplayEvents
             return;
         }
         ItemStack stack = event.getItemStack();
-        if (stack.isEmpty() || event.getHand() == InteractionHand.OFF_HAND)
+        if (stack.isEmpty())
         {
             return;
         }
@@ -414,19 +416,6 @@ public final class ModGameplayEvents
             {
                 event.setCanceled(true);
                 event.setCancellationResult(placed);
-                return;
-            }
-        }
-
-        if (DdStacks.isEdible(stack))
-        {
-            InteractionResult eaten = stack.getItem()
-                    .use(event.getLevel(), player, event.getHand())
-                    .getResult();
-            if (eaten.consumesAction())
-            {
-                event.setCanceled(true);
-                event.setCancellationResult(eaten);
             }
         }
     }
@@ -559,16 +548,29 @@ public final class ModGameplayEvents
         if (target.getBlock() instanceof FoldedQuiltBlock && FoldedQuiltBlock.isOccupied(target))
         {
             event.setCanceled(true);
+        }
+    }
+
+    @SubscribeEvent(priority = EventPriority.LOWEST)
+    public static void onGinsengSoilBreak(BlockEvent.BreakEvent event)
+    {
+        if (event.isCanceled() || !(event.getLevel() instanceof ServerLevel level))
+        {
             return;
         }
         Player player = event.getPlayer();
-        // 必须空手：拿着工具刨土只会把参苗一起铲掉
-        if (!player.getMainHandItem().isEmpty())
+        // 必须生存模式空手：拿着工具刨土只会把参苗一起铲掉，创造模式不产生掉落
+        if (player == null || player.isCreative() || !player.getMainHandItem().isEmpty())
         {
             return;
         }
         BlockPos plantPos = event.getPos().above();
         BlockState plant = level.getBlockState(plantPos);
+        if (plant.is(Blocks.SNOW))
+        {
+            plantPos = plantPos.above();
+            plant = level.getBlockState(plantPos);
+        }
         if (!plant.is(ModBlocks.GINSENG_CROP.get())
                 || plant.getValue(GinsengCropBlock.AGE) < GinsengCropBlock.MAX_AGE)
         {

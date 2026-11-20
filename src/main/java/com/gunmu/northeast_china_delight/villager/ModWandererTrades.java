@@ -51,7 +51,6 @@ public final class ModWandererTrades
         // 特殊货：山参（48~64 绿宝石 1 根，一次只卖一根 —— 雪地里刨出来的东西，不该白菜价）
         rare.add(ginsengListing());
 
-        generic.add(new BasicItemListing(1, new ItemStack(ModItems.HAZELNUT.get()), 12, 1));
         generic.add(new BasicItemListing(1, new ItemStack(ModItems.HAZEL_MUSHROOM.get()), 12, 1));
         generic.add(new BasicItemListing(1, new ItemStack(ModItems.WOOD_EAR.get()), 12, 1));
         generic.add(new BasicItemListing(1, new ItemStack(ModItems.BELLFLOWER_ROOT.get()), 12, 1));

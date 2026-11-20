@@ -289,9 +289,7 @@
       "element": {
         "element_type": "minecraft:legacy_single_pool_element",
         "location": "northeast_china_delight:village/relish_savanna",
-        "processors": {
-          "processors": []
-        },
+        "processors": "minecraft:zombie_savanna",
         "projection": "rigid"
       },
       "weight": 5

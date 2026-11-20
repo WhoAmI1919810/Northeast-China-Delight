@@ -24,25 +24,39 @@ public class BiomeRichSoilPiece extends StructurePiece
             DdIds.of("farmersdelight", "rich_soil");
 
     private final float density;
+    private final int[] excludedBoxes;
 
     public BiomeRichSoilPiece(BlockPos center, int radius, float density)
+    {
+        this(center, radius, density, new int[0]);
+    }
+
+    public BiomeRichSoilPiece(BlockPos center, int radius, float density, int[] excludedBoxes)
     {
         super(ModWorldGen.BIOME_RICH_SOIL_PIECE.get(), 0,
                 new BoundingBox(center.getX() - radius, center.getY() - 96, center.getZ() - radius,
                         center.getX() + radius, center.getY() + 96, center.getZ() + radius));
+        this.boundingBox = new YardClearingPiece.DetectionFreeBoundingBox(this.boundingBox);
         this.density = density;
+        this.excludedBoxes = excludedBoxes == null ? new int[0] : excludedBoxes.clone();
     }
 
     public BiomeRichSoilPiece(CompoundTag tag)
     {
         super(ModWorldGen.BIOME_RICH_SOIL_PIECE.get(), tag);
+        this.boundingBox = new YardClearingPiece.DetectionFreeBoundingBox(this.boundingBox);
         this.density = tag.getFloat("Density");
+        this.excludedBoxes = tag.getIntArray("ExcludedBoxes");
     }
 
     @Override
     protected void addAdditionalSaveData(StructurePieceSerializationContext context, CompoundTag tag)
     {
         tag.putFloat("Density", this.density);
+        if (this.excludedBoxes.length > 0)
+        {
+            tag.putIntArray("ExcludedBoxes", this.excludedBoxes);
+        }
     }
 
     @Override
@@ -58,13 +72,14 @@ public class BiomeRichSoilPiece extends StructurePiece
         int minX = Math.max(box.minX(), this.boundingBox.minX());
         int maxX = Math.min(box.maxX(), this.boundingBox.maxX());
         int minZ = Math.max(box.minZ(), this.boundingBox.minZ());
-        int maxZ = Math.max(box.maxZ(), this.boundingBox.maxZ());
+        int maxZ = Math.min(box.maxZ(), this.boundingBox.maxZ());
+        long worldSeed = level.getSeed();
         BlockPos.MutableBlockPos cursor = new BlockPos.MutableBlockPos();
         for (int x = minX; x <= maxX; x++)
         {
             for (int z = minZ; z <= maxZ; z++)
             {
-                if (!chunkContains(chunkPos, x, z))
+                if (!chunkContains(chunkPos, x, z) || BlackSoilPiece.isExcluded(this.excludedBoxes, x, z))
                 {
                     continue;
                 }
@@ -73,7 +88,7 @@ public class BiomeRichSoilPiece extends StructurePiece
                 {
                     continue;
                 }
-                double noise = valueNoise(x, z);
+                double noise = valueNoise(x, z, worldSeed);
                 if (noise < 1.0 - this.density)
                 {
                     continue;
@@ -82,9 +97,14 @@ public class BiomeRichSoilPiece extends StructurePiece
                 BlockState state = level.getBlockState(cursor);
                 if (state.is(Blocks.SNOW))
                 {
-                    level.setBlock(cursor, Blocks.AIR.defaultBlockState(), 2);
-                    cursor.setY(y - 1);
-                    state = level.getBlockState(cursor);
+                    BlockPos belowPos = cursor.below();
+                    BlockState below = level.getBlockState(belowPos);
+                    if (isReplaceable(below))
+                    {
+                        level.setBlock(cursor, Blocks.AIR.defaultBlockState(), 2);
+                        level.setBlock(belowPos, soil, 2);
+                    }
+                    continue;
                 }
                 if (isReplaceable(state))
                 {
@@ -102,7 +122,7 @@ public class BiomeRichSoilPiece extends StructurePiece
 
     private static final double NOISE_CELL = 12.0;
 
-    private static double valueNoise(int x, int z)
+    private static double valueNoise(int x, int z, long seed)
     {
         double fx = x / NOISE_CELL;
         double fz = z / NOISE_CELL;
@@ -110,16 +130,17 @@ public class BiomeRichSoilPiece extends StructurePiece
         int z0 = (int) Math.floor(fz);
         double tx = smoothstep(fx - x0);
         double tz = smoothstep(fz - z0);
-        double v00 = hash(x0, z0);
-        double v10 = hash(x0 + 1, z0);
-        double v01 = hash(x0, z0 + 1);
-        double v11 = hash(x0 + 1, z0 + 1);
+        double v00 = hash(x0, z0, seed);
+        double v10 = hash(x0 + 1, z0, seed);
+        double v01 = hash(x0, z0 + 1, seed);
+        double v11 = hash(x0 + 1, z0 + 1, seed);
         return lerp(lerp(v00, v10, tx), lerp(v01, v11, tx), tz);
     }
 
-    private static double hash(int x, int z)
+    private static double hash(int x, int z, long seed)
     {
-        int h = x * 0x27d4eb2d ^ z * 0x165667b1;
+        int seedMix = (int) (seed ^ (seed >>> 32));
+        int h = x * 0x27d4eb2d ^ z * 0x165667b1 ^ seedMix * 0x9e3779b9;
         h = (h ^ (h >>> 15)) * 0x85ebca6b;
         h ^= h >>> 13;
         h *= 0xc2b2ae35;
@@ -144,8 +165,6 @@ public class BiomeRichSoilPiece extends StructurePiece
                 || state.is(Blocks.COARSE_DIRT)
                 || state.is(Blocks.ROOTED_DIRT)
                 || state.is(Blocks.PODZOL)
-                || state.is(Blocks.MYCELIUM)
-                || state.is(Blocks.SNOW_BLOCK)
-                || state.is(Blocks.SNOW);
+                || state.is(Blocks.MYCELIUM);
     }
 }

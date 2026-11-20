@@ -1,5 +1,6 @@
 package com.gunmu.northeast_china_delight.block;
 
+import com.gunmu.northeast_china_delight.advancement.ModAdvancements;
 import com.gunmu.northeast_china_delight.crafting.GrillRecipes;
 import com.gunmu.northeast_china_delight.item.GrillSeasonings;
 import com.gunmu.northeast_china_delight.item.ModItems;
@@ -12,20 +13,28 @@ import net.minecraft.core.Direction;
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.Containers;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
-//? if >=1.20.5 {
+//? if <1.20.5 {
+import net.minecraft.world.SimpleContainer;
+//?} else {
 /*import net.minecraft.world.ItemInteractionResult;
+import net.minecraft.world.item.crafting.RecipeHolder;
+import net.minecraft.world.item.crafting.SingleRecipeInput;
 *///?}
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.item.crafting.CampfireCookingRecipe;
 import net.minecraft.world.item.crafting.RecipeManager;
+import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.block.Block;
@@ -44,6 +53,9 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.HashSet;
+import java.util.Set;
+
 /**
  * 架上烧烤架的营火。一个烤架能放 4 份食材 （什么都能放、可以混着放），四份各自独立计时。
  */
@@ -60,6 +72,7 @@ public class GrillCampfireBlock extends CampfireBlock {
 
     private static final VoxelShape INTERACTION_SHAPE = Block.box(0.0, 0.0, 0.0, 16.0, 16.0, 16.0);
     private static final VoxelShape RACK_SHAPE = Block.box(0.0, 0.0, 0.0, 16.0, 15.0, 16.0);
+    private static final ThreadLocal<Set<BlockPos>> CREATIVE_BREAKING = ThreadLocal.withInitial(HashSet::new);
 
     public GrillCampfireBlock(Properties properties) {
         super(true, 1, properties);
@@ -95,6 +108,22 @@ public class GrillCampfireBlock extends CampfireBlock {
     @Override
     public VoxelShape getCollisionShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
         return RACK_SHAPE;
+    }
+
+    /** 灵魂营火踩上去每秒扣 2 点，普通营火扣 1 点，与原版两种营火保持一致。 */
+    @Override
+    public void entityInside(BlockState state, Level level, BlockPos pos, Entity entity) {
+        if (state.getValue(LIT) && entity instanceof LivingEntity living) {
+            float damage = state.getValue(SOUL) ? 2.0F : 1.0F;
+            //? if <1.20.5 {
+            if (!entity.fireImmune()
+                    && !net.minecraft.world.item.enchantment.EnchantmentHelper.hasFrostWalker(living)) {
+                entity.hurt(level.damageSources().inFire(), damage);
+            }
+            //?} else {
+            /*entity.hurt(level.damageSources().campfire(), damage);*/
+            //?}
+        }
     }
 
     @Override
@@ -231,6 +260,9 @@ public class GrillCampfireBlock extends CampfireBlock {
             hint(player, "message.northeast_china_delight.grill.full");
             return InteractionResult.sidedSuccess(false);
         }
+        if (brushing && player instanceof ServerPlayer serverPlayer) {
+            ModAdvancements.award(serverPlayer, ModAdvancements.BRUSH, "brush");
+        }
 
         boolean infinite = DdPlayers.hasInfiniteMaterials(player);
         if (bottle) {
@@ -348,6 +380,9 @@ public class GrillCampfireBlock extends CampfireBlock {
     }
 
     private static void clientTick(Level level, BlockPos pos, BlockState state, GrillBlockEntity grill) {
+        if (!state.getValue(LIT)) {
+            return;
+        }
         RandomSource random = level.random;
         if (random.nextFloat() < 0.035F) {
             for (int i = 0; i < random.nextInt(2) + 1; i++) {
@@ -383,12 +418,30 @@ public class GrillCampfireBlock extends CampfireBlock {
                 continue;
             }
             GrillRecipes.Recipe recipe = grill.recipeOf(slot, level.getRecipeManager());
-            if (recipe == null || !recipe.seasoningsReady(grill.seasoningsOf(slot)) || !lit) {
-                highest = Math.max(highest, grill.progress(slot));
-                continue;
+            int totalTicks;
+            ItemStack result;
+            if (recipe != null) {
+                if (!recipe.seasoningsReady(grill.seasoningsOf(slot)) || !lit) {
+                    highest = Math.max(highest, grill.progress(slot));
+                    continue;
+                }
+                totalTicks = recipe.ticks();
+                result = recipe.result().copy();
+            } else {
+                CampfireCookingRecipe vanilla = lit ? vanillaCampfireRecipe(level, food) : null;
+                if (vanilla == null) {
+                    highest = Math.max(highest, grill.progress(slot));
+                    continue;
+                }
+                totalTicks = Math.max(1, vanilla.getCookingTime());
+                //? if <1.20.5 {
+                result = vanilla.assemble(new SimpleContainer(food), level.registryAccess());
+                //?} else {
+                /*result = vanilla.assemble(new SingleRecipeInput(food), level.registryAccess());*/
+                //?}
             }
 
-            int step = Math.max(1, recipe.ticks() / MAX_PROGRESS);
+            int step = Math.max(1, totalTicks / MAX_PROGRESS);
             if (level.getGameTime() % step != 0L) {
                 highest = Math.max(highest, grill.progress(slot));
                 continue;
@@ -400,7 +453,6 @@ public class GrillCampfireBlock extends CampfireBlock {
                 continue;
             }
 
-            ItemStack result = recipe.result().copy();
             grill.clearSlot(slot);
             Containers.dropItemStack(level, pos.getX() + 0.5, pos.getY() + 1.0, pos.getZ() + 0.5, result);
             level.playSound(null, pos, SoundEvents.CAMPFIRE_CRACKLE, SoundSource.BLOCKS, 1.0F, 1.2F);
@@ -413,6 +465,20 @@ public class GrillCampfireBlock extends CampfireBlock {
         if (changed) {
             level.sendBlockUpdated(pos, state, state, 3);
         }
+    }
+
+    @Nullable
+    private static CampfireCookingRecipe vanillaCampfireRecipe(Level level, ItemStack food) {
+        //? if <1.20.5 {
+        return level.getRecipeManager()
+                .getRecipeFor(RecipeType.CAMPFIRE_COOKING, new SimpleContainer(food), level)
+                .orElse(null);
+        //?} else {
+        /*return level.getRecipeManager()
+                .getRecipeFor(RecipeType.CAMPFIRE_COOKING, new SingleRecipeInput(food), level)
+                .map(RecipeHolder::value)
+                .orElse(null);*/
+        //?}
     }
 
     public static void install(Level level, BlockPos pos, BlockState campfire, CampfireBlockEntity oldFire) {
@@ -452,16 +518,40 @@ public class GrillCampfireBlock extends CampfireBlock {
                 .setValue(FACING, state.getValue(FACING));
     }
 
+    //? if <1.20.2 {
+    @Override
+    public void playerWillDestroy(Level level, BlockPos pos, BlockState state, Player player) {
+        if (!level.isClientSide && player.isCreative()) {
+            CREATIVE_BREAKING.get().add(pos.immutable());
+        }
+        super.playerWillDestroy(level, pos, state, player);
+    }
+    //?} else {
+    /*@Override
+    public BlockState playerWillDestroy(Level level, BlockPos pos, BlockState state, Player player) {
+        if (!level.isClientSide && player.isCreative()) {
+            CREATIVE_BREAKING.get().add(pos.immutable());
+        }
+        return super.playerWillDestroy(level, pos, state, player);
+    }
+    *///?}
+
     @Override
     public void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean isMoving) {
-        if (!state.is(newState.getBlock()) && !level.isClientSide
-                && level.getBlockEntity(pos) instanceof GrillBlockEntity grill) {
-            for (ItemStack stack : grill.getItems()) {
-                if (!stack.isEmpty()) {
-                    popResource(level, pos, stack.copy());
-                }
+        if (!state.is(newState.getBlock()) && !level.isClientSide) {
+            Set<BlockPos> creative = CREATIVE_BREAKING.get();
+            boolean creativeBreak = creative.remove(pos);
+            if (creative.isEmpty()) {
+                CREATIVE_BREAKING.remove();
             }
-            popResource(level, pos, new ItemStack(ModItems.GRILL_RACK.get()));
+            if (!creativeBreak && level.getBlockEntity(pos) instanceof GrillBlockEntity grill) {
+                for (ItemStack stack : grill.getItems()) {
+                    if (!stack.isEmpty()) {
+                        popResource(level, pos, stack.copy());
+                    }
+                }
+                popResource(level, pos, new ItemStack(ModItems.GRILL_RACK.get()));
+            }
         }
         super.onRemove(state, level, pos, newState, isMoving);
     }

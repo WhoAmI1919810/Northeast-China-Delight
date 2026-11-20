@@ -432,13 +432,27 @@ public final class VatBrewing {
         if (vat.isFermented() && kind != VatRecipes.Kind.NONE) {
             net.minecraft.world.level.material.Fluid product = VatRecipes.productOf(vat);
             VatRecipes.Serving serving = VatRecipes.servingOf(vat);
-            if (serving != null && held.is(serving.container()) && vat.productMb(product) > 0) {
-                vat.takeOneServing(product);
-                return new ItemStack(serving.item());
+            if (serving != null && held.is(serving.container()) && product != null) {
+                int have = vat.productMb(product);
+                if (serving.item() instanceof com.gunmu.northeast_china_delight.item.SeasoningBottleItem) {
+                    if (have > 0) {
+                        int moved = Math.min(VatRecipes.SERVING_MB, have);
+                        vat.setProductMb(product, have - moved);
+                        ItemStack bottle = new ItemStack(serving.item());
+                        int missing = com.gunmu.northeast_china_delight.item.SeasoningBottleItem.CAPACITY_MB - moved;
+                        if (missing > 0) {
+                            bottle.setDamageValue(missing);
+                        }
+                        return bottle;
+                    }
+                } else if (have >= VatRecipes.SERVING_MB && vat.takeOneServing(product)) {
+                    return new ItemStack(serving.item());
+                }
             }
         }
-        if (vat.sourWaterMb() > 0 && held.is(net.minecraft.world.item.Items.GLASS_BOTTLE)) {
-            vat.takeOneServing(com.gunmu.northeast_china_delight.fluid.ModFluids.sourWaterSource());
+        if (vat.sourWaterMb() >= VatRecipes.SERVING_MB
+                && held.is(net.minecraft.world.item.Items.GLASS_BOTTLE)
+                && vat.takeOneServing(com.gunmu.northeast_china_delight.fluid.ModFluids.sourWaterSource())) {
             return new ItemStack(com.gunmu.northeast_china_delight.item.ModItems.SOUR_WATER.get());
         }
         return null;
