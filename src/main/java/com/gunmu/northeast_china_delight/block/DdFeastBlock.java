@@ -114,16 +114,20 @@ public class DdFeastBlock extends Block {
         if (this.servingItem == null) {
             return InteractionResult.PASS;
         }
-        // 必须拿碗来盛：右键一次盛走一份，碗被消耗，取一份「碗装XX」
-        if (!stack.is(net.minecraft.world.item.Items.BOWL)) {
+        // 必须拿碗来盛：右键一次盛走一份，碗被消耗，取一份「碗装XX」；
+        // 主手拿非碗物品（如方块）而副手拿碗时，若返回 PASS 会先触发主手放方块而截断副手交互，
+        // 因此主手阶段直接消费副手碗完成盛菜。
+        ItemStack bowlStack = stack;
+        if (!bowlStack.is(net.minecraft.world.item.Items.BOWL)) {
             if (hand == InteractionHand.MAIN_HAND && player.getOffhandItem().is(net.minecraft.world.item.Items.BOWL)) {
-                return InteractionResult.PASS;
+                bowlStack = player.getOffhandItem();
+            } else {
+                if (!level.isClientSide) {
+                    player.displayClientMessage(net.minecraft.network.chat.Component.translatable(
+                            servings > 0 ? "message.northeast_china_delight.pot_need_bowl" : "message.northeast_china_delight.pot_empty"), true);
+                }
+                return InteractionResult.sidedSuccess(level.isClientSide);
             }
-            if (!level.isClientSide) {
-                player.displayClientMessage(net.minecraft.network.chat.Component.translatable(
-                        servings > 0 ? "message.northeast_china_delight.pot_need_bowl" : "message.northeast_china_delight.pot_empty"), true);
-            }
-            return InteractionResult.sidedSuccess(level.isClientSide);
         }
         if (servings <= 0) {
             if (!level.isClientSide) {
@@ -134,7 +138,7 @@ public class DdFeastBlock extends Block {
         }
         if (!level.isClientSide) {
             if (!player.getAbilities().instabuild) {
-                stack.shrink(1);
+                bowlStack.shrink(1);
             }
             popResource(level, pos, this.servingStack(level, pos));
             if (servings == 1) {
@@ -162,16 +166,20 @@ public class DdFeastBlock extends Block {
         if (this.servingItem == null) {
             return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
         }
-        // 必须拿**碗**来盛：右键一次盛走一份，碗被消耗，取一份「碗装XX」
-        if (!stack.is(net.minecraft.world.item.Items.BOWL)) {
+        // 必须拿**碗**来盛：右键一次盛走一份，碗被消耗，取一份「碗装XX」；
+        // 主手拿非碗物品（如方块）而副手拿碗时，若返回 PASS 会先触发主手放方块而截断副手交互，
+        // 因此主手阶段直接消费副手碗完成盛菜。
+        ItemStack bowlStack = stack;
+        if (!bowlStack.is(net.minecraft.world.item.Items.BOWL)) {
             if (hand == InteractionHand.MAIN_HAND && player.getOffhandItem().is(net.minecraft.world.item.Items.BOWL)) {
-                return ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+                bowlStack = player.getOffhandItem();
+            } else {
+                if (!level.isClientSide) {
+                    player.displayClientMessage(net.minecraft.network.chat.Component.translatable(
+                            servings > 0 ? "message.northeast_china_delight.pot_need_bowl" : "message.northeast_china_delight.pot_empty"), true);
+                }
+                return ItemInteractionResult.sidedSuccess(level.isClientSide);
             }
-            if (!level.isClientSide) {
-                player.displayClientMessage(net.minecraft.network.chat.Component.translatable(
-                        servings > 0 ? "message.northeast_china_delight.pot_need_bowl" : "message.northeast_china_delight.pot_empty"), true);
-            }
-            return ItemInteractionResult.sidedSuccess(level.isClientSide);
         }
         if (servings <= 0) {
             if (!level.isClientSide) {
@@ -182,7 +190,7 @@ public class DdFeastBlock extends Block {
         }
         if (!level.isClientSide) {
             if (!player.getAbilities().instabuild) {
-                stack.shrink(1);
+                bowlStack.shrink(1);
             }
             popResource(level, pos, this.servingStack(level, pos));
             if (servings == 1) {
