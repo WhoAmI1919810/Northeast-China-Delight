@@ -15,6 +15,7 @@
     "LivingEntityUseDurationMixin",
     "PlayerQuiltSleepMixin",
     "ServerPlayerPillowSleepMixin",
+    "ServerLevelPrecipitationMixin",
     "MapItemSavedDataMixin"
   ],
   "client": [
