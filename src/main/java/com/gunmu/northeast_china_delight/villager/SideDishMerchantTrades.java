@@ -116,7 +116,7 @@ public final class SideDishMerchantTrades
     {
         ItemStack stack = new ItemStack(item);
         stack.setDamageValue(SeasoningBottleItem.CAPACITY_MB - uses * SeasoningBottleItem.DOSE_MB);
-        return new BasicItemListing(emeralds, stack, maxUses, xp);
+        return new BasicItemListing(emeralds, stack, maxUses, xp, TradeHelpers.DEFAULT_PRICE_MULTIPLIER);
     }
 
     /** 价格在 min..max 之间随机，交易生成后固定，直到补货刷新。 */
@@ -125,12 +125,12 @@ public final class SideDishMerchantTrades
     {
         return (trader, random) -> new BasicItemListing(
                 minEmeralds + random.nextInt(maxEmeralds - minEmeralds + 1),
-                new ItemStack(item, count), maxUses, xp).getOffer(trader, random);
+                new ItemStack(item, count), maxUses, xp, TradeHelpers.DEFAULT_PRICE_MULTIPLIER).getOffer(trader, random);
     }
 
     private static VillagerTrades.ItemListing sellFull(Item item, int price, int maxUses, int xp)
     {
-        return new BasicItemListing(price, new ItemStack(item), maxUses, xp);
+        return new BasicItemListing(price, new ItemStack(item), maxUses, xp, TradeHelpers.DEFAULT_PRICE_MULTIPLIER);
     }
 
     /** 大师级固定交易；等级提升时由 SideDishMerchantTradeMixin 补入，避免被原版二选一随机掉。 */

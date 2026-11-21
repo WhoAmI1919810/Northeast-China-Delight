@@ -573,19 +573,35 @@ public final class ModGameplayEvents
             return;
         }
         Player player = event.getPlayer();
-        // 必须生存模式空手：拿着工具刨土只会把参苗一起铲掉，创造模式不产生掉落
-        if (player == null || player.isCreative() || !player.getMainHandItem().isEmpty())
+        if (player == null)
         {
             return;
         }
-        BlockPos plantPos = event.getPos().above();
+        BlockPos abovePos = event.getPos().above();
+        BlockPos plantPos = abovePos;
         BlockState plant = level.getBlockState(plantPos);
-        if (plant.is(Blocks.SNOW))
+        boolean snowBetween = plant.is(Blocks.SNOW);
+        if (snowBetween)
         {
             plantPos = plantPos.above();
             plant = level.getBlockState(plantPos);
         }
-        if (!plant.is(ModBlocks.GINSENG_CROP.get())
+        if (!plant.is(ModBlocks.GINSENG_CROP.get()))
+        {
+            return;
+        }
+        // 创造模式刨掉参苗脚下的土时静默清除参苗（及夹层雪片），防止悬空连锁破坏掉落参籽
+        if (player.isCreative())
+        {
+            level.removeBlock(plantPos, false);
+            if (snowBetween)
+            {
+                level.removeBlock(abovePos, false);
+            }
+            return;
+        }
+        // 必须生存模式空手且参苗成熟：拿着工具刨土只会按原版连锁掉落参籽
+        if (!player.getMainHandItem().isEmpty()
                 || plant.getValue(GinsengCropBlock.AGE) < GinsengCropBlock.MAX_AGE)
         {
             return;

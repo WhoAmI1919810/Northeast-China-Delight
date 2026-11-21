@@ -1,5 +1,6 @@
 package com.gunmu.northeast_china_delight.block;
 
+import com.gunmu.northeast_china_delight.advancement.ModAdvancements;
 import com.gunmu.northeast_china_delight.crafting.VatRecipes;
 import com.gunmu.northeast_china_delight.fluid.ModFluids;
 import com.gunmu.northeast_china_delight.item.ModItems;
@@ -787,13 +788,13 @@ public class VatBlockEntity extends BlockEntity implements IFluidHandler {
         AdvancementHolder advancement = serverLevel.getServer().getAdvancements().get(
                 DdIds.of(NortheastChinaDelight.MODID, "pump_seasoning"));
         //?}
-        if (advancement == null) {
-            return;
-        }
         Vec3 center = Vec3.atCenterOf(this.worldPosition);
         for (ServerPlayer player : serverLevel.players()) {
             if (player.distanceToSqr(center) <= 32 * 32) {
-                player.getAdvancements().award(advancement, "pump");
+                ModAdvancements.award(player, ModAdvancements.VAT_FLUID, "brew");
+                if (advancement != null) {
+                    player.getAdvancements().award(advancement, "pump");
+                }
             }
         }
     }

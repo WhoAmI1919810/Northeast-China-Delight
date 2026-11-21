@@ -151,11 +151,23 @@ public class HazelnutBushBlock extends BushBlock implements BonemealableBlock {
 
     @Override
     public boolean isRandomlyTicking(BlockState state) {
-        return state.getValue(AGE) < MAX_AGE || state.getValue(SNOWY);
+        return true;
     }
 
     @Override
     public void randomTick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random) {
+        if (level.isRaining() && level.canSeeSky(pos)) {
+            Biome.Precipitation precipitation = level.getBiome(pos).value().getPrecipitationAt(pos);
+            if (precipitation == Biome.Precipitation.SNOW && !state.getValue(SNOWY)
+                    && level.getBrightness(LightLayer.BLOCK, pos) < 10) {
+                state = state.setValue(SNOWY, true);
+                level.setBlock(pos, state, 2);
+            } else if (precipitation == Biome.Precipitation.RAIN && state.getValue(SNOWY)
+                    && !isSnow(level.getBlockState(pos.below()))) {
+                state = state.setValue(SNOWY, false);
+                level.setBlock(pos, state, 2);
+            }
+        }
         if (state.getValue(SNOWY)
                 && level.getBrightness(LightLayer.BLOCK, pos) > 11
                 && !isSnow(level.getBlockState(pos.below()))) {

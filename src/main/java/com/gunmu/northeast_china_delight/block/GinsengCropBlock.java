@@ -243,7 +243,7 @@ public class GinsengCropBlock extends BushBlock implements BonemealableBlock
     @Override
     public boolean isRandomlyTicking(BlockState state)
     {
-        return state.getValue(AGE) < MAX_AGE || state.getValue(SNOWY);
+        return true;
     }
 
     @Override
@@ -252,6 +252,24 @@ public class GinsengCropBlock extends BushBlock implements BonemealableBlock
         if (!level.isAreaLoaded(pos, 1))
         {
             return;
+        }
+        // BushBlock 无碰撞，原版 ServerLevel#tickPrecipitation 只对脚下的土块调用 handlePrecipitation，
+        // 不会落到参苗自身；因此借 randomTick 在降雪/降雨时主动维护覆雪状态。
+        if (level.isRaining() && level.canSeeSky(pos))
+        {
+            Biome.Precipitation precipitation = level.getBiome(pos).value().getPrecipitationAt(pos);
+            if (precipitation == Biome.Precipitation.SNOW && !state.getValue(SNOWY)
+                    && level.getBrightness(LightLayer.BLOCK, pos) < 10)
+            {
+                state = state.setValue(SNOWY, true);
+                level.setBlock(pos, state, 2);
+            }
+            else if (precipitation == Biome.Precipitation.RAIN && state.getValue(SNOWY)
+                    && !isSnow(level.getBlockState(pos.below())))
+            {
+                state = state.setValue(SNOWY, false);
+                level.setBlock(pos, state, 2);
+            }
         }
         if (state.getValue(SNOWY)
                 && level.getBrightness(LightLayer.BLOCK, pos) > 11

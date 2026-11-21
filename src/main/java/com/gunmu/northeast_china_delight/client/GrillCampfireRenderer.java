@@ -10,6 +10,7 @@ import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.Sheets;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.client.renderer.entity.ItemRenderer;
@@ -63,16 +64,19 @@ public class GrillCampfireRenderer implements BlockEntityRenderer<GrillBlockEnti
             }
             Direction direction = Direction.from2DDataValue(Math.floorMod(slot + facing.get2DDataValue(), 4));
 
+            List<GrillSeasoningOverlay.Layer> layers = seasoningLayers(grill, slot);
+            BakedModel model = this.itemRenderer.getModel(stack, grill.getLevel(), null, seed + slot);
+            MultiBufferSource itemBuffer = !layers.isEmpty() || GrillSeasoningOverlay.isCutoutModel(model)
+                    ? new CutoutBufferSource(buffer) : buffer;
+
             pose.pushPose();
             translateToItem(pose, direction);
-            drawItem(stack, buffer, pose, packedLight, packedOverlay, grill, seed + slot);
+            drawItem(stack, itemBuffer, pose, packedLight, packedOverlay, grill, seed + slot);
             pose.popPose();
 
-            List<GrillSeasoningOverlay.Layer> layers = seasoningLayers(grill, slot);
             if (layers.isEmpty()) {
                 continue;
             }
-            BakedModel model = this.itemRenderer.getModel(stack, grill.getLevel(), null, seed + slot);
             pose.pushPose();
             translateToItem(pose, direction);
             boolean drawn = GrillSeasoningOverlay.draw(pose, buffer, model, layers, slot, packedLight, packedOverlay);
@@ -169,11 +173,31 @@ public class GrillCampfireRenderer implements BlockEntityRenderer<GrillBlockEnti
         pose.scale(ITEM_SCALE, ITEM_SCALE, ITEM_SCALE);
     }
 
+    /**
+     * 把烤架上的食材从半透明物品通道转到 cutoutBlockSheet：
+     * 原版对非 BlockItem 默认用 translucentCullBlockSheet（写深度且按面心排序），
+     * 而调料层也画在同一批半透明里；平铺的小调料方片在斜视角下有半数面心比整块食材更远，
+     * 会排在食材之前绘制并写入更高深度，把底下的食材深度剔除掉，表现为食材变半透明。
+     * 食材走 cutoutBlockSheet 会在 LevelRenderer 中严格先于半透明批绘完并写实深度，
+     * 调料层随后叠在上面，任何画质和视角下都不会再吃掉食材。
+     */
+    private record CutoutBufferSource(MultiBufferSource delegate) implements MultiBufferSource {
+        @Override
+        public VertexConsumer getBuffer(RenderType renderType) {
+            if (renderType == Sheets.translucentCullBlockSheet() || renderType == Sheets.translucentItemSheet()) {
+                return this.delegate.getBuffer(Sheets.cutoutBlockSheet());
+            }
+            return this.delegate.getBuffer(renderType);
+        }
+    }
+
     private record TintBufferSource(MultiBufferSource delegate,
                                     float red, float green, float blue, float alpha) implements MultiBufferSource {
         @Override
         public VertexConsumer getBuffer(RenderType renderType) {
-            return new TintVertexConsumer(this.delegate.getBuffer(renderType), this.red, this.green, this.blue, this.alpha);
+            RenderType target = renderType == Sheets.solidBlockSheet() || renderType == Sheets.cutoutBlockSheet()
+                    ? Sheets.translucentCullBlockSheet() : renderType;
+            return new TintVertexConsumer(this.delegate.getBuffer(target), this.red, this.green, this.blue, this.alpha);
         }
     }
 

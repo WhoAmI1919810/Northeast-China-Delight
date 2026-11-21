@@ -30,9 +30,11 @@ import java.util.WeakHashMap;
  * 方片才和贴图像素对得上（之前直接按贴图坐标画，物品模型自带的 180° 翻转会让白点落到对角的空白处）。
  * 图案只跟（贴图、样式、颜色、第几种）有关，算一次后缓存。</p>
  *
- * <p>方片取方块图集里一格纯白、靠顶点色上色，用和半透明物品同一种 {@link Sheets#translucentCullBlockSheet()}：
- * 「极佳」画质下物品就画在这一批里、一起按远近排序；其它画质下物品先画，这一批最后画。
- * 两种情况半透明的酱都是叠在食材上，不会透到底下的火。</p>
+ * <p>食材由 {@link GrillCampfireRenderer} 通过 {@link Sheets#cutoutBlockSheet()} 先行完整绘制并写入深度；
+ * 调料方片取方块图集里一格纯白、靠顶点色上色，统一走 {@link Sheets#translucentCullBlockSheet()}，
+ * 在 {@code LevelRenderer} 中严格排在 {@code cutoutBlockSheet} 之后绘制，因此半透明酱层只会正确叠在食材表面，
+ * 不会再和食材抢深度或把食材剔除成半透明。同槽位多层整格覆盖（打蛋 + 刷酱）在 CPU 端按源覆盖预合成单层，
+ * 避免多层半透明小方片互相排序出错。</p>
  */
 final class GrillSeasoningOverlay {
 
@@ -40,9 +42,9 @@ final class GrillSeasoningOverlay {
 
     /** 物品贴图正面在模型坐标里的 z */
     private static final float FRONT_Z = 8.5F / 16.0F;
-    /** 第一层离贴图正面多远、每多一层再抬多少（模型单位，乘 0.375 才是世界单位） */
+    /** 第一层离贴图正面多远、撒料层再抬多少（模型单位，乘 0.375 才是世界单位） */
     private static final float BASE_LIFT = 0.010F;
-    private static final float LAYER_LIFT = 0.006F;
+    private static final float LAYER_LIFT = 0.012F;
 
     /** 一个格子：x0 y0 x1 y1（贴图坐标 0..1，y 朝下）、r g b a、额外抬高 */
     private static final int STRIDE = 9;
@@ -53,9 +55,9 @@ final class GrillSeasoningOverlay {
     private static final int EGG_BROWNED = 0xDDA04A;
 
     private static final Map<TextureAtlasSprite, Mask> MASKS = new WeakHashMap<>();
-    private static final Map<Key, float[]> PATTERNS = new LinkedHashMap<>(64, 0.75F, true) {
+    private static final Map<CompositeKey, float[]> COMPOSITE_PATTERNS = new LinkedHashMap<>(64, 0.75F, true) {
         @Override
-        protected boolean removeEldestEntry(Map.Entry<Key, float[]> eldest) {
+        protected boolean removeEldestEntry(Map.Entry<CompositeKey, float[]> eldest) {
             return this.size() > 512;
         }
     };
@@ -64,18 +66,31 @@ final class GrillSeasoningOverlay {
     record Layer(GrillVisual.Style style, int color, float opacity) {
     }
 
-    private record Key(TextureAtlasSprite sprite, Layer layer, int variant) {
+    private record CompositeKey(TextureAtlasSprite sprite, List<Layer> layers, int variant) {
     }
 
     /**
      * 食材贴图的形状：depth = 离透明处有几格（0 = 透明，1 = 最外一圈）。
-     * 主轴角度用来让刷子沿食材的长边刷。
+     * 主轴角度用来让刷子沿食材的长边刷。cutoutOnly 表示贴图不含半透明像素，可安全走 cutout 通道。
      */
     private record Mask(int width, int height, int[] depth, int maxDepth, float centerX, float centerY,
-                        float axisAngle) {
+                        float axisAngle, boolean cutoutOnly) {
     }
 
     private GrillSeasoningOverlay() {
+    }
+
+    /** 平面贴图且不含半透明像素的食材可走 cutoutBlockSheet，避免和半透明调料层互相深度排序。 */
+    static boolean isCutoutModel(BakedModel model) {
+        if (model.isGui3d()) {
+            return false;
+        }
+        List<BakedQuad> quads = model.getQuads(null, null, RandomSource.create(42L));
+        if (quads.isEmpty()) {
+            return false;
+        }
+        TextureAtlasSprite sprite = quads.get(0).getSprite();
+        return MASKS.computeIfAbsent(sprite, GrillSeasoningOverlay::mask).cutoutOnly();
     }
 
     /**
@@ -101,25 +116,23 @@ final class GrillSeasoningOverlay {
         float u = (white.getU0() + white.getU1()) / 2.0F;
         float v = (white.getV0() + white.getV1()) / 2.0F;
         VertexConsumer consumer = buffer.getBuffer(Sheets.translucentCullBlockSheet());
-        for (int layer = 0; layer < layers.size(); layer++) {
-            float[] cells = pattern(sprite, layers.get(layer), variant * 4 + layer);
-            float z = FRONT_Z + BASE_LIFT + LAYER_LIFT * layer;
-            for (int i = 0; i < cells.length; i += STRIDE) {
-                float cellZ = z + cells[i + 8];
-                float x0 = cells[i];
-                float x1 = cells[i + 2];
-                float y0 = 1.0F - cells[i + 3];
-                float y1 = 1.0F - cells[i + 1];
-                float r = cells[i + 4];
-                float g = cells[i + 5];
-                float b = cells[i + 6];
-                float a = cells[i + 7];
-                // 逆时针（从上面看），这批是开背面剔除的
-                vertex(consumer, last, x0, y0, cellZ, u, v, r, g, b, a, packedLight, packedOverlay);
-                vertex(consumer, last, x1, y0, cellZ, u, v, r, g, b, a, packedLight, packedOverlay);
-                vertex(consumer, last, x1, y1, cellZ, u, v, r, g, b, a, packedLight, packedOverlay);
-                vertex(consumer, last, x0, y1, cellZ, u, v, r, g, b, a, packedLight, packedOverlay);
-            }
+        float[] cells = compositePattern(sprite, layers, variant);
+        float baseZ = FRONT_Z + BASE_LIFT;
+        for (int i = 0; i < cells.length; i += STRIDE) {
+            float cellZ = baseZ + cells[i + 8];
+            float x0 = cells[i];
+            float x1 = cells[i + 2];
+            float y0 = 1.0F - cells[i + 3];
+            float y1 = 1.0F - cells[i + 1];
+            float r = cells[i + 4];
+            float g = cells[i + 5];
+            float b = cells[i + 6];
+            float a = cells[i + 7];
+            // 逆时针（从上面看），这批是开背面剔除的
+            vertex(consumer, last, x0, y0, cellZ, u, v, r, g, b, a, packedLight, packedOverlay);
+            vertex(consumer, last, x1, y0, cellZ, u, v, r, g, b, a, packedLight, packedOverlay);
+            vertex(consumer, last, x1, y1, cellZ, u, v, r, g, b, a, packedLight, packedOverlay);
+            vertex(consumer, last, x0, y1, cellZ, u, v, r, g, b, a, packedLight, packedOverlay);
         }
         pose.popPose();
         return true;
@@ -146,15 +159,75 @@ final class GrillSeasoningOverlay {
         //?}
     }
 
-    private static float[] pattern(TextureAtlasSprite sprite, Layer layer, int variant) {
-        return PATTERNS.computeIfAbsent(new Key(sprite, layer, variant), key -> {
+    /**
+     * 把同一槽位的所有调料层合成为最终待画方片：
+     * 打蛋 / 刷酱都是整像素网格，按顺序用源覆盖（source-over）合并为单层，避免半透明多层互抢深度；
+     * 撒料颗粒叠在合成层上方。
+     */
+    private static float[] compositePattern(TextureAtlasSprite sprite, List<Layer> layers, int variant) {
+        return COMPOSITE_PATTERNS.computeIfAbsent(new CompositeKey(sprite, List.copyOf(layers), variant), key -> {
             Mask mask = MASKS.computeIfAbsent(sprite, GrillSeasoningOverlay::mask);
-            return switch (layer.style()) {
-                case EGG -> egg(mask, layer.opacity(), variant);
-                case BRUSH -> brush(mask, layer.color(), layer.opacity(), variant);
-                case SPRINKLE -> sprinkle(mask, layer.color(), layer.opacity(), variant);
-                default -> new float[0];
-            };
+            int total = mask.width() * mask.height();
+            float[] coatR = new float[total];
+            float[] coatG = new float[total];
+            float[] coatB = new float[total];
+            float[] coatA = new float[total];
+            boolean hasCoat = false;
+
+            Cells sprinkles = new Cells();
+            int sprinkleIndex = 0;
+            for (int idx = 0; idx < layers.size(); idx++) {
+                Layer layer = layers.get(idx);
+                int layerVariant = variant * 4 + idx;
+                if (layer.style() == GrillVisual.Style.EGG || layer.style() == GrillVisual.Style.BRUSH) {
+                    float[] cells = layer.style() == GrillVisual.Style.EGG
+                            ? egg(mask, layer.opacity(), layerVariant)
+                            : brush(mask, layer.color(), layer.opacity(), layerVariant);
+                    for (int i = 0; i < cells.length; i += STRIDE) {
+                        int px = Math.min(mask.width() - 1, Math.max(0, Math.round(cells[i] * mask.width())));
+                        int py = Math.min(mask.height() - 1, Math.max(0, Math.round(cells[i + 1] * mask.height())));
+                        int cellIdx = py * mask.width() + px;
+                        float sr = cells[i + 4];
+                        float sg = cells[i + 5];
+                        float sb = cells[i + 6];
+                        float sa = cells[i + 7];
+                        float da = coatA[cellIdx];
+                        float outA = sa + da * (1.0F - sa);
+                        if (outA > 1.0E-4F) {
+                            float keep = da * (1.0F - sa);
+                            coatR[cellIdx] = (sr * sa + coatR[cellIdx] * keep) / outA;
+                            coatG[cellIdx] = (sg * sa + coatG[cellIdx] * keep) / outA;
+                            coatB[cellIdx] = (sb * sa + coatB[cellIdx] * keep) / outA;
+                            coatA[cellIdx] = outA;
+                            hasCoat = true;
+                        }
+                    }
+                } else if (layer.style() == GrillVisual.Style.SPRINKLE) {
+                    float extraLift = (hasCoat ? LAYER_LIFT : 0.0F) + sprinkleIndex * (LAYER_LIFT * 0.5F);
+                    float[] cells = sprinkle(mask, layer.color(), layer.opacity(), layerVariant);
+                    for (int i = 0; i < cells.length; i += STRIDE) {
+                        sprinkles.addRaw(cells[i], cells[i + 1], cells[i + 2], cells[i + 3],
+                                cells[i + 4], cells[i + 5], cells[i + 6], cells[i + 7], cells[i + 8] + extraLift);
+                    }
+                    sprinkleIndex++;
+                }
+            }
+
+            Cells out = new Cells();
+            if (hasCoat) {
+                for (int y = 0; y < mask.height(); y++) {
+                    for (int x = 0; x < mask.width(); x++) {
+                        int cellIdx = y * mask.width() + x;
+                        float a = coatA[cellIdx];
+                        if (a > 1.0E-4F) {
+                            out.addRaw(x / (float) mask.width(), y / (float) mask.height(),
+                                    (x + 1) / (float) mask.width(), (y + 1) / (float) mask.height(),
+                                    coatR[cellIdx], coatG[cellIdx], coatB[cellIdx], a, 0.0F);
+                        }
+                    }
+                }
+            }
+            return sprinkles.size == 0 ? out.toArray() : out.concat(sprinkles);
         });
     }
 
@@ -166,9 +239,14 @@ final class GrillSeasoningOverlay {
         double sumX = 0;
         double sumY = 0;
         int count = 0;
+        boolean cutoutOnly = true;
         for (int y = 0; y < height; y++) {
             for (int x = 0; x < width; x++) {
-                boolean opaque = (sprite.getPixelRGBA(0, x, y) >>> 24) >= 128;
+                int alpha = sprite.getPixelRGBA(0, x, y) >>> 24;
+                if (alpha > 10 && alpha < 245) {
+                    cutoutOnly = false;
+                }
+                boolean opaque = alpha >= 128;
                 depth[y * width + x] = opaque ? big : 0;
                 if (opaque) {
                     sumX += x + 0.5;
@@ -217,7 +295,7 @@ final class GrillSeasoningOverlay {
             }
         }
         float angle = (float) (0.5 * Math.atan2(2.0 * xy, xx - yy));
-        return new Mask(width, height, depth, maxDepth, centerX, centerY, angle);
+        return new Mask(width, height, depth, maxDepth, centerX, centerY, angle, cutoutOnly);
     }
 
     /** 贴图越大，图案的「一个像素」占的贴图格越多，保持和 16×16 贴图一样的颗粒感 */
@@ -343,18 +421,26 @@ final class GrillSeasoningOverlay {
         private int size;
 
         void add(float x0, float y0, float x1, float y1, Mask mask, int rgb, float shade, float alpha, float lift) {
+            addRaw(x0 / mask.width(), y0 / mask.height(), x1 / mask.width(), y1 / mask.height(),
+                    Math.min(1.0F, ((rgb >> 16) & 0xFF) / 255.0F * shade),
+                    Math.min(1.0F, ((rgb >> 8) & 0xFF) / 255.0F * shade),
+                    Math.min(1.0F, (rgb & 0xFF) / 255.0F * shade),
+                    alpha, lift);
+        }
+
+        void addRaw(float u0, float v0, float u1, float v1, float r, float g, float b, float alpha, float lift) {
             if (this.size + STRIDE > this.data.length) {
                 this.data = Arrays.copyOf(this.data, this.data.length * 2);
             }
             float[] d = this.data;
             int i = this.size;
-            d[i] = x0 / mask.width();
-            d[i + 1] = y0 / mask.height();
-            d[i + 2] = x1 / mask.width();
-            d[i + 3] = y1 / mask.height();
-            d[i + 4] = Math.min(1.0F, ((rgb >> 16) & 0xFF) / 255.0F * shade);
-            d[i + 5] = Math.min(1.0F, ((rgb >> 8) & 0xFF) / 255.0F * shade);
-            d[i + 6] = Math.min(1.0F, (rgb & 0xFF) / 255.0F * shade);
+            d[i] = u0;
+            d[i + 1] = v0;
+            d[i + 2] = u1;
+            d[i + 3] = v1;
+            d[i + 4] = r;
+            d[i + 5] = g;
+            d[i + 6] = b;
             d[i + 7] = alpha;
             d[i + 8] = lift;
             this.size += STRIDE;
