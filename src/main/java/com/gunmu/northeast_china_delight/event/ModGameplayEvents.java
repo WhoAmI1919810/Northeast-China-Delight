@@ -9,7 +9,6 @@ import com.gunmu.chinese_regional_culinary_ingredients.item.CrciItems;
 import com.gunmu.northeast_china_delight.NortheastChinaDelight;
 import com.gunmu.northeast_china_delight.advancement.ModAdvancements;
 import com.gunmu.chinese_regional_culinary_ingredients.block.BigStoveBlock;
-import com.gunmu.chinese_regional_culinary_ingredients.block.FacingDecorBlock;
 import com.gunmu.chinese_regional_culinary_ingredients.block.GinsengCropBlock;
 import com.gunmu.chinese_regional_culinary_ingredients.block.CrciBlockTags;
 import com.gunmu.northeast_china_delight.block.ModBlocks;
@@ -60,9 +59,12 @@ import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.level.levelgen.structure.Structure;
 import net.minecraft.world.level.levelgen.structure.StructurePiece;
 import net.minecraft.world.level.levelgen.structure.StructureStart;
+import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraft.sounds.SoundSource;
 //? if <1.20.2 {
 /*import net.minecraftforge.eventbus.api.EventPriority;
@@ -340,7 +342,7 @@ public final class ModGameplayEvents
                 && hasVisibleRadiator(player);
     }
 
-    /** 玩家周围 9 格内是否有正面朝向、且能直接看到的暖气片。 */
+    /** 玩家周围 9 格内是否有直线视线无遮挡的暖气片（不区分正反面）。 */
     public static boolean hasVisibleRadiator(ServerPlayer player)
     {
         ServerLevel level = player.serverLevel();
@@ -359,17 +361,37 @@ public final class ModGameplayEvents
             if (sourceCenter.distanceToSqr(target) > maxDistanceSqr) {
                 continue;
             }
-            Direction facing = state.getValue(FacingDecorBlock.FACING);
-            Vec3 source = sourceCenter.add(
-                    facing.getStepX() * 0.51D, 0.0D, facing.getStepZ() * 0.51D);
-            ClipContext context = new ClipContext(source, eye,
-                    ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, player);
-            var hit = level.clip(context);
-            if (hit.getType() == HitResult.Type.MISS) {
+            VoxelShape shape = state.getCollisionShape(level, pos);
+            if (shape.isEmpty()) {
+                if (hasClearSightToBlock(level, player, eye, sourceCenter, pos)) {
+                    return true;
+                }
+                continue;
+            }
+            AABB bounds = shape.bounds();
+            Vec3 origin = Vec3.atLowerCornerOf(pos);
+            Vec3 boxCenter = origin.add(bounds.getCenter());
+            if (hasClearSightToBlock(level, player, eye, boxCenter, pos)) {
+                return true;
+            }
+            Vec3 upperPoint = new Vec3(
+                    boxCenter.x,
+                    origin.y + Math.max(bounds.getCenter().y, bounds.maxY - 0.05D),
+                    boxCenter.z);
+            if (hasClearSightToBlock(level, player, eye, upperPoint, pos)) {
                 return true;
             }
         }
         return false;
+    }
+
+    private static boolean hasClearSightToBlock(ServerLevel level, ServerPlayer player,
+                                                Vec3 eye, Vec3 point, BlockPos targetPos)
+    {
+        BlockHitResult hit = level.clip(new ClipContext(eye, point,
+                ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, player));
+        return hit.getType() == HitResult.Type.MISS
+                || (hit.getType() == HitResult.Type.BLOCK && hit.getBlockPos().equals(targetPos));
     }
 
     private static void awardYardVisit(ServerPlayer player)
