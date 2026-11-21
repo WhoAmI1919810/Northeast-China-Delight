@@ -53,6 +53,8 @@ public class VatRenderer implements BlockEntityRenderer<VatBlockEntity> {
     /** 压缸石略小于 0.75（12 像素）以贴合内壁又避免与内壁闪烁 */
     private static final float PRESS_STONE_WIDTH = 0.746F;
     private static final float PRESS_STONE_HEIGHT = 0.32F;
+    /** 缸内有液体时，压缸石顶面至少高出液面 1 像素，便于直观分辨缸口压着石头 */
+    private static final float PRESS_STONE_LIQUID_EXPOSE = 1.0F / 16.0F;
     private static final float RIM_TOP = 0.995F;
 
     private static final float ITEM_W = 0.35F;
@@ -111,6 +113,12 @@ public class VatRenderer implements BlockEntityRenderer<VatBlockEntity> {
         BlockRenderDispatcher blockRenderer = Minecraft.getInstance().getBlockRenderer();
 
         boolean fermented = vat.getBlockState().getValue(Vat.FERMENTED);
+        float liquidSurfaceY = switch (vat.getBlockState().getValue(Vat.WATER_LEVEL)) {
+            case 1 -> 6.0F / 16.0F;
+            case 2 -> 10.0F / 16.0F;
+            case 3 -> 14.0F / 16.0F;
+            default -> 0.0F;
+        };
 
         if (fermented) {
             net.minecraft.world.level.material.Fluid product = VatRecipes.productOf(vat);
@@ -118,7 +126,9 @@ public class VatRenderer implements BlockEntityRenderer<VatBlockEntity> {
             // 酸引水的水面由方块状态里的 water_level 模型画，这里再画会叠出两层
             if (product != null && amount > 0 && !product.isSame(ModFluids.sourWaterSource())) {
                 float ratio = amount / (float) capacityOf(product);
-                renderFluidSurface(pose, buffer, product, 0.10F + 0.72F * ratio, light);
+                float fluidY = 0.10F + 0.72F * ratio;
+                renderFluidSurface(pose, buffer, product, fluidY, light);
+                liquidSurfaceY = Math.max(liquidSurfaceY, fluidY);
             }
         }
 
@@ -269,13 +279,18 @@ public class VatRenderer implements BlockEntityRenderer<VatBlockEntity> {
 
         if (vat.isPressed()) {
             ItemStack press = vat.press();
-            float stoneH = PRESS_STONE_HEIGHT;
-            // 压缸石直接贴实并略微压入顶层食材（压入量按顶层食材高度自适应），彻底消除悬浮感
+            // 压缸石底面直接贴实并略微压入顶层食材，消除悬浮感；
+            // 缸内有液面时把石块顶面抬到略高于液面（至少 1 像素，且不超出缸口），让人能清晰分辨。
             float pressSink = total > 0 ? Mth.clamp(topLayerHeight * 0.26F, 0.014F, 0.045F) : 0.0F;
             float stoneBottom = total > 0
                     ? Math.max(FLOOR + 0.015F, contentTop - pressSink)
                     : FLOOR + 0.002F;
-            stoneBottom = Math.min(stoneBottom, RIM_TOP - stoneH);
+            float minTopForLiquid = liquidSurfaceY > 0.0F ? liquidSurfaceY + PRESS_STONE_LIQUID_EXPOSE : 0.0F;
+            float stoneTop = Math.min(RIM_TOP, Math.max(stoneBottom + PRESS_STONE_HEIGHT, minTopForLiquid));
+            if (stoneTop - stoneBottom < PRESS_STONE_HEIGHT) {
+                stoneBottom = Math.max(FLOOR + 0.002F, stoneTop - PRESS_STONE_HEIGHT);
+            }
+            float stoneH = stoneTop - stoneBottom;
             if (press.getItem() instanceof BlockItem blockItem) {
                 float s = PRESS_STONE_WIDTH;
                 pose.pushPose();
@@ -286,7 +301,7 @@ public class VatRenderer implements BlockEntityRenderer<VatBlockEntity> {
                 pose.popPose();
             } else {
                 pose.pushPose();
-                pose.translate(0.5F, stoneBottom + stoneH - 0.02F, 0.5F);
+                pose.translate(0.5F, stoneTop - 0.02F, 0.5F);
                 pose.scale(0.55F, 0.55F, 0.55F);
                 itemRenderer.renderStatic(press, ItemDisplayContext.GROUND, light, packedOverlay, pose, buffer, level, 0);
                 pose.popPose();
