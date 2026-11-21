@@ -1,5 +1,6 @@
 package com.gunmu.northeast_china_delight.block;
 
+import com.gunmu.northeast_china_delight.advancement.ModAdvancements;
 import com.gunmu.northeast_china_delight.crafting.VatBrewing;
 import com.gunmu.northeast_china_delight.crafting.VatRecipe;
 import com.gunmu.northeast_china_delight.crafting.VatRecipes;
@@ -13,6 +14,7 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.BlockTags;
@@ -390,16 +392,23 @@ public class Vat extends Block implements EntityBlock {
                 return InteractionResult.sidedSuccess(false);
             }
             SeasoningBottleItem.refill(stack, moved);
+            if (player instanceof ServerPlayer serverPlayer) {
+                ModAdvancements.award(serverPlayer, ModAdvancements.VAT_FLUID, "brew");
+            }
             playFill(level, pos);
             vat.resetIfDrained();
             return InteractionResult.sidedSuccess(false);
         }
 
+        boolean fermentedFluid = vat.isFermented() && vat.hasProductLiquid();
         ItemStack filled = VatBrewing.fillContainer(vat, stack);
         if (filled != null) {
             boolean bowl = stack.is(Items.BOWL);
             consume(player, stack);
             give(player, filled);
+            if (fermentedFluid && player instanceof ServerPlayer serverPlayer) {
+                ModAdvancements.award(serverPlayer, ModAdvancements.VAT_FLUID, "brew");
+            }
             level.playSound(null, pos, bowl
                     ? SoundEvents.HONEY_BLOCK_SLIDE : SoundEvents.BOTTLE_FILL, SoundSource.BLOCKS, 1.0F, 1.0F);
             // 取完最后一份就复位，下一次投料不用先空点一下

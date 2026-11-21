@@ -13,11 +13,13 @@
     "SideDishMerchantTradeMixin",
     "VillagerOutfitDiscountMixin",
     "LivingEntityLidSoundMixin",
+    "LivingEntityUseDurationMixin",
     "PlayerQuiltSleepMixin",
     "ServerPlayerPillowSleepMixin",
     "MapItemSavedDataMixin"
   ],
   "client": [
+    "ItemInHandRendererEatMixin",
     "LoomScreenMixin",
     "SoundEngineMixin",
     "MapRendererMixin"

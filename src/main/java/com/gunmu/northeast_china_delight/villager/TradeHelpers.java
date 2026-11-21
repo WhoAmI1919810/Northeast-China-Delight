@@ -13,27 +13,30 @@ import net.minecraftforge.common.BasicItemListing;
 
 final class TradeHelpers
 {
+    static final float DEFAULT_PRICE_MULTIPLIER = 0.05F;
+
     private TradeHelpers()
     {
     }
 
     static VillagerTrades.ItemListing sell(int emeralds, Item item, int count, int maxUses, int xp)
     {
-        return new BasicItemListing(emeralds, new ItemStack(item, count), maxUses, xp);
+        // 注意：4 参 BasicItemListing 默认 priceMult = 1.0F（原版 0.05F 的 20 倍），会导致极快打折到 1 绿宝石
+        return new BasicItemListing(emeralds, new ItemStack(item, count), maxUses, xp, DEFAULT_PRICE_MULTIPLIER);
     }
 
     static VillagerTrades.ItemListing sellBlock(int emeralds, Block block, int count, int maxUses, int xp)
     {
-        return new BasicItemListing(emeralds, new ItemStack(block, count), maxUses, xp);
+        return new BasicItemListing(emeralds, new ItemStack(block, count), maxUses, xp, DEFAULT_PRICE_MULTIPLIER);
     }
 
     static VillagerTrades.ItemListing buy(Item item, int count, int maxUses, int xp)
     {
-        return new BasicItemListing(new ItemStack(item, count), new ItemStack(Items.EMERALD), maxUses, xp, 0.05F);
+        return new BasicItemListing(new ItemStack(item, count), new ItemStack(Items.EMERALD), maxUses, xp, DEFAULT_PRICE_MULTIPLIER);
     }
 
     static VillagerTrades.ItemListing buyBlock(Block block, int count, int maxUses, int xp)
     {
-        return new BasicItemListing(new ItemStack(block, count), new ItemStack(Items.EMERALD), maxUses, xp, 0.05F);
+        return new BasicItemListing(new ItemStack(block, count), new ItemStack(Items.EMERALD), maxUses, xp, DEFAULT_PRICE_MULTIPLIER);
     }
 }
