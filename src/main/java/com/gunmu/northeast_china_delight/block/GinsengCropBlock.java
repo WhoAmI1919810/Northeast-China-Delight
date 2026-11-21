@@ -11,6 +11,7 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.LevelReader;
@@ -20,12 +21,14 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.BonemealableBlock;
 import net.minecraft.world.level.block.BushBlock;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.LeavesBlock;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
+import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
@@ -202,6 +205,34 @@ public class GinsengCropBlock extends BushBlock implements BonemealableBlock
         return hasShade(level, pos) ? 2 : 1;
     }
 
+    /**
+     * 降雪是否能落到这株参苗上：露天或头顶只有树叶遮阴（非实体屋顶／洞穴）时可以覆雪。
+     * 注意不能用 {@code level.canSeeSky(pos)}，因为哪怕头顶只有一层树叶也会把天空光照降到 14，
+     * 导致长在树荫下的生长期与成熟期人参永远无法覆雪。
+     */
+    private static boolean canReceiveSnow(ServerLevel level, BlockPos pos)
+    {
+        if (level.getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, pos.getX(), pos.getZ()) <= pos.getY())
+        {
+            return true;
+        }
+        int topY = level.getHeight(Heightmap.Types.MOTION_BLOCKING, pos.getX(), pos.getZ());
+        BlockPos.MutableBlockPos cursor = new BlockPos.MutableBlockPos(pos.getX(), pos.getY() + 1, pos.getZ());
+        for (int y = pos.getY() + 1; y < topY; y++)
+        {
+            cursor.setY(y);
+            BlockState above = level.getBlockState(cursor);
+            if ((above.blocksMotion() || !above.getFluidState().isEmpty())
+                    && !(above.getBlock() instanceof LeavesBlock)
+                    && !above.is(BlockTags.LEAVES)
+                    && !above.is(ModBlockTags.GINSENG_SHADE))
+            {
+                return false;
+            }
+        }
+        return true;
+    }
+
     @Override
     public BlockState updateShape(BlockState state, Direction direction, BlockState neighborState,
                                   LevelAccessor level, BlockPos pos, BlockPos neighborPos)
@@ -211,11 +242,7 @@ public class GinsengCropBlock extends BushBlock implements BonemealableBlock
         {
             return updated;
         }
-        if (direction == Direction.UP)
-        {
-            return updated.setValue(SNOWY, isSnow(neighborState) || isSnow(level.getBlockState(pos.below())));
-        }
-        if (direction == Direction.DOWN && isSnow(neighborState))
+        if ((direction == Direction.UP || direction == Direction.DOWN) && isSnow(neighborState))
         {
             return updated.setValue(SNOWY, true);
         }
@@ -229,12 +256,17 @@ public class GinsengCropBlock extends BushBlock implements BonemealableBlock
         {
             return;
         }
-        if (precipitation == Biome.Precipitation.SNOW && !state.getValue(SNOWY))
+        if (precipitation == Biome.Precipitation.SNOW
+                && !state.getValue(SNOWY)
+                && level.getGameRules().getInt(GameRules.RULE_SNOW_ACCUMULATION_HEIGHT) > 0
+                && level.getBrightness(LightLayer.BLOCK, pos) < 10)
         {
             level.setBlock(pos, state.setValue(SNOWY, true), 2);
         }
-        else if (precipitation == Biome.Precipitation.RAIN && state.getValue(SNOWY)
-                && !isSnow(level.getBlockState(pos.below())))
+        else if (precipitation == Biome.Precipitation.RAIN
+                && state.getValue(SNOWY)
+                && !isSnow(level.getBlockState(pos.below()))
+                && !isSnow(level.getBlockState(pos.above())))
         {
             level.setBlock(pos, state.setValue(SNOWY, false), 2);
         }
@@ -253,19 +285,22 @@ public class GinsengCropBlock extends BushBlock implements BonemealableBlock
         {
             return;
         }
-        // BushBlock 无碰撞，原版 ServerLevel#tickPrecipitation 只对脚下的土块调用 handlePrecipitation，
-        // 不会落到参苗自身；因此借 randomTick 在降雪/降雨时主动维护覆雪状态。
-        if (level.isRaining() && level.canSeeSky(pos))
+        // 降雪/降雨时主动维护覆雪状态（同时兼容树荫遮挡与露天场景）
+        if (level.isRaining() && canReceiveSnow(level, pos))
         {
             Biome.Precipitation precipitation = level.getBiome(pos).value().getPrecipitationAt(pos);
-            if (precipitation == Biome.Precipitation.SNOW && !state.getValue(SNOWY)
+            if (precipitation == Biome.Precipitation.SNOW
+                    && !state.getValue(SNOWY)
+                    && level.getGameRules().getInt(GameRules.RULE_SNOW_ACCUMULATION_HEIGHT) > 0
                     && level.getBrightness(LightLayer.BLOCK, pos) < 10)
             {
                 state = state.setValue(SNOWY, true);
                 level.setBlock(pos, state, 2);
             }
-            else if (precipitation == Biome.Precipitation.RAIN && state.getValue(SNOWY)
-                    && !isSnow(level.getBlockState(pos.below())))
+            else if (precipitation == Biome.Precipitation.RAIN
+                    && state.getValue(SNOWY)
+                    && !isSnow(level.getBlockState(pos.below()))
+                    && !isSnow(level.getBlockState(pos.above())))
             {
                 state = state.setValue(SNOWY, false);
                 level.setBlock(pos, state, 2);
@@ -273,7 +308,8 @@ public class GinsengCropBlock extends BushBlock implements BonemealableBlock
         }
         if (state.getValue(SNOWY)
                 && level.getBrightness(LightLayer.BLOCK, pos) > 11
-                && !isSnow(level.getBlockState(pos.below())))
+                && !isSnow(level.getBlockState(pos.below()))
+                && !isSnow(level.getBlockState(pos.above())))
         {
             state = state.setValue(SNOWY, false);
             level.setBlock(pos, state, 2);
