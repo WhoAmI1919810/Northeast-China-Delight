@@ -50,6 +50,10 @@ public final class ModAdvancements
     public static final ResourceLocation PLACE_DISH = id("place_dish");
     /** 刷油/刷酱——在烤架营火上使用刷子成功给食材刷料 */
     public static final ResourceLocation BRUSH = id("brush");
+    /** 缸里出鲜——从大缸酿造并取得一种流体 */
+    public static final ResourceLocation VAT_FLUID = id("vat_fluid");
+    /** 泵抽鲜汁——通过流体管道/动力泵从大缸抽出成品流体 */
+    public static final ResourceLocation PUMP_SEASONING = id("pump_seasoning");
 
     private ModAdvancements()
     {
