@@ -414,7 +414,7 @@
   "message.northeast_china_delight.grill.not_needed": "这道菜还不需要这样调料",
   "message.northeast_china_delight.grill.full": "烤架已经放满了",
   "message.northeast_china_delight.grill.sneak_to_remove": "空手潜行右键可以收回烧烤架",
-  "message.northeast_china_delight.grill.need_brush": "瓶装调料要用刷子刷：左手拿调料瓶、右手拿刷子右键",
+  "message.northeast_china_delight.grill.need_brush": "瓶装调料要用刷子刷",
   "message.northeast_china_delight.grill.brushed": "刷上 %s，瓶里还剩 %s mB",
   "message.northeast_china_delight.grill.brushed_empty": "刷上 %s，瓶子用空了",
   "message.northeast_china_delight.grill.sprinkled": "加入 %s",

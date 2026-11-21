@@ -382,7 +382,7 @@
   "message.northeast_china_delight.grill.not_needed": "This dish doesn't need that seasoning",
   "message.northeast_china_delight.grill.full": "The grill is full",
   "message.northeast_china_delight.grill.sneak_to_remove": "Sneak + right-click with an empty hand to remove the grill rack",
-  "message.northeast_china_delight.grill.need_brush": "Bottled seasoning must be brushed on: bottle in the off hand, brush in the main hand",
+  "message.northeast_china_delight.grill.need_brush": "Bottled seasoning must be brushed on",
   "message.northeast_china_delight.grill.brushed": "Brushed on %s, %s mB left in the bottle",
   "message.northeast_china_delight.grill.brushed_empty": "Brushed on %s, the bottle is now empty",
   "message.northeast_china_delight.grill.sprinkled": "Added %s",
