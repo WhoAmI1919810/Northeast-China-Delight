@@ -7,6 +7,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.tags.BlockTags;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -21,6 +22,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.LevelReader;
@@ -29,6 +31,7 @@ import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.BonemealableBlock;
 import net.minecraft.world.level.block.BushBlock;
+import net.minecraft.world.level.block.LeavesBlock;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
@@ -36,6 +39,7 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
 import net.minecraft.world.level.gameevent.GameEvent;
+import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.CollisionContext;
@@ -120,6 +124,24 @@ public class HazelnutBushBlock extends BushBlock implements BonemealableBlock {
         return state.getValue(AGE) < MAX_AGE ? MID_GROWTH_SHAPE : super.getShape(state, level, pos, context);
     }
 
+    private static boolean canReceiveSnow(ServerLevel level, BlockPos pos) {
+        if (level.getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, pos.getX(), pos.getZ()) <= pos.getY()) {
+            return true;
+        }
+        int topY = level.getHeight(Heightmap.Types.MOTION_BLOCKING, pos.getX(), pos.getZ());
+        BlockPos.MutableBlockPos cursor = new BlockPos.MutableBlockPos(pos.getX(), pos.getY() + 1, pos.getZ());
+        for (int y = pos.getY() + 1; y < topY; y++) {
+            cursor.setY(y);
+            BlockState above = level.getBlockState(cursor);
+            if ((above.blocksMotion() || !above.getFluidState().isEmpty())
+                    && !(above.getBlock() instanceof LeavesBlock)
+                    && !above.is(BlockTags.LEAVES)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
     @Override
     public BlockState updateShape(BlockState state, Direction direction, BlockState neighborState,
                                   LevelAccessor level, BlockPos pos, BlockPos neighborPos) {
@@ -127,10 +149,7 @@ public class HazelnutBushBlock extends BushBlock implements BonemealableBlock {
         if (!updated.is(this)) {
             return updated;
         }
-        if (direction == Direction.UP) {
-            return updated.setValue(SNOWY, isSnow(neighborState) || isSnow(level.getBlockState(pos.below())));
-        }
-        if (direction == Direction.DOWN && isSnow(neighborState)) {
+        if ((direction == Direction.UP || direction == Direction.DOWN) && isSnow(neighborState)) {
             return updated.setValue(SNOWY, true);
         }
         return updated;
@@ -141,10 +160,15 @@ public class HazelnutBushBlock extends BushBlock implements BonemealableBlock {
         if (level.isClientSide) {
             return;
         }
-        if (precipitation == Biome.Precipitation.SNOW && !state.getValue(SNOWY)) {
+        if (precipitation == Biome.Precipitation.SNOW
+                && !state.getValue(SNOWY)
+                && level.getGameRules().getInt(GameRules.RULE_SNOW_ACCUMULATION_HEIGHT) > 0
+                && level.getBrightness(LightLayer.BLOCK, pos) < 10) {
             level.setBlock(pos, state.setValue(SNOWY, true), 2);
-        } else if (precipitation == Biome.Precipitation.RAIN && state.getValue(SNOWY)
-                && !isSnow(level.getBlockState(pos.below()))) {
+        } else if (precipitation == Biome.Precipitation.RAIN
+                && state.getValue(SNOWY)
+                && !isSnow(level.getBlockState(pos.below()))
+                && !isSnow(level.getBlockState(pos.above()))) {
             level.setBlock(pos, state.setValue(SNOWY, false), 2);
         }
     }
@@ -156,21 +180,26 @@ public class HazelnutBushBlock extends BushBlock implements BonemealableBlock {
 
     @Override
     public void randomTick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random) {
-        if (level.isRaining() && level.canSeeSky(pos)) {
+        if (level.isRaining() && canReceiveSnow(level, pos)) {
             Biome.Precipitation precipitation = level.getBiome(pos).value().getPrecipitationAt(pos);
-            if (precipitation == Biome.Precipitation.SNOW && !state.getValue(SNOWY)
+            if (precipitation == Biome.Precipitation.SNOW
+                    && !state.getValue(SNOWY)
+                    && level.getGameRules().getInt(GameRules.RULE_SNOW_ACCUMULATION_HEIGHT) > 0
                     && level.getBrightness(LightLayer.BLOCK, pos) < 10) {
                 state = state.setValue(SNOWY, true);
                 level.setBlock(pos, state, 2);
-            } else if (precipitation == Biome.Precipitation.RAIN && state.getValue(SNOWY)
-                    && !isSnow(level.getBlockState(pos.below()))) {
+            } else if (precipitation == Biome.Precipitation.RAIN
+                    && state.getValue(SNOWY)
+                    && !isSnow(level.getBlockState(pos.below()))
+                    && !isSnow(level.getBlockState(pos.above()))) {
                 state = state.setValue(SNOWY, false);
                 level.setBlock(pos, state, 2);
             }
         }
         if (state.getValue(SNOWY)
                 && level.getBrightness(LightLayer.BLOCK, pos) > 11
-                && !isSnow(level.getBlockState(pos.below()))) {
+                && !isSnow(level.getBlockState(pos.below()))
+                && !isSnow(level.getBlockState(pos.above()))) {
             state = state.setValue(SNOWY, false);
             level.setBlock(pos, state, 2);
         }
