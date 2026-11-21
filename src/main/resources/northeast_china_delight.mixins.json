@@ -12,11 +12,13 @@
     "RepairItemRecipeMixin",
     "VillagerOutfitDiscountMixin",
     "LivingEntityLidSoundMixin",
+    "LivingEntityUseDurationMixin",
     "PlayerQuiltSleepMixin",
     "ServerPlayerPillowSleepMixin",
     "MapItemSavedDataMixin"
   ],
   "client": [
+    "ItemInHandRendererEatMixin",
     "LoomScreenMixin",
     "ClientRecipeBookFilterMixin",
     "SoundEngineMixin",

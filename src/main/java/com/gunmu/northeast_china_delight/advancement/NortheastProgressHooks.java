@@ -33,6 +33,16 @@ public final class NortheastProgressHooks {
             public void onBrushed(ServerPlayer player) {
                 ModAdvancements.award(player, ModAdvancements.BRUSH, "brush");
             }
+
+            @Override
+            public void onVatFluid(ServerPlayer player) {
+                ModAdvancements.award(player, ModAdvancements.VAT_FLUID, "brew");
+            }
+
+            @Override
+            public void onPumpSeasoning(ServerPlayer player) {
+                ModAdvancements.award(player, ModAdvancements.PUMP_SEASONING, "pump");
+            }
         });
     }
 
