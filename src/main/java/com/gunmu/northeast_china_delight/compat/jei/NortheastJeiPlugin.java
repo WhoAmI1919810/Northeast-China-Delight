@@ -118,6 +118,8 @@ public class NortheastJeiPlugin implements IModPlugin {
                 Component.translatable("jei.northeast_china_delight.info.wood_ear"));
         registration.addItemStackInfo(new ItemStack(CrciItems.HAZEL_MUSHROOM.get()),
                 Component.translatable("jei.northeast_china_delight.info.hazel_mushroom"));
+        registration.addItemStackInfo(new ItemStack(CrciItems.HAZELNUT.get()),
+                Component.translatable("jei.northeast_china_delight.info.hazelnut"));
         registration.addItemStackInfo(new ItemStack(CrciItems.HAIRTAIL.get()),
                 Component.translatable("jei.northeast_china_delight.info.hairtail"));
         registration.addItemStackInfo(new ItemStack(CrciItems.OYSTER.get()),

@@ -33,7 +33,7 @@ public class WildWoodEarFeature extends Feature<NoneFeatureConfiguration>
     private static final int MAX_DEPTH = 40;
     /** 「是不是树」：原木上方这个范围里得有树叶 */
     private static final int LEAF_RADIUS = 3;
-    private static final int LEAF_HEIGHT = 8;
+    private static final int LEAF_HEIGHT = 14;
 
     public WildWoodEarFeature(Codec<NoneFeatureConfiguration> codec)
     {
