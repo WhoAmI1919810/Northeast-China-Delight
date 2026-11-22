@@ -17,7 +17,6 @@
         { "condition": "neoforge:loot_table_id", "loot_table_id": "minecraft:chests/village/village_armorer" },
         { "condition": "neoforge:loot_table_id", "loot_table_id": "minecraft:chests/village/village_cartographer" },
         { "condition": "neoforge:loot_table_id", "loot_table_id": "minecraft:chests/village/village_fletcher" },
-        { "condition": "neoforge:loot_table_id", "loot_table_id": "minecraft:chests/village/village_library" },
         { "condition": "neoforge:loot_table_id", "loot_table_id": "minecraft:chests/village/village_mason" },
         { "condition": "neoforge:loot_table_id", "loot_table_id": "minecraft:chests/village/village_shepherd" },
         { "condition": "neoforge:loot_table_id", "loot_table_id": "minecraft:chests/village/village_tannery" },
