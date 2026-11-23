@@ -12,6 +12,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
@@ -448,14 +449,15 @@ public class GrillCampfireBlock extends CampfireBlock {
             }
 
             int step = Math.max(1, totalTicks / MAX_PROGRESS);
-            if (level.getGameTime() % step != 0L) {
+            int currentTicks = Math.max(grill.cookTicks(slot), grill.progress(slot) * step);
+            int nextTicks = currentTicks + 1;
+            if (nextTicks < totalTicks) {
+                grill.setCookTicks(slot, nextTicks);
+                int progress = Math.min(MAX_PROGRESS - 1, (int) ((long) nextTicks * MAX_PROGRESS / totalTicks));
+                if (progress > grill.progress(slot)) {
+                    grill.setProgress(slot, progress);
+                }
                 highest = Math.max(highest, grill.progress(slot));
-                continue;
-            }
-            int progress = grill.progress(slot) + 1;
-            if (progress < MAX_PROGRESS) {
-                grill.setProgress(slot, progress);
-                highest = Math.max(highest, progress);
                 continue;
             }
 
@@ -488,9 +490,42 @@ public class GrillCampfireBlock extends CampfireBlock {
     }
 
     public static void install(Level level, BlockPos pos, BlockState campfire, CampfireBlockEntity oldFire) {
+        //? if <1.20.5 {
+        /*CompoundTag oldTag = oldFire.saveWithoutMetadata();*/
+        //?} else {
+        CompoundTag oldTag = oldFire.saveWithoutMetadata(level.registryAccess());
+        //?}
+        int[] oldCookingTimes = oldTag.getIntArray("CookingTimes");
+        int[] oldCookingTotalTimes = oldTag.getIntArray("CookingTotalTimes");
+
         NonNullList<ItemStack> carried = NonNullList.withSize(oldFire.getItems().size(), ItemStack.EMPTY);
+        int[] carriedTicks = new int[carried.size()];
+        int[] carriedProgress = new int[carried.size()];
+        int initialHighest = 0;
         for (int i = 0; i < carried.size(); i++) {
-            carried.set(i, oldFire.getItems().get(i).copy());
+            ItemStack stack = oldFire.getItems().get(i).copy();
+            carried.set(i, stack);
+            if (stack.isEmpty()) {
+                continue;
+            }
+            int elapsed = i < oldCookingTimes.length ? Math.max(0, oldCookingTimes[i]) : 0;
+            int oldTotal = i < oldCookingTotalTimes.length ? oldCookingTotalTimes[i] : 0;
+            GrillRecipes.Recipe grillRecipe = GrillRecipes.byInput(level.getRecipeManager(), stack);
+            int targetTotal;
+            if (grillRecipe != null) {
+                targetTotal = Math.max(1, grillRecipe.ticks());
+            } else {
+                CampfireCookingRecipe vanilla = vanillaCampfireRecipe(level, stack);
+                targetTotal = vanilla != null ? Math.max(1, vanilla.getCookingTime()) : Math.max(1, oldTotal);
+            }
+            int ticks = (oldTotal > 0 && oldTotal != targetTotal)
+                    ? (int) ((long) elapsed * targetTotal / oldTotal)
+                    : elapsed;
+            ticks = Math.min(Math.max(0, ticks), Math.max(0, targetTotal - 1));
+            int progress = Math.min(MAX_PROGRESS - 1, (int) ((long) ticks * MAX_PROGRESS / Math.max(1, targetTotal)));
+            carriedTicks[i] = ticks;
+            carriedProgress[i] = progress;
+            initialHighest = Math.max(initialHighest, progress);
         }
         oldFire.getItems().clear();
 
@@ -500,11 +535,11 @@ public class GrillCampfireBlock extends CampfireBlock {
                 .setValue(WATERLOGGED, campfire.getValue(WATERLOGGED))
                 .setValue(FACING, campfire.getValue(FACING))
                 .setValue(SOUL, campfire.is(Blocks.SOUL_CAMPFIRE))
-                .setValue(PROGRESS, 0);
+                .setValue(PROGRESS, initialHighest);
         level.setBlock(pos, grilled, 3);
 
         if (level.getBlockEntity(pos) instanceof GrillBlockEntity grill) {
-            grill.setItemsFrom(carried);
+            grill.setItemsFrom(carried, carriedTicks, carriedProgress);
             level.sendBlockUpdated(pos, grilled, grilled, 3);
             return;
         }

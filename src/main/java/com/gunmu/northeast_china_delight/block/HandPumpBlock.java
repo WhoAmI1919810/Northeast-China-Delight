@@ -199,7 +199,7 @@ public class HandPumpBlock extends FacingDecorBlock {
     /*@Override
     public InteractionResult use(BlockState state, Level level, BlockPos pos, Player player,
                                  InteractionHand hand, BlockHitResult hitResult) {
-        InteractionResult result = pump(player.getItemInHand(hand), level, base(state, pos), player, hand);
+        InteractionResult result = pump(state, player.getItemInHand(hand), level, base(state, pos), player, hand);
         return result == InteractionResult.PASS && hand == InteractionHand.MAIN_HAND
                 ? splash(state, level, pos, player)
                 : result;
@@ -208,7 +208,7 @@ public class HandPumpBlock extends FacingDecorBlock {
     @Override
     protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos,
                                               Player player, InteractionHand hand, BlockHitResult hitResult) {
-        InteractionResult result = pump(stack, level, base(state, pos), player, hand);
+        InteractionResult result = pump(state, stack, level, base(state, pos), player, hand);
         return result == InteractionResult.PASS
                 ? ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION
                 : ItemInteractionResult.sidedSuccess(level.isClientSide());
@@ -221,10 +221,8 @@ public class HandPumpBlock extends FacingDecorBlock {
     }
     //?}
 
-    private static InteractionResult pump(ItemStack held, Level level, BlockPos pos, Player player, InteractionHand hand) {
-        if (waterEvaporates(level)) {
-            return InteractionResult.PASS;
-        }
+    private static InteractionResult pump(BlockState state, ItemStack held, Level level, BlockPos pos, Player player,
+                                          InteractionHand hand) {
         ItemStack filled;
         if (held.is(Items.BUCKET)) {
             filled = new ItemStack(Items.WATER_BUCKET);
@@ -234,6 +232,12 @@ public class HandPumpBlock extends FacingDecorBlock {
             filled = waterBottle();
         } else {
             return InteractionResult.PASS;
+        }
+        if (waterEvaporates(level)) {
+            if (level instanceof ServerLevel server) {
+                evaporate(server, pos, state.getValue(FACING));
+            }
+            return InteractionResult.sidedSuccess(level.isClientSide);
         }
         if (!level.isClientSide) {
             Item used = held.getItem();
@@ -254,7 +258,8 @@ public class HandPumpBlock extends FacingDecorBlock {
         if (isContainer(player.getMainHandItem()) || isContainer(player.getOffhandItem())) {
             return InteractionResult.PASS;
         }
-        if (waterEvaporates(level)) {
+        if (waterEvaporates(level)
+                && (!player.getMainHandItem().isEmpty() || !player.getOffhandItem().isEmpty())) {
             return InteractionResult.PASS;
         }
         if (level instanceof ServerLevel server) {
@@ -266,6 +271,7 @@ public class HandPumpBlock extends FacingDecorBlock {
     /** 光压一下：出水嘴正前方是空大脸盆就优先装盆，否则看前下方；有容器就落一道水，没有就在槽口喷水花（右键和红石共用） */
     private static void pumpOnce(ServerLevel server, BlockPos pos, Direction facing, @Nullable Entity by) {
         if (waterEvaporates(server)) {
+            evaporate(server, pos, facing);
             return;
         }
         BlockPos target = pourInto(server, pos, facing, by);
@@ -356,9 +362,18 @@ public class HandPumpBlock extends FacingDecorBlock {
                 IFluidHandler.FluidAction.EXECUTE);
     }
 
-    /** 下界这类超热维度里水会蒸发，压水井不应产出水，也不应播放取水反馈。 */
+    /** 下界这类超热维度里水会蒸发，压水井不产出水，改为在出水口触发蒸发音效与烟雾粒子。 */
     private static boolean waterEvaporates(Level level) {
         return level.dimensionType().ultraWarm();
+    }
+
+    private static void evaporate(ServerLevel server, BlockPos pos, Direction facing) {
+        double x = pos.getX() + 0.5 + facing.getStepX() * MOUTH_FORWARD;
+        double y = pos.getY() + MOUTH_Y;
+        double z = pos.getZ() + 0.5 + facing.getStepZ() * MOUTH_FORWARD;
+        server.sendParticles(ParticleTypes.LARGE_SMOKE, x, y, z, 8, 0.15, 0.1, 0.15, 0.02);
+        server.playSound(null, pos, SoundEvents.FIRE_EXTINGUISH, SoundSource.BLOCKS,
+                0.5F, 2.6F + (server.random.nextFloat() - server.random.nextFloat()) * 0.8F);
     }
 
     /**

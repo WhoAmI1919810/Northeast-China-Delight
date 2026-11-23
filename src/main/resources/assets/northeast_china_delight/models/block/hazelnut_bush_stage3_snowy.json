@@ -1,5 +1,5 @@
 {
-  "ambientocclusion": false,
+  "ambientocclusion": true,
   "render_type": "minecraft:cutout",
   "textures": {
     "particle": "northeast_china_delight:block/hazelnut_bush_stage3",
