@@ -40,6 +40,7 @@ public class GrillBlockEntity extends BlockEntity {
     private final NonNullList<ItemStack> seasonings =
             NonNullList.withSize(SLOTS * SEASONINGS_PER_SLOT, ItemStack.EMPTY);
     private final int[] progress = new int[SLOTS];
+    private final int[] cookTicks = new int[SLOTS];
     private final ResourceLocation[] recipeIds = new ResourceLocation[SLOTS];
     private final GrillRecipes.Recipe[] resolvedRecipes = new GrillRecipes.Recipe[SLOTS];
     private final boolean[] recipesResolved = new boolean[SLOTS];
@@ -167,8 +168,24 @@ public class GrillBlockEntity extends BlockEntity {
     }
 
     public void setProgress(int slot, int value) {
+        if (value == 0 && this.cookTicks[slot] != 0) {
+            this.cookTicks[slot] = 0;
+            setChanged();
+        }
         if (this.progress[slot] != value) {
             this.progress[slot] = value;
+            setChanged();
+        }
+    }
+
+    public int cookTicks(int slot) {
+        return this.cookTicks[slot];
+    }
+
+    public void setCookTicks(int slot, int value) {
+        int clamped = Math.max(0, value);
+        if (this.cookTicks[slot] != clamped) {
+            this.cookTicks[slot] = clamped;
             setChanged();
         }
     }
@@ -180,6 +197,7 @@ public class GrillBlockEntity extends BlockEntity {
             this.seasonings.set(base + i, ItemStack.EMPTY);
         }
         this.progress[slot] = 0;
+        this.cookTicks[slot] = 0;
         this.recipeIds[slot] = null;
         this.resolvedRecipes[slot] = null;
         this.recipesResolved[slot] = false;
@@ -187,9 +205,22 @@ public class GrillBlockEntity extends BlockEntity {
     }
 
     public void setItemsFrom(List<ItemStack> source) {
+        setItemsFrom(source, null, null);
+    }
+
+    public void setItemsFrom(List<ItemStack> source, @Nullable int[] initialCookTicks, @Nullable int[] initialProgress) {
         for (int i = 0; i < this.items.size(); i++) {
             clearSlot(i);
-            this.items.set(i, i < source.size() ? source.get(i).copy() : ItemStack.EMPTY);
+            ItemStack stack = i < source.size() ? source.get(i).copy() : ItemStack.EMPTY;
+            this.items.set(i, stack);
+            if (!stack.isEmpty()) {
+                if (initialCookTicks != null && i < initialCookTicks.length) {
+                    this.cookTicks[i] = Math.max(0, initialCookTicks[i]);
+                }
+                if (initialProgress != null && i < initialProgress.length) {
+                    this.progress[i] = Math.max(0, initialProgress[i]);
+                }
+            }
         }
         setChanged();
     }
@@ -219,6 +250,11 @@ public class GrillBlockEntity extends BlockEntity {
             int[] saved = tag.getIntArray("GrillProgress");
             System.arraycopy(saved, 0, this.progress, 0, Math.min(saved.length, this.progress.length));
         }
+        Arrays.fill(this.cookTicks, 0);
+        if (tag.contains("GrillCookTicks")) {
+            int[] savedTicks = tag.getIntArray("GrillCookTicks");
+            System.arraycopy(savedTicks, 0, this.cookTicks, 0, Math.min(savedTicks.length, this.cookTicks.length));
+        }
         Arrays.fill(this.recipeIds, null);
         Arrays.fill(this.resolvedRecipes, null);
         Arrays.fill(this.recipesResolved, false);
@@ -247,6 +283,7 @@ public class GrillBlockEntity extends BlockEntity {
         DdNbt.saveAllItems(seasoningsTag, this.seasonings, true, registries);
         tag.put("Seasonings", seasoningsTag);
         tag.putIntArray("GrillProgress", this.progress);
+        tag.putIntArray("GrillCookTicks", this.cookTicks);
         ListTag ids = new ListTag();
         for (ResourceLocation recipeId : this.recipeIds) {
             ids.add(StringTag.valueOf(recipeId == null ? "" : recipeId.toString()));
