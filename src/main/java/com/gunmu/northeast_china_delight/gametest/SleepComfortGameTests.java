@@ -392,7 +392,9 @@ public final class SleepComfortGameTests
     public static void radiatorWarmthRequiresSuitableClimateAndVisibleRadiator(GameTestHelper helper)
     {
         ServerLevel level = helper.getLevel();
-        BlockPos playerPos = helper.absolutePos(new BlockPos(4, 3, 4));
+        // empty.nbt 为 5x5x5（相对坐标 0..4），1.21.1 会在 x=5 等外沿自动围屏障墙，
+        // 玩家和东侧暖气片都放在模板内部，避免暖气片上方撞到外围屏障。
+        BlockPos playerPos = helper.absolutePos(new BlockPos(2, 1, 2));
         BlockPos radiatorPos = playerPos.east(1);
         placeRadiator(level, radiatorPos);
 

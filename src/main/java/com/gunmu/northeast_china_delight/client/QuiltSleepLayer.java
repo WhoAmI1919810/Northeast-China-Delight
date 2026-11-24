@@ -63,7 +63,7 @@ public class QuiltSleepLayer extends RenderLayer<AbstractClientPlayer, PlayerMod
         pose.popPose();
     }
 
-    private static boolean hasVisibleQuilt(AbstractClientPlayer player)
+    public static boolean hasVisibleQuilt(AbstractClientPlayer player)
     {
         if (!player.isSleeping() || player.isInvisible())
         {
