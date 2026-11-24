@@ -20,6 +20,7 @@
     "MapItemSavedDataMixin"
   ],
   "client": [
+    "HumanoidArmorLayerQuiltMixin",
     "ItemInHandRendererEatMixin",
     "LoomScreenMixin",
     "SoundEngineMixin",
