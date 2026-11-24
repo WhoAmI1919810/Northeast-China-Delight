@@ -58,8 +58,11 @@ public final class VatRecipes {
     public static final int WHITE_VINEGAR_SERVINGS = 10;
     public static final int WATER_MB_PER_LEVEL = 1000;
     public static final int SERVING_MB = 250;
+    /** 大缸物理最大流体容量（3 层 × 1000 mB = 3000 mB），输入流体与产物共用同一容量口径 */
+    public static final int CAPACITY_MB = com.gunmu.northeast_china_delight.block.ModBlockStateProperties.VAT_MAX_WATER
+            * WATER_MB_PER_LEVEL;
     /** 白醋要喝的酸引水 = 一整缸（3 层 = 3000 mB） */
-    public static final int SOUR_WATER_MB = 3 * WATER_MB_PER_LEVEL;
+    public static final int SOUR_WATER_MB = CAPACITY_MB;
     public static final int FISH_SAUCE_FISH = 3;
     public static final int FISH_SAUCE_SALT = 6;
     public static final int FISH_SAUCE_SERVINGS = 1;

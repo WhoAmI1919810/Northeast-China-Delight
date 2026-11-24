@@ -250,18 +250,45 @@ public final class VatRecipe {
 
     }
 
-    public record Liquid(int waterMin, int waterMax, int sourWaterMb,
+    public record Liquid(int waterMin, int waterMax,
+                         @Nullable net.minecraft.world.level.material.Fluid inputFluid, int inputMb,
                          @Nullable net.minecraft.world.level.material.Fluid product,
                          int productMb, boolean productPerLayer,
-                         LiquidAfter waterAfter, LiquidAfter sourWaterAfter,
+                         LiquidAfter waterAfter, LiquidAfter inputAfter,
                          @Nullable net.minecraft.world.item.Item servingContainer,
                          @Nullable net.minecraft.world.item.Item servingItem) {
 
-        public static final Liquid NONE = new Liquid(0, 0, 0, null, 0, false,
+        public static final Liquid NONE = new Liquid(0, 0, null, 0, null, 0, false,
                 LiquidAfter.KEEP, LiquidAfter.KEEP, null, null);
 
         public boolean waterFits(int water) {
             return water >= this.waterMin && water <= this.waterMax;
+        }
+
+        public boolean requiresInputFluid() {
+            return this.inputFluid != null && this.inputMb > 0;
+        }
+
+        public boolean acceptsInputFluid(@Nullable net.minecraft.world.level.material.Fluid fluid) {
+            if (fluid == null) {
+                return false;
+            }
+            if (fluid.isSame(net.minecraft.world.level.material.Fluids.WATER)) {
+                return this.waterMax > 0;
+            }
+            return this.requiresInputFluid() && this.inputFluid.isSame(fluid);
+        }
+
+        /** 兼容旧调用：仅当输入流体是酸引水时返回所需 mB，否则返回 0 */
+        public int sourWaterMb() {
+            return this.requiresInputFluid()
+                    && this.inputFluid.isSame(com.gunmu.northeast_china_delight.fluid.ModFluids.sourWaterSource())
+                    ? this.inputMb : 0;
+        }
+
+        /** 兼容旧调用：等价于 {@link #inputAfter()} */
+        public LiquidAfter sourWaterAfter() {
+            return this.inputAfter;
         }
     }
 
@@ -538,18 +565,51 @@ public final class VatRecipe {
         return this.slots.get(slotIndex).matcher().test(stack);
     }
 
+    public boolean liquidFits(int water, @Nullable net.minecraft.world.level.material.Fluid inputFluid, int inputMb) {
+        if (!this.liquid.waterFits(water)) {
+            return false;
+        }
+        if (this.liquid.requiresInputFluid()) {
+            return inputFluid != null && this.liquid.inputFluid().isSame(inputFluid)
+                    && inputMb >= this.liquid.inputMb();
+        }
+        return inputFluid == null || inputMb <= 0;
+    }
+
     public boolean liquidFits(int water, int sourWaterMb) {
-        return this.liquid.waterFits(water) && sourWaterMb >= this.liquid.sourWaterMb();
+        return this.liquidFits(water,
+                sourWaterMb > 0 ? com.gunmu.northeast_china_delight.fluid.ModFluids.sourWaterSource() : null,
+                sourWaterMb);
     }
 
     /**
      * 这缸现在的液体还"救得回来"吗 —— 判断现在能不能继续往缸里投料。
      *
-     * <p>和 {@link #liquidFits} 的区别：这里只要求没有超上限的水、酸引水不少于配方要求。
-     * 于是"先放酱块后倒水""酿完酱只剩酱渣时先加谷物再倒水"这些玩法仍然成立。
+     * <p>和 {@link #liquidFits} 的区别：清水只要不超过上限即可，特殊输入流体只要当前没有装其它冲突液体即可
+     * （即便尚未凑齐所需 mB，也允许先投料再由管道或容器补液），于是"先放酱块后倒水"、"先投谷物后补酸引水"、
+     * 以及任意自定义流体连锁配方都成立。</p>
      */
+    public boolean canStillMatch(int water, @Nullable net.minecraft.world.level.material.Fluid inputFluid,
+                                 int inputMb) {
+        if (water > this.liquid.waterMax()) {
+            return false;
+        }
+        boolean hasInput = inputFluid != null && inputMb > 0;
+        if (this.liquid.requiresInputFluid()) {
+            return !hasInput || this.liquid.inputFluid().isSame(inputFluid);
+        }
+        return !hasInput;
+    }
+
     public boolean canStillMatch(int water, int sourWaterMb) {
-        return water <= this.liquid.waterMax() && sourWaterMb >= this.liquid.sourWaterMb();
+        return this.canStillMatch(water,
+                sourWaterMb > 0 ? com.gunmu.northeast_china_delight.fluid.ModFluids.sourWaterSource() : null,
+                sourWaterMb);
+    }
+
+    public boolean materialsReady(Counts counts, @Nullable net.minecraft.world.level.material.Fluid inputFluid,
+                                  int inputMb) {
+        return this.liquidFits(counts.water(), inputFluid, inputMb) && this.ingredientsReady(counts);
     }
 
     public boolean materialsReady(Counts counts, int sourWaterMb) {
@@ -683,19 +743,26 @@ public final class VatRecipe {
         }
 
         public Builder water(int min, int max, LiquidAfter waterAfter) {
-            this.liquid = new Liquid(min, max, 0, null, 0, false, waterAfter, LiquidAfter.KEEP, null, null);
+            this.liquid = new Liquid(min, max, null, 0, null, 0, false, waterAfter, LiquidAfter.KEEP, null, null);
+            return this;
+        }
+
+        public Builder inputFluid(@Nullable net.minecraft.world.level.material.Fluid fluid, int mb,
+                                  LiquidAfter inputAfter) {
+            this.liquid = new Liquid(0, 0, fluid != null && mb > 0 ? fluid : null, Math.max(0, mb),
+                    null, 0, false, LiquidAfter.KEEP, inputAfter, null, null);
             return this;
         }
 
         public Builder sourWater(int mb, LiquidAfter sourAfter) {
-            this.liquid = new Liquid(0, 0, mb, null, 0, false, LiquidAfter.KEEP, sourAfter, null, null);
-            return this;
+            return inputFluid(mb > 0 ? com.gunmu.northeast_china_delight.fluid.ModFluids.sourWaterSource() : null,
+                    mb, sourAfter);
         }
 
         public Builder product(net.minecraft.world.level.material.Fluid fluid, int mb, boolean perLayer) {
             Liquid old = this.liquid;
-            this.liquid = new Liquid(old.waterMin(), old.waterMax(), old.sourWaterMb(),
-                    fluid, mb, perLayer, old.waterAfter(), old.sourWaterAfter(),
+            this.liquid = new Liquid(old.waterMin(), old.waterMax(), old.inputFluid(), old.inputMb(),
+                    fluid, mb, perLayer, old.waterAfter(), old.inputAfter(),
                     old.servingContainer(), old.servingItem());
             return this;
         }
@@ -703,24 +770,24 @@ public final class VatRecipe {
         /** 用什么容器取这份液体，取出来变成什么物品。两个都给才算数 */
         public Builder serving(net.minecraft.world.item.Item container, net.minecraft.world.item.Item item) {
             Liquid old = this.liquid;
-            this.liquid = new Liquid(old.waterMin(), old.waterMax(), old.sourWaterMb(),
+            this.liquid = new Liquid(old.waterMin(), old.waterMax(), old.inputFluid(), old.inputMb(),
                     old.product(), old.productMb(), old.productPerLayer(),
-                    old.waterAfter(), old.sourWaterAfter(), container, item);
+                    old.waterAfter(), old.inputAfter(), container, item);
             return this;
         }
 
         public Builder clearWater() {
             Liquid old = this.liquid;
-            this.liquid = new Liquid(old.waterMin(), old.waterMax(), old.sourWaterMb(),
+            this.liquid = new Liquid(old.waterMin(), old.waterMax(), old.inputFluid(), old.inputMb(),
                     old.product(), old.productMb(), old.productPerLayer(),
-                    LiquidAfter.CLEAR, old.sourWaterAfter(),
+                    LiquidAfter.CLEAR, old.inputAfter(),
                     old.servingContainer(), old.servingItem());
             return this;
         }
 
         public Builder clearSourWater() {
             Liquid old = this.liquid;
-            this.liquid = new Liquid(old.waterMin(), old.waterMax(), old.sourWaterMb(),
+            this.liquid = new Liquid(old.waterMin(), old.waterMax(), old.inputFluid(), old.inputMb(),
                     old.product(), old.productMb(), old.productPerLayer(),
                     old.waterAfter(), LiquidAfter.CLEAR,
                     old.servingContainer(), old.servingItem());
@@ -729,7 +796,7 @@ public final class VatRecipe {
 
         public Builder waterBecomesSourWater() {
             Liquid old = this.liquid;
-            this.liquid = new Liquid(old.waterMin(), old.waterMax(), old.sourWaterMb(),
+            this.liquid = new Liquid(old.waterMin(), old.waterMax(), old.inputFluid(), old.inputMb(),
                     com.gunmu.northeast_china_delight.fluid.ModFluids.sourWaterSource(),
                     VatRecipes.WATER_MB_PER_LEVEL, true,
                     LiquidAfter.CLEAR, LiquidAfter.KEEP,

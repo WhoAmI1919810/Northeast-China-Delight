@@ -44,6 +44,19 @@ public final class VatBrewing {
         }
     }
 
+    private record AssumedWaterCounts(VatBlockEntity vat, int water) implements VatRecipe.Counts {
+
+        @Override
+        public int count(java.util.function.Predicate<ItemStack> matcher) {
+            return this.vat.count(matcher);
+        }
+
+        @Override
+        public int water() {
+            return this.water;
+        }
+    }
+
     private static boolean isSnowyBiome(VatBlockEntity vat) {
         var level = vat.getLevel();
         if (level == null) {
@@ -52,8 +65,30 @@ public final class VatBrewing {
         return level.getBiome(vat.getBlockPos()).value().getBaseTemperature() < 0.15F;
     }
 
-    private static boolean hasBottledProduct(VatBlockEntity vat) {
-        return vat.hasBottledProduct();
+    /**
+     * 当前参与配方匹配的非清水液体：
+     * 已完成且还装着成品液体时取成品流体（用于判断是否允许原地连锁衔接下游配方），
+     * 否则取输入槽里的非清水流体（酸引水或数据包自定义的任意输入流体）。
+     */
+    @Nullable
+    private static net.minecraft.world.level.material.Fluid currentNonWaterFluid(VatBlockEntity vat) {
+        if (vat.hasFinishedProductLiquid()) {
+            net.minecraft.world.level.material.Fluid product = VatRecipes.productOf(vat);
+            return product != null && !product.isSame(net.minecraft.world.level.material.Fluids.WATER)
+                    && vat.productMb(product) > 0 ? product : null;
+        }
+        return vat.nonWaterInputFluid();
+    }
+
+    private static int currentNonWaterMb(VatBlockEntity vat,
+                                         @Nullable net.minecraft.world.level.material.Fluid fluid) {
+        if (fluid == null) {
+            return 0;
+        }
+        if (vat.hasFinishedProductLiquid()) {
+            return vat.productMb(fluid);
+        }
+        return vat.inputMb(fluid);
     }
 
     @Nullable
@@ -64,13 +99,12 @@ public final class VatBrewing {
         VatRecipe.Counts now = counts(vat, null);
         VatRecipe.Counts after = counts(vat, stack);
         int water = now.water();
-        int sour = vat.sourWaterMb();
-        boolean bottled = hasBottledProduct(vat);
-        boolean sourPot = sour > 0;
+        net.minecraft.world.level.material.Fluid nonWater = currentNonWaterFluid(vat);
+        int nonWaterMb = currentNonWaterMb(vat, nonWater);
         // 正在发酵的那一缸只收"同一条配方"的料（泡菜中途还能再塞菜，但不许中途改酿大酱）。
         // 揭开封口会解除绑定（Vat.interrupt），那之后就不受这条限制，可以补料改做别的。
         // 注意这里必须排掉"已经做完"的缸：完成时 PROGRESS 会写到 MAX_PROGRESS，
-        // 把 FERMENTED 的缸也算成"发酵中"的话，二次发酵（泡菜酸引水→白醋、酱渣→醋）就永远投不进料了。
+        // 把 FERMENTED 的缸也算成"发酵中"的话，二次发酵（泡菜酸引水→白醋、酱渣→醋、自定义流体连锁）就永远投不进料了。
         // 封口后到第一次 tick 之间 PROGRESS 还是 0，但配方已经绑定；必须把 recipeId 也算进去，
         // 否则这段窗口里还能塞进另一条配方的材料。
         boolean processing = !vat.isFermented() && (vat.recipeId() != null
@@ -80,28 +114,19 @@ public final class VatBrewing {
         int[] bestScore = null;
         for (VatRecipe recipe : VatRecipes.all(vat.getLevel())) {
             int slot = recipe.findSlotFor(stack, now);
-            if (slot < 0 || !recipe.canStillMatch(water, sour)) {
+            if (slot < 0 || !recipe.canStillMatch(water, nonWater, nonWaterMb)) {
                 continue;
             }
-            if (sourPot && recipe.liquid().sourWaterMb() <= 0) {
+            if (vat.isFermented() && isCurrent(vat, recipe)) {
                 continue;
             }
-            // 成品液体还没取空：先取液体，别往里加料，否则这缸液体会取不出来
-            if (bottled) {
+            if (vat.isFermented() && !continuationFits(vat, recipe, now, nonWater, nonWaterMb)) {
                 continue;
             }
-            if (vat.isFermented() && (vat.recipeId() != null
-                    ? recipe.id().equals(vat.recipeId()) : recipe.kind() == vat.kind())) {
+            if (processing && !isCurrent(vat, recipe)) {
                 continue;
             }
-            if (vat.isFermented() && !continuationFits(vat, recipe, now)) {
-                continue;
-            }
-            if (processing && (vat.recipeId() != null
-                    ? !recipe.id().equals(vat.recipeId()) : recipe.kind() != vat.kind())) {
-                continue;
-            }
-            int[] score = score(recipe, after, sour, vat);
+            int[] score = score(recipe, after, nonWater, nonWaterMb, vat);
             if (bestScore == null || better(score, bestScore)) {
                 best = recipe;
                 bestScore = score;
@@ -115,13 +140,14 @@ public final class VatBrewing {
      */
     public static boolean canContinueWithWater(VatBlockEntity vat) {
         if (!vat.isFermented() || vat.hasMissingUnfinishedRecipe()
-                || hasBottledProduct(vat) || vat.sourWaterMb() > 0) {
+                || vat.hasFinishedProductLiquid() || vat.nonWaterInputMb() > 0) {
             return false;
         }
         VatRecipe.Counts now = counts(vat, null);
         for (VatRecipe recipe : VatRecipes.all(vat.getLevel())) {
             if (isCurrent(vat, recipe) || recipe.liquid().waterMax() <= now.water()
-                    || !recipe.canStillMatch(now.water(), 0) || !continuationFits(vat, recipe, now)) {
+                    || !recipe.canStillMatch(now.water(), null, 0)
+                    || !continuationFits(vat, recipe, now, null, 0)) {
                 continue;
             }
             return true;
@@ -129,14 +155,82 @@ public final class VatBrewing {
         return false;
     }
 
+    /**
+     * 数据驱动的流体输入上限查询（mB）：不写死任何流体名，完全按当前已加载的配方表推导。
+     *
+     * <p>返回在当前缸内状态（已有固体、是否二次发酵、是否已盖布）下，{@code fluid} 允许灌入的最高目标总量
+     * （范围 {@code 0 .. VatRecipes.CAPACITY_MB}）；若无任何兼容配方接收该流体或存在混液冲突则返回 0。</p>
+     */
+    public static int maxFluidInputMb(VatBlockEntity vat,
+                                      @Nullable net.minecraft.world.level.material.Fluid fluid) {
+        if (fluid == null || fluid.isSame(net.minecraft.world.level.material.Fluids.EMPTY)
+                || vat.getLevel() == null || vat.hasMissingUnfinishedRecipe()) {
+            return 0;
+        }
+        // 已完成且还有未取走的成品液体 → 成品态（只出不进）
+        if (vat.hasFinishedProductLiquid()) {
+            return 0;
+        }
+        // 已有另一种输入液体时绝不混液
+        if (vat.inputMb() > 0 && vat.inputFluid() != null && !vat.inputFluid().isSame(fluid)) {
+            return 0;
+        }
+        boolean isWater = fluid.isSame(net.minecraft.world.level.material.Fluids.WATER);
+        VatRecipe.Counts now = counts(vat, null);
+        List<ItemStack> existing = vat.contentSnapshot();
+        boolean hasSolids = !existing.isEmpty();
+
+        int maxMb = 0;
+        for (VatRecipe recipe : VatRecipes.all(vat.getLevel())) {
+            if (!recipe.liquid().acceptsInputFluid(fluid)) {
+                continue;
+            }
+            if (vat.isCovered() && !sealMatches(vat, recipe)) {
+                continue;
+            }
+            VatRecipe.Counts fitCounts = isWater
+                    ? new AssumedWaterCounts(vat, Math.max(now.water(), recipe.liquid().waterMax()))
+                    : now;
+            if (vat.isFermented()) {
+                if (isCurrent(vat, recipe) || !continuationFits(vat, recipe, fitCounts, null, 0)) {
+                    continue;
+                }
+            } else if (hasSolids && !allExistingFit(recipe, existing, fitCounts)) {
+                continue;
+            }
+            int recipeCap = isWater
+                    ? recipe.liquid().waterMax() * VatRecipes.WATER_MB_PER_LEVEL
+                    : recipe.liquid().inputMb();
+            if (recipeCap > maxMb) {
+                maxMb = recipeCap;
+            }
+        }
+        return Math.min(VatRecipes.CAPACITY_MB, maxMb);
+    }
+
+    private static boolean allExistingFit(VatRecipe recipe, List<ItemStack> existing, VatRecipe.Counts counts) {
+        for (ItemStack content : existing) {
+            if (!fitsExisting(recipe, content, counts)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
     public static boolean isCurrent(VatBlockEntity vat, VatRecipe recipe) {
         return vat.recipeId() != null
                 ? recipe.id().equals(vat.recipeId()) : recipe.kind() == vat.kind();
     }
 
-    /** 缸里现有的固体或酸引水，都能被这条配方当作原料，且没有超出数量上限。 */
-    private static boolean continuationFits(VatBlockEntity vat, VatRecipe recipe, VatRecipe.Counts counts) {
-        boolean matched = vat.sourWaterMb() > 0 && recipe.liquid().sourWaterMb() > 0;
+    /** 缸里现有的固体或上一道工序留下的成品流体，都能被这条配方当作原料，且没有超出数量上限。 */
+    private static boolean continuationFits(VatBlockEntity vat, VatRecipe recipe, VatRecipe.Counts counts,
+                                            @Nullable net.minecraft.world.level.material.Fluid nonWater,
+                                            int nonWaterMb) {
+        boolean hasNonWater = nonWater != null && nonWaterMb > 0;
+        boolean matched = hasNonWater && recipe.liquid().acceptsInputFluid(nonWater);
+        if (hasNonWater && !matched) {
+            return false;
+        }
         for (ItemStack content : vat.contentSnapshot()) {
             if (!fitsExisting(recipe, content, counts)) {
                 return false;
@@ -165,13 +259,13 @@ public final class VatBrewing {
         if (vat.hasMissingUnfinishedRecipe()) {
             return null;
         }
-        // 上一道工序的成品还没取完时，不允许开始下一道工序：
-        // 否则新配方会消耗原料，而 addProduct 又因为缸里已有另一种液体而拒绝写入，成品直接丢失。
-        if (vat.hasBottledProduct()) {
+        // 未完成态不应带着成品液开工；已完成态则交给下面的 continuationFits 判定是否属于合法流体连锁配方。
+        if (!vat.isFermented() && vat.hasBottledProduct()) {
             return null;
         }
         VatRecipe.Counts counts = counts(vat, null);
-        int sour = vat.sourWaterMb();
+        net.minecraft.world.level.material.Fluid nonWater = currentNonWaterFluid(vat);
+        int nonWaterMb = currentNonWaterMb(vat, nonWater);
         VatRecipe best = null;
         int[] bestScore = null;
         for (VatRecipe recipe : VatRecipes.all(vat.getLevel())) {
@@ -180,19 +274,17 @@ public final class VatBrewing {
                     && !recipe.id().equals(vat.recipeId())) {
                 continue;
             }
-            if (vat.isFermented() && (isCurrent(vat, recipe) || !continuationFits(vat, recipe, counts))) {
+            if (vat.isFermented()
+                    && (isCurrent(vat, recipe) || !continuationFits(vat, recipe, counts, nonWater, nonWaterMb))) {
                 continue;
             }
-            if (!recipe.materialsReady(counts, sour) || !sealMatches(vat, recipe)) {
+            if (!recipe.materialsReady(counts, nonWater, nonWaterMb) || !sealMatches(vat, recipe)) {
                 continue;
             }
             if (recipe.requiresSnowyBiome() && !isSnowyBiome(vat)) {
                 continue;
             }
-            if (sour > 0 && recipe.liquid().sourWaterMb() <= 0) {
-                continue;
-            }
-            int[] score = score(recipe, counts, sour, vat);
+            int[] score = score(recipe, counts, nonWater, nonWaterMb, vat);
             if (bestScore == null || better(score, bestScore)) {
                 best = recipe;
                 bestScore = score;
@@ -203,14 +295,21 @@ public final class VatBrewing {
 
     /** 料、液体、封口都齐了，只差不在会下雪的群系（冻梨、冻豆腐）：封口时换一句提示，别说成"材料没凑齐" */
     public static boolean onlyNeedsSnowyBiome(VatBlockEntity vat) {
-        if (vat.hasMissingUnfinishedRecipe() || vat.hasBottledProduct() || isSnowyBiome(vat)) {
+        if (vat.hasMissingUnfinishedRecipe() || (!vat.isFermented() && vat.hasBottledProduct())
+                || isSnowyBiome(vat)) {
             return false;
         }
         VatRecipe.Counts counts = counts(vat, null);
-        int sour = vat.sourWaterMb();
+        net.minecraft.world.level.material.Fluid nonWater = currentNonWaterFluid(vat);
+        int nonWaterMb = currentNonWaterMb(vat, nonWater);
         for (VatRecipe recipe : VatRecipes.all(vat.getLevel())) {
-            if (recipe.requiresSnowyBiome() && recipe.materialsReady(counts, sour) && sealMatches(vat, recipe)
-                    && (sour <= 0 || recipe.liquid().sourWaterMb() > 0)) {
+            if (vat.isFermented()
+                    && (isCurrent(vat, recipe) || !continuationFits(vat, recipe, counts, nonWater, nonWaterMb))) {
+                continue;
+            }
+            if (recipe.requiresSnowyBiome()
+                    && recipe.materialsReady(counts, nonWater, nonWaterMb)
+                    && sealMatches(vat, recipe)) {
                 return true;
             }
         }
@@ -223,17 +322,15 @@ public final class VatBrewing {
             return null;
         }
         VatRecipe.Counts counts = counts(vat, null);
-        int sour = vat.sourWaterMb();
+        net.minecraft.world.level.material.Fluid nonWater = currentNonWaterFluid(vat);
+        int nonWaterMb = currentNonWaterMb(vat, nonWater);
         VatRecipe best = null;
         int[] bestScore = null;
         for (VatRecipe recipe : VatRecipes.all(vat.getLevel())) {
-            if (!recipe.canStillMatch(counts.water(), sour)) {
+            if (!recipe.canStillMatch(counts.water(), nonWater, nonWaterMb)) {
                 continue;
             }
-            if (sour > 0 && recipe.liquid().sourWaterMb() <= 0) {
-                continue;
-            }
-            int[] score = score(recipe, counts, sour, vat);
+            int[] score = score(recipe, counts, nonWater, nonWaterMb, vat);
             if (bestScore == null || better(score, bestScore)) {
                 best = recipe;
                 bestScore = score;
@@ -248,40 +345,40 @@ public final class VatBrewing {
      * <p>默认就是缸现在认的那条（{@link #current}）：先盖布、后倒水这种玩法靠的就是它。但「一缸两吃」会卡在旧
      * kind 上 —— 大酱 / 酱油取空液体、只剩酱渣时加水加谷物，缸里其实已经是醋的料，可 kind 还是 PASTE，
      * {@link #current} 里 sticky 压过满足的格子数，封口这一关只认地毯，粗布毯放不上去，缸永远转不到醋。
-     * 所以当前配方不肯收这个封口物时，再找一条「材料都齐、只差封口」的配方。
+     * 所以当前配方不肯收这个封口物时，再找一条「材料都齐、只差封口」的配方。</p>
      */
     @Nullable
     public static VatRecipe sealRecipe(VatBlockEntity vat, ItemStack stack) {
         if (vat.hasMissingUnfinishedRecipe()) {
             return null;
         }
-        // 成品液体没取完时不能封口开工；先把液体装走，再继续下一道工序。
-        if (vat.hasBottledProduct()) {
+        if (!vat.isFermented() && vat.hasBottledProduct()) {
             return null;
         }
-        VatRecipe now = current(vat);
-        if (now != null && acceptsSeal(now, stack)) {
-            return now;
-        }
         VatRecipe.Counts counts = counts(vat, null);
-        int sour = vat.sourWaterMb();
+        net.minecraft.world.level.material.Fluid nonWater = currentNonWaterFluid(vat);
+        int nonWaterMb = currentNonWaterMb(vat, nonWater);
+        if (!vat.isFermented()) {
+            VatRecipe now = current(vat);
+            if (now != null && acceptsSeal(now, stack)) {
+                return now;
+            }
+        }
         VatRecipe best = null;
         int[] bestScore = null;
         for (VatRecipe recipe : VatRecipes.all(vat.getLevel())) {
             if (!acceptsSeal(recipe, stack) || !recipe.ingredientsReady(counts)
-                    || !recipe.canStillMatch(counts.water(), sour)) {
+                    || !recipe.canStillMatch(counts.water(), nonWater, nonWaterMb)) {
                 continue;
             }
-            if (vat.isFermented() && (isCurrent(vat, recipe) || !continuationFits(vat, recipe, counts))) {
+            if (vat.isFermented()
+                    && (isCurrent(vat, recipe) || !continuationFits(vat, recipe, counts, nonWater, nonWaterMb))) {
                 continue;
             }
             if (recipe.requiresSnowyBiome() && !isSnowyBiome(vat)) {
                 continue;
             }
-            if (sour > 0 && recipe.liquid().sourWaterMb() <= 0) {
-                continue;
-            }
-            int[] score = score(recipe, counts, sour, vat);
+            int[] score = score(recipe, counts, nonWater, nonWaterMb, vat);
             if (bestScore == null || better(score, bestScore)) {
                 best = recipe;
                 bestScore = score;
@@ -334,13 +431,14 @@ public final class VatBrewing {
      * 泡菜缸里加了辣椒酱之后，泡菜那条配方立刻就"能开工了"，
      * 但玩家要的显然是继续往辣白菜那条路上走 —— 所以谁更"贴切"优先于谁"现在就能开工"。
      */
-    private static int[] score(VatRecipe recipe, VatRecipe.Counts counts, int sourWaterMb,
+    private static int[] score(VatRecipe recipe, VatRecipe.Counts counts,
+                               @Nullable net.minecraft.world.level.material.Fluid nonWater, int nonWaterMb,
                                VatBlockEntity vat) {
-        boolean ready = recipe.materialsReady(counts, sourWaterMb);
+        boolean ready = recipe.materialsReady(counts, nonWater, nonWaterMb);
         int satisfied = recipe.satisfiedSlots(counts);
         int sticky = vat.recipeId() != null ? (recipe.id().equals(vat.recipeId()) ? 1 : 0)
                 : (recipe.kind() == vat.kind() ? 1 : 0);
-        int liquid = recipe.liquidFits(counts.water(), sourWaterMb) ? 1 : 0;
+        int liquid = recipe.liquidFits(counts.water(), nonWater, nonWaterMb) ? 1 : 0;
         int exactMatch = ready && recipe.allSlotsExact(counts) ? 1 : 0;
         return new int[] { sticky, satisfied, exactMatch, ready ? 1 : 0, liquid, -recipe.minimumTotal(counts),
                 recipe.priority() };
@@ -367,10 +465,13 @@ public final class VatBrewing {
             case KEEP -> {
             }
         }
-        switch (liquid.sourWaterAfter()) {
-            case CLEAR -> vat.setSourWaterMb(0);
-            case DRAIN_REQUIRED -> vat.setSourWaterMb(Math.max(0, vat.sourWaterMb() - liquid.sourWaterMb()));
-            case KEEP -> {
+        if (liquid.requiresInputFluid()) {
+            switch (liquid.inputAfter()) {
+                case CLEAR -> vat.setInputFluid(null, 0);
+                case DRAIN_REQUIRED -> vat.setInputFluid(liquid.inputFluid(),
+                        Math.max(0, vat.inputMb(liquid.inputFluid()) - liquid.inputMb()));
+                case KEEP -> {
+                }
             }
         }
 
@@ -450,10 +551,12 @@ public final class VatBrewing {
                 }
             }
         }
-        if (vat.sourWaterMb() >= VatRecipes.SERVING_MB
-                && held.is(net.minecraft.world.item.Items.GLASS_BOTTLE)
-                && vat.takeOneServing(com.gunmu.northeast_china_delight.fluid.ModFluids.sourWaterSource())) {
-            return new ItemStack(com.gunmu.northeast_china_delight.item.ModItems.SOUR_WATER.get());
+        net.minecraft.world.level.material.Fluid input = vat.nonWaterInputFluid();
+        if (input != null && vat.inputMb(input) >= VatRecipes.SERVING_MB) {
+            VatRecipes.Serving serving = VatRecipes.servingOf(input);
+            if (serving != null && held.is(serving.container()) && vat.takeInputServing(input)) {
+                return new ItemStack(serving.item());
+            }
         }
         return null;
     }

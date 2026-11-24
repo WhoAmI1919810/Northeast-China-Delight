@@ -61,12 +61,27 @@ public enum VatComponentProvider implements IBlockComponentProvider {
         IElementHelper helper = IElementHelper.get();
 
         List<ItemStack> contents = vat.contents();
-        if (kind == VatRecipes.Kind.NONE && water <= 0 && contents.isEmpty()
-                && !vat.isPressed() && !vat.isCovered()) {
+        int waterMb = vat.waterMb();
+        net.minecraft.world.level.material.Fluid nonWaterInput = vat.nonWaterInputFluid();
+        int nonWaterMb = vat.nonWaterInputMb();
+        if (kind == VatRecipes.Kind.NONE && water <= 0 && waterMb <= 0 && nonWaterMb <= 0
+                && contents.isEmpty() && !vat.isPressed() && !vat.isCovered()) {
             return;
         }
 
-        if (water > 0) {
+        if (waterMb > 0) {
+            if (waterMb % VatRecipes.WATER_MB_PER_LEVEL == 0) {
+                tooltip.add(Component.translatable("jade.northeast_china_delight.vat.water",
+                        vat.waterLayers(), ModBlockStateProperties.VAT_MAX_WATER));
+            } else {
+                tooltip.add(Component.translatable("jade.northeast_china_delight.vat.water_mb",
+                        vat.waterLayers(), ModBlockStateProperties.VAT_MAX_WATER,
+                        waterMb, VatRecipes.CAPACITY_MB));
+            }
+        } else if (nonWaterInput != null && nonWaterMb > 0) {
+            tooltip.add(Component.translatable("jade.northeast_china_delight.vat.liquid_mb",
+                    nonWaterInput.getFluidType().getDescription(), nonWaterMb, VatRecipes.CAPACITY_MB));
+        } else if (water > 0) {
             tooltip.add(Component.translatable("jade.northeast_china_delight.vat.water", water,
                     ModBlockStateProperties.VAT_MAX_WATER));
         }

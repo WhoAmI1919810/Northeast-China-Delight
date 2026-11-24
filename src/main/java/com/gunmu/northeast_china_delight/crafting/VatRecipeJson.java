@@ -89,13 +89,34 @@ public final class VatRecipeJson {
         }
         builder.water(waterMin, waterMax,
                 enumValue(VatRecipe.LiquidAfter.class, GsonHelper.getAsString(liquid, "water_after", "KEEP")));
-        if (liquid.has("sour_water_mb")) {
-            int sourWaterMb = GsonHelper.getAsInt(liquid, "sour_water_mb");
-            if (waterMax != 0 || sourWaterMb < 0 || sourWaterMb > 3000) {
-                throw new JsonParseException("酸引水配方不能同时要求清水，且用量必须在 0 到 3000 mB 之间");
+        boolean hasInputFluid = liquid.has("input_fluid") || liquid.has("input_mb");
+        boolean hasSourWater = liquid.has("sour_water_mb");
+        if (hasInputFluid && hasSourWater) {
+            throw new JsonParseException("大缸配方不能同时写 input_fluid 和 sour_water_mb");
+        }
+        if (hasInputFluid) {
+            if (!liquid.has("input_fluid") || !liquid.has("input_mb")) {
+                throw new JsonParseException("自定义输入流体需同时提供 input_fluid 和 input_mb");
             }
-            builder.sourWater(sourWaterMb,
-                    enumValue(VatRecipe.LiquidAfter.class, GsonHelper.getAsString(liquid, "sour_water_after", "KEEP")));
+            net.minecraft.world.level.material.Fluid inputFluid = storableFluid(
+                    GsonHelper.getAsString(liquid, "input_fluid"), "输入流体");
+            int inputMb = GsonHelper.getAsInt(liquid, "input_mb");
+            if (waterMax != 0 || inputMb <= 0 || inputMb > VatRecipes.CAPACITY_MB) {
+                throw new JsonParseException("输入流体配方不能同时要求清水，且用量必须在 1 到 "
+                        + VatRecipes.CAPACITY_MB + " mB 之间");
+            }
+            builder.inputFluid(inputFluid, inputMb,
+                    enumValue(VatRecipe.LiquidAfter.class, GsonHelper.getAsString(liquid, "input_after", "KEEP")));
+        } else if (hasSourWater) {
+            int sourWaterMb = GsonHelper.getAsInt(liquid, "sour_water_mb");
+            if (waterMax != 0 || sourWaterMb < 0 || sourWaterMb > VatRecipes.CAPACITY_MB) {
+                throw new JsonParseException("酸引水配方不能同时要求清水，且用量必须在 0 到 "
+                        + VatRecipes.CAPACITY_MB + " mB 之间");
+            }
+            if (sourWaterMb > 0) {
+                builder.sourWater(sourWaterMb,
+                        enumValue(VatRecipe.LiquidAfter.class, GsonHelper.getAsString(liquid, "sour_water_after", "KEEP")));
+            }
         }
         if (liquid.has("product")) {
             net.minecraft.world.level.material.Fluid product = productFluid(GsonHelper.getAsString(liquid, "product"));
@@ -104,7 +125,7 @@ public final class VatRecipeJson {
             // 但数据包可以产出别的流体（比如 3000 mB 的茶），所以这里按缸的实际容量卡，不按瓶子份数卡
             if (productMb <= 0
                     || (long) productMb * (GsonHelper.getAsBoolean(liquid, "product_per_layer", false)
-                    ? Math.max(1, waterMax) : 1) > VatRecipes.SOUR_WATER_MB) {
+                    ? Math.max(1, waterMax) : 1) > VatRecipes.CAPACITY_MB) {
                 throw new JsonParseException("大缸产物需是可存放的液体，且总量不得超过缸容量");
             }
             builder.product(product, productMb,
@@ -357,16 +378,20 @@ public final class VatRecipeJson {
                 .orElseThrow(() -> new JsonParseException("不存在的物品：" + key));
     }
 
-    /**
-     * 产物液体。新配方直接写流体 id（{@code "northeast_china_delight:soy_sauce"}），
-     * 旧数据包里写的是枚举名（{@code "SOY_SAUCE"}），两种都认：没有冒号的按旧枚举名翻译，
-     * 带冒号的按流体 id 去注册表里找。清水不是成品液体，写了也算错。
-     */
     private static net.minecraft.world.level.material.Fluid productFluid(String value) {
+        return storableFluid(value, "产物");
+    }
+
+    /**
+     * 产物 / 自定义输入液体。新配方直接写流体 id（{@code "northeast_china_delight:soy_sauce"}），
+     * 旧数据包里写的是枚举名（{@code "SOY_SAUCE"}），两种都认：没有冒号的按旧枚举名翻译，
+     * 带冒号的按流体 id 去注册表里找。清水走 water_min/water_max，不能写在这里。
+     */
+    private static net.minecraft.world.level.material.Fluid storableFluid(String value, String role) {
         if (!value.contains(":")) {
             net.minecraft.world.level.material.Fluid legacy = enumValue(VatRecipe.Fluid.class, value).resolve();
             if (legacy == null) {
-                throw new JsonParseException("大缸产物不能是清水：" + value);
+                throw new JsonParseException("大缸" + role + "不能是清水：" + value);
             }
             return legacy;
         }
@@ -375,7 +400,7 @@ public final class VatRecipeJson {
                 .orElseThrow(() -> new JsonParseException("不存在的流体：" + key));
         if (fluid.isSame(net.minecraft.world.level.material.Fluids.EMPTY)
                 || fluid.isSame(net.minecraft.world.level.material.Fluids.WATER)) {
-            throw new JsonParseException("大缸产物需是可存放的液体：" + key);
+            throw new JsonParseException("大缸" + role + "需是可存放的非清水液体：" + key);
         }
         return fluid;
     }
