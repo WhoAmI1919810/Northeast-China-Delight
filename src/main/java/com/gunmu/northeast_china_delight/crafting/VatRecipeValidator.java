@@ -74,6 +74,11 @@ public final class VatRecipeValidator {
             problems.add("配方 " + recipe.id() + " 的水位区间反了："
                     + recipe.liquid().waterMin() + " ~ " + recipe.liquid().waterMax());
         }
+        if (recipe.liquid().requiresInputFluid()
+                && (recipe.liquid().waterMax() > 0 || recipe.liquid().inputMb() > VatRecipes.CAPACITY_MB)) {
+            problems.add("配方 " + recipe.id() + " 的输入流体配置不合法（不能同时要求清水，且用量不能超过 "
+                    + VatRecipes.CAPACITY_MB + " mB）");
+        }
         int[] blank = new int[recipe.slots().size()];
         for (int i = 0; i < recipe.slots().size(); i++) {
             VatRecipe.Slot slot = recipe.slots().get(i);
@@ -106,7 +111,7 @@ public final class VatRecipeValidator {
         }
         int rows = (recipe.seal() == VatRecipe.Seal.NONE ? 0 : 1)
                 + layerRows(seasoning) + layerRows(primary)
-                + (recipe.liquid().waterMin() > 0 || recipe.liquid().sourWaterMb() > 0 ? 1 : 0);
+                + (recipe.liquid().waterMin() > 0 || recipe.liquid().requiresInputFluid() ? 1 : 0);
         if (rows > MAX_ROWS) {
             problems.add("配方 " + recipe.id() + " 在 JEI 里要占 " + rows + " 行，超过一页的 "
                     + MAX_ROWS + " 行（把分类画布加大，或者拆配方）");
@@ -139,7 +144,7 @@ public final class VatRecipeValidator {
         for (int level : levelsOf(recipe)) {
             int[] counts = recipe.displayedCounts(level);
             VatRecipe.Counts view = new VatRecipe.AssumedCounts(level, counts, recipe);
-            if (!recipe.materialsReady(view, recipe.liquid().sourWaterMb())) {
+            if (!recipe.materialsReady(view, recipe.liquid().inputFluid(), recipe.liquid().inputMb())) {
                 problems.add("配方 " + recipe.id() + " 在 " + level + " 层水时按规则算出来的份数是 "
                         + Arrays.toString(counts) + "，照这个数投料开不了工（JEI 上会写错份数）");
             }

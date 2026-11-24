@@ -125,9 +125,19 @@ public class VatRenderer implements BlockEntityRenderer<VatBlockEntity> {
             int amount = product == null ? 0 : vat.productMb(product);
             // 酸引水的水面由方块状态里的 water_level 模型画，这里再画会叠出两层
             if (product != null && amount > 0 && !product.isSame(ModFluids.sourWaterSource())) {
-                float ratio = amount / (float) capacityOf(product);
+                float ratio = Mth.clamp(amount / (float) capacityOf(product), 0.0F, 1.0F);
                 float fluidY = 0.10F + 0.72F * ratio;
                 renderFluidSurface(pose, buffer, product, fluidY, light);
+                liquidSurfaceY = Math.max(liquidSurfaceY, fluidY);
+            }
+        } else {
+            // 清水和酸引水由方块状态 water_level 画；其它数据包自定义输入流体直接按流体自身贴图画液面
+            net.minecraft.world.level.material.Fluid input = vat.inputFluid();
+            int amount = vat.inputMb();
+            if (input != null && amount > 0 && !vat.usesWaterLevelModel()) {
+                float ratio = Mth.clamp(amount / (float) VatRecipes.CAPACITY_MB, 0.0F, 1.0F);
+                float fluidY = 0.10F + 0.72F * ratio;
+                renderFluidSurface(pose, buffer, input, fluidY, light);
                 liquidSurfaceY = Math.max(liquidSurfaceY, fluidY);
             }
         }

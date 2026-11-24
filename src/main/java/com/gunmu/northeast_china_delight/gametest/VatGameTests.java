@@ -45,9 +45,11 @@ import net.minecraftforge.gametest.PrefixGameTestTemplate;
 /*import net.neoforged.neoforge.gametest.PrefixGameTestTemplate;
 *///?}
 //? if <1.20.2 {
+import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 //?} else {
-/*import net.neoforged.neoforge.fluids.capability.IFluidHandler;
+/*import net.neoforged.neoforge.fluids.FluidStack;
+import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 *///?}
 
 import java.util.List;
@@ -1235,6 +1237,336 @@ public final class VatGameTests {
         BlockState done = idle.setValue(Vat.FERMENTED, true);
         if (done.getCollisionShape(level, pos).max(Direction.Axis.Y, 0.5, 0.5) < 0.99) {
             helper.fail("制作完成后大缸碰撞箱应该封上");
+        }
+        helper.succeed();
+    }
+
+    /** 大缸储量口径统一为 3000 mB（空缸、清水、成品一致） */
+    @GameTest(template = "empty")
+    public static void vatTankCapacityIsAlwaysThreeBuckets(GameTestHelper helper) {
+        VatBlockEntity vat = placeVat(helper);
+        if (vat.getTankCapacity(0) != VatRecipes.CAPACITY_MB) {
+            helper.fail("空大缸储量应为 3000 mB，实际 " + vat.getTankCapacity(0));
+        }
+        VatRecipe paste = VatRecipes.recipeOf(VatRecipes.Kind.PASTE, helper.getLevel());
+        vat.setRecipe(paste);
+        if (vat.getTankCapacity(0) != VatRecipes.CAPACITY_MB) {
+            helper.fail("成品大缸储量应统一为 3000 mB，实际 " + vat.getTankCapacity(0));
+        }
+        helper.succeed();
+    }
+
+    /** 三态管道 + 按内容物限流 + 整层边界截断 + 手动水桶补满钳位 */
+    @GameTest(template = "empty")
+    public static void vatPipeWaterFillRespectsRecipeLimitsAndThreeStateMutex(GameTestHelper helper) {
+        ServerLevel level = helper.getLevel();
+        BlockPos pos = helper.absolutePos(AT);
+        VatBlockEntity vat = placeVat(helper);
+
+        // 干腌料（生猪肉）不允许管道灌水
+        vat.addContent(new ItemStack(Items.PORKCHOP));
+        if (vat.isFluidValid(0, new FluidStack(net.minecraft.world.level.material.Fluids.WATER, 100))
+                || vat.fill(new FluidStack(net.minecraft.world.level.material.Fluids.WATER, 100),
+                IFluidHandler.FluidAction.EXECUTE) != 0) {
+            helper.fail("干腌缸（生猪肉）不应接受管道灌水");
+        }
+        vat.clearContents();
+
+        // 豆芽（water_max=1）先盖粗布毯再小流量（64 mB/tick）泵水：必须在 1000 mB 整层边界精准截断并开工锁闭
+        Item cloth = clothRug();
+        if (cloth != null) {
+            vat.addContent(new ItemStack(ModItems.SOYBEAN.get()));
+            vat.setCover(new ItemStack(cloth));
+            int totalFilled = 0;
+            for (int tick = 0; tick < 30; tick++) {
+                int moved = vat.fill(new FluidStack(net.minecraft.world.level.material.Fluids.WATER, 64),
+                        IFluidHandler.FluidAction.EXECUTE);
+                totalFilled += moved;
+                // 备料态与发酵锁闭态均严禁 drain
+                if (!vat.drain(1000, IFluidHandler.FluidAction.SIMULATE).isEmpty()) {
+                    helper.fail("未发酵大缸不应允许管道抽液（tick=" + tick + "）");
+                }
+            }
+            if (totalFilled != 1000 || vat.waterMb() != 1000 || vat.recipeId() == null) {
+                helper.fail("豆芽缸应精准灌满 1000 mB 后开工停泵，实际 total=" + totalFilled
+                        + " waterMb=" + vat.waterMb() + " recipe=" + vat.recipeId());
+            }
+            assertScheduled(helper, level, pos);
+            if (vat.fill(new FluidStack(net.minecraft.world.level.material.Fluids.WATER, 100),
+                    IFluidHandler.FluidAction.EXECUTE) != 0) {
+                helper.fail("发酵中的豆芽缸必须锁闭禁灌");
+            }
+        }
+
+        // 压着压缸石的大缸必须拒绝管道灌液
+        Vat.reset(level, pos, level.getBlockState(pos), vat);
+        vat.takeCover();
+        vat.setPress(new ItemStack(Items.STONE));
+        if (vat.fill(new FluidStack(net.minecraft.world.level.material.Fluids.WATER, 500),
+                IFluidHandler.FluidAction.EXECUTE) != 0) {
+            helper.fail("压着压缸石的大缸不应允许管道灌水");
+        }
+        vat.takePress();
+
+        // 通过加载器方块能力（管道实际入口）验证侧向灌水与手动水桶补零头钳位到 3000 mB
+        IFluidHandler capHandler;
+        //? if <1.20.2 {
+        capHandler = vat.getCapability(net.minecraftforge.common.capabilities.ForgeCapabilities.FLUID_HANDLER,
+                Direction.NORTH).orElse(null);
+        //?} else {
+        /*capHandler = level.getCapability(net.neoforged.neoforge.capabilities.Capabilities.FluidHandler.BLOCK,
+                pos, Direction.NORTH);
+        *///?}
+        if (capHandler == null) {
+            helper.fail("大缸侧面必须暴露方块流体能力");
+        }
+        capHandler.fill(new FluidStack(net.minecraft.world.level.material.Fluids.WATER, 1000),
+                IFluidHandler.FluidAction.EXECUTE);
+        capHandler.fill(new FluidStack(net.minecraft.world.level.material.Fluids.WATER, 1000),
+                IFluidHandler.FluidAction.EXECUTE);
+        capHandler.fill(new FluidStack(net.minecraft.world.level.material.Fluids.WATER, 450),
+                IFluidHandler.FluidAction.EXECUTE);
+        if (vat.waterMb() != 2450 || capHandler.getFluidInTank(0).getAmount() != 2450) {
+            helper.fail("小流量灌水后应准确记录 2450 mB，实际 " + vat.waterMb());
+        }
+        Player player = mockPlayer(helper, GameType.SURVIVAL);
+        click(helper, player, new ItemStack(Items.WATER_BUCKET));
+        if (vat.waterMb() != VatRecipes.CAPACITY_MB) {
+            helper.fail("2450 mB 缸再倒一桶水应钳位补满至 3000 mB，实际 " + vat.waterMb());
+        }
+        helper.succeed();
+    }
+
+    /** 流水线双缸：缸 A 腌泡菜（成品态只出酸引水）→ 泵 → 缸 B 攒酸引水（备料态只进不出）→ 酿白醋 → 抽空复位 */
+    @GameTest(template = "empty")
+    public static void vatPipelinePickleSourWaterToWhiteVinegar(GameTestHelper helper) {
+        ServerLevel level = helper.getLevel();
+        BlockPos posA = helper.absolutePos(AT);
+        BlockPos relB = AT.east(2);
+        BlockPos posB = helper.absolutePos(relB);
+        helper.setBlock(AT, ModBlocks.VAT.get());
+        helper.setBlock(relB, ModBlocks.VAT.get());
+        VatBlockEntity vatA = (VatBlockEntity) helper.getBlockEntity(AT);
+        VatBlockEntity vatB = (VatBlockEntity) helper.getBlockEntity(relB);
+
+        // 缸 A 完成 1 层泡菜（产出 1000 mB 酸引水）
+        vatA.addWater(VatRecipes.WATER_MB_PER_LEVEL);
+        vatA.addContent(new ItemStack(ModItems.NAPA_CABBAGE.get()));
+        vatA.addContent(new ItemStack(ModItems.SALT.get()));
+        vatA.setPress(new ItemStack(Items.STONE));
+        VatBrewing.complete(level, posA, vatA, VatRecipes.recipeOf(VatRecipes.Kind.PICKLE, level));
+
+        // 缸 A 处于成品态：只出不进
+        if (vatA.fill(new FluidStack(ModFluids.sourWaterSource(), 250),
+                IFluidHandler.FluidAction.EXECUTE) != 0) {
+            helper.fail("成品泡菜缸在未投下游料前不应允许管道灌入酸引水");
+        }
+        FluidStack pulled = vatA.drain(1000, IFluidHandler.FluidAction.EXECUTE);
+        if (pulled.getAmount() != 1000 || !pulled.getFluid().isSame(ModFluids.sourWaterSource())) {
+            helper.fail("流水线应能从缸 A 抽出 1000 mB 酸引水");
+        }
+
+        // 缸 B 处于备料态：只进不出，攒满 3000 mB
+        int in1 = vatB.fill(pulled, IFluidHandler.FluidAction.EXECUTE);
+        int in2 = vatB.fill(new FluidStack(ModFluids.sourWaterSource(), 2500),
+                IFluidHandler.FluidAction.EXECUTE);
+        if (in1 != 1000 || in2 != 2000 || vatB.sourWaterMb() != VatRecipes.CAPACITY_MB) {
+            helper.fail("缸 B 应精准收满 3000 mB 酸引水，实际 in1=" + in1 + " in2=" + in2
+                    + " total=" + vatB.sourWaterMb());
+        }
+        if (!vatB.drain(1000, IFluidHandler.FluidAction.SIMULATE).isEmpty()) {
+            helper.fail("缸 B 在白醋备料态严禁抽走未发酵的酸引水");
+        }
+
+        // 缸 B 投谷物 + 粗布毯进入白醋发酵锁闭态，完成后产出白醋并可抽空复位
+        for (int i = 0; i < VatRecipes.VINEGAR_GRAIN_COUNT; i++) {
+            vatB.addContent(new ItemStack(ModItems.CORN_SEEDS.get()));
+        }
+        Item cloth = clothRug();
+        if (cloth != null) {
+            vatB.setCover(new ItemStack(cloth));
+            VatBrewing.complete(level, posB, vatB, VatRecipes.recipeOf(VatRecipes.Kind.WHITE_VINEGAR, level));
+            // 盖着布的成品白醋缸处于锁闭态（双禁）
+            if (!vatB.drain(1000, IFluidHandler.FluidAction.SIMULATE).isEmpty()
+                    || vatB.fill(new FluidStack(ModFluids.sourWaterSource(), 250),
+                    IFluidHandler.FluidAction.EXECUTE) != 0) {
+                helper.fail("盖着布的成品白醋缸必须双禁");
+            }
+            vatB.takeCover();
+            // 揭布后切成品态：只出白醋不进酸引水
+            if (vatB.fill(new FluidStack(ModFluids.sourWaterSource(), 250),
+                    IFluidHandler.FluidAction.EXECUTE) != 0) {
+                helper.fail("白醋成品态不应允许灌入酸引水");
+            }
+            FluidStack vinegar = vatB.drain(Integer.MAX_VALUE, IFluidHandler.FluidAction.EXECUTE);
+            if (vinegar.getAmount() != VatRecipes.WHITE_VINEGAR_SERVINGS * VatRecipes.SERVING_MB
+                    || !vinegar.getFluid().isSame(ModFluids.whiteVinegarSource())) {
+                helper.fail("应能抽出 2500 mB 白醋，实际 " + vinegar.getAmount());
+            }
+            if (vatB.isFermented() || vatB.kind() != VatRecipes.Kind.NONE) {
+                helper.fail("白醋抽空后缸 B 应复位回空缸备料态");
+            }
+            if (vatB.fill(new FluidStack(ModFluids.sourWaterSource(), 500),
+                    IFluidHandler.FluidAction.EXECUTE) != 500) {
+                helper.fail("复位后的缸 B 应可立即接下一轮酸引水");
+            }
+        }
+        helper.succeed();
+    }
+
+    /** 单缸原地连锁切态：1 层泡菜取菜后投入谷物立刻切出成品态（禁抽、开灌）并由管道补满 3000 mB 酿白醋 */
+    @GameTest(template = "empty")
+    public static void vatInPlaceChainedFollowUpSwitchesStateOnInsert(GameTestHelper helper) {
+        ServerLevel level = helper.getLevel();
+        BlockPos pos = helper.absolutePos(AT);
+        VatBlockEntity vat = placeVat(helper);
+        Player player = mockPlayer(helper, GameType.CREATIVE);
+
+        vat.addWater(VatRecipes.WATER_MB_PER_LEVEL);
+        vat.addContent(new ItemStack(ModItems.NAPA_CABBAGE.get()));
+        vat.addContent(new ItemStack(ModItems.SALT.get()));
+        vat.setPress(new ItemStack(Items.STONE));
+        VatBrewing.complete(level, pos, vat, VatRecipes.recipeOf(VatRecipes.Kind.PICKLE, level));
+        vat.takePress();
+        VatBrewing.takeOne(vat, new ArrayList<>());
+
+        // 投谷物前是成品态：可抽不可灌
+        if (vat.drain(1000, IFluidHandler.FluidAction.SIMULATE).getAmount() != 1000
+                || vat.fill(new FluidStack(ModFluids.sourWaterSource(), 500),
+                IFluidHandler.FluidAction.EXECUTE) != 0) {
+            helper.fail("投谷物前 1 层泡菜缸应处于成品态（只出不进）");
+        }
+
+        // 投入第 1 份谷物即显式切入白醋备料态：立刻禁抽、开放管道补液
+        click(helper, player, new ItemStack(ModItems.CORN_SEEDS.get()));
+        if (vat.isFermented() || !vat.drain(1000, IFluidHandler.FluidAction.SIMULATE).isEmpty()) {
+            helper.fail("投入谷物后应立刻退出成品态并锁定出液管道");
+        }
+        int topped = vat.fill(new FluidStack(ModFluids.sourWaterSource(), 3000),
+                IFluidHandler.FluidAction.EXECUTE);
+        if (topped != 2000 || vat.sourWaterMb() != VatRecipes.CAPACITY_MB) {
+            helper.fail("切入备料态后管道应补齐剩余 2000 mB 酸引水，实际补了 " + topped);
+        }
+        click(helper, player, new ItemStack(ModItems.CORN_SEEDS.get()));
+        click(helper, player, new ItemStack(ModItems.CORN_SEEDS.get()));
+        Item cloth = clothRug();
+        if (cloth != null) {
+            click(helper, player, new ItemStack(cloth));
+            assertScheduled(helper, level, pos);
+        }
+        helper.succeed();
+    }
+
+    /** 酱油剩酱渣二次发酵：抽空酱油前禁灌清水，抽空后管道可续满 3000 mB 清水酿醋 */
+    @GameTest(template = "empty")
+    public static void vatSoyResidueFollowUpAcceptsPipeWaterOnlyAfterDrained(GameTestHelper helper) {
+        ServerLevel level = helper.getLevel();
+        BlockPos pos = helper.absolutePos(AT);
+        VatBlockEntity vat = placeVat(helper);
+        finishSoySauce(helper, level, pos, vat);
+        vat.takeCover();
+
+        if (vat.fill(new FluidStack(net.minecraft.world.level.material.Fluids.WATER, 1000),
+                IFluidHandler.FluidAction.EXECUTE) != 0) {
+            helper.fail("酱油未抽空时管道不应允许续水");
+        }
+        FluidStack drained = vat.drain(Integer.MAX_VALUE, IFluidHandler.FluidAction.EXECUTE);
+        if (drained.getAmount() <= 0 || vat.hasFinishedProductLiquid()) {
+            helper.fail("酱油应能被管道抽空");
+        }
+        int filled = 0;
+        for (int i = 0; i < 4; i++) {
+            filled += vat.fill(new FluidStack(net.minecraft.world.level.material.Fluids.WATER, 1000),
+                    IFluidHandler.FluidAction.EXECUTE);
+        }
+        if (filled != VatRecipes.CAPACITY_MB || vat.waterMb() != VatRecipes.CAPACITY_MB) {
+            helper.fail("酱油抽空剩酱渣后，管道应能续满 3000 mB 清水，实际 " + filled);
+        }
+        helper.succeed();
+    }
+
+    /** 数据驱动通用输入流体 JSON 解码、网络同步、JEI 与自定义流体 NBT 存档往返 */
+    @GameTest(template = "empty")
+    public static void vatCustomInputFluidSchemaAndNbtRoundTrip(GameTestHelper helper) {
+        JsonObject config = JsonParser.parseString("""
+                {"kind":"WHITE_VINEGAR","seal":"CLOTH","seconds":30,
+                 "liquid":{"input_fluid":"northeast_china_delight:soy_sauce","input_mb":1500,
+                   "input_after":"DRAIN_REQUIRED","product":"northeast_china_delight:vinegar","product_mb":1500},
+                 "slots":[{"ingredient":{"item":"minecraft:sugar"},
+                   "bounds":{"type":"exact","count":1},"fate":"CONSUME"}]}
+                """).getAsJsonObject();
+        VatRecipe recipe = roundTripVerbRecipe(helper, config);
+        if (recipe == null || !recipe.liquid().requiresInputFluid()
+                || !recipe.liquid().inputFluid().isSame(ModFluids.soySauceSource())
+                || recipe.liquid().inputMb() != 1500
+                || recipe.liquid().sourWaterMb() != 0) {
+            helper.fail("自定义 input_fluid 配方应正确解码、同步且不误判为酸引水");
+        }
+        VatJeiRecipe.State jeiState = VatJeiRecipes.pagesFor(recipe).get(0).first();
+        if (!jeiState.hasLiquid() || !jeiState.liquid().isSame(ModFluids.soySauceSource())
+                || jeiState.liquidMb() != 1500) {
+            helper.fail("JEI 应自动展示自定义 input_fluid 及其用量");
+        }
+        for (String invalid : List.of(
+                """
+                {"kind":"WHITE_VINEGAR","seal":"CLOTH","seconds":30,
+                 "liquid":{"water_min":1,"water_max":1,"input_fluid":"northeast_china_delight:soy_sauce","input_mb":1000},
+                 "slots":[{"ingredient":{"item":"minecraft:sugar"},"bounds":{"type":"exact","count":1},"fate":"CONSUME"}]}
+                """,
+                """
+                {"kind":"WHITE_VINEGAR","seal":"CLOTH","seconds":30,
+                 "liquid":{"input_fluid":"minecraft:water","input_mb":1000},
+                 "slots":[{"ingredient":{"item":"minecraft:sugar"},"bounds":{"type":"exact","count":1},"fate":"CONSUME"}]}
+                """,
+                """
+                {"kind":"WHITE_VINEGAR","seal":"CLOTH","seconds":30,
+                 "liquid":{"input_fluid":"northeast_china_delight:soy_sauce","input_mb":1000,"sour_water_mb":1000},
+                 "slots":[{"ingredient":{"item":"minecraft:sugar"},"bounds":{"type":"exact","count":1},"fate":"CONSUME"}]}
+                """)) {
+            try {
+                com.gunmu.northeast_china_delight.crafting.VatRecipeJson.decode(
+                        null, JsonParser.parseString(invalid).getAsJsonObject());
+            } catch (JsonParseException expected) {
+                continue;
+            }
+            helper.fail("非法的 input_fluid 配方组合应被拒绝");
+        }
+
+        // 自定义输入流体 NBT 存档往返
+        VatBlockEntity vat = placeVat(helper);
+        vat.setInputFluid(ModFluids.soySauceSource(), 1500);
+        //? if <1.20.5 {
+        net.minecraft.nbt.CompoundTag tag = vat.saveWithoutMetadata();
+        vat.clearContents();
+        vat.load(tag);
+        //?} else {
+        /*net.minecraft.nbt.CompoundTag tag = vat.saveWithoutMetadata(helper.getLevel().registryAccess());
+        vat.clearContents();
+        vat.loadWithComponents(tag, helper.getLevel().registryAccess());
+        *///?}
+        if (vat.nonWaterInputFluid() == null || !vat.nonWaterInputFluid().isSame(ModFluids.soySauceSource())
+                || vat.inputMb() != 1500 || vat.waterMb() != 0 || vat.sourWaterMb() != 0) {
+            helper.fail("自定义输入流体应完整经过 NBT 存档往返");
+        }
+
+        // 自定义连锁成品切态与完成结算（soy_sauce → vinegar，不写死酸引水）
+        ServerLevel level = helper.getLevel();
+        BlockPos pos = helper.absolutePos(AT);
+        vat.clearContents();
+        vat.addProduct(ModFluids.soySauceSource(), 1500);
+        level.setBlock(pos, level.getBlockState(pos).setValue(Vat.FERMENTED, true), 3);
+        vat.beginChainedFollowUp(ModFluids.soySauceSource(), 1500);
+        level.setBlock(pos, level.getBlockState(pos).setValue(Vat.FERMENTED, false).setValue(Vat.PROGRESS, 0), 3);
+        vat.addContent(new ItemStack(Items.SUGAR));
+        VatBrewing.complete(level, pos, vat, recipe);
+        if (vat.inputMb() != 0 || vat.productMb(ModFluids.vinegarSource()) != 1500
+                || !vat.hasFinishedProductLiquid()) {
+            helper.fail("自定义输入流体配方完成后应消耗输入液并产出 1500 mB 目标液体");
+        }
+        FluidStack out = vat.drain(Integer.MAX_VALUE, IFluidHandler.FluidAction.EXECUTE);
+        if (out.getAmount() != 1500 || !out.getFluid().isSame(ModFluids.vinegarSource())
+                || vat.isFermented() || vat.kind() != VatRecipes.Kind.NONE) {
+            helper.fail("自定义连锁产物抽空后大缸应完整复位");
         }
         helper.succeed();
     }

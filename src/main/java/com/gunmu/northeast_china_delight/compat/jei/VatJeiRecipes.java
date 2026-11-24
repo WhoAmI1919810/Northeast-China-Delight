@@ -154,8 +154,8 @@ public final class VatJeiRecipes {
 
         VatRecipe.Liquid liquid = recipe.liquid();
         Fluid base = liquid.waterMin() > 0 ? Fluids.WATER
-                : liquid.sourWaterMb() > 0 ? ModFluids.SOUR_WATER.get() : null;
-        long baseMb = liquid.waterMin() > 0 ? level * ONE_LAYER : liquid.sourWaterMb();
+                : liquid.requiresInputFluid() ? liquid.inputFluid() : null;
+        long baseMb = liquid.waterMin() > 0 ? level * ONE_LAYER : liquid.inputMb();
         Fluid product = liquid.product();
         long productMb = product == null ? 0 : recipe.productMbFor(level);
         List<ItemStack> results = mergeAll(products);

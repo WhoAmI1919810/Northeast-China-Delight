@@ -277,6 +277,8 @@
   "jade.northeast_china_delight.vat.kind.sour_corn": "Sour Corn Kernels",
   "jade.northeast_china_delight.vat.kind.kvass": "Kvass",
   "jade.northeast_china_delight.vat.water": "Water: %s / %s layers",
+  "jade.northeast_china_delight.vat.water_mb": "Water: %s / %s layers (%s / %s mB)",
+  "jade.northeast_china_delight.vat.liquid_mb": "%s: %s / %s mB",
   "jade.northeast_china_delight.vat.salt": "Salt: %s / %s",
   "jade.northeast_china_delight.vat.salt_dissolved": "Salt (dissolved): %s / %s",
   "jade.northeast_china_delight.vat.paste_chunks": "Paste chunks: %s / %s",

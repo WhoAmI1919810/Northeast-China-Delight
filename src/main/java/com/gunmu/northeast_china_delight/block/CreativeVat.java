@@ -22,6 +22,7 @@ public class CreativeVat extends Vat {
         if (level instanceof ServerLevel serverLevel) {
             VatRecipe recipe = VatBrewing.ready(vat);
             if (recipe != null) {
+                promoteChainedFluidIfNeeded(vat, recipe);
                 vat.setRecipe(recipe);
                 VatBrewing.complete(serverLevel, pos, vat, recipe);
                 return true;

@@ -277,6 +277,8 @@
   "jade.northeast_china_delight.vat.kind.sour_corn": "酸玉米粒",
   "jade.northeast_china_delight.vat.kind.kvass": "格瓦斯",
   "jade.northeast_china_delight.vat.water": "水位：%s / %s 层",
+  "jade.northeast_china_delight.vat.water_mb": "水位：%s / %s 层（%s / %s mB）",
+  "jade.northeast_china_delight.vat.liquid_mb": "%s：%s / %s mB",
   "jade.northeast_china_delight.vat.salt": "盐：%s / %s 份",
   "jade.northeast_china_delight.vat.salt_dissolved": "盐（溶于水）：%s / %s 份",
   "jade.northeast_china_delight.vat.paste_chunks": "酱块：%s / %s 块",

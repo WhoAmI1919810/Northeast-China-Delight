@@ -87,19 +87,20 @@ public class VatBlockEntity extends BlockEntity implements IFluidHandler {
     private int pasteMb;
     private int soySauceMb;
     private int vinegarMb;
-    private int sourWaterMb;
     private int whiteVinegarMb;
     private int fishSauceMb;
     private int shrimpPasteMb;
     private int kvassMb;
     /**
-     * 缸里的清水（mB，一层 = 1000 mB）。
+     * 缸里的输入流体（清水、酸引水或数据包自定义的任意非清水输入流体）。
      *
-     * <p>以前清水直接用方块状态的水位记，而酸引水又会按 mB 折算回同一个水位 ——
-     * 两者混用一个字段，才会出现"倒一瓶酸引水当一层水腌菜、腌完水翻倍"这类问题。
-     * 现在清水单独记账，水位只是"显示值" = ceil((清水 + 酸引水) / 1000)。
+     * <p>物理上一口大缸同时只能装一种输入液体，统一用一个槽位记账以彻底杜绝混液；
+     * 清水与酸引水同步映射到方块状态 {@link Vat#WATER_LEVEL}（一层 = 1000 mB，最多 3 层）以沿用原水面模型，
+     * 其它自定义输入流体由渲染器直接按流体贴图画液面。</p>
      */
-    private int waterMb;
+    @Nullable
+    private Fluid inputFluid;
+    private int inputMb;
     private VatRecipes.Kind kind = VatRecipes.Kind.NONE;
     @Nullable
     private String recipeId;
@@ -190,18 +191,31 @@ public class VatBlockEntity extends BlockEntity implements IFluidHandler {
     }
 
     public boolean hasProductLiquid() {
-        return this.hasBottledProduct() || this.sourWaterMb > 0;
+        return this.hasBottledProduct() || this.nonWaterInputMb() > 0;
+    }
+
+    /**
+     * 缸里是否还有上一道已完成工序尚未取走的成品液体。
+     * 管道输入与原地连锁切态都以它为准：为 true 时管道严格处于「成品态（只出不进）」，
+     * 不受未发酵或已进入下一道备料态的输入流体干扰。
+     */
+    public boolean hasFinishedProductLiquid() {
+        if (!this.isFermented()) {
+            return false;
+        }
+        Fluid product = VatRecipes.productOf(this);
+        return product != null && this.productMb(product) > 0;
     }
 
     /**
      * 盐是不是已经溶在水里。
      *
      * 泡菜 / 大酱 / 酱油都是「水里加盐」的流程，发酵完成后水被吸收（水位归零），
-     * 但盐不该再变回物品，所以这里主要看流程类型；另外只要缸里当下还有水
+     * 但盐不该再变回物品，所以这里主要看流程类型；另外只要缸里当下还有液体
      * （例如腊肉缸里误加了水），盐也一律按溶解处理。
      */
     public boolean isSaltDissolved() {
-        if (this.getBlockState().getValue(Vat.WATER_LEVEL) > 0) {
+        if (this.getBlockState().getValue(Vat.WATER_LEVEL) > 0 || this.inputMb > 0) {
             return true;
         }
         return this.kind == VatRecipes.Kind.PICKLE
@@ -300,11 +314,11 @@ public class VatBlockEntity extends BlockEntity implements IFluidHandler {
     }
 
     public int sourWater() {
-        return this.sourWaterMb / VatRecipes.SERVING_MB;
+        return this.sourWaterMb() / VatRecipes.SERVING_MB;
     }
 
     public int sourWaterMb() {
-        return this.sourWaterMb;
+        return this.inputMb(ModFluids.sourWaterSource());
     }
 
     public int whiteVinegar() {
@@ -365,14 +379,37 @@ public class VatBlockEntity extends BlockEntity implements IFluidHandler {
 
     /**
      * 没做完就揭开封口：解除配方绑定，加工类型也退回「还没开工」。只解绑的话 kind 还会让旧配方优先，
-     * 大酱补了小麦照样酿成大酱。缸里有酸引水时按倒酸引水的规矩记作泡菜缸，免得之后倒不进酸引水。
+     * 大酱补了小麦照样酿成大酱。配方匹配已直接读取 {@link #inputFluid} / {@link #inputMb}，不再硬编码切回 PICKLE。
      */
     public void releaseUnfinishedRecipe() {
         this.recipeId = null;
-        this.kind = this.sourWaterMb > 0 ? VatRecipes.Kind.PICKLE : VatRecipes.Kind.NONE;
+        this.kind = VatRecipes.Kind.NONE;
         if (this.brewedMb <= 0) {
             this.brewedFluid = null;
         }
+        this.sync();
+    }
+
+    /**
+     * 通用连锁切态：把上一道工序产出的成品液体转入输入流体槽，清空成品槽与旧配方绑定，
+     * 使大缸从「成品态（只出）」切入下游配方的「备料态（只进）」。
+     */
+    public void beginChainedFollowUp(Fluid fluid, int mb) {
+        this.brewedFluid = null;
+        this.brewedMb = 0;
+        this.pasteMb = 0;
+        this.soySauceMb = 0;
+        this.vinegarMb = 0;
+        this.whiteVinegarMb = 0;
+        this.fishSauceMb = 0;
+        this.shrimpPasteMb = 0;
+        this.kvassMb = 0;
+        int clamped = Math.min(VatRecipes.CAPACITY_MB, Math.max(0, mb));
+        this.inputFluid = clamped > 0 ? fluid : null;
+        this.inputMb = clamped;
+        this.kind = VatRecipes.Kind.NONE;
+        this.recipeId = null;
+        this.refreshLiquidLevel();
         this.sync();
     }
 
@@ -446,58 +483,134 @@ public class VatBlockEntity extends BlockEntity implements IFluidHandler {
         return stack;
     }
 
-    public void setSourWaterMb(int mb) {
-        this.sourWaterMb = Math.max(0, mb);
+    @Nullable
+    public Fluid inputFluid() {
+        return this.inputMb > 0 ? this.inputFluid : null;
+    }
+
+    public int inputMb() {
+        return this.inputFluid != null && this.inputMb > 0 ? this.inputMb : 0;
+    }
+
+    public int inputMb(@Nullable Fluid fluid) {
+        return fluid != null && this.inputFluid != null && this.inputMb > 0
+                && this.inputFluid.isSame(fluid) ? this.inputMb : 0;
+    }
+
+    /** 非清水的输入流体（酸引水或数据包自定义的任意输入流体）；清水或空槽返回 null。 */
+    @Nullable
+    public Fluid nonWaterInputFluid() {
+        return this.inputFluid != null && this.inputMb > 0 && !this.inputFluid.isSame(Fluids.WATER)
+                ? this.inputFluid : null;
+    }
+
+    public int nonWaterInputMb() {
+        return this.nonWaterInputFluid() != null ? this.inputMb : 0;
+    }
+
+    /** 清水与酸引水继续沿用方块状态里的 WATER_LEVEL 液面模型，其它自定义流体由 BER 直接绘制。 */
+    public boolean usesWaterLevelModel() {
+        return this.inputFluid != null && this.inputMb > 0
+                && (this.inputFluid.isSame(Fluids.WATER)
+                || this.inputFluid.isSame(ModFluids.sourWaterSource()));
+    }
+
+    public void setInputFluid(@Nullable Fluid fluid, int mb) {
+        int amount = Math.max(0, mb);
+        if (fluid == null || amount <= 0 || fluid.isSame(Fluids.EMPTY)) {
+            this.inputFluid = null;
+            this.inputMb = 0;
+        } else {
+            this.inputFluid = fluid;
+            this.inputMb = amount;
+        }
         this.refreshLiquidLevel();
         this.sync();
+    }
+
+    public void addInputFluid(Fluid fluid, int mb) {
+        if (fluid == null || mb <= 0 || fluid.isSame(Fluids.EMPTY)) {
+            return;
+        }
+        if (this.inputMb > 0 && this.inputFluid != null && !this.inputFluid.isSame(fluid)) {
+            return;
+        }
+        this.inputFluid = fluid;
+        this.inputMb += mb;
+        this.refreshLiquidLevel();
+        this.sync();
+    }
+
+    public boolean takeInputServing(Fluid fluid) {
+        int have = this.inputMb(fluid);
+        if (have < VatRecipes.SERVING_MB) {
+            return false;
+        }
+        this.setInputFluid(fluid, have - VatRecipes.SERVING_MB);
+        return true;
+    }
+
+    public void setSourWaterMb(int mb) {
+        int amount = Math.max(0, mb);
+        if (amount > 0) {
+            this.setInputFluid(ModFluids.sourWaterSource(), amount);
+        } else if (this.inputFluid != null && this.inputFluid.isSame(ModFluids.sourWaterSource())) {
+            this.setInputFluid(null, 0);
+        }
     }
 
     public void addSourWater(int mb) {
-        if (mb > 0) {
-            this.sourWaterMb += mb;
-            this.refreshLiquidLevel();
-            this.sync();
-        }
+        this.addInputFluid(ModFluids.sourWaterSource(), mb);
     }
 
     public int waterMb() {
-        return this.waterMb;
+        return this.inputMb(Fluids.WATER);
     }
 
     public int waterLayers() {
-        return this.waterMb / VatRecipes.WATER_MB_PER_LEVEL;
+        return this.waterMb() / VatRecipes.WATER_MB_PER_LEVEL;
     }
 
     public void setWaterMb(int mb) {
-        this.waterMb = Math.max(0, mb);
-        this.refreshLiquidLevel();
-        this.sync();
-    }
-
-    public void addWater(int mb) {
-        if (mb > 0) {
-            this.waterMb += mb;
-            this.refreshLiquidLevel();
-            this.sync();
+        int amount = Math.max(0, mb);
+        if (amount > 0) {
+            this.setInputFluid(Fluids.WATER, amount);
+        } else if (this.inputFluid != null && this.inputFluid.isSame(Fluids.WATER)) {
+            this.setInputFluid(null, 0);
         }
     }
 
+    public void addWater(int mb) {
+        this.addInputFluid(Fluids.WATER, mb);
+    }
+
     /**
-     * 往缸里加成品液体。酸引水不进成品槽：它决定水位，记在 {@link #sourWaterMb}。
-     * 缸里已经有另一种成品液体时不加（一缸只出一种液体）。
+     * 往缸里加成品液体。酸引水仍记在输入槽以沿用 WATER_LEVEL 水面渲染与旧存档口径；
+     * 其它成品液体写入 {@link #brewedFluid}/{@link #brewedMb}，并清掉残留冲突输入液，保证缸内始终只有一种流体。
      */
     public void addProduct(Fluid fluid, int mb) {
         if (mb <= 0 || fluid == null) {
             return;
         }
         if (fluid.isSame(ModFluids.sourWaterSource())) {
-            this.sourWaterMb += mb;
+            if (this.inputFluid != null && !this.inputFluid.isSame(fluid)) {
+                this.inputFluid = fluid;
+                this.inputMb = mb;
+            } else {
+                this.inputFluid = fluid;
+                this.inputMb += mb;
+            }
             this.refreshLiquidLevel();
             this.sync();
             return;
         }
         if (this.brewedFluid != null && !this.brewedFluid.isSame(fluid)) {
             return;
+        }
+        if (this.inputMb > 0) {
+            this.inputFluid = null;
+            this.inputMb = 0;
+            this.refreshLiquidLevel();
         }
         this.brewedFluid = fluid;
         this.brewedMb += mb;
@@ -512,10 +625,10 @@ public class VatBlockEntity extends BlockEntity implements IFluidHandler {
             return 0;
         }
         if (fluid.isSame(Fluids.WATER)) {
-            return this.waterMb;
+            return this.waterMb();
         }
         if (fluid.isSame(ModFluids.sourWaterSource())) {
-            return this.sourWaterMb;
+            return this.sourWaterMb();
         }
         return this.effectiveProductMb(fluid, this.legacyProductMb(fluid));
     }
@@ -526,12 +639,14 @@ public class VatBlockEntity extends BlockEntity implements IFluidHandler {
         }
         int amount = Math.max(0, mb);
         if (fluid.isSame(Fluids.WATER)) {
-            this.waterMb = amount;
-            this.refreshLiquidLevel();
-        } else if (fluid.isSame(ModFluids.sourWaterSource())) {
-            this.sourWaterMb = amount;
-            this.refreshLiquidLevel();
-        } else if (amount == 0) {
+            this.setWaterMb(amount);
+            return;
+        }
+        if (fluid.isSame(ModFluids.sourWaterSource())) {
+            this.setSourWaterMb(amount);
+            return;
+        }
+        if (amount == 0) {
             if (this.brewedFluid != null && this.brewedFluid.isSame(fluid)) {
                 this.brewedFluid = null;
                 this.brewedMb = 0;
@@ -621,18 +736,19 @@ public class VatBlockEntity extends BlockEntity implements IFluidHandler {
     }
 
     /**
-     * 把「清水 + 酸引水」折算成方块状态里的水位（一层 = 1000 mB，最多 3 层）。
+     * 把「清水 / 酸引水」折算成方块状态里的水位（一层 = 1000 mB，最多 3 层）。
      *
-     * <p>水位只是显示值：罐子里的液面高度、缸体模型的水面都看它。
-     * 配方判定一律走 {@link #waterLayers()}（只有清水）与 {@link #sourWaterMb()}，不会混淆。
+     * <p>水位只是显示值：缸体模型的水面和群系水色看它；其它自定义输入流体由 BER 直接画液面。
+     * 配方判定一律走 {@link #waterLayers()}（只有清水）与 {@link #inputFluid()} / {@link #inputMb()}，不会混淆。</p>
      */
     private void refreshLiquidLevel() {
         if (this.level == null) {
             return;
         }
         BlockState state = this.getBlockState();
+        int modelMb = this.usesWaterLevelModel() ? this.inputMb : 0;
         int level = Math.min(ModBlockStateProperties.VAT_MAX_WATER,
-                (int) Math.ceil((this.waterMb + this.sourWaterMb) / (double) VatRecipes.WATER_MB_PER_LEVEL));
+                (int) Math.ceil(modelMb / (double) VatRecipes.WATER_MB_PER_LEVEL));
         if (state.getValue(Vat.WATER_LEVEL) != level) {
             this.level.setBlock(this.worldPosition, state.setValue(Vat.WATER_LEVEL, level), Block.UPDATE_CLIENTS);
         }
@@ -665,12 +781,12 @@ public class VatBlockEntity extends BlockEntity implements IFluidHandler {
         this.pasteMb = 0;
         this.soySauceMb = 0;
         this.vinegarMb = 0;
-        this.sourWaterMb = 0;
         this.whiteVinegarMb = 0;
         this.fishSauceMb = 0;
         this.shrimpPasteMb = 0;
         this.kvassMb = 0;
-        this.waterMb = 0;
+        this.inputFluid = null;
+        this.inputMb = 0;
         this.sync();
     }
 
@@ -709,6 +825,29 @@ public class VatBlockEntity extends BlockEntity implements IFluidHandler {
         return net.minecraft.util.Mth.clamp(progress * 15 / Vat.MAX_PROGRESS, 1, 14);
     }
 
+    /**
+     * 三态管道门禁：返回在当前状态下允许往缸里灌入 {@code fluid} 的最高目标总量（mB）。
+     *
+     * <ul>
+     *   <li>成品态（已完成且仍有未取走成品液）：严格只出不进，返回 0；</li>
+     *   <li>锁闭态（压缸石锁住 / 正在发酵中 / 已删配方保护态）：双禁，返回 0；</li>
+     *   <li>备料态（未发酵未开工未压石，或已完成且成品液已抽空待二次发酵）：按当前配方表推导允许上限。</li>
+     * </ul>
+     */
+    private int maxFillMb(@Nullable Fluid fluid) {
+        if (fluid == null || this.level == null || this.isPressed() || this.hasMissingUnfinishedRecipe()) {
+            return 0;
+        }
+        BlockState state = this.getBlockState();
+        if (!state.getValue(Vat.FERMENTED) && (this.recipeId != null || state.getValue(Vat.PROGRESS) > 0)) {
+            return 0;
+        }
+        if (this.hasFinishedProductLiquid()) {
+            return 0;
+        }
+        return com.gunmu.northeast_china_delight.crafting.VatBrewing.maxFluidInputMb(this, fluid);
+    }
+
     @Override
     public int getTanks() {
         return 1;
@@ -717,24 +856,69 @@ public class VatBlockEntity extends BlockEntity implements IFluidHandler {
     @Override
     public FluidStack getFluidInTank(int tank) {
         Fluid fluid = productFluid();
-        return fluid == null ? FluidStack.EMPTY : new FluidStack(fluid, productAmount());
+        if (fluid != null) {
+            return new FluidStack(fluid, productAmount());
+        }
+        // 已完成且盖着布的成品缸保持对管道隐藏，与旧行为一致
+        if (this.hasFinishedProductLiquid()) {
+            return FluidStack.EMPTY;
+        }
+        if (this.inputFluid != null && this.inputMb > 0) {
+            return new FluidStack(this.inputFluid, this.inputMb);
+        }
+        return FluidStack.EMPTY;
     }
 
     @Override
     public int getTankCapacity(int tank) {
-        Fluid product = VatRecipes.productOf(this);
-        return product != null && product.isSame(ModFluids.sourWaterSource())
-                ? VatRecipes.SOUR_WATER_MB : VatRecipes.PRODUCT_CAPACITY_MB;
+        return VatRecipes.CAPACITY_MB;
     }
 
     @Override
     public boolean isFluidValid(int tank, FluidStack stack) {
-        return false;
+        return !stack.isEmpty() && this.maxFillMb(stack.getFluid()) > 0;
     }
 
     @Override
     public int fill(FluidStack resource, FluidAction action) {
-        return 0;
+        if (resource.isEmpty() || resource.getAmount() <= 0 || this.level == null) {
+            return 0;
+        }
+        Fluid fluid = resource.getFluid();
+        int cap = this.maxFillMb(fluid);
+        if (cap <= this.inputMb) {
+            return 0;
+        }
+        int room = cap - this.inputMb;
+        // 清水在 1000 mB 整层边界截断，单层配方凑齐 1000 mB 瞬间切入发酵锁闭态，避免多灌零头
+        if (fluid.isSame(Fluids.WATER)) {
+            int nextLayer = ((this.inputMb / VatRecipes.WATER_MB_PER_LEVEL) + 1) * VatRecipes.WATER_MB_PER_LEVEL;
+            room = Math.min(room, Math.min(cap, nextLayer) - this.inputMb);
+        }
+        int accepted = Math.min(resource.getAmount(), room);
+        if (accepted <= 0) {
+            return 0;
+        }
+        if (action.execute()) {
+            if (!this.level.isClientSide) {
+                Vat.resetStalledProgress(this.level, this.worldPosition, this.getBlockState(), this);
+                // 已完成但无成品液（例如纯固体产物或已抽空）转灌非清水自定义流体时，切回未发酵备料态，
+                // 保证 productFluid() 严格为 null，不与上一道配方的产物类型产生歧义。
+                if (this.isFermented() && !fluid.isSame(Fluids.WATER)) {
+                    BlockState cur = this.getBlockState();
+                    this.kind = VatRecipes.Kind.NONE;
+                    this.recipeId = null;
+                    this.level.setBlock(this.worldPosition,
+                            cur.setValue(Vat.FERMENTED, false).setValue(Vat.PROGRESS, 0), 3);
+                }
+            }
+            this.addInputFluid(fluid, accepted);
+            if (!this.level.isClientSide && this.getBlockState().getBlock() instanceof Vat vatBlock) {
+                Vat.refreshSalted(this.level, this.worldPosition, this);
+                vatBlock.tryStart(this.level, this.worldPosition, this);
+            }
+        }
+        return accepted;
     }
 
     @Override
@@ -815,12 +999,19 @@ public class VatBlockEntity extends BlockEntity implements IFluidHandler {
         tag.putInt("paste_mb", this.pasteMb);
         tag.putInt("soy_sauce_mb", this.soySauceMb);
         tag.putInt("vinegar_mb", this.vinegarMb);
-        tag.putInt("sour_water_mb", this.sourWaterMb);
+        tag.putInt("sour_water_mb", this.sourWaterMb());
         tag.putInt("white_vinegar_mb", this.whiteVinegarMb);
         tag.putInt("fish_sauce_mb", this.fishSauceMb);
         tag.putInt("shrimp_paste_mb", this.shrimpPasteMb);
         tag.putInt("kvass_mb", this.kvassMb);
-        tag.putInt("water_mb", this.waterMb);
+        tag.putInt("water_mb", this.waterMb());
+        if (this.inputFluid != null && this.inputMb > 0
+                && !this.inputFluid.isSame(Fluids.WATER)
+                && !this.inputFluid.isSame(ModFluids.sourWaterSource())) {
+            tag.putString("input_fluid",
+                    net.minecraft.core.registries.BuiltInRegistries.FLUID.getKey(this.inputFluid).toString());
+            tag.putInt("input_mb", this.inputMb);
+        }
         tag.putString("kind", this.kind.name());
         if (this.recipeId != null) {
             tag.putString("recipe_id", this.recipeId);
@@ -894,18 +1085,45 @@ public class VatBlockEntity extends BlockEntity implements IFluidHandler {
             this.soySauceMb = Math.max(0, legacy) * VatRecipes.SERVING_MB;
         }
         this.vinegarMb = Math.max(0, tag.getInt("vinegar_mb"));
-        this.sourWaterMb = Math.max(0, tag.getInt("sour_water_mb"));
         this.whiteVinegarMb = Math.max(0, tag.getInt("white_vinegar_mb"));
         this.fishSauceMb = Math.max(0, tag.getInt("fish_sauce_mb"));
         this.shrimpPasteMb = Math.max(0, tag.getInt("shrimp_paste_mb"));
         this.kvassMb = Math.max(0, tag.getInt("kvass_mb"));
+        this.inputFluid = null;
+        this.inputMb = 0;
+        if (tag.contains("input_fluid")) {
+            int loadedInputMb = Math.max(0, tag.getInt("input_mb"));
+            if (loadedInputMb > 0) {
+                net.minecraft.core.registries.BuiltInRegistries.FLUID
+                        .getOptional(DdIds.parse(tag.getString("input_fluid")))
+                        .ifPresent(fluid -> {
+                            if (!fluid.isSame(Fluids.EMPTY)) {
+                                this.inputFluid = fluid;
+                                this.inputMb = loadedInputMb;
+                            }
+                        });
+            }
+        }
+        int loadedSour = Math.max(0, tag.getInt("sour_water_mb"));
+        int loadedWater;
         if (tag.contains("water_mb")) {
-            this.waterMb = Math.max(0, tag.getInt("water_mb"));
-        } else if (this.level != null) {
+            loadedWater = Math.max(0, tag.getInt("water_mb"));
+        } else if (this.level != null && this.inputFluid == null) {
             // 旧存档没有 water_mb：那时水位字段既代表清水也代表酸引水。
             // 缸里有酸引水就说明那层水已经转化过（清水记 0），否则按水位补成清水。
             int level = this.getBlockState().getValue(Vat.WATER_LEVEL);
-            this.waterMb = this.sourWaterMb > 0 ? 0 : level * VatRecipes.WATER_MB_PER_LEVEL;
+            loadedWater = loadedSour > 0 ? 0 : level * VatRecipes.WATER_MB_PER_LEVEL;
+        } else {
+            loadedWater = 0;
+        }
+        if (this.inputFluid == null) {
+            if (loadedSour > 0) {
+                this.inputFluid = ModFluids.sourWaterSource();
+                this.inputMb = loadedSour;
+            } else if (loadedWater > 0) {
+                this.inputFluid = Fluids.WATER;
+                this.inputMb = loadedWater;
+            }
         }
         // 兼容一种历史状态：酿好的大酱被加了小麦，kind 变成了酱油、份数却还记在大酱里，
         // 结果这缸酱看起来是空的。这里把它救成同等份数的酱油。

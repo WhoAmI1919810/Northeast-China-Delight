@@ -137,32 +137,31 @@ public class Vat extends Block implements EntityBlock {
 
     /**
      * 能不能把瓶装酸引水倒进这个缸。
-     * 注意：第一瓶倒进空缸后，缸的状态会变成「泡菜缸」但还没腌制，
-     * 所以泡菜缸不能要求 fermented，否则只能倒一瓶。
      *
-     * <p>缸里就装得下 {@link ModBlockStateProperties#VAT_MAX_WATER} 层（3000 mB）液体，
-     * 所以先卡一道总容量：满了就不再收，免得液面显示停在 3 层、实际却越积越多。
+     * <p>未发酵时直接走数据驱动的 {@link VatBrewing#maxFluidInputMb}（不写死 kind）；
+     * 已完成泡菜缸仍保留手工倒瓶补满的便利，但不允许混液或超过 {@link VatRecipes#CAPACITY_MB}。</p>
      */
-    private static boolean canPourSourWater(VatBlockEntity vat, BlockState state) {
-        if (vat.hasMissingUnfinishedRecipe()) {
-            return false;
+    private static int manualSourWaterRoom(VatBlockEntity vat, BlockState state) {
+        if (vat.hasMissingUnfinishedRecipe() || vat.hasBottledProduct()) {
+            return 0;
         }
-        int capacity = ModBlockStateProperties.VAT_MAX_WATER * VatRecipes.WATER_MB_PER_LEVEL;
-        if (vat.waterMb() + vat.sourWaterMb() + VatRecipes.SERVING_MB > capacity) {
-            return false;
+        net.minecraft.world.level.material.Fluid sourWater =
+                com.gunmu.northeast_china_delight.fluid.ModFluids.sourWaterSource();
+        if (vat.inputMb() > 0 && vat.inputFluid() != null && !vat.inputFluid().isSame(sourWater)) {
+            return 0;
         }
-        return switch (vat.kind()) {
-            // 空缸：倒进去就成了一缸酸引水（状态记为泡菜缸）。
-            // 缸里已经有清水就不许倒 —— 酸引水和清水不能混，混了水位会被算错、水还会凭空少掉。
-            case NONE -> state.getValue(Vat.WATER_LEVEL) == 0
-                    && vat.contents().isEmpty() && !vat.hasProductLiquid();
-            // 泡菜缸：只有「本来就是酸引水缸」或「空缸」才能继续攒；
-            // 拿清水正在腌的那一缸不许倒，否则整缸盐水就废了
-            case PICKLE -> vat.sourWaterMb() > 0
-                    || (state.getValue(Vat.WATER_LEVEL) == 0 && vat.contents().isEmpty());
-            case WHITE_VINEGAR -> !state.getValue(FERMENTED);
-            default -> false;
-        };
+        int have = vat.sourWaterMb();
+        if (have >= VatRecipes.CAPACITY_MB) {
+            return 0;
+        }
+        if (vat.isFermented()) {
+            return have > 0 ? Math.min(VatRecipes.SERVING_MB, VatRecipes.CAPACITY_MB - have) : 0;
+        }
+        if (vat.recipeId() != null || state.getValue(PROGRESS) > 0) {
+            return 0;
+        }
+        int cap = VatBrewing.maxFluidInputMb(vat, sourWater);
+        return cap > have ? Math.min(VatRecipes.SERVING_MB, cap - have) : 0;
     }
 
     public static boolean hasEnoughSalt(VatBlockEntity vat) {
@@ -182,7 +181,7 @@ public class Vat extends Block implements EntityBlock {
         return false;
     }
 
-    private static void refreshSalted(Level level, BlockPos pos, VatBlockEntity vat) {
+    static void refreshSalted(Level level, BlockPos pos, VatBlockEntity vat) {
         BlockState state = level.getBlockState(pos);
         boolean salted = hasEnoughSalt(vat);
         if (state.getValue(SALTED) != salted) {
@@ -221,11 +220,24 @@ public class Vat extends Block implements EntityBlock {
             return false;
         }
         if (fermented) {
+            promoteChainedFluidIfNeeded(vat, recipe);
             level.setBlock(pos, state.setValue(FERMENTED, false).setValue(PROGRESS, 0), 3);
         }
         vat.setRecipe(recipe);
         level.scheduleTick(pos, level.getBlockState(pos).getBlock(), VatBrewing.stepTicks(recipe, vat));
         return true;
+    }
+
+    /** 若已完成缸的成品流体正好是下游配方的输入流体，将其转入输入槽以供下一道工序消耗。 */
+    static void promoteChainedFluidIfNeeded(VatBlockEntity vat, VatRecipe recipe) {
+        if (!vat.hasFinishedProductLiquid()) {
+            return;
+        }
+        net.minecraft.world.level.material.Fluid chained = VatRecipes.productOf(vat);
+        int chainedMb = chained == null ? 0 : vat.productMb(chained);
+        if (chained != null && chainedMb > 0 && recipe.liquid().acceptsInputFluid(chained)) {
+            vat.beginChainedFollowUp(chained, chainedMb);
+        }
     }
 
     /**
@@ -237,34 +249,40 @@ public class Vat extends Block implements EntityBlock {
             return false;
         }
         resetStalledProgress(level, pos, state, vat);
-        if (vat.isPressed() || !canAddWater(vat)) {
+        int add = manualWaterAddMb(vat);
+        if (vat.isPressed() || add <= 0) {
             return false;
         }
-        vat.addWater(VatRecipes.WATER_MB_PER_LEVEL);
+        vat.addWater(add);
         refreshSalted(level, pos, vat);
         tryStart(level, pos, vat);
         return true;
     }
 
-    private static boolean canAddWater(VatBlockEntity vat) {
-        if (vat.hasMissingUnfinishedRecipe()) {
-            return false;
-        }
-        if (vat.waterLayers() >= ModBlockStateProperties.VAT_MAX_WATER) {
-            return false;
-        }
-        // 酸引水和清水不能混：混了水位会算错，水还会凭空少掉
-        if (vat.sourWaterMb() > 0) {
-            return false;
+    private static int manualWaterCapMb(VatBlockEntity vat) {
+        if (vat.hasMissingUnfinishedRecipe() || vat.nonWaterInputMb() > 0) {
+            return 0;
         }
         if (!vat.isFermented() && (vat.recipeId() != null
                 || vat.getBlockState().getValue(PROGRESS) > 0)) {
             // 已经开始计时的配方可能只要 0~1 层水（冻梨、豆芽等）。这时再倒水会超过
             // water_max，ready() 返回 null，而 tick 又不会继续排程 —— 正是最典型的卡死路径。
             VatRecipe recipe = VatRecipes.recipeOf(vat);
-            return recipe != null && vat.waterLayers() < recipe.liquid().waterMax();
+            return recipe == null ? 0 : recipe.liquid().waterMax() * VatRecipes.WATER_MB_PER_LEVEL;
         }
-        return !vat.isFermented() || VatBrewing.canContinueWithWater(vat);
+        if (vat.isFermented()) {
+            return VatBrewing.maxFluidInputMb(vat, net.minecraft.world.level.material.Fluids.WATER);
+        }
+        return VatRecipes.CAPACITY_MB;
+    }
+
+    private static int manualWaterAddMb(VatBlockEntity vat) {
+        int cap = manualWaterCapMb(vat);
+        int have = vat.waterMb();
+        if (have >= cap) {
+            return 0;
+        }
+        return Math.min(VatRecipes.WATER_MB_PER_LEVEL, cap - have);
     }
 
     private static void give(Player player, ItemStack stack) {
@@ -332,11 +350,12 @@ public class Vat extends Block implements EntityBlock {
             return returnRemovedRecipe(level, pos, state, vat, player);
         }
 
-        // 水桶和水盆都注一层水（1000 mB），并返还空容器。
+        // 水桶和水盆都注一层水（最多补齐到允许上限，避免管道灌了半层后倒桶溢出），并返还空容器。
         boolean waterBasin = stack.is(ModItems.WATER_BASIN.get());
-        if ((stack.is(Items.WATER_BUCKET) || waterBasin) && canAddWater(vat)) {
+        int waterAdd = (stack.is(Items.WATER_BUCKET) || waterBasin) ? manualWaterAddMb(vat) : 0;
+        if (waterAdd > 0) {
             if (!level.isClientSide) {
-                vat.addWater(VatRecipes.WATER_MB_PER_LEVEL);
+                vat.addWater(waterAdd);
                 if (!player.getAbilities().instabuild) {
                     stack.shrink(1);
                     ItemStack empty = new ItemStack(waterBasin ? ModItems.LARGE_BASIN.get() : Items.BUCKET);
@@ -365,11 +384,9 @@ public class Vat extends Block implements EntityBlock {
             return InteractionResult.PASS;
         }
 
-        if (stack.is(ModItems.SOUR_WATER.get()) && canPourSourWater(vat, state)) {
-            if (vat.kind() == VatRecipes.Kind.NONE) {
-                vat.setKind(VatRecipes.Kind.PICKLE);
-            }
-            vat.addSourWater(VatRecipes.SERVING_MB);
+        int sourWaterAdd = stack.is(ModItems.SOUR_WATER.get()) ? manualSourWaterRoom(vat, state) : 0;
+        if (sourWaterAdd > 0) {
+            vat.addSourWater(sourWaterAdd);
             consume(player, stack);
             give(player, new ItemStack(Items.GLASS_BOTTLE));
             playFill(level, pos);
@@ -448,6 +465,17 @@ public class Vat extends Block implements EntityBlock {
         if (recipeSlot.perDose() && SeasoningBottleItem.isBottle(stack) && !SeasoningBottleItem.hasPortion(stack)) {
             // 不足完整一份的瓶装调料不能按一份入缸，避免把瓶底余量吞掉
             return false;
+        }
+        // 通用原地连锁切态：已完成缸里装着上一道成品液 F，且玩家投入了以 F 为 input_fluid 的下游配方原料。
+        // 立刻把 F 转入输入槽并清除 FERMENTED，管道随即从「成品态（只出）」切入「备料态（只进）」。
+        if (vat.hasFinishedProductLiquid()) {
+            net.minecraft.world.level.material.Fluid chained = VatRecipes.productOf(vat);
+            int chainedMb = chained == null ? 0 : vat.productMb(chained);
+            if (chained != null && chainedMb > 0 && recipe.liquid().acceptsInputFluid(chained)) {
+                vat.beginChainedFollowUp(chained, chainedMb);
+                BlockState current = level.getBlockState(pos);
+                level.setBlock(pos, current.setValue(FERMENTED, false).setValue(PROGRESS, 0), 3);
+            }
         }
         vat.addContent(stack);
         if (recipeSlot.perDose() && SeasoningBottleItem.isBottle(stack)) {
@@ -785,7 +813,7 @@ public class Vat extends Block implements EntityBlock {
      * 没做完的缸已经计了进度、或者绑着配方，却没有任何配方能匹配时，退回未开工状态并解除旧绑定，
      * 保证玩家还能补料、重新封口开工。只绑定没计进度的情况（封口后第一次 tick 前就被打断、旧版本管道抽空留下的缸）也算。
      */
-    private static void resetStalledProgress(Level level, BlockPos pos, BlockState state, VatBlockEntity vat) {
+    static void resetStalledProgress(Level level, BlockPos pos, BlockState state, VatBlockEntity vat) {
         if (state.getValue(FERMENTED) || (state.getValue(PROGRESS) == 0 && vat.recipeId() == null)
                 || vat.hasMissingUnfinishedRecipe() || VatBrewing.ready(vat) != null) {
             return;
