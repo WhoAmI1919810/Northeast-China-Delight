@@ -41,6 +41,13 @@ public class SleepingPillowBlock extends FacingDecorBlock
     public static final BooleanProperty OCCUPIED = BlockStateProperties.OCCUPIED;
     public static final BooleanProperty REVERSED = BooleanProperty.create("reversed");
 
+    /**
+     * 枕头入睡时的实体 Y 偏移：枕头顶面高 4.5 像素，沿用原版床「床面高度 + 2 像素」的相对关系
+     * （原版床 9 + 2 = 11 像素 = 0.6875，枕头 4.5 + 2 = 6.5 像素 = 0.40625），
+     * 头部自然枕入枕头且睡眠碰撞箱仍稳稳位于枕头碰撞箱上方。
+     */
+    public static final double SLEEP_POS_Y_OFFSET = 6.5D / 16.0D;
+
     private static final int QUILT_RADIUS_XZ = 4;
     private static final int QUILT_RADIUS_Y = 2;
 

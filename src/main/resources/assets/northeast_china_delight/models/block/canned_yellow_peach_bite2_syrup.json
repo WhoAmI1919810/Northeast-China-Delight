@@ -1,0 +1,83 @@
+{
+  "credit": "True translucent peach syrup layer",
+  "texture_size": [
+    32,
+    32
+  ],
+  "render_type": "minecraft:translucent",
+  "textures": {
+    "syrup": "northeast_china_delight:block/canned_yellow_peach_syrup",
+    "particle": "northeast_china_delight:block/canned_yellow_peach"
+  },
+  "elements": [
+    {
+      "name": "peach_syrup",
+      "from": [
+        3.2,
+        0.5,
+        3.2
+      ],
+      "to": [
+        12.8,
+        3.8,
+        12.8
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            8.0,
+            0.0,
+            13.0,
+            1.65
+          ],
+          "texture": "#syrup"
+        },
+        "east": {
+          "uv": [
+            8.0,
+            0.0,
+            13.0,
+            1.65
+          ],
+          "texture": "#syrup"
+        },
+        "south": {
+          "uv": [
+            8.0,
+            0.0,
+            13.0,
+            1.65
+          ],
+          "texture": "#syrup"
+        },
+        "west": {
+          "uv": [
+            8.0,
+            0.0,
+            13.0,
+            1.65
+          ],
+          "texture": "#syrup"
+        },
+        "up": {
+          "uv": [
+            0.0,
+            0.0,
+            5.0,
+            5.0
+          ],
+          "texture": "#syrup"
+        },
+        "down": {
+          "uv": [
+            0.0,
+            8.0,
+            5.0,
+            13.0
+          ],
+          "texture": "#syrup"
+        }
+      }
+    }
+  ]
+}

@@ -13,6 +13,7 @@
     "SideDishMerchantTradeMixin",
     "VillagerOutfitDiscountMixin",
     "LivingEntityLidSoundMixin",
+    "LivingEntityPillowSleepMixin",
     "LivingEntityUseDurationMixin",
     "PlayerQuiltSleepMixin",
     "ServerPlayerPillowSleepMixin",
