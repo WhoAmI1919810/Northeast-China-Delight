@@ -588,4 +588,51 @@ public final class PillowSleepGameTests
         }
         helper.succeed();
     }
+
+    @GameTest(template = "empty")
+    public static void pillowSleepLowersPlayerToPillowHeight(GameTestHelper helper)
+    {
+        ServerLevel level = helper.getLevel();
+        BlockPos pillowPos = helper.absolutePos(new BlockPos(2, 1, 2));
+        BlockPos quiltPos = pillowPos.east(1);
+        BlockPos bedFoot = helper.absolutePos(new BlockPos(1, 1, 3));
+        BlockPos bedHead = bedFoot.north();
+        long oldTime = level.getDayTime();
+        ServerPlayer player = serverPlayer(helper);
+        try
+        {
+            beginPillowSleep(helper, level, player, pillowPos, quiltPos);
+            double expectedPillowY = pillowPos.getY() + SleepingPillowBlock.SLEEP_POS_Y_OFFSET;
+            helper.assertTrue(Math.abs(player.getY() - expectedPillowY) < 1.0E-6D,
+                    "枕头入睡高度应与枕头高度匹配，期望 " + expectedPillowY + "，实际 " + player.getY());
+            helper.assertTrue(player.blockPosition().equals(pillowPos),
+                    "枕头入睡后玩家所在方块仍应是枕头位置");
+            player.stopSleepInBed(true, false);
+
+            level.setBlockAndUpdate(bedFoot.below(), Blocks.STONE.defaultBlockState());
+            level.setBlockAndUpdate(bedHead.below(), Blocks.STONE.defaultBlockState());
+            level.setBlockAndUpdate(bedFoot, Blocks.RED_BED.defaultBlockState()
+                    .setValue(net.minecraft.world.level.block.BedBlock.FACING, Direction.NORTH)
+                    .setValue(net.minecraft.world.level.block.BedBlock.PART,
+                            net.minecraft.world.level.block.state.properties.BedPart.FOOT));
+            level.setBlockAndUpdate(bedHead, Blocks.RED_BED.defaultBlockState()
+                    .setValue(net.minecraft.world.level.block.BedBlock.FACING, Direction.NORTH)
+                    .setValue(net.minecraft.world.level.block.BedBlock.PART,
+                            net.minecraft.world.level.block.state.properties.BedPart.HEAD));
+            player.startSleeping(bedHead);
+            double expectedBedY = bedHead.getY() + 0.6875D;
+            helper.assertTrue(Math.abs(player.getY() - expectedBedY) < 1.0E-6D,
+                    "原版床入睡高度不应被枕头逻辑改动，期望 " + expectedBedY + "，实际 " + player.getY());
+        }
+        finally
+        {
+            if (player.isSleeping())
+            {
+                player.stopSleepInBed(true, false);
+            }
+            level.setDayTime(oldTime);
+            level.updateSkyBrightness();
+        }
+        helper.succeed();
+    }
 }

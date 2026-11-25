@@ -32,10 +32,11 @@ public class QuiltSleepLayer extends RenderLayer<AbstractClientPlayer, PlayerMod
     private static final float MIN_Y = 0.0F;
     private static final float MAX_Y = 26.0F;
     private static final float TOP_Z = -3.0F;
-    private static final float DRAPE_BOTTOM_Z = 11.0F;
+    // 枕头入睡高度在 y + 6.5/16，玩家模型缩放 0.9375：6.75 * 0.9375 ≈ 6.33 像素，被角刚好贴近下方羊毛而不穿进方块
+    private static final float DRAPE_BOTTOM_Z = 6.75F;
     private static final int COLUMNS = 2;
     private static final int ROWS = 4;
-    private static final int SIDE_BANDS = 2;
+    private static final int SIDE_BANDS = 1;
     private static final float MODEL_PIXEL = 1.0F / 16.0F;
 
     public QuiltSleepLayer(PlayerRenderer renderer)

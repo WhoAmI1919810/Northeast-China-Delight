@@ -1,12 +1,29 @@
 {
-  "credit": "黄桃罐头：物品栏 / 配方书 / JEI 这类 GUI 用 canned_yellow_peach_icon 的 2D 贴图，手上、地面、展示框用 canned_yellow_peach_model 的 3D 罐子；分视角由加载器的 separate_transforms 处理，不走自定义渲染器",
+  "credit": "黄桃罐头：物品栏 / 配方书 / JEI 这类 GUI 用 canned_yellow_peach_icon 的 2D 贴图，手上、地面、展示框用分层复合 3D 罐子（cutout 瓶身黄桃 + translucent 真半透明糖水）；分视角由 separate_transforms 处理",
   "loader": "neoforge:separate_transforms",
   "gui_light": "front",
   "textures": {
     "particle": "northeast_china_delight:item/canned_yellow_peach"
   },
   "base": {
-    "parent": "northeast_china_delight:item/canned_yellow_peach_model",
+    "loader": "neoforge:composite",
+    "textures": {
+      "particle": "northeast_china_delight:block/canned_yellow_peach"
+    },
+    "children": {
+      "jar": {
+        "parent": "northeast_china_delight:block/canned_yellow_peach",
+        "render_type": "minecraft:cutout"
+      },
+      "syrup": {
+        "parent": "northeast_china_delight:block/canned_yellow_peach_syrup",
+        "render_type": "minecraft:translucent"
+      }
+    },
+    "item_render_order": [
+      "jar",
+      "syrup"
+    ],
     "display": {
       "ground": {
         "rotation": [

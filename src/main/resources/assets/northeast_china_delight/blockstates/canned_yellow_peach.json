@@ -1,49 +1,238 @@
 {
-  "variants": {
-    "bites=0,facing=north": {
-      "model": "northeast_china_delight:block/canned_yellow_peach"
+  "multipart": [
+    {
+      "when": {
+        "bites": "0",
+        "facing": "north"
+      },
+      "apply": {
+        "model": "northeast_china_delight:block/canned_yellow_peach"
+      }
     },
-    "bites=1,facing=north": {
-      "model": "northeast_china_delight:block/canned_yellow_peach_bite1"
+    {
+      "when": {
+        "bites": "0",
+        "facing": "north"
+      },
+      "apply": {
+        "model": "northeast_china_delight:block/canned_yellow_peach_syrup"
+      }
     },
-    "bites=2,facing=north": {
-      "model": "northeast_china_delight:block/canned_yellow_peach_bite2"
+    {
+      "when": {
+        "bites": "0",
+        "facing": "east"
+      },
+      "apply": {
+        "model": "northeast_china_delight:block/canned_yellow_peach",
+        "y": 90
+      }
     },
-    "bites=0,facing=east": {
-      "model": "northeast_china_delight:block/canned_yellow_peach",
-      "y": 90
+    {
+      "when": {
+        "bites": "0",
+        "facing": "east"
+      },
+      "apply": {
+        "model": "northeast_china_delight:block/canned_yellow_peach_syrup",
+        "y": 90
+      }
     },
-    "bites=1,facing=east": {
-      "model": "northeast_china_delight:block/canned_yellow_peach_bite1",
-      "y": 90
+    {
+      "when": {
+        "bites": "0",
+        "facing": "south"
+      },
+      "apply": {
+        "model": "northeast_china_delight:block/canned_yellow_peach",
+        "y": 180
+      }
     },
-    "bites=2,facing=east": {
-      "model": "northeast_china_delight:block/canned_yellow_peach_bite2",
-      "y": 90
+    {
+      "when": {
+        "bites": "0",
+        "facing": "south"
+      },
+      "apply": {
+        "model": "northeast_china_delight:block/canned_yellow_peach_syrup",
+        "y": 180
+      }
     },
-    "bites=0,facing=south": {
-      "model": "northeast_china_delight:block/canned_yellow_peach",
-      "y": 180
+    {
+      "when": {
+        "bites": "0",
+        "facing": "west"
+      },
+      "apply": {
+        "model": "northeast_china_delight:block/canned_yellow_peach",
+        "y": 270
+      }
     },
-    "bites=1,facing=south": {
-      "model": "northeast_china_delight:block/canned_yellow_peach_bite1",
-      "y": 180
+    {
+      "when": {
+        "bites": "0",
+        "facing": "west"
+      },
+      "apply": {
+        "model": "northeast_china_delight:block/canned_yellow_peach_syrup",
+        "y": 270
+      }
     },
-    "bites=2,facing=south": {
-      "model": "northeast_china_delight:block/canned_yellow_peach_bite2",
-      "y": 180
+    {
+      "when": {
+        "bites": "1",
+        "facing": "north"
+      },
+      "apply": {
+        "model": "northeast_china_delight:block/canned_yellow_peach_bite1"
+      }
     },
-    "bites=0,facing=west": {
-      "model": "northeast_china_delight:block/canned_yellow_peach",
-      "y": 270
+    {
+      "when": {
+        "bites": "1",
+        "facing": "north"
+      },
+      "apply": {
+        "model": "northeast_china_delight:block/canned_yellow_peach_bite1_syrup"
+      }
     },
-    "bites=1,facing=west": {
-      "model": "northeast_china_delight:block/canned_yellow_peach_bite1",
-      "y": 270
+    {
+      "when": {
+        "bites": "1",
+        "facing": "east"
+      },
+      "apply": {
+        "model": "northeast_china_delight:block/canned_yellow_peach_bite1",
+        "y": 90
+      }
     },
-    "bites=2,facing=west": {
-      "model": "northeast_china_delight:block/canned_yellow_peach_bite2",
-      "y": 270
+    {
+      "when": {
+        "bites": "1",
+        "facing": "east"
+      },
+      "apply": {
+        "model": "northeast_china_delight:block/canned_yellow_peach_bite1_syrup",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "bites": "1",
+        "facing": "south"
+      },
+      "apply": {
+        "model": "northeast_china_delight:block/canned_yellow_peach_bite1",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "bites": "1",
+        "facing": "south"
+      },
+      "apply": {
+        "model": "northeast_china_delight:block/canned_yellow_peach_bite1_syrup",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "bites": "1",
+        "facing": "west"
+      },
+      "apply": {
+        "model": "northeast_china_delight:block/canned_yellow_peach_bite1",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "bites": "1",
+        "facing": "west"
+      },
+      "apply": {
+        "model": "northeast_china_delight:block/canned_yellow_peach_bite1_syrup",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "bites": "2",
+        "facing": "north"
+      },
+      "apply": {
+        "model": "northeast_china_delight:block/canned_yellow_peach_bite2"
+      }
+    },
+    {
+      "when": {
+        "bites": "2",
+        "facing": "north"
+      },
+      "apply": {
+        "model": "northeast_china_delight:block/canned_yellow_peach_bite2_syrup"
+      }
+    },
+    {
+      "when": {
+        "bites": "2",
+        "facing": "east"
+      },
+      "apply": {
+        "model": "northeast_china_delight:block/canned_yellow_peach_bite2",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "bites": "2",
+        "facing": "east"
+      },
+      "apply": {
+        "model": "northeast_china_delight:block/canned_yellow_peach_bite2_syrup",
+        "y": 90
+      }
+    },
+    {
+      "when": {
+        "bites": "2",
+        "facing": "south"
+      },
+      "apply": {
+        "model": "northeast_china_delight:block/canned_yellow_peach_bite2",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "bites": "2",
+        "facing": "south"
+      },
+      "apply": {
+        "model": "northeast_china_delight:block/canned_yellow_peach_bite2_syrup",
+        "y": 180
+      }
+    },
+    {
+      "when": {
+        "bites": "2",
+        "facing": "west"
+      },
+      "apply": {
+        "model": "northeast_china_delight:block/canned_yellow_peach_bite2",
+        "y": 270
+      }
+    },
+    {
+      "when": {
+        "bites": "2",
+        "facing": "west"
+      },
+      "apply": {
+        "model": "northeast_china_delight:block/canned_yellow_peach_bite2_syrup",
+        "y": 270
+      }
     }
-  }
+  ]
 }
